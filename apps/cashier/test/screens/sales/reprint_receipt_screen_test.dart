@@ -35,8 +35,7 @@ void main() {
       when(() => ordersDao.getOrders(any()))
           .thenAnswer((_) async => <OrdersTableData>[]);
 
-      await tester.pumpWidget(
-          createTestWidget(const ReprintReceiptScreen()));
+      await tester.pumpWidget(createTestWidget(const ReprintReceiptScreen()));
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
@@ -50,8 +49,7 @@ void main() {
       when(() => ordersDao.getOrders(any()))
           .thenAnswer((_) async => <OrdersTableData>[]);
 
-      await tester.pumpWidget(
-          createTestWidget(const ReprintReceiptScreen()));
+      await tester.pumpWidget(createTestWidget(const ReprintReceiptScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.receipt_long_outlined), findsOneWidget);
@@ -76,11 +74,9 @@ void main() {
         ),
       ];
 
-      when(() => ordersDao.getOrders(any()))
-          .thenAnswer((_) async => orders);
+      when(() => ordersDao.getOrders(any())).thenAnswer((_) async => orders);
 
-      await tester.pumpWidget(
-          createTestWidget(const ReprintReceiptScreen()));
+      await tester.pumpWidget(createTestWidget(const ReprintReceiptScreen()));
       await tester.pumpAndSettle();
 
       // Order cards with receipt icons
@@ -96,8 +92,7 @@ void main() {
       when(() => ordersDao.getOrders(any()))
           .thenAnswer((_) async => <OrdersTableData>[]);
 
-      await tester.pumpWidget(
-          createTestWidget(const ReprintReceiptScreen()));
+      await tester.pumpWidget(createTestWidget(const ReprintReceiptScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(TextField), findsOneWidget);
@@ -113,8 +108,7 @@ void main() {
       when(() => ordersDao.getOrders(any()))
           .thenAnswer((_) async => <OrdersTableData>[]);
 
-      await tester.pumpWidget(
-          createTestWidget(const ReprintReceiptScreen()));
+      await tester.pumpWidget(createTestWidget(const ReprintReceiptScreen()));
       await tester.pumpAndSettle();
 
       // Print prompt icon should be visible (no order selected)

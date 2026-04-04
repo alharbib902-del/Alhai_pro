@@ -69,7 +69,8 @@ class DbHealthReport {
   String toString() {
     final sb = StringBuffer('=== DB Health Report ===\n');
     sb.writeln('Status: $healthLevel');
-    sb.writeln('Integrity: ${integrityOk ? "OK" : "FAILED"} ($integrityMessage)');
+    sb.writeln(
+        'Integrity: ${integrityOk ? "OK" : "FAILED"} ($integrityMessage)');
     sb.writeln('FK Violations: $foreignKeyViolations');
     sb.writeln('Orphaned sale_items: $orphanedSaleItems');
     sb.writeln('Orphaned return_items: $orphanedReturnItems');
@@ -292,9 +293,11 @@ class DbHealthService {
   /// فحص sale_items اليتيمة
   Future<int> _checkOrphanedSaleItems() async {
     try {
-      final result = await _db.customSelect(
-        'SELECT COUNT(*) as cnt FROM sale_items WHERE sale_id NOT IN (SELECT id FROM sales)',
-      ).getSingle();
+      final result = await _db
+          .customSelect(
+            'SELECT COUNT(*) as cnt FROM sale_items WHERE sale_id NOT IN (SELECT id FROM sales)',
+          )
+          .getSingle();
       return result.data['cnt'] as int? ?? 0;
     } catch (e) {
       if (kDebugMode) {
@@ -307,9 +310,11 @@ class DbHealthService {
   /// فحص return_items اليتيمة
   Future<int> _checkOrphanedReturnItems() async {
     try {
-      final result = await _db.customSelect(
-        'SELECT COUNT(*) as cnt FROM return_items WHERE return_id NOT IN (SELECT id FROM returns)',
-      ).getSingle();
+      final result = await _db
+          .customSelect(
+            'SELECT COUNT(*) as cnt FROM return_items WHERE return_id NOT IN (SELECT id FROM returns)',
+          )
+          .getSingle();
       return result.data['cnt'] as int? ?? 0;
     } catch (e) {
       if (kDebugMode) {
@@ -325,18 +330,22 @@ class DbHealthService {
 
     try {
       // 1. مخزون سالب
-      final negativeStock = await _db.customSelect(
-        'SELECT COUNT(*) as cnt FROM products WHERE stock_qty < 0',
-      ).getSingle();
+      final negativeStock = await _db
+          .customSelect(
+            'SELECT COUNT(*) as cnt FROM products WHERE stock_qty < 0',
+          )
+          .getSingle();
       final negCount = negativeStock.data['cnt'] as int? ?? 0;
       if (negCount > 0) {
         anomalies.add('$negCount products with negative stock');
       }
 
       // 2. مبيعات مكتملة بإجمالي صفري أو سالب
-      final zeroSales = await _db.customSelect(
-        "SELECT COUNT(*) as cnt FROM sales WHERE status = 'completed' AND total <= 0",
-      ).getSingle();
+      final zeroSales = await _db
+          .customSelect(
+            "SELECT COUNT(*) as cnt FROM sales WHERE status = 'completed' AND total <= 0",
+          )
+          .getSingle();
       final zeroCount = zeroSales.data['cnt'] as int? ?? 0;
       if (zeroCount > 0) {
         anomalies.add('$zeroCount completed sales with zero or negative total');
@@ -354,9 +363,11 @@ class DbHealthService {
       }
 
       // 4. منتجات بسعر سالب
-      final negativePrices = await _db.customSelect(
-        'SELECT COUNT(*) as cnt FROM products WHERE price < 0',
-      ).getSingle();
+      final negativePrices = await _db
+          .customSelect(
+            'SELECT COUNT(*) as cnt FROM products WHERE price < 0',
+          )
+          .getSingle();
       final negPriceCount = negativePrices.data['cnt'] as int? ?? 0;
       if (negPriceCount > 0) {
         anomalies.add('$negPriceCount products with negative price');
@@ -387,7 +398,8 @@ class DbHealthService {
     try {
       final pageCount = await _db.customSelect('PRAGMA page_count').getSingle();
       final pageSize = await _db.customSelect('PRAGMA page_size').getSingle();
-      final freePages = await _db.customSelect('PRAGMA freelist_count').getSingle();
+      final freePages =
+          await _db.customSelect('PRAGMA freelist_count').getSingle();
 
       final pages = pageCount.data.values.first as int? ?? 0;
       final size = pageSize.data.values.first as int? ?? 4096;
@@ -408,7 +420,8 @@ class DbHealthService {
   /// الحصول على عدد الصفحات الفارغة
   Future<int> _getFreePages() async {
     try {
-      final result = await _db.customSelect('PRAGMA freelist_count').getSingle();
+      final result =
+          await _db.customSelect('PRAGMA freelist_count').getSingle();
       return result.data.values.first as int? ?? 0;
     } catch (_) {
       return 0;

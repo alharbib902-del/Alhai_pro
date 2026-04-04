@@ -11,7 +11,6 @@ import 'package:uuid/uuid.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:get_it/get_it.dart';
 
-
 const _uuid = Uuid();
 
 // ============================================================================
@@ -99,7 +98,8 @@ Future<String> createReturn(
     tableName: 'returns',
     recordId: id,
     operation: 'CREATE',
-    payload: '{"id":"$id","sale_id":"$saleId","store_id":"$storeId","total_refund":$totalRefund,"reason":"$reason","refund_method":"$refundMethod"}',
+    payload:
+        '{"id":"$id","sale_id":"$saleId","store_id":"$storeId","total_refund":$totalRefund,"reason":"$reason","refund_method":"$refundMethod"}',
     idempotencyKey: 'return_create_$id',
   );
 

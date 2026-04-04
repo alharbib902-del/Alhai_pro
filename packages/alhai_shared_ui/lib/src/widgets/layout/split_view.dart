@@ -196,9 +196,7 @@ class _SplitViewState extends State<SplitView>
                   width: context.screenWidth * 0.85,
                   child: Transform.translate(
                     offset: Offset(
-                      (1 - _animation.value) *
-                          context.screenWidth *
-                          0.85,
+                      (1 - _animation.value) * context.screenWidth * 0.85,
                       0,
                     ),
                     child: Container(

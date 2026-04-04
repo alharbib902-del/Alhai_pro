@@ -38,7 +38,8 @@ void main() {
       tester.view.resetDevicePixelRatio();
     });
 
-    testWidgets('shows tab bar with roles and permissions tabs', (tester) async {
+    testWidgets('shows tab bar with roles and permissions tabs',
+        (tester) async {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();

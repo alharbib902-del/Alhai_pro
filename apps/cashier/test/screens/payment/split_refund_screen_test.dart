@@ -34,8 +34,8 @@ void main() {
       when(() => ordersDao.getOrderById(any()))
           .thenAnswer((_) async => createTestOrder(id: 'order-1'));
 
-      await tester.pumpWidget(createTestWidget(
-          const SplitRefundScreen(orderId: 'order-1')));
+      await tester.pumpWidget(
+          createTestWidget(const SplitRefundScreen(orderId: 'order-1')));
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
@@ -46,11 +46,10 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => ordersDao.getOrderById(any()))
-          .thenAnswer((_) async => null);
+      when(() => ordersDao.getOrderById(any())).thenAnswer((_) async => null);
 
-      await tester.pumpWidget(createTestWidget(
-          const SplitRefundScreen(orderId: 'order-1')));
+      await tester.pumpWidget(
+          createTestWidget(const SplitRefundScreen(orderId: 'order-1')));
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.receipt_long_outlined), findsOneWidget);
@@ -70,8 +69,8 @@ void main() {
                 paymentMethod: 'cash',
               ));
 
-      await tester.pumpWidget(createTestWidget(
-          const SplitRefundScreen(orderId: 'order-1')));
+      await tester.pumpWidget(
+          createTestWidget(const SplitRefundScreen(orderId: 'order-1')));
       await tester.pumpAndSettle();
 
       // Refund card icon
@@ -91,8 +90,8 @@ void main() {
                 paymentMethod: 'cash',
               ));
 
-      await tester.pumpWidget(createTestWidget(
-          const SplitRefundScreen(orderId: 'order-1')));
+      await tester.pumpWidget(
+          createTestWidget(const SplitRefundScreen(orderId: 'order-1')));
       await tester.pumpAndSettle();
 
       // Refund summary icon
@@ -100,8 +99,7 @@ void main() {
       expect(find.text('Refund Summary'), findsOneWidget);
     });
 
-    testWidgets('shows bottom bar with process refund button',
-        (tester) async {
+    testWidgets('shows bottom bar with process refund button', (tester) async {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
 
@@ -114,8 +112,8 @@ void main() {
                 paymentMethod: 'cash',
               ));
 
-      await tester.pumpWidget(createTestWidget(
-          const SplitRefundScreen(orderId: 'order-1')));
+      await tester.pumpWidget(
+          createTestWidget(const SplitRefundScreen(orderId: 'order-1')));
       await tester.pumpAndSettle();
 
       expect(find.text('Process Refund'), findsOneWidget);
@@ -133,8 +131,8 @@ void main() {
                 total: 200.0,
               ));
 
-      await tester.pumpWidget(createTestWidget(
-          const SplitRefundScreen(orderId: 'order-1')));
+      await tester.pumpWidget(
+          createTestWidget(const SplitRefundScreen(orderId: 'order-1')));
       await tester.pumpAndSettle();
 
       // Back button

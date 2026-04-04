@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -116,15 +114,15 @@ void main() {
         subType: '0100000',
       );
 
-  final validComplianceResult = ComplianceResult(
+  const validComplianceResult = ComplianceResult(
     isValid: true,
     errors: [],
   );
 
-  final invalidComplianceResult = ComplianceResult(
+  const invalidComplianceResult = ComplianceResult(
     isValid: false,
     errors: [
-      const ComplianceError(
+      ComplianceError(
         code: 'BT-1',
         field: 'invoiceNumber',
         message: 'Invoice number is required',
@@ -133,10 +131,10 @@ void main() {
     ],
   );
 
-  final warningOnlyResult = ComplianceResult(
+  const warningOnlyResult = ComplianceResult(
     isValid: false,
     errors: [
-      const ComplianceError(
+      ComplianceError(
         code: 'KSA-EN16931-08',
         field: 'vatRate',
         message: 'Non-standard VAT rate',
@@ -200,9 +198,11 @@ void main() {
         .thenAnswer((_) async => 'prev-hash-base64');
     when(() => mockXmlBuilder.build(any())).thenReturn('<Invoice/>');
     when(() => mockSigner.sign(
-          invoiceXml: any(named: 'invoiceXml'),
-          certificate: any(named: 'certificate'),
-        )).thenReturn('<ds:Signature><ds:SignatureValue>abc123</ds:SignatureValue></ds:Signature>');
+              invoiceXml: any(named: 'invoiceXml'),
+              certificate: any(named: 'certificate'),
+            ))
+        .thenReturn(
+            '<ds:Signature><ds:SignatureValue>abc123</ds:SignatureValue></ds:Signature>');
     when(() => mockSigner.computeInvoiceHash(any()))
         .thenReturn('invoice-hash-base64');
     when(() => mockQrService.generateQrData(
@@ -281,7 +281,8 @@ void main() {
     // ── processInvoice - validation failures ──────────────
 
     group('processInvoice - validation', () {
-      test('returns failed when compliance check has blocking errors', () async {
+      test('returns failed when compliance check has blocking errors',
+          () async {
         when(() => mockComplianceChecker.check(any()))
             .thenReturn(invalidComplianceResult);
 
@@ -319,7 +320,8 @@ void main() {
       test('returns failed when no certificate found', () async {
         when(() => mockComplianceChecker.check(any()))
             .thenReturn(validComplianceResult);
-        when(() => mockCertStorage.getCertificate(storeId: any(named: 'storeId')))
+        when(() =>
+                mockCertStorage.getCertificate(storeId: any(named: 'storeId')))
             .thenAnswer((_) async => null);
 
         final result = await service.processInvoice(
@@ -335,7 +337,8 @@ void main() {
       test('returns failed when certificate is expired', () async {
         when(() => mockComplianceChecker.check(any()))
             .thenReturn(validComplianceResult);
-        when(() => mockCertStorage.getCertificate(storeId: any(named: 'storeId')))
+        when(() =>
+                mockCertStorage.getCertificate(storeId: any(named: 'storeId')))
             .thenAnswer((_) async => expiredCertificate);
 
         final result = await service.processInvoice(
@@ -344,8 +347,7 @@ void main() {
         );
 
         expect(result.reportingStatus, ReportingStatus.failed);
-        expect(
-            result.errors.any((e) => e.contains('expired')), isTrue);
+        expect(result.errors.any((e) => e.contains('expired')), isTrue);
       });
     });
 
@@ -439,7 +441,8 @@ void main() {
       test('never throws - captures processing errors', () async {
         when(() => mockComplianceChecker.check(any()))
             .thenReturn(validComplianceResult);
-        when(() => mockCertStorage.getCertificate(storeId: any(named: 'storeId')))
+        when(() =>
+                mockCertStorage.getCertificate(storeId: any(named: 'storeId')))
             .thenThrow(Exception('Database corrupted'));
 
         final result = await service.processInvoice(
@@ -448,8 +451,8 @@ void main() {
         );
 
         expect(result.reportingStatus, ReportingStatus.failed);
-        expect(result.errors.any((e) => e.contains('Processing error')),
-            isTrue);
+        expect(
+            result.errors.any((e) => e.contains('Processing error')), isTrue);
       });
     });
 
@@ -480,8 +483,7 @@ void main() {
 
     group('getPendingQueueCount', () {
       test('returns count from offline queue', () async {
-        when(() => mockOfflineQueue.pendingCount)
-            .thenAnswer((_) async => 5);
+        when(() => mockOfflineQueue.pendingCount).thenAnswer((_) async => 5);
 
         final count = await service.getPendingQueueCount();
         expect(count, 5);

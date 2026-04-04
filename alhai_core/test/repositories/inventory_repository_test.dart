@@ -61,14 +61,16 @@ void main() {
             )).thenAnswer((_) async => [testAdjustmentResponse]);
 
         // Act
-        final result = await repository.getAdjustments('prod-1', page: 1, limit: 20);
+        final result =
+            await repository.getAdjustments('prod-1', page: 1, limit: 20);
 
         // Assert
         expect(result.items, hasLength(1));
         expect(result.items.first.id, equals('adj-1'));
         expect(result.items.first.type, equals(AdjustmentType.sold));
         expect(result.page, equals(1));
-        verify(() => mockRemote.getAdjustments('prod-1', page: 1, limit: 20)).called(1);
+        verify(() => mockRemote.getAdjustments('prod-1', page: 1, limit: 20))
+            .called(1);
       });
 
       test('throws NetworkException on connection error', () async {

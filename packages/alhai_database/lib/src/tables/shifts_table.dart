@@ -5,7 +5,9 @@ import 'package:drift/drift.dart';
 @TableIndex(name: 'idx_shifts_cashier_id', columns: {#cashierId})
 @TableIndex(name: 'idx_shifts_status', columns: {#status})
 @TableIndex(name: 'idx_shifts_opened_at', columns: {#openedAt})
-@TableIndex(name: 'idx_shifts_store_cashier_status', columns: {#storeId, #cashierId, #status})
+@TableIndex(
+    name: 'idx_shifts_store_cashier_status',
+    columns: {#storeId, #cashierId, #status})
 class ShiftsTable extends Table {
   @override
   String get tableName => 'shifts';
@@ -50,6 +52,7 @@ class CashMovementsTable extends Table {
   RealColumn get amount => real()();
   TextColumn get reason => text().nullable()();
   TextColumn get reference => text().nullable()();
+
   /// NOTE: Naming inconsistency - this column is called [createdBy] but other
   /// tables (audit_log, notifications, inventory_movements, org_members) use
   /// [userId] for the same concept. Preferred standard: [userId] to match

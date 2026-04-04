@@ -176,7 +176,8 @@ class OrderFactory {
   }) {
     _counter++;
     final orderItems = items ?? [OrderItemFactory.create()];
-    final double sub = subtotal ?? orderItems.fold<double>(0.0, (sum, i) => sum + i.lineTotal);
+    final double sub =
+        subtotal ?? orderItems.fold<double>(0.0, (sum, i) => sum + i.lineTotal);
 
     return Order(
       id: id ?? 'order-$_counter',
@@ -333,8 +334,10 @@ class AuthTokensFactory {
     DateTime? expiresAt,
   }) {
     return AuthTokens(
-      accessToken: accessToken ?? 'test-access-token-${DateTime.now().millisecondsSinceEpoch}',
-      refreshToken: refreshToken ?? 'test-refresh-token-${DateTime.now().millisecondsSinceEpoch}',
+      accessToken: accessToken ??
+          'test-access-token-${DateTime.now().millisecondsSinceEpoch}',
+      refreshToken: refreshToken ??
+          'test-refresh-token-${DateTime.now().millisecondsSinceEpoch}',
       expiresAt: expiresAt ?? DateTime.now().add(const Duration(hours: 1)),
     );
   }
@@ -347,7 +350,8 @@ class AuthTokensFactory {
     return AuthTokensEntity(
       accessToken: accessToken ?? 'test-access-token',
       refreshToken: refreshToken ?? 'test-refresh-token',
-      expiresAt: expiresAt ?? DateTime.now().add(const Duration(hours: 1)).toIso8601String(),
+      expiresAt: expiresAt ??
+          DateTime.now().add(const Duration(hours: 1)).toIso8601String(),
     );
   }
 
@@ -355,7 +359,8 @@ class AuthTokensFactory {
     return AuthTokensEntity(
       accessToken: 'expired-access-token',
       refreshToken: 'expired-refresh-token',
-      expiresAt: DateTime.now().subtract(const Duration(hours: 1)).toIso8601String(),
+      expiresAt:
+          DateTime.now().subtract(const Duration(hours: 1)).toIso8601String(),
     );
   }
 
@@ -367,7 +372,8 @@ class AuthTokensFactory {
     return AuthTokensResponse(
       accessToken: accessToken ?? 'test-access-token',
       refreshToken: refreshToken ?? 'test-refresh-token',
-      expiresAt: expiresAt ?? DateTime.now().add(const Duration(hours: 1)).toIso8601String(),
+      expiresAt: expiresAt ??
+          DateTime.now().add(const Duration(hours: 1)).toIso8601String(),
     );
   }
 }

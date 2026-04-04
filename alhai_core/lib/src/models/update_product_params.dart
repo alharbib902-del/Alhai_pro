@@ -10,25 +10,25 @@ class UpdateProductParams with _$UpdateProductParams {
   const factory UpdateProductParams({
     /// Product ID to update
     required String id,
-    
+
     /// New product name (optional)
     String? name,
-    
+
     /// New product price (optional)
     double? price,
-    
+
     /// New product description (optional)
     String? description,
-    
+
     /// New product image URL (optional)
     String? imageUrl,
-    
+
     /// New product barcode (optional)
     String? barcode,
-    
+
     /// New category ID (optional)
     String? categoryId,
-    
+
     /// New availability status (optional)
     bool? available,
   }) = _UpdateProductParams;

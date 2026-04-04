@@ -91,7 +91,8 @@ void main() {
       await tester.pumpWidget(createSimpleTestWidget(
         const AppTextField(enabled: false),
       ));
-      final textField = tester.widget<TextFormField>(find.byType(TextFormField));
+      final textField =
+          tester.widget<TextFormField>(find.byType(TextFormField));
       expect(textField.enabled, isFalse);
     });
 

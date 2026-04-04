@@ -93,8 +93,8 @@ class _DeliveryProofScreenState extends ConsumerState<DeliveryProofScreen> {
                 Text(
                   'تم تسليم الطلب بنجاح!',
                   style: Theme.of(dialogCtx).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+                        fontWeight: FontWeight.bold,
+                      ),
                 ),
               ],
             ),
@@ -197,169 +197,175 @@ class _DeliveryProofScreenState extends ConsumerState<DeliveryProofScreen> {
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(AlhaiSpacing.md),
               child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Photo capture
-              Text(
-                'صورة التسليم',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: AlhaiSpacing.xs),
-              GestureDetector(
-                onTap: _capturePhoto,
-                child: Container(
-                  height: MediaQuery.of(context).size.height * 0.25,
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(AlhaiRadius.md),
-                    border: Border.all(color: theme.colorScheme.outlineVariant),
-                  ),
-                  child: _photoBytes != null
-                      ? ClipRRect(
-                          borderRadius: BorderRadius.circular(AlhaiRadius.md),
-                          // cacheWidth/cacheHeight prevent decoding the full
-                          // resolution image just to display a thumbnail.
-                          // gaplessPlayback avoids a white flash when the
-                          // bytes reference changes (e.g. retake photo).
-                          child: Image.memory(
-                            _photoBytes!,
-                            fit: BoxFit.cover,
-                            cacheWidth: 800,
-                            gaplessPlayback: true,
-                          ),
-                        )
-                      : Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.camera_alt_outlined,
-                              size: 48,
-                              color: theme.colorScheme.outline,
-                            ),
-                            const SizedBox(height: AlhaiSpacing.xs),
-                            Text(
-                              'اضغط لالتقاط صورة',
-                              style: TextStyle(color: theme.colorScheme.outline),
-                            ),
-                          ],
-                        ),
-                ),
-              ),
-              const SizedBox(height: AlhaiSpacing.lg),
-
-              // Signature
-              Text(
-                'توقيع المستلم',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: AlhaiSpacing.xs),
-              Container(
-                height: MediaQuery.of(context).size.height * 0.2,
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.surface,
-                  borderRadius: BorderRadius.circular(AlhaiRadius.md),
-                  border: Border.all(color: theme.colorScheme.outlineVariant),
-                ),
-                child: Stack(
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(AlhaiRadius.md),
-                      child: Signature(
-                        controller: _signatureController,
-                        backgroundColor: theme.colorScheme.surface,
-                      ),
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Photo capture
+                  Text(
+                    'صورة التسليم',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
                     ),
-                    Positioned(
-                      top: 4,
-                      left: 4,
-                      child: IconButton(
-                        icon: const Icon(Icons.refresh, size: 20),
-                        tooltip: 'مسح التوقيع',
-                        onPressed: () async {
-                          final confirm = await showDialog<bool>(
-                            context: context,
-                            builder: (ctx) => AlertDialog(
-                              title: const Text('مسح التوقيع'),
-                              content: const Text('هل تريد مسح التوقيع؟'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.pop(ctx, false),
-                                  child: const Text('إلغاء'),
+                  ),
+                  const SizedBox(height: AlhaiSpacing.xs),
+                  GestureDetector(
+                    onTap: _capturePhoto,
+                    child: Container(
+                      height: MediaQuery.of(context).size.height * 0.25,
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.surfaceContainerHighest,
+                        borderRadius: BorderRadius.circular(AlhaiRadius.md),
+                        border:
+                            Border.all(color: theme.colorScheme.outlineVariant),
+                      ),
+                      child: _photoBytes != null
+                          ? ClipRRect(
+                              borderRadius:
+                                  BorderRadius.circular(AlhaiRadius.md),
+                              // cacheWidth/cacheHeight prevent decoding the full
+                              // resolution image just to display a thumbnail.
+                              // gaplessPlayback avoids a white flash when the
+                              // bytes reference changes (e.g. retake photo).
+                              child: Image.memory(
+                                _photoBytes!,
+                                fit: BoxFit.cover,
+                                cacheWidth: 800,
+                                gaplessPlayback: true,
+                              ),
+                            )
+                          : Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.camera_alt_outlined,
+                                  size: 48,
+                                  color: theme.colorScheme.outline,
                                 ),
-                                FilledButton(
-                                  onPressed: () => Navigator.pop(ctx, true),
-                                  child: const Text('مسح'),
+                                const SizedBox(height: AlhaiSpacing.xs),
+                                Text(
+                                  'اضغط لالتقاط صورة',
+                                  style: TextStyle(
+                                      color: theme.colorScheme.outline),
                                 ),
                               ],
                             ),
-                          );
-                          if (confirm == true) {
-                            _signatureController.clear();
-                          }
-                        },
+                    ),
+                  ),
+                  const SizedBox(height: AlhaiSpacing.lg),
+
+                  // Signature
+                  Text(
+                    'توقيع المستلم',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: AlhaiSpacing.xs),
+                  Container(
+                    height: MediaQuery.of(context).size.height * 0.2,
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surface,
+                      borderRadius: BorderRadius.circular(AlhaiRadius.md),
+                      border:
+                          Border.all(color: theme.colorScheme.outlineVariant),
+                    ),
+                    child: Stack(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(AlhaiRadius.md),
+                          child: Signature(
+                            controller: _signatureController,
+                            backgroundColor: theme.colorScheme.surface,
+                          ),
+                        ),
+                        Positioned(
+                          top: 4,
+                          left: 4,
+                          child: IconButton(
+                            icon: const Icon(Icons.refresh, size: 20),
+                            tooltip: 'مسح التوقيع',
+                            onPressed: () async {
+                              final confirm = await showDialog<bool>(
+                                context: context,
+                                builder: (ctx) => AlertDialog(
+                                  title: const Text('مسح التوقيع'),
+                                  content: const Text('هل تريد مسح التوقيع؟'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () =>
+                                          Navigator.pop(ctx, false),
+                                      child: const Text('إلغاء'),
+                                    ),
+                                    FilledButton(
+                                      onPressed: () => Navigator.pop(ctx, true),
+                                      child: const Text('مسح'),
+                                    ),
+                                  ],
+                                ),
+                              );
+                              if (confirm == true) {
+                                _signatureController.clear();
+                              }
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: AlhaiSpacing.lg),
+
+                  // Recipient name
+                  TextField(
+                    controller: _nameController,
+                    textCapitalization: TextCapitalization.words,
+                    textInputAction: TextInputAction.next,
+                    decoration: InputDecoration(
+                      labelText: 'اسم المستلم (اختياري)',
+                      prefixIcon: const Icon(Icons.person_outline),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(AlhaiRadius.input),
                       ),
                     ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: AlhaiSpacing.lg),
-
-              // Recipient name
-              TextField(
-                controller: _nameController,
-                textCapitalization: TextCapitalization.words,
-                textInputAction: TextInputAction.next,
-                decoration: InputDecoration(
-                  labelText: 'اسم المستلم (اختياري)',
-                  prefixIcon: const Icon(Icons.person_outline),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(AlhaiRadius.input),
                   ),
-                ),
-              ),
-              const SizedBox(height: AlhaiSpacing.md),
+                  const SizedBox(height: AlhaiSpacing.md),
 
-              // Notes
-              TextField(
-                controller: _notesController,
-                maxLines: 2,
-                textInputAction: TextInputAction.done,
-                decoration: InputDecoration(
-                  labelText: 'ملاحظات (اختياري)',
-                  prefixIcon: const Icon(Icons.note_outlined),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(AlhaiRadius.input),
+                  // Notes
+                  TextField(
+                    controller: _notesController,
+                    maxLines: 2,
+                    textInputAction: TextInputAction.done,
+                    decoration: InputDecoration(
+                      labelText: 'ملاحظات (اختياري)',
+                      prefixIcon: const Icon(Icons.note_outlined),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(AlhaiRadius.input),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              const SizedBox(height: AlhaiSpacing.xl),
+                  const SizedBox(height: AlhaiSpacing.xl),
 
-              // Submit button
-              FilledButton.icon(
-                onPressed: _isLoading ? null : _submit,
-                icon: _isLoading
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Icon(Icons.check_circle),
-                label: Text(
-                  _isLoading ? 'جاري التأكيد...' : 'تأكيد التسليم',
-                  style: const TextStyle(fontSize: 16),
-                ),
-                style: FilledButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(AlhaiRadius.button),
+                  // Submit button
+                  FilledButton.icon(
+                    onPressed: _isLoading ? null : _submit,
+                    icon: _isLoading
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Icon(Icons.check_circle),
+                    label: Text(
+                      _isLoading ? 'جاري التأكيد...' : 'تأكيد التسليم',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    style: FilledButton.styleFrom(
+                      padding:
+                          const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(AlhaiRadius.button),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            ],
+                ],
               ),
             ),
           ),

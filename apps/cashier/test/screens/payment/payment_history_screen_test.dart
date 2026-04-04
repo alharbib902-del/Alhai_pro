@@ -35,8 +35,7 @@ void main() {
       when(() => ordersDao.getOrders(any()))
           .thenAnswer((_) async => <OrdersTableData>[]);
 
-      await tester
-          .pumpWidget(createTestWidget(const PaymentHistoryScreen()));
+      await tester.pumpWidget(createTestWidget(const PaymentHistoryScreen()));
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
@@ -50,8 +49,7 @@ void main() {
       when(() => ordersDao.getOrders(any()))
           .thenAnswer((_) async => <OrdersTableData>[]);
 
-      await tester
-          .pumpWidget(createTestWidget(const PaymentHistoryScreen()));
+      await tester.pumpWidget(createTestWidget(const PaymentHistoryScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.payments_outlined), findsOneWidget);
@@ -66,8 +64,7 @@ void main() {
       when(() => ordersDao.getOrders(any()))
           .thenAnswer((_) async => <OrdersTableData>[]);
 
-      await tester
-          .pumpWidget(createTestWidget(const PaymentHistoryScreen()));
+      await tester.pumpWidget(createTestWidget(const PaymentHistoryScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(TextField), findsOneWidget);
@@ -83,15 +80,13 @@ void main() {
       when(() => ordersDao.getOrders(any()))
           .thenAnswer((_) async => <OrdersTableData>[]);
 
-      await tester
-          .pumpWidget(createTestWidget(const PaymentHistoryScreen()));
+      await tester.pumpWidget(createTestWidget(const PaymentHistoryScreen()));
       await tester.pumpAndSettle();
 
       // Payment method filter icons
       expect(find.byIcon(Icons.money_rounded), findsOneWidget);
       expect(find.byIcon(Icons.credit_card_rounded), findsOneWidget);
-      expect(
-          find.byIcon(Icons.account_balance_wallet_rounded), findsOneWidget);
+      expect(find.byIcon(Icons.account_balance_wallet_rounded), findsOneWidget);
     });
 
     testWidgets('displays payment cards when orders loaded', (tester) async {
@@ -115,11 +110,9 @@ void main() {
         ),
       ];
 
-      when(() => ordersDao.getOrders(any()))
-          .thenAnswer((_) async => orders);
+      when(() => ordersDao.getOrders(any())).thenAnswer((_) async => orders);
 
-      await tester
-          .pumpWidget(createTestWidget(const PaymentHistoryScreen()));
+      await tester.pumpWidget(createTestWidget(const PaymentHistoryScreen()));
       await tester.pumpAndSettle();
 
       // Person icons on payment cards
@@ -142,11 +135,9 @@ void main() {
         ),
       ];
 
-      when(() => ordersDao.getOrders(any()))
-          .thenAnswer((_) async => orders);
+      when(() => ordersDao.getOrders(any())).thenAnswer((_) async => orders);
 
-      await tester
-          .pumpWidget(createTestWidget(const PaymentHistoryScreen()));
+      await tester.pumpWidget(createTestWidget(const PaymentHistoryScreen()));
       await tester.pumpAndSettle();
 
       // Summary stats should show "Payments" text

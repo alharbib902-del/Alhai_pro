@@ -10,7 +10,10 @@ import 'products_table.dart';
 @TableIndex(name: 'idx_returns_sale_id', columns: {#saleId})
 @TableIndex(name: 'idx_returns_status', columns: {#status})
 @TableIndex(name: 'idx_returns_created_at', columns: {#createdAt})
-@TableIndex(name: 'idx_returns_store_number_unique', columns: {#storeId, #returnNumber}, unique: true)
+@TableIndex(
+    name: 'idx_returns_store_number_unique',
+    columns: {#storeId, #returnNumber},
+    unique: true)
 class ReturnsTable extends Table {
   @override
   String get tableName => 'returns';
@@ -18,15 +21,21 @@ class ReturnsTable extends Table {
   TextColumn get id => text()();
   TextColumn get orgId => text().nullable()();
   TextColumn get returnNumber => text()();
-  TextColumn get saleId => text().references(SalesTable, #id, onDelete: KeyAction.restrict)();
-  TextColumn get storeId => text().references(StoresTable, #id, onDelete: KeyAction.restrict)();
-  TextColumn get customerId => text().nullable().references(CustomersTable, #id, onDelete: KeyAction.setNull)();
+  TextColumn get saleId =>
+      text().references(SalesTable, #id, onDelete: KeyAction.restrict)();
+  TextColumn get storeId =>
+      text().references(StoresTable, #id, onDelete: KeyAction.restrict)();
+  TextColumn get customerId => text()
+      .nullable()
+      .references(CustomersTable, #id, onDelete: KeyAction.setNull)();
   TextColumn get customerName => text().nullable()();
   TextColumn get reason => text().nullable()();
-  TextColumn get type => text().withDefault(const Constant('full'))(); // full, partial
+  TextColumn get type =>
+      text().withDefault(const Constant('full'))(); // full, partial
   TextColumn get refundMethod => text().withDefault(const Constant('cash'))();
   RealColumn get totalRefund => real()();
   TextColumn get status => text().withDefault(const Constant('completed'))();
+
   /// NOTE: Naming inconsistency - this column is called [createdBy] but other
   /// tables (audit_log, notifications, inventory_movements, org_members) use
   /// [userId] for the same concept. Preferred standard: [userId] to match
@@ -51,9 +60,11 @@ class ReturnItemsTable extends Table {
 
   TextColumn get id => text()();
   TextColumn get orgId => text().nullable()();
-  TextColumn get returnId => text().references(ReturnsTable, #id, onDelete: KeyAction.cascade)();
+  TextColumn get returnId =>
+      text().references(ReturnsTable, #id, onDelete: KeyAction.cascade)();
   TextColumn get saleItemId => text().nullable()();
-  TextColumn get productId => text().references(ProductsTable, #id, onDelete: KeyAction.restrict)();
+  TextColumn get productId =>
+      text().references(ProductsTable, #id, onDelete: KeyAction.restrict)();
   TextColumn get productName => text()();
   RealColumn get qty => real()();
   RealColumn get unitPrice => real()();

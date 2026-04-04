@@ -29,8 +29,7 @@ void main() {
       when(() => mockSuppliersDao.getActiveSuppliers(any()))
           .thenAnswer((_) async => []);
 
-      await tester
-          .pumpWidget(createTestWidget(const PurchaseFormScreen()));
+      await tester.pumpWidget(createTestWidget(const PurchaseFormScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(PurchaseFormScreen), findsOneWidget);
@@ -43,8 +42,7 @@ void main() {
       when(() => mockSuppliersDao.getActiveSuppliers(any()))
           .thenAnswer((_) async => suppliers);
 
-      await tester
-          .pumpWidget(createTestWidget(const PurchaseFormScreen()));
+      await tester.pumpWidget(createTestWidget(const PurchaseFormScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(DropdownButtonFormField<String>), findsWidgets);
@@ -54,8 +52,7 @@ void main() {
       when(() => mockSuppliersDao.getActiveSuppliers(any()))
           .thenAnswer((_) async => []);
 
-      await tester
-          .pumpWidget(createTestWidget(const PurchaseFormScreen()));
+      await tester.pumpWidget(createTestWidget(const PurchaseFormScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.inventory_2_outlined), findsOneWidget);
@@ -65,8 +62,7 @@ void main() {
       when(() => mockSuppliersDao.getActiveSuppliers(any()))
           .thenAnswer((_) async => []);
 
-      await tester
-          .pumpWidget(createTestWidget(const PurchaseFormScreen()));
+      await tester.pumpWidget(createTestWidget(const PurchaseFormScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(SegmentedButton<String>), findsOneWidget);
@@ -76,8 +72,7 @@ void main() {
       when(() => mockSuppliersDao.getActiveSuppliers(any()))
           .thenAnswer((_) async => []);
 
-      await tester
-          .pumpWidget(createTestWidget(const PurchaseFormScreen()));
+      await tester.pumpWidget(createTestWidget(const PurchaseFormScreen()));
       await tester.pumpAndSettle();
 
       final saveButton = find.byIcon(Icons.save);
@@ -88,8 +83,7 @@ void main() {
       when(() => mockSuppliersDao.getActiveSuppliers(any()))
           .thenAnswer((_) async => []);
 
-      await tester
-          .pumpWidget(createTestWidget(const PurchaseFormScreen()));
+      await tester.pumpWidget(createTestWidget(const PurchaseFormScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.add), findsWidgets);

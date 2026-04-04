@@ -64,8 +64,7 @@ class LocalCategoriesRepository implements CategoriesRepository {
   /// Sub-categories with storeId
   Future<List<Category>> getSubCategories(
       String parentId, String storeId) async {
-    final results =
-        await _db.categoriesDao.getSubCategories(parentId, storeId);
+    final results = await _db.categoriesDao.getSubCategories(parentId, storeId);
     return results.map(_toCategory).toList();
   }
 

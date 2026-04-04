@@ -17,6 +17,7 @@ class MockDebtsRemoteDataSource extends Mock implements DebtsRemoteDataSource {}
 
 // Fake classes
 class FakeCreateDebtRequest extends Fake implements CreateDebtRequest {}
+
 class FakeRecordPaymentRequest extends Fake implements RecordPaymentRequest {}
 
 void main() {

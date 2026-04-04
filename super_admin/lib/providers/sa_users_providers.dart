@@ -29,15 +29,14 @@ final saUsersListProvider =
 });
 
 /// Single user detail.
-final saUserDetailProvider = FutureProvider.autoDispose
-    .family<SAUser, String>((ref, userId) async {
+final saUserDetailProvider =
+    FutureProvider.autoDispose.family<SAUser, String>((ref, userId) async {
   final ds = ref.watch(saUsersDatasourceProvider);
   return ds.getUser(userId);
 });
 
 /// Total user count.
-final saTotalUserCountProvider =
-    FutureProvider.autoDispose<int>((ref) async {
+final saTotalUserCountProvider = FutureProvider.autoDispose<int>((ref) async {
   final ds = ref.watch(saUsersDatasourceProvider);
   return ds.getTotalUserCount();
 });

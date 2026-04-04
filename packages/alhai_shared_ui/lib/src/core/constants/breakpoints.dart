@@ -30,16 +30,16 @@ class Breakpoints {
 /// عدد الأعمدة حسب نوع الجهاز
 class GridColumns {
   GridColumns._();
-  
+
   /// أعمدة المنتجات على الهاتف
   static const int mobileProducts = 2;
-  
+
   /// أعمدة المنتجات على التابلت
   static const int tabletProducts = 3;
-  
+
   /// أعمدة المنتجات على سطح المكتب
   static const int desktopProducts = 4;
-  
+
   /// أعمدة المنتجات على الشاشات الكبيرة
   static const int largeDesktopProducts = 6;
 }
@@ -48,10 +48,10 @@ class GridColumns {
 enum DeviceType {
   /// هاتف محمول
   mobile,
-  
+
   /// تابلت
   tablet,
-  
+
   /// سطح المكتب
   desktop,
 }
@@ -60,19 +60,19 @@ enum DeviceType {
 extension DeviceTypeExtension on DeviceType {
   /// هل هو هاتف؟
   bool get isMobile => this == DeviceType.mobile;
-  
+
   /// هل هو تابلت؟
   bool get isTablet => this == DeviceType.tablet;
-  
+
   /// هل هو سطح مكتب؟
   bool get isDesktop => this == DeviceType.desktop;
-  
+
   /// هل يجب عرض السلة في BottomSheet؟
   bool get showCartInBottomSheet => isMobile;
-  
+
   /// هل يجب عرض السلة بجانب المنتجات؟
   bool get showCartSideBySide => isTablet || isDesktop;
-  
+
   /// عدد أعمدة المنتجات
   int get productGridColumns {
     switch (this) {

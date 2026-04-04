@@ -15,7 +15,8 @@ class NotificationsTable extends Table {
   TextColumn get userId => text().nullable()();
   TextColumn get title => text()();
   TextColumn get body => text()();
-  TextColumn get type => text().withDefault(const Constant('info'))(); // info, warning, error, success
+  TextColumn get type => text()
+      .withDefault(const Constant('info'))(); // info, warning, error, success
   BoolColumn get isRead => boolean().withDefault(const Constant(false))();
   TextColumn get data => text().nullable()(); // JSON
   TextColumn get actionUrl => text().nullable()();

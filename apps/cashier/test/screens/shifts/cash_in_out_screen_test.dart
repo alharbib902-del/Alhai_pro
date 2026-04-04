@@ -66,8 +66,7 @@ void main() {
       expect(find.byIcon(Icons.timer_off_rounded), findsOneWidget);
     });
 
-    testWidgets('shows type selector with cash in/out options',
-        (tester) async {
+    testWidgets('shows type selector with cash in/out options', (tester) async {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
 

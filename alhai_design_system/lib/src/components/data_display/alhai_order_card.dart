@@ -7,7 +7,7 @@ import 'alhai_order_status.dart';
 import 'alhai_price_text.dart';
 
 /// AlhaiOrderRow - Compact order row for lists
-/// 
+///
 /// Features:
 /// - Order number and status badge
 /// - Total amount with currency
@@ -182,7 +182,7 @@ class AlhaiOrderCardItem {
 }
 
 /// AlhaiOrderCard - Full order card for details
-/// 
+///
 /// Features:
 /// - Complete order information
 /// - Customer details with actions
@@ -287,15 +287,15 @@ class AlhaiOrderCard extends StatelessWidget {
                 children: [
                   // Header
                   _buildHeader(theme, colorScheme),
-                  
+
                   // Customer info
                   if (customer != null || phone != null || address != null)
                     _buildCustomerSection(theme, colorScheme, isDisabled),
-                  
+
                   // Items
                   if (items != null && items!.isNotEmpty)
                     _buildItemsSection(theme, colorScheme),
-                  
+
                   // Totals
                   _buildTotalsSection(theme, colorScheme),
                 ],
@@ -336,7 +336,8 @@ class AlhaiOrderCard extends StatelessWidget {
     );
   }
 
-  Widget _buildCustomerSection(ThemeData theme, ColorScheme colorScheme, bool isDisabled) {
+  Widget _buildCustomerSection(
+      ThemeData theme, ColorScheme colorScheme, bool isDisabled) {
     return Container(
       padding: const EdgeInsetsDirectional.symmetric(
         horizontal: AlhaiSpacing.md,
@@ -386,7 +387,7 @@ class AlhaiOrderCard extends StatelessWidget {
                   ),
               ],
             ),
-          
+
           // Address
           if (address != null) ...[
             const SizedBox(height: AlhaiSpacing.xs),
@@ -504,7 +505,7 @@ class AlhaiOrderCard extends StatelessWidget {
               subtotal!,
               isSubtle: true,
             ),
-          
+
           // Delivery
           if (delivery != null) ...[
             const SizedBox(height: AlhaiSpacing.xs),
@@ -516,7 +517,7 @@ class AlhaiOrderCard extends StatelessWidget {
               isSubtle: true,
             ),
           ],
-          
+
           // Total
           if (subtotal != null || delivery != null)
             const SizedBox(height: AlhaiSpacing.sm),
@@ -543,16 +544,24 @@ class AlhaiOrderCard extends StatelessWidget {
       children: [
         Text(
           label,
-          style: (isSubtle ? theme.textTheme.bodySmall : theme.textTheme.titleMedium)?.copyWith(
-            color: isSubtle ? colorScheme.onSurfaceVariant : colorScheme.onSurface,
+          style: (isSubtle
+                  ? theme.textTheme.bodySmall
+                  : theme.textTheme.titleMedium)
+              ?.copyWith(
+            color:
+                isSubtle ? colorScheme.onSurfaceVariant : colorScheme.onSurface,
             fontWeight: isSubtle ? FontWeight.normal : FontWeight.bold,
           ),
         ),
         const Spacer(),
         Text(
           '$amount $currency',
-          style: (isSubtle ? theme.textTheme.bodySmall : theme.textTheme.titleMedium)?.copyWith(
-            color: isSubtle ? colorScheme.onSurfaceVariant : colorScheme.primary,
+          style: (isSubtle
+                  ? theme.textTheme.bodySmall
+                  : theme.textTheme.titleMedium)
+              ?.copyWith(
+            color:
+                isSubtle ? colorScheme.onSurfaceVariant : colorScheme.primary,
             fontWeight: isSubtle ? FontWeight.normal : FontWeight.bold,
           ),
         ),

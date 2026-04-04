@@ -20,9 +20,12 @@ import '../../features/addresses/screens/addresses_screen.dart';
 import '../../shared/widgets/bottom_nav_shell.dart';
 
 // FIX 2: Deferred imports for heavy/rarely-used screens
-import '../../features/tracking/screens/order_tracking_screen.dart' deferred as tracking;
-import '../../features/settings/screens/settings_screen.dart' deferred as settings;
-import '../../features/stores/screens/nearby_stores_screen.dart' deferred as nearby_stores;
+import '../../features/tracking/screens/order_tracking_screen.dart'
+    deferred as tracking;
+import '../../features/settings/screens/settings_screen.dart'
+    deferred as settings;
+import '../../features/stores/screens/nearby_stores_screen.dart'
+    deferred as nearby_stores;
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 

@@ -22,8 +22,7 @@ class SAAnalyticsDatasource {
       final data = await _client.rpc('sa_monthly_revenue');
       if (data is List && data.isNotEmpty) {
         return data
-            .map((e) =>
-                SARevenueData.fromJson(e as Map<String, dynamic>))
+            .map((e) => SARevenueData.fromJson(e as Map<String, dynamic>))
             .toList();
       }
     } catch (_) {
@@ -72,8 +71,8 @@ class SAAnalyticsDatasource {
       final monthly = cycle == 'yearly' ? amount / 12 : amount;
 
       if (!planRevenue.containsKey(slug)) {
-        planRevenue[slug] = _PlanAccumulator(
-            name: slug.replaceAll('_', ' '), slug: slug);
+        planRevenue[slug] =
+            _PlanAccumulator(name: slug.replaceAll('_', ' '), slug: slug);
       }
       planRevenue[slug]!.subscribers += 1;
       planRevenue[slug]!.revenue += monthly;
@@ -100,8 +99,7 @@ class SAAnalyticsDatasource {
       );
       if (data is List && data.isNotEmpty) {
         return data
-            .map((e) =>
-                SATopStoreRevenue.fromJson(e as Map<String, dynamic>))
+            .map((e) => SATopStoreRevenue.fromJson(e as Map<String, dynamic>))
             .toList();
       }
     } catch (_) {
@@ -145,10 +143,8 @@ class SAAnalyticsDatasource {
 
   /// Get total transaction count across all stores.
   Future<int> getTotalTransactionCount() async {
-    final result = await _client
-        .from('sales')
-        .select('id')
-        .count(CountOption.exact);
+    final result =
+        await _client.from('sales').select('id').count(CountOption.exact);
     return result.count;
   }
 
@@ -278,9 +274,7 @@ class SAAnalyticsDatasource {
           .select('id')
           .gte(
             'created_at',
-            DateTime.now()
-                .subtract(const Duration(days: 30))
-                .toIso8601String(),
+            DateTime.now().subtract(const Duration(days: 30)).toIso8601String(),
           )
           .count(CountOption.exact), // 3: new signups (30d)
     ]);

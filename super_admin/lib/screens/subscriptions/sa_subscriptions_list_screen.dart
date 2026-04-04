@@ -56,7 +56,9 @@ class _SASubscriptionsListScreenState
                   _SummaryChip(
                     label: l10n.activeSubscriptions,
                     count: '${counts['active'] ?? 0}',
-                    color: isDark ? const Color(0xFF4ADE80) : const Color(0xFF16A34A),
+                    color: isDark
+                        ? const Color(0xFF4ADE80)
+                        : const Color(0xFF16A34A),
                     isSelected: filter == 'active',
                     onTap: () => ref.read(saSubsFilterProvider.notifier).state =
                         filter == 'active' ? 'all' : 'active',
@@ -64,7 +66,9 @@ class _SASubscriptionsListScreenState
                   _SummaryChip(
                     label: l10n.trialSubscriptions,
                     count: '${counts['trial'] ?? 0}',
-                    color: isDark ? const Color(0xFFFBBF24) : const Color(0xFFD97706),
+                    color: isDark
+                        ? const Color(0xFFFBBF24)
+                        : const Color(0xFFD97706),
                     isSelected: filter == 'trial',
                     onTap: () => ref.read(saSubsFilterProvider.notifier).state =
                         filter == 'trial' ? 'all' : 'trial',
@@ -72,7 +76,9 @@ class _SASubscriptionsListScreenState
                   _SummaryChip(
                     label: l10n.expiredSubscriptions,
                     count: '${counts['expired'] ?? 0}',
-                    color: isDark ? const Color(0xFFF87171) : const Color(0xFFB91C1C),
+                    color: isDark
+                        ? const Color(0xFFF87171)
+                        : const Color(0xFFB91C1C),
                     isSelected: filter == 'expired',
                     onTap: () => ref.read(saSubsFilterProvider.notifier).state =
                         filter == 'expired' ? 'all' : 'expired',
@@ -109,9 +115,11 @@ class _SASubscriptionsListScreenState
                     dataRowHeight: 52,
                     empty: SAEmptyState.subscriptions(),
                     columns: [
-                      DataColumn2(label: Text(l10n.storeName), size: ColumnSize.L),
+                      DataColumn2(
+                          label: Text(l10n.storeName), size: ColumnSize.L),
                       DataColumn2(label: Text(l10n.storePlan), fixedWidth: 130),
-                      DataColumn2(label: Text(l10n.storeStatus), fixedWidth: 120),
+                      DataColumn2(
+                          label: Text(l10n.storeStatus), fixedWidth: 120),
                       const DataColumn2(label: Text('Start'), fixedWidth: 120),
                       const DataColumn2(label: Text('End'), fixedWidth: 120),
                       DataColumn2(
@@ -224,21 +232,21 @@ class _StatusChip extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final (color, bgColor) = switch (status) {
       'active' => (
-        isDark ? const Color(0xFF4ADE80) : const Color(0xFF15803D),
-        isDark ? const Color(0xFF1B3A2A) : const Color(0xFFDCFCE7),
-      ),
+          isDark ? const Color(0xFF4ADE80) : const Color(0xFF15803D),
+          isDark ? const Color(0xFF1B3A2A) : const Color(0xFFDCFCE7),
+        ),
       'trial' => (
-        isDark ? const Color(0xFFFBBF24) : const Color(0xFFB45309),
-        isDark ? const Color(0xFF3A2F1B) : const Color(0xFFFEF3C7),
-      ),
+          isDark ? const Color(0xFFFBBF24) : const Color(0xFFB45309),
+          isDark ? const Color(0xFF3A2F1B) : const Color(0xFFFEF3C7),
+        ),
       'expired' => (
-        isDark ? const Color(0xFFF87171) : const Color(0xFFB91C1C),
-        isDark ? const Color(0xFF3A1B1B) : const Color(0xFFFEE2E2),
-      ),
+          isDark ? const Color(0xFFF87171) : const Color(0xFFB91C1C),
+          isDark ? const Color(0xFF3A1B1B) : const Color(0xFFFEE2E2),
+        ),
       _ => (
-        isDark ? const Color(0xFF9CA3AF) : const Color(0xFF4B5563),
-        isDark ? const Color(0xFF2A2A2A) : const Color(0xFFF3F4F6),
-      ),
+          isDark ? const Color(0xFF9CA3AF) : const Color(0xFF4B5563),
+          isDark ? const Color(0xFF2A2A2A) : const Color(0xFFF3F4F6),
+        ),
     };
 
     return Container(
@@ -253,9 +261,9 @@ class _StatusChip extends StatelessWidget {
       child: Text(
         status.toUpperCase(),
         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-          color: color,
-          fontWeight: FontWeight.w600,
-        ),
+              color: color,
+              fontWeight: FontWeight.w600,
+            ),
       ),
     );
   }

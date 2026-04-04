@@ -32,7 +32,8 @@ class BundleSuggestionCard extends StatelessWidget {
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
+          color:
+              isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
         ),
         boxShadow: [
           BoxShadow(
@@ -56,7 +57,8 @@ class BundleSuggestionCard extends StatelessWidget {
                   ),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 18),
+                child: const Icon(Icons.auto_awesome_rounded,
+                    color: Colors.white, size: 18),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
@@ -74,7 +76,9 @@ class BundleSuggestionCard extends StatelessWidget {
                     Text(
                       '${bundle.products.length} منتجات', // X products
                       style: TextStyle(
-                        color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textMuted,
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.5)
+                            : AppColors.textMuted,
                         fontSize: 12,
                       ),
                     ),
@@ -83,16 +87,19 @@ class BundleSuggestionCard extends StatelessWidget {
               ),
               // Uplift badge
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
                   color: AppColors.success.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: AppColors.success.withValues(alpha: 0.3)),
+                  border: Border.all(
+                      color: AppColors.success.withValues(alpha: 0.3)),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.trending_up_rounded, size: 14, color: AppColors.success),
+                    const Icon(Icons.trending_up_rounded,
+                        size: 14, color: AppColors.success),
                     const SizedBox(width: AlhaiSpacing.xxs),
                     Text(
                       '+${bundle.expectedUplift.toStringAsFixed(0)}%',
@@ -122,7 +129,8 @@ class BundleSuggestionCard extends StatelessWidget {
                         color: AppColors.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: const Icon(Icons.shopping_bag_outlined, size: 16, color: AppColors.primary),
+                      child: const Icon(Icons.shopping_bag_outlined,
+                          size: 16, color: AppColors.primary),
                     ),
                     const SizedBox(width: 10),
                     Expanded(
@@ -132,7 +140,8 @@ class BundleSuggestionCard extends StatelessWidget {
                           Text(
                             product.name,
                             style: TextStyle(
-                              color: isDark ? Colors.white : AppColors.textPrimary,
+                              color:
+                                  isDark ? Colors.white : AppColors.textPrimary,
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
                             ),
@@ -141,7 +150,9 @@ class BundleSuggestionCard extends StatelessWidget {
                             Text(
                               product.category!,
                               style: TextStyle(
-                                color: isDark ? Colors.white.withValues(alpha: 0.4) : AppColors.textMuted,
+                                color: isDark
+                                    ? Colors.white.withValues(alpha: 0.4)
+                                    : AppColors.textMuted,
                                 fontSize: 11,
                               ),
                             ),
@@ -151,7 +162,9 @@ class BundleSuggestionCard extends StatelessWidget {
                     Text(
                       '${product.price.toStringAsFixed(1)} ر.س', // SAR
                       style: TextStyle(
-                        color: isDark ? Colors.white.withValues(alpha: 0.7) : AppColors.textSecondary,
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.7)
+                            : AppColors.textSecondary,
                         fontSize: 13,
                       ),
                     ),
@@ -163,7 +176,9 @@ class BundleSuggestionCard extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs),
             child: Divider(
-              color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.1)
+                  : AppColors.border,
             ),
           ),
 
@@ -177,14 +192,18 @@ class BundleSuggestionCard extends StatelessWidget {
                   Text(
                     'السعر العادي', // Regular Price
                     style: TextStyle(
-                      color: isDark ? Colors.white.withValues(alpha: 0.4) : AppColors.textMuted,
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.4)
+                          : AppColors.textMuted,
                       fontSize: 11,
                     ),
                   ),
                   Text(
                     '${bundle.currentTotalPrice.toStringAsFixed(1)} ر.س', // SAR
                     style: TextStyle(
-                      color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textSecondary,
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.5)
+                          : AppColors.textSecondary,
                       fontSize: 14,
                       decoration: TextDecoration.lineThrough,
                     ),
@@ -193,7 +212,9 @@ class BundleSuggestionCard extends StatelessWidget {
               ),
               Icon(
                 Icons.arrow_forward_rounded,
-                color: isDark ? Colors.white.withValues(alpha: 0.3) : AppColors.textMuted,
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.3)
+                    : AppColors.textMuted,
                 size: 20,
               ),
               Column(
@@ -218,7 +239,8 @@ class BundleSuggestionCard extends StatelessWidget {
                 ],
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
                 decoration: BoxDecoration(
                   color: AppColors.error.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -241,7 +263,9 @@ class BundleSuggestionCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: isDark ? Colors.white.withValues(alpha: 0.03) : AppColors.grey50,
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.03)
+                  : AppColors.grey50,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
@@ -256,7 +280,9 @@ class BundleSuggestionCard extends StatelessWidget {
                   child: Text(
                     bundle.reasoning,
                     style: TextStyle(
-                      color: isDark ? Colors.white.withValues(alpha: 0.6) : AppColors.textSecondary,
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.6)
+                          : AppColors.textSecondary,
                       fontSize: 11,
                       height: 1.4,
                     ),
@@ -275,16 +301,21 @@ class BundleSuggestionCard extends StatelessWidget {
                 child: OutlinedButton(
                   onPressed: onDismiss,
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: isDark ? Colors.white.withValues(alpha: 0.6) : AppColors.textSecondary,
+                    foregroundColor: isDark
+                        ? Colors.white.withValues(alpha: 0.6)
+                        : AppColors.textSecondary,
                     side: BorderSide(
-                      color: isDark ? Colors.white.withValues(alpha: 0.15) : AppColors.border,
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.15)
+                          : AppColors.border,
                     ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
                     padding: const EdgeInsets.symmetric(vertical: 10),
                   ),
-                  child: Text(l10n.cancel, style: const TextStyle(fontSize: 13)),
+                  child:
+                      Text(l10n.cancel, style: const TextStyle(fontSize: 13)),
                 ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
@@ -293,7 +324,8 @@ class BundleSuggestionCard extends StatelessWidget {
                 child: ElevatedButton.icon(
                   onPressed: onActivate,
                   icon: const Icon(Icons.rocket_launch_rounded, size: 16),
-                  label: const Text('تفعيل الحزمة', style: TextStyle(fontSize: 13)), // Activate Bundle
+                  label: const Text('تفعيل الحزمة',
+                      style: TextStyle(fontSize: 13)), // Activate Bundle
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,

@@ -42,7 +42,8 @@ class _RecognitionResultCardState extends State<RecognitionResultCard> {
     }
   }
 
-  String get _statusLabel => AiProductRecognitionService.getStatusLabel(widget.product.status);
+  String get _statusLabel =>
+      AiProductRecognitionService.getStatusLabel(widget.product.status);
 
   IconData get _statusIcon {
     switch (widget.product.status) {
@@ -75,7 +76,9 @@ class _RecognitionResultCardState extends State<RecognitionResultCard> {
           border: Border.all(
             color: _isHovered
                 ? _statusColor.withValues(alpha: 0.4)
-                : (isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.border),
+                : (isDark
+                    ? Colors.white.withValues(alpha: 0.08)
+                    : AppColors.border),
             width: _isHovered ? 2 : 1,
           ),
           boxShadow: [
@@ -107,7 +110,8 @@ class _RecognitionResultCardState extends State<RecognitionResultCard> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.image_rounded, color: _statusColor.withValues(alpha: 0.5), size: 24),
+                    Icon(Icons.image_rounded,
+                        color: _statusColor.withValues(alpha: 0.5), size: 24),
                     const SizedBox(height: AlhaiSpacing.xxxs),
                     Text(
                       '$confidence%',
@@ -135,14 +139,16 @@ class _RecognitionResultCardState extends State<RecognitionResultCard> {
                             style: TextStyle(
                               fontWeight: FontWeight.w700,
                               fontSize: 14,
-                              color: isDark ? Colors.white : AppColors.textPrimary,
+                              color:
+                                  isDark ? Colors.white : AppColors.textPrimary,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 3),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: AlhaiSpacing.xs, vertical: 3),
                           decoration: BoxDecoration(
                             color: _statusColor.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(6),
@@ -171,21 +177,27 @@ class _RecognitionResultCardState extends State<RecognitionResultCard> {
                     Row(
                       children: [
                         if (widget.product.barcode != null) ...[
-                          Icon(Icons.qr_code_rounded, size: 12,
-                            color: isDark ? Colors.white.withValues(alpha: 0.4) : AppColors.textMuted),
+                          Icon(Icons.qr_code_rounded,
+                              size: 12,
+                              color: isDark
+                                  ? Colors.white.withValues(alpha: 0.4)
+                                  : AppColors.textMuted),
                           const SizedBox(width: AlhaiSpacing.xxs),
                           Text(
                             widget.product.barcode!,
                             style: TextStyle(
                               fontSize: 11,
-                              color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textMuted,
+                              color: isDark
+                                  ? Colors.white.withValues(alpha: 0.5)
+                                  : AppColors.textMuted,
                             ),
                           ),
                           const SizedBox(width: AlhaiSpacing.sm),
                         ],
                         if (widget.product.category != null) ...[
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: AlhaiSpacing.xxxs),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 6, vertical: AlhaiSpacing.xxxs),
                             decoration: BoxDecoration(
                               color: AppColors.info.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(4),
@@ -228,7 +240,9 @@ class _RecognitionResultCardState extends State<RecognitionResultCard> {
                             style: TextStyle(
                               fontWeight: FontWeight.w700,
                               fontSize: 14,
-                              color: isDark ? AppColors.primaryLight : AppColors.primary,
+                              color: isDark
+                                  ? AppColors.primaryLight
+                                  : AppColors.primary,
                             ),
                           ),
                       ],

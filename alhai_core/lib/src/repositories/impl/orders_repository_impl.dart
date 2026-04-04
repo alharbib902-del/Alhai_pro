@@ -62,7 +62,7 @@ class OrdersRepositoryImpl implements OrdersRepository {
 
       // Convert each DTO to Domain
       final items = responses.map((r) => r.toDomain()).toList();
-      
+
       // Calculate hasMore based on returned items
       final hasMore = items.length >= limit;
 

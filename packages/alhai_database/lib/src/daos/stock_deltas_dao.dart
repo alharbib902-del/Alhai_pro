@@ -54,8 +54,8 @@ class StockDeltasDao extends DatabaseAccessor<AppDatabase>
   Future<List<StockDeltasTableData>> getPendingDeltasForStore(String storeId,
       {int limit = 100}) {
     return (select(stockDeltasTable)
-          ..where((t) =>
-              t.syncStatus.equals('pending') & t.storeId.equals(storeId))
+          ..where(
+              (t) => t.syncStatus.equals('pending') & t.storeId.equals(storeId))
           ..orderBy([(t) => OrderingTerm.asc(t.createdAt)])
           ..limit(limit))
         .get();

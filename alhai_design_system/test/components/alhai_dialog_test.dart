@@ -112,7 +112,8 @@ void main() {
     });
 
     group('Destructive Dialog', () {
-      testWidgets('renders destructive dialog with warning style', (tester) async {
+      testWidgets('renders destructive dialog with warning style',
+          (tester) async {
         // Arrange & Act
         await tester.pumpWidget(
           MaterialApp(

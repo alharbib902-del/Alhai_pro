@@ -104,8 +104,7 @@ final paginatedPurchasesProvider = FutureProvider.autoDispose
     params.status == null
         ? db.purchasesDao.getPurchasesPaginated(storeId,
             offset: offset, limit: params.pageSize)
-        : db.purchasesDao.getPurchasesByStatusPaginated(
-            storeId, params.status!,
+        : db.purchasesDao.getPurchasesByStatusPaginated(storeId, params.status!,
             offset: offset, limit: params.pageSize),
     db.purchasesDao.getPurchasesCount(storeId, status: params.status),
   ]);

@@ -21,7 +21,8 @@ void main() {
         endpoint: '/ai/forecast',
       );
 
-      expect(exception.toString(), 'AiApiException(/ai/forecast): Connection failed');
+      expect(exception.toString(),
+          'AiApiException(/ai/forecast): Connection failed');
     });
 
     test('isOffline returns true for connection error', () {

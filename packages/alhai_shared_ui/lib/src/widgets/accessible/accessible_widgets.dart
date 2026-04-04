@@ -152,11 +152,14 @@ class AccessibleButton extends StatelessWidget {
   EdgeInsets _getPadding() {
     switch (size) {
       case AccessibleButtonSize.small:
-        return const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xs);
+        return const EdgeInsets.symmetric(
+            horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xs);
       case AccessibleButtonSize.medium:
-        return const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm);
+        return const EdgeInsets.symmetric(
+            horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm);
       case AccessibleButtonSize.large:
-        return const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg, vertical: AlhaiSpacing.md);
+        return const EdgeInsets.symmetric(
+            horizontal: AlhaiSpacing.lg, vertical: AlhaiSpacing.md);
     }
   }
 
@@ -206,6 +209,7 @@ class AccessibleButton extends StatelessWidget {
 }
 
 enum AccessibleButtonType { primary, secondary, text, danger }
+
 enum AccessibleButtonSize { small, medium, large }
 
 // ============================================================================
@@ -427,8 +431,8 @@ class AccessibleCard extends StatelessWidget {
     return Semantics(
       label: label,
       hint: onTap != null
-        ? (hint ?? AccessibilityHints.doubleTapToActivate)
-        : null,
+          ? (hint ?? AccessibilityHints.doubleTapToActivate)
+          : null,
       button: onTap != null,
       child: Card(
         elevation: elevation,
@@ -495,8 +499,8 @@ class AccessibleListTile extends StatelessWidget {
     return Semantics(
       label: semanticLabel,
       hint: onTap != null && isEnabled
-        ? (hint ?? AccessibilityHints.doubleTapToActivate)
-        : null,
+          ? (hint ?? AccessibilityHints.doubleTapToActivate)
+          : null,
       button: onTap != null,
       enabled: isEnabled,
       selected: isSelected,
@@ -580,32 +584,34 @@ class AccessibleImage extends StatelessWidget {
         height: height,
         fit: fit,
         errorBuilder: (context, error, stackTrace) {
-          return errorWidget ?? Container(
-            width: width,
-            height: height,
-            color: Theme.of(context).colorScheme.surfaceContainerHighest,
-            child: Icon(
-              Icons.broken_image,
-              color: Theme.of(context).colorScheme.outline,
-              size: 40,
-            ),
-          );
+          return errorWidget ??
+              Container(
+                width: width,
+                height: height,
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                child: Icon(
+                  Icons.broken_image,
+                  color: Theme.of(context).colorScheme.outline,
+                  size: 40,
+                ),
+              );
         },
         loadingBuilder: (context, child, loadingProgress) {
           if (loadingProgress == null) return child;
-          return loadingWidget ?? Container(
-            width: width,
-            height: height,
-            color: Theme.of(context).colorScheme.surfaceContainerHighest,
-            child: Center(
-              child: CircularProgressIndicator(
-                value: loadingProgress.expectedTotalBytes != null
-                  ? loadingProgress.cumulativeBytesLoaded /
-                    loadingProgress.expectedTotalBytes!
-                  : null,
-              ),
-            ),
-          );
+          return loadingWidget ??
+              Container(
+                width: width,
+                height: height,
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                child: Center(
+                  child: CircularProgressIndicator(
+                    value: loadingProgress.expectedTotalBytes != null
+                        ? loadingProgress.cumulativeBytesLoaded /
+                            loadingProgress.expectedTotalBytes!
+                        : null,
+                  ),
+                ),
+              );
         },
       ),
     );
@@ -650,9 +656,7 @@ class AccessibleCheckbox extends StatelessWidget {
       checked: value,
       enabled: isEnabled,
       child: InkWell(
-        onTap: isEnabled && onChanged != null
-          ? () => onChanged!(!value)
-          : null,
+        onTap: isEnabled && onChanged != null ? () => onChanged!(!value) : null,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -664,9 +668,7 @@ class AccessibleCheckbox extends StatelessWidget {
             Text(
               label,
               style: TextStyle(
-                color: isEnabled
-                  ? null
-                  : Theme.of(context).disabledColor,
+                color: isEnabled ? null : Theme.of(context).disabledColor,
               ),
             ),
           ],
@@ -690,9 +692,7 @@ class ScreenReaderAnnouncer {
     SemanticsService.announce(
       message,
       TextDirection.rtl,
-      assertiveness: isPolite
-        ? Assertiveness.polite
-        : Assertiveness.assertive,
+      assertiveness: isPolite ? Assertiveness.polite : Assertiveness.assertive,
     );
   }
 

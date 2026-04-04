@@ -210,9 +210,7 @@ class _LiteOnboardingScreenState extends ConsumerState<LiteOnboardingScreen> {
                     )
                   else
                     const Spacer(),
-
                   const SizedBox(width: AppSizes.md),
-
                   Expanded(
                     flex: 2,
                     child: FilledButton(

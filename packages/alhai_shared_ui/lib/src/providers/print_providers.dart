@@ -114,9 +114,8 @@ class PrintQueueNotifier extends StateNotifier<List<PrintJob>> {
   /// إعادة محاولة طباعة مهمة فاشلة
   void retryJob(String id) {
     state = state
-        .map((j) => j.id == id
-            ? j.copyWith(status: 'pending', errorMessage: null)
-            : j)
+        .map((j) =>
+            j.id == id ? j.copyWith(status: 'pending', errorMessage: null) : j)
         .toList();
   }
 
@@ -143,7 +142,9 @@ final printQueueProvider =
 /// مزود عدد المهام المعلقة (للشارة في القائمة الجانبية)
 final pendingPrintCountProvider = Provider<int>((ref) {
   final jobs = ref.watch(printQueueProvider);
-  return jobs.where((j) => j.status == 'pending' || j.status == 'failed').length;
+  return jobs
+      .where((j) => j.status == 'pending' || j.status == 'failed')
+      .length;
 });
 
 /// Callback type for auto-printing a receipt by sale ID

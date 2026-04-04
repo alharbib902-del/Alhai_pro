@@ -13,7 +13,10 @@ enum SyncPriority { low, normal, high }
 
 /// الجداول ذات الأولوية العالية (المبيعات والمخزون) - لا تخضع لحد الطابور
 const _highPriorityTables = {
-  'sales', 'sale_items', 'inventory_movements', 'cash_movements',
+  'sales',
+  'sale_items',
+  'inventory_movements',
+  'cash_movements',
 };
 
 /// خدمة طابور المزامنة
@@ -38,7 +41,8 @@ class SyncService {
   }) async {
     // === حماية حجم الطابور ===
     // تأجيل العناصر منخفضة الأولوية إذا الطابور ممتلئ
-    if (!_highPriorityTables.contains(tableName) && priority != SyncPriority.high) {
+    if (!_highPriorityTables.contains(tableName) &&
+        priority != SyncPriority.high) {
       final health = await _getCachedHealth();
       if (health.isOverloaded) {
         developer.log(
@@ -89,7 +93,8 @@ class SyncService {
         return existing.id;
       } else if (existing.status == 'syncing') {
         // العنصر قيد الإرسال حالياً - إنشاء عنصر جديد بمفتاح فريد
-        idempotencyKey = '${idempotencyKey}_${DateTime.now().millisecondsSinceEpoch}';
+        idempotencyKey =
+            '${idempotencyKey}_${DateTime.now().millisecondsSinceEpoch}';
         developer.log(
           'SyncService: existing item is syncing, creating new entry (key=$idempotencyKey)',
           name: 'SyncService',
@@ -137,9 +142,8 @@ class SyncService {
 
     // حالة 1: DELETE بعد CREATE → إلغاء كليهما
     if (operation == SyncOperation.delete) {
-      final pendingCreate = pendingItems
-          .where((item) => item.operation == 'CREATE')
-          .toList();
+      final pendingCreate =
+          pendingItems.where((item) => item.operation == 'CREATE').toList();
       if (pendingCreate.isNotEmpty) {
         developer.log(
           'SyncService: DELETE cancels pending CREATE for $tableName/$recordId - removing both',
@@ -156,13 +160,13 @@ class SyncService {
 
     // حالة 2: UPDATE بعد CREATE → دمج بيانات التحديث في الإنشاء
     if (operation == SyncOperation.update) {
-      final pendingCreate = pendingItems
-          .where((item) => item.operation == 'CREATE')
-          .toList();
+      final pendingCreate =
+          pendingItems.where((item) => item.operation == 'CREATE').toList();
       if (pendingCreate.isNotEmpty) {
         final createItem = pendingCreate.first;
         try {
-          final createPayload = jsonDecode(createItem.payload) as Map<String, dynamic>;
+          final createPayload =
+              jsonDecode(createItem.payload) as Map<String, dynamic>;
           // دمج بيانات التحديث فوق بيانات الإنشاء
           createPayload.addAll(payload);
           await _syncQueueDao.updatePayload(
@@ -261,7 +265,7 @@ class SyncService {
     _healthCacheTime = now;
     return _cachedHealth!;
   }
-  
+
   /// إضافة عملية إنشاء
   Future<String> enqueueCreate({
     required String tableName,
@@ -277,7 +281,7 @@ class SyncService {
       priority: priority,
     );
   }
-  
+
   /// إضافة عملية تحديث
   Future<String> enqueueUpdate({
     required String tableName,
@@ -293,7 +297,7 @@ class SyncService {
       priority: priority,
     );
   }
-  
+
   /// إضافة عملية حذف
   Future<String> enqueueDelete({
     required String tableName,
@@ -308,17 +312,17 @@ class SyncService {
       priority: priority,
     );
   }
-  
+
   /// الحصول على العناصر المعلقة
   Future<List<SyncQueueTableData>> getPendingItems() {
     return _syncQueueDao.getPendingItems();
   }
-  
+
   /// عدد العناصر المعلقة
   Future<int> getPendingCount() {
     return _syncQueueDao.getPendingCount();
   }
-  
+
   /// مراقبة العناصر المعلقة
   Stream<int> watchPendingCount() {
     return _syncQueueDao.watchPendingCount();
@@ -333,22 +337,22 @@ class SyncService {
   Future<void> markAsSyncing(String id) {
     return _syncQueueDao.markAsSyncing(id);
   }
-  
+
   /// تعيين كـ "تمت المزامنة"
   Future<void> markAsSynced(String id) {
     return _syncQueueDao.markAsSynced(id);
   }
-  
+
   /// تعيين كـ "فشل"
   Future<void> markAsFailed(String id, String error) {
     return _syncQueueDao.markAsFailed(id, error);
   }
-  
+
   /// حذف عنصر
   Future<void> removeItem(String id) {
     return _syncQueueDao.removeItem(id);
   }
-  
+
   /// الحصول على العناصر العالقة في حالة 'syncing'
   Future<List<SyncQueueTableData>> getStuckSyncingItems() {
     return _syncQueueDao.getStuckSyncingItems();
@@ -439,7 +443,8 @@ class SyncService {
   }
 
   /// تنظيف سجلات المزامنة القديمة (أقدم من 7 أيام)
-  Future<int> cleanupSyncAuditLogs({Duration olderThan = const Duration(days: 7)}) {
+  Future<int> cleanupSyncAuditLogs(
+      {Duration olderThan = const Duration(days: 7)}) {
     return _syncQueueDao.cleanupSyncAuditLogs(olderThan: olderThan);
   }
 
@@ -459,7 +464,8 @@ class SyncService {
   }
 
   /// تنظيف جميع التعارضات المحلولة
-  Future<int> cleanupResolvedConflicts({Duration olderThan = const Duration(days: 3)}) {
+  Future<int> cleanupResolvedConflicts(
+      {Duration olderThan = const Duration(days: 3)}) {
     return _syncQueueDao.cleanupResolvedConflicts(olderThan: olderThan);
   }
 

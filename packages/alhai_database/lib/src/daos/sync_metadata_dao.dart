@@ -81,8 +81,7 @@ class SyncMetadataDao extends DatabaseAccessor<AppDatabase>
   }
 
   /// تحديث عدد العناصر المعلقة والفاشلة
-  Future<void> updateCounts(
-      String tableName, int pending, int failed) async {
+  Future<void> updateCounts(String tableName, int pending, int failed) async {
     final companion = SyncMetadataTableCompanion(
       pendingCount: Value(pending),
       failedCount: Value(failed),

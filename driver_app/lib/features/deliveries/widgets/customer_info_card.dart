@@ -48,7 +48,8 @@ class CustomerInfoCard extends StatelessWidget {
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 leading: const Icon(Icons.phone_outlined),
-                title: Text(_maskPhone(phone!), textDirection: TextDirection.ltr),
+                title:
+                    Text(_maskPhone(phone!), textDirection: TextDirection.ltr),
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -91,10 +92,9 @@ class CustomerInfoCard extends StatelessWidget {
     );
   }
 
-  String _maskPhone(String phone) =>
-      phone.length > 4
-          ? '${'*' * (phone.length - 4)}${phone.substring(phone.length - 4)}'
-          : phone;
+  String _maskPhone(String phone) => phone.length > 4
+      ? '${'*' * (phone.length - 4)}${phone.substring(phone.length - 4)}'
+      : phone;
 
   Future<void> _launchPhone(String phone) async {
     final uri = Uri.parse('tel:$phone');

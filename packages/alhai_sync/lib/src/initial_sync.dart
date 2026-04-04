@@ -111,8 +111,7 @@ class InitialSync {
     'sale_items',
   ];
 
-  final _progressController =
-      StreamController<InitialSyncProgress>.broadcast();
+  final _progressController = StreamController<InitialSyncProgress>.broadcast();
 
   InitialSync({
     required SupabaseClient client,
@@ -123,8 +122,7 @@ class InitialSync {
         _metadataDao = metadataDao;
 
   /// Stream لحالة التقدم
-  Stream<InitialSyncProgress> get progressStream =>
-      _progressController.stream;
+  Stream<InitialSyncProgress> get progressStream => _progressController.stream;
 
   /// هل تمت المزامنة الأولية لجميع الجداول؟
   Future<bool> isComplete() async {

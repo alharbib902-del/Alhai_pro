@@ -32,7 +32,10 @@ class ProductDetailScreen extends ConsumerWidget {
             children: [
               AspectRatio(
                 aspectRatio: 1,
-                child: AlhaiSkeleton.rectangle(width: double.infinity, height: double.infinity, borderRadius: BorderRadius.zero),
+                child: AlhaiSkeleton.rectangle(
+                    width: double.infinity,
+                    height: double.infinity,
+                    borderRadius: BorderRadius.zero),
               ),
               Padding(
                 padding: const EdgeInsets.all(AlhaiSpacing.md),
@@ -59,7 +62,9 @@ class ProductDetailScreen extends ConsumerWidget {
           ),
         ),
         data: (product) {
-          final cartItem = ref.watch(cartProvider).items
+          final cartItem = ref
+              .watch(cartProvider)
+              .items
               .where((item) => item.productId == product.id)
               .firstOrNull;
           final qtyInCart = cartItem?.qty ?? 0;
@@ -187,126 +192,130 @@ class ProductDetailScreen extends ConsumerWidget {
                             ),
                           ),
                   ),
-              // Bottom action bar
-              Container(
-                padding: const EdgeInsets.all(AlhaiSpacing.md),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.surface,
-                  boxShadow: [
-                    BoxShadow(
-                      color: theme.colorScheme.shadow,
-                      blurRadius: 8,
-                      offset: const Offset(0, -2),
-                    ),
-                  ],
-                ),
-                child: SafeArea(
-                  child: qtyInCart > 0
-                      ? Row(
-                          children: [
-                            AlhaiQuantityControl(
-                              quantity: qtyInCart,
-                              min: 0,
-                              onChanged: (newQty) {
-                                if (newQty <= 0) {
-                                  ref.read(cartProvider.notifier)
-                                      .removeItem(product.id);
-                                } else {
-                                  ref.read(cartProvider.notifier)
-                                      .updateQty(product.id, newQty);
-                                }
-                              },
-                              decrementSemanticLabel: 'تقليل الكمية',
-                              incrementSemanticLabel: 'زيادة الكمية',
-                            ),
-                            const Spacer(),
-                            FilledButton(
-                              onPressed: () => context.push('/cart'),
-                              child: const Text('عرض السلة'),
-                            ),
-                          ],
-                        )
-                      : FilledButton(
-                          onPressed: product.isOutOfStock
-                              ? null
-                              : () {
-                                  HapticFeedback.mediumImpact();
-                                  final storeId = store?.id ?? '';
-                                  final added = ref
-                                      .read(cartProvider.notifier)
-                                      .addItem(product, storeId);
-                                  if (added) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content:
-                                            Text('تمت إضافة ${product.name}'),
-                                        duration: const Duration(seconds: 1),
-                                      ),
-                                    );
-                                  } else {
-                                    showDialog(
-                                      context: context,
-                                      builder: (ctx) => AlertDialog(
-                                        title: const Text('تغيير المتجر'),
-                                        content: const Text(
-                                          'السلة تحتوي على منتجات من متجر آخر. '
-                                          'هل تريد مسح السلة والإضافة من هذا المتجر؟',
-                                        ),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () =>
-                                                Navigator.pop(ctx),
-                                            child: const Text('إلغاء'),
-                                          ),
-                                          FilledButton(
-                                            onPressed: () {
-                                              ref
-                                                  .read(
-                                                      cartProvider.notifier)
-                                                  .clearAndSwitchStore(
-                                                      storeId);
-                                              ref
-                                                  .read(
-                                                      cartProvider.notifier)
-                                                  .addItem(
-                                                      product, storeId);
-                                              Navigator.pop(ctx);
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                SnackBar(
-                                                  content: Text(
-                                                      'تمت إضافة ${product.name}'),
-                                                  duration: const Duration(
-                                                      seconds: 1),
-                                                ),
-                                              );
-                                            },
-                                            child: const Text('مسح وإضافة'),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  }
-                                },
-                          style: FilledButton.styleFrom(
-                            minimumSize: const Size.fromHeight(52),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: AlhaiRadius.borderMd,
-                            ),
-                          ),
-                          child: Text(
-                            product.isOutOfStock
-                                ? 'غير متوفر'
-                                : 'أضف للسلة',
-                            style: const TextStyle(fontSize: 16),
-                          ),
+                  // Bottom action bar
+                  Container(
+                    padding: const EdgeInsets.all(AlhaiSpacing.md),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surface,
+                      boxShadow: [
+                        BoxShadow(
+                          color: theme.colorScheme.shadow,
+                          blurRadius: 8,
+                          offset: const Offset(0, -2),
                         ),
-                ),
-              ),
-                  ],
-                );
-              },
-            );
+                      ],
+                    ),
+                    child: SafeArea(
+                      child: qtyInCart > 0
+                          ? Row(
+                              children: [
+                                AlhaiQuantityControl(
+                                  quantity: qtyInCart,
+                                  min: 0,
+                                  onChanged: (newQty) {
+                                    if (newQty <= 0) {
+                                      ref
+                                          .read(cartProvider.notifier)
+                                          .removeItem(product.id);
+                                    } else {
+                                      ref
+                                          .read(cartProvider.notifier)
+                                          .updateQty(product.id, newQty);
+                                    }
+                                  },
+                                  decrementSemanticLabel: 'تقليل الكمية',
+                                  incrementSemanticLabel: 'زيادة الكمية',
+                                ),
+                                const Spacer(),
+                                FilledButton(
+                                  onPressed: () => context.push('/cart'),
+                                  child: const Text('عرض السلة'),
+                                ),
+                              ],
+                            )
+                          : FilledButton(
+                              onPressed: product.isOutOfStock
+                                  ? null
+                                  : () {
+                                      HapticFeedback.mediumImpact();
+                                      final storeId = store?.id ?? '';
+                                      final added = ref
+                                          .read(cartProvider.notifier)
+                                          .addItem(product, storeId);
+                                      if (added) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                                'تمت إضافة ${product.name}'),
+                                            duration:
+                                                const Duration(seconds: 1),
+                                          ),
+                                        );
+                                      } else {
+                                        showDialog(
+                                          context: context,
+                                          builder: (ctx) => AlertDialog(
+                                            title: const Text('تغيير المتجر'),
+                                            content: const Text(
+                                              'السلة تحتوي على منتجات من متجر آخر. '
+                                              'هل تريد مسح السلة والإضافة من هذا المتجر؟',
+                                            ),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () =>
+                                                    Navigator.pop(ctx),
+                                                child: const Text('إلغاء'),
+                                              ),
+                                              FilledButton(
+                                                onPressed: () {
+                                                  ref
+                                                      .read(
+                                                          cartProvider.notifier)
+                                                      .clearAndSwitchStore(
+                                                          storeId);
+                                                  ref
+                                                      .read(
+                                                          cartProvider.notifier)
+                                                      .addItem(
+                                                          product, storeId);
+                                                  Navigator.pop(ctx);
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    SnackBar(
+                                                      content: Text(
+                                                          'تمت إضافة ${product.name}'),
+                                                      duration: const Duration(
+                                                          seconds: 1),
+                                                    ),
+                                                  );
+                                                },
+                                                child: const Text('مسح وإضافة'),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      }
+                                    },
+                              style: FilledButton.styleFrom(
+                                minimumSize: const Size.fromHeight(52),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: AlhaiRadius.borderMd,
+                                ),
+                              ),
+                              child: Text(
+                                product.isOutOfStock
+                                    ? 'غير متوفر'
+                                    : 'أضف للسلة',
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                            ),
+                    ),
+                  ),
+                ],
+              );
+            },
+          );
         },
       ),
     );

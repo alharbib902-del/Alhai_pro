@@ -158,7 +158,8 @@ class ProductsNotifier extends StateNotifier<ProductsState> {
         searchQuery: state.searchQuery,
       );
 
-      final newProducts = refresh ? result.items : [...state.products, ...result.items];
+      final newProducts =
+          refresh ? result.items : [...state.products, ...result.items];
 
       state = state.copyWith(
         products: newProducts,
@@ -230,7 +231,8 @@ final productsListProvider = Provider<List<Product>>((ref) {
 });
 
 /// مزود منتج واحد بالـ ID - محسّن باستخدام Map للبحث السريع
-final productByIdProvider = Provider.autoDispose.family<Product?, String>((ref, id) {
+final productByIdProvider =
+    Provider.autoDispose.family<Product?, String>((ref, id) {
   final productsMap = ref.watch(productsMapProvider);
   return productsMap[id];
 });
@@ -248,7 +250,8 @@ final productsMapProvider = Provider<Map<String, Product>>((ref) {
 /// rather than on every mutation of the full products list (L58 fix).
 final lowStockProductsProvider = Provider<List<Product>>((ref) {
   final products = ref.watch(
-    productsStateProvider.select((state) => state.products.where((p) => p.isLowStock).toList()),
+    productsStateProvider
+        .select((state) => state.products.where((p) => p.isLowStock).toList()),
   );
   return products;
 });
@@ -257,7 +260,8 @@ final lowStockProductsProvider = Provider<List<Product>>((ref) {
 /// Uses .select() to only rebuild when the filtered out-of-stock list actually changes (L58 fix).
 final outOfStockProductsProvider = Provider<List<Product>>((ref) {
   final products = ref.watch(
-    productsStateProvider.select((state) => state.products.where((p) => p.isOutOfStock).toList()),
+    productsStateProvider.select(
+        (state) => state.products.where((p) => p.isOutOfStock).toList()),
   );
   return products;
 });
@@ -267,7 +271,8 @@ final outOfStockProductsProvider = Provider<List<Product>>((ref) {
 // ============================================================================
 
 /// مزود التصنيفات - مع Cache (keepAlive) لتجنب إعادة الجلب
-final categoriesProvider = FutureProvider.autoDispose<List<Category>>((ref) async {
+final categoriesProvider =
+    FutureProvider.autoDispose<List<Category>>((ref) async {
   // الإبقاء على البيانات في الذاكرة لمدة 5 دقائق
   final link = ref.keepAlive();
 
@@ -293,7 +298,8 @@ final categoriesMapProvider = Provider<Map<String, Category>>((ref) {
 });
 
 /// مزود تصنيف واحد بالـ ID - محسّن
-final categoryByIdProvider = Provider.autoDispose.family<Category?, String>((ref, id) {
+final categoryByIdProvider =
+    Provider.autoDispose.family<Category?, String>((ref, id) {
   final categoriesMap = ref.watch(categoriesMapProvider);
   return categoriesMap[id];
 });

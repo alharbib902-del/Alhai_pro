@@ -151,10 +151,10 @@ class AlhaiAvatar extends StatelessWidget {
     final iconSize = _getIconSize();
 
     // Get colors
-    final backgroundColor = backgroundColorOverride ??
-        colorScheme.secondaryContainer;
-    final foregroundColor = foregroundColorOverride ??
-        colorScheme.onSecondaryContainer;
+    final backgroundColor =
+        backgroundColorOverride ?? colorScheme.secondaryContainer;
+    final foregroundColor =
+        foregroundColorOverride ?? colorScheme.onSecondaryContainer;
 
     // Get border radius
     final borderRadius = shape == AlhaiAvatarShape.circle
@@ -252,9 +252,8 @@ class AlhaiAvatar extends StatelessWidget {
   ) {
     if (initials != null && initials!.isNotEmpty) {
       // Take first 2 characters (no toUpperCase for Arabic support)
-      final displayInitials = initials!.length > 2
-          ? initials!.substring(0, 2)
-          : initials!;
+      final displayInitials =
+          initials!.length > 2 ? initials!.substring(0, 2) : initials!;
 
       return Text(
         displayInitials,

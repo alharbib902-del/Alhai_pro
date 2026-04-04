@@ -42,7 +42,11 @@ double calculateExpectedCash({
   required double cashIn,
   required double cashOut,
 }) {
-  return openingCash + (cashSales + mixedCashPortion) - cashRefunds + cashIn - cashOut;
+  return openingCash +
+      (cashSales + mixedCashPortion) -
+      cashRefunds +
+      cashIn -
+      cashOut;
 }
 
 /// Calculate variance between actual and expected cash.
@@ -167,7 +171,8 @@ void main() {
 
       // Expected is 500 + 800 = 1300, NOT 500 + 800 + 2000
       expect(expected, closeTo(1300.0, 0.001));
-      expect(expected, isNot(closeTo(openingCash + cashSalesOnly + cardSales, 0.001)));
+      expect(expected,
+          isNot(closeTo(openingCash + cashSalesOnly + cardSales, 0.001)));
     });
   });
 
@@ -194,7 +199,8 @@ void main() {
 
       // Expected is 500 + 600 = 1100, NOT 500 + 600 + 1500
       expect(expected, closeTo(1100.0, 0.001));
-      expect(expected, isNot(closeTo(openingCash + cashSalesOnly + creditSales, 0.001)));
+      expect(expected,
+          isNot(closeTo(openingCash + cashSalesOnly + creditSales, 0.001)));
     });
   });
 

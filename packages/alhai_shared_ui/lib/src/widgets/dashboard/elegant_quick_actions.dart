@@ -92,9 +92,9 @@ class ElegantQuickActions extends StatelessWidget {
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: actions.length,
-                    gridDelegate:
-                        SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: getResponsiveGridColumns(context, mobile: 2, desktop: 3),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: getResponsiveGridColumns(context,
+                          mobile: 2, desktop: 3),
                       mainAxisSpacing: 12,
                       crossAxisSpacing: 12,
                       childAspectRatio: 1.3,

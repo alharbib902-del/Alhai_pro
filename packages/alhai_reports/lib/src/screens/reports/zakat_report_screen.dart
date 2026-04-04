@@ -32,8 +32,7 @@ class _ZakatReportScreenState extends ConsumerState<ZakatReportScreen> {
 
   double get _zakatableAssets =>
       _inventoryValue + _cashBalance + _accountsReceivable;
-  double get _zakatableDeductions =>
-      _accountsPayable + _otherLiabilities;
+  double get _zakatableDeductions => _accountsPayable + _otherLiabilities;
   double get _netZakatBase =>
       (_zakatableAssets - _zakatableDeductions).clamp(0.0, double.infinity);
   double get _zakatDue =>
@@ -48,11 +47,17 @@ class _ZakatReportScreenState extends ConsumerState<ZakatReportScreen> {
 
   Future<void> _loadData() async {
     try {
-      setState(() { _isLoading = true; _error = null; });
+      setState(() {
+        _isLoading = true;
+        _error = null;
+      });
       final db = GetIt.I<AppDatabase>();
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) {
-        setState(() { _error = 'لم يتم تحديد المتجر'; _isLoading = false; });
+        setState(() {
+          _error = 'لم يتم تحديد المتجر';
+          _isLoading = false;
+        });
         return;
       }
 
@@ -87,7 +92,8 @@ class _ZakatReportScreenState extends ConsumerState<ZakatReportScreen> {
       if (mounted) {
         setState(() {
           _inventoryValue = _toDouble(invResult.data['total']);
-          _cashBalance = _toDouble(cashResult.data['cash']).clamp(0.0, double.infinity);
+          _cashBalance =
+              _toDouble(cashResult.data['cash']).clamp(0.0, double.infinity);
           _accountsReceivable = _toDouble(recResult.data['total']);
           _accountsPayable = _toDouble(payResult.data['total']);
           _otherLiabilities = 0;
@@ -95,7 +101,11 @@ class _ZakatReportScreenState extends ConsumerState<ZakatReportScreen> {
         });
       }
     } catch (e) {
-      if (mounted) setState(() { _error = e.toString(); _isLoading = false; });
+      if (mounted)
+        setState(() {
+          _error = e.toString();
+          _isLoading = false;
+        });
     }
   }
 
@@ -126,7 +136,8 @@ class _ZakatReportScreenState extends ConsumerState<ZakatReportScreen> {
               Icon(Icons.error_outline, size: 48, color: AlhaiColors.error),
               const SizedBox(height: AlhaiSpacing.sm),
               Text(_error!),
-              TextButton(onPressed: _loadData, child: const Text('إعادة المحاولة')),
+              TextButton(
+                  onPressed: _loadData, child: const Text('إعادة المحاولة')),
             ],
           ),
         ),
@@ -137,7 +148,8 @@ class _ZakatReportScreenState extends ConsumerState<ZakatReportScreen> {
       appBar: AppBar(
         title: const Text('حساب الزكاة'),
         actions: [
-          IconButton(icon: const Icon(Icons.refresh_rounded), onPressed: _loadData),
+          IconButton(
+              icon: const Icon(Icons.refresh_rounded), onPressed: _loadData),
         ],
       ),
       body: ListView(
@@ -151,7 +163,9 @@ class _ZakatReportScreenState extends ConsumerState<ZakatReportScreen> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
               side: BorderSide(
-                color: _aboveNisab ? AlhaiColors.success.withValues(alpha: 0.7) : AlhaiColors.info.withValues(alpha: 0.7),
+                color: _aboveNisab
+                    ? AlhaiColors.success.withValues(alpha: 0.7)
+                    : AlhaiColors.info.withValues(alpha: 0.7),
               ),
             ),
             child: Padding(
@@ -169,13 +183,17 @@ class _ZakatReportScreenState extends ConsumerState<ZakatReportScreen> {
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: _aboveNisab ? AlhaiColors.successDark : AlhaiColors.infoDark,
+                      color: _aboveNisab
+                          ? AlhaiColors.successDark
+                          : AlhaiColors.infoDark,
                     ),
                   ),
                   if (_aboveNisab) ...[
                     const SizedBox(height: AlhaiSpacing.xs),
                     Text('مقدار الزكاة الواجبة',
-                        style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 13)),
+                        style: TextStyle(
+                            color: theme.colorScheme.onSurfaceVariant,
+                            fontSize: 13)),
                     const SizedBox(height: AlhaiSpacing.xxs),
                     Text(
                       '${_zakatDue.toStringAsFixed(2)} ر.س',
@@ -187,7 +205,9 @@ class _ZakatReportScreenState extends ConsumerState<ZakatReportScreen> {
                     ),
                     Text(
                       'بنسبة ${(_zakatRate * 100).toStringAsFixed(1)}% من وعاء الزكاة',
-                      style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 12),
+                      style: TextStyle(
+                          color: theme.colorScheme.onSurfaceVariant,
+                          fontSize: 12),
                     ),
                   ] else ...[
                     const SizedBox(height: AlhaiSpacing.xs),
@@ -197,7 +217,9 @@ class _ZakatReportScreenState extends ConsumerState<ZakatReportScreen> {
                     ),
                     Text(
                       'وعاء الزكاة الحالي: ${_netZakatBase.toStringAsFixed(0)} ر.س',
-                      style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 12),
+                      style: TextStyle(
+                          color: theme.colorScheme.onSurfaceVariant,
+                          fontSize: 12),
                     ),
                   ],
                 ],
@@ -213,7 +235,8 @@ class _ZakatReportScreenState extends ConsumerState<ZakatReportScreen> {
               padding: const EdgeInsets.all(AlhaiSpacing.sm),
               child: Row(
                 children: [
-                  Icon(Icons.info_outline, color: Colors.amber.shade700, size: 20),
+                  Icon(Icons.info_outline,
+                      color: Colors.amber.shade700, size: 20),
                   const SizedBox(width: AlhaiSpacing.xs),
                   Expanded(
                     child: Text(
@@ -221,7 +244,9 @@ class _ZakatReportScreenState extends ConsumerState<ZakatReportScreen> {
                       '(قيمة 85 جرام من الذهب تقريباً)',
                       style: TextStyle(
                         fontSize: 12,
-                        color: isDark ? Colors.amber.shade200 : Colors.amber.shade800,
+                        color: isDark
+                            ? Colors.amber.shade200
+                            : Colors.amber.shade800,
                       ),
                     ),
                   ),
@@ -286,7 +311,8 @@ class _ZakatReportScreenState extends ConsumerState<ZakatReportScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text('وعاء الزكاة الصافي',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
                 Text(
                   '${_netZakatBase.toStringAsFixed(0)} ر.س',
                   style: TextStyle(
@@ -301,38 +327,42 @@ class _ZakatReportScreenState extends ConsumerState<ZakatReportScreen> {
           const SizedBox(height: AlhaiSpacing.xs),
 
           // Zakat calculation
-          if (_aboveNisab) Container(
-            padding: const EdgeInsets.all(AlhaiSpacing.md),
-            decoration: BoxDecoration(
-              color: AlhaiColors.success.withValues(alpha: 0.08),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('${_netZakatBase.toStringAsFixed(0)} × ${(_zakatRate * 100).toStringAsFixed(1)}%',
-                        style: const TextStyle(fontSize: 13)),
-                    Text(
-                      '${_zakatDue.toStringAsFixed(2)} ر.س',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        color: AlhaiColors.successDark,
+          if (_aboveNisab)
+            Container(
+              padding: const EdgeInsets.all(AlhaiSpacing.md),
+              decoration: BoxDecoration(
+                color: AlhaiColors.success.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                          '${_netZakatBase.toStringAsFixed(0)} × ${(_zakatRate * 100).toStringAsFixed(1)}%',
+                          style: const TextStyle(fontSize: 13)),
+                      Text(
+                        '${_zakatDue.toStringAsFixed(2)} ر.س',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          color: AlhaiColors.successDark,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: AlhaiSpacing.xs),
-                Text(
-                  'تنبيه: هذا الحساب تقريبي. يُنصح بمراجعة مختص شرعي لتحديد الزكاة الواجبة بدقة.',
-                  style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant),
-                  textAlign: TextAlign.center,
-                ),
-              ],
+                    ],
+                  ),
+                  const SizedBox(height: AlhaiSpacing.xs),
+                  Text(
+                    'تنبيه: هذا الحساب تقريبي. يُنصح بمراجعة مختص شرعي لتحديد الزكاة الواجبة بدقة.',
+                    style: TextStyle(
+                        fontSize: 11,
+                        color: theme.colorScheme.onSurfaceVariant),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
             ),
-          ),
         ],
       ),
     );

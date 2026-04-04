@@ -77,10 +77,8 @@ void main() {
         setupSelectChain(queryBuilder, filterBuilder, data: []);
 
         when(() => mockMetadataDao.updateLastPullAt(any(), any(),
-                syncCount: any(named: 'syncCount')))
-            .thenAnswer((_) async {});
-        when(() => mockMetadataDao.clearError(any()))
-            .thenAnswer((_) async {});
+            syncCount: any(named: 'syncCount'))).thenAnswer((_) async {});
+        when(() => mockMetadataDao.clearError(any())).thenAnswer((_) async {});
 
         final result = await strategy.pullTable(
           tableName: 'products',
@@ -109,12 +107,12 @@ void main() {
 
           final queryBuilder = MockSupabaseQueryBuilder();
           final filterBuilder = MockPostgrestFilterBuilder();
-          when(() => mockClient.from(tableName)).thenAnswer((_) => queryBuilder);
+          when(() => mockClient.from(tableName))
+              .thenAnswer((_) => queryBuilder);
           setupSelectChain(queryBuilder, filterBuilder, data: []);
 
           when(() => mockMetadataDao.updateLastPullAt(tableName, any(),
-                  syncCount: any(named: 'syncCount')))
-              .thenAnswer((_) async {});
+              syncCount: any(named: 'syncCount'))).thenAnswer((_) async {});
           when(() => mockMetadataDao.clearError(tableName))
               .thenAnswer((_) async {});
         }

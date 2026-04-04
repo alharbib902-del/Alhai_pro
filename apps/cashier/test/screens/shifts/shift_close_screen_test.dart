@@ -122,8 +122,7 @@ void main() {
       expect(find.byIcon(Icons.money_rounded), findsOneWidget);
     });
 
-    testWidgets('close button is disabled when input is empty',
-        (tester) async {
+    testWidgets('close button is disabled when input is empty', (tester) async {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
 

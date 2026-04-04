@@ -15,11 +15,11 @@ import 'secure_storage_service.dart';
 class BiometricService {
   static final LocalAuthentication _auth = LocalAuthentication();
   static const String _biometricEnabledKey = 'biometric_enabled';
-  
+
   // ============================================================================
   // AVAILABILITY
   // ============================================================================
-  
+
   /// التحقق من توفر المصادقة البيومترية
   static Future<bool> isAvailable() async {
     try {
@@ -30,7 +30,7 @@ class BiometricService {
       return false;
     }
   }
-  
+
   /// الحصول على الأنواع المتاحة
   static Future<List<BiometricType>> getAvailableTypes() async {
     try {
@@ -39,56 +39,56 @@ class BiometricService {
       return [];
     }
   }
-  
+
   /// التحقق من دعم البصمة
   static Future<bool> hasFingerprintSupport() async {
     final types = await getAvailableTypes();
     return types.contains(BiometricType.fingerprint);
   }
-  
+
   /// التحقق من دعم Face ID
   static Future<bool> hasFaceIdSupport() async {
     final types = await getAvailableTypes();
     return types.contains(BiometricType.face);
   }
-  
+
   // ============================================================================
   // SETTINGS
   // ============================================================================
-  
+
   /// التحقق من تفعيل البيومترية
   static Future<bool> isEnabled() async {
     final enabled = await SecureStorageService.read(_biometricEnabledKey);
     return enabled == 'true';
   }
-  
+
   /// تفعيل البيومترية
   static Future<bool> enable() async {
     // التحقق أولاً من توفر البيومترية
     if (!await isAvailable()) return false;
-    
+
     // طلب المصادقة للتأكيد
     final authenticated = await authenticate(
       reason: 'قم بالمصادقة لتفعيل الدخول بالبصمة',
     );
-    
+
     if (authenticated) {
       await SecureStorageService.write(_biometricEnabledKey, 'true');
       return true;
     }
-    
+
     return false;
   }
-  
+
   /// تعطيل البيومترية
   static Future<void> disable() async {
     await SecureStorageService.delete(_biometricEnabledKey);
   }
-  
+
   // ============================================================================
   // AUTHENTICATION
   // ============================================================================
-  
+
   /// المصادقة بالبيومترية
   static Future<bool> authenticate({
     String reason = 'قم بالمصادقة للمتابعة',
@@ -121,29 +121,29 @@ class BiometricService {
       return false;
     }
   }
-  
+
   /// تسجيل الدخول بالبيومترية
   static Future<BiometricLoginResult> login() async {
     // التحقق من التفعيل
     if (!await isEnabled()) {
       return BiometricLoginResult.notEnabled();
     }
-    
+
     // التحقق من التوفر
     if (!await isAvailable()) {
       return BiometricLoginResult.notAvailable();
     }
-    
+
     // محاولة المصادقة
     final authenticated = await authenticate(
       reason: 'قم بالمصادقة لتسجيل الدخول',
       sensitiveTransaction: true,
     );
-    
+
     if (authenticated) {
       return BiometricLoginResult.success();
     }
-    
+
     return BiometricLoginResult.failed();
   }
 }
@@ -164,32 +164,32 @@ class BiometricLoginResult {
     this.errorType,
   });
 
-  factory BiometricLoginResult.success() => 
+  factory BiometricLoginResult.success() =>
       const BiometricLoginResult._(isSuccess: true);
-  
+
   factory BiometricLoginResult.failed() => const BiometricLoginResult._(
-    isSuccess: false,
-    error: 'فشلت المصادقة',
-    errorType: BiometricLoginError.failed,
-  );
-  
+        isSuccess: false,
+        error: 'فشلت المصادقة',
+        errorType: BiometricLoginError.failed,
+      );
+
   factory BiometricLoginResult.notEnabled() => const BiometricLoginResult._(
-    isSuccess: false,
-    error: 'البصمة غير مفعلة',
-    errorType: BiometricLoginError.notEnabled,
-  );
-  
+        isSuccess: false,
+        error: 'البصمة غير مفعلة',
+        errorType: BiometricLoginError.notEnabled,
+      );
+
   factory BiometricLoginResult.notAvailable() => const BiometricLoginResult._(
-    isSuccess: false,
-    error: 'البصمة غير متوفرة على هذا الجهاز',
-    errorType: BiometricLoginError.notAvailable,
-  );
-  
+        isSuccess: false,
+        error: 'البصمة غير متوفرة على هذا الجهاز',
+        errorType: BiometricLoginError.notAvailable,
+      );
+
   factory BiometricLoginResult.lockedOut() => const BiometricLoginResult._(
-    isSuccess: false,
-    error: 'تم قفل البصمة بسبب كثرة المحاولات',
-    errorType: BiometricLoginError.lockedOut,
-  );
+        isSuccess: false,
+        error: 'تم قفل البصمة بسبب كثرة المحاولات',
+        errorType: BiometricLoginError.lockedOut,
+      );
 }
 
 /// أنواع أخطاء البيومترية

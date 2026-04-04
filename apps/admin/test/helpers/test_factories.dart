@@ -92,7 +92,8 @@ ProductsTableData createTestProduct({
   String id = 'prod-1',
   String? orgId,
   String storeId = 'test-store-1',
-  String name = '\u0645\u0646\u062a\u062c \u062a\u062c\u0631\u064a\u0628\u064a', // منتج تجريبي
+  String name =
+      '\u0645\u0646\u062a\u062c \u062a\u062c\u0631\u064a\u0628\u064a', // منتج تجريبي
   String? sku,
   String? barcode,
   double price = 25.0,
@@ -208,7 +209,8 @@ CustomersTableData createTestCustomer({
   String id = 'cust-1',
   String? orgId,
   String storeId = 'test-store-1',
-  String name = '\u0639\u0645\u064a\u0644 \u062a\u062c\u0631\u064a\u0628\u064a', // عميل تجريبي
+  String name =
+      '\u0639\u0645\u064a\u0644 \u062a\u062c\u0631\u064a\u0628\u064a', // عميل تجريبي
   String? phone = '0501234567',
   String? email,
   String? address,
@@ -250,7 +252,8 @@ ShiftsTableData createTestShift({
   String storeId = 'test-store-1',
   String? terminalId,
   String cashierId = 'test-user-1',
-  String cashierName = '\u0645\u0648\u0638\u0641 \u062a\u062c\u0631\u064a\u0628\u064a', // موظف تجريبي
+  String cashierName =
+      '\u0645\u0648\u0638\u0641 \u062a\u062c\u0631\u064a\u0628\u064a', // موظف تجريبي
   double openingCash = 500.0,
   double? closingCash,
   double? expectedCash,
@@ -296,7 +299,8 @@ CategoriesTableData createTestCategory({
   String id = 'cat-1',
   String? orgId,
   String storeId = 'test-store-1',
-  String name = '\u062a\u0635\u0646\u064a\u0641 \u062a\u062c\u0631\u064a\u0628\u064a', // تصنيف تجريبي
+  String name =
+      '\u062a\u0635\u0646\u064a\u0641 \u062a\u062c\u0631\u064a\u0628\u064a', // تصنيف تجريبي
   String? nameEn = 'Test Category',
   String? parentId,
   String? imageUrl,
@@ -334,7 +338,8 @@ DiscountsTableData createTestDiscount({
   String id = 'disc-1',
   String? orgId,
   String storeId = 'test-store-1',
-  String name = '\u062e\u0635\u0645 \u062a\u062c\u0631\u064a\u0628\u064a', // خصم تجريبي
+  String name =
+      '\u062e\u0635\u0645 \u062a\u062c\u0631\u064a\u0628\u064a', // خصم تجريبي
   String? nameEn = 'Test Discount',
   String type = 'percentage',
   double value = 10.0,
@@ -420,7 +425,8 @@ SuppliersTableData createTestSupplier({
   String id = 'sup-1',
   String? orgId,
   String storeId = 'test-store-1',
-  String name = '\u0645\u0648\u0631\u062f \u062a\u062c\u0631\u064a\u0628\u064a', // مورد تجريبي
+  String name =
+      '\u0645\u0648\u0631\u062f \u062a\u062c\u0631\u064a\u0628\u064a', // مورد تجريبي
   String? phone = '0501234567',
   String? email,
   String? address,
@@ -465,7 +471,8 @@ PurchasesTableData createTestPurchase({
   String? orgId,
   String storeId = 'test-store-1',
   String? supplierId = 'sup-1',
-  String? supplierName = '\u0645\u0648\u0631\u062f \u062a\u062c\u0631\u064a\u0628\u064a', // مورد تجريبي
+  String? supplierName =
+      '\u0645\u0648\u0631\u062f \u062a\u062c\u0631\u064a\u0628\u064a', // مورد تجريبي
   String purchaseNumber = 'PUR-20260115-001',
   String status = 'received',
   double subtotal = 1000.0,
@@ -513,8 +520,10 @@ ReturnsTableData createTestReturn({
   String saleId = 'sale-1',
   String storeId = 'test-store-1',
   String? customerId,
-  String? customerName = '\u0639\u0645\u064a\u0644 \u062a\u062c\u0631\u064a\u0628\u064a', // عميل تجريبي
-  String? reason = '\u0639\u064a\u0628 \u0641\u064a \u0627\u0644\u0645\u0646\u062a\u062c', // عيب في المنتج
+  String? customerName =
+      '\u0639\u0645\u064a\u0644 \u062a\u062c\u0631\u064a\u0628\u064a', // عميل تجريبي
+  String? reason =
+      '\u0639\u064a\u0628 \u0641\u064a \u0627\u0644\u0645\u0646\u062a\u062c', // عيب في المنتج
   String type = 'full',
   String refundMethod = 'cash',
   double totalRefund = 50.0,
@@ -554,7 +563,8 @@ ExpensesTableData createTestExpense({
   String storeId = 'test-store-1',
   String? categoryId,
   double amount = 200.0,
-  String? description = '\u0645\u0635\u0631\u0648\u0641 \u062a\u062c\u0631\u064a\u0628\u064a', // مصروف تجريبي
+  String? description =
+      '\u0645\u0635\u0631\u0648\u0641 \u062a\u062c\u0631\u064a\u0628\u064a', // مصروف تجريبي
   String paymentMethod = 'cash',
   String? receiptImage,
   String? createdBy = 'test-user-1',

@@ -172,8 +172,7 @@ class _SyncIndicatorButtonState extends State<_SyncIndicatorButton>
           borderRadius: BorderRadius.circular(8),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(
-                  alpha: widget.isDark ? 0.3 : 0.15),
+              color: Colors.black.withValues(alpha: widget.isDark ? 0.3 : 0.15),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -222,7 +221,8 @@ class _SyncIndicatorButtonState extends State<_SyncIndicatorButton>
                       },
                       child: Icon(
                         state.icon,
-                        key: ValueKey('${state.icon.codePoint}_${state.color.toARGB32()}'),
+                        key: ValueKey(
+                            '${state.icon.codePoint}_${state.color.toARGB32()}'),
                         color: state.color,
                         size: 18,
                       ),
@@ -320,9 +320,7 @@ class _SyncIndicatorButtonState extends State<_SyncIndicatorButton>
                   width: 260,
                   padding: const EdgeInsets.all(AlhaiSpacing.md),
                   decoration: BoxDecoration(
-                    color: isDark
-                        ? AppColors.surfaceDark
-                        : Colors.white,
+                    color: isDark ? AppColors.surfaceDark : Colors.white,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: isDark
@@ -331,8 +329,8 @@ class _SyncIndicatorButtonState extends State<_SyncIndicatorButton>
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(
-                            alpha: isDark ? 0.24 : 0.12),
+                        color: Colors.black
+                            .withValues(alpha: isDark ? 0.24 : 0.12),
                         blurRadius: 16,
                         offset: const Offset(0, 4),
                       ),

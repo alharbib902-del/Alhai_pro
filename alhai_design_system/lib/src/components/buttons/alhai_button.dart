@@ -324,7 +324,8 @@ class _AlhaiButtonState extends State<AlhaiButton>
 
     if (widget.trailingIcon != null) {
       children.add(const SizedBox(width: AlhaiSpacing.xs));
-      children.add(Icon(widget.trailingIcon, size: _iconSize, color: iconColor));
+      children
+          .add(Icon(widget.trailingIcon, size: _iconSize, color: iconColor));
     }
 
     return Row(

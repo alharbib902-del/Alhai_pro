@@ -314,7 +314,8 @@ class _AppTextFieldState extends State<AppTextField> {
                 : null,
             suffixIcon: widget.obscureText
                 ? IconButton(
-                    onPressed: () => setState(() => _obscureText = !_obscureText),
+                    onPressed: () =>
+                        setState(() => _obscureText = !_obscureText),
                     icon: Icon(
                       _obscureText ? Icons.visibility : Icons.visibility_off,
                       color: AppColors.textMuted,
@@ -445,55 +446,55 @@ class _AppSearchFieldState extends State<AppSearchField> {
       textField: true,
       label: widget.hint,
       child: SizedBox(
-      width: widget.fullWidth ? double.infinity : 300,
-      child: TextField(
-        controller: _controller,
-        focusNode: widget.focusNode,
-        onChanged: widget.onChanged,
-        onSubmitted: widget.onSubmitted,
-        autofocus: widget.autofocus,
-        maxLength: widget.maxLength,
-        textInputAction: TextInputAction.search,
-        style: AppTypography.inputText,
-        decoration: InputDecoration(
-          hintText: widget.hint,
-          hintStyle: AppTypography.inputHint.copyWith(
-            color: AppColors.textMuted,
-          ),
-          counterText: '',
-          prefixIcon: const Icon(
-            Icons.search,
-            color: AppColors.textMuted,
-            size: AppIconSize.md,
-          ),
-          suffixIcon: _hasText
-              ? IconButton(
-                  onPressed: _clear,
-                  icon: const Icon(Icons.close, size: 20),
-                  color: AppColors.textMuted,
-                )
-              : null,
-          filled: true,
-          fillColor: AppColors.surface,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.lg,
-            vertical: AppSpacing.md,
-          ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(AppRadius.full),
-            borderSide: const BorderSide(color: AppColors.border),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(AppRadius.full),
-            borderSide: const BorderSide(color: AppColors.border),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(AppRadius.full),
-            borderSide: const BorderSide(color: AppColors.primary, width: 2),
+        width: widget.fullWidth ? double.infinity : 300,
+        child: TextField(
+          controller: _controller,
+          focusNode: widget.focusNode,
+          onChanged: widget.onChanged,
+          onSubmitted: widget.onSubmitted,
+          autofocus: widget.autofocus,
+          maxLength: widget.maxLength,
+          textInputAction: TextInputAction.search,
+          style: AppTypography.inputText,
+          decoration: InputDecoration(
+            hintText: widget.hint,
+            hintStyle: AppTypography.inputHint.copyWith(
+              color: AppColors.textMuted,
+            ),
+            counterText: '',
+            prefixIcon: const Icon(
+              Icons.search,
+              color: AppColors.textMuted,
+              size: AppIconSize.md,
+            ),
+            suffixIcon: _hasText
+                ? IconButton(
+                    onPressed: _clear,
+                    icon: const Icon(Icons.close, size: 20),
+                    color: AppColors.textMuted,
+                  )
+                : null,
+            filled: true,
+            fillColor: AppColors.surface,
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.lg,
+              vertical: AppSpacing.md,
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(AppRadius.full),
+              borderSide: const BorderSide(color: AppColors.border),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(AppRadius.full),
+              borderSide: const BorderSide(color: AppColors.border),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(AppRadius.full),
+              borderSide: const BorderSide(color: AppColors.primary, width: 2),
+            ),
           ),
         ),
       ),
-    ),
     );
   }
 }
@@ -552,7 +553,8 @@ class _AppQuantityFieldState extends State<AppQuantityField> {
   @override
   Widget build(BuildContext context) {
     final canDecrement = widget.enabled && widget.value > widget.min;
-    final canIncrement = widget.enabled && (widget.max == null || widget.value < widget.max!);
+    final canIncrement =
+        widget.enabled && (widget.max == null || widget.value < widget.max!);
 
     return Container(
       decoration: BoxDecoration(
@@ -619,9 +621,8 @@ class _QuantityButton extends StatelessWidget {
           child: Icon(
             icon,
             size: size * 0.5,
-            color: onPressed != null
-                ? AppColors.textPrimary
-                : AppColors.grey300,
+            color:
+                onPressed != null ? AppColors.textPrimary : AppColors.grey300,
           ),
         ),
       ),

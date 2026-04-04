@@ -48,7 +48,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       MemoryMonitor.instance.startMonitoring();
 
       stopwatch.stop();
-      AppLogger.debug('Init time: ${stopwatch.elapsedMilliseconds}ms', tag: 'SPLASH');
+      AppLogger.debug('Init time: ${stopwatch.elapsedMilliseconds}ms',
+          tag: 'SPLASH');
     } catch (e, stackTrace) {
       stopwatch.stop();
       AppLogger.error('Initialization error: $e', tag: 'SPLASH');
@@ -143,12 +144,18 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
   String _getStatusText(_SplashStatus status, AppLocalizations l10n) {
     switch (status) {
-      case _SplashStatus.loading: return l10n.loadingApp;
-      case _SplashStatus.initSearch: return l10n.initializingSearch;
-      case _SplashStatus.loadData: return l10n.loadingData;
-      case _SplashStatus.initDemo: return l10n.initializingDemoData;
-      case _SplashStatus.checkAuth: return 'جاري التحقق...';
-      case _SplashStatus.ready: return l10n.pointOfSale;
+      case _SplashStatus.loading:
+        return l10n.loadingApp;
+      case _SplashStatus.initSearch:
+        return l10n.initializingSearch;
+      case _SplashStatus.loadData:
+        return l10n.loadingData;
+      case _SplashStatus.initDemo:
+        return l10n.initializingDemoData;
+      case _SplashStatus.checkAuth:
+        return 'جاري التحقق...';
+      case _SplashStatus.ready:
+        return l10n.pointOfSale;
     }
   }
 
@@ -162,85 +169,107 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     return Scaffold(
       body: SafeArea(
         child: LayoutBuilder(
-        builder: (context, constraints) {
-          final isMobile = constraints.maxWidth < 600;
-          final isDesktop = constraints.maxWidth >= 1200;
-          final logoSize = isMobile ? 120.0 : isDesktop ? 200.0 : 150.0;
-          final logoBorderRadius = isMobile ? 24.0 : isDesktop ? 40.0 : 30.0;
+          builder: (context, constraints) {
+            final isMobile = constraints.maxWidth < 600;
+            final isDesktop = constraints.maxWidth >= 1200;
+            final logoSize = isMobile
+                ? 120.0
+                : isDesktop
+                    ? 200.0
+                    : 150.0;
+            final logoBorderRadius = isMobile
+                ? 24.0
+                : isDesktop
+                    ? 40.0
+                    : 30.0;
 
-          return Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [primaryGreen, darkGreen],
+            return Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [primaryGreen, darkGreen],
+                ),
               ),
-            ),
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // صورة الروبوت 3D
-                  Container(
-                    width: logoSize,
-                    height: logoSize,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surface,
-                      borderRadius: BorderRadius.circular(logoBorderRadius),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Color.fromRGBO(0, 0, 0, 0.25),
-                          blurRadius: 30,
-                          offset: Offset(0, 15),
-                        ),
-                      ],
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // صورة الروبوت 3D
+                    Container(
+                      width: logoSize,
+                      height: logoSize,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surface,
+                        borderRadius: BorderRadius.circular(logoBorderRadius),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color.fromRGBO(0, 0, 0, 0.25),
+                            blurRadius: 30,
+                            offset: Offset(0, 15),
+                          ),
+                        ],
+                      ),
+                      padding: const EdgeInsets.all(AlhaiSpacing.md),
+                      child: const Icon(
+                        Icons.smart_toy_rounded,
+                        size: 80,
+                        color: Colors.white,
+                      ),
                     ),
-                    padding: const EdgeInsets.all(AlhaiSpacing.md),
-                    child: const Icon(
-                      Icons.smart_toy_rounded,
-                      size: 80,
-                      color: Colors.white,
+                    const SizedBox(height: AlhaiSpacing.lg),
+                    Text(
+                      l10n.pointOfSale,
+                      style:
+                          Theme.of(context).textTheme.headlineMedium?.copyWith(
+                                color: Theme.of(context).colorScheme.surface,
+                                fontWeight: FontWeight.bold,
+                                fontSize: isMobile
+                                    ? 22
+                                    : isDesktop
+                                        ? 32
+                                        : 26,
+                                fontFamilyFallback:
+                                    AlhaiTypography.fontFamilyFallback,
+                              ),
                     ),
-                  ),
-                  const SizedBox(height: AlhaiSpacing.lg),
-                  Text(
-                    l10n.pointOfSale,
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.surface,
-                      fontWeight: FontWeight.bold,
-                      fontSize: isMobile ? 22 : isDesktop ? 32 : 26,
-                      fontFamilyFallback: AlhaiTypography.fontFamilyFallback,
+                    const SizedBox(height: AlhaiSpacing.xs),
+                    Text(
+                      'Al-HAI POS',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .surface
+                                .withValues(alpha: 0.7),
+                            fontFamilyFallback:
+                                AlhaiTypography.fontFamilyFallback,
+                          ),
                     ),
-                  ),
-                  const SizedBox(height: AlhaiSpacing.xs),
-                  Text(
-                    'Al-HAI POS',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.7),
-                      fontFamilyFallback: AlhaiTypography.fontFamilyFallback,
+                    const SizedBox(height: AlhaiSpacing.xxxl),
+                    CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                          Theme.of(context).colorScheme.surface),
                     ),
-                  ),
-                  const SizedBox(height: AlhaiSpacing.xxxl),
-                  CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.surface),
-                  ),
-                  const SizedBox(height: AlhaiSpacing.md),
-                  // نص الحالة
-                  Text(
-                    _getStatusText(_status, l10n),
-                    style: TextStyle(
-                      fontFamily: AlhaiTypography.fontFamily,
-                      fontFamilyFallback: AlhaiTypography.fontFamilyFallback,
-                      color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.7),
-                      fontSize: 14,
+                    const SizedBox(height: AlhaiSpacing.md),
+                    // نص الحالة
+                    Text(
+                      _getStatusText(_status, l10n),
+                      style: TextStyle(
+                        fontFamily: AlhaiTypography.fontFamily,
+                        fontFamilyFallback: AlhaiTypography.fontFamilyFallback,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .surface
+                            .withValues(alpha: 0.7),
+                        fontSize: 14,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          );
-        },
-      ),
+            );
+          },
+        ),
       ),
     );
   }

@@ -92,26 +92,34 @@ class _SARevenueAnalyticsScreenState
                       value: _fmtNum(kpis.mrr),
                       suffix: l10n.sar,
                       icon: Icons.repeat_rounded,
-                      color: isDark ? const Color(0xFF2DD4BF) : const Color(0xFF0D9488),
+                      color: isDark
+                          ? const Color(0xFF2DD4BF)
+                          : const Color(0xFF0D9488),
                     ),
                     _KpiCard(
                       title: l10n.annualRecurringRevenue,
                       value: _fmtNum(kpis.arr),
                       suffix: l10n.sar,
                       icon: Icons.calendar_today_rounded,
-                      color: isDark ? const Color(0xFF818CF8) : const Color(0xFF4F46E5),
+                      color: isDark
+                          ? const Color(0xFF818CF8)
+                          : const Color(0xFF4F46E5),
                     ),
                     _KpiCard(
                       title: l10n.activeSubscriptions,
                       value: '${kpis.activeSubscriptions}',
                       icon: Icons.card_membership_rounded,
-                      color: isDark ? const Color(0xFF4ADE80) : const Color(0xFF15803D),
+                      color: isDark
+                          ? const Color(0xFF4ADE80)
+                          : const Color(0xFF15803D),
                     ),
                     _KpiCard(
                       title: l10n.trialSubscriptions,
                       value: '${kpis.trialSubscriptions}',
                       icon: Icons.science_rounded,
-                      color: isDark ? const Color(0xFFFB923C) : const Color(0xFFEA580C),
+                      color: isDark
+                          ? const Color(0xFFFB923C)
+                          : const Color(0xFFEA580C),
                     ),
                   ],
                 );
@@ -151,8 +159,7 @@ class _SARevenueAnalyticsScreenState
                 child: Center(child: CircularProgressIndicator()),
               ),
               error: (e, _) => Text('Error: $e'),
-              data: (plans) =>
-                  _RevenueByPlanTable(l10n: l10n, plans: plans),
+              data: (plans) => _RevenueByPlanTable(l10n: l10n, plans: plans),
             ),
 
             const SizedBox(height: AlhaiSpacing.xl),
@@ -171,8 +178,7 @@ class _SARevenueAnalyticsScreenState
                 child: Center(child: CircularProgressIndicator()),
               ),
               error: (e, _) => Text('Error: $e'),
-              data: (stores) =>
-                  _TopStoresTable(l10n: l10n, stores: stores),
+              data: (stores) => _TopStoresTable(l10n: l10n, stores: stores),
             ),
           ],
         ),
@@ -337,8 +343,8 @@ class _MrrChart extends StatelessWidget {
                 show: true,
                 drawVerticalLine: false,
                 getDrawingHorizontalLine: (value) => FlLine(
-                  color: theme.colorScheme.outlineVariant
-                      .withValues(alpha: 0.3),
+                  color:
+                      theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
                   strokeWidth: 1,
                 ),
               ),
@@ -364,12 +370,10 @@ class _MrrChart extends StatelessWidget {
                         return const SizedBox();
                       }
                       final month = monthlyData[idx].month;
-                      final label = month.length >= 7
-                          ? month.substring(5)
-                          : month;
+                      final label =
+                          month.length >= 7 ? month.substring(5) : month;
                       return Padding(
-                        padding: const EdgeInsets.only(
-                            top: AlhaiSpacing.xs),
+                        padding: const EdgeInsets.only(top: AlhaiSpacing.xs),
                         child: Text(
                           label,
                           style: theme.textTheme.bodySmall?.copyWith(
@@ -380,10 +384,10 @@ class _MrrChart extends StatelessWidget {
                     },
                   ),
                 ),
-                topTitles: const AxisTitles(
-                    sideTitles: SideTitles(showTitles: false)),
-                rightTitles: const AxisTitles(
-                    sideTitles: SideTitles(showTitles: false)),
+                topTitles:
+                    const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                rightTitles:
+                    const AxisTitles(sideTitles: SideTitles(showTitles: false)),
               ),
               borderData: FlBorderData(show: false),
               minY: 0,
@@ -397,8 +401,7 @@ class _MrrChart extends StatelessWidget {
                   dotData: const FlDotData(show: false),
                   belowBarData: BarAreaData(
                     show: true,
-                    color: theme.colorScheme.primary
-                        .withValues(alpha: 0.1),
+                    color: theme.colorScheme.primary.withValues(alpha: 0.1),
                   ),
                 ),
               ],
@@ -519,8 +522,7 @@ class _TopStoresTable extends StatelessWidget {
           return DataRow(cells: [
             DataCell(Text('${i + 1}')),
             DataCell(Text(store.storeName)),
-            DataCell(
-                Text('${store.revenue.toStringAsFixed(0)} ${l10n.sar}')),
+            DataCell(Text('${store.revenue.toStringAsFixed(0)} ${l10n.sar}')),
           ]);
         }),
       ),

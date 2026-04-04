@@ -120,7 +120,10 @@ class GradientButton extends StatefulWidget {
       isDisabled: isDisabled,
       width: width,
       gradient: LinearGradient(
-        colors: [AppColors.secondary, AppColors.secondary.withValues(alpha: 0.8)],
+        colors: [
+          AppColors.secondary,
+          AppColors.secondary.withValues(alpha: 0.8)
+        ],
         begin: AlignmentDirectional.topStart,
         end: AlignmentDirectional.bottomEnd,
       ),
@@ -291,11 +294,14 @@ class _GradientButtonState extends State<GradientButton>
   EdgeInsets get _padding {
     switch (widget.size) {
       case GradientButtonSize.small:
-        return const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xs);
+        return const EdgeInsets.symmetric(
+            horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xs);
       case GradientButtonSize.medium:
-        return const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: 10);
+        return const EdgeInsets.symmetric(
+            horizontal: AlhaiSpacing.md, vertical: 10);
       case GradientButtonSize.large:
-        return const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg, vertical: 14);
+        return const EdgeInsets.symmetric(
+            horizontal: AlhaiSpacing.lg, vertical: 14);
     }
   }
 
@@ -372,7 +378,8 @@ class _GradientButtonState extends State<GradientButton>
           height: _iconSize,
           child: CircularProgressIndicator(
             strokeWidth: 2,
-            valueColor: AlwaysStoppedAnimation(Colors.white.withValues(alpha: 0.9)),
+            valueColor:
+                AlwaysStoppedAnimation(Colors.white.withValues(alpha: 0.9)),
           ),
         ),
       );
@@ -408,7 +415,8 @@ class _GradientButtonState extends State<GradientButton>
       size: _iconSize,
     );
 
-    final spacing = SizedBox(width: widget.size == GradientButtonSize.small ? 6 : 8);
+    final spacing =
+        SizedBox(width: widget.size == GradientButtonSize.small ? 6 : 8);
 
     return Row(
       mainAxisSize: MainAxisSize.min,

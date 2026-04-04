@@ -212,7 +212,8 @@ class AppShadows {
 
   /// ظلال تتكيف مع الوضع الداكن/الفاتح
   /// في الوضع الداكن: ظل أغمق مع alpha أعلى لأن الخلفية داكنة
-  static List<BoxShadow> of(BuildContext context, {ShadowSize size = ShadowSize.md}) {
+  static List<BoxShadow> of(BuildContext context,
+      {ShadowSize size = ShadowSize.md}) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     switch (size) {
       case ShadowSize.sm:

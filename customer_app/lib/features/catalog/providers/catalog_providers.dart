@@ -6,8 +6,7 @@ import '../data/products_datasource.dart';
 import '../data/categories_datasource.dart';
 
 /// Products for a store with optional filters.
-final productsProvider = FutureProvider.family<
-    Paginated<Product>,
+final productsProvider = FutureProvider.family<Paginated<Product>,
     ({String storeId, int page, String? categoryId, String? search})>(
   (ref, params) async {
     final datasource = locator<ProductsDatasource>();

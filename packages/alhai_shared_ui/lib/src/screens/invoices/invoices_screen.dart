@@ -108,10 +108,15 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
     }
     if (_searchQuery.isNotEmpty) {
       final q = _searchQuery.toLowerCase();
-      list = list.where((i) => i.id.toLowerCase().contains(q) || i.customer.toLowerCase().contains(q)).toList();
+      list = list
+          .where((i) =>
+              i.id.toLowerCase().contains(q) ||
+              i.customer.toLowerCase().contains(q))
+          .toList();
     }
     return list;
   }
+
   void _copyInvoiceId(String id) {
     Clipboard.setData(ClipboardData(text: id));
     final l10n = AppLocalizations.of(context)!;
@@ -126,7 +131,10 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
   }
 
   void _showCreateInvoiceDialog() {
-    showDialog(context: context, barrierDismissible: true, builder: (context) => const CreateInvoiceDialog());
+    showDialog(
+        context: context,
+        barrierDismissible: true,
+        builder: (context) => const CreateInvoiceDialog());
   }
 
   void _showDeleteDialog(InvoiceModel invoice) {
@@ -137,7 +145,11 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
           Navigator.pop(ctx);
           final l10n = AppLocalizations.of(context)!;
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(l10n.invoiceDeleted), behavior: SnackBarBehavior.floating, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+            SnackBar(
+                content: Text(l10n.invoiceDeleted),
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12))),
           );
         },
       ),
@@ -164,106 +176,148 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
             )
           : null,
       body: Column(
-              children: [
-                _buildHeader(context, isWideScreen, isDark, l10n),
-                Expanded(
-                  child: invoicesAsync.when(
-                    loading: () => Padding(
-                      padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-                      child: Column(
-                        children: [
-                          ShimmerStats(count: 4, isWide: isWideScreen),
-                          SizedBox(height: AlhaiSpacing.lg),
-                          const ShimmerList(itemCount: 6, itemHeight: 72),
-                        ],
-                      ),
-                    ),
-                    error: (e, _) => AppErrorState.general(
-                      context,
-                      message: e.toString(),
-                      onRetry: () => ref.invalidate(invoicesListProvider),
-                    ),
-                    data: (salesList) {
-                      // تحويل بيانات المبيعات إلى نموذج الفواتير
-                      final allInvoices = salesList.map((s) => InvoiceModel.fromSalesData(s)).toList();
-                      final filteredInvoices = _filterInvoices(allInvoices);
-                      final pendingCount = allInvoices.where((i) => i.status == 'pending').length;
-
-                      if (allInvoices.isEmpty) {
-                        return AppEmptyState.noInvoices(context);
-                      }
-
-                      return RefreshIndicator(
-                        onRefresh: () async {
-                          ref.invalidate(invoicesListProvider);
-                          ref.invalidate(invoicesStatsProvider);
-                        },
-                        color: AppColors.primary,
-                        child: SingleChildScrollView(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-                        child: Column(
-                          children: [
-                            _buildStatsSection(l10n, isDark, isWideScreen, statsAsync, pendingCount),
-                            SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-                            _buildChartSection(l10n, isDark, isWideScreen),
-                            SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-                            InvoiceFilters(
-                              activeTab: _activeTab,
-                              onTabChanged: (tab) => setState(() => _activeTab = tab),
-                              isGridView: _isGridView,
-                              onViewToggle: () => setState(() => _isGridView = !_isGridView),
-                              onReset: () => setState(() { _activeTab = 'all'; _searchQuery = ''; }),
-                            ),
-                            SizedBox(height: AlhaiSpacing.md),
-                            InvoiceDataTable(
-                              invoices: filteredInvoices,
-                              selectedIds: _selectedInvoices,
-                              onSelectAll: (selected) {
-                                setState(() {
-                                  if (selected) { _selectedInvoices.addAll(filteredInvoices.map((i) => i.id)); }
-                                  else { _selectedInvoices.clear(); }
-                                });
-                              },
-                              onSelectInvoice: (id, selected) {
-                                setState(() { if (selected) { _selectedInvoices.add(id); } else { _selectedInvoices.remove(id); } });
-                              },
-                              onCopyId: _copyInvoiceId,
-                              onView: (invoice) => context.push(AppRoutes.invoiceDetailPath(invoice.id)),
-                              onDelete: _showDeleteDialog,
-                              isMobile: !isMediumScreen,
-                            ),
-                            SizedBox(height: AlhaiSpacing.lg),
-                            _buildFooter(l10n, isDark),
-                          ],
-                        ),
-                        ),
-                      );
-                    },
-                  ),
+        children: [
+          _buildHeader(context, isWideScreen, isDark, l10n),
+          Expanded(
+            child: invoicesAsync.when(
+              loading: () => Padding(
+                padding: EdgeInsets.all(
+                    isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+                child: Column(
+                  children: [
+                    ShimmerStats(count: 4, isWide: isWideScreen),
+                    SizedBox(height: AlhaiSpacing.lg),
+                    const ShimmerList(itemCount: 6, itemHeight: 72),
+                  ],
                 ),
-              ],
+              ),
+              error: (e, _) => AppErrorState.general(
+                context,
+                message: e.toString(),
+                onRetry: () => ref.invalidate(invoicesListProvider),
+              ),
+              data: (salesList) {
+                // تحويل بيانات المبيعات إلى نموذج الفواتير
+                final allInvoices = salesList
+                    .map((s) => InvoiceModel.fromSalesData(s))
+                    .toList();
+                final filteredInvoices = _filterInvoices(allInvoices);
+                final pendingCount =
+                    allInvoices.where((i) => i.status == 'pending').length;
+
+                if (allInvoices.isEmpty) {
+                  return AppEmptyState.noInvoices(context);
+                }
+
+                return RefreshIndicator(
+                  onRefresh: () async {
+                    ref.invalidate(invoicesListProvider);
+                    ref.invalidate(invoicesStatsProvider);
+                  },
+                  color: AppColors.primary,
+                  child: SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: EdgeInsets.all(
+                        isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+                    child: Column(
+                      children: [
+                        _buildStatsSection(l10n, isDark, isWideScreen,
+                            statsAsync, pendingCount),
+                        SizedBox(
+                            height: isMediumScreen
+                                ? AlhaiSpacing.lg
+                                : AlhaiSpacing.md),
+                        _buildChartSection(l10n, isDark, isWideScreen),
+                        SizedBox(
+                            height: isMediumScreen
+                                ? AlhaiSpacing.lg
+                                : AlhaiSpacing.md),
+                        InvoiceFilters(
+                          activeTab: _activeTab,
+                          onTabChanged: (tab) =>
+                              setState(() => _activeTab = tab),
+                          isGridView: _isGridView,
+                          onViewToggle: () =>
+                              setState(() => _isGridView = !_isGridView),
+                          onReset: () => setState(() {
+                            _activeTab = 'all';
+                            _searchQuery = '';
+                          }),
+                        ),
+                        SizedBox(height: AlhaiSpacing.md),
+                        InvoiceDataTable(
+                          invoices: filteredInvoices,
+                          selectedIds: _selectedInvoices,
+                          onSelectAll: (selected) {
+                            setState(() {
+                              if (selected) {
+                                _selectedInvoices
+                                    .addAll(filteredInvoices.map((i) => i.id));
+                              } else {
+                                _selectedInvoices.clear();
+                              }
+                            });
+                          },
+                          onSelectInvoice: (id, selected) {
+                            setState(() {
+                              if (selected) {
+                                _selectedInvoices.add(id);
+                              } else {
+                                _selectedInvoices.remove(id);
+                              }
+                            });
+                          },
+                          onCopyId: _copyInvoiceId,
+                          onView: (invoice) => context
+                              .push(AppRoutes.invoiceDetailPath(invoice.id)),
+                          onDelete: _showDeleteDialog,
+                          isMobile: !isMediumScreen,
+                        ),
+                        SizedBox(height: AlhaiSpacing.lg),
+                        _buildFooter(l10n, isDark),
+                      ],
+                    ),
+                  ),
+                );
+              },
             ),
+          ),
+        ],
+      ),
     );
   }
 
-  Widget _buildHeader(BuildContext context, bool isWideScreen, bool isDark, AppLocalizations l10n) {
+  Widget _buildHeader(BuildContext context, bool isWideScreen, bool isDark,
+      AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg, vertical: 14),
+      padding:
+          const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg, vertical: 14),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor)),
+        border:
+            Border(bottom: BorderSide(color: Theme.of(context).dividerColor)),
       ),
       child: Row(
         children: [
           IconButton(
-            onPressed: isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
-            icon: Icon(Icons.menu_rounded, color: isDark ? AppColors.textMutedDark : AppColors.textSecondary),
+            onPressed:
+                isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+            icon: Icon(Icons.menu_rounded,
+                color:
+                    isDark ? AppColors.textMutedDark : AppColors.textSecondary),
           ),
           SizedBox(width: AlhaiSpacing.xs),
-          Text(l10n.invoicesTitle, style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
+          Text(l10n.invoicesTitle,
+              style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onSurface)),
           if (isWideScreen) ...[
-            Container(height: 28, width: 1, margin: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md), color: Theme.of(context).dividerColor),
+            Container(
+                height: 28,
+                width: 1,
+                margin: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md),
+                color: Theme.of(context).dividerColor),
             FilledButton.icon(
               onPressed: _showCreateInvoiceDialog,
               icon: const Icon(Icons.add, size: 18),
@@ -271,26 +325,55 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
               style: FilledButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.mdl, vertical: AlhaiSpacing.sm),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: AlhaiSpacing.mdl, vertical: AlhaiSpacing.sm),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
               ),
             ),
             SizedBox(width: AlhaiSpacing.xs),
             PopupMenuButton<String>(
               onSelected: (value) {},
               offset: const Offset(0, 40),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
               itemBuilder: (context) => [
-                PopupMenuItem(value: 'export', child: Row(children: [const Icon(Icons.file_download_outlined, size: 18, color: AppColors.primary), SizedBox(width: AlhaiSpacing.xs), Text(l10n.exportAll)])),
-                PopupMenuItem(value: 'print', child: Row(children: [const Icon(Icons.print_outlined, size: 18, color: AppColors.primary), SizedBox(width: AlhaiSpacing.xs), Text(l10n.printReport)])),
+                PopupMenuItem(
+                    value: 'export',
+                    child: Row(children: [
+                      const Icon(Icons.file_download_outlined,
+                          size: 18, color: AppColors.primary),
+                      SizedBox(width: AlhaiSpacing.xs),
+                      Text(l10n.exportAll)
+                    ])),
+                PopupMenuItem(
+                    value: 'print',
+                    child: Row(children: [
+                      const Icon(Icons.print_outlined,
+                          size: 18, color: AppColors.primary),
+                      SizedBox(width: AlhaiSpacing.xs),
+                      Text(l10n.printReport)
+                    ])),
               ],
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xs),
-                decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), border: Border.all(color: Theme.of(context).dividerColor)),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xs),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Theme.of(context).dividerColor)),
                 child: Row(children: [
-                  Text(l10n.more, style: TextStyle(fontSize: 14, color: isDark ? AppColors.textMutedDark : AppColors.textSecondary)),
+                  Text(l10n.more,
+                      style: TextStyle(
+                          fontSize: 14,
+                          color: isDark
+                              ? AppColors.textMutedDark
+                              : AppColors.textSecondary)),
                   SizedBox(width: AlhaiSpacing.xxs),
-                  Icon(Icons.keyboard_arrow_down, size: 16, color: isDark ? AppColors.textMutedDark : AppColors.textSecondary),
+                  Icon(Icons.keyboard_arrow_down,
+                      size: 16,
+                      color: isDark
+                          ? AppColors.textMutedDark
+                          : AppColors.textSecondary),
                 ]),
               ),
             ),
@@ -304,57 +387,128 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
                 onChanged: (v) {
                   final sanitized = InputSanitizer.sanitize(v);
                   _searchDebounce?.cancel();
-                  _searchDebounce = Timer(const Duration(milliseconds: 300), () {
+                  _searchDebounce =
+                      Timer(const Duration(milliseconds: 300), () {
                     setState(() => _searchQuery = sanitized);
                   });
                 },
                 decoration: InputDecoration(
                   counterText: '',
                   hintText: l10n.searchInvoiceHint,
-                  hintStyle: TextStyle(color: isDark ? AppColors.textMutedDark : AppColors.textMuted, fontSize: 14),
-                  prefixIcon: Icon(Icons.search, color: isDark ? AppColors.textMutedDark : AppColors.textMuted),
+                  hintStyle: TextStyle(
+                      color: isDark
+                          ? AppColors.textMutedDark
+                          : AppColors.textMuted,
+                      fontSize: 14),
+                  prefixIcon: Icon(Icons.search,
+                      color: isDark
+                          ? AppColors.textMutedDark
+                          : AppColors.textMuted),
                   filled: true,
                   fillColor: Theme.of(context).colorScheme.surfaceContainerLow,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
-                  focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: AppColors.primary.withValues(alpha: 0.5))),
+                  contentPadding: const EdgeInsets.symmetric(
+                      horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none),
+                  focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                          color: AppColors.primary.withValues(alpha: 0.5))),
                 ),
-                style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 14),
+                style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    fontSize: 14),
               ),
             ),
           SizedBox(width: AlhaiSpacing.xs),
-          IconButton(onPressed: () {}, icon: Badge(smallSize: 8, backgroundColor: AppColors.secondary, child: Icon(Icons.notifications_outlined, color: isDark ? AppColors.textMutedDark : AppColors.textSecondary))),
-          IconButton(onPressed: () {}, icon: Icon(isDark ? Icons.light_mode : Icons.dark_mode, color: isDark ? AppColors.warning : AppColors.textSecondary)),
+          IconButton(
+              onPressed: () {},
+              icon: Badge(
+                  smallSize: 8,
+                  backgroundColor: AppColors.secondary,
+                  child: Icon(Icons.notifications_outlined,
+                      color: isDark
+                          ? AppColors.textMutedDark
+                          : AppColors.textSecondary))),
+          IconButton(
+              onPressed: () {},
+              icon: Icon(isDark ? Icons.light_mode : Icons.dark_mode,
+                  color: isDark ? AppColors.warning : AppColors.textSecondary)),
         ],
       ),
     );
   }
 
-  Widget _buildStatsSection(AppLocalizations l10n, bool isDark, bool isWideScreen, AsyncValue statsAsync, int pendingCount) {
+  Widget _buildStatsSection(AppLocalizations l10n, bool isDark,
+      bool isWideScreen, AsyncValue statsAsync, int pendingCount) {
     // استخدام الإحصائيات الحقيقية من قاعدة البيانات
     final statsData = statsAsync.valueOrNull;
     final totalCount = statsData?.count ?? 0;
     final totalAmount = statsData?.total ?? 0.0;
     final formattedTotal = CurrencyFormatter.formatCompact(totalAmount);
-    final formattedAverage = CurrencyFormatter.formatCompact(statsData?.average ?? 0);
+    final formattedAverage =
+        CurrencyFormatter.formatCompact(statsData?.average ?? 0);
 
     final stats = [
-      InvoiceStatData(title: l10n.totalInvoices, value: '$totalCount', icon: Icons.receipt_long, iconBgColor: AppColors.info.withValues(alpha: 0.1), iconColor: AppColors.info, gradientColor: AppColors.info, changeValue: '', isPositive: true, subtitle: l10n.comparedToLastMonth),
-      InvoiceStatData(title: l10n.totalPaid, value: formattedTotal, icon: Icons.check_circle, iconBgColor: AppColors.success.withValues(alpha: 0.1), iconColor: AppColors.success, gradientColor: AppColors.success, subtitle: l10n.sar),
-      InvoiceStatData(title: l10n.totalPending, value: '$pendingCount', icon: Icons.access_time, iconBgColor: AppColors.warning.withValues(alpha: 0.1), iconColor: AppColors.warning, gradientColor: AppColors.warning, subtitle: l10n.invoicesWaitingPayment(pendingCount)),
-      InvoiceStatData(title: l10n.totalOverdue, value: formattedAverage, icon: Icons.trending_up, iconBgColor: AppColors.error.withValues(alpha: 0.1), iconColor: AppColors.error, gradientColor: AppColors.error, subtitle: l10n.averageInvoice),
+      InvoiceStatData(
+          title: l10n.totalInvoices,
+          value: '$totalCount',
+          icon: Icons.receipt_long,
+          iconBgColor: AppColors.info.withValues(alpha: 0.1),
+          iconColor: AppColors.info,
+          gradientColor: AppColors.info,
+          changeValue: '',
+          isPositive: true,
+          subtitle: l10n.comparedToLastMonth),
+      InvoiceStatData(
+          title: l10n.totalPaid,
+          value: formattedTotal,
+          icon: Icons.check_circle,
+          iconBgColor: AppColors.success.withValues(alpha: 0.1),
+          iconColor: AppColors.success,
+          gradientColor: AppColors.success,
+          subtitle: l10n.sar),
+      InvoiceStatData(
+          title: l10n.totalPending,
+          value: '$pendingCount',
+          icon: Icons.access_time,
+          iconBgColor: AppColors.warning.withValues(alpha: 0.1),
+          iconColor: AppColors.warning,
+          gradientColor: AppColors.warning,
+          subtitle: l10n.invoicesWaitingPayment(pendingCount)),
+      InvoiceStatData(
+          title: l10n.totalOverdue,
+          value: formattedAverage,
+          icon: Icons.trending_up,
+          iconBgColor: AppColors.error.withValues(alpha: 0.1),
+          iconColor: AppColors.error,
+          gradientColor: AppColors.error,
+          subtitle: l10n.averageInvoice),
     ];
 
     if (isWideScreen) {
-      return Row(children: stats.map((s) => Expanded(child: Padding(padding: const EdgeInsets.symmetric(horizontal: 6), child: InvoiceStatCard(data: s)))).toList());
+      return Row(
+          children: stats
+              .map((s) => Expanded(
+                  child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 6),
+                      child: InvoiceStatCard(data: s))))
+              .toList());
     }
     return Wrap(
-      spacing: 12, runSpacing: 12,
-      children: stats.map((s) => SizedBox(width: (context.screenWidth - 56) / 2, child: InvoiceStatCard(data: s, compact: true))).toList(),
+      spacing: 12,
+      runSpacing: 12,
+      children: stats
+          .map((s) => SizedBox(
+              width: (context.screenWidth - 56) / 2,
+              child: InvoiceStatCard(data: s, compact: true)))
+          .toList(),
     );
   }
 
-  Widget _buildChartSection(AppLocalizations l10n, bool isDark, bool isWideScreen) {
+  Widget _buildChartSection(
+      AppLocalizations l10n, bool isDark, bool isWideScreen) {
     if (isWideScreen) {
       return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Expanded(flex: 2, child: InvoiceRevenueChart(isDark: isDark)),
@@ -371,18 +525,66 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
 
   Widget _buildFooter(AppLocalizations l10n, bool isDark) {
     return Padding(
-      padding: const EdgeInsets.only(top: AlhaiSpacing.md, bottom: AlhaiSpacing.xs),
+      padding:
+          const EdgeInsets.only(top: AlhaiSpacing.md, bottom: AlhaiSpacing.xs),
       child: Column(children: [
         Divider(color: Theme.of(context).dividerColor),
         SizedBox(height: AlhaiSpacing.sm),
-        Text(l10n.allRightsReservedFooter, style: TextStyle(fontSize: 12, color: isDark ? AppColors.textMutedDark : AppColors.textMuted)),
+        Text(l10n.allRightsReservedFooter,
+            style: TextStyle(
+                fontSize: 12,
+                color: isDark ? AppColors.textMutedDark : AppColors.textMuted)),
         SizedBox(height: AlhaiSpacing.xs),
         Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          TextButton(onPressed: () {}, style: TextButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs), minimumSize: Size.zero, tapTargetSize: MaterialTapTargetSize.shrinkWrap), child: Text(l10n.privacyPolicyFooter, style: TextStyle(fontSize: 12, color: isDark ? AppColors.textMutedDark : AppColors.textMuted))),
-          Text(' | ', style: TextStyle(fontSize: 12, color: isDark ? AppColors.textMutedDark : AppColors.textMuted)),
-          TextButton(onPressed: () {}, style: TextButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs), minimumSize: Size.zero, tapTargetSize: MaterialTapTargetSize.shrinkWrap), child: Text(l10n.termsFooter, style: TextStyle(fontSize: 12, color: isDark ? AppColors.textMutedDark : AppColors.textMuted))),
-          Text(' | ', style: TextStyle(fontSize: 12, color: isDark ? AppColors.textMutedDark : AppColors.textMuted)),
-          TextButton(onPressed: () {}, style: TextButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs), minimumSize: Size.zero, tapTargetSize: MaterialTapTargetSize.shrinkWrap), child: Text(l10n.supportFooter, style: TextStyle(fontSize: 12, color: isDark ? AppColors.textMutedDark : AppColors.textMuted))),
+          TextButton(
+              onPressed: () {},
+              style: TextButton.styleFrom(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs),
+                  minimumSize: Size.zero,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap),
+              child: Text(l10n.privacyPolicyFooter,
+                  style: TextStyle(
+                      fontSize: 12,
+                      color: isDark
+                          ? AppColors.textMutedDark
+                          : AppColors.textMuted))),
+          Text(' | ',
+              style: TextStyle(
+                  fontSize: 12,
+                  color:
+                      isDark ? AppColors.textMutedDark : AppColors.textMuted)),
+          TextButton(
+              onPressed: () {},
+              style: TextButton.styleFrom(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs),
+                  minimumSize: Size.zero,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap),
+              child: Text(l10n.termsFooter,
+                  style: TextStyle(
+                      fontSize: 12,
+                      color: isDark
+                          ? AppColors.textMutedDark
+                          : AppColors.textMuted))),
+          Text(' | ',
+              style: TextStyle(
+                  fontSize: 12,
+                  color:
+                      isDark ? AppColors.textMutedDark : AppColors.textMuted)),
+          TextButton(
+              onPressed: () {},
+              style: TextButton.styleFrom(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs),
+                  minimumSize: Size.zero,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap),
+              child: Text(l10n.supportFooter,
+                  style: TextStyle(
+                      fontSize: 12,
+                      color: isDark
+                          ? AppColors.textMutedDark
+                          : AppColors.textMuted))),
         ]),
       ]),
     );

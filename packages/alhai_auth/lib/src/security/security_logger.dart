@@ -8,7 +8,8 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' show Supabase, SupabaseClient;
+import 'package:supabase_flutter/supabase_flutter.dart'
+    show Supabase, SupabaseClient;
 
 import '../core/monitoring/production_logger.dart';
 
@@ -20,7 +21,7 @@ enum SecurityEventType {
   otpVerifyFailed,
   otpExpired,
   otpRateLimited,
-  
+
   // PIN
   pinVerifySuccess,
   pinVerifyFailed,
@@ -28,19 +29,19 @@ enum SecurityEventType {
   pinCreated,
   pinChanged,
   pinRemoved,
-  
+
   // Session
   sessionStarted,
   sessionEnded,
   sessionExpired,
   sessionRefreshed,
-  
+
   // Biometric
   biometricSuccess,
   biometricFailed,
   biometricEnabled,
   biometricDisabled,
-  
+
   // Auth
   loginSuccess,
   loginFailed,
@@ -66,13 +67,13 @@ class SecurityLogEntry {
   }) : timestamp = overrideTimestamp ?? DateTime.now();
 
   Map<String, dynamic> toJson() => {
-    'timestamp': timestamp.toIso8601String(),
-    'type': type.name,
-    'userId': userId,
-    'phone': phone,
-    'details': details,
-    'metadata': metadata,
-  };
+        'timestamp': timestamp.toIso8601String(),
+        'type': type.name,
+        'userId': userId,
+        'phone': phone,
+        'details': details,
+        'metadata': metadata,
+      };
 
   @override
   String toString() {
@@ -386,15 +387,17 @@ class SecurityLogger {
     _pendingFlush.clear();
 
     try {
-      final eventsJson = batch.map((e) => {
-        'store_id': _storeId,
-        'user_id': e.userId,
-        'phone': e.phone,
-        'event_type': e.type.name,
-        'details': e.details,
-        'metadata': e.metadata != null ? jsonEncode(e.metadata) : null,
-        'created_at': e.timestamp.toUtc().toIso8601String(),
-      }).toList();
+      final eventsJson = batch
+          .map((e) => {
+                'store_id': _storeId,
+                'user_id': e.userId,
+                'phone': e.phone,
+                'event_type': e.type.name,
+                'details': e.details,
+                'metadata': e.metadata != null ? jsonEncode(e.metadata) : null,
+                'created_at': e.timestamp.toUtc().toIso8601String(),
+              })
+          .toList();
 
       await client.rpc(
         'insert_security_events',
@@ -434,9 +437,8 @@ class SecurityLogger {
         query = query.eq('store_id', _storeId!);
       }
 
-      final List<dynamic> rows = await query
-          .order('created_at', ascending: false)
-          .limit(_maxLogs);
+      final List<dynamic> rows =
+          await query.order('created_at', ascending: false).limit(_maxLogs);
 
       // Insert at the front (newest first from DB, reverse to get
       // chronological order in _logs).
@@ -456,7 +458,8 @@ class SecurityLogger {
           metadata: map['metadata'] is Map
               ? Map<String, dynamic>.from(map['metadata'] as Map)
               : map['metadata'] is String
-                  ? (jsonDecode(map['metadata'] as String) as Map<String, dynamic>?)
+                  ? (jsonDecode(map['metadata'] as String)
+                      as Map<String, dynamic>?)
                   : null,
           overrideTimestamp: DateTime.tryParse(
             map['created_at'] as String? ?? '',

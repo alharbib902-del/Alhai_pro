@@ -174,9 +174,8 @@ void main() {
 
       expect(requestedRefund > originalTotal, isTrue);
       // The actual refund should be capped
-      const actualRefund = requestedRefund > originalTotal
-          ? originalTotal
-          : requestedRefund;
+      const actualRefund =
+          requestedRefund > originalTotal ? originalTotal : requestedRefund;
       expect(actualRefund, equals(originalTotal));
     });
 

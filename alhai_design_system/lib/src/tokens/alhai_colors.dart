@@ -184,11 +184,19 @@ abstract final class AlhaiColors {
 
   static List<Color> chartColors(bool isDark) => isDark
       ? const [
-          Color(0xFF60A5FA), Color(0xFFA78BFA), Color(0xFF2DD4BF),
-          Color(0xFFFBBF24), Color(0xFFF87171), Color(0xFF34D399),
+          Color(0xFF60A5FA),
+          Color(0xFFA78BFA),
+          Color(0xFF2DD4BF),
+          Color(0xFFFBBF24),
+          Color(0xFFF87171),
+          Color(0xFF34D399),
         ]
       : const [
-          Color(0xFF2563EB), Color(0xFF7C3AED), Color(0xFF0D9488),
-          Color(0xFFD97706), Color(0xFFDC2626), Color(0xFF059669),
+          Color(0xFF2563EB),
+          Color(0xFF7C3AED),
+          Color(0xFF0D9488),
+          Color(0xFFD97706),
+          Color(0xFFDC2626),
+          Color(0xFF059669),
         ];
 }

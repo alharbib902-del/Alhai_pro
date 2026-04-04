@@ -112,7 +112,8 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
                   if (actions != null) ...[
                     const SizedBox(width: AppSpacing.md),
                     ...actions!.map((action) => Padding(
-                          padding: const EdgeInsetsDirectional.only(end: AppSpacing.xs),
+                          padding: const EdgeInsetsDirectional.only(
+                              end: AppSpacing.xs),
                           child: action,
                         )),
                   ],
@@ -414,7 +415,10 @@ class TopBarStatusIndicator extends StatelessWidget {
           ),
           const SizedBox(width: AppSpacing.xs),
           Text(
-            customText ?? (isOnline ? AppLocalizations.of(context)!.online : AppLocalizations.of(context)!.offline),
+            customText ??
+                (isOnline
+                    ? AppLocalizations.of(context)!.online
+                    : AppLocalizations.of(context)!.offline),
             style: AppTypography.labelSmall.copyWith(
               color: isOnline ? AppColors.success : AppColors.warning,
               fontWeight: FontWeight.w600,

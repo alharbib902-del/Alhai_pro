@@ -11,13 +11,13 @@ class ChatMessage with _$ChatMessage {
   const factory ChatMessage({
     required String id,
     required String orderId,
-    required String sender,  // 'customer' | 'driver' | 'system'
+    required String sender, // 'customer' | 'driver' | 'system'
     required String text,
-    String? textTranslated,  // Translated version
+    String? textTranslated, // Translated version
     String? imageUrl,
-    String? language,  // 'ar', 'en', 'ur', 'hi', 'bn', 'id'
+    String? language, // 'ar', 'en', 'ur', 'hi', 'bn', 'id'
     @Default(false) bool isRead,
-    @Default(false) bool isSystem,  // System messages (order updates)
+    @Default(false) bool isSystem, // System messages (order updates)
     required DateTime timestamp,
   }) = _ChatMessage;
 

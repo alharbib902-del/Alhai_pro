@@ -159,13 +159,12 @@ void main() {
       });
 
       test('returns top customers from loyalty dao', () async {
-        when(() => mockLoyaltyDao.getTopCustomers(any(), limit: any(named: 'limit')))
-            .thenAnswer((_) async => []);
+        when(() => mockLoyaltyDao.getTopCustomers(any(),
+            limit: any(named: 'limit'))).thenAnswer((_) async => []);
 
         final result = await service.getTopLoyaltyCustomers('store-1');
         expect(result, isEmpty);
-        verify(() =>
-                mockLoyaltyDao.getTopCustomers('store-1', limit: 10))
+        verify(() => mockLoyaltyDao.getTopCustomers('store-1', limit: 10))
             .called(1);
       });
     });
@@ -192,8 +191,7 @@ void main() {
             .thenAnswer((_) async => []);
 
         when(() => mockProductsDao.getTopSellingProducts(any(),
-                limit: any(named: 'limit')))
-            .thenAnswer((_) async => []);
+            limit: any(named: 'limit'))).thenAnswer((_) async => []);
 
         final report = await service.getSalesReport(
           'store-1',
@@ -380,8 +378,7 @@ void main() {
       expect(comp.revenueChange, equals(20.0));
     });
 
-    test('revenueChange returns 100 when previous is zero and current > 0',
-        () {
+    test('revenueChange returns 100 when previous is zero and current > 0', () {
       const comp = SalesComparison(
         currentTotal: 500.0,
         previousTotal: 0,

@@ -45,10 +45,7 @@ class _DistributorPricingScreenState
     }
     // Remove controllers for products that no longer exist.
     final ids = products.map((p) => p.id).toSet();
-    _controllers.keys
-        .where((k) => !ids.contains(k))
-        .toList()
-        .forEach((k) {
+    _controllers.keys.where((k) => !ids.contains(k)).toList().forEach((k) {
       _controllers[k]?.dispose();
       _controllers.remove(k);
     });
@@ -97,8 +94,8 @@ class _DistributorPricingScreenState
       context: context,
       builder: (context) => AlertDialog(
         title: Text(l10n?.distributorUnsavedChanges ?? 'تغييرات غير محفوظة'),
-        content: Text(
-            l10n?.distributorUnsavedChangesMessage ?? 'لديك تغييرات غير محفوظة. هل تريد المغادرة بدون حفظ؟'),
+        content: Text(l10n?.distributorUnsavedChangesMessage ??
+            'لديك تغييرات غير محفوظة. هل تريد المغادرة بدون حفظ؟'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -142,9 +139,7 @@ class _DistributorPricingScreenState
         bindings: <ShortcutActivator, VoidCallback>{
           const SingleActivator(LogicalKeyboardKey.keyS, control: true): () {
             final products = productsAsync.valueOrNull;
-            if (products != null &&
-                _changedCount(products) > 0 &&
-                !_isSaving) {
+            if (products != null && _changedCount(products) > 0 && !_isSaving) {
               _savePrices(products);
             }
           },
@@ -156,8 +151,8 @@ class _DistributorPricingScreenState
             appBar: AppBar(
               title: Text(
                 l10n?.distributorPricing ?? 'إدارة الأسعار',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold, color: cs.onSurface),
+                style:
+                    TextStyle(fontWeight: FontWeight.bold, color: cs.onSurface),
               ),
               centerTitle: false,
               actions: [
@@ -166,8 +161,8 @@ class _DistributorPricingScreenState
                   Container(
                     margin:
                         const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 2),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                     decoration: BoxDecoration(
                       color: AppColors.warning.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(AlhaiRadius.md),
@@ -244,8 +239,7 @@ class _DistributorPricingScreenState
                     _buildSummaryHeader(isDark, isMedium, products, changed),
                     Expanded(
                       child: RefreshIndicator(
-                        onRefresh: () async =>
-                            ref.invalidate(productsProvider),
+                        onRefresh: () async => ref.invalidate(productsProvider),
                         child: isWide
                             ? _buildPricingTable(isDark, sortedProducts)
                             : _buildPricingCards(
@@ -333,8 +327,7 @@ class _DistributorPricingScreenState
     );
   }
 
-  Widget _buildPricingTable(
-      bool isDark, List<DistributorProduct> products) {
+  Widget _buildPricingTable(bool isDark, List<DistributorProduct> products) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       child: Container(
@@ -360,7 +353,8 @@ class _DistributorPricingScreenState
                   _tHeader('السعر الجديد', 3, isDark),
                   _tHeader('آخر تحديث', 2, isDark),
                   _tHeaderWithHelp('الفرق', 2, isDark,
-                      helpText: 'الفرق بين السعر الجديد والسعر الحالي. أخضر = انخفاض، أحمر = زيادة'),
+                      helpText:
+                          'الفرق بين السعر الجديد والسعر الحالي. أخضر = انخفاض، أحمر = زيادة'),
                 ],
               ),
             ),
@@ -368,14 +362,12 @@ class _DistributorPricingScreenState
               final product = products[index];
               final controller = _controllers[product.id]!;
               final newPrice = double.tryParse(controller.text);
-              final hasDiff =
-                  newPrice != null && newPrice != product.price;
+              final hasDiff = newPrice != null && newPrice != product.price;
               final diff = hasDiff ? newPrice - product.price : 0.0;
 
               return Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: AlhaiSpacing.mdl,
-                    vertical: AlhaiSpacing.sm),
+                    horizontal: AlhaiSpacing.mdl, vertical: AlhaiSpacing.sm),
                 decoration: BoxDecoration(
                   color: hasDiff
                       ? AppColors.warning
@@ -396,8 +388,7 @@ class _DistributorPricingScreenState
                             style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
-                                color:
-                                    AppColors.getTextPrimary(isDark)))),
+                                color: AppColors.getTextPrimary(isDark)))),
                     Expanded(
                         flex: 2,
                         child: Text(
@@ -405,8 +396,7 @@ class _DistributorPricingScreenState
                             textAlign: TextAlign.center,
                             style: TextStyle(
                                 fontSize: 14,
-                                color: AppColors.getTextSecondary(
-                                    isDark)))),
+                                color: AppColors.getTextSecondary(isDark)))),
                     Expanded(
                       flex: 3,
                       child: Padding(
@@ -416,8 +406,7 @@ class _DistributorPricingScreenState
                           controller: controller,
                           keyboardType: TextInputType.number,
                           textAlign: TextAlign.center,
-                          onChanged: (_) =>
-                              setState(() => _hasChanges = true),
+                          onChanged: (_) => setState(() => _hasChanges = true),
                           style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
@@ -431,22 +420,22 @@ class _DistributorPricingScreenState
                                 fontSize: 11,
                                 color: AppColors.getTextMuted(isDark)),
                             filled: true,
-                            fillColor:
-                                AppColors.getSurfaceVariant(isDark),
+                            fillColor: AppColors.getSurfaceVariant(isDark),
                             contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 10, vertical: 10),
                             border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(AlhaiRadius.sm + 2),
+                                borderRadius:
+                                    BorderRadius.circular(AlhaiRadius.sm + 2),
                                 borderSide: BorderSide(
-                                    color:
-                                        AppColors.getBorder(isDark))),
+                                    color: AppColors.getBorder(isDark))),
                             enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(AlhaiRadius.sm + 2),
+                                borderRadius:
+                                    BorderRadius.circular(AlhaiRadius.sm + 2),
                                 borderSide: BorderSide(
-                                    color:
-                                        AppColors.getBorder(isDark))),
+                                    color: AppColors.getBorder(isDark))),
                             focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(AlhaiRadius.sm + 2),
+                                borderRadius:
+                                    BorderRadius.circular(AlhaiRadius.sm + 2),
                                 borderSide: const BorderSide(
                                     color: AppColors.primary, width: 2)),
                           ),
@@ -463,8 +452,7 @@ class _DistributorPricingScreenState
                             textAlign: TextAlign.center,
                             style: TextStyle(
                                 fontSize: 12,
-                                color:
-                                    AppColors.getTextMuted(isDark)))),
+                                color: AppColors.getTextMuted(isDark)))),
                     Expanded(
                       flex: 2,
                       child: hasDiff
@@ -476,8 +464,8 @@ class _DistributorPricingScreenState
                                           ? AppColors.error
                                           : AppColors.success)
                                       .withValues(alpha: 0.1),
-                                  borderRadius:
-                                      BorderRadius.circular(AlhaiRadius.sm - 2)),
+                                  borderRadius: BorderRadius.circular(
+                                      AlhaiRadius.sm - 2)),
                               child: Text(
                                   '${diff > 0 ? '+' : ''}${NumberFormat('#,##0.00').format(diff)}',
                                   textAlign: TextAlign.center,
@@ -489,9 +477,8 @@ class _DistributorPricingScreenState
                                           : AppColors.success)))
                           : Text('-',
                               textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  color:
-                                      AppColors.getTextMuted(isDark))),
+                              style:
+                                  TextStyle(color: AppColors.getTextMuted(isDark))),
                     ),
                   ],
                 ),
@@ -612,12 +599,10 @@ class _DistributorPricingScreenState
                             color: AppColors.getTextPrimary(isDark)))),
                 Text(
                     product.updatedAt != null
-                        ? DateFormat('dd/MM', 'ar')
-                            .format(product.updatedAt!)
+                        ? DateFormat('dd/MM', 'ar').format(product.updatedAt!)
                         : '-',
                     style: TextStyle(
-                        fontSize: 11,
-                        color: AppColors.getTextMuted(isDark))),
+                        fontSize: 11, color: AppColors.getTextMuted(isDark))),
               ]),
               const SizedBox(height: AlhaiSpacing.sm),
               Row(children: [
@@ -635,8 +620,7 @@ class _DistributorPricingScreenState
                           style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w600,
-                              color:
-                                  AppColors.getTextSecondary(isDark))),
+                              color: AppColors.getTextSecondary(isDark))),
                     ])),
                 Icon(Icons.arrow_forward_rounded,
                     color: AppColors.getTextMuted(isDark), size: 18),
@@ -645,8 +629,7 @@ class _DistributorPricingScreenState
                   child: TextField(
                     controller: controller,
                     keyboardType: TextInputType.number,
-                    onChanged: (_) =>
-                        setState(() => _hasChanges = true),
+                    onChanged: (_) => setState(() => _hasChanges = true),
                     style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
@@ -654,29 +637,30 @@ class _DistributorPricingScreenState
                     decoration: InputDecoration(
                       labelText: 'السعر الجديد',
                       labelStyle: TextStyle(
-                          fontSize: 12,
-                          color: AppColors.getTextMuted(isDark)),
+                          fontSize: 12, color: AppColors.getTextMuted(isDark)),
                       hintText: product.price.toStringAsFixed(2),
-                      hintStyle: TextStyle(
-                          color: AppColors.getTextMuted(isDark)),
+                      hintStyle:
+                          TextStyle(color: AppColors.getTextMuted(isDark)),
                       suffixText: 'ر.س',
                       suffixStyle: TextStyle(
-                          fontSize: 11,
-                          color: AppColors.getTextMuted(isDark)),
+                          fontSize: 11, color: AppColors.getTextMuted(isDark)),
                       filled: true,
                       fillColor: AppColors.getSurfaceVariant(isDark),
                       contentPadding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 12),
                       border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(AlhaiRadius.sm + 2),
-                          borderSide: BorderSide(
-                              color: AppColors.getBorder(isDark))),
+                          borderRadius:
+                              BorderRadius.circular(AlhaiRadius.sm + 2),
+                          borderSide:
+                              BorderSide(color: AppColors.getBorder(isDark))),
                       enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(AlhaiRadius.sm + 2),
-                          borderSide: BorderSide(
-                              color: AppColors.getBorder(isDark))),
+                          borderRadius:
+                              BorderRadius.circular(AlhaiRadius.sm + 2),
+                          borderSide:
+                              BorderSide(color: AppColors.getBorder(isDark))),
                       focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(AlhaiRadius.sm + 2),
+                          borderRadius:
+                              BorderRadius.circular(AlhaiRadius.sm + 2),
                           borderSide: const BorderSide(
                               color: AppColors.primary, width: 2)),
                     ),
@@ -696,12 +680,10 @@ class _DistributorPricingScreenState
     final l10n = AppLocalizations.of(context);
 
     return Container(
-      padding:
-          EdgeInsets.all(isMedium ? AlhaiSpacing.mdl : AlhaiSpacing.md),
+      padding: EdgeInsets.all(isMedium ? AlhaiSpacing.mdl : AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
-        border: Border(
-            top: BorderSide(color: AppColors.getBorder(isDark))),
+        border: Border(top: BorderSide(color: AppColors.getBorder(isDark))),
         boxShadow: [
           ...AppColors.getElevatedShadow(isDark),
         ],
@@ -710,7 +692,9 @@ class _DistributorPricingScreenState
         child: Row(children: [
           if (changed > 0)
             Expanded(
-                child: Text(l10n?.distributorProductsWillUpdate(changed) ?? '$changed منتج سيتم تحديث سعره',
+                child: Text(
+                    l10n?.distributorProductsWillUpdate(changed) ??
+                        '$changed منتج سيتم تحديث سعره',
                     style: TextStyle(
                         fontSize: 13,
                         color: AppColors.getTextSecondary(isDark)))),
@@ -728,16 +712,16 @@ class _DistributorPricingScreenState
                         width: 18,
                         height: 18,
                         child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: AppColors.textOnPrimary))
+                            strokeWidth: 2, color: AppColors.textOnPrimary))
                     : const Icon(Icons.save_rounded, size: 18),
                 label: Text(l10n?.distributorSaveChanges ?? 'حفظ التغييرات',
-                    style: TextStyle(
-                        fontSize: 14, fontWeight: FontWeight.w600)),
+                    style:
+                        TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
                 style: FilledButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     foregroundColor: AppColors.textOnPrimary,
-                    padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
+                    padding:
+                        const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(AlhaiRadius.md))),
               ),
@@ -775,14 +759,16 @@ class _DistributorPricingScreenState
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text(l10n?.distributorChangesSaved ?? 'تم حفظ التغييرات بنجاح'),
+              content: Text(
+                  l10n?.distributorChangesSaved ?? 'تم حفظ التغييرات بنجاح'),
               backgroundColor: AppColors.success),
         );
       } catch (_) {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text(l10n?.distributorSaveError ?? 'حدث خطأ أثناء حفظ الأسعار'),
+              content: Text(
+                  l10n?.distributorSaveError ?? 'حدث خطأ أثناء حفظ الأسعار'),
               backgroundColor: AppColors.error),
         );
       }

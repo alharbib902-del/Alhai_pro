@@ -11,36 +11,36 @@ enum AuditAction {
   // المصادقة
   login,
   logout,
-  
+
   // المبيعات
   saleCreate,
   saleCancel,
   saleRefund,
-  
+
   // المنتجات
   productCreate,
   productEdit,
   productDelete,
   priceChange,
-  
+
   // المخزون
   stockAdjust,
   stockReceive,
-  
+
   // العملاء
   customerCreate,
   customerEdit,
   paymentRecord,
-  
+
   // الوردية
   shiftOpen,
   shiftClose,
   cashDrawerOpen,
-  
+
   // الطلبات
   orderStatusChange,
   orderCancel,
-  
+
   // الإعدادات
   settingsChange,
   interestApply,
@@ -48,11 +48,12 @@ enum AuditAction {
 
 /// DAO لسجل التدقيق
 @DriftAccessor(tables: [AuditLogTable])
-class AuditLogDao extends DatabaseAccessor<AppDatabase> with _$AuditLogDaoMixin {
+class AuditLogDao extends DatabaseAccessor<AppDatabase>
+    with _$AuditLogDaoMixin {
   AuditLogDao(super.db);
 
   // ==================== إضافة سجلات ====================
-  
+
   /// تسجيل عملية جديدة
   Future<int> log({
     required String storeId,
@@ -69,7 +70,7 @@ class AuditLogDao extends DatabaseAccessor<AppDatabase> with _$AuditLogDaoMixin 
   }) {
     final rand = Random().nextInt(999999).toString().padLeft(6, '0');
     final id = '${DateTime.now().millisecondsSinceEpoch}_${action.name}_$rand';
-    
+
     return into(auditLogTable).insert(AuditLogTableCompanion.insert(
       id: id,
       storeId: storeId,
@@ -178,7 +179,7 @@ class AuditLogDao extends DatabaseAccessor<AppDatabase> with _$AuditLogDaoMixin 
   }
 
   // ==================== استعلامات ====================
-  
+
   /// جلب سجلات متجر معين
   Future<List<AuditLogTableData>> getLogs(String storeId, {int limit = 100}) {
     return (select(auditLogTable)
@@ -209,7 +210,8 @@ class AuditLogDao extends DatabaseAccessor<AppDatabase> with _$AuditLogDaoMixin 
     AuditAction action,
   ) {
     return (select(auditLogTable)
-          ..where((l) => l.storeId.equals(storeId) & l.action.equals(action.name))
+          ..where(
+              (l) => l.storeId.equals(storeId) & l.action.equals(action.name))
           ..orderBy([(l) => OrderingTerm.desc(l.createdAt)]))
         .get();
   }
@@ -241,8 +243,7 @@ class AuditLogDao extends DatabaseAccessor<AppDatabase> with _$AuditLogDaoMixin 
     final cutoff = DateTime.now().subtract(olderThan);
     return (delete(auditLogTable)
           ..where((l) =>
-              l.syncedAt.isNotNull() &
-              l.createdAt.isSmallerThanValue(cutoff)))
+              l.syncedAt.isNotNull() & l.createdAt.isSmallerThanValue(cutoff)))
         .go();
   }
 }

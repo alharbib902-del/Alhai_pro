@@ -26,8 +26,7 @@ class User with _$User {
     DateTime? updatedAt,
   }) = _User;
 
-  factory User.fromJson(Map<String, dynamic> json) =>
-      _$UserFromJson(json);
+  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 
   /// Check if user is admin
   bool get isAdmin => role == UserRole.superAdmin;
@@ -45,9 +44,8 @@ class User with _$User {
   bool get isCustomer => role == UserRole.customer;
 
   /// Check if user can access store management
-  bool get canManageStore => 
-      role == UserRole.superAdmin || 
-      role == UserRole.storeOwner;
+  bool get canManageStore =>
+      role == UserRole.superAdmin || role == UserRole.storeOwner;
 
   /// Get initials for avatar
   String get initials {

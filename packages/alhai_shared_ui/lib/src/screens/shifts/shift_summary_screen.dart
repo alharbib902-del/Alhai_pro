@@ -28,7 +28,8 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
   }
 
   /// حساب مدة الوردية بصيغة نصية
-  String _formatDuration(DateTime openedAt, DateTime? closedAt, AppLocalizations l10n) {
+  String _formatDuration(
+      DateTime openedAt, DateTime? closedAt, AppLocalizations l10n) {
     final end = closedAt ?? DateTime.now();
     final duration = end.difference(openedAt);
     final hours = duration.inHours;
@@ -61,37 +62,40 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
     );
 
     return Column(
-              children: [
-                AppHeader(
-                  title: l10n.shiftSummary,
-                  subtitle: _getDateSubtitle(l10n),
-                  showSearch: false,
-                  searchHint: l10n.searchPlaceholder,
-                  onMenuTap: isWideScreen
-                      ? null
-                      : () => Scaffold.of(context).openDrawer(),
-                  onNotificationsTap: () => context.push('/notifications'),
-                  notificationsCount: 3,
-                  userName: l10n.defaultUserName,
-                  userRole: l10n.branchManager,
-                  onUserTap: () {},
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-                    child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n, shift),
-                  ),
-                ),
-              ],
-            );
+      children: [
+        AppHeader(
+          title: l10n.shiftSummary,
+          subtitle: _getDateSubtitle(l10n),
+          showSearch: false,
+          searchHint: l10n.searchPlaceholder,
+          onMenuTap:
+              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onNotificationsTap: () => context.push('/notifications'),
+          notificationsCount: 3,
+          userName: l10n.defaultUserName,
+          userRole: l10n.branchManager,
+          onUserTap: () {},
+        ),
+        Expanded(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.all(
+                isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+            child: _buildContent(
+                isWideScreen, isMediumScreen, isDark, l10n, shift),
+          ),
+        ),
+      ],
+    );
   }
+
   String _getDateSubtitle(AppLocalizations l10n) {
     final now = DateTime.now();
     final dateStr = '${now.day}/${now.month}/${now.year}';
     return '$dateStr • ${l10n.mainBranch}';
   }
 
-  Widget _buildContent(bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n, ShiftsTableData? shift) {
+  Widget _buildContent(bool isWideScreen, bool isMediumScreen, bool isDark,
+      AppLocalizations l10n, ShiftsTableData? shift) {
     if (isWideScreen) {
       return Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -134,7 +138,8 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
     );
   }
 
-  Widget _buildSuccessCard(bool isDark, AppLocalizations l10n, ShiftsTableData? shift) {
+  Widget _buildSuccessCard(
+      bool isDark, AppLocalizations l10n, ShiftsTableData? shift) {
     // عرض وقت الإغلاق الفعلي من بيانات الوردية أو الوقت الحالي
     final closedTime = shift?.closedAt ?? DateTime.now();
     return Container(
@@ -156,7 +161,8 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
               color: Colors.white.withValues(alpha: 0.2),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.check_circle_rounded, size: 40, color: Colors.white),
+            child: const Icon(Icons.check_circle_rounded,
+                size: 40, color: Colors.white),
           ),
           SizedBox(height: AlhaiSpacing.md),
           Text(
@@ -180,7 +186,8 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
     );
   }
 
-  Widget _buildStatsCard(bool isDark, AppLocalizations l10n, ShiftsTableData? shift) {
+  Widget _buildStatsCard(
+      bool isDark, AppLocalizations l10n, ShiftsTableData? shift) {
     // حساب القيم من بيانات الوردية الفعلية
     final duration = shift != null
         ? _formatDuration(shift.openedAt, shift.closedAt, l10n)
@@ -190,8 +197,10 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
     final refunds = shift?.totalRefundsAmount ?? 0.0;
     // مبيعات البطاقة والنقدية غير متوفرة مباشرة - نعرض إجمالي المبيعات ناقص المرتجعات كصافي
     // TODO: إضافة حقول مبيعات البطاقة والنقدية في جدول الورديات مستقبلاً
-    final cashSales = shift != null ? (shift.closingCash ?? 0) - shift.openingCash : 0.0;
-    final cardSales = shift != null ? totalSales - cashSales.clamp(0, totalSales) : 0.0;
+    final cashSales =
+        shift != null ? (shift.closingCash ?? 0) - shift.openingCash : 0.0;
+    final cardSales =
+        shift != null ? totalSales - cashSales.clamp(0, totalSales) : 0.0;
 
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
@@ -211,7 +220,8 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
                   color: AppColors.info.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.analytics_rounded, color: AppColors.info, size: 20),
+                child: const Icon(Icons.analytics_rounded,
+                    color: AppColors.info, size: 20),
               ),
               SizedBox(width: AlhaiSpacing.sm),
               Text(
@@ -260,7 +270,8 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
           _StatRow(
             icon: Icons.money_rounded,
             label: l10n.cashSalesLabel,
-            value: '${_formatAmount(cashSales.clamp(0, double.infinity))} ${l10n.sar}',
+            value:
+                '${_formatAmount(cashSales.clamp(0, double.infinity))} ${l10n.sar}',
             color: AppColors.cash,
             isDark: isDark,
           ),
@@ -277,7 +288,8 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
     );
   }
 
-  Widget _buildCashStatusCard(bool isDark, AppLocalizations l10n, ShiftsTableData? shift) {
+  Widget _buildCashStatusCard(
+      bool isDark, AppLocalizations l10n, ShiftsTableData? shift) {
     // حساب قيم الصندوق من بيانات الوردية الفعلية
     final expectedCash = shift?.expectedCash ?? 0.0;
     final actualCash = shift?.closingCash ?? 0.0;
@@ -286,8 +298,14 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
     // تحديد لون ورمز الفرق بناءً على القيمة
     final isBalanced = difference == 0;
     final isPositive = difference >= 0;
-    final diffColor = isBalanced ? AppColors.success : (isPositive ? AppColors.info : AppColors.error);
-    final diffIcon = isBalanced ? Icons.check_circle_rounded : (isPositive ? Icons.arrow_upward_rounded : Icons.arrow_downward_rounded);
+    final diffColor = isBalanced
+        ? AppColors.success
+        : (isPositive ? AppColors.info : AppColors.error);
+    final diffIcon = isBalanced
+        ? Icons.check_circle_rounded
+        : (isPositive
+            ? Icons.arrow_upward_rounded
+            : Icons.arrow_downward_rounded);
 
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
@@ -307,7 +325,8 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
                   color: AppColors.success.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.account_balance_wallet_rounded, color: AppColors.success, size: 20),
+                child: const Icon(Icons.account_balance_wallet_rounded,
+                    color: AppColors.success, size: 20),
               ),
               SizedBox(width: AlhaiSpacing.sm),
               Text(
@@ -345,7 +364,8 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: diffColor.withValues(alpha: isDark ? 0.15 : 0.1),
                   borderRadius: BorderRadius.circular(20),
@@ -413,12 +433,15 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
           child: FilledButton.icon(
             onPressed: () => context.go(AppRoutes.home),
             icon: const Icon(Icons.add_rounded, size: 20),
-            label: Text(l10n.openNewShift, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+            label: Text(l10n.openNewShift,
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
             style: FilledButton.styleFrom(
               backgroundColor: AppColors.primary,
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
             ),
           ),
         ),
@@ -427,7 +450,9 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
           width: double.infinity,
           child: OutlinedButton.icon(
             onPressed: () => context.go('/login'),
-            icon: Icon(Icons.logout_rounded, size: 20, color: Theme.of(context).colorScheme.onSurfaceVariant),
+            icon: Icon(Icons.logout_rounded,
+                size: 20,
+                color: Theme.of(context).colorScheme.onSurfaceVariant),
             label: Text(
               l10n.logout,
               style: TextStyle(
@@ -437,7 +462,8 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
             ),
             style: OutlinedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 14),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
               side: BorderSide(color: Theme.of(context).dividerColor),
             ),
           ),
@@ -480,7 +506,8 @@ class _StatRow extends StatelessWidget {
           Expanded(
             child: Text(
               label,
-              style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+              style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant),
             ),
           ),
           Text(
@@ -501,7 +528,8 @@ class _CashRow extends StatelessWidget {
   final String value;
   final bool isDark;
 
-  const _CashRow({required this.label, required this.value, required this.isDark});
+  const _CashRow(
+      {required this.label, required this.value, required this.isDark});
 
   @override
   Widget build(BuildContext context) {
@@ -510,7 +538,8 @@ class _CashRow extends StatelessWidget {
       children: [
         Text(
           label,
-          style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+          style:
+              TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
         ),
         Text(
           value,
@@ -557,7 +586,9 @@ class _ActionButton extends StatelessWidget {
             children: [
               Icon(icon, color: color, size: 28),
               SizedBox(height: AlhaiSpacing.xs),
-              Text(label, style: TextStyle(color: color, fontWeight: FontWeight.w600, fontSize: 13)),
+              Text(label,
+                  style: TextStyle(
+                      color: color, fontWeight: FontWeight.w600, fontSize: 13)),
             ],
           ),
         ),

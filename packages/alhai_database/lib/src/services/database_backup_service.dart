@@ -235,7 +235,8 @@ class DatabaseBackupService {
     final backupId = 'backup_pre_migration_v${fromVersion}_$timestamp';
 
     if (kDebugMode) {
-      debugPrint('[Backup] Creating pre-migration backup (v$fromVersion): $backupId');
+      debugPrint(
+          '[Backup] Creating pre-migration backup (v$fromVersion): $backupId');
     }
 
     // تصدير البيانات كـ JSON
@@ -254,7 +255,8 @@ class DatabaseBackupService {
     await _saveBackupInfo(info);
 
     if (kDebugMode) {
-      debugPrint('[Backup] Pre-migration backup completed: ${info.formattedSize}');
+      debugPrint(
+          '[Backup] Pre-migration backup completed: ${info.formattedSize}');
     }
 
     return info;
@@ -267,7 +269,8 @@ class DatabaseBackupService {
     final backupId = 'backup_post_migration_v${toVersion}_$timestamp';
 
     if (kDebugMode) {
-      debugPrint('[Backup] Creating post-migration backup (v$toVersion): $backupId');
+      debugPrint(
+          '[Backup] Creating post-migration backup (v$toVersion): $backupId');
     }
 
     // تصدير البيانات كـ JSON
@@ -280,13 +283,15 @@ class DatabaseBackupService {
       createdAt: DateTime.now(),
       sizeBytes: jsonData.length,
       schemaVersion: toVersion,
-      notes: 'Post-migration backup after successful upgrade to schema v$toVersion',
+      notes:
+          'Post-migration backup after successful upgrade to schema v$toVersion',
     );
 
     await _saveBackupInfo(info);
 
     if (kDebugMode) {
-      debugPrint('[Backup] Post-migration backup completed: ${info.formattedSize}');
+      debugPrint(
+          '[Backup] Post-migration backup completed: ${info.formattedSize}');
     }
 
     return info;

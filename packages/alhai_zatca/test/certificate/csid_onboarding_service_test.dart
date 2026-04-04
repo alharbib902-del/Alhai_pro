@@ -98,8 +98,7 @@ void main() {
               serialNumber: any(named: 'serialNumber'),
               invoiceType: any(named: 'invoiceType'),
               branchLocation: any(named: 'branchLocation'),
-              industryBusinessCategory:
-                  any(named: 'industryBusinessCategory'),
+              industryBusinessCategory: any(named: 'industryBusinessCategory'),
             )).thenAnswer((_) async => testCsrResult);
 
         when(() => mockComplianceApi.requestComplianceCsid(
@@ -141,8 +140,7 @@ void main() {
               serialNumber: any(named: 'serialNumber'),
               invoiceType: any(named: 'invoiceType'),
               branchLocation: any(named: 'branchLocation'),
-              industryBusinessCategory:
-                  any(named: 'industryBusinessCategory'),
+              industryBusinessCategory: any(named: 'industryBusinessCategory'),
             )).thenAnswer((_) async => testCsrResult);
 
         when(() => mockComplianceApi.requestComplianceCsid(

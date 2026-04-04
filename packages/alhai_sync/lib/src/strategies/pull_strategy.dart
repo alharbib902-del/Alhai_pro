@@ -179,7 +179,8 @@ class PullStrategy {
           await _db.customStatement(
               "INSERT INTO products_fts(products_fts) VALUES('rebuild')");
           if (kDebugMode) {
-            debugPrint('[Pull] FTS index rebuilt after pulling $totalPulled products');
+            debugPrint(
+                '[Pull] FTS index rebuilt after pulling $totalPulled products');
           }
         } catch (e) {
           if (kDebugMode) {
@@ -228,9 +229,17 @@ class PullStrategy {
 
     // المجموعة 1: جداول مستقلة - تُسحب بالتوازي
     const group1 = [
-      'categories', 'stores', 'roles', 'settings', 'users',
-      'drivers', 'expense_categories', 'coupons', 'promotions',
-      'loyalty_rewards', 'org_products',
+      'categories',
+      'stores',
+      'roles',
+      'settings',
+      'users',
+      'drivers',
+      'expense_categories',
+      'coupons',
+      'promotions',
+      'loyalty_rewards',
+      'org_products',
     ];
 
     final group1Futures = group1.map((tableName) async {

@@ -69,7 +69,12 @@ class _InvoiceStatCardState extends State<InvoiceStatCard> {
                 : (Theme.of(context).dividerColor),
           ),
           boxShadow: _isHovered
-              ? [BoxShadow(color: d.gradientColor.withValues(alpha: 0.1), blurRadius: 16, offset: const Offset(0, 4))]
+              ? [
+                  BoxShadow(
+                      color: d.gradientColor.withValues(alpha: 0.1),
+                      blurRadius: 16,
+                      offset: const Offset(0, 4))
+                ]
               : null,
         ),
         child: Stack(
@@ -89,7 +94,9 @@ class _InvoiceStatCardState extends State<InvoiceStatCard> {
                             style: TextStyle(
                               fontSize: widget.compact ? 12 : 14,
                               fontWeight: FontWeight.w500,
-                              color: isDark ? AppColors.textMutedDark : AppColors.textSecondary,
+                              color: isDark
+                                  ? AppColors.textMutedDark
+                                  : AppColors.textSecondary,
                             ),
                           ),
                           SizedBox(height: AlhaiSpacing.xxs),
@@ -98,7 +105,8 @@ class _InvoiceStatCardState extends State<InvoiceStatCard> {
                             style: TextStyle(
                               fontSize: widget.compact ? 20 : 28,
                               fontWeight: FontWeight.bold,
-                              color: d.actionText != null && d.gradientColor == AppColors.error
+                              color: d.actionText != null &&
+                                      d.gradientColor == AppColors.error
                                   ? AppColors.error
                                   : (Theme.of(context).colorScheme.onSurface),
                             ),
@@ -115,10 +123,13 @@ class _InvoiceStatCardState extends State<InvoiceStatCard> {
                         width: widget.compact ? 40 : 48,
                         height: widget.compact ? 40 : 48,
                         decoration: BoxDecoration(
-                          color: isDark ? d.iconColor.withValues(alpha: 0.15) : d.iconBgColor,
+                          color: isDark
+                              ? d.iconColor.withValues(alpha: 0.15)
+                              : d.iconBgColor,
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: Icon(d.icon, color: d.iconColor, size: widget.compact ? 20 : 24),
+                        child: Icon(d.icon,
+                            color: d.iconColor, size: widget.compact ? 20 : 24),
                       ),
                     ),
                   ],
@@ -128,18 +139,26 @@ class _InvoiceStatCardState extends State<InvoiceStatCard> {
                   Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 3),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: AlhaiSpacing.xs, vertical: 3),
                         decoration: BoxDecoration(
-                          color: (d.isPositive ? AppColors.success : AppColors.error).withValues(alpha: 0.1),
+                          color: (d.isPositive
+                                  ? AppColors.success
+                                  : AppColors.error)
+                              .withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Icon(
-                              d.isPositive ? Icons.trending_up : Icons.trending_down,
+                              d.isPositive
+                                  ? Icons.trending_up
+                                  : Icons.trending_down,
                               size: 14,
-                              color: d.isPositive ? AppColors.success : AppColors.error,
+                              color: d.isPositive
+                                  ? AppColors.success
+                                  : AppColors.error,
                             ),
                             SizedBox(width: AlhaiSpacing.xxs),
                             Text(
@@ -147,7 +166,9 @@ class _InvoiceStatCardState extends State<InvoiceStatCard> {
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
-                                color: d.isPositive ? AppColors.success : AppColors.error,
+                                color: d.isPositive
+                                    ? AppColors.success
+                                    : AppColors.error,
                               ),
                             ),
                           ],
@@ -160,7 +181,9 @@ class _InvoiceStatCardState extends State<InvoiceStatCard> {
                             d.subtitle!,
                             style: TextStyle(
                               fontSize: 12,
-                              color: isDark ? AppColors.textMutedDark : AppColors.textMuted,
+                              color: isDark
+                                  ? AppColors.textMutedDark
+                                  : AppColors.textMuted,
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -172,14 +195,21 @@ class _InvoiceStatCardState extends State<InvoiceStatCard> {
                     borderRadius: BorderRadius.circular(4),
                     child: LinearProgressIndicator(
                       value: d.progressValue!,
-                      backgroundColor: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.backgroundSecondary,
+                      backgroundColor: isDark
+                          ? Colors.white.withValues(alpha: 0.1)
+                          : AppColors.backgroundSecondary,
                       valueColor: AlwaysStoppedAnimation(d.gradientColor),
                       minHeight: 6,
                     ),
                   ),
                   const SizedBox(height: 6),
                   if (d.subtitle != null)
-                    Text(d.subtitle!, style: TextStyle(fontSize: 11, color: isDark ? AppColors.textMutedDark : AppColors.textMuted)),
+                    Text(d.subtitle!,
+                        style: TextStyle(
+                            fontSize: 11,
+                            color: isDark
+                                ? AppColors.textMutedDark
+                                : AppColors.textMuted)),
                 ],
                 if (d.actionText != null)
                   TextButton(
@@ -191,20 +221,36 @@ class _InvoiceStatCardState extends State<InvoiceStatCard> {
                     ),
                     child: Text(
                       d.actionText!,
-                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: d.gradientColor),
+                      style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: d.gradientColor),
                     ),
                   ),
-                if (d.subtitle != null && d.changeValue == null && d.progressValue == null && d.actionText == null)
-                  Text(d.subtitle!, style: TextStyle(fontSize: 12, color: isDark ? AppColors.textMutedDark : AppColors.textMuted)),
+                if (d.subtitle != null &&
+                    d.changeValue == null &&
+                    d.progressValue == null &&
+                    d.actionText == null)
+                  Text(d.subtitle!,
+                      style: TextStyle(
+                          fontSize: 12,
+                          color: isDark
+                              ? AppColors.textMutedDark
+                              : AppColors.textMuted)),
               ],
             ),
             // Bottom gradient line
             Positioned(
-              bottom: 0, left: 0, right: 0,
+              bottom: 0,
+              left: 0,
+              right: 0,
               child: Container(
                 height: 3,
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(colors: [d.gradientColor, d.gradientColor.withValues(alpha: 0)]),
+                  gradient: LinearGradient(colors: [
+                    d.gradientColor,
+                    d.gradientColor.withValues(alpha: 0)
+                  ]),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),

@@ -67,7 +67,8 @@ class SuppliersRepositoryImpl implements SuppliersRepository {
   }
 
   @override
-  Future<Supplier> updateSupplier(String id, UpdateSupplierParams params) async {
+  Future<Supplier> updateSupplier(
+      String id, UpdateSupplierParams params) async {
     try {
       final request = UpdateSupplierRequest.fromDomain(params);
       final response = await _remote.updateSupplier(id, request);

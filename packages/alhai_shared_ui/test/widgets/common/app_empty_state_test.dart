@@ -217,7 +217,8 @@ void main() {
         (context) => AppEmptyState.noDebts(context),
       ));
       await tester.pumpAndSettle();
-      expect(find.byIcon(Icons.account_balance_wallet_outlined), findsOneWidget);
+      expect(
+          find.byIcon(Icons.account_balance_wallet_outlined), findsOneWidget);
     });
 
     testWidgets('noReturns should render', (tester) async {

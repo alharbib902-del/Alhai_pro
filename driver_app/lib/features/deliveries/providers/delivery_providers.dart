@@ -125,8 +125,7 @@ final filteredDeliveriesProvider =
 ///
 /// Returns `{'success': true, 'offline': true}` when the device is offline
 /// and the update has been queued; throws on non-retriable failure.
-final updateDeliveryStatusProvider = FutureProvider.family<
-    Map<String, dynamic>,
+final updateDeliveryStatusProvider = FutureProvider.family<Map<String, dynamic>,
     ({String id, String status, String? notes})>((ref, params) async {
   final ds = GetIt.instance<DeliveryDatasource>();
   final result = await ds.updateStatus(

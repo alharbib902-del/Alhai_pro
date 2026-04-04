@@ -24,8 +24,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const AdminHomeScreen()));
+      await tester.pumpWidget(createTestWidget(const AdminHomeScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(AdminHomeScreen), findsOneWidget);
@@ -39,8 +38,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const AdminHomeScreen()));
+      await tester.pumpWidget(createTestWidget(const AdminHomeScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.admin_panel_settings_outlined), findsOneWidget);
@@ -54,8 +52,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const AdminHomeScreen()));
+      await tester.pumpWidget(createTestWidget(const AdminHomeScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(Scaffold), findsWidgets);

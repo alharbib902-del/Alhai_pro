@@ -9,16 +9,17 @@ import 'package:alhai_core/src/dto/products/product_response.dart';
 import 'package:alhai_core/src/dto/products/update_product_request.dart';
 
 /// Mock classes
-class MockProductsRemoteDataSource extends Mock implements ProductsRemoteDataSource {}
+class MockProductsRemoteDataSource extends Mock
+    implements ProductsRemoteDataSource {}
 
 /// Fake classes for mocktail
 class FakeUpdateProductRequest extends Fake implements UpdateProductRequest {}
 
 /// Cross-Tenant Isolation Tests
-/// 
+///
 /// These tests verify that RLS policies correctly prevent cross-tenant access.
 /// This is the MOST CRITICAL security test for multi-tenant systems.
-/// 
+///
 /// Test Scenario:
 /// - Store A creates a product
 /// - Store B tries to READ/UPDATE/DELETE it → should get 403 FORBIDDEN
@@ -67,7 +68,7 @@ void main() {
           storeBRepository.getProduct(productId),
           throwsA(isA<Exception>()),
         );
-        
+
         verify(() => mockRemoteStoreB.getProduct(productId)).called(1);
       });
 
@@ -90,7 +91,8 @@ void main() {
         // Note: This test verifies the mock is set up correctly for 403 response
         // Actual update would require a valid UpdateProductParams which would throw
         expect(
-          () => mockRemoteStoreB.updateProduct(productId, FakeUpdateProductRequest()),
+          () => mockRemoteStoreB.updateProduct(
+              productId, FakeUpdateProductRequest()),
           throwsA(isA<DioException>()),
         );
       });
@@ -116,7 +118,7 @@ void main() {
           storeBRepository.deleteProduct(productId),
           throwsA(isA<Exception>()),
         );
-        
+
         verify(() => mockRemoteStoreB.deleteProduct(productId)).called(1);
       });
 
@@ -168,7 +170,7 @@ void main() {
         // Assert: Should only contain Store B products
         expect(paginated.items.length, 1);
         expect(paginated.items.first.storeId, storeBId);
-        
+
         // Verify no Store A products leaked
         expect(
           paginated.items.where((p) => p.storeId == storeAId).isEmpty,

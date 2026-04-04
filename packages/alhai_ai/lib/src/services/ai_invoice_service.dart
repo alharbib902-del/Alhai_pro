@@ -7,7 +7,7 @@ import 'package:flutter/foundation.dart';
 class AiInvoiceService {
   // ignore: unused_field
   static const String _baseUrl = AppEndpoints.aiInvoice;
-  
+
   /// استخراج بيانات الفاتورة من الصورة
   static Future<AiInvoiceResult> extractInvoiceData(File imageFile) async {
     try {
@@ -37,7 +37,7 @@ class AiInvoiceService {
       throw AiInvoiceException('فشل في استخراج البيانات: $e');
     }
   }
-  
+
   /// بيانات وهمية للتطوير
   static AiInvoiceResult _getMockData() {
     return AiInvoiceResult(
@@ -114,14 +114,15 @@ class AiInvoiceResult {
     return AiInvoiceResult(
       supplierName: json['supplier_name'],
       invoiceNumber: json['invoice_number'],
-      invoiceDate: json['invoice_date'] != null 
-          ? DateTime.parse(json['invoice_date']) 
+      invoiceDate: json['invoice_date'] != null
+          ? DateTime.parse(json['invoice_date'])
           : null,
       totalAmount: (json['total_amount'] ?? 0).toDouble(),
       taxAmount: (json['tax_amount'] ?? 0).toDouble(),
       items: (json['items'] as List?)
-          ?.map((e) => AiInvoiceItem.fromJson(e))
-          .toList() ?? [],
+              ?.map((e) => AiInvoiceItem.fromJson(e))
+              .toList() ??
+          [],
     );
   }
 
@@ -192,7 +193,7 @@ class AiInvoiceItem {
 class AiInvoiceException implements Exception {
   final String message;
   AiInvoiceException(this.message);
-  
+
   @override
   String toString() => message;
 }

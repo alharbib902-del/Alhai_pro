@@ -71,8 +71,7 @@ class ZatcaInvoiceLine {
   double get lineTotal => lineNetAmount + vatAmount;
 
   /// Rounding helper - returns value rounded to 2 decimal places
-  static double _round2(double value) =>
-      (value * 100).roundToDouble() / 100;
+  static double _round2(double value) => (value * 100).roundToDouble() / 100;
 
   /// Net amount rounded to 2 decimal places
   double get lineNetAmountRounded => _round2(lineNetAmount);
@@ -108,7 +107,8 @@ class ZatcaInvoiceLine {
       vatRate: vatRate ?? this.vatRate,
       vatCategoryCode: vatCategoryCode ?? this.vatCategoryCode,
       vatExemptionReason: vatExemptionReason ?? this.vatExemptionReason,
-      vatExemptionReasonCode: vatExemptionReasonCode ?? this.vatExemptionReasonCode,
+      vatExemptionReasonCode:
+          vatExemptionReasonCode ?? this.vatExemptionReasonCode,
       barcode: barcode ?? this.barcode,
       sellerItemId: sellerItemId ?? this.sellerItemId,
     );
@@ -125,13 +125,16 @@ class ZatcaInvoiceLine {
         if (discountReason != null) 'discountReason': discountReason,
         'vatRate': vatRate,
         'vatCategoryCode': vatCategoryCode,
-        if (vatExemptionReason != null) 'vatExemptionReason': vatExemptionReason,
-        if (vatExemptionReasonCode != null) 'vatExemptionReasonCode': vatExemptionReasonCode,
+        if (vatExemptionReason != null)
+          'vatExemptionReason': vatExemptionReason,
+        if (vatExemptionReasonCode != null)
+          'vatExemptionReasonCode': vatExemptionReasonCode,
         if (barcode != null) 'barcode': barcode,
         if (sellerItemId != null) 'sellerItemId': sellerItemId,
       };
 
-  factory ZatcaInvoiceLine.fromJson(Map<String, dynamic> json) => ZatcaInvoiceLine(
+  factory ZatcaInvoiceLine.fromJson(Map<String, dynamic> json) =>
+      ZatcaInvoiceLine(
         lineId: json['lineId'] as String,
         itemName: json['itemName'] as String,
         quantity: (json['quantity'] as num).toDouble(),

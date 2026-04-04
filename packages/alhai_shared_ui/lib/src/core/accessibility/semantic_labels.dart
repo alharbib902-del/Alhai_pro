@@ -56,28 +56,26 @@ abstract class POSLabels {
   static const String barcodeScanner = 'فتح ماسح الباركود';
 
   /// إضافة للسلة
-  static String addToCart(String productName) =>
-    'إضافة $productName إلى السلة';
+  static String addToCart(String productName) => 'إضافة $productName إلى السلة';
 
   /// إزالة من السلة
   static String removeFromCart(String productName) =>
-    'إزالة $productName من السلة';
+      'إزالة $productName من السلة';
 
   /// زيادة الكمية
   static String increaseQuantity(String productName, int currentQty) =>
-    'زيادة كمية $productName، الكمية الحالية $currentQty';
+      'زيادة كمية $productName، الكمية الحالية $currentQty';
 
   /// تقليل الكمية
   static String decreaseQuantity(String productName, int currentQty) =>
-    'تقليل كمية $productName، الكمية الحالية $currentQty';
+      'تقليل كمية $productName، الكمية الحالية $currentQty';
 
   /// سعر المنتج
   static String productPrice(double price) =>
-    'السعر ${price.toStringAsFixed(2)} ريال';
+      'السعر ${price.toStringAsFixed(2)} ريال';
 
   /// الكمية المتاحة
-  static String availableStock(int qty) =>
-    'الكمية المتاحة $qty قطعة';
+  static String availableStock(int qty) => 'الكمية المتاحة $qty قطعة';
 
   /// السلة
   static const String cart = 'سلة المشتريات';
@@ -87,7 +85,7 @@ abstract class POSLabels {
 
   /// إجمالي السلة
   static String cartTotal(double total, int itemCount) =>
-    'إجمالي السلة ${total.toStringAsFixed(2)} ريال، $itemCount منتج';
+      'إجمالي السلة ${total.toStringAsFixed(2)} ريال، $itemCount منتج';
 
   /// إفراغ السلة
   static const String clearCart = 'إفراغ السلة بالكامل';
@@ -115,7 +113,7 @@ abstract class POSLabels {
 
   /// تأكيد الدفع
   static String confirmPayment(double amount) =>
-    'تأكيد الدفع بمبلغ ${amount.toStringAsFixed(2)} ريال';
+      'تأكيد الدفع بمبلغ ${amount.toStringAsFixed(2)} ريال';
 
   /// طباعة الفاتورة
   static const String printReceipt = 'طباعة الفاتورة';
@@ -132,7 +130,7 @@ abstract class POSLabels {
 abstract class ProductLabels {
   /// بطاقة المنتج
   static String productCard(String name, double price) =>
-    '$name، السعر ${price.toStringAsFixed(2)} ريال';
+      '$name، السعر ${price.toStringAsFixed(2)} ريال';
 
   /// صورة المنتج
   static String productImage(String name) => 'صورة $name';
@@ -231,11 +229,10 @@ abstract class DialogLabels {
 
   /// تأكيد الحذف
   static String confirmDelete(String item) =>
-    'هل أنت متأكد من حذف $item؟ لا يمكن التراجع عن هذا الإجراء';
+      'هل أنت متأكد من حذف $item؟ لا يمكن التراجع عن هذا الإجراء';
 
   /// تأكيد الخروج
-  static const String confirmExit =
-    'هل أنت متأكد من تسجيل الخروج؟';
+  static const String confirmExit = 'هل أنت متأكد من تسجيل الخروج؟';
 }
 
 // ============================================================================
@@ -251,12 +248,10 @@ abstract class StatusLabels {
   static const String offline = 'غير متصل بالإنترنت';
 
   /// جاري المزامنة
-  static String syncing(int count) =>
-    'جاري مزامنة $count عملية';
+  static String syncing(int count) => 'جاري مزامنة $count عملية';
 
   /// عمليات معلقة
-  static String pendingSync(int count) =>
-    '$count عملية في انتظار المزامنة';
+  static String pendingSync(int count) => '$count عملية في انتظار المزامنة';
 
   /// تم المزامنة
   static const String synced = 'تم المزامنة';
@@ -276,7 +271,7 @@ abstract class StatusLabels {
 abstract class ReportLabels {
   /// مبيعات اليوم
   static String todaySales(double total, int count) =>
-    'مبيعات اليوم ${total.toStringAsFixed(2)} ريال من $count عملية';
+      'مبيعات اليوم ${total.toStringAsFixed(2)} ريال من $count عملية';
 
   /// أفضل المنتجات
   static const String topProducts = 'قائمة أفضل المنتجات مبيعاً';
@@ -310,8 +305,7 @@ abstract class CustomerLabels {
   static const String phoneField = 'رقم جوال العميل';
 
   /// نقاط الولاء
-  static String loyaltyPoints(int points) =>
-    'نقاط الولاء: $points نقطة';
+  static String loyaltyPoints(int points) => 'نقاط الولاء: $points نقطة';
 
   /// مستوى العميل
   static String customerLevel(String level) => 'المستوى: $level';

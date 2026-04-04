@@ -58,8 +58,7 @@ List<Override> defaultProviderOverrides({
         priority: any(named: 'priority'),
       )).thenAnswer((_) async => 'mock-sync-id');
 
-  when(() => mockSyncService.getPendingCount())
-      .thenAnswer((_) async => 0);
+  when(() => mockSyncService.getPendingCount()).thenAnswer((_) async => 0);
 
   when(() => mockSyncService.watchPendingCount())
       .thenAnswer((_) => Stream.value(0));
@@ -85,10 +84,8 @@ List<Override> defaultProviderOverrides({
 
   // Create a mock AuthNotifier so screens that use authStateProvider work.
   final mockAuthRepo = MockAuthRepository();
-  when(() => mockAuthRepo.getCurrentUser())
-      .thenAnswer((_) async => testUser);
-  when(() => mockAuthRepo.isAuthenticated())
-      .thenAnswer((_) async => true);
+  when(() => mockAuthRepo.getCurrentUser()).thenAnswer((_) async => testUser);
+  when(() => mockAuthRepo.isAuthenticated()).thenAnswer((_) async => true);
 
   return [
     currentStoreIdProvider.overrideWith((ref) => storeId),

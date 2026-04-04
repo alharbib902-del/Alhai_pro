@@ -24,17 +24,17 @@ class CertificateParser {
     final topSequence = asn1Parser.nextObject() as ASN1Sequence;
 
     // TBSCertificate is the first element in the top sequence
-    final tbsCert = topSequence.elements![0] as ASN1Sequence;
+    final tbsCert = topSequence.elements[0] as ASN1Sequence;
 
     int elementIndex = 0;
 
     // Check for explicit version tag [0]
-    if (tbsCert.elements![0].tag == 0xA0) {
+    if (tbsCert.elements[0].tag == 0xA0) {
       elementIndex++; // skip version
     }
 
     // Serial number
-    final serialNumberObj = tbsCert.elements![elementIndex] as ASN1Integer;
+    final serialNumberObj = tbsCert.elements[elementIndex] as ASN1Integer;
     final serialNumber = serialNumberObj.valueAsBigInteger.toRadixString(16);
     elementIndex++;
 
@@ -42,24 +42,24 @@ class CertificateParser {
     elementIndex++;
 
     // Issuer
-    final issuerSeq = tbsCert.elements![elementIndex] as ASN1Sequence;
+    final issuerSeq = tbsCert.elements[elementIndex] as ASN1Sequence;
     final issuerName = _parseDistinguishedName(issuerSeq);
     elementIndex++;
 
     // Validity
-    final validitySeq = tbsCert.elements![elementIndex] as ASN1Sequence;
-    final validFrom = _parseAsn1Time(validitySeq.elements![0]);
-    final validTo = _parseAsn1Time(validitySeq.elements![1]);
+    final validitySeq = tbsCert.elements[elementIndex] as ASN1Sequence;
+    final validFrom = _parseAsn1Time(validitySeq.elements[0]);
+    final validTo = _parseAsn1Time(validitySeq.elements[1]);
     elementIndex++;
 
     // Subject
-    final subjectSeq = tbsCert.elements![elementIndex] as ASN1Sequence;
+    final subjectSeq = tbsCert.elements[elementIndex] as ASN1Sequence;
     final subjectName = _parseDistinguishedName(subjectSeq);
     elementIndex++;
 
     // SubjectPublicKeyInfo
-    final pubKeyInfoSeq = tbsCert.elements![elementIndex] as ASN1Sequence;
-    final pubKeyBitString = pubKeyInfoSeq.elements![1] as ASN1BitString;
+    final pubKeyInfoSeq = tbsCert.elements[elementIndex] as ASN1Sequence;
+    final pubKeyBitString = pubKeyInfoSeq.elements[1] as ASN1BitString;
     final publicKeyBytes = pubKeyBitString.valueBytes();
 
     return {
@@ -114,7 +114,7 @@ class CertificateParser {
     final topSequence = asn1Parser.nextObject() as ASN1Sequence;
 
     // The third element is the signatureValue BIT STRING
-    final sigBitString = topSequence.elements![2] as ASN1BitString;
+    final sigBitString = topSequence.elements[2] as ASN1BitString;
     final rawBytes = sigBitString.valueBytes();
 
     // BIT STRING content starts with a padding-bits count octet (usually 0).
@@ -138,12 +138,12 @@ class CertificateParser {
   String _parseDistinguishedName(ASN1Sequence dnSequence) {
     final parts = <String>[];
 
-    for (final rdn in dnSequence.elements!) {
+    for (final rdn in dnSequence.elements) {
       if (rdn is ASN1Set) {
-        for (final atv in rdn.elements!) {
-          if (atv is ASN1Sequence && atv.elements!.length >= 2) {
-            final oid = atv.elements![0] as ASN1ObjectIdentifier;
-            final value = atv.elements![1];
+        for (final atv in rdn.elements) {
+          if (atv is ASN1Sequence && atv.elements.length >= 2) {
+            final oid = atv.elements[0] as ASN1ObjectIdentifier;
+            final value = atv.elements[1];
 
             final oidStr = _oidToShortName(oid.identifier ?? oid.oi.join('.'));
             final valueStr = _extractStringValue(value);
@@ -181,13 +181,13 @@ class CertificateParser {
   /// Extract the string value from an ASN.1 object
   String _extractStringValue(ASN1Object obj) {
     if (obj is ASN1UTF8String) {
-      return obj.utf8StringValue ?? '';
+      return obj.utf8StringValue;
     }
     if (obj is ASN1PrintableString) {
-      return obj.stringValue ?? '';
+      return obj.stringValue;
     }
     if (obj is ASN1IA5String) {
-      return obj.stringValue ?? '';
+      return obj.stringValue;
     }
     // Fallback: try to read the raw value bytes as UTF-8
     try {
@@ -196,9 +196,7 @@ class CertificateParser {
         try {
           return utf8.decode(bytes);
         } catch (_) {
-          return bytes
-              .map((b) => b.toRadixString(16).padLeft(2, '0'))
-              .join('');
+          return bytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join('');
         }
       }
     } catch (_) {
@@ -210,10 +208,10 @@ class CertificateParser {
   /// Parse ASN.1 time values (UTCTime or GeneralizedTime) to DateTime
   DateTime _parseAsn1Time(ASN1Object timeObj) {
     if (timeObj is ASN1UtcTime) {
-      return timeObj.dateTimeValue!;
+      return timeObj.dateTimeValue;
     }
     if (timeObj is ASN1GeneralizedTime) {
-      return timeObj.dateTimeValue!;
+      return timeObj.dateTimeValue;
     }
     // Fallback: try to parse from raw bytes
     try {

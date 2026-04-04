@@ -80,8 +80,7 @@ void main() {
         ),
       ];
 
-      when(() => ordersDao.getOrders(any()))
-          .thenAnswer((_) async => orders);
+      when(() => ordersDao.getOrders(any())).thenAnswer((_) async => orders);
 
       await tester.pumpWidget(createTestWidget(const SalesHistoryScreen()));
       await tester.pumpAndSettle();
@@ -122,8 +121,7 @@ void main() {
         ),
       ];
 
-      when(() => ordersDao.getOrders(any()))
-          .thenAnswer((_) async => orders);
+      when(() => ordersDao.getOrders(any())).thenAnswer((_) async => orders);
 
       await tester.pumpWidget(createTestWidget(const SalesHistoryScreen()));
       await tester.pumpAndSettle();

@@ -40,7 +40,6 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
   Timer? _searchDebounce;
   bool _showScrollToTop = false;
 
-
   @override
   void initState() {
     super.initState();
@@ -48,7 +47,9 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
     Future.microtask(() {
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId != null) {
-        ref.read(productsStateProvider.notifier).loadProducts(storeId: storeId, refresh: true);
+        ref
+            .read(productsStateProvider.notifier)
+            .loadProducts(storeId: storeId, refresh: true);
       }
     });
   }
@@ -115,11 +116,12 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                   // App Header
                   AppHeader(
                     title: l10n.products,
-                    subtitle: '${productsState.products.length} ${l10n.product}',
+                    subtitle:
+                        '${productsState.products.length} ${l10n.product}',
                     showSearch: false,
                     onMenuTap: isWideScreen
-                      ? null
-                      : () => Scaffold.of(context).openDrawer(),
+                        ? null
+                        : () => Scaffold.of(context).openDrawer(),
                     onNotificationsTap: () => context.push('/notifications'),
                     notificationsCount: 3,
                     userName: l10n.defaultUserName,
@@ -141,7 +143,8 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                       children: [
                         // Filters Sidebar (Desktop only)
                         if (isDesktop && _showFilters)
-                          _buildFiltersSidebar(categoriesAsync, isDark, l10n: l10n),
+                          _buildFiltersSidebar(categoriesAsync, isDark,
+                              l10n: l10n),
                         // Products Grid/List
                         Expanded(
                           child: _buildProductsContent(productsState),
@@ -158,10 +161,13 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
     );
   }
 
-  Widget _buildToolbar(bool isDark, bool isDesktop, AsyncValue<List<Category>> categoriesAsync, {required AppLocalizations l10n}) {
+  Widget _buildToolbar(
+      bool isDark, bool isDesktop, AsyncValue<List<Category>> categoriesAsync,
+      {required AppLocalizations l10n}) {
     final colorScheme = Theme.of(context).colorScheme;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppSizes.md, vertical: AppSizes.sm),
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppSizes.md, vertical: AppSizes.sm),
       decoration: BoxDecoration(
         color: colorScheme.surface,
         border: Border(
@@ -191,7 +197,8 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                       );
                     }
                     _searchDebounce?.cancel();
-                    _searchDebounce = Timer(const Duration(milliseconds: 300), () {
+                    _searchDebounce =
+                        Timer(const Duration(milliseconds: 300), () {
                       _onSearch(sanitized);
                     });
                   },
@@ -205,7 +212,8 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                 const SizedBox(width: AppSizes.sm),
                 // Toggle Filters
                 AppIconButton(
-                  icon: _showFilters ? Icons.filter_list_off : Icons.filter_list,
+                  icon:
+                      _showFilters ? Icons.filter_list_off : Icons.filter_list,
                   onPressed: () => setState(() => _showFilters = !_showFilters),
                   tooltip: _showFilters ? l10n.hideFilters : l10n.showFilters,
                 ),
@@ -265,10 +273,14 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                           fontSize: 14,
                         ),
                         items: [
-                          DropdownMenuItem(value: 'name', child: Text(l10n.sortByName)),
-                          DropdownMenuItem(value: 'price', child: Text(l10n.sortByPrice)),
-                          DropdownMenuItem(value: 'stock', child: Text(l10n.sortByStock)),
-                          DropdownMenuItem(value: 'recent', child: Text(l10n.sortByRecent)),
+                          DropdownMenuItem(
+                              value: 'name', child: Text(l10n.sortByName)),
+                          DropdownMenuItem(
+                              value: 'price', child: Text(l10n.sortByPrice)),
+                          DropdownMenuItem(
+                              value: 'stock', child: Text(l10n.sortByStock)),
+                          DropdownMenuItem(
+                              value: 'recent', child: Text(l10n.sortByRecent)),
                         ],
                         onChanged: (value) {
                           if (value != null) {
@@ -284,7 +296,8 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                           size: 18,
                           color: colorScheme.onSurfaceVariant,
                         ),
-                        onPressed: () => setState(() => _sortAscending = !_sortAscending),
+                        onPressed: () =>
+                            setState(() => _sortAscending = !_sortAscending),
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(
                           minWidth: 32,
@@ -337,7 +350,9 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
     );
   }
 
-  Widget _buildFiltersSidebar(AsyncValue<List<Category>> categoriesAsync, bool isDark, {AppLocalizations? l10n}) {
+  Widget _buildFiltersSidebar(
+      AsyncValue<List<Category>> categoriesAsync, bool isDark,
+      {AppLocalizations? l10n}) {
     final colorScheme = Theme.of(context).colorScheme;
     return Container(
       width: 260,
@@ -366,9 +381,9 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                 Text(
                   l10n?.categories ?? 'Categories',
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: colorScheme.onSurface,
-                  ),
+                        fontWeight: FontWeight.bold,
+                        color: colorScheme.onSurface,
+                      ),
                 ),
               ],
             ),
@@ -426,9 +441,9 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                 Text(
                   l10n?.stockStatus ?? 'Stock Status',
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: colorScheme.onSurface,
-                  ),
+                        fontWeight: FontWeight.bold,
+                        color: colorScheme.onSurface,
+                      ),
                 ),
               ],
             ),
@@ -476,7 +491,9 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                   });
                   final storeId = ref.read(currentStoreIdProvider);
                   if (storeId != null) {
-                    ref.read(productsStateProvider.notifier).filterByCategory(null, storeId: storeId);
+                    ref
+                        .read(productsStateProvider.notifier)
+                        .filterByCategory(null, storeId: storeId);
                   }
                 },
                 icon: Icons.clear_all_rounded,
@@ -524,10 +541,10 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                 child: Text(
                   label,
                   style: TextStyle(
-                    color: isSelected
-                        ? AppColors.primary
-                        : colorScheme.onSurface,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                    color:
+                        isSelected ? AppColors.primary : colorScheme.onSurface,
+                    fontWeight:
+                        isSelected ? FontWeight.w600 : FontWeight.normal,
                   ),
                 ),
               ),
@@ -623,7 +640,8 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
 
   Widget _buildGridView(List<Product> products) {
     final productsState = ref.watch(productsStateProvider);
-    final isLandscape = MediaQuery.orientationOf(context) == Orientation.landscape;
+    final isLandscape =
+        MediaQuery.orientationOf(context) == Orientation.landscape;
     final isMobileDevice = context.screenWidth < AppSizes.breakpointTablet;
     // In landscape on phones, use smaller maxCrossAxisExtent to fit more columns
     final maxExtent = (isLandscape && isMobileDevice) ? 160.0 : 220.0;
@@ -639,7 +657,8 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
       itemCount: products.length + (productsState.hasMore ? 1 : 0),
       itemBuilder: (context, index) {
         if (index >= products.length) {
-          return const Center(child: Padding(
+          return const Center(
+              child: Padding(
             padding: EdgeInsets.all(AppSizes.md),
             child: CircularProgressIndicator(strokeWidth: 2),
           ));
@@ -662,7 +681,8 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
       itemCount: products.length + (productsState.hasMore ? 1 : 0),
       itemBuilder: (context, index) {
         if (index >= products.length) {
-          return const Center(child: Padding(
+          return const Center(
+              child: Padding(
             padding: EdgeInsets.all(AppSizes.md),
             child: CircularProgressIndicator(strokeWidth: 2),
           ));
@@ -690,18 +710,15 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
         selected: isSelected,
         onSelected: (_) => _onCategorySelected(categoryId),
         backgroundColor: colorScheme.surface,
-        selectedColor: AppColors.primary.withValues(alpha: isDark ? 0.25 : 0.15),
+        selectedColor:
+            AppColors.primary.withValues(alpha: isDark ? 0.25 : 0.15),
         checkmarkColor: AppColors.primary,
         labelStyle: TextStyle(
-          color: isSelected
-              ? AppColors.primary
-              : colorScheme.onSurface,
+          color: isSelected ? AppColors.primary : colorScheme.onSurface,
           fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
         ),
         side: BorderSide(
-          color: isSelected
-              ? AppColors.primary
-              : colorScheme.outlineVariant,
+          color: isSelected ? AppColors.primary : colorScheme.outlineVariant,
         ),
       ),
     );
@@ -787,14 +804,18 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
     setState(() => _selectedCategoryId = categoryId);
     final storeId = ref.read(currentStoreIdProvider);
     if (storeId != null) {
-      ref.read(productsStateProvider.notifier).filterByCategory(categoryId, storeId: storeId);
+      ref
+          .read(productsStateProvider.notifier)
+          .filterByCategory(categoryId, storeId: storeId);
     }
   }
 
   void _refreshProducts() {
     final storeId = ref.read(currentStoreIdProvider);
     if (storeId != null) {
-      ref.read(productsStateProvider.notifier).loadProducts(storeId: storeId, refresh: true);
+      ref
+          .read(productsStateProvider.notifier)
+          .loadProducts(storeId: storeId, refresh: true);
     }
   }
 
@@ -886,9 +907,7 @@ class _ProductGridCardState extends State<_ProductGridCard> {
           color: colorScheme.surface,
           borderRadius: BorderRadius.circular(AppSizes.radiusLg),
           border: Border.all(
-            color: _isHovered
-                ? AppColors.primary
-                : colorScheme.outlineVariant,
+            color: _isHovered ? AppColors.primary : colorScheme.outlineVariant,
           ),
           boxShadow: _isHovered
               ? [
@@ -940,7 +959,8 @@ class _ProductGridCardState extends State<_ProductGridCard> {
                                   placeholder: (_, __) => const Center(
                                     child: CircularProgressIndicator(),
                                   ),
-                                  errorWidget: (_, __, ___) => _buildPlaceholder(),
+                                  errorWidget: (_, __, ___) =>
+                                      _buildPlaceholder(),
                                 ),
                               )
                             : _buildPlaceholder(),
@@ -960,8 +980,10 @@ class _ProductGridCardState extends State<_ProductGridCard> {
                         child: Container(
                           decoration: BoxDecoration(
                             color: colorScheme.surface,
-                            borderRadius: BorderRadius.circular(AppSizes.radiusSm),
-                            boxShadow: AppShadows.of(context, size: ShadowSize.sm),
+                            borderRadius:
+                                BorderRadius.circular(AppSizes.radiusSm),
+                            boxShadow:
+                                AppShadows.of(context, size: ShadowSize.sm),
                           ),
                           child: IconButton(
                             icon: Icon(
@@ -997,10 +1019,13 @@ class _ProductGridCardState extends State<_ProductGridCard> {
                             type: MaterialType.transparency,
                             child: Text(
                               widget.product.name,
-                              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                fontWeight: FontWeight.w600,
-                                color: colorScheme.onSurface,
-                              ),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleSmall
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    color: colorScheme.onSurface,
+                                  ),
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -1012,20 +1037,23 @@ class _ProductGridCardState extends State<_ProductGridCard> {
                       if (widget.product.barcode != null)
                         Text(
                           widget.product.barcode!,
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: colorScheme.onSurfaceVariant,
-                          ),
+                          style:
+                              Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: colorScheme.onSurfaceVariant,
+                                  ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                       const Spacer(),
                       // Price
                       Text(
-                        CurrencyFormatter.formatWithContext(context, widget.product.price),
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.primary,
-                        ),
+                        CurrencyFormatter.formatWithContext(
+                            context, widget.product.price),
+                        style:
+                            Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.primary,
+                                ),
                       ),
                     ],
                   ),
@@ -1043,7 +1071,10 @@ class _ProductGridCardState extends State<_ProductGridCard> {
       child: Icon(
         Icons.image_rounded,
         size: 48,
-        color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+        color: Theme.of(context)
+            .colorScheme
+            .onSurfaceVariant
+            .withValues(alpha: 0.3),
       ),
     );
   }
@@ -1053,7 +1084,8 @@ class _ProductGridCardState extends State<_ProductGridCard> {
       return AppBadge.stock(context, 0);
     }
     if (widget.product.isLowStock) {
-      return AppBadge.stock(context, widget.product.stockQty, minQuantity: widget.product.minQty);
+      return AppBadge.stock(context, widget.product.stockQty,
+          minQuantity: widget.product.minQty);
     }
     return const SizedBox.shrink();
   }
@@ -1091,9 +1123,7 @@ class _ProductListCardState extends State<_ProductListCard> {
           color: colorScheme.surface,
           borderRadius: BorderRadius.circular(AppSizes.radiusMd),
           border: Border.all(
-            color: _isHovered
-                ? AppColors.primary
-                : colorScheme.outlineVariant,
+            color: _isHovered ? AppColors.primary : colorScheme.outlineVariant,
           ),
           boxShadow: [
             BoxShadow(
@@ -1122,7 +1152,8 @@ class _ProductListCardState extends State<_ProductListCard> {
                     ),
                     child: widget.product.imageThumbnail != null
                         ? ClipRRect(
-                            borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+                            borderRadius:
+                                BorderRadius.circular(AppSizes.radiusMd),
                             child: CachedNetworkImage(
                               imageUrl: widget.product.imageThumbnail!,
                               fit: BoxFit.cover,
@@ -1152,10 +1183,13 @@ class _ProductListCardState extends State<_ProductListCard> {
                                 type: MaterialType.transparency,
                                 child: Text(
                                   widget.product.name,
-                                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                    fontWeight: FontWeight.w600,
-                                    color: colorScheme.onSurface,
-                                  ),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleSmall
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.w600,
+                                        color: colorScheme.onSurface,
+                                      ),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -1167,27 +1201,34 @@ class _ProductListCardState extends State<_ProductListCard> {
                       ),
                       const SizedBox(height: AppSizes.xxs),
                       Text(
-                        widget.product.barcode ?? AppLocalizations.of(context)!.noBarcode,
+                        widget.product.barcode ??
+                            AppLocalizations.of(context)!.noBarcode,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: colorScheme.onSurfaceVariant,
-                        ),
+                              color: colorScheme.onSurfaceVariant,
+                            ),
                       ),
                       const SizedBox(height: AppSizes.xs),
                       Row(
                         children: [
                           Text(
-                            CurrencyFormatter.formatWithContext(context, widget.product.price),
-                            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.primary,
-                            ),
+                            CurrencyFormatter.formatWithContext(
+                                context, widget.product.price),
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleSmall
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.primary,
+                                ),
                           ),
                           const Spacer(),
                           Text(
-                            AppLocalizations.of(context)!.stockCount(widget.product.stockQty.toInt()),
-                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: colorScheme.onSurfaceVariant,
-                            ),
+                            AppLocalizations.of(context)!
+                                .stockCount(widget.product.stockQty.toInt()),
+                            style:
+                                Theme.of(context).textTheme.bodySmall?.copyWith(
+                                      color: colorScheme.onSurfaceVariant,
+                                    ),
                           ),
                         ],
                       ),
@@ -1221,7 +1262,10 @@ class _ProductListCardState extends State<_ProductListCard> {
       child: Icon(
         Icons.image_rounded,
         size: 24,
-        color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+        color: Theme.of(context)
+            .colorScheme
+            .onSurfaceVariant
+            .withValues(alpha: 0.3),
       ),
     );
   }
@@ -1231,8 +1275,10 @@ class _ProductListCardState extends State<_ProductListCard> {
       return AppBadge.stock(context, 0);
     }
     if (widget.product.isLowStock) {
-      return AppBadge.stock(context, widget.product.stockQty, minQuantity: widget.product.minQty);
+      return AppBadge.stock(context, widget.product.stockQty,
+          minQuantity: widget.product.minQty);
     }
-    return AppBadge.stock(context, widget.product.stockQty, minQuantity: widget.product.minQty);
+    return AppBadge.stock(context, widget.product.stockQty,
+        minQuantity: widget.product.minQty);
   }
 }

@@ -12247,6 +12247,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get editPlan => 'Edit Plan';
 
   @override
+  String get selectPlan => 'Select Plan';
+
+  @override
+  String get currentPlan => 'Current Plan';
+
+  @override
+  String get noPlansAvailable => 'No plans available. Create plans first.';
+
+  @override
+  String get alreadyOnHighestPlan => 'Already on the highest plan.';
+
+  @override
+  String get alreadyOnLowestPlan => 'Already on the lowest plan.';
+
+  @override
   String get activeSubscriptions => 'Active Subscriptions';
 
   @override
@@ -13277,4 +13292,161 @@ class AppLocalizationsEn extends AppLocalizations {
   String deviceClockInaccurate(int minutes) {
     return 'Device clock is inaccurate - please adjust the time (offset: $minutes min)';
   }
+
+  @override
+  String get saSignInFailed => 'Sign in failed';
+
+  @override
+  String get saAccessDenied => 'Access denied. Super Admin role required.';
+
+  @override
+  String get saPlatformManagement => 'Alhai POS Platform Management';
+
+  @override
+  String get saSuperAdmin => 'Super Admin';
+
+  @override
+  String get saEnterCredentials => 'Please enter email and password';
+
+  @override
+  String get saSignIn => 'Sign In';
+
+  @override
+  String get saSuperAdminOnly =>
+      'Only users with Super Admin role can access this panel.';
+
+  @override
+  String get saNoSubscriptionsYet => 'No subscriptions yet';
+
+  @override
+  String get saNoRevenueData => 'No revenue data';
+
+  @override
+  String get saNoLogsFound => 'No logs found';
+
+  @override
+  String get saPlatformSummary => 'Platform Summary';
+
+  @override
+  String get saSubscriptionStatus => 'Subscription Status';
+
+  @override
+  String get saExportData => 'Export Data';
+
+  @override
+  String get saExportComingSoon => 'Export coming soon';
+
+  @override
+  String get saStoresReport => 'Stores Report';
+
+  @override
+  String get saUsersReport => 'Users Report';
+
+  @override
+  String get saRevenueReport => 'Revenue Report';
+
+  @override
+  String get saActivityLogs => 'Activity Logs';
+
+  @override
+  String get saWarnings => 'Warnings';
+
+  @override
+  String get saZatcaEInvoicing => 'ZATCA E-invoicing';
+
+  @override
+  String get saEnableEInvoicing =>
+      'Enable electronic invoicing compliance for all stores';
+
+  @override
+  String get saApiEnvironment => 'API Environment';
+
+  @override
+  String get saTaxRateVat => 'Tax Rate (VAT)';
+
+  @override
+  String get saDefaultLanguage => 'Default Language';
+
+  @override
+  String get saDefaultCurrency => 'Default Currency';
+
+  @override
+  String get saTrialPeriodDays => 'Trial Period (Days)';
+
+  @override
+  String get saResourceUsage => 'Resource Usage';
+
+  @override
+  String get saResponseTime => 'Response Time';
+
+  @override
+  String get saDbRoundTrip => 'DB Round-trip';
+
+  @override
+  String get saExcellent => 'Excellent';
+
+  @override
+  String get saGood => 'Good';
+
+  @override
+  String get saSlow => 'Slow';
+
+  @override
+  String get saRoleUpdated => 'Role updated';
+
+  @override
+  String get saNoInvoices => 'No invoices found';
+
+  @override
+  String get saErrorLoading => 'Error loading data';
+
+  @override
+  String get saUpgradePlan => 'Upgrade Plan';
+
+  @override
+  String get saDowngradePlan => 'Downgrade Plan';
+
+  @override
+  String get saEditPlan => 'Edit Plan';
+
+  @override
+  String get saPaymentGateways => 'Payment Gateways';
+
+  @override
+  String get saCreditDebitProcessing => 'Credit/debit card processing';
+
+  @override
+  String get saMultiMethodGateway => 'Multi-method payment gateway';
+
+  @override
+  String get saBuyNowPayLater => 'Buy now, pay later';
+
+  @override
+  String get saInstallmentPayments => 'Installment payments';
+
+  @override
+  String get saActiveStores => 'Active Stores';
+
+  @override
+  String get saActiveSubscriptions => 'Active Subscriptions';
+
+  @override
+  String get saTrialSubscriptions => 'Trial Subscriptions';
+
+  @override
+  String get saNewSignups30d => 'New Signups (30d)';
+
+  @override
+  String get saSubscribers => 'Subscribers';
+
+  @override
+  String get saPercentOfTotal => '% of Total';
+
+  @override
+  String get saDeactivateUserConfirm =>
+      'Are you sure you want to deactivate this user? Their access will be revoked immediately.';
+
+  @override
+  String get saSuspendStoreConfirm =>
+      'Are you sure you want to suspend this store? All user access will be revoked immediately.';
 }

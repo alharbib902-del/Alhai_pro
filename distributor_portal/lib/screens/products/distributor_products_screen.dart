@@ -114,8 +114,7 @@ class _DistributorProductsScreenState
               onPressed: () {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content:
-                        Text(l10n?.distributorComingSoon ?? 'Coming soon'),
+                    content: Text(l10n?.distributorComingSoon ?? 'Coming soon'),
                     backgroundColor: AppColors.info,
                   ),
                 );
@@ -218,8 +217,7 @@ class _DistributorProductsScreenState
               onChanged: _onSearchChanged,
               style: TextStyle(color: AppColors.getTextPrimary(isDark)),
               decoration: InputDecoration(
-                hintText:
-                    l10n?.distributorSearchHint ??
+                hintText: l10n?.distributorSearchHint ??
                     'Search by name or barcode...',
                 hintStyle: TextStyle(color: AppColors.getTextMuted(isDark)),
                 prefixIcon: Icon(Icons.search_rounded,
@@ -260,15 +258,13 @@ class _DistributorProductsScreenState
                   const SizedBox(width: AlhaiSpacing.xs),
               itemBuilder: (_, index) {
                 final cat = allCategories[index];
-                final label = cat.isEmpty
-                    ? (l10n?.distributorAllOrders ?? 'All')
-                    : cat;
+                final label =
+                    cat.isEmpty ? (l10n?.distributorAllOrders ?? 'All') : cat;
                 final isSelected = cat == _selectedCategory;
                 return FilterChip(
                   label: Text(label),
                   selected: isSelected,
-                  onSelected: (_) =>
-                      setState(() => _selectedCategory = cat),
+                  onSelected: (_) => setState(() => _selectedCategory = cat),
                   selectedColor: AppColors.primary.withValues(alpha: 0.12),
                   checkmarkColor: AppColors.primary,
                   labelStyle: TextStyle(
@@ -297,8 +293,8 @@ class _DistributorProductsScreenState
     );
   }
 
-  Widget _buildDataTable(List<DistributorProduct> products, bool isDark,
-      AppLocalizations? l10n) {
+  Widget _buildDataTable(
+      List<DistributorProduct> products, bool isDark, AppLocalizations? l10n) {
     return ListView.builder(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       itemCount: products.length + 1, // +1 for the header
@@ -317,12 +313,10 @@ class _DistributorProductsScreenState
               children: [
                 _tableHeader(l10n?.products ?? 'Product', 4, isDark,
                     sortIndex: 0),
-                _tableHeader(
-                    l10n?.distributorBarcode ?? 'Barcode', 2, isDark),
+                _tableHeader(l10n?.distributorBarcode ?? 'Barcode', 2, isDark),
                 _tableHeader(
                     l10n?.distributorCategory ?? 'Category', 2, isDark),
-                _tableHeader(l10n?.price ?? 'Price', 2, isDark,
-                    sortIndex: 3),
+                _tableHeader(l10n?.price ?? 'Price', 2, isDark, sortIndex: 3),
                 _tableHeader(l10n?.distributorStock ?? 'Stock', 2, isDark,
                     sortIndex: 4),
               ],
@@ -550,7 +544,8 @@ class _DistributorProductsScreenState
                                 horizontal: 6, vertical: 2),
                             decoration: BoxDecoration(
                               color: AppColors.info.withValues(alpha: 0.08),
-                              borderRadius: BorderRadius.circular(AlhaiRadius.xs),
+                              borderRadius:
+                                  BorderRadius.circular(AlhaiRadius.xs),
                             ),
                             child: Text(
                               product.category,
@@ -606,8 +601,8 @@ class _DistributorProductsScreenState
     return Semantics(
       label: 'Stock: $label',
       child: Container(
-        padding:
-            const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 4),
+        padding: const EdgeInsets.symmetric(
+            horizontal: AlhaiSpacing.xs, vertical: 4),
         decoration: BoxDecoration(
           color: color.withValues(alpha: isDark ? 0.2 : 0.1),
           borderRadius: BorderRadius.circular(AlhaiRadius.sm - 2),
@@ -644,7 +639,8 @@ class _DistributorProductsScreenState
           ),
           const SizedBox(height: AlhaiSpacing.xs),
           Text(
-            l10n?.distributorChangeSearch ?? 'Try changing your search criteria',
+            l10n?.distributorChangeSearch ??
+                'Try changing your search criteria',
             style: TextStyle(
               fontSize: 14,
               color: AppColors.getTextMuted(isDark),

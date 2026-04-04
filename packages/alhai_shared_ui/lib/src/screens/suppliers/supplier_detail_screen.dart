@@ -23,7 +23,6 @@ class SupplierDetailScreen extends ConsumerStatefulWidget {
 }
 
 class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
-
   SuppliersTableData? _supplier;
   List<PurchasesTableData> _recentPurchases = [];
   bool _isLoading = true;
@@ -44,10 +43,10 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
     List<PurchasesTableData> purchases = [];
     try {
       // Query purchases for this supplier
-      final allPurchases = await db.purchasesDao.getAllPurchases(supplier?.storeId ?? '');
-      purchases = allPurchases
-          .where((p) => p.supplierId == widget.supplierId)
-          .toList();
+      final allPurchases =
+          await db.purchasesDao.getAllPurchases(supplier?.storeId ?? '');
+      purchases =
+          allPurchases.where((p) => p.supplierId == widget.supplierId).toList();
     } catch (_) {}
     if (mounted) {
       setState(() {
@@ -57,6 +56,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
       });
     }
   }
+
   @override
   Widget build(BuildContext context) {
     final isWideScreen = context.isDesktop;
@@ -66,45 +66,44 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
     final l10n = AppLocalizations.of(context)!;
 
     return Column(
-              children: [
-                // Header
-                AppHeader(
-                  title: l10n.supplierDetailTitle,
-                  subtitle: _supplier?.name ?? '',
-                  onMenuTap: isWideScreen
-                      ? null
-                      : () => Scaffold.of(context).openDrawer(),
-                  onNotificationsTap: () {},
-                  notificationsCount: 3,
-                  userName: 'أحمد',
-                  userRole: l10n.dashboard,
-                ),
+      children: [
+        // Header
+        AppHeader(
+          title: l10n.supplierDetailTitle,
+          subtitle: _supplier?.name ?? '',
+          onMenuTap:
+              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onNotificationsTap: () {},
+          notificationsCount: 3,
+          userName: 'أحمد',
+          userRole: l10n.dashboard,
+        ),
 
-                // Content
-                Expanded(
-                  child: _isLoading
-                      ? const Padding(
-                          padding: EdgeInsets.all(AlhaiSpacing.md),
-                          child: ShimmerList(itemCount: 5, itemHeight: 72),
-                        )
-                      : _supplier == null
-                          ? Center(
-                              child: Text(
-                                l10n.supplierNotFoundMsg,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: colorScheme.onSurfaceVariant,
-                                ),
-                              ),
-                            )
-                          : SingleChildScrollView(
-                              padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-                              child:
-                                  _buildContent(isDark, isMediumScreen, l10n),
-                            ),
-                ),
-              ],
-            );
+        // Content
+        Expanded(
+          child: _isLoading
+              ? const Padding(
+                  padding: EdgeInsets.all(AlhaiSpacing.md),
+                  child: ShimmerList(itemCount: 5, itemHeight: 72),
+                )
+              : _supplier == null
+                  ? Center(
+                      child: Text(
+                        l10n.supplierNotFoundMsg,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    )
+                  : SingleChildScrollView(
+                      padding: EdgeInsets.all(
+                          isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+                      child: _buildContent(isDark, isMediumScreen, l10n),
+                    ),
+        ),
+      ],
+    );
   }
 
   Widget _buildContent(
@@ -343,9 +342,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      isNegative
-                          ? l10n.duePayments
-                          : l10n.balance,
+                      isNegative ? l10n.duePayments : l10n.balance,
                       style: TextStyle(
                         color: colorScheme.onSurfaceVariant,
                         fontSize: 13,
@@ -375,7 +372,8 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
                 label: Text(l10n.registerPayment),
                 style: FilledButton.styleFrom(
                   backgroundColor: AppColors.error,
-                  padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -394,9 +392,8 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
       0.0,
       (sum, p) => sum + p.total,
     );
-    final lastPurchaseDate = _recentPurchases.isNotEmpty
-        ? _recentPurchases.first.createdAt
-        : null;
+    final lastPurchaseDate =
+        _recentPurchases.isNotEmpty ? _recentPurchases.first.createdAt : null;
 
     return Row(
       children: [
@@ -414,9 +411,8 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
           child: _StatCard(
             icon: Icons.calendar_today_outlined,
             label: l10n.lastPurchaseLabel,
-            value: lastPurchaseDate != null
-                ? _formatDate(lastPurchaseDate)
-                : '-',
+            value:
+                lastPurchaseDate != null ? _formatDate(lastPurchaseDate) : '-',
             color: AppColors.primary,
             isDark: isDark,
           ),
@@ -490,8 +486,8 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
         else
           ...List.generate(_recentPurchases.length, (index) {
             final purchase = _recentPurchases[index];
-            final isCompleted = purchase.status == 'received' ||
-                purchase.status == 'completed';
+            final isCompleted =
+                purchase.status == 'received' || purchase.status == 'completed';
             final statusColor =
                 isCompleted ? AppColors.success : AppColors.warning;
 
@@ -585,6 +581,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
       ],
     );
   }
+
   String _formatDate(DateTime date) {
     return '${date.day}/${date.month}/${date.year}';
   }

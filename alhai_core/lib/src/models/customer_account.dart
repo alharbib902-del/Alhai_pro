@@ -11,9 +11,9 @@ class CustomerAccount with _$CustomerAccount {
 
   const factory CustomerAccount({
     required String id,
-    required String customerId,  // global_customers.id
+    required String customerId, // global_customers.id
     required String storeId,
-    @Default(0.0) double balance,  // negative = debt, positive = credit
+    @Default(0.0) double balance, // negative = debt, positive = credit
     @Default(500.0) double creditLimit,
     @Default(true) bool isActive,
     @Default(0) int totalOrders,
@@ -29,8 +29,8 @@ class CustomerAccount with _$CustomerAccount {
 
   /// Calculate available credit
   double get availableCredit {
-    if (balance >= 0) return creditLimit;  // No debt
-    return creditLimit + balance;  // balance is negative
+    if (balance >= 0) return creditLimit; // No debt
+    return creditLimit + balance; // balance is negative
   }
 
   /// Check if customer can order with credit

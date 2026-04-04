@@ -141,7 +141,8 @@ class _SidebarState extends State<Sidebar> with SingleTickerProviderStateMixin {
                 child: ListView(
                   padding: EdgeInsets.symmetric(
                     vertical: AppSpacing.md,
-                    horizontal: widget.isCollapsed ? AppSpacing.xs : AppSpacing.sm,
+                    horizontal:
+                        widget.isCollapsed ? AppSpacing.xs : AppSpacing.sm,
                   ),
                   children: widget.items.map((item) {
                     return _SidebarItemWidget(
@@ -353,7 +354,8 @@ class _SidebarItemWidgetState extends State<_SidebarItemWidget> {
   @override
   Widget build(BuildContext context) {
     final isActive = widget.isSelected;
-    final hasChildren = widget.item.children != null && widget.item.children!.isNotEmpty;
+    final hasChildren =
+        widget.item.children != null && widget.item.children!.isNotEmpty;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: AppSpacing.xs),
@@ -433,7 +435,8 @@ class _SidebarItemWidgetState extends State<_SidebarItemWidget> {
                             ),
                             decoration: BoxDecoration(
                               color: widget.item.badgeColor ?? AppColors.error,
-                              borderRadius: BorderRadius.circular(AppRadius.full),
+                              borderRadius:
+                                  BorderRadius.circular(AppRadius.full),
                             ),
                             child: Text(
                               widget.item.badge!,

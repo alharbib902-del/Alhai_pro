@@ -191,8 +191,7 @@ void main() {
       when(() => mockSalesDao.getSalesByDateRange(any(), any(), any()))
           .thenAnswer((_) async => []);
 
-      final patterns =
-          await service.detectSeasonalPatterns('store-1');
+      final patterns = await service.detectSeasonalPatterns('store-1');
 
       expect(patterns, isNotEmpty);
     });

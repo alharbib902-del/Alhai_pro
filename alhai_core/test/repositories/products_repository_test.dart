@@ -66,7 +66,8 @@ void main() {
             )).thenAnswer((_) async => [testProductResponse]);
 
         // Act
-        final result = await repository.getProducts('store-1', page: 1, limit: 20);
+        final result =
+            await repository.getProducts('store-1', page: 1, limit: 20);
 
         // Assert
         expect(result.items, hasLength(1));
@@ -74,7 +75,8 @@ void main() {
         expect(result.items.first.name, equals('Test Product'));
         expect(result.page, equals(1));
         expect(result.limit, equals(20));
-        verify(() => mockRemote.getProducts('store-1', page: 1, limit: 20)).called(1);
+        verify(() => mockRemote.getProducts('store-1', page: 1, limit: 20))
+            .called(1);
       });
 
       test('throws AppException on network error', () async {
@@ -165,7 +167,8 @@ void main() {
 
       test('returns null when barcode not found', () async {
         // Arrange
-        when(() => mockRemote.getByBarcode(any())).thenAnswer((_) async => null);
+        when(() => mockRemote.getByBarcode(any()))
+            .thenAnswer((_) async => null);
 
         // Act
         final result = await repository.getByBarcode('unknown');
@@ -209,7 +212,9 @@ void main() {
             statusCode: 400,
             data: {
               'message': 'Validation failed',
-              'errors': {'name': ['Name is required']}
+              'errors': {
+                'name': ['Name is required']
+              }
             },
             requestOptions: RequestOptions(path: '/products'),
           ),

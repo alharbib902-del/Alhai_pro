@@ -136,7 +136,8 @@ Future<void> waitMedium() => waitForDuration(const Duration(milliseconds: 200));
 // ============================================================================
 
 /// ينشئ رقم هاتف سعودي صالح
-String saudiPhone([int suffix = 0]) => '+9665${suffix.toString().padLeft(8, '0')}';
+String saudiPhone([int suffix = 0]) =>
+    '+9665${suffix.toString().padLeft(8, '0')}';
 
 /// ينشئ معرف UUID وهمي
 String fakeUuid([int index = 1]) =>

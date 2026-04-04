@@ -37,13 +37,10 @@ class ShiftsDatasource {
 
   /// End the active shift.
   Future<void> endShift(String shiftId) async {
-    await _client
-        .from('driver_shifts')
-        .update({
-          'status': 'ended',
-          'ended_at': DateTime.now().toIso8601String(),
-        })
-        .eq('id', shiftId);
+    await _client.from('driver_shifts').update({
+      'status': 'ended',
+      'ended_at': DateTime.now().toIso8601String(),
+    }).eq('id', shiftId);
 
     // Set driver offline
     await _client.from('driver_locations').upsert({

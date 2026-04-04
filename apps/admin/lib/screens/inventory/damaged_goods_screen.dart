@@ -25,7 +25,12 @@ class _DamagedGoodsScreenState extends ConsumerState<DamagedGoodsScreen> {
   List<(String, String, IconData, Color)> _lossTypes(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return [
-      ('damaged', l10n.damagedDefectiveShort, Icons.broken_image_rounded, Colors.red),
+      (
+        'damaged',
+        l10n.damagedDefectiveShort,
+        Icons.broken_image_rounded,
+        Colors.red
+      ),
       ('expired', l10n.expiredShort, Icons.event_busy_rounded, Colors.orange),
       ('theft', l10n.theftLoss, Icons.security_rounded, Colors.purple),
       ('waste', l10n.wasteBreakage, Icons.delete_rounded, Colors.brown),
@@ -89,15 +94,18 @@ class _DamagedGoodsScreenState extends ConsumerState<DamagedGoodsScreen> {
       ).get();
 
       if (mounted) {
-        final records = result.map((row) => _DamagedRecord(
-          id: row.data['id'] as String,
-          type: row.data['type'] as String,
-          productName: row.data['product_name'] as String? ?? AppLocalizations.of(context).unknownProduct,
-          qty: _toDouble(row.data['qty']).abs(),
-          lossAmount: _toDouble(row.data['loss_amount']),
-          note: row.data['note'] as String? ?? '',
-          date: _parseDate(row.data['created_at']),
-        )).toList();
+        final records = result
+            .map((row) => _DamagedRecord(
+                  id: row.data['id'] as String,
+                  type: row.data['type'] as String,
+                  productName: row.data['product_name'] as String? ??
+                      AppLocalizations.of(context).unknownProduct,
+                  qty: _toDouble(row.data['qty']).abs(),
+                  lossAmount: _toDouble(row.data['loss_amount']),
+                  note: row.data['note'] as String? ?? '',
+                  date: _parseDate(row.data['created_at']),
+                ))
+            .toList();
 
         setState(() {
           _records = records;
@@ -134,122 +142,134 @@ class _DamagedGoodsScreenState extends ConsumerState<DamagedGoodsScreen> {
         builder: (ctx, setDlg) {
           final l10n = AppLocalizations.of(ctx);
           return AlertDialog(
-          title: Text(l10n.recordDamagedGoods),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  decoration: InputDecoration(
-                    labelText: l10n.productNameLabel,
-                    border: const OutlineInputBorder(),
+            title: Text(l10n.recordDamagedGoods),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    decoration: InputDecoration(
+                      labelText: l10n.productNameLabel,
+                      border: const OutlineInputBorder(),
+                    ),
+                    onChanged: (v) => productName = v,
                   ),
-                  onChanged: (v) => productName = v,
-                ),
-                const SizedBox(height: AlhaiSpacing.sm),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        decoration: InputDecoration(
-                          labelText: l10n.quantityLabel,
-                          border: const OutlineInputBorder(),
+                  const SizedBox(height: AlhaiSpacing.sm),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          decoration: InputDecoration(
+                            labelText: l10n.quantityLabel,
+                            border: const OutlineInputBorder(),
+                          ),
+                          keyboardType: TextInputType.number,
+                          onChanged: (v) => qty = double.tryParse(v) ?? 1,
                         ),
-                        keyboardType: TextInputType.number,
-                        onChanged: (v) => qty = double.tryParse(v) ?? 1,
                       ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: TextField(
-                        decoration: InputDecoration(
-                          labelText: l10n.costPerUnit,
-                          border: const OutlineInputBorder(),
-                          suffixText: l10n.sarSuffix,
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: TextField(
+                          decoration: InputDecoration(
+                            labelText: l10n.costPerUnit,
+                            border: const OutlineInputBorder(),
+                            suffixText: l10n.sarSuffix,
+                          ),
+                          keyboardType: TextInputType.number,
+                          onChanged: (_) {},
                         ),
-                        keyboardType: TextInputType.number,
-                        onChanged: (_) {},
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: AlhaiSpacing.sm),
-                Text(l10n.lossType, style: const TextStyle(fontWeight: FontWeight.bold)),
-                const SizedBox(height: AlhaiSpacing.xs),
-                Wrap(
-                  spacing: 6,
-                  children: _lossTypes(ctx).map((t) => ChoiceChip(
-                    label: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(t.$3, size: 14, color: lossType == t.$1 ? Colors.white : t.$4),
-                        const SizedBox(width: AlhaiSpacing.xxs),
-                        Text(t.$2, style: const TextStyle(fontSize: 12)),
-                      ],
-                    ),
-                    selected: lossType == t.$1,
-                    onSelected: (_) => setDlg(() => lossType = t.$1),
-                    selectedColor: t.$4,
-                  )).toList(),
-                ),
-                const SizedBox(height: AlhaiSpacing.sm),
-                TextField(
-                  controller: noteController,
-                  decoration: InputDecoration(
-                    labelText: l10n.notes,
-                    border: const OutlineInputBorder(),
+                    ],
                   ),
-                  maxLines: 2,
-                ),
-              ],
+                  const SizedBox(height: AlhaiSpacing.sm),
+                  Text(l10n.lossType,
+                      style: const TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: AlhaiSpacing.xs),
+                  Wrap(
+                    spacing: 6,
+                    children: _lossTypes(ctx)
+                        .map((t) => ChoiceChip(
+                              label: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(t.$3,
+                                      size: 14,
+                                      color: lossType == t.$1
+                                          ? Colors.white
+                                          : t.$4),
+                                  const SizedBox(width: AlhaiSpacing.xxs),
+                                  Text(t.$2,
+                                      style: const TextStyle(fontSize: 12)),
+                                ],
+                              ),
+                              selected: lossType == t.$1,
+                              onSelected: (_) => setDlg(() => lossType = t.$1),
+                              selectedColor: t.$4,
+                            ))
+                        .toList(),
+                  ),
+                  const SizedBox(height: AlhaiSpacing.sm),
+                  TextField(
+                    controller: noteController,
+                    decoration: InputDecoration(
+                      labelText: l10n.notes,
+                      border: const OutlineInputBorder(),
+                    ),
+                    maxLines: 2,
+                  ),
+                ],
+              ),
             ),
-          ),
-          actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l10n.cancel)),
-            FilledButton(
-              onPressed: () async {
-                if (productName.trim().isEmpty) return;
-                Navigator.pop(ctx);
-                try {
-                  final db = GetIt.I<AppDatabase>();
-                  final storeId = ref.read(currentStoreIdProvider)!;
-                  await db.customStatement(
-                    '''INSERT INTO inventory_movements
+            actions: [
+              TextButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  child: Text(l10n.cancel)),
+              FilledButton(
+                onPressed: () async {
+                  if (productName.trim().isEmpty) return;
+                  Navigator.pop(ctx);
+                  try {
+                    final db = GetIt.I<AppDatabase>();
+                    final storeId = ref.read(currentStoreIdProvider)!;
+                    await db.customStatement(
+                      '''INSERT INTO inventory_movements
                        (id, store_id, product_id, type, qty, note, created_at)
                        VALUES (?, ?, NULL, ?, ?, ?, ?)''',
-                    [
-                      const Uuid().v4(),
-                      storeId,
-                      lossType,
-                      -qty,
-                      '${noteController.text} - $productName',
-                      DateTime.now().toIso8601String(),
-                    ],
-                  );
-                  _loadData();
-                  if (mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(AppLocalizations.of(context).damagedGoodsRecorded),
-                        backgroundColor: AppColors.success,
-                      ),
+                      [
+                        const Uuid().v4(),
+                        storeId,
+                        lossType,
+                        -qty,
+                        '${noteController.text} - $productName',
+                        DateTime.now().toIso8601String(),
+                      ],
                     );
+                    _loadData();
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(AppLocalizations.of(context)
+                              .damagedGoodsRecorded),
+                          backgroundColor: AppColors.success,
+                        ),
+                      );
+                    }
+                  } catch (e) {
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(AppLocalizations.of(context)
+                              .errorPrefix(e.toString(), e)),
+                          backgroundColor: Theme.of(context).colorScheme.error,
+                        ),
+                      );
+                    }
                   }
-                } catch (e) {
-                  if (mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(AppLocalizations.of(context).errorPrefix(e.toString(), e)),
-                        backgroundColor: Theme.of(context).colorScheme.error,
-                      ),
-                    );
-                  }
-                }
-              },
-              child: Text(l10n.recordAction),
-            ),
-          ],
-        );
+                },
+                child: Text(l10n.recordAction),
+              ),
+            ],
+          );
         },
       ),
     );
@@ -275,7 +295,10 @@ class _DamagedGoodsScreenState extends ConsumerState<DamagedGoodsScreen> {
         title: Text(l10n.damagedAndLostGoods),
         actions: [
           PopupMenuButton<String>(
-            onSelected: (v) { setState(() => _period = v); _loadData(); },
+            onSelected: (v) {
+              setState(() => _period = v);
+              _loadData();
+            },
             itemBuilder: (_) => [
               PopupMenuItem(value: 'week', child: Text(l10n.thisWeek)),
               PopupMenuItem(value: 'month', child: Text(l10n.thisMonth)),
@@ -305,7 +328,9 @@ class _DamagedGoodsScreenState extends ConsumerState<DamagedGoodsScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(l10n.totalLosses,
-                              style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.red)),
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.red)),
                           Text(
                             l10n.amountSar(_totalLoss.toStringAsFixed(2)),
                             style: const TextStyle(
@@ -323,7 +348,8 @@ class _DamagedGoodsScreenState extends ConsumerState<DamagedGoodsScreen> {
                           final amount = byType[t.$1] ?? 0;
                           return Expanded(
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 3),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 3),
                               child: Column(
                                 children: [
                                   Icon(t.$3, size: 18, color: t.$4),
@@ -338,7 +364,9 @@ class _DamagedGoodsScreenState extends ConsumerState<DamagedGoodsScreen> {
                                     textAlign: TextAlign.center,
                                   ),
                                   Text(t.$2,
-                                      style: TextStyle(fontSize: 9, color: Theme.of(context).hintColor),
+                                      style: TextStyle(
+                                          fontSize: 9,
+                                          color: Theme.of(context).hintColor),
                                       textAlign: TextAlign.center),
                                 ],
                               ),
@@ -368,11 +396,15 @@ class _DamagedGoodsScreenState extends ConsumerState<DamagedGoodsScreen> {
                               margin: const EdgeInsets.only(bottom: 6),
                               child: ListTile(
                                 leading: CircleAvatar(
-                                  backgroundColor: typeInfo.$2.withValues(alpha: 0.1),
-                                  child: Icon(typeInfo.$1, color: typeInfo.$2, size: 20),
+                                  backgroundColor:
+                                      typeInfo.$2.withValues(alpha: 0.1),
+                                  child: Icon(typeInfo.$1,
+                                      color: typeInfo.$2, size: 20),
                                 ),
                                 title: Text(r.productName,
-                                    style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14)),
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 14)),
                                 subtitle: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -383,11 +415,15 @@ class _DamagedGoodsScreenState extends ConsumerState<DamagedGoodsScreen> {
                                     ),
                                     if (r.note.isNotEmpty)
                                       Text(r.note,
-                                          style: TextStyle(fontSize: 11, color: Theme.of(context).hintColor)),
+                                          style: TextStyle(
+                                              fontSize: 11,
+                                              color:
+                                                  Theme.of(context).hintColor)),
                                   ],
                                 ),
                                 trailing: Text(
-                                  l10n.amountSar(r.lossAmount.toStringAsFixed(0)),
+                                  l10n.amountSar(
+                                      r.lossAmount.toStringAsFixed(0)),
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: typeInfo.$2,

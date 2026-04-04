@@ -36,9 +36,8 @@ class _ConflictResolutionScreenState
       children: [
         AppHeader(
           title: l10n.conflictResolutionTitle,
-          onMenuTap: isWideScreen
-              ? null
-              : () => Scaffold.of(context).openDrawer(),
+          onMenuTap:
+              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 0,
           userName: l10n.defaultUserName,
@@ -64,16 +63,14 @@ class _ConflictResolutionScreenState
                   Text(
                     error.toString(),
                     style: TextStyle(
-                      color:
-                          Theme.of(context).colorScheme.onSurfaceVariant,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                       fontSize: 14,
                     ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: AlhaiSpacing.md),
                   FilledButton.icon(
-                    onPressed: () =>
-                        ref.invalidate(conflictSyncItemsProvider),
+                    onPressed: () => ref.invalidate(conflictSyncItemsProvider),
                     icon: const Icon(Icons.refresh, size: 18),
                     label: Text(l10n.retry),
                   ),
@@ -88,7 +85,8 @@ class _ConflictResolutionScreenState
                     children: [
                       Icon(Icons.check_circle,
                           size: 64,
-                          color: AppColors.success.withValues(alpha: isDark ? 0.5 : 1.0)),
+                          color: AppColors.success
+                              .withValues(alpha: isDark ? 0.5 : 1.0)),
                       const SizedBox(height: AlhaiSpacing.md),
                       Text(
                         l10n.noConflicts,
@@ -136,13 +134,11 @@ class _ConflictResolutionScreenState
                 ? AppColors.error.withValues(alpha: 0.1)
                 : AppColors.errorSurface,
             borderRadius: BorderRadius.circular(12),
-            border:
-                Border.all(color: AppColors.error.withValues(alpha: 0.3)),
+            border: Border.all(color: AppColors.error.withValues(alpha: 0.3)),
           ),
           child: Row(
             children: [
-              const Icon(Icons.warning_amber_rounded,
-                  color: AppColors.error),
+              const Icon(Icons.warning_amber_rounded, color: AppColors.error),
               const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 child: Column(
@@ -291,8 +287,7 @@ class _ConflictResolutionScreenState
               } catch (e) {
                 messenger.showSnackBar(
                   SnackBar(
-                      content: Text('$e'),
-                      backgroundColor: AppColors.error),
+                      content: Text('$e'), backgroundColor: AppColors.error),
                 );
               }
             },
@@ -338,8 +333,7 @@ class _ConflictResolutionScreenState
                 if (!mounted) return;
                 messenger.showSnackBar(
                   SnackBar(
-                      content: Text('$e'),
-                      backgroundColor: AppColors.error),
+                      content: Text('$e'), backgroundColor: AppColors.error),
                 );
               } finally {
                 if (mounted) setState(() => _isResolving = false);
@@ -426,8 +420,8 @@ class _ConflictCard extends StatelessWidget {
               ),
               if (item.retryCount > 0)
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
                   decoration: BoxDecoration(
                     color: AppColors.error.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(6),
@@ -540,9 +534,7 @@ class _ConflictCard extends StatelessWidget {
       });
       return entries.join(', ');
     } catch (_) {
-      return payload.length > 60
-          ? '${payload.substring(0, 60)}...'
-          : payload;
+      return payload.length > 60 ? '${payload.substring(0, 60)}...' : payload;
     }
   }
 }
@@ -594,8 +586,7 @@ class _ConflictOption extends StatelessWidget {
                   ),
                   Text(
                     value,
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, color: color),
+                    style: TextStyle(fontWeight: FontWeight.bold, color: color),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),

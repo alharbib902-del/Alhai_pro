@@ -130,7 +130,8 @@ class _CashierCategoriesScreenState
         setState(() => _isLoadingProducts = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(AppLocalizations.of(context)?.errorOccurred ?? 'حدث خطأ'),
+            content:
+                Text(AppLocalizations.of(context)?.errorOccurred ?? 'حدث خطأ'),
             backgroundColor: AppColors.error,
           ),
         );
@@ -154,9 +155,8 @@ class _CashierCategoriesScreenState
               '${_categories.length} ${l10n.categories} \u2022 ${l10n.mainBranch}',
           showSearch: false,
           searchHint: l10n.searchPlaceholder,
-          onMenuTap: isWideScreen
-              ? null
-              : () => Scaffold.of(context).openDrawer(),
+          onMenuTap:
+              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 3,
           userName: user?.name ?? l10n.cashCustomer,
@@ -167,15 +167,16 @@ class _CashierCategoriesScreenState
           child: _isLoading
               ? const AppLoadingState()
               : _error != null
-                  ? AppErrorState.general(context, message: _error!, onRetry: _loadCategories)
+                  ? AppErrorState.general(context,
+                      message: _error!, onRetry: _loadCategories)
                   : _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
         ),
       ],
     );
   }
 
-  Widget _buildContent(
-      bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n) {
+  Widget _buildContent(bool isWideScreen, bool isMediumScreen, bool isDark,
+      AppLocalizations l10n) {
     if (isWideScreen && _selectedCategory != null) {
       return Row(
         children: [
@@ -205,7 +206,8 @@ class _CashierCategoriesScreenState
       children: [
         // Search bar
         Padding(
-          padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+          padding: EdgeInsets.all(
+              isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
           child: TextField(
             controller: _searchController,
             style: TextStyle(color: AppColors.getTextPrimary(isDark)),
@@ -240,7 +242,8 @@ class _CashierCategoriesScreenState
               ? _buildEmptyState(isDark, l10n)
               : GridView.builder(
                   padding: EdgeInsets.symmetric(
-                      horizontal: isMediumScreen ? 24 : 16, vertical: AlhaiSpacing.xs),
+                      horizontal: isMediumScreen ? 24 : 16,
+                      vertical: AlhaiSpacing.xs),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: isMediumScreen ? 3 : 2,
                     crossAxisSpacing: 12,
@@ -289,8 +292,8 @@ class _CashierCategoriesScreenState
                 borderRadius: BorderRadius.circular(14),
               ),
               alignment: Alignment.center,
-              child: Icon(_getCategoryIcon(category.name),
-                  color: color, size: 24),
+              child:
+                  Icon(_getCategoryIcon(category.name), color: color, size: 24),
             ),
             const SizedBox(height: AlhaiSpacing.sm),
             Text(
@@ -334,20 +337,19 @@ class _CashierCategoriesScreenState
       children: [
         // Back button + category header
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+          padding: const EdgeInsets.symmetric(
+              horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
           decoration: BoxDecoration(
             color: AppColors.getSurface(isDark),
             border: Border(
-              bottom:
-                  BorderSide(color: AppColors.getBorder(isDark), width: 1),
+              bottom: BorderSide(color: AppColors.getBorder(isDark), width: 1),
             ),
           ),
           child: Row(
             children: [
               if (!context.isDesktop)
                 IconButton(
-                  onPressed: () =>
-                      setState(() => _selectedCategory = null),
+                  onPressed: () => setState(() => _selectedCategory = null),
                   icon: Icon(Icons.arrow_back_rounded,
                       color: AppColors.getTextPrimary(isDark)),
                   tooltip: l10n.back,
@@ -357,14 +359,13 @@ class _CashierCategoriesScreenState
                         borderRadius: BorderRadius.circular(12)),
                   ),
                 ),
-              if (!context.isDesktop)
-                const SizedBox(width: AlhaiSpacing.sm),
+              if (!context.isDesktop) const SizedBox(width: AlhaiSpacing.sm),
               Container(
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: _getCategoryColor(category.name)
-                      .withValues(alpha: 0.12),
+                  color:
+                      _getCategoryColor(category.name).withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 alignment: Alignment.center,
@@ -410,8 +411,7 @@ class _CashierCategoriesScreenState
                           Text(l10n.noProducts,
                               style: TextStyle(
                                   fontSize: 14,
-                                  color:
-                                      AppColors.getTextMuted(isDark))),
+                                  color: AppColors.getTextMuted(isDark))),
                         ],
                       ),
                     )
@@ -420,9 +420,8 @@ class _CashierCategoriesScreenState
                       itemCount: _categoryProducts.length,
                       separatorBuilder: (_, __) =>
                           const SizedBox(height: AlhaiSpacing.xs),
-                      itemBuilder: (context, index) =>
-                          _buildProductItem(
-                              _categoryProducts[index], isDark, l10n),
+                      itemBuilder: (context, index) => _buildProductItem(
+                          _categoryProducts[index], isDark, l10n),
                     ),
         ),
       ],
@@ -468,8 +467,7 @@ class _CashierCategoriesScreenState
                   children: [
                     if (product.barcode != null) ...[
                       Icon(Icons.qr_code_rounded,
-                          size: 12,
-                          color: AppColors.getTextMuted(isDark)),
+                          size: 12, color: AppColors.getTextMuted(isDark)),
                       const SizedBox(width: AlhaiSpacing.xxs),
                       Text(product.barcode!,
                           style: TextStyle(
@@ -482,10 +480,9 @@ class _CashierCategoriesScreenState
                       padding: const EdgeInsets.symmetric(
                           horizontal: 6, vertical: AlhaiSpacing.xxxs),
                       decoration: BoxDecoration(
-                        color: (hasLowStock
-                                ? AppColors.error
-                                : AppColors.success)
-                            .withValues(alpha: 0.1),
+                        color:
+                            (hasLowStock ? AppColors.error : AppColors.success)
+                                .withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(999),
                       ),
                       child: Text(
@@ -493,9 +490,8 @@ class _CashierCategoriesScreenState
                         style: TextStyle(
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
-                          color: hasLowStock
-                              ? AppColors.error
-                              : AppColors.success,
+                          color:
+                              hasLowStock ? AppColors.error : AppColors.success,
                         ),
                       ),
                     ),
@@ -524,8 +520,7 @@ class _CashierCategoriesScreenState
         children: [
           Icon(Icons.category_outlined,
               size: 64,
-              color:
-                  AppColors.getTextMuted(isDark).withValues(alpha: 0.4)),
+              color: AppColors.getTextMuted(isDark).withValues(alpha: 0.4)),
           const SizedBox(height: AlhaiSpacing.md),
           Text(l10n.noCategories,
               style: TextStyle(

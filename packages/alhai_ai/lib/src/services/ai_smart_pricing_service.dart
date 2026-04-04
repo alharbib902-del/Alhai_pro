@@ -52,8 +52,9 @@ class PriceSuggestion {
   });
 
   /// نسبة التغيير في السعر
-  double get changePercent =>
-      currentPrice > 0 ? ((suggestedPrice - currentPrice) / currentPrice) * 100 : 0;
+  double get changePercent => currentPrice > 0
+      ? ((suggestedPrice - currentPrice) / currentPrice) * 100
+      : 0;
 
   /// هل يقترح زيادة؟
   bool get isIncrease => suggestedPrice > currentPrice;
@@ -66,10 +67,9 @@ class PriceSuggestion {
       currentPrice > 0 ? ((currentPrice - costPrice) / currentPrice) * 100 : 0;
 
   /// هامش الربح المقترح
-  double get suggestedMargin =>
-      suggestedPrice > 0
-          ? ((suggestedPrice - costPrice) / suggestedPrice) * 100
-          : 0;
+  double get suggestedMargin => suggestedPrice > 0
+      ? ((suggestedPrice - costPrice) / suggestedPrice) * 100
+      : 0;
 }
 
 /// تصنيف مرونة الطلب
@@ -282,8 +282,8 @@ class AiSmartPricingService {
       }
     }
 
-    options.sort(
-        (a, b) => b.safeIncreasePercent.compareTo(a.safeIncreasePercent));
+    options
+        .sort((a, b) => b.safeIncreasePercent.compareTo(a.safeIncreasePercent));
     return options;
   }
 
@@ -347,10 +347,9 @@ class AiSmartPricingService {
     final newVolume = monthlyVolume * (1 + volumeChangePercent / 100);
     final monthlyRevenueDelta =
         (suggestedPrice * newVolume) - (product.price * monthlyVolume);
-    final yearlyProfitDelta =
-        ((suggestedPrice - cost) * newVolume -
-                (product.price - cost) * monthlyVolume) *
-            12;
+    final yearlyProfitDelta = ((suggestedPrice - cost) * newVolume -
+            (product.price - cost) * monthlyVolume) *
+        12;
 
     return PriceSuggestion(
       productId: product.id,

@@ -103,8 +103,10 @@ void main() {
         customerPhone: '0512345678',
         customerAddress: 'Riyadh',
         items: const [
-          OrderItem(productId: 'p1', productName: 'A', quantity: 2, unitPrice: 10.0),
-          OrderItem(productId: 'p2', productName: 'B', quantity: 3, unitPrice: 5.0),
+          OrderItem(
+              productId: 'p1', productName: 'A', quantity: 2, unitPrice: 10.0),
+          OrderItem(
+              productId: 'p2', productName: 'B', quantity: 3, unitPrice: 5.0),
         ],
         subtotal: 35.0,
         deliveryFee: 5.0,
@@ -138,14 +140,13 @@ void main() {
     });
 
     test('isPaid returns false for non-paid status', () {
-      final codOrder = order.copyWith(
-          paymentStatus: PaymentStatus.cashOnDelivery);
+      final codOrder =
+          order.copyWith(paymentStatus: PaymentStatus.cashOnDelivery);
       expect(codOrder.isPaid, isFalse);
     });
 
     test('isCancelled returns true for cancelled status', () {
-      final cancelled =
-          order.copyWith(status: OrderStatus.cancelled);
+      final cancelled = order.copyWith(status: OrderStatus.cancelled);
       expect(cancelled.isCancelled, isTrue);
     });
 
@@ -154,8 +155,7 @@ void main() {
     });
 
     test('isCompleted returns true for delivered status', () {
-      final delivered =
-          order.copyWith(status: OrderStatus.delivered);
+      final delivered = order.copyWith(status: OrderStatus.delivered);
       expect(delivered.isCompleted, isTrue);
     });
 

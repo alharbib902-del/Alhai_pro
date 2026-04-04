@@ -225,8 +225,7 @@ void main() {
 
     test('build with PaperSize.mm58 produces output', () async {
       final receipt = _sampleReceipt();
-      final bytes =
-          await ReceiptBuilder.build(receipt, size: PaperSize.mm58);
+      final bytes = await ReceiptBuilder.build(receipt, size: PaperSize.mm58);
 
       expect(bytes.isNotEmpty, isTrue);
     });
@@ -302,7 +301,8 @@ void main() {
       final text = _bytesToString(bytes);
 
       // Default store address is Arabic
-      expect(text, contains('\u0627\u0644\u0631\u064a\u0627\u0636')); // "الرياض"
+      expect(
+          text, contains('\u0627\u0644\u0631\u064a\u0627\u0636')); // "الرياض"
     });
 
     test('receipt contains Arabic thank-you footer', () async {
@@ -345,10 +345,7 @@ void main() {
       final bytes = await ReceiptBuilder.build(receipt);
       final text = _bytesToString(bytes);
 
-      expect(
-          text,
-          contains(
-              '\u062a\u0641\u0627\u062d')); // "تفاح"
+      expect(text, contains('\u062a\u0641\u0627\u062d')); // "تفاح"
     });
 
     test('payment method translated to Arabic for cash', () async {
@@ -371,8 +368,7 @@ void main() {
       // "بطاقة ائتمان"
       expect(
         text,
-        contains(
-            '\u0628\u0637\u0627\u0642\u0629'),
+        contains('\u0628\u0637\u0627\u0642\u0629'),
       ); // "بطاقة"
     });
 

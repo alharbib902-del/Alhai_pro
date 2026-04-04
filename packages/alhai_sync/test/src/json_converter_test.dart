@@ -44,9 +44,10 @@ void main() {
     group('getJsonbFields', () {
       test('returns correct fields for known tables', () {
         expect(converter.getJsonbFields('roles'), {'permissions'});
-        expect(converter.getJsonbFields('audit_log'), {'old_value', 'new_value'});
         expect(
-            converter.getJsonbFields('discounts'), {'product_ids', 'category_ids'});
+            converter.getJsonbFields('audit_log'), {'old_value', 'new_value'});
+        expect(converter.getJsonbFields('discounts'),
+            {'product_ids', 'category_ids'});
       });
 
       test('returns empty set for unknown tables', () {
@@ -322,8 +323,7 @@ void main() {
         final result = JsonColumnConverter.normalizeJson(input);
         final decoded = jsonDecode(result) as Map<String, dynamic>;
         final outerKeys = decoded.keys.toList();
-        final innerKeys =
-            (decoded['b'] as Map<String, dynamic>).keys.toList();
+        final innerKeys = (decoded['b'] as Map<String, dynamic>).keys.toList();
 
         expect(outerKeys, ['a', 'b']);
         expect(innerKeys, ['a', 'z']);

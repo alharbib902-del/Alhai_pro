@@ -60,7 +60,8 @@ class SimpleBarChart extends StatelessWidget {
           child: Text(
             AppLocalizations.of(context)?.noData ?? 'No data',
             style: TextStyle(
-              color: isDark ? Colors.white.withAlpha(128) : AppColors.textTertiary,
+              color:
+                  isDark ? Colors.white.withAlpha(128) : AppColors.textTertiary,
               fontSize: 14,
             ),
           ),
@@ -78,7 +79,8 @@ class SimpleBarChart extends StatelessWidget {
           final barAreaHeight = height - (showLabels ? 32 : 0);
           final barWidth = (constraints.maxWidth / data.length) * 0.5;
           final gridColor = isDark ? AppColors.borderDark : AppColors.border;
-          final textColor = isDark ? AppColors.textSecondaryDark : AppColors.textSecondary;
+          final textColor =
+              isDark ? AppColors.textSecondaryDark : AppColors.textSecondary;
 
           return Column(
             children: [
@@ -104,9 +106,11 @@ class SimpleBarChart extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: data.map((point) {
-                        final percentage = maxValue > 0 ? point.value / maxValue : 0.0;
+                        final percentage =
+                            maxValue > 0 ? point.value / maxValue : 0.0;
                         return Tooltip(
-                          message: '${point.label}: ${_formatValue(point.value)}',
+                          message:
+                              '${point.label}: ${_formatValue(point.value)}',
                           child: AnimatedContainer(
                             duration: context.prefersReducedMotion
                                 ? Duration.zero
@@ -213,7 +217,8 @@ class _SalesChartCardState extends State<SalesChartCard> {
       padding: EdgeInsets.all(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
+        borderRadius:
+            BorderRadius.circular(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
         border: Border.all(
           color: isDark
               ? Colors.white.withAlpha(13)
@@ -260,7 +265,9 @@ class _SalesChartCardState extends State<SalesChartCard> {
               Container(
                 padding: const EdgeInsets.all(AlhaiSpacing.xxs),
                 decoration: BoxDecoration(
-                  color: isDark ? AppColors.backgroundDark : AppColors.backgroundSecondary,
+                  color: isDark
+                      ? AppColors.backgroundDark
+                      : AppColors.backgroundSecondary,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
@@ -298,9 +305,8 @@ class _SalesChartCardState extends State<SalesChartCard> {
                                     ? Colors.white.withAlpha(102)
                                     : AppColors.textSecondary),
                             fontSize: 12,
-                            fontWeight: isSelected
-                                ? FontWeight.bold
-                                : FontWeight.w500,
+                            fontWeight:
+                                isSelected ? FontWeight.bold : FontWeight.w500,
                           ),
                         ),
                       ),
@@ -428,90 +434,90 @@ class _TopProductRow extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(8),
       child: Container(
-      padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
-      decoration: BoxDecoration(
-        border: isLast
-            ? null
-            : Border(
-                bottom: BorderSide(
-                  color: isDark
-                      ? Colors.white.withAlpha(26)
-                      : AppColors.border,
+        padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
+        decoration: BoxDecoration(
+          border: isLast
+              ? null
+              : Border(
+                  bottom: BorderSide(
+                    color:
+                        isDark ? Colors.white.withAlpha(26) : AppColors.border,
+                  ),
                 ),
+        ),
+        child: Row(
+          children: [
+            // أيقونة المنتج
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: isDark
+                    ? AppColors.backgroundDark
+                    : AppColors.backgroundSecondary,
+                borderRadius: BorderRadius.circular(12),
               ),
-      ),
-      child: Row(
-        children: [
-          // أيقونة المنتج
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: isDark
-                  ? AppColors.backgroundDark
-                  : AppColors.backgroundSecondary,
-              borderRadius: BorderRadius.circular(12),
+              child: product.icon != null
+                  ? Icon(
+                      product.icon,
+                      color: isDark
+                          ? Colors.white.withAlpha(128)
+                          : AppColors.textTertiary,
+                      size: 20,
+                    )
+                  : Icon(
+                      Icons.inventory_2_outlined,
+                      color: isDark
+                          ? Colors.white.withAlpha(128)
+                          : AppColors.textTertiary,
+                      size: 20,
+                    ),
             ),
-            child: product.icon != null
-                ? Icon(
-                    product.icon,
-                    color: isDark
-                        ? Colors.white.withAlpha(128)
-                        : AppColors.textTertiary,
-                    size: 20,
-                  )
-                : Icon(
-                    Icons.inventory_2_outlined,
-                    color: isDark
-                        ? Colors.white.withAlpha(128)
-                        : AppColors.textTertiary,
-                    size: 20,
-                  ),
-          ),
 
-          SizedBox(width: AlhaiSpacing.sm),
+            SizedBox(width: AlhaiSpacing.sm),
 
-          // الاسم والكمية
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  product.name,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
+            // الاسم والكمية
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    product.name,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurface,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                SizedBox(height: AlhaiSpacing.xxxs),
-                Text(
-                  product.quantityLabel ??
-                      '${product.quantity} ${l10n.ordersText}',
-                  style: TextStyle(
-                    color: isDark
-                        ? Colors.white.withAlpha(102)
-                        : AppColors.textTertiary,
-                    fontSize: 11,
+                  SizedBox(height: AlhaiSpacing.xxxs),
+                  Text(
+                    product.quantityLabel ??
+                        '${product.quantity} ${l10n.ordersText}',
+                    style: TextStyle(
+                      color: isDark
+                          ? Colors.white.withAlpha(102)
+                          : AppColors.textTertiary,
+                      fontSize: 11,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
 
-          // الإيرادات
-          Text(
-            CurrencyFormatter.formatCompactWithContext(context, product.revenue),
-            style: const TextStyle(
-              color: AppColors.primary,
-              fontSize: 13,
-              fontWeight: FontWeight.bold,
+            // الإيرادات
+            Text(
+              CurrencyFormatter.formatCompactWithContext(
+                  context, product.revenue),
+              style: const TextStyle(
+                color: AppColors.primary,
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-        ],
-      ),
+          ],
+        ),
       ),
     );
   }

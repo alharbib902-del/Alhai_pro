@@ -17,7 +17,7 @@ class LoyaltyPoints with _$LoyaltyPoints {
     @Default(0) int redeemedThisMonth,
     @Default(0) int expiringPoints,
     DateTime? expiryDate,
-    @Default(0) int currentStreak,  // Days ordering consecutively
+    @Default(0) int currentStreak, // Days ordering consecutively
     @Default(0) int longestStreak,
     DateTime? lastEarnedAt,
     required DateTime createdAt,
@@ -31,13 +31,13 @@ class LoyaltyPoints with _$LoyaltyPoints {
   int get pointsToNextTier {
     switch (tier) {
       case LoyaltyTier.bronze:
-        return 1000 - balance;  // Bronze to Silver
+        return 1000 - balance; // Bronze to Silver
       case LoyaltyTier.silver:
-        return 5000 - balance;  // Silver to Gold
+        return 5000 - balance; // Silver to Gold
       case LoyaltyTier.gold:
         return 10000 - balance; // Gold to Platinum
       case LoyaltyTier.platinum:
-        return 0;  // Max tier
+        return 0; // Max tier
     }
   }
 
@@ -51,7 +51,7 @@ class LoyaltyPoints with _$LoyaltyPoints {
       case LoyaltyTier.gold:
         return LoyaltyTier.platinum;
       case LoyaltyTier.platinum:
-        return null;  // Already max
+        return null; // Already max
     }
   }
 

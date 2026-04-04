@@ -1,5 +1,5 @@
 /// Logging abstraction for Alhai platform
-/// 
+///
 /// This abstraction allows apps to plug in their preferred logging solution
 /// (Firebase Crashlytics, Sentry, etc.) without coupling the core package.
 library;
@@ -15,7 +15,7 @@ enum LogLevel {
 }
 
 /// Abstract logger interface
-/// 
+///
 /// Implement this interface to integrate with your logging backend
 abstract class AppLogger {
   /// Log a debug message
@@ -42,11 +42,12 @@ abstract class AppLogger {
   void clearUser();
 
   /// Add a breadcrumb for navigation/action tracking
-  void addBreadcrumb(String message, {String? category, Map<String, dynamic>? data});
+  void addBreadcrumb(String message,
+      {String? category, Map<String, dynamic>? data});
 }
 
 /// Default console logger implementation
-/// 
+///
 /// Use this for development or as a fallback
 class ConsoleLogger implements AppLogger {
   final String tag;
@@ -97,12 +98,13 @@ class ConsoleLogger implements AppLogger {
   }
 
   @override
-  void addBreadcrumb(String message, {String? category, Map<String, dynamic>? data}) {
+  void addBreadcrumb(String message,
+      {String? category, Map<String, dynamic>? data}) {
     debug('Breadcrumb: [$category] $message${data != null ? ' | $data' : ''}');
   }
 }
 
 /// Global logger instance
-/// 
+///
 /// Set this to your preferred logger implementation in main()
 AppLogger logger = ConsoleLogger();

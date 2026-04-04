@@ -123,8 +123,7 @@ void main() {
       });
 
       test('should accept zero when allowZero is true', () {
-        final result =
-            PriceValidator.validateQuantity('0', allowZero: true);
+        final result = PriceValidator.validateQuantity('0', allowZero: true);
         expect(result.isValid, isTrue);
       });
 
@@ -147,15 +146,13 @@ void main() {
       });
 
       test('should reject quantity above max', () {
-        final result =
-            PriceValidator.validateQuantity('200', maxValue: 100);
+        final result = PriceValidator.validateQuantity('200', maxValue: 100);
         expect(result.isValid, isFalse);
         expect(result.errorCode, 'QUANTITY_TOO_HIGH');
       });
 
       test('should accept quantity at max boundary', () {
-        final result =
-            PriceValidator.validateQuantity('100', maxValue: 100);
+        final result = PriceValidator.validateQuantity('100', maxValue: 100);
         expect(result.isValid, isTrue);
       });
     });
@@ -217,14 +214,12 @@ void main() {
       });
 
       test('should hide currency when showCurrency is false', () {
-        final formatted =
-            PriceValidator.format(100.0, showCurrency: false);
+        final formatted = PriceValidator.format(100.0, showCurrency: false);
         expect(formatted, isNot(contains('ريال')));
       });
 
       test('should use custom currency', () {
-        final formatted =
-            PriceValidator.format(100.0, currency: 'درهم');
+        final formatted = PriceValidator.format(100.0, currency: 'درهم');
         expect(formatted, contains('درهم'));
       });
 
@@ -234,8 +229,7 @@ void main() {
       });
 
       test('should add thousands separator', () {
-        final formatted =
-            PriceValidator.format(1000000.0, showCurrency: false);
+        final formatted = PriceValidator.format(1000000.0, showCurrency: false);
         expect(formatted, '1,000,000.00');
       });
     });

@@ -16,7 +16,10 @@ void main() {
         userName: 'Ahmed',
         userPhone: '+966500000001',
         role: UserRole.employee,
-        permissions: [StorePermissions.manageProducts, StorePermissions.manageOrders],
+        permissions: [
+          StorePermissions.manageProducts,
+          StorePermissions.manageOrders
+        ],
         isActive: true,
         joinedAt: DateTime(2026, 1, 15),
       );

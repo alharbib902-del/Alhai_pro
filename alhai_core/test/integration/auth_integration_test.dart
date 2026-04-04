@@ -12,10 +12,11 @@ import 'package:alhai_core/src/dto/auth/auth_response.dart';
 
 /// Mock classes for integration testing
 class MockAuthRemoteDataSource extends Mock implements AuthRemoteDataSource {}
+
 class MockAuthLocalDataSource extends Mock implements AuthLocalDataSource {}
 
 /// Integration Tests for AuthRepository
-/// 
+///
 /// These tests verify the complete flow from Repository -> DataSource -> API
 void main() {
   late AuthRepository authRepository;
@@ -122,7 +123,8 @@ void main() {
     group('Check Auth Status', () {
       test('should return true when authenticated', () async {
         // Arrange
-        when(() => mockLocal.getTokens()).thenAnswer((_) async => FakeAuthTokensEntity());
+        when(() => mockLocal.getTokens())
+            .thenAnswer((_) async => FakeAuthTokensEntity());
 
         // Act
         final result = await authRepository.isAuthenticated();
@@ -136,20 +138,23 @@ void main() {
 
 /// Fake entity for testing
 class FakeAuthTokensEntity extends AuthTokensEntity {
-  FakeAuthTokensEntity() : super(
-    accessToken: 'test-token',
-    refreshToken: 'test-refresh',
-    expiresAt: DateTime.now().add(const Duration(hours: 1)).toIso8601String(),
-  );
+  FakeAuthTokensEntity()
+      : super(
+          accessToken: 'test-token',
+          refreshToken: 'test-refresh',
+          expiresAt:
+              DateTime.now().add(const Duration(hours: 1)).toIso8601String(),
+        );
 }
 
 /// Fake user entity for testing
 class FakeUserEntity extends UserEntity {
-  FakeUserEntity() : super(
-    id: 'test-user-id',
-    phone: '+966512345678',
-    name: 'Test User',
-    role: 'customer',
-    createdAt: DateTime.now().toIso8601String(),
-  );
+  FakeUserEntity()
+      : super(
+          id: 'test-user-id',
+          phone: '+966512345678',
+          name: 'Test User',
+          role: 'customer',
+          createdAt: DateTime.now().toIso8601String(),
+        );
 }

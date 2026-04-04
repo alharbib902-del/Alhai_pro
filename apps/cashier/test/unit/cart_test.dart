@@ -31,7 +31,8 @@ void main() {
     });
 
     test('effectivePrice returns custom price when set', () {
-      final item = PosCartItem(product: _product(price: 50.0), customPrice: 40.0);
+      final item =
+          PosCartItem(product: _product(price: 50.0), customPrice: 40.0);
       expect(item.effectivePrice, equals(40.0));
     });
 
@@ -89,8 +90,10 @@ void main() {
     group('subtotal & total calculations', () {
       test('subtotal sums all item totals', () {
         final cart = CartState(items: [
-          PosCartItem(product: _product(id: 'a', price: 10.0), quantity: 2), // 20
-          PosCartItem(product: _product(id: 'b', price: 15.0), quantity: 3), // 45
+          PosCartItem(
+              product: _product(id: 'a', price: 10.0), quantity: 2), // 20
+          PosCartItem(
+              product: _product(id: 'b', price: 15.0), quantity: 3), // 45
         ]);
         expect(cart.subtotal, equals(65.0));
       });
@@ -220,7 +223,10 @@ void main() {
         final cart = CartState(
           items: [
             PosCartItem(product: _product(id: 'p1', price: 25.0), quantity: 3),
-            PosCartItem(product: _product(id: 'p2', price: 10.0), quantity: 1, customPrice: 8.0),
+            PosCartItem(
+                product: _product(id: 'p2', price: 10.0),
+                quantity: 1,
+                customPrice: 8.0),
           ],
           discount: 5.0,
           customerId: 'cust-1',

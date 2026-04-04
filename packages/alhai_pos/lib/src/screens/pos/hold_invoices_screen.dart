@@ -14,7 +14,8 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import '../../providers/cart_providers.dart';
 import '../../providers/held_invoices_providers.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' hide ResponsiveBuilder;
+import 'package:alhai_design_system/alhai_design_system.dart'
+    hide ResponsiveBuilder;
 
 /// Hold Invoices Screen
 class HoldInvoicesScreen extends ConsumerWidget {
@@ -66,8 +67,8 @@ class HoldInvoicesScreen extends ConsumerWidget {
           heldInvoicesAsync.maybeWhen(
             data: (invoices) => invoices.isNotEmpty
                 ? TextButton.icon(
-                    onPressed: () =>
-                        _showClearAllDialog(context, ref, l10n, invoices.length),
+                    onPressed: () => _showClearAllDialog(
+                        context, ref, l10n, invoices.length),
                     icon: const Icon(Icons.delete_sweep, size: 20),
                     label: Text(l10n.clearAll),
                     style: TextButton.styleFrom(
@@ -82,26 +83,105 @@ class HoldInvoicesScreen extends ConsumerWidget {
       body: SafeArea(
         top: false,
         child: heldInvoicesAsync.when(
-        // حالة التحميل
-        loading: () => const Center(child: CircularProgressIndicator()),
-        // حالة الخطأ
-        error: (error, _) => AppErrorState.general(
-          context,
-          message: error.toString(),
-          onRetry: () => ref.invalidate(dbHeldInvoicesListProvider),
-        ),
-        // حالة البيانات
-        data: (heldInvoices) => heldInvoices.isEmpty
-            ? AppEmptyState(
-                icon: Icons.pause_circle_outline,
-                title: l10n.noHoldInvoices,
-                description: l10n.holdInvoicesDesc,
-              )
-            : ResponsiveBuilder(
-                builder: (context, deviceType, width) {
-                  if (deviceType.isMobile) {
-                    return ListView.builder(
+          // حالة التحميل
+          loading: () => const Center(child: CircularProgressIndicator()),
+          // حالة الخطأ
+          error: (error, _) => AppErrorState.general(
+            context,
+            message: error.toString(),
+            onRetry: () => ref.invalidate(dbHeldInvoicesListProvider),
+          ),
+          // حالة البيانات
+          data: (heldInvoices) => heldInvoices.isEmpty
+              ? AppEmptyState(
+                  icon: Icons.pause_circle_outline,
+                  title: l10n.noHoldInvoices,
+                  description: l10n.holdInvoicesDesc,
+                )
+              : ResponsiveBuilder(
+                  builder: (context, deviceType, width) {
+                    if (deviceType.isMobile) {
+                      return ListView.builder(
+                        padding: const EdgeInsets.all(AppSizes.md),
+                        itemCount: heldInvoices.length,
+                        itemBuilder: (context, index) {
+                          final invoice = heldInvoices[index];
+                          return Dismissible(
+                            key: ValueKey(invoice.id),
+                            direction: DismissDirection.endToStart,
+                            background: Container(
+                              alignment: AlignmentDirectional.centerEnd,
+                              padding: const EdgeInsetsDirectional.only(
+                                  end: AlhaiSpacing.lg),
+                              margin:
+                                  const EdgeInsets.only(bottom: AppSizes.md),
+                              decoration: BoxDecoration(
+                                color: AppColors.error,
+                                borderRadius:
+                                    BorderRadius.circular(AppSizes.radiusLg),
+                              ),
+                              child: const Icon(Icons.delete_outline,
+                                  color: AppColors.textOnPrimary, size: 28),
+                            ),
+                            confirmDismiss: (_) async {
+                              return await showDialog<bool>(
+                                    context: context,
+                                    builder: (ctx) => AlertDialog(
+                                      title: Text(l10n.deleteInvoiceTitle),
+                                      content:
+                                          Text(l10n.deleteHeldInvoiceConfirm),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(ctx, false),
+                                          child: Text(l10n.cancel),
+                                        ),
+                                        ElevatedButton(
+                                          onPressed: () =>
+                                              Navigator.pop(ctx, true),
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: AppColors.error,
+                                            foregroundColor:
+                                                AppColors.textOnPrimary,
+                                          ),
+                                          child: Text(l10n.delete),
+                                        ),
+                                      ],
+                                    ),
+                                  ) ??
+                                  false;
+                            },
+                            onDismissed: (_) async {
+                              await deleteHeldInvoice(ref, invoice.id);
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(l10n.invoiceDeletedMsg),
+                                    behavior: SnackBarBehavior.floating,
+                                  ),
+                                );
+                              }
+                            },
+                            child: _HoldInvoiceCard(
+                              invoice: invoice,
+                              onResume: () =>
+                                  _resumeInvoice(context, ref, invoice, l10n),
+                              onDelete: () =>
+                                  _deleteInvoice(context, ref, invoice, l10n),
+                            ),
+                          );
+                        },
+                      );
+                    }
+                    // Tablet/Desktop: 2-column grid
+                    return GridView.builder(
                       padding: const EdgeInsets.all(AppSizes.md),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: deviceType.isTablet ? 2 : 3,
+                        crossAxisSpacing: AppSizes.md,
+                        mainAxisSpacing: AppSizes.md,
+                        childAspectRatio: 1.4,
+                      ),
                       itemCount: heldInvoices.length,
                       itemBuilder: (context, index) {
                         final invoice = heldInvoices[index];
@@ -110,36 +190,43 @@ class HoldInvoicesScreen extends ConsumerWidget {
                           direction: DismissDirection.endToStart,
                           background: Container(
                             alignment: AlignmentDirectional.centerEnd,
-                            padding: const EdgeInsetsDirectional.only(end: AlhaiSpacing.lg),
-                            margin: const EdgeInsets.only(bottom: AppSizes.md),
+                            padding: const EdgeInsetsDirectional.only(
+                                end: AlhaiSpacing.lg),
                             decoration: BoxDecoration(
                               color: AppColors.error,
-                              borderRadius: BorderRadius.circular(AppSizes.radiusLg),
+                              borderRadius:
+                                  BorderRadius.circular(AppSizes.radiusLg),
                             ),
-                            child: const Icon(Icons.delete_outline, color: AppColors.textOnPrimary, size: 28),
+                            child: const Icon(Icons.delete_outline,
+                                color: AppColors.textOnPrimary, size: 28),
                           ),
                           confirmDismiss: (_) async {
                             return await showDialog<bool>(
-                              context: context,
-                              builder: (ctx) => AlertDialog(
-                                title: Text(l10n.deleteInvoiceTitle),
-                                content: Text(l10n.deleteHeldInvoiceConfirm),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () => Navigator.pop(ctx, false),
-                                    child: Text(l10n.cancel),
+                                  context: context,
+                                  builder: (ctx) => AlertDialog(
+                                    title: Text(l10n.deleteInvoiceTitle),
+                                    content:
+                                        Text(l10n.deleteHeldInvoiceConfirm),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.pop(ctx, false),
+                                        child: Text(l10n.cancel),
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () =>
+                                            Navigator.pop(ctx, true),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: AppColors.error,
+                                          foregroundColor:
+                                              AppColors.textOnPrimary,
+                                        ),
+                                        child: Text(l10n.delete),
+                                      ),
+                                    ],
                                   ),
-                                  ElevatedButton(
-                                    onPressed: () => Navigator.pop(ctx, true),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: AppColors.error,
-                                      foregroundColor: AppColors.textOnPrimary,
-                                    ),
-                                    child: Text(l10n.delete),
-                                  ),
-                                ],
-                              ),
-                            ) ?? false;
+                                ) ??
+                                false;
                           },
                           onDismissed: (_) async {
                             await deleteHeldInvoice(ref, invoice.id);
@@ -162,84 +249,15 @@ class HoldInvoicesScreen extends ConsumerWidget {
                         );
                       },
                     );
-                  }
-                  // Tablet/Desktop: 2-column grid
-                  return GridView.builder(
-                    padding: const EdgeInsets.all(AppSizes.md),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: deviceType.isTablet ? 2 : 3,
-                      crossAxisSpacing: AppSizes.md,
-                      mainAxisSpacing: AppSizes.md,
-                      childAspectRatio: 1.4,
-                    ),
-                    itemCount: heldInvoices.length,
-                    itemBuilder: (context, index) {
-                      final invoice = heldInvoices[index];
-                      return Dismissible(
-                        key: ValueKey(invoice.id),
-                        direction: DismissDirection.endToStart,
-                        background: Container(
-                          alignment: AlignmentDirectional.centerEnd,
-                          padding: const EdgeInsetsDirectional.only(end: AlhaiSpacing.lg),
-                          decoration: BoxDecoration(
-                            color: AppColors.error,
-                            borderRadius: BorderRadius.circular(AppSizes.radiusLg),
-                          ),
-                          child: const Icon(Icons.delete_outline, color: AppColors.textOnPrimary, size: 28),
-                        ),
-                        confirmDismiss: (_) async {
-                          return await showDialog<bool>(
-                            context: context,
-                            builder: (ctx) => AlertDialog(
-                              title: Text(l10n.deleteInvoiceTitle),
-                              content: Text(l10n.deleteHeldInvoiceConfirm),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.pop(ctx, false),
-                                  child: Text(l10n.cancel),
-                                ),
-                                ElevatedButton(
-                                  onPressed: () => Navigator.pop(ctx, true),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: AppColors.error,
-                                    foregroundColor: AppColors.textOnPrimary,
-                                  ),
-                                  child: Text(l10n.delete),
-                                ),
-                              ],
-                            ),
-                          ) ?? false;
-                        },
-                        onDismissed: (_) async {
-                          await deleteHeldInvoice(ref, invoice.id);
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(l10n.invoiceDeletedMsg),
-                                behavior: SnackBarBehavior.floating,
-                              ),
-                            );
-                          }
-                        },
-                        child: _HoldInvoiceCard(
-                          invoice: invoice,
-                          onResume: () =>
-                              _resumeInvoice(context, ref, invoice, l10n),
-                          onDelete: () =>
-                              _deleteInvoice(context, ref, invoice, l10n),
-                        ),
-                      );
-                    },
-                  );
-                },
-              ),
-      ),
+                  },
+                ),
+        ),
       ),
     );
   }
 
-  void _resumeInvoice(BuildContext context, WidgetRef ref,
-      HeldInvoice invoice, AppLocalizations l10n) async {
+  void _resumeInvoice(BuildContext context, WidgetRef ref, HeldInvoice invoice,
+      AppLocalizations l10n) async {
     HapticFeedback.mediumImpact();
 
     // استعادة الفاتورة من قاعدة البيانات إلى السلة
@@ -264,8 +282,8 @@ class HoldInvoicesScreen extends ConsumerWidget {
     Navigator.pop(context, true); // true = تم استعادة الفاتورة
   }
 
-  void _deleteInvoice(BuildContext context, WidgetRef ref,
-      HeldInvoice invoice, AppLocalizations l10n) {
+  void _deleteInvoice(BuildContext context, WidgetRef ref, HeldInvoice invoice,
+      AppLocalizations l10n) {
     showDialog(
       context: context,
       builder: (dialogCtx) => AlertDialog(
@@ -451,8 +469,9 @@ class _HoldInvoiceCard extends StatelessWidget {
                             width: 6,
                             height: 6,
                             decoration: BoxDecoration(
-                              color:
-                                  isDark ? AppColors.grey600 : AppColors.grey400,
+                              color: isDark
+                                  ? AppColors.grey600
+                                  : AppColors.grey400,
                               shape: BoxShape.circle,
                             ),
                           ),

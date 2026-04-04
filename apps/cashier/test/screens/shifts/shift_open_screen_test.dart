@@ -49,8 +49,7 @@ void main() {
       expect(find.byIcon(Icons.calculate_rounded), findsOneWidget);
     });
 
-    testWidgets('has quick amount chips (100, 200, 500, 1000)',
-        (tester) async {
+    testWidgets('has quick amount chips (100, 200, 500, 1000)', (tester) async {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
 

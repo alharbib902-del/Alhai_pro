@@ -16,23 +16,35 @@ import 'package:alhai_design_system/alhai_design_system.dart';
 class PosKeyboardShortcuts {
   /// خريطة المفاتيح الرقمية (numpad + digit) → القيمة
   static final _numberKeys = <LogicalKeyboardKey, int>{
-    LogicalKeyboardKey.numpad1: 1, LogicalKeyboardKey.digit1: 1,
-    LogicalKeyboardKey.numpad2: 2, LogicalKeyboardKey.digit2: 2,
-    LogicalKeyboardKey.numpad3: 3, LogicalKeyboardKey.digit3: 3,
-    LogicalKeyboardKey.numpad4: 4, LogicalKeyboardKey.digit4: 4,
-    LogicalKeyboardKey.numpad5: 5, LogicalKeyboardKey.digit5: 5,
-    LogicalKeyboardKey.numpad6: 6, LogicalKeyboardKey.digit6: 6,
-    LogicalKeyboardKey.numpad7: 7, LogicalKeyboardKey.digit7: 7,
-    LogicalKeyboardKey.numpad8: 8, LogicalKeyboardKey.digit8: 8,
-    LogicalKeyboardKey.numpad9: 9, LogicalKeyboardKey.digit9: 9,
+    LogicalKeyboardKey.numpad1: 1,
+    LogicalKeyboardKey.digit1: 1,
+    LogicalKeyboardKey.numpad2: 2,
+    LogicalKeyboardKey.digit2: 2,
+    LogicalKeyboardKey.numpad3: 3,
+    LogicalKeyboardKey.digit3: 3,
+    LogicalKeyboardKey.numpad4: 4,
+    LogicalKeyboardKey.digit4: 4,
+    LogicalKeyboardKey.numpad5: 5,
+    LogicalKeyboardKey.digit5: 5,
+    LogicalKeyboardKey.numpad6: 6,
+    LogicalKeyboardKey.digit6: 6,
+    LogicalKeyboardKey.numpad7: 7,
+    LogicalKeyboardKey.digit7: 7,
+    LogicalKeyboardKey.numpad8: 8,
+    LogicalKeyboardKey.digit8: 8,
+    LogicalKeyboardKey.numpad9: 9,
+    LogicalKeyboardKey.digit9: 9,
   };
 
   /// مفاتيح زيادة/نقصان الكمية
   static final _increaseKeys = {
-    LogicalKeyboardKey.add, LogicalKeyboardKey.equal, LogicalKeyboardKey.numpadAdd,
+    LogicalKeyboardKey.add,
+    LogicalKeyboardKey.equal,
+    LogicalKeyboardKey.numpadAdd,
   };
   static final _decreaseKeys = {
-    LogicalKeyboardKey.minus, LogicalKeyboardKey.numpadSubtract,
+    LogicalKeyboardKey.minus,
+    LogicalKeyboardKey.numpadSubtract,
   };
 
   /// معالج الاختصارات

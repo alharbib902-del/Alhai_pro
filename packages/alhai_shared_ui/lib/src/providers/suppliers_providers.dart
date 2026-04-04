@@ -157,9 +157,9 @@ Future<void> deleteSupplier(WidgetRef ref, String id) async {
   // إضافة عملية الحذف لطابور المزامنة
   try {
     await ref.read(syncServiceProvider).enqueueDelete(
-      tableName: 'suppliers',
-      recordId: id,
-    );
+          tableName: 'suppliers',
+          recordId: id,
+        );
   } catch (e) {
     debugPrint('فشل إضافة حذف المورد لطابور المزامنة: $e');
   }

@@ -24,10 +24,8 @@ import '../../screens/analytics/sa_revenue_analytics_screen.dart'
     deferred as revenue;
 import '../../screens/analytics/sa_usage_analytics_screen.dart'
     deferred as usage;
-import '../../screens/subscriptions/sa_billing_screen.dart'
-    deferred as billing;
-import '../../screens/settings/sa_system_health_screen.dart'
-    deferred as health;
+import '../../screens/subscriptions/sa_billing_screen.dart' deferred as billing;
+import '../../screens/settings/sa_system_health_screen.dart' deferred as health;
 
 /// Route paths
 class SuperAdminRoutes {
@@ -172,7 +170,7 @@ final List<RouteBase> _routes = [
         path: SuperAdminRoutes.billing,
         builder: (c, s) => DeferredWidget(
           libraryLoader: billing.loadLibrary,
-          builder: () => const billing.SABillingScreen(),
+          builder: () => billing.SABillingScreen(),
         ),
       ),
       GoRoute(
@@ -197,14 +195,14 @@ final List<RouteBase> _routes = [
         path: SuperAdminRoutes.revenueAnalytics,
         builder: (c, s) => DeferredWidget(
           libraryLoader: revenue.loadLibrary,
-          builder: () => const revenue.SARevenueAnalyticsScreen(),
+          builder: () => revenue.SARevenueAnalyticsScreen(),
         ),
       ),
       GoRoute(
         path: SuperAdminRoutes.usageAnalytics,
         builder: (c, s) => DeferredWidget(
           libraryLoader: usage.loadLibrary,
-          builder: () => const usage.SAUsageAnalyticsScreen(),
+          builder: () => usage.SAUsageAnalyticsScreen(),
         ),
       ),
 
@@ -217,7 +215,7 @@ final List<RouteBase> _routes = [
         path: SuperAdminRoutes.systemHealth,
         builder: (c, s) => DeferredWidget(
           libraryLoader: health.loadLibrary,
-          builder: () => const health.SASystemHealthScreen(),
+          builder: () => health.SASystemHealthScreen(),
         ),
       ),
 
@@ -329,7 +327,8 @@ class _Placeholder extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final amberColor = isDark ? const Color(0xFFFBBF24) : const Color(0xFFD97706);
+    final amberColor =
+        isDark ? const Color(0xFFFBBF24) : const Color(0xFFD97706);
 
     return Scaffold(
       appBar: AppBar(title: Text(title)),

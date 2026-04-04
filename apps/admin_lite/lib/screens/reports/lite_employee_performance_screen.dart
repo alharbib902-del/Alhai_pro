@@ -33,21 +33,29 @@ class LiteEmployeePerformanceScreen extends ConsumerWidget {
         data: (employees) {
           if (employees.isEmpty) {
             return Center(
-              child: Text(l10n.noResults, style: TextStyle(color: isDark ? Colors.white54 : Theme.of(context).colorScheme.onSurfaceVariant)),
+              child: Text(l10n.noResults,
+                  style: TextStyle(
+                      color: isDark
+                          ? Colors.white54
+                          : Theme.of(context).colorScheme.onSurfaceVariant)),
             );
           }
           final activeCount = employees.length;
           return SingleChildScrollView(
-            padding: EdgeInsets.all(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
+            padding:
+                EdgeInsets.all(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildOverviewCards(context, isDark, isMobile, l10n, employees.length, activeCount),
+                _buildOverviewCards(context, isDark, isMobile, l10n,
+                    employees.length, activeCount),
                 const SizedBox(height: AlhaiSpacing.lg),
-                _buildSectionTitle(l10n.performanceOverview, Icons.leaderboard, isDark),
+                _buildSectionTitle(
+                    l10n.performanceOverview, Icons.leaderboard, isDark),
                 const SizedBox(height: AlhaiSpacing.sm),
                 ...employees.asMap().entries.map((entry) {
-                  return _buildEmployeeTile(context, entry.value, entry.key, isDark);
+                  return _buildEmployeeTile(
+                      context, entry.value, entry.key, isDark);
                 }),
                 const SizedBox(height: AlhaiSpacing.lg),
               ],
@@ -61,7 +69,8 @@ class LiteEmployeePerformanceScreen extends ConsumerWidget {
             children: [
               Text(l10n.errorOccurred),
               TextButton.icon(
-                onPressed: () => ref.invalidate(liteEmployeePerformanceProvider),
+                onPressed: () =>
+                    ref.invalidate(liteEmployeePerformanceProvider),
                 icon: const Icon(Icons.refresh_rounded),
                 label: Text(l10n.tryAgain),
               ),
@@ -72,10 +81,13 @@ class LiteEmployeePerformanceScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildOverviewCards(BuildContext context, bool isDark, bool isMobile, AppLocalizations l10n, int total, int active) {
+  Widget _buildOverviewCards(BuildContext context, bool isDark, bool isMobile,
+      AppLocalizations l10n, int total, int active) {
     final items = [
-      _OverviewItem(l10n.employees, '$total', Icons.people, AlhaiColors.primary),
-      _OverviewItem(l10n.active, '$active', Icons.check_circle, AlhaiColors.success),
+      _OverviewItem(
+          l10n.employees, '$total', Icons.people, AlhaiColors.primary),
+      _OverviewItem(
+          l10n.active, '$active', Icons.check_circle, AlhaiColors.success),
     ];
 
     return Row(
@@ -88,10 +100,14 @@ class LiteEmployeePerformanceScreen extends ConsumerWidget {
             child: Container(
               padding: const EdgeInsets.all(AlhaiSpacing.md),
               decoration: BoxDecoration(
-                color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.white,
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.06)
+                    : Colors.white,
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
-                  color: isDark ? Colors.white12 : Theme.of(context).colorScheme.outlineVariant,
+                  color: isDark
+                      ? Colors.white12
+                      : Theme.of(context).colorScheme.outlineVariant,
                 ),
               ),
               child: Column(
@@ -112,7 +128,9 @@ class LiteEmployeePerformanceScreen extends ConsumerWidget {
                     entry.value.label,
                     style: TextStyle(
                       fontSize: 12,
-                      color: isDark ? Colors.white54 : Theme.of(context).colorScheme.onSurfaceVariant,
+                      color: isDark
+                          ? Colors.white54
+                          : Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -143,7 +161,8 @@ class LiteEmployeePerformanceScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildEmployeeTile(BuildContext context, EmployeePerformanceData emp, int index, bool isDark) {
+  Widget _buildEmployeeTile(BuildContext context, EmployeePerformanceData emp,
+      int index, bool isDark) {
     final rank = index + 1;
     final rankColor = rank <= 3 ? AlhaiColors.warning : Colors.transparent;
 
@@ -154,7 +173,9 @@ class LiteEmployeePerformanceScreen extends ConsumerWidget {
         color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color: isDark ? Colors.white12 : Theme.of(context).colorScheme.outlineVariant,
+          color: isDark
+              ? Colors.white12
+              : Theme.of(context).colorScheme.outlineVariant,
         ),
       ),
       child: Row(
@@ -209,7 +230,9 @@ class LiteEmployeePerformanceScreen extends ConsumerWidget {
                   emp.role,
                   style: TextStyle(
                     fontSize: 12,
-                    color: isDark ? Colors.white38 : Theme.of(context).colorScheme.onSurfaceVariant,
+                    color: isDark
+                        ? Colors.white38
+                        : Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
               ],

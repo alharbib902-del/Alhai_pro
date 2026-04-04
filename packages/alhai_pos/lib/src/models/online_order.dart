@@ -1,24 +1,24 @@
 // نموذج الطلب الأونلاين
-// 
+//
 // يمثل طلب من تطبيق العميل مع جميع التفاصيل
 
 /// حالة الطلب
 enum OrderStatus {
   /// طلب جديد بانتظار القبول
   pending,
-  
+
   /// تم قبول الطلب
   accepted,
-  
+
   /// جاري التجهيز
   preparing,
-  
+
   /// في الطريق للتوصيل
   outForDelivery,
-  
+
   /// تم التسليم
   delivered,
-  
+
   /// ملغي
   cancelled,
 }
@@ -27,10 +27,10 @@ enum OrderStatus {
 enum PaymentStatus {
   /// مدفوع مسبقاً
   paid,
-  
+
   /// الدفع عند الاستلام
   cashOnDelivery,
-  
+
   /// فشل الدفع
   failed,
 }
@@ -77,13 +77,13 @@ class OrderItem {
 
   /// تحويل لـ JSON
   Map<String, dynamic> toJson() => {
-    'productId': productId,
-    'productName': productName,
-    'quantity': quantity,
-    'unitPrice': unitPrice,
-    'discount': discount,
-    'notes': notes,
-  };
+        'productId': productId,
+        'productName': productName,
+        'quantity': quantity,
+        'unitPrice': unitPrice,
+        'discount': discount,
+        'notes': notes,
+      };
 
   /// إنشاء من JSON
   factory OrderItem.fromJson(Map<String, dynamic> json) {
@@ -92,7 +92,9 @@ class OrderItem {
       productName: json['productName'] as String,
       quantity: json['quantity'] as int,
       unitPrice: (json['unitPrice'] as num).toDouble(),
-      discount: json['discount'] != null ? (json['discount'] as num).toDouble() : null,
+      discount: json['discount'] != null
+          ? (json['discount'] as num).toDouble()
+          : null,
       notes: json['notes'] as String?,
     );
   }
@@ -165,7 +167,8 @@ class OnlineOrder {
   bool get isCompleted => status == OrderStatus.delivered;
 
   /// هل يحتاج إجراء
-  bool get needsAction => status == OrderStatus.pending || status == OrderStatus.accepted;
+  bool get needsAction =>
+      status == OrderStatus.pending || status == OrderStatus.accepted;
 
   /// نسخ مع تعديل
   OnlineOrder copyWith({
@@ -218,28 +221,28 @@ class OnlineOrder {
 
   /// تحويل لـ JSON
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'storeId': storeId,
-    'customerId': customerId,
-    'customerName': customerName,
-    'customerPhone': customerPhone,
-    'customerAddress': customerAddress,
-    'items': items.map((e) => e.toJson()).toList(),
-    'subtotal': subtotal,
-    'deliveryFee': deliveryFee,
-    'discount': discount,
-    'total': total,
-    'status': status.name,
-    'paymentStatus': paymentStatus.name,
-    'createdAt': createdAt.toIso8601String(),
-    'acceptedAt': acceptedAt?.toIso8601String(),
-    'preparedAt': preparedAt?.toIso8601String(),
-    'deliveredAt': deliveredAt?.toIso8601String(),
-    'driverId': driverId,
-    'driverName': driverName,
-    'notes': notes,
-    'cancellationReason': cancellationReason,
-  };
+        'id': id,
+        'storeId': storeId,
+        'customerId': customerId,
+        'customerName': customerName,
+        'customerPhone': customerPhone,
+        'customerAddress': customerAddress,
+        'items': items.map((e) => e.toJson()).toList(),
+        'subtotal': subtotal,
+        'deliveryFee': deliveryFee,
+        'discount': discount,
+        'total': total,
+        'status': status.name,
+        'paymentStatus': paymentStatus.name,
+        'createdAt': createdAt.toIso8601String(),
+        'acceptedAt': acceptedAt?.toIso8601String(),
+        'preparedAt': preparedAt?.toIso8601String(),
+        'deliveredAt': deliveredAt?.toIso8601String(),
+        'driverId': driverId,
+        'driverName': driverName,
+        'notes': notes,
+        'cancellationReason': cancellationReason,
+      };
 
   /// إنشاء من JSON
   factory OnlineOrder.fromJson(Map<String, dynamic> json) {
@@ -263,10 +266,17 @@ class OnlineOrder {
         (e) => e.name == json['paymentStatus'],
         orElse: () => PaymentStatus.cashOnDelivery,
       ),
-      createdAt: DateTime.tryParse(json['createdAt'] as String) ?? DateTime.now(),
-      acceptedAt: json['acceptedAt'] != null ? DateTime.tryParse(json['acceptedAt'] as String) : null,
-      preparedAt: json['preparedAt'] != null ? DateTime.tryParse(json['preparedAt'] as String) : null,
-      deliveredAt: json['deliveredAt'] != null ? DateTime.tryParse(json['deliveredAt'] as String) : null,
+      createdAt:
+          DateTime.tryParse(json['createdAt'] as String) ?? DateTime.now(),
+      acceptedAt: json['acceptedAt'] != null
+          ? DateTime.tryParse(json['acceptedAt'] as String)
+          : null,
+      preparedAt: json['preparedAt'] != null
+          ? DateTime.tryParse(json['preparedAt'] as String)
+          : null,
+      deliveredAt: json['deliveredAt'] != null
+          ? DateTime.tryParse(json['deliveredAt'] as String)
+          : null,
       driverId: json['driverId'] as String?,
       driverName: json['driverName'] as String?,
       notes: json['notes'] as String?,

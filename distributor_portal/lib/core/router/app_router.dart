@@ -8,8 +8,10 @@ import '../../screens/dashboard/distributor_dashboard_screen.dart';
 import '../../screens/orders/distributor_orders_screen.dart';
 import '../../screens/orders/distributor_order_detail_screen.dart';
 import '../../screens/products/distributor_products_screen.dart';
-import '../../screens/pricing/distributor_pricing_screen.dart' deferred as pricing;
-import '../../screens/reports/distributor_reports_screen.dart' deferred as reports;
+import '../../screens/pricing/distributor_pricing_screen.dart'
+    deferred as pricing;
+import '../../screens/reports/distributor_reports_screen.dart'
+    deferred as reports;
 import '../../screens/settings/distributor_settings_screen.dart';
 import '../supabase/supabase_client.dart';
 

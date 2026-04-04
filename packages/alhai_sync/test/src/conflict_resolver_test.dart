@@ -38,7 +38,12 @@ void main() {
 
     group('getStrategy', () {
       test('returns localWins for POS-originated sales data', () {
-        for (final table in ['sales', 'sale_items', 'shifts', 'cash_movements']) {
+        for (final table in [
+          'sales',
+          'sale_items',
+          'shifts',
+          'cash_movements'
+        ]) {
           expect(
             resolver.getStrategy(table, ConflictType.versionConflict),
             ResolutionStrategy.localWins,
@@ -475,8 +480,7 @@ void main() {
       );
 
       final json = original.toJsonString();
-      final restored =
-          SyncConflict.fromJsonString(json, syncQueueId: 'sq-1');
+      final restored = SyncConflict.fromJsonString(json, syncQueueId: 'sq-1');
 
       expect(restored, isNotNull);
       expect(restored!.tableName, 'customers');
@@ -498,8 +502,7 @@ void main() {
         'operation': 'UPDATE',
         'table': 'products',
       });
-      final result =
-          SyncConflict.fromJsonString(json, syncQueueId: 'sq-1');
+      final result = SyncConflict.fromJsonString(json, syncQueueId: 'sq-1');
       expect(result, isNull);
     });
 
@@ -510,8 +513,7 @@ void main() {
         'table': 'products',
         'record_id': 'prod-1',
       });
-      final result =
-          SyncConflict.fromJsonString(json, syncQueueId: 'sq-1');
+      final result = SyncConflict.fromJsonString(json, syncQueueId: 'sq-1');
 
       expect(result, isNotNull);
       expect(result!.type, ConflictType.versionConflict);

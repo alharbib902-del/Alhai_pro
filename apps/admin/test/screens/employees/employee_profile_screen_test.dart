@@ -33,8 +33,8 @@ void main() {
       when(() => mockUsersDao.getUserById(any()))
           .thenAnswer((_) => completer.future);
 
-      await tester.pumpWidget(createTestWidget(
-          const EmployeeProfileScreen(userId: 'user-1')));
+      await tester.pumpWidget(
+          createTestWidget(const EmployeeProfileScreen(userId: 'user-1')));
       await tester.pump();
 
       expect(find.byType(CircularProgressIndicator), findsWidgets);
@@ -44,8 +44,8 @@ void main() {
       when(() => mockUsersDao.getUserById('user-1'))
           .thenAnswer((_) async => null);
 
-      await tester.pumpWidget(createTestWidget(
-          const EmployeeProfileScreen(userId: 'user-1')));
+      await tester.pumpWidget(
+          createTestWidget(const EmployeeProfileScreen(userId: 'user-1')));
       await tester.pumpAndSettle();
 
       // Screen should handle null user
@@ -65,8 +65,8 @@ void main() {
       when(() => mockUsersDao.getUserById('user-1'))
           .thenAnswer((_) async => user);
 
-      await tester.pumpWidget(createTestWidget(
-          const EmployeeProfileScreen(userId: 'user-1')));
+      await tester.pumpWidget(
+          createTestWidget(const EmployeeProfileScreen(userId: 'user-1')));
       await tester.pumpAndSettle();
 
       expect(find.text('أحمد محمد'), findsWidgets);
@@ -85,8 +85,8 @@ void main() {
       when(() => mockUsersDao.getUserById('user-1'))
           .thenAnswer((_) async => user);
 
-      await tester.pumpWidget(createTestWidget(
-          const EmployeeProfileScreen(userId: 'user-1')));
+      await tester.pumpWidget(
+          createTestWidget(const EmployeeProfileScreen(userId: 'user-1')));
       await tester.pumpAndSettle();
 
       expect(find.byType(TabBar), findsOneWidget);
@@ -97,8 +97,8 @@ void main() {
       when(() => mockUsersDao.getUserById('user-1'))
           .thenThrow(Exception('DB error'));
 
-      await tester.pumpWidget(createTestWidget(
-          const EmployeeProfileScreen(userId: 'user-1')));
+      await tester.pumpWidget(
+          createTestWidget(const EmployeeProfileScreen(userId: 'user-1')));
       await tester.pumpAndSettle();
 
       expect(find.byType(EmployeeProfileScreen), findsOneWidget);

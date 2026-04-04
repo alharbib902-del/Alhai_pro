@@ -22,8 +22,7 @@ class CustomReportScreen extends ConsumerStatefulWidget {
   const CustomReportScreen({super.key});
 
   @override
-  ConsumerState<CustomReportScreen> createState() =>
-      _CustomReportScreenState();
+  ConsumerState<CustomReportScreen> createState() => _CustomReportScreenState();
 }
 
 class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
@@ -104,7 +103,8 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(AppLocalizations.of(context)?.errorOccurred ?? 'حدث خطأ'),
+            content:
+                Text(AppLocalizations.of(context)?.errorOccurred ?? 'حدث خطأ'),
             backgroundColor: AppColors.error,
           ),
         );
@@ -117,15 +117,16 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
     final sales = await _db.salesDao.getAllSales(storeId);
     final filtered = sales.where((o) {
       return o.createdAt.isAfter(_dateRange!.start) &&
-          o.createdAt
-              .isBefore(_dateRange!.end.add(const Duration(days: 1)));
+          o.createdAt.isBefore(_dateRange!.end.add(const Duration(days: 1)));
     }).toList();
 
-    return _groupResults(filtered.map((o) => _GroupItem(
-      date: o.createdAt,
-      value: o.total,
-      count: 1,
-    )).toList());
+    return _groupResults(filtered
+        .map((o) => _GroupItem(
+              date: o.createdAt,
+              value: o.total,
+              count: 1,
+            ))
+        .toList());
   }
 
   Future<List<Map<String, dynamic>>> _generateInventoryReport(
@@ -152,11 +153,13 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
         );
       }
     }
-    return grouped.entries.map((e) => {
-      'label': e.key,
-      'value': e.value.value,
-      'count': e.value.count,
-    }).toList();
+    return grouped.entries
+        .map((e) => {
+              'label': e.key,
+              'value': e.value.value,
+              'count': e.value.count,
+            })
+        .toList();
   }
 
   Future<List<Map<String, dynamic>>> _generateCustomersReport(
@@ -164,15 +167,16 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
     final customers = await _db.customersDao.getAllCustomers(storeId);
     final filtered = customers.where((c) {
       return c.createdAt.isAfter(_dateRange!.start) &&
-          c.createdAt
-              .isBefore(_dateRange!.end.add(const Duration(days: 1)));
+          c.createdAt.isBefore(_dateRange!.end.add(const Duration(days: 1)));
     }).toList();
 
-    return _groupResults(filtered.map((c) => _GroupItem(
-      date: c.createdAt,
-      value: 0,
-      count: 1,
-    )).toList());
+    return _groupResults(filtered
+        .map((c) => _GroupItem(
+              date: c.createdAt,
+              value: 0,
+              count: 1,
+            ))
+        .toList());
   }
 
   Future<List<Map<String, dynamic>>> _generatePaymentsReport(
@@ -180,8 +184,7 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
     final sales = await _db.salesDao.getAllSales(storeId);
     final filtered = sales.where((o) {
       return o.createdAt.isAfter(_dateRange!.start) &&
-          o.createdAt
-              .isBefore(_dateRange!.end.add(const Duration(days: 1)));
+          o.createdAt.isBefore(_dateRange!.end.add(const Duration(days: 1)));
     }).toList();
 
     // Group by payment method instead of date
@@ -193,11 +196,13 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
       countByMethod[method] = (countByMethod[method] ?? 0) + 1;
     }
 
-    return byMethod.entries.map((e) => {
-      'label': e.key,
-      'value': e.value,
-      'count': countByMethod[e.key] ?? 0,
-    }).toList();
+    return byMethod.entries
+        .map((e) => {
+              'label': e.key,
+              'value': e.value,
+              'count': countByMethod[e.key] ?? 0,
+            })
+        .toList();
   }
 
   List<Map<String, dynamic>> _groupResults(List<_GroupItem> items) {
@@ -220,8 +225,8 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
     }
 
     final result = grouped.values.toList();
-    result.sort((a, b) =>
-        (a['label'] as String).compareTo(b['label'] as String));
+    result
+        .sort((a, b) => (a['label'] as String).compareTo(b['label'] as String));
     return result;
   }
 
@@ -255,13 +260,11 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
       children: [
         AppHeader(
           title: l10n.customReport,
-          subtitle:
-              '${l10n.reportBuilder} \u2022 ${l10n.mainBranch}',
+          subtitle: '${l10n.reportBuilder} \u2022 ${l10n.mainBranch}',
           showSearch: false,
           searchHint: l10n.searchPlaceholder,
-          onMenuTap: isWideScreen
-              ? null
-              : () => Scaffold.of(context).openDrawer(),
+          onMenuTap:
+              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 3,
           userName: l10n.cashCustomer,
@@ -270,7 +273,8 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
         ),
         Expanded(
           child: SingleChildScrollView(
-            padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+            padding: EdgeInsets.all(
+                isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -279,9 +283,7 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                          flex: 3,
-                          child: _buildConfigCard(isDark, l10n)),
+                      Expanded(flex: 3, child: _buildConfigCard(isDark, l10n)),
                       const SizedBox(width: AlhaiSpacing.lg),
                       Expanded(
                           flex: 2,
@@ -291,13 +293,17 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
                   )
                 else ...[
                   _buildConfigCard(isDark, l10n),
-                  SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+                  SizedBox(
+                      height:
+                          isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
                   _buildDateRangeCard(isDark, l10n, isMediumScreen),
                 ],
-                SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+                SizedBox(
+                    height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
                 // Generate button
                 _buildGenerateButton(isDark, l10n),
-                SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+                SizedBox(
+                    height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
                 // Results
                 if (_isLoading)
                   const Padding(
@@ -404,17 +410,15 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
           onTap: () => setState(() => _reportType = type.key),
           borderRadius: BorderRadius.circular(12),
           child: Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+            padding: const EdgeInsets.symmetric(
+                horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
             decoration: BoxDecoration(
               color: isSelected
                   ? type.color.withValues(alpha: isDark ? 0.2 : 0.1)
                   : AppColors.getSurfaceVariant(isDark),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: isSelected
-                    ? type.color
-                    : AppColors.getBorder(isDark),
+                color: isSelected ? type.color : AppColors.getBorder(isDark),
                 width: isSelected ? 2 : 1,
               ),
             ),
@@ -487,9 +491,8 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
                     Text(option.$2,
                         style: TextStyle(
                             fontSize: 13,
-                            fontWeight: isSelected
-                                ? FontWeight.w600
-                                : FontWeight.w500,
+                            fontWeight:
+                                isSelected ? FontWeight.w600 : FontWeight.w500,
                             color: isSelected
                                 ? AppColors.textOnPrimary
                                 : AppColors.getTextSecondary(isDark))),
@@ -574,8 +577,7 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
                     ),
                   ),
                   Icon(Icons.arrow_forward_rounded,
-                      size: 18,
-                      color: AppColors.getTextMuted(isDark)),
+                      size: 18, color: AppColors.getTextMuted(isDark)),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
@@ -622,22 +624,34 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
   Widget _buildQuickDateChips(bool isDark, AppLocalizations l10n) {
     final now = DateTime.now();
     final chips = [
-      (l10n.today, DateTimeRange(
-        start: DateTime(now.year, now.month, now.day),
-        end: now,
-      )),
-      (l10n.thisWeek, DateTimeRange(
-        start: now.subtract(Duration(days: now.weekday - 1)),
-        end: now,
-      )),
-      (l10n.thisMonthPeriod, DateTimeRange(
-        start: DateTime(now.year, now.month, 1),
-        end: now,
-      )),
-      (l10n.lastMonth, DateTimeRange(
-        start: DateTime(now.year, now.month - 1, 1),
-        end: DateTime(now.year, now.month, 0),
-      )),
+      (
+        l10n.today,
+        DateTimeRange(
+          start: DateTime(now.year, now.month, now.day),
+          end: now,
+        )
+      ),
+      (
+        l10n.thisWeek,
+        DateTimeRange(
+          start: now.subtract(Duration(days: now.weekday - 1)),
+          end: now,
+        )
+      ),
+      (
+        l10n.thisMonthPeriod,
+        DateTimeRange(
+          start: DateTime(now.year, now.month, 1),
+          end: now,
+        )
+      ),
+      (
+        l10n.lastMonth,
+        DateTimeRange(
+          start: DateTime(now.year, now.month - 1, 1),
+          end: DateTime(now.year, now.month, 0),
+        )
+      ),
     ];
 
     return SingleChildScrollView(
@@ -650,13 +664,12 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
               onTap: () => setState(() => _dateRange = chip.$2),
               borderRadius: BorderRadius.circular(999),
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: AlhaiSpacing.sm, vertical: 6),
                 decoration: BoxDecoration(
                   color: AppColors.getSurfaceVariant(isDark),
                   borderRadius: BorderRadius.circular(999),
-                  border:
-                      Border.all(color: AppColors.getBorder(isDark)),
+                  border: Border.all(color: AppColors.getBorder(isDark)),
                 ),
                 child: Text(chip.$1,
                     style: TextStyle(
@@ -685,7 +698,7 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
 
   Widget _buildGenerateButton(bool isDark, AppLocalizations l10n) {
     return SizedBox(
-      height:52,
+      height: 52,
       child: ElevatedButton(
         onPressed: _isLoading ? null : _generateReport,
         style: ElevatedButton.styleFrom(
@@ -792,8 +805,8 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
     );
   }
 
-  Widget _buildSummaryCard(String label, String value, IconData icon,
-      Color color, bool isDark) {
+  Widget _buildSummaryCard(
+      String label, String value, IconData icon, Color color, bool isDark) {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
@@ -889,8 +902,7 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
                           style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w700,
-                              color:
-                                  AppColors.getTextSecondary(isDark)))),
+                              color: AppColors.getTextSecondary(isDark)))),
               ],
             ),
           ),
@@ -958,10 +970,10 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
                         children: [
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxxs),
+                                horizontal: AlhaiSpacing.xs,
+                                vertical: AlhaiSpacing.xxxs),
                             decoration: BoxDecoration(
-                              color: AppColors.primary
-                                  .withValues(alpha: 0.1),
+                              color: AppColors.primary.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(999),
                             ),
                             child: Text('$percentage%',
@@ -984,8 +996,8 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
             decoration: BoxDecoration(
               color: AppColors.primary.withValues(alpha: isDark ? 0.1 : 0.05),
               border: Border(
-                top: BorderSide(
-                    color: AppColors.primary.withValues(alpha: 0.3)),
+                top:
+                    BorderSide(color: AppColors.primary.withValues(alpha: 0.3)),
               ),
             ),
             child: Row(
@@ -1040,8 +1052,7 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
           children: [
             Icon(Icons.search_off_rounded,
                 size: 64,
-                color:
-                    AppColors.getTextMuted(isDark).withValues(alpha: 0.4)),
+                color: AppColors.getTextMuted(isDark).withValues(alpha: 0.4)),
             const SizedBox(height: AlhaiSpacing.md),
             Text(l10n.noData,
                 style: TextStyle(
@@ -1051,16 +1062,14 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
             const SizedBox(height: AlhaiSpacing.xs),
             Text(l10n.tryDifferentFilters,
                 style: TextStyle(
-                    fontSize: 13,
-                    color: AppColors.getTextMuted(isDark))),
+                    fontSize: 13, color: AppColors.getTextMuted(isDark))),
           ],
         ),
       ),
     );
   }
 
-  String _formatDate(DateTime date) =>
-      '${date.day}/${date.month}/${date.year}';
+  String _formatDate(DateTime date) => '${date.day}/${date.month}/${date.year}';
 }
 
 class _GroupItem {

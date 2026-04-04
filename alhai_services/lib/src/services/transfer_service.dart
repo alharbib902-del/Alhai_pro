@@ -50,7 +50,8 @@ class TransferService {
   }
 
   /// رفض التحويل
-  Future<Transfer> rejectTransfer(String id, String rejectedBy, String reason) async {
+  Future<Transfer> rejectTransfer(
+      String id, String rejectedBy, String reason) async {
     return await _transfersRepo.rejectTransfer(id, rejectedBy, reason);
   }
 

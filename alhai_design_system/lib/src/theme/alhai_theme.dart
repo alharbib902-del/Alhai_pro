@@ -51,40 +51,40 @@ abstract final class AlhaiTheme {
       textTheme: textTheme,
       brightness: brightness,
       visualDensity: VisualDensity.adaptivePlatformDensity,
-      
+
       // تثبيت الخط عالميًا
       // Note: ThemeData.fontFamily does not support fontFamilyFallback.
       // Multi-script fallback (Hindi, Bengali) is applied via the textTheme
       // where each TextStyle includes AlhaiTypography.fontFamilyFallback.
       fontFamily: AlhaiTypography.fontFamily,
-      
+
       // Ripple/Splash موحّد
       splashFactory: InkSparkle.splashFactory,
 
       // Extensions
       extensions: [statusColors],
-      
+
       // أيقونات موحدة
       iconTheme: IconThemeData(color: colorScheme.onSurface),
       primaryIconTheme: IconThemeData(color: colorScheme.onSurface),
-      
+
       // materialTapTargetSize: يُفرض في cashier فقط (MaterialTapTargetSize.padded)
-      
+
       // Text Selection (Cursor/Selection موحّد)
       textSelectionTheme: TextSelectionThemeData(
         cursorColor: colorScheme.primary,
         selectionColor: colorScheme.primary.withValues(alpha: 0.25),
         selectionHandleColor: colorScheme.primary,
       ),
-      
+
       // Scrollbar (افتراضي - فعّل thumbVisibility في cashier فقط)
       scrollbarTheme: ScrollbarThemeData(
         thickness: const WidgetStatePropertyAll(6),
         radius: const Radius.circular(999),
-        thumbColor: WidgetStatePropertyAll(colorScheme.onSurface.withValues(
-            alpha: brightness == Brightness.dark ? 0.45 : 0.35)),
+        thumbColor: WidgetStatePropertyAll(colorScheme.onSurface
+            .withValues(alpha: brightness == Brightness.dark ? 0.45 : 0.35)),
       ),
-      
+
       // pageTransitionsTheme: يُفرض في كل تطبيق حسب احتياجه
       // cashier يستخدم FadeUpwards، consumer/delivery يتركون iOS الافتراضي
 
@@ -189,7 +189,8 @@ abstract final class AlhaiTheme {
       // Icon Button
       iconButtonTheme: IconButtonThemeData(
         style: IconButton.styleFrom(
-          minimumSize: const Size(AlhaiSpacing.minTouchTarget, AlhaiSpacing.minTouchTarget),
+          minimumSize: const Size(
+              AlhaiSpacing.minTouchTarget, AlhaiSpacing.minTouchTarget),
         ),
       ),
 

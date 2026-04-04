@@ -164,7 +164,8 @@ class AlhaiEmptyState extends StatelessWidget {
           Icon(
             icon,
             size: iconSize,
-            color: iconColor ?? colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+            color: iconColor ??
+                colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
           ),
 
           SizedBox(height: spacing),

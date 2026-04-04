@@ -26,7 +26,10 @@ class KeywordCloud extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
+        border: Border.all(
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.1)
+                : AppColors.border),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
@@ -49,7 +52,8 @@ class KeywordCloud extends StatelessWidget {
                   ),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.cloud_rounded, color: Colors.white, size: 18),
+                child: const Icon(Icons.cloud_rounded,
+                    color: Colors.white, size: 18),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
@@ -68,7 +72,9 @@ class KeywordCloud extends StatelessWidget {
                       '${keywords.length} كلمة مفتاحية',
                       style: TextStyle(
                         fontSize: 12,
-                        color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textMuted,
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.5)
+                            : AppColors.textMuted,
                       ),
                     ),
                   ],
@@ -78,11 +84,20 @@ class KeywordCloud extends StatelessWidget {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  _LegendDot(color: AppColors.success, label: l10n.positive, isDark: isDark),
+                  _LegendDot(
+                      color: AppColors.success,
+                      label: l10n.positive,
+                      isDark: isDark),
                   const SizedBox(width: AlhaiSpacing.sm),
-                  _LegendDot(color: AppColors.warning, label: l10n.neutral, isDark: isDark),
+                  _LegendDot(
+                      color: AppColors.warning,
+                      label: l10n.neutral,
+                      isDark: isDark),
                   const SizedBox(width: AlhaiSpacing.sm),
-                  _LegendDot(color: AppColors.error, label: l10n.negative, isDark: isDark),
+                  _LegendDot(
+                      color: AppColors.error,
+                      label: l10n.negative,
+                      isDark: isDark),
                 ],
               ),
             ],
@@ -115,7 +130,8 @@ class _LegendDot extends StatelessWidget {
   final String label;
   final bool isDark;
 
-  const _LegendDot({required this.color, required this.label, required this.isDark});
+  const _LegendDot(
+      {required this.color, required this.label, required this.isDark});
 
   @override
   Widget build(BuildContext context) {
@@ -132,7 +148,9 @@ class _LegendDot extends StatelessWidget {
           label,
           style: TextStyle(
             fontSize: 10,
-            color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textMuted,
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.5)
+                : AppColors.textMuted,
           ),
         ),
       ],

@@ -37,8 +37,8 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const WhatsAppManagementScreen()));
+      await tester
+          .pumpWidget(createTestWidget(const WhatsAppManagementScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(WhatsAppManagementScreen), findsOneWidget);
@@ -52,8 +52,8 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const WhatsAppManagementScreen()));
+      await tester
+          .pumpWidget(createTestWidget(const WhatsAppManagementScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(TabBar), findsOneWidget);
@@ -67,8 +67,8 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const WhatsAppManagementScreen()));
+      await tester
+          .pumpWidget(createTestWidget(const WhatsAppManagementScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.message_outlined), findsWidgets);

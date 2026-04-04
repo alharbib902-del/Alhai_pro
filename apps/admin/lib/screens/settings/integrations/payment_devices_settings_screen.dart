@@ -147,13 +147,13 @@ class _PaymentDevicesSettingsScreenState
     final l10n = AppLocalizations.of(context);
 
     if (_isLoading) {
-      return SafeArea(child: Column(
+      return SafeArea(
+          child: Column(
         children: [
           AppHeader(
             title: l10n.paymentDevicesSettings,
-            onMenuTap: isWideScreen
-                ? null
-                : () => Scaffold.of(context).openDrawer(),
+            onMenuTap:
+                isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
             onNotificationsTap: () => context.push('/notifications'),
             notificationsCount: 3,
             userName: l10n.defaultUserName,
@@ -166,13 +166,13 @@ class _PaymentDevicesSettingsScreenState
       ));
     }
 
-    return SafeArea(child: Column(
+    return SafeArea(
+        child: Column(
       children: [
         AppHeader(
           title: l10n.paymentDevicesSettings,
-          onMenuTap: isWideScreen
-              ? null
-              : () => Scaffold.of(context).openDrawer(),
+          onMenuTap:
+              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 3,
           userName: l10n.defaultUserName,
@@ -194,13 +194,12 @@ class _PaymentDevicesSettingsScreenState
       children: [
         _buildPageHeader(isDark, l10n),
         const SizedBox(height: AlhaiSpacing.mdl),
-
         _buildSettingsGroup(l10n.supportedPaymentMethods, Icons.payment_rounded,
             const Color(0xFF06B6D4), isDark, [
           SwitchListTile(
             title: Text('mada',
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface)),
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
             subtitle: Text(l10n.madaLocalCards),
             secondary: const Icon(Icons.credit_card),
             value: _enableMada,
@@ -211,8 +210,8 @@ class _PaymentDevicesSettingsScreenState
           ),
           SwitchListTile(
             title: Text('Visa / Mastercard',
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface)),
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
             subtitle: Text(l10n.internationalCards),
             secondary: const Icon(Icons.credit_card),
             value: _enableVisa,
@@ -224,8 +223,8 @@ class _PaymentDevicesSettingsScreenState
           const Divider(indent: 16, endIndent: 16),
           SwitchListTile(
             title: Text('STC Pay',
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface)),
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
             subtitle: Text(l10n.stcDigitalWallet),
             secondary: const Icon(Icons.phone_android),
             value: _enableStcPay,
@@ -236,8 +235,8 @@ class _PaymentDevicesSettingsScreenState
           ),
           SwitchListTile(
             title: Text('Apple Pay',
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface)),
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
             secondary: const Icon(Icons.apple),
             value: _enableApplePay,
             onChanged: (v) {
@@ -247,7 +246,6 @@ class _PaymentDevicesSettingsScreenState
           ),
           const SizedBox(height: AlhaiSpacing.xs),
         ]),
-
         _buildSettingsGroup(l10n.paymentTerminal, Icons.contactless_rounded,
             AppColors.primary, isDark, [
           RadioGroup<String>(
@@ -284,13 +282,12 @@ class _PaymentDevicesSettingsScreenState
           ),
           const SizedBox(height: AlhaiSpacing.xs),
         ]),
-
         _buildSettingsGroup(l10n.settlement, Icons.account_balance_rounded,
             AppColors.success, isDark, [
           SwitchListTile(
             title: Text(l10n.autoSettlement,
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface)),
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
             subtitle: Text(l10n.autoSettlementDesc),
             value: _autoSettle,
             onChanged: (v) {
@@ -301,8 +298,8 @@ class _PaymentDevicesSettingsScreenState
           ListTile(
             leading: const Icon(Icons.sync, color: AppColors.info),
             title: Text(l10n.manualSettlement,
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface)),
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
             subtitle: Text(l10n.executeSettlementNow),
             trailing: const AdaptiveIcon(Icons.chevron_right),
             onTap: () {
@@ -313,7 +310,6 @@ class _PaymentDevicesSettingsScreenState
           ),
           const SizedBox(height: AlhaiSpacing.xs),
         ]),
-
         const SizedBox(height: AlhaiSpacing.md),
         SizedBox(
           width: double.infinity,
@@ -329,7 +325,9 @@ class _PaymentDevicesSettingsScreenState
                     ),
                   )
                 : const Icon(Icons.save_rounded),
-            label: Text(_isSaving ? '\u062C\u0627\u0631\u064A \u0627\u0644\u062D\u0641\u0638...' : l10n.saveSettings),
+            label: Text(_isSaving
+                ? '\u062C\u0627\u0631\u064A \u0627\u0644\u062D\u0641\u0638...'
+                : l10n.saveSettings),
             style: FilledButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
               shape: RoundedRectangleBorder(
@@ -398,7 +396,8 @@ class _PaymentDevicesSettingsScreenState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl, AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.xs),
+            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl,
+                AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.xs),
             child: Row(
               children: [
                 Container(
@@ -414,8 +413,7 @@ class _PaymentDevicesSettingsScreenState
                     style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color:
-                            Theme.of(context).colorScheme.onSurface)),
+                        color: Theme.of(context).colorScheme.onSurface)),
               ],
             ),
           ),

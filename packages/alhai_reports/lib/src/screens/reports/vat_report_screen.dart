@@ -45,7 +45,8 @@ class _VatReportScreenState extends ConsumerState<VatReportScreen> {
       final startDate = _dateRange?.start ?? DateTime(now.year, now.month, 1);
       final endDate = _dateRange?.end ?? now;
 
-      final salesStats = await db.salesDao.getSalesStats(storeId, startDate: startDate, endDate: endDate);
+      final salesStats = await db.salesDao
+          .getSalesStats(storeId, startDate: startDate, endDate: endDate);
       _totalSales = salesStats.total;
       _vatCollected = _totalSales * 0.15;
 
@@ -81,178 +82,225 @@ class _VatReportScreenState extends ConsumerState<VatReportScreen> {
         builder: (context, constraints) {
           final isMobile = constraints.maxWidth < 600;
           final isDesktop = constraints.maxWidth >= 1200;
-          final padding = isMobile ? 12.0 : isDesktop ? 24.0 : 16.0;
+          final padding = isMobile
+              ? 12.0
+              : isDesktop
+                  ? 24.0
+                  : 16.0;
 
           return _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _error != null
-              ? Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(AlhaiSpacing.xl),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.error_outline_rounded, size: 64, color: Theme.of(context).colorScheme.onSurfaceVariant),
-                        const SizedBox(height: AlhaiSpacing.md),
-                        Text(
-                          AppLocalizations.of(context)!.errorLoadingVatReport,
-                          style: TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.onSurfaceVariant),
-                          textAlign: TextAlign.center,
+              ? const Center(child: CircularProgressIndicator())
+              : _error != null
+                  ? Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(AlhaiSpacing.xl),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.error_outline_rounded,
+                                size: 64,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurfaceVariant),
+                            const SizedBox(height: AlhaiSpacing.md),
+                            Text(
+                              AppLocalizations.of(context)!
+                                  .errorLoadingVatReport,
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurfaceVariant),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: AlhaiSpacing.md),
+                            FilledButton.icon(
+                              onPressed: _loadVatData,
+                              icon: const Icon(Icons.refresh_rounded),
+                              label: Text(
+                                  AppLocalizations.of(context)!.retryAction),
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: AlhaiSpacing.md),
-                        FilledButton.icon(
-                          onPressed: _loadVatData,
-                          icon: const Icon(Icons.refresh_rounded),
-                          label: Text(AppLocalizations.of(context)!.retryAction),
-                        ),
-                      ],
-                    ),
-                  ),
-                )
-              : Center(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: isDesktop ? 800 : double.infinity),
-              child: ListView(
-              padding: EdgeInsets.all(padding),
-              children: [
-                // Date Range Selector
-                Card(
-                  child: ListTile(
-                    leading: const Icon(Icons.date_range),
-                    title: Text(_dateRange == null
-                      ? AppLocalizations.of(context)!.selectPeriod
-                      : '${_formatDate(_dateRange!.start)} - ${_formatDate(_dateRange!.end)}'),
-                    trailing: const AdaptiveIcon(Icons.chevron_right),
-                    onTap: _selectDateRange,
-                  ),
-                ),
-                const SizedBox(height: AlhaiSpacing.md),
-                
-                // Sales VAT
-                _VatCard(
-                  title: AppLocalizations.of(context)!.salesVat,
-                  icon: Icons.trending_up,
-                  color: Colors.green,
-                  items: [
-                    _VatItem(AppLocalizations.of(context)!.totalSalesIncVat, _totalSales),
-                    _VatItem(AppLocalizations.of(context)!.vatCollected, _vatCollected, isVat: true),
-                  ],
-                ),
-                const SizedBox(height: AlhaiSpacing.sm),
-
-                // Purchases VAT
-                _VatCard(
-                  title: AppLocalizations.of(context)!.purchasesVat,
-                  icon: Icons.trending_down,
-                  color: Colors.orange,
-                  items: [
-                    _VatItem(AppLocalizations.of(context)!.totalPurchasesIncVat, _totalPurchases),
-                    _VatItem(AppLocalizations.of(context)!.vatPaid, _vatPaid, isVat: true),
-                  ],
-                ),
-                const SizedBox(height: AlhaiSpacing.md),
-                
-                // Net VAT
-                Card(
-                  color: _netVat >= 0 ? Colors.green.withValues(alpha: 0.1) : Colors.red.withValues(alpha: 0.1),
-                  child: Padding(
-                    padding: const EdgeInsets.all(AlhaiSpacing.mdl),
-                    child: Column(
-                      children: [
-                        Text(
-                          AppLocalizations.of(context)!.netVatDue,
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                        const SizedBox(height: AlhaiSpacing.xs),
-                        Text(
-                          '${_netVat.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
-                          style: TextStyle(
-                            fontSize: 32,
-                            fontWeight: FontWeight.bold,
-                            color: _netVat >= 0 ? Colors.green.shade700 : Colors.red.shade700,
-                          ),
-                        ),
-                        const SizedBox(height: AlhaiSpacing.xs),
-                        Text(
-                          _netVat >= 0 ? AppLocalizations.of(context)!.dueToAuthority : AppLocalizations.of(context)!.dueFromAuthority,
-                          style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: AlhaiSpacing.lg),
-                
-                // Actions
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                AppLocalizations.of(context)!.exportingPdfReport,
+                      ),
+                    )
+                  : Center(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                            maxWidth: isDesktop ? 800 : double.infinity),
+                        child: ListView(
+                          padding: EdgeInsets.all(padding),
+                          children: [
+                            // Date Range Selector
+                            Card(
+                              child: ListTile(
+                                leading: const Icon(Icons.date_range),
+                                title: Text(_dateRange == null
+                                    ? AppLocalizations.of(context)!.selectPeriod
+                                    : '${_formatDate(_dateRange!.start)} - ${_formatDate(_dateRange!.end)}'),
+                                trailing:
+                                    const AdaptiveIcon(Icons.chevron_right),
+                                onTap: _selectDateRange,
                               ),
                             ),
-                          );
-                        },
-                        icon: const Icon(Icons.print),
-                        label: Text(AppLocalizations.of(context)!.printAction),
-                      ),
-                    ),
-                    const SizedBox(width: AlhaiSpacing.sm),
-                    Expanded(
-                      child: FilledButton.icon(
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (ctx) => AlertDialog(
-                              title: const Text('إرسال للهيئة الزكاة والضريبة'),
-                              content: const Text(
-                                'سيتم إرسال بيانات الفوترة الإلكترونية للهيئة. تأكد من صحة بياناتك أولاً.',
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.pop(ctx),
-                                  child: const Text('إلغاء'),
-                                ),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.pop(ctx);
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text(
-                                          'سيتم الربط بنظام ZATCA قريباً - تأكد من إعداد الشهادة الرقمية',
-                                        ),
+                            const SizedBox(height: AlhaiSpacing.md),
+
+                            // Sales VAT
+                            _VatCard(
+                              title: AppLocalizations.of(context)!.salesVat,
+                              icon: Icons.trending_up,
+                              color: Colors.green,
+                              items: [
+                                _VatItem(
+                                    AppLocalizations.of(context)!
+                                        .totalSalesIncVat,
+                                    _totalSales),
+                                _VatItem(
+                                    AppLocalizations.of(context)!.vatCollected,
+                                    _vatCollected,
+                                    isVat: true),
+                              ],
+                            ),
+                            const SizedBox(height: AlhaiSpacing.sm),
+
+                            // Purchases VAT
+                            _VatCard(
+                              title: AppLocalizations.of(context)!.purchasesVat,
+                              icon: Icons.trending_down,
+                              color: Colors.orange,
+                              items: [
+                                _VatItem(
+                                    AppLocalizations.of(context)!
+                                        .totalPurchasesIncVat,
+                                    _totalPurchases),
+                                _VatItem(AppLocalizations.of(context)!.vatPaid,
+                                    _vatPaid,
+                                    isVat: true),
+                              ],
+                            ),
+                            const SizedBox(height: AlhaiSpacing.md),
+
+                            // Net VAT
+                            Card(
+                              color: _netVat >= 0
+                                  ? Colors.green.withValues(alpha: 0.1)
+                                  : Colors.red.withValues(alpha: 0.1),
+                              child: Padding(
+                                padding: const EdgeInsets.all(AlhaiSpacing.mdl),
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      AppLocalizations.of(context)!.netVatDue,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium,
+                                    ),
+                                    const SizedBox(height: AlhaiSpacing.xs),
+                                    Text(
+                                      '${_netVat.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
+                                      style: TextStyle(
+                                        fontSize: 32,
+                                        fontWeight: FontWeight.bold,
+                                        color: _netVat >= 0
+                                            ? Colors.green.shade700
+                                            : Colors.red.shade700,
                                       ),
-                                    );
-                                  },
-                                  child: const Text('إرسال'),
+                                    ),
+                                    const SizedBox(height: AlhaiSpacing.xs),
+                                    Text(
+                                      _netVat >= 0
+                                          ? AppLocalizations.of(context)!
+                                              .dueToAuthority
+                                          : AppLocalizations.of(context)!
+                                              .dueFromAuthority,
+                                      style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurfaceVariant),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: AlhaiSpacing.lg),
+
+                            // Actions
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: OutlinedButton.icon(
+                                    onPressed: () {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            AppLocalizations.of(context)!
+                                                .exportingPdfReport,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    icon: const Icon(Icons.print),
+                                    label: Text(AppLocalizations.of(context)!
+                                        .printAction),
+                                  ),
+                                ),
+                                const SizedBox(width: AlhaiSpacing.sm),
+                                Expanded(
+                                  child: FilledButton.icon(
+                                    onPressed: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (ctx) => AlertDialog(
+                                          title: const Text(
+                                              'إرسال للهيئة الزكاة والضريبة'),
+                                          content: const Text(
+                                            'سيتم إرسال بيانات الفوترة الإلكترونية للهيئة. تأكد من صحة بياناتك أولاً.',
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(ctx),
+                                              child: const Text('إلغاء'),
+                                            ),
+                                            ElevatedButton(
+                                              onPressed: () {
+                                                Navigator.pop(ctx);
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  const SnackBar(
+                                                    content: Text(
+                                                      'سيتم الربط بنظام ZATCA قريباً - تأكد من إعداد الشهادة الرقمية',
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                              child: const Text('إرسال'),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                    icon: const AdaptiveIcon(Icons.send),
+                                    label: Text(AppLocalizations.of(context)!
+                                        .sendToAuthority),
+                                  ),
                                 ),
                               ],
                             ),
-                          );
-                        },
-                        icon: const AdaptiveIcon(Icons.send),
-                        label: Text(AppLocalizations.of(context)!.sendToAuthority),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            ),
-          );
+                    );
         },
       ),
     );
   }
-  
+
   String _formatDate(DateTime date) {
     return '${date.day}/${date.month}/${date.year}';
   }
-  
+
   void _selectDateRange() async {
     final range = await showDateRangePicker(
       context: context,
@@ -268,7 +316,7 @@ class _VatReportScreenState extends ConsumerState<VatReportScreen> {
       _loadVatData();
     }
   }
-  
+
   void _exportPdf() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(AppLocalizations.of(context)!.exportingPdfReport)),
@@ -281,14 +329,14 @@ class _VatCard extends StatelessWidget {
   final IconData icon;
   final Color color;
   final List<_VatItem> items;
-  
+
   const _VatCard({
     required this.title,
     required this.icon,
     required this.color,
     required this.items,
   });
-  
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -306,21 +354,23 @@ class _VatCard extends StatelessWidget {
             ),
             const Divider(),
             ...items.map((item) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(item.label),
-                  Text(
-                    '${item.amount.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
-                    style: TextStyle(
-                      fontWeight: item.isVat ? FontWeight.bold : FontWeight.normal,
-                      color: item.isVat ? color : null,
-                    ),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(item.label),
+                      Text(
+                        '${item.amount.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
+                        style: TextStyle(
+                          fontWeight:
+                              item.isVat ? FontWeight.bold : FontWeight.normal,
+                          color: item.isVat ? color : null,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            )),
+                )),
           ],
         ),
       ),
@@ -332,6 +382,6 @@ class _VatItem {
   final String label;
   final double amount;
   final bool isVat;
-  
+
   _VatItem(this.label, this.amount, {this.isVat = false});
 }

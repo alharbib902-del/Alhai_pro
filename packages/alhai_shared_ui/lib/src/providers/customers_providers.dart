@@ -30,8 +30,7 @@ final receivableAccountsProvider =
 });
 
 /// Total receivable
-final totalReceivableProvider =
-    FutureProvider.autoDispose<double>((ref) async {
+final totalReceivableProvider = FutureProvider.autoDispose<double>((ref) async {
   final storeId = ref.watch(currentStoreIdProvider);
   if (storeId == null) return 0.0;
   final db = GetIt.I<AppDatabase>();

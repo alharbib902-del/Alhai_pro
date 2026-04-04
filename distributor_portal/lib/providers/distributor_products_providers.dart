@@ -8,8 +8,7 @@ import 'distributor_datasource_provider.dart';
 
 // ─── Products ───────────────────────────────────────────────────
 
-final productsProvider =
-    FutureProvider<List<DistributorProduct>>((ref) async {
+final productsProvider = FutureProvider<List<DistributorProduct>>((ref) async {
   final ds = ref.watch(distributorDatasourceProvider);
   return ds.getProducts();
 });

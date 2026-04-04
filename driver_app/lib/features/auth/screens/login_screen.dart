@@ -112,150 +112,150 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(AlhaiSpacing.lg),
               child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const SizedBox(height: 60),
-              // Logo
-              Center(
-                child: Container(
-                  width: logoSize,
-                  height: logoSize,
-                  margin: const EdgeInsets.only(bottom: AlhaiSpacing.xl),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.primaryContainer,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.local_shipping_rounded,
-                    size: logoSize * 0.52,
-                    color: theme.colorScheme.primary,
-                  ),
-                ),
-              ),
-              Text(
-                'تسجيل الدخول',
-                style: theme.textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: AlhaiSpacing.xs),
-              Text(
-                'أدخل رقم جوالك المسجل كسائق',
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.outline,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: AlhaiSpacing.xxl),
-
-              // Phone input – Saudi mobile: 9 digits starting with 5.
-              TextField(
-                controller: _phoneController,
-                keyboardType: TextInputType.phone,
-                textDirection: TextDirection.ltr,
-                textInputAction: TextInputAction.done,
-                onSubmitted: (_) => _isLoading ? null : _sendOtp(),
-                enabled: !_otpSent,
-                maxLength: 9,
-                inputFormatters: [
-                  FilteringTextInputFormatter.digitsOnly,
-                  LengthLimitingTextInputFormatter(9),
-                ],
-                decoration: InputDecoration(
-                  labelText: 'رقم الجوال',
-                  hintText: '5XXXXXXXX',
-                  prefixText: '+966 ',
-                  prefixIcon: const Icon(Icons.phone_outlined),
-                  counterText: '',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-              ),
-
-              if (_otpSent) ...[
-                const SizedBox(height: AlhaiSpacing.md),
-                TextField(
-                  controller: _otpController,
-                  keyboardType: TextInputType.number,
-                  textDirection: TextDirection.ltr,
-                  textAlign: TextAlign.center,
-                  textInputAction: TextInputAction.done,
-                  onSubmitted: (_) => _isLoading ? null : _verifyOtp(),
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                    LengthLimitingTextInputFormatter(6),
-                  ],
-                  style: theme.textTheme.headlineSmall?.copyWith(
-                    letterSpacing: 8,
-                  ),
-                  decoration: InputDecoration(
-                    labelText: 'رمز التحقق',
-                    hintText: '------',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const SizedBox(height: 60),
+                  // Logo
+                  Center(
+                    child: Container(
+                      width: logoSize,
+                      height: logoSize,
+                      margin: const EdgeInsets.only(bottom: AlhaiSpacing.xl),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.primaryContainer,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.local_shipping_rounded,
+                        size: logoSize * 0.52,
+                        color: theme.colorScheme.primary,
+                      ),
                     ),
                   ),
-                ),
-              ],
-
-              if (_error != null) ...[
-                const SizedBox(height: AlhaiSpacing.sm),
-                Container(
-                  padding: const EdgeInsets.all(AlhaiSpacing.sm),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.errorContainer,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    _error!,
-                    style: TextStyle(color: theme.colorScheme.error),
+                  Text(
+                    'تسجيل الدخول',
+                    style: theme.textTheme.headlineMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                     textAlign: TextAlign.center,
                   ),
-                ),
-              ],
-
-              const SizedBox(height: AlhaiSpacing.lg),
-
-              FilledButton(
-                onPressed: _isLoading
-                    ? null
-                    : (_otpSent ? _verifyOtp : _sendOtp),
-                style: FilledButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                  const SizedBox(height: AlhaiSpacing.xs),
+                  Text(
+                    'أدخل رقم جوالك المسجل كسائق',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.outline,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                ),
-                child: _isLoading
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : Text(
-                        _otpSent ? 'تحقق' : 'إرسال رمز التحقق',
-                        style: const TextStyle(fontSize: 16),
-                      ),
-              ),
+                  const SizedBox(height: AlhaiSpacing.xxl),
 
-              if (_otpSent) ...[
-                const SizedBox(height: AlhaiSpacing.sm),
-                TextButton(
-                  onPressed: _isLoading
-                      ? null
-                      : () {
-                          setState(() {
-                            _otpSent = false;
-                            _otpController.clear();
-                            _error = null;
-                          });
-                        },
-                  child: const Text('تغيير رقم الجوال'),
-                ),
-              ],
-            ],
+                  // Phone input – Saudi mobile: 9 digits starting with 5.
+                  TextField(
+                    controller: _phoneController,
+                    keyboardType: TextInputType.phone,
+                    textDirection: TextDirection.ltr,
+                    textInputAction: TextInputAction.done,
+                    onSubmitted: (_) => _isLoading ? null : _sendOtp(),
+                    enabled: !_otpSent,
+                    maxLength: 9,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(9),
+                    ],
+                    decoration: InputDecoration(
+                      labelText: 'رقم الجوال',
+                      hintText: '5XXXXXXXX',
+                      prefixText: '+966 ',
+                      prefixIcon: const Icon(Icons.phone_outlined),
+                      counterText: '',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+
+                  if (_otpSent) ...[
+                    const SizedBox(height: AlhaiSpacing.md),
+                    TextField(
+                      controller: _otpController,
+                      keyboardType: TextInputType.number,
+                      textDirection: TextDirection.ltr,
+                      textAlign: TextAlign.center,
+                      textInputAction: TextInputAction.done,
+                      onSubmitted: (_) => _isLoading ? null : _verifyOtp(),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        LengthLimitingTextInputFormatter(6),
+                      ],
+                      style: theme.textTheme.headlineSmall?.copyWith(
+                        letterSpacing: 8,
+                      ),
+                      decoration: InputDecoration(
+                        labelText: 'رمز التحقق',
+                        hintText: '------',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ],
+
+                  if (_error != null) ...[
+                    const SizedBox(height: AlhaiSpacing.sm),
+                    Container(
+                      padding: const EdgeInsets.all(AlhaiSpacing.sm),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.errorContainer,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        _error!,
+                        style: TextStyle(color: theme.colorScheme.error),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ],
+
+                  const SizedBox(height: AlhaiSpacing.lg),
+
+                  FilledButton(
+                    onPressed:
+                        _isLoading ? null : (_otpSent ? _verifyOtp : _sendOtp),
+                    style: FilledButton.styleFrom(
+                      padding:
+                          const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: _isLoading
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : Text(
+                            _otpSent ? 'تحقق' : 'إرسال رمز التحقق',
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                  ),
+
+                  if (_otpSent) ...[
+                    const SizedBox(height: AlhaiSpacing.sm),
+                    TextButton(
+                      onPressed: _isLoading
+                          ? null
+                          : () {
+                              setState(() {
+                                _otpSent = false;
+                                _otpController.clear();
+                                _error = null;
+                              });
+                            },
+                      child: const Text('تغيير رقم الجوال'),
+                    ),
+                  ],
+                ],
               ),
             ),
           ),

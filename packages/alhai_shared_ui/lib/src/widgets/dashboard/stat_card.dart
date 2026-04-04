@@ -66,15 +66,18 @@ class _DashboardStatCardState extends State<DashboardStatCard> {
         color: Colors.transparent,
         child: InkWell(
           onTap: widget.onTap,
-          borderRadius: BorderRadius.circular(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
+          borderRadius: BorderRadius.circular(
+              isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
           child: AnimatedContainer(
             duration: context.prefersReducedMotion
                 ? Duration.zero
                 : AlhaiDurations.slow,
-            padding: EdgeInsets.all(isMobile ? AlhaiSpacing.sm : AlhaiSpacing.mdl),
+            padding:
+                EdgeInsets.all(isMobile ? AlhaiSpacing.sm : AlhaiSpacing.mdl),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
-              borderRadius: BorderRadius.circular(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
+              borderRadius: BorderRadius.circular(
+                  isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
               border: Border.all(
                 color: isDarkMode
                     ? Colors.white.withAlpha(13)
@@ -82,7 +85,8 @@ class _DashboardStatCardState extends State<DashboardStatCard> {
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: isDarkMode ? 0.2 : 0.04),
+                  color:
+                      Colors.black.withValues(alpha: isDarkMode ? 0.2 : 0.04),
                   blurRadius: _isHovered ? 20 : 8,
                   offset: const Offset(0, 4),
                 ),
@@ -115,11 +119,14 @@ class _DashboardStatCardState extends State<DashboardStatCard> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Container(
-                          width: isMobile ? AlhaiSpacing.xxl : AlhaiSpacing.xxxl,
-                          height: isMobile ? AlhaiSpacing.xxl : AlhaiSpacing.xxxl,
+                          width:
+                              isMobile ? AlhaiSpacing.xxl : AlhaiSpacing.xxxl,
+                          height:
+                              isMobile ? AlhaiSpacing.xxl : AlhaiSpacing.xxxl,
                           decoration: BoxDecoration(
                             color: effectiveIconColor.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(isMobile ? AlhaiSpacing.sm : AlhaiSpacing.md),
+                            borderRadius: BorderRadius.circular(
+                                isMobile ? AlhaiSpacing.sm : AlhaiSpacing.md),
                           ),
                           child: Icon(
                             widget.icon,

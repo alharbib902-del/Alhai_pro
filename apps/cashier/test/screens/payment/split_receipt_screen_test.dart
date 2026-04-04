@@ -34,8 +34,8 @@ void main() {
       when(() => ordersDao.getOrderById(any()))
           .thenAnswer((_) async => createTestOrder(id: 'order-1'));
 
-      await tester.pumpWidget(createTestWidget(
-          const SplitReceiptScreen(orderId: 'order-1')));
+      await tester.pumpWidget(
+          createTestWidget(const SplitReceiptScreen(orderId: 'order-1')));
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
@@ -46,11 +46,10 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => ordersDao.getOrderById(any()))
-          .thenAnswer((_) async => null);
+      when(() => ordersDao.getOrderById(any())).thenAnswer((_) async => null);
 
-      await tester.pumpWidget(createTestWidget(
-          const SplitReceiptScreen(orderId: 'order-1')));
+      await tester.pumpWidget(
+          createTestWidget(const SplitReceiptScreen(orderId: 'order-1')));
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.receipt_long_outlined), findsOneWidget);
@@ -70,8 +69,8 @@ void main() {
                 paymentMethod: 'cash',
               ));
 
-      await tester.pumpWidget(createTestWidget(
-          const SplitReceiptScreen(orderId: 'order-1')));
+      await tester.pumpWidget(
+          createTestWidget(const SplitReceiptScreen(orderId: 'order-1')));
       await tester.pumpAndSettle();
 
       // Order summary card icon
@@ -91,8 +90,8 @@ void main() {
                 paymentMethod: 'cash',
               ));
 
-      await tester.pumpWidget(createTestWidget(
-          const SplitReceiptScreen(orderId: 'order-1')));
+      await tester.pumpWidget(
+          createTestWidget(const SplitReceiptScreen(orderId: 'order-1')));
       await tester.pumpAndSettle();
 
       // Payment breakdown icon
@@ -111,8 +110,8 @@ void main() {
                 total: 200.0,
               ));
 
-      await tester.pumpWidget(createTestWidget(
-          const SplitReceiptScreen(orderId: 'order-1')));
+      await tester.pumpWidget(
+          createTestWidget(const SplitReceiptScreen(orderId: 'order-1')));
       await tester.pumpAndSettle();
 
       // QR code icon
@@ -131,8 +130,8 @@ void main() {
                 total: 200.0,
               ));
 
-      await tester.pumpWidget(createTestWidget(
-          const SplitReceiptScreen(orderId: 'order-1')));
+      await tester.pumpWidget(
+          createTestWidget(const SplitReceiptScreen(orderId: 'order-1')));
       await tester.pumpAndSettle();
 
       // Print button

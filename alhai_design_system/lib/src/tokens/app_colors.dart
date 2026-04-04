@@ -541,16 +541,14 @@ class AppColors {
       isDark ? backgroundDark : background;
 
   /// الحصول على لون السطح حسب الوضع
-  static Color getSurface(bool isDark) =>
-      isDark ? surfaceDark : surface;
+  static Color getSurface(bool isDark) => isDark ? surfaceDark : surface;
 
   /// الحصول على لون سطح متغير حسب الوضع
   static Color getSurfaceVariant(bool isDark) =>
       isDark ? surfaceVariantDark : surfaceVariant;
 
   /// الحصول على لون الحدود حسب الوضع
-  static Color getBorder(bool isDark) =>
-      isDark ? borderDark : border;
+  static Color getBorder(bool isDark) => isDark ? borderDark : border;
 
   /// الحصول على لون النص الأساسي حسب الوضع
   static Color getTextPrimary(bool isDark) =>
@@ -561,8 +559,7 @@ class AppColors {
       isDark ? textSecondaryDark : textSecondary;
 
   /// الحصول على لون النص الخافت حسب الوضع
-  static Color getTextMuted(bool isDark) =>
-      isDark ? textMutedDark : textMuted;
+  static Color getTextMuted(bool isDark) => isDark ? textMutedDark : textMuted;
 
   // ==========================================================================
   // DISTRIBUTOR STATUS COLORS - ألوان حالات الموزع
@@ -574,13 +571,13 @@ class AppColors {
       case 'sent':
       case 'draft':
       case 'pending':
-        return isDark ? const Color(0xFF60A5FA) : info;        // blue
+        return isDark ? const Color(0xFF60A5FA) : info; // blue
       case 'approved':
-        return isDark ? const Color(0xFF4ADE80) : success;     // green
+        return isDark ? const Color(0xFF4ADE80) : success; // green
       case 'received':
-        return isDark ? const Color(0xFF2DD4BF) : credit;      // teal
+        return isDark ? const Color(0xFF2DD4BF) : credit; // teal
       case 'rejected':
-        return isDark ? const Color(0xFFF87171) : error;       // red
+        return isDark ? const Color(0xFFF87171) : error; // red
       default:
         return isDark ? textMutedDark : grey500;
     }

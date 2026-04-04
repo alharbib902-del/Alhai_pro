@@ -36,7 +36,8 @@ class SupplierService {
   }
 
   /// تحديث مورد
-  Future<Supplier> updateSupplier(String id, UpdateSupplierParams params) async {
+  Future<Supplier> updateSupplier(
+      String id, UpdateSupplierParams params) async {
     return await _suppliersRepo.updateSupplier(id, params);
   }
 

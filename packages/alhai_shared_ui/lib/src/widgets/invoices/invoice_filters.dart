@@ -36,7 +36,8 @@ class InvoiceFilters extends StatelessWidget {
             children: [
               Expanded(
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm),
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(12),
@@ -46,13 +47,30 @@ class InvoiceFilters extends StatelessWidget {
                     child: DropdownButton<String>(
                       value: 'all',
                       isExpanded: true,
-                      icon: Icon(Icons.keyboard_arrow_down, color: isDark ? AppColors.textMutedDark : AppColors.textMuted),
-                      style: TextStyle(fontSize: 14, color: Theme.of(context).colorScheme.onSurface),
+                      icon: Icon(Icons.keyboard_arrow_down,
+                          color: isDark
+                              ? AppColors.textMutedDark
+                              : AppColors.textMuted),
+                      style: TextStyle(
+                          fontSize: 14,
+                          color: Theme.of(context).colorScheme.onSurface),
                       dropdownColor: Theme.of(context).colorScheme.surface,
                       items: [
-                        DropdownMenuItem(value: 'all', child: Row(children: [Icon(Icons.filter_list, size: 16, color: isDark ? AppColors.textMutedDark : AppColors.textMuted), SizedBox(width: AlhaiSpacing.xs), Text(l10n.statusAll)])),
-                        DropdownMenuItem(value: 'paid', child: Text(l10n.statusPaid)),
-                        DropdownMenuItem(value: 'pending', child: Text(l10n.statusPending)),
+                        DropdownMenuItem(
+                            value: 'all',
+                            child: Row(children: [
+                              Icon(Icons.filter_list,
+                                  size: 16,
+                                  color: isDark
+                                      ? AppColors.textMutedDark
+                                      : AppColors.textMuted),
+                              SizedBox(width: AlhaiSpacing.xs),
+                              Text(l10n.statusAll)
+                            ])),
+                        DropdownMenuItem(
+                            value: 'paid', child: Text(l10n.statusPaid)),
+                        DropdownMenuItem(
+                            value: 'pending', child: Text(l10n.statusPending)),
                       ],
                       onChanged: (v) {},
                     ),
@@ -70,8 +88,10 @@ class InvoiceFilters extends StatelessWidget {
                 style: OutlinedButton.styleFrom(
                   foregroundColor: Theme.of(context).colorScheme.onSurface,
                   side: BorderSide(color: Theme.of(context).dividerColor),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
                 ),
                 child: Text(l10n.resetFilters),
               ),
@@ -85,8 +105,10 @@ class InvoiceFilters extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    _viewToggleBtn(Icons.list, !isGridView, isDark, context: context),
-                    _viewToggleBtn(Icons.grid_view, isGridView, isDark, context: context),
+                    _viewToggleBtn(Icons.list, !isGridView, isDark,
+                        context: context),
+                    _viewToggleBtn(Icons.grid_view, isGridView, isDark,
+                        context: context),
                   ],
                 ),
               ),
@@ -125,18 +147,28 @@ class InvoiceFilters extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         child: AnimatedContainer(
           duration: AlhaiDurations.standard,
-          padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.mdl, vertical: 10),
+          padding: const EdgeInsets.symmetric(
+              horizontal: AlhaiSpacing.mdl, vertical: 10),
           decoration: BoxDecoration(
             color: isActive ? AppColors.primary : Colors.transparent,
             borderRadius: BorderRadius.circular(12),
-            boxShadow: isActive ? [BoxShadow(color: AppColors.primary.withValues(alpha: 0.2), blurRadius: 8, offset: const Offset(0, 2))] : null,
+            boxShadow: isActive
+                ? [
+                    BoxShadow(
+                        color: AppColors.primary.withValues(alpha: 0.2),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2))
+                  ]
+                : null,
           ),
           child: Text(
             label,
             style: TextStyle(
               fontSize: 14,
               fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
-              color: isActive ? Colors.white : (isDark ? AppColors.textMutedDark : AppColors.textMuted),
+              color: isActive
+                  ? Colors.white
+                  : (isDark ? AppColors.textMutedDark : AppColors.textMuted),
             ),
           ),
         ),
@@ -144,18 +176,28 @@ class InvoiceFilters extends StatelessWidget {
     );
   }
 
-  Widget _viewToggleBtn(IconData icon, bool isActive, bool isDark, {required BuildContext context}) {
+  Widget _viewToggleBtn(IconData icon, bool isActive, bool isDark,
+      {required BuildContext context}) {
     return InkWell(
       onTap: onViewToggle,
       borderRadius: BorderRadius.circular(8),
       child: Container(
         padding: const EdgeInsets.all(AlhaiSpacing.xs),
         decoration: BoxDecoration(
-          color: isActive ? (isDark ? AppColors.backgroundDark : AppColors.backgroundSecondary) : Colors.transparent,
+          color: isActive
+              ? (isDark
+                  ? AppColors.backgroundDark
+                  : AppColors.backgroundSecondary)
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
-          boxShadow: isActive ? AppShadows.of(context, size: ShadowSize.sm) : null,
+          boxShadow:
+              isActive ? AppShadows.of(context, size: ShadowSize.sm) : null,
         ),
-        child: Icon(icon, size: 18, color: isActive ? AppColors.primary : (isDark ? AppColors.textMutedDark : AppColors.textMuted)),
+        child: Icon(icon,
+            size: 18,
+            color: isActive
+                ? AppColors.primary
+                : (isDark ? AppColors.textMutedDark : AppColors.textMuted)),
       ),
     );
   }
@@ -163,7 +205,8 @@ class InvoiceFilters extends StatelessWidget {
   Widget _dateInput(BuildContext context, bool isDark) {
     return Container(
       width: 140,
-      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 10),
+      padding:
+          const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 10),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
@@ -171,9 +214,14 @@ class InvoiceFilters extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(Icons.calendar_today, size: 14, color: isDark ? AppColors.textMutedDark : AppColors.textMuted),
+          Icon(Icons.calendar_today,
+              size: 14,
+              color: isDark ? AppColors.textMutedDark : AppColors.textMuted),
           SizedBox(width: AlhaiSpacing.xs),
-          Text('2026-02-09', style: TextStyle(fontSize: 13, color: Theme.of(context).colorScheme.onSurface)),
+          Text('2026-02-09',
+              style: TextStyle(
+                  fontSize: 13,
+                  color: Theme.of(context).colorScheme.onSurface)),
         ],
       ),
     );

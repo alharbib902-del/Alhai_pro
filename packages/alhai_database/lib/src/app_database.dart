@@ -135,134 +135,137 @@ class AppDatabase extends _$AppDatabase {
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
-    onCreate: (Migrator m) async {
-      await m.createAll();
-      // إنشاء جدول FTS للبحث السريع
-      await ftsService.createFtsTable();
-      // إنشاء جدول سجل الهجرات
-      await _createMigrationHistoryTable();
-      // تسجيل الإنشاء الأولي
-      await _recordMigrationHistory(
-        version: schemaVersion,
-        durationMs: 0,
-        success: true,
-      );
-    },
-    onUpgrade: (Migrator m, int from, int to) async {
-      final migrationStartTime = DateTime.now();
-
-      // نسخ احتياطي تلقائي قبل أي ترحيل للـ schema
-      try {
-        await backupService.createPreMigrationBackup(from);
-      } catch (e) {
-        // لا نمنع الترحيل إذا فشل النسخ الاحتياطي
-        debugPrint('[Backup] Pre-migration backup failed: $e');
-      }
-
-      // إنشاء جدول سجل الهجرات (إن لم يكن موجوداً)
-      await _createMigrationHistoryTable();
-
-      // فحص سلامة قاعدة البيانات قبل الهجرة
-      final preIntegrityOk = await _checkDatabaseIntegrity();
-      if (!preIntegrityOk) {
-        const errorMsg =
-            'Database integrity check failed BEFORE migration. '
-            'Aborting migration to prevent further corruption.';
-        debugPrint('[Migration] $errorMsg');
-        await _recordMigrationHistory(
-          version: from,
-          durationMs: 0,
-          success: false,
-          errorMessage: errorMsg,
-        );
-        return;
-      }
-
-      debugPrint('[Migration] Pre-migration integrity check passed. '
-          'Upgrading v$from -> v$to...');
-
-      // تنفيذ كل هجرة على حدة مع تسجيل النتيجة
-      for (var version = from + 1; version <= to; version++) {
-        final stepStart = DateTime.now();
-        try {
-          debugPrint('[Migration] Migrating v${version - 1} -> v$version...');
-          await _runMigrationStep(m, version);
-          final stepDuration =
-              DateTime.now().difference(stepStart).inMilliseconds;
-          debugPrint('[Migration] v$version complete (${stepDuration}ms)');
+        onCreate: (Migrator m) async {
+          await m.createAll();
+          // إنشاء جدول FTS للبحث السريع
+          await ftsService.createFtsTable();
+          // إنشاء جدول سجل الهجرات
+          await _createMigrationHistoryTable();
+          // تسجيل الإنشاء الأولي
           await _recordMigrationHistory(
-            version: version,
-            durationMs: stepDuration,
+            version: schemaVersion,
+            durationMs: 0,
             success: true,
           );
-        } catch (e, stackTrace) {
-          final stepDuration =
-              DateTime.now().difference(stepStart).inMilliseconds;
-          debugPrint('[Migration] v$version FAILED (${stepDuration}ms): $e');
-          debugPrint('[Migration] Stack trace: $stackTrace');
-          await _recordMigrationHistory(
-            version: version,
-            durationMs: stepDuration,
-            success: false,
-            errorMessage: e.toString(),
-          );
-          // إعادة رمي الخطأ ليتم التراجع عن الهجرة بواسطة Drift
-          rethrow;
-        }
-      }
+        },
+        onUpgrade: (Migrator m, int from, int to) async {
+          final migrationStartTime = DateTime.now();
 
-      // فحص سلامة قاعدة البيانات بعد الهجرة
-      final postIntegrityOk = await _checkDatabaseIntegrity();
-      if (!postIntegrityOk) {
-        debugPrint(
-            '[Migration] WARNING: Post-migration integrity check failed!');
-      } else {
-        debugPrint('[Migration] Post-migration integrity check passed.');
-      }
+          // نسخ احتياطي تلقائي قبل أي ترحيل للـ schema
+          try {
+            await backupService.createPreMigrationBackup(from);
+          } catch (e) {
+            // لا نمنع الترحيل إذا فشل النسخ الاحتياطي
+            debugPrint('[Backup] Pre-migration backup failed: $e');
+          }
 
-      // التحقق من وجود الجداول المتوقعة
-      final schemaValid = await verifySchema();
-      if (!schemaValid) {
-        debugPrint(
-            '[Migration] WARNING: Schema verification found missing tables!');
-      } else {
-        debugPrint('[Migration] Schema verification passed '
-            '- all expected tables present.');
-      }
+          // إنشاء جدول سجل الهجرات (إن لم يكن موجوداً)
+          await _createMigrationHistoryTable();
 
-      // نسخ احتياطي بعد نجاح الترحيل
-      try {
-        await backupService.createPostMigrationBackup(to);
-      } catch (e) {
-        debugPrint('[Backup] Post-migration backup failed: $e');
-      }
+          // فحص سلامة قاعدة البيانات قبل الهجرة
+          final preIntegrityOk = await _checkDatabaseIntegrity();
+          if (!preIntegrityOk) {
+            const errorMsg =
+                'Database integrity check failed BEFORE migration. '
+                'Aborting migration to prevent further corruption.';
+            debugPrint('[Migration] $errorMsg');
+            await _recordMigrationHistory(
+              version: from,
+              durationMs: 0,
+              success: false,
+              errorMessage: errorMsg,
+            );
+            return;
+          }
 
-      final totalDuration =
-          DateTime.now().difference(migrationStartTime).inMilliseconds;
-      debugPrint('[Migration] Full migration v$from -> v$to '
-          'completed in ${totalDuration}ms');
-    },
-    beforeOpen: (details) async {
-      // تفعيل المفاتيح الأجنبية (M31 fix)
-      await customStatement('PRAGMA foreign_keys = ON');
-      // تحسينات الأداء
-      await customStatement('PRAGMA cache_size = -8000'); // 8MB cache
-      // Wait 5s instead of failing immediately on database lock (C09)
-      await customStatement('PRAGMA busy_timeout = 5000');
+          debugPrint('[Migration] Pre-migration integrity check passed. '
+              'Upgrading v$from -> v$to...');
 
-      // تنظيف تلقائي للبيانات القديمة (عند فتح القاعدة)
-      await _autoCleanup();
+          // تنفيذ كل هجرة على حدة مع تسجيل النتيجة
+          for (var version = from + 1; version <= to; version++) {
+            final stepStart = DateTime.now();
+            try {
+              debugPrint(
+                  '[Migration] Migrating v${version - 1} -> v$version...');
+              await _runMigrationStep(m, version);
+              final stepDuration =
+                  DateTime.now().difference(stepStart).inMilliseconds;
+              debugPrint('[Migration] v$version complete (${stepDuration}ms)');
+              await _recordMigrationHistory(
+                version: version,
+                durationMs: stepDuration,
+                success: true,
+              );
+            } catch (e, stackTrace) {
+              final stepDuration =
+                  DateTime.now().difference(stepStart).inMilliseconds;
+              debugPrint(
+                  '[Migration] v$version FAILED (${stepDuration}ms): $e');
+              debugPrint('[Migration] Stack trace: $stackTrace');
+              await _recordMigrationHistory(
+                version: version,
+                durationMs: stepDuration,
+                success: false,
+                errorMessage: e.toString(),
+              );
+              // إعادة رمي الخطأ ليتم التراجع عن الهجرة بواسطة Drift
+              rethrow;
+            }
+          }
 
-      // استعادة عناصر المزامنة المعلقة (من تعطل سابق)
-      final resetCount = await syncQueueDao.resetStuckItems();
-      if (resetCount > 0) {
-        debugPrint('[DB] Reset $resetCount stuck sync items back to pending');
-      }
+          // فحص سلامة قاعدة البيانات بعد الهجرة
+          final postIntegrityOk = await _checkDatabaseIntegrity();
+          if (!postIntegrityOk) {
+            debugPrint(
+                '[Migration] WARNING: Post-migration integrity check failed!');
+          } else {
+            debugPrint('[Migration] Post-migration integrity check passed.');
+          }
 
-      // بدء النسخ الاحتياطي الدوري التلقائي (كل ساعتين)
-      backupService.startPeriodicBackup();
-    },
-  );
+          // التحقق من وجود الجداول المتوقعة
+          final schemaValid = await verifySchema();
+          if (!schemaValid) {
+            debugPrint(
+                '[Migration] WARNING: Schema verification found missing tables!');
+          } else {
+            debugPrint('[Migration] Schema verification passed '
+                '- all expected tables present.');
+          }
+
+          // نسخ احتياطي بعد نجاح الترحيل
+          try {
+            await backupService.createPostMigrationBackup(to);
+          } catch (e) {
+            debugPrint('[Backup] Post-migration backup failed: $e');
+          }
+
+          final totalDuration =
+              DateTime.now().difference(migrationStartTime).inMilliseconds;
+          debugPrint('[Migration] Full migration v$from -> v$to '
+              'completed in ${totalDuration}ms');
+        },
+        beforeOpen: (details) async {
+          // تفعيل المفاتيح الأجنبية (M31 fix)
+          await customStatement('PRAGMA foreign_keys = ON');
+          // تحسينات الأداء
+          await customStatement('PRAGMA cache_size = -8000'); // 8MB cache
+          // Wait 5s instead of failing immediately on database lock (C09)
+          await customStatement('PRAGMA busy_timeout = 5000');
+
+          // تنظيف تلقائي للبيانات القديمة (عند فتح القاعدة)
+          await _autoCleanup();
+
+          // استعادة عناصر المزامنة المعلقة (من تعطل سابق)
+          final resetCount = await syncQueueDao.resetStuckItems();
+          if (resetCount > 0) {
+            debugPrint(
+                '[DB] Reset $resetCount stuck sync items back to pending');
+          }
+
+          // بدء النسخ الاحتياطي الدوري التلقائي (كل ساعتين)
+          backupService.startPeriodicBackup();
+        },
+      );
 
   // ==========================================================================
   // Migration steps - كل خطوة هجرة منفصلة
@@ -397,8 +400,7 @@ class AppDatabase extends _$AppDatabase {
         // إعادة إنشاء الفهارس
         await customStatement(
             'CREATE INDEX idx_users_store_id ON users (store_id)');
-        await customStatement(
-            'CREATE INDEX idx_users_phone ON users (phone)');
+        await customStatement('CREATE INDEX idx_users_phone ON users (phone)');
         await customStatement(
             'CREATE INDEX idx_users_is_active ON users (is_active)');
       case 19:
@@ -493,7 +495,8 @@ class AppDatabase extends _$AppDatabase {
         // However, this is risky for existing data. The trigger approach above handles
         // referential integrity without changing the column type, so we skip the rebuild.
         // New installs get the correct nullable column from Drift's createAll().
-        debugPrint('[Migration v22] sales.shift_id + stock_deltas FK triggers created');
+        debugPrint(
+            '[Migration v22] sales.shift_id + stock_deltas FK triggers created');
       default:
         debugPrint('[Migration] Unknown migration version: $targetVersion');
     }
@@ -509,14 +512,35 @@ class AppDatabase extends _$AppDatabase {
     await m.createTable(posTerminalsTable);
     // إضافة org_id للجداول الحالية
     final tablesForOrgId = [
-      'products', 'categories', 'customers', 'customer_addresses',
-      'sales', 'orders', 'order_items', 'inventory_movements',
-      'accounts', 'suppliers', 'stores', 'users', 'shifts',
-      'cash_movements', 'audit_log', 'loyalty_points',
-      'loyalty_transactions', 'loyalty_rewards', 'expenses',
-      'expense_categories', 'returns', 'return_items',
-      'purchases', 'purchase_items', 'discounts', 'coupons',
-      'promotions', 'notifications', 'daily_summaries',
+      'products',
+      'categories',
+      'customers',
+      'customer_addresses',
+      'sales',
+      'orders',
+      'order_items',
+      'inventory_movements',
+      'accounts',
+      'suppliers',
+      'stores',
+      'users',
+      'shifts',
+      'cash_movements',
+      'audit_log',
+      'loyalty_points',
+      'loyalty_transactions',
+      'loyalty_rewards',
+      'expenses',
+      'expense_categories',
+      'returns',
+      'return_items',
+      'purchases',
+      'purchase_items',
+      'discounts',
+      'coupons',
+      'promotions',
+      'notifications',
+      'daily_summaries',
     ];
     for (final table in tablesForOrgId) {
       await customStatement(
@@ -541,10 +565,21 @@ class AppDatabase extends _$AppDatabase {
   /// Migration v11 -> v12: إضافة عمود deleted_at للحذف الناعم (soft delete)
   Future<void> _migrateToV12() async {
     final tablesForDeletedAt = [
-      'products', 'customers', 'categories', 'suppliers',
-      'sales', 'orders', 'purchases', 'returns',
-      'expenses', 'accounts', 'discounts', 'coupons',
-      'promotions', 'users', 'stores',
+      'products',
+      'customers',
+      'categories',
+      'suppliers',
+      'sales',
+      'orders',
+      'purchases',
+      'returns',
+      'expenses',
+      'accounts',
+      'discounts',
+      'coupons',
+      'promotions',
+      'users',
+      'stores',
     ];
     for (final table in tablesForDeletedAt) {
       await customStatement(
@@ -740,14 +775,11 @@ class AppDatabase extends _$AppDatabase {
         'ALTER TABLE products ADD COLUMN online_max_qty REAL');
     await customStatement(
         'ALTER TABLE products ADD COLUMN online_reserved_qty REAL NOT NULL DEFAULT 0');
-    await customStatement(
-        'ALTER TABLE products ADD COLUMN min_alert_qty REAL');
+    await customStatement('ALTER TABLE products ADD COLUMN min_alert_qty REAL');
     await customStatement(
         'ALTER TABLE products ADD COLUMN auto_reorder INTEGER NOT NULL DEFAULT 0');
-    await customStatement(
-        'ALTER TABLE products ADD COLUMN reorder_qty REAL');
-    await customStatement(
-        'ALTER TABLE products ADD COLUMN turnover_rate REAL');
+    await customStatement('ALTER TABLE products ADD COLUMN reorder_qty REAL');
+    await customStatement('ALTER TABLE products ADD COLUMN turnover_rate REAL');
 
     // إضافة أعمدة تأكيد التسليم للطلبات
     await customStatement(
@@ -821,12 +853,10 @@ class AppDatabase extends _$AppDatabase {
         'CREATE INDEX idx_products_store_id ON products (store_id)');
     await customStatement(
         'CREATE INDEX idx_products_barcode ON products (barcode)');
-    await customStatement(
-        'CREATE INDEX idx_products_sku ON products (sku)');
+    await customStatement('CREATE INDEX idx_products_sku ON products (sku)');
     await customStatement(
         'CREATE INDEX idx_products_category_id ON products (category_id)');
-    await customStatement(
-        'CREATE INDEX idx_products_name ON products (name)');
+    await customStatement('CREATE INDEX idx_products_name ON products (name)');
     await customStatement(
         'CREATE INDEX idx_products_synced_at ON products (synced_at)');
     await customStatement(
@@ -1063,8 +1093,7 @@ class AppDatabase extends _$AppDatabase {
         "SELECT name FROM sqlite_master "
         "WHERE type='table' AND name NOT LIKE 'sqlite_%'",
       ).get();
-      final existingTables =
-          result.map((r) => r.read<String>('name')).toSet();
+      final existingTables = result.map((r) => r.read<String>('name')).toSet();
 
       final missingTables = <String>[];
       for (final table in expectedTables) {
@@ -1074,8 +1103,7 @@ class AppDatabase extends _$AppDatabase {
       }
 
       if (missingTables.isNotEmpty) {
-        debugPrint(
-            '[Migration] Missing tables: ${missingTables.join(', ')}');
+        debugPrint('[Migration] Missing tables: ${missingTables.join(', ')}');
         return false;
       }
       return true;

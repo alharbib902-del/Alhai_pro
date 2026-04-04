@@ -122,16 +122,19 @@ void main() {
     test('every supported locale has a native name', () {
       for (final locale in SupportedLocales.all) {
         final name = SupportedLocales.getNativeName(locale);
-        expect(name, isNotEmpty, reason: '${locale.languageCode} missing native name');
+        expect(name, isNotEmpty,
+            reason: '${locale.languageCode} missing native name');
       }
     });
 
     test('Arabic native name is correct', () {
-      expect(SupportedLocales.getNativeName(SupportedLocales.arabic), '\u0627\u0644\u0639\u0631\u0628\u064a\u0629');
+      expect(SupportedLocales.getNativeName(SupportedLocales.arabic),
+          '\u0627\u0644\u0639\u0631\u0628\u064a\u0629');
     });
 
     test('English native name is correct', () {
-      expect(SupportedLocales.getNativeName(SupportedLocales.english), 'English');
+      expect(
+          SupportedLocales.getNativeName(SupportedLocales.english), 'English');
     });
 
     test('unknown locale returns language code', () {

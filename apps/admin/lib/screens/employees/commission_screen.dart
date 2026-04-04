@@ -109,24 +109,32 @@ class _CommissionScreenState extends ConsumerState<CommissionScreen> {
   String _periodLabel(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     switch (_period) {
-      case 'week': return l10n.thisWeek;
-      case 'month': return l10n.thisMonth;
-      case 'year': return l10n.thisYear;
-      default: return l10n.thisMonth;
+      case 'week':
+        return l10n.thisWeek;
+      case 'month':
+        return l10n.thisMonth;
+      case 'year':
+        return l10n.thisYear;
+      default:
+        return l10n.thisMonth;
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final totalCommissions = _employees.fold(0.0, (sum, e) => sum + e.commission);
+    final totalCommissions =
+        _employees.fold(0.0, (sum, e) => sum + e.commission);
 
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.employeeCommissions),
         actions: [
           PopupMenuButton<String>(
-            onSelected: (v) { setState(() => _period = v); _loadData(); },
+            onSelected: (v) {
+              setState(() => _period = v);
+              _loadData();
+            },
             itemBuilder: (_) => [
               PopupMenuItem(value: 'week', child: Text(l10n.thisWeek)),
               PopupMenuItem(value: 'month', child: Text(l10n.thisMonth)),
@@ -145,156 +153,215 @@ class _CommissionScreenState extends ConsumerState<CommissionScreen> {
       body: SafeArea(
         top: false,
         child: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Column(
-              children: [
-                // Total commissions banner
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(AlhaiSpacing.md),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Theme.of(context).colorScheme.primary, Theme.of(context).colorScheme.primary.withValues(alpha: 0.8)],
+            ? const Center(child: CircularProgressIndicator())
+            : Column(
+                children: [
+                  // Total commissions banner
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(AlhaiSpacing.md),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Theme.of(context).colorScheme.primary,
+                          Theme.of(context)
+                              .colorScheme
+                              .primary
+                              .withValues(alpha: 0.8)
+                        ],
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        Text(l10n.totalDueCommissions,
+                            style: TextStyle(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onPrimary
+                                    .withValues(alpha: 0.7),
+                                fontSize: 12)),
+                        const SizedBox(height: AlhaiSpacing.xxs),
+                        Text(
+                          l10n.amountSar(totalCommissions.toStringAsFixed(2)),
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onPrimary,
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          l10n.forEmployees(_employees.length),
+                          style: TextStyle(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onPrimary
+                                  .withValues(alpha: 0.7),
+                              fontSize: 12),
+                        ),
+                      ],
                     ),
                   ),
-                  child: Column(
-                    children: [
-                      Text(l10n.totalDueCommissions,
-                          style: TextStyle(color: Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.7), fontSize: 12)),
-                      const SizedBox(height: AlhaiSpacing.xxs),
-                      Text(
-                        l10n.amountSar(totalCommissions.toStringAsFixed(2)),
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onPrimary,
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        l10n.forEmployees(_employees.length),
-                        style: TextStyle(color: Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.7), fontSize: 12),
-                      ),
-                    ],
-                  ),
-                ),
 
-                Expanded(
-                  child: _employees.isEmpty
-                      ? AppEmptyState.noData(
-                          context,
-                          title: l10n.noCommissions,
-                          description: l10n.noSalesInPeriod,
-                        )
-                      : ListView.builder(
-                          padding: const EdgeInsets.all(AlhaiSpacing.sm),
-                          itemCount: _employees.length,
-                          itemBuilder: (ctx, i) {
-                            final emp = _employees[i];
-                            final achievedPct =
-                                emp.target > 0 ? (emp.totalSales / emp.target).clamp(0.0, 1.0) : 0.0;
-                            return Card(
-                              margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
-                              child: Padding(
-                                padding: const EdgeInsets.all(AlhaiSpacing.md),
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      children: [
-                                        CircleAvatar(
-                                          radius: 22,
-                                          backgroundColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
-                                          child: Text(
-                                            emp.name.isNotEmpty ? emp.name[0] : '?',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Theme.of(context).colorScheme.primary,
-                                              fontSize: 18,
+                  Expanded(
+                    child: _employees.isEmpty
+                        ? AppEmptyState.noData(
+                            context,
+                            title: l10n.noCommissions,
+                            description: l10n.noSalesInPeriod,
+                          )
+                        : ListView.builder(
+                            padding: const EdgeInsets.all(AlhaiSpacing.sm),
+                            itemCount: _employees.length,
+                            itemBuilder: (ctx, i) {
+                              final emp = _employees[i];
+                              final achievedPct = emp.target > 0
+                                  ? (emp.totalSales / emp.target)
+                                      .clamp(0.0, 1.0)
+                                  : 0.0;
+                              return Card(
+                                margin: const EdgeInsets.only(
+                                    bottom: AlhaiSpacing.xs),
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.all(AlhaiSpacing.md),
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          CircleAvatar(
+                                            radius: 22,
+                                            backgroundColor: Theme.of(context)
+                                                .colorScheme
+                                                .primary
+                                                .withValues(alpha: 0.1),
+                                            child: Text(
+                                              emp.name.isNotEmpty
+                                                  ? emp.name[0]
+                                                  : '?',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .primary,
+                                                fontSize: 18,
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                        const SizedBox(width: AlhaiSpacing.sm),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Text(emp.name,
-                                                  style: const TextStyle(
-                                                      fontWeight: FontWeight.bold)),
-                                              Text(
-                                                l10n.invoicesSales(emp.saleCount, emp.totalSales.toStringAsFixed(0)),
-                                                style: TextStyle(
-                                                    fontSize: 12, color: Theme.of(context).hintColor),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Container(
-                                          padding: const EdgeInsets.all(AlhaiSpacing.xs),
-                                          decoration: BoxDecoration(
-                                            color: AppColors.success.withValues(alpha: 0.1),
-                                            borderRadius: BorderRadius.circular(8),
-                                          ),
-                                          child: Column(
-                                            children: [
-                                              Text(l10n.commissionLabel,
+                                          const SizedBox(
+                                              width: AlhaiSpacing.sm),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(emp.name,
+                                                    style: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold)),
+                                                Text(
+                                                  l10n.invoicesSales(
+                                                      emp.saleCount,
+                                                      emp.totalSales
+                                                          .toStringAsFixed(0)),
                                                   style: TextStyle(
-                                                      fontSize: 10, color: Theme.of(context).hintColor)),
-                                              Text(
-                                                l10n.amountSar(emp.commission.toStringAsFixed(0)),
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: AppColors.success,
-                                                  fontSize: 15,
+                                                      fontSize: 12,
+                                                      color: Theme.of(context)
+                                                          .hintColor),
                                                 ),
-                                              ),
-                                            ],
+                                              ],
+                                            ),
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 10),
-                                    // Target progress
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          l10n.targetLabel(emp.target.toStringAsFixed(0)),
-                                          style: TextStyle(fontSize: 11, color: Theme.of(context).hintColor),
-                                        ),
-                                        Text(
-                                          l10n.achievedPercent((achievedPct * 100).toStringAsFixed(0)),
-                                          style: TextStyle(
-                                            fontSize: 11,
-                                            fontWeight: FontWeight.bold,
-                                            color: achievedPct >= 1 ? AppColors.success : AppColors.warning,
+                                          Container(
+                                            padding: const EdgeInsets.all(
+                                                AlhaiSpacing.xs),
+                                            decoration: BoxDecoration(
+                                              color: AppColors.success
+                                                  .withValues(alpha: 0.1),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                            child: Column(
+                                              children: [
+                                                Text(l10n.commissionLabel,
+                                                    style: TextStyle(
+                                                        fontSize: 10,
+                                                        color: Theme.of(context)
+                                                            .hintColor)),
+                                                Text(
+                                                  l10n.amountSar(emp.commission
+                                                      .toStringAsFixed(0)),
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: AppColors.success,
+                                                    fontSize: 15,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: AlhaiSpacing.xxs),
-                                    LinearProgressIndicator(
-                                      value: achievedPct,
-                                      backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                        achievedPct >= 1 ? AppColors.success : AppColors.warning,
+                                        ],
                                       ),
-                                      minHeight: 6,
-                                      borderRadius: BorderRadius.circular(3),
-                                    ),
-                                    const SizedBox(height: AlhaiSpacing.xxs),
-                                    Text(
-                                      l10n.commissionRate((emp.commissionRate * 100).toStringAsFixed(0)),
-                                      style: TextStyle(fontSize: 10, color: Theme.of(context).hintColor),
-                                    ),
-                                  ],
+                                      const SizedBox(height: 10),
+                                      // Target progress
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            l10n.targetLabel(
+                                                emp.target.toStringAsFixed(0)),
+                                            style: TextStyle(
+                                                fontSize: 11,
+                                                color: Theme.of(context)
+                                                    .hintColor),
+                                          ),
+                                          Text(
+                                            l10n.achievedPercent(
+                                                (achievedPct * 100)
+                                                    .toStringAsFixed(0)),
+                                            style: TextStyle(
+                                              fontSize: 11,
+                                              fontWeight: FontWeight.bold,
+                                              color: achievedPct >= 1
+                                                  ? AppColors.success
+                                                  : AppColors.warning,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: AlhaiSpacing.xxs),
+                                      LinearProgressIndicator(
+                                        value: achievedPct,
+                                        backgroundColor: Theme.of(context)
+                                            .colorScheme
+                                            .surfaceContainerLow,
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                          achievedPct >= 1
+                                              ? AppColors.success
+                                              : AppColors.warning,
+                                        ),
+                                        minHeight: 6,
+                                        borderRadius: BorderRadius.circular(3),
+                                      ),
+                                      const SizedBox(height: AlhaiSpacing.xxs),
+                                      Text(
+                                        l10n.commissionRate(
+                                            (emp.commissionRate * 100)
+                                                .toStringAsFixed(0)),
+                                        style: TextStyle(
+                                            fontSize: 10,
+                                            color: Theme.of(context).hintColor),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            );
-                          },
-                        ),
-                ),
-              ],
-            ),
+                              );
+                            },
+                          ),
+                  ),
+                ],
+              ),
       ),
     );
   }

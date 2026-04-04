@@ -112,7 +112,8 @@ void main() {
   setUp(() {
     FlutterError.onError = (details) {
       final msg = details.toString();
-      if (msg.contains('overflowed') || msg.contains('Multiple exceptions')) return;
+      if (msg.contains('overflowed') || msg.contains('Multiple exceptions'))
+        return;
       originalOnError?.call(details);
     };
   });

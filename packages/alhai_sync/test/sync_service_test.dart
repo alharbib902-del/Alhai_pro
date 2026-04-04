@@ -203,8 +203,7 @@ void main() {
       );
       when(() => mockDao.findByIdempotencyKey(any()))
           .thenAnswer((_) async => existingItem);
-      when(() => mockDao.updatePayload(any(), any()))
-          .thenAnswer((_) async {});
+      when(() => mockDao.updatePayload(any(), any())).thenAnswer((_) async {});
 
       final id = await service.enqueue(
         tableName: 'products',
@@ -230,7 +229,8 @@ void main() {
   // ─── Queue overload protection ────────────────────────────────────
 
   group('Queue overload protection', () {
-    test('high-priority tables are not downgraded when queue is overloaded', () async {
+    test('high-priority tables are not downgraded when queue is overloaded',
+        () async {
       // Setup overloaded queue
       _setupOverloadedQueue(mockDao);
       _setupNoPendingItems(mockDao);
@@ -255,7 +255,8 @@ void main() {
           )).called(1);
     });
 
-    test('low-priority tables are downgraded when queue is overloaded', () async {
+    test('low-priority tables are downgraded when queue is overloaded',
+        () async {
       _setupOverloadedQueue(mockDao);
       _setupNoPendingItems(mockDao);
       _setupNoExistingIdempotency(mockDao);
@@ -344,19 +345,23 @@ void main() {
 
   group('Enums', () {
     test('SyncOperation has all expected values', () {
-      expect(SyncOperation.values, containsAll([
-        SyncOperation.create,
-        SyncOperation.update,
-        SyncOperation.delete,
-      ]));
+      expect(
+          SyncOperation.values,
+          containsAll([
+            SyncOperation.create,
+            SyncOperation.update,
+            SyncOperation.delete,
+          ]));
     });
 
     test('SyncPriority has all expected values', () {
-      expect(SyncPriority.values, containsAll([
-        SyncPriority.low,
-        SyncPriority.normal,
-        SyncPriority.high,
-      ]));
+      expect(
+          SyncPriority.values,
+          containsAll([
+            SyncPriority.low,
+            SyncPriority.normal,
+            SyncPriority.high,
+          ]));
     });
   });
 }
@@ -388,13 +393,11 @@ SyncQueueHealth _overloadedQueue() => SyncQueueHealth(
     );
 
 void _setupHealthyQueue(MockSyncQueueDao dao) {
-  when(() => dao.getQueueHealth())
-      .thenAnswer((_) async => _healthyQueue());
+  when(() => dao.getQueueHealth()).thenAnswer((_) async => _healthyQueue());
 }
 
 void _setupOverloadedQueue(MockSyncQueueDao dao) {
-  when(() => dao.getQueueHealth())
-      .thenAnswer((_) async => _overloadedQueue());
+  when(() => dao.getQueueHealth()).thenAnswer((_) async => _overloadedQueue());
 }
 
 void _setupNoPendingItems(MockSyncQueueDao dao) {
@@ -403,8 +406,7 @@ void _setupNoPendingItems(MockSyncQueueDao dao) {
 }
 
 void _setupNoExistingIdempotency(MockSyncQueueDao dao) {
-  when(() => dao.findByIdempotencyKey(any()))
-      .thenAnswer((_) async => null);
+  when(() => dao.findByIdempotencyKey(any())).thenAnswer((_) async => null);
 }
 
 void _setupEnqueueSuccess(MockSyncQueueDao dao) {

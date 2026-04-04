@@ -38,83 +38,86 @@ class HomeScreen extends ConsumerWidget {
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 800),
             child: RefreshIndicator(
-          onRefresh: () async {
-            ref.invalidate(dashboardStatsProvider);
-          },
-          child: ListView(
-            padding: const EdgeInsets.all(AlhaiSpacing.md),
-            children: [
-            // Daily stats
-            Semantics(
-              label: 'بطاقة إحصائيات اليوم',
-              child: stats.when(
-                data: (data) => DailyStatsCard(stats: data),
-                loading: () => const ShimmerStatsCard(),
-                error: (_, __) => const DailyStatsCard(stats: {}),
-              ),
-            ),
-            const SizedBox(height: AlhaiSpacing.md),
-
-            // Active delivery card
-            Semantics(
-              label: 'بطاقة التوصيل النشط',
-              child: stats.when(
-                data: (data) {
-                  final activeId = data['active_delivery_id'] as String?;
-                  final activeStatus =
-                      data['active_delivery_status'] as String?;
-                  if (activeId != null) {
-                    return ActiveDeliveryCard(
-                      deliveryId: activeId,
-                      status: activeStatus ?? '',
-                      onTap: () => context.push('/orders/$activeId'),
-                    );
-                  }
-                  return _NoActiveDeliveryCard();
-                },
-                loading: () => const ShimmerCard(),
-                error: (_, __) => _NoActiveDeliveryCard(),
-              ),
-            ),
-
-            const SizedBox(height: AlhaiSpacing.md),
-
-            // Pending assignments count
-            stats.when(
-              data: (data) {
-                final pending = data['pending_count'] as int? ?? 0;
-                if (pending > 0) {
-                  return Semantics(
-                    label: '$pending طلبات بانتظار القبول، اضغط للعرض',
-                    button: true,
-                    child: Card(
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AlhaiRadius.md),
-                      ),
-                      color: Theme.of(context).colorScheme.tertiaryContainer,
-                      child: ListTile(
-                        leading: Badge(
-                          label: Text('$pending'),
-                          child: const Icon(
-                            Icons.notification_important_rounded,
-                            size: 24,
-                          ),
-                        ),
-                        title: Text('$pending طلبات بانتظار القبول'),
-                        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                        onTap: () => context.go('/deliveries'),
-                      ),
-                    ),
-                  );
-                }
-                return const SizedBox.shrink();
+              onRefresh: () async {
+                ref.invalidate(dashboardStatsProvider);
               },
-              loading: () => const SizedBox.shrink(),
-              error: (_, __) => const SizedBox.shrink(),
-            ),
-          ],
-          ),
+              child: ListView(
+                padding: const EdgeInsets.all(AlhaiSpacing.md),
+                children: [
+                  // Daily stats
+                  Semantics(
+                    label: 'بطاقة إحصائيات اليوم',
+                    child: stats.when(
+                      data: (data) => DailyStatsCard(stats: data),
+                      loading: () => const ShimmerStatsCard(),
+                      error: (_, __) => const DailyStatsCard(stats: {}),
+                    ),
+                  ),
+                  const SizedBox(height: AlhaiSpacing.md),
+
+                  // Active delivery card
+                  Semantics(
+                    label: 'بطاقة التوصيل النشط',
+                    child: stats.when(
+                      data: (data) {
+                        final activeId = data['active_delivery_id'] as String?;
+                        final activeStatus =
+                            data['active_delivery_status'] as String?;
+                        if (activeId != null) {
+                          return ActiveDeliveryCard(
+                            deliveryId: activeId,
+                            status: activeStatus ?? '',
+                            onTap: () => context.push('/orders/$activeId'),
+                          );
+                        }
+                        return _NoActiveDeliveryCard();
+                      },
+                      loading: () => const ShimmerCard(),
+                      error: (_, __) => _NoActiveDeliveryCard(),
+                    ),
+                  ),
+
+                  const SizedBox(height: AlhaiSpacing.md),
+
+                  // Pending assignments count
+                  stats.when(
+                    data: (data) {
+                      final pending = data['pending_count'] as int? ?? 0;
+                      if (pending > 0) {
+                        return Semantics(
+                          label: '$pending طلبات بانتظار القبول، اضغط للعرض',
+                          button: true,
+                          child: Card(
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.circular(AlhaiRadius.md),
+                            ),
+                            color:
+                                Theme.of(context).colorScheme.tertiaryContainer,
+                            child: ListTile(
+                              leading: Badge(
+                                label: Text('$pending'),
+                                child: const Icon(
+                                  Icons.notification_important_rounded,
+                                  size: 24,
+                                ),
+                              ),
+                              title: Text('$pending طلبات بانتظار القبول'),
+                              trailing:
+                                  const Icon(Icons.arrow_forward_ios, size: 16),
+                              onTap: () => context.go('/deliveries'),
+                            ),
+                          ),
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    },
+                    loading: () => const SizedBox.shrink(),
+                    error: (_, __) => const SizedBox.shrink(),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -173,4 +176,3 @@ class _NoActiveDeliveryCard extends StatelessWidget {
     );
   }
 }
-

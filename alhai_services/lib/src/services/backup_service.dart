@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'gzip_helper_stub.dart'
-    if (dart.library.io) 'gzip_helper_native.dart' as gzip_helper;
+import 'gzip_helper_stub.dart' if (dart.library.io) 'gzip_helper_native.dart'
+    as gzip_helper;
 
 /// خدمة النسخ الاحتياطي
 /// تستخدم من: admin_pos, cashier
@@ -126,7 +126,8 @@ class BackupService {
       // Log compression ratio in debug mode
       assert(() {
         // ignore: avoid_print
-        print('[Backup] Compressed: ${rawBytes.length} -> ${gzipBytes.length} bytes (${ratio.toStringAsFixed(1)}% reduction)');
+        print(
+            '[Backup] Compressed: ${rawBytes.length} -> ${gzipBytes.length} bytes (${ratio.toStringAsFixed(1)}% reduction)');
         return true;
       }());
       return compressed;
@@ -174,34 +175,35 @@ class BackupData {
   });
 
   factory BackupData.fromJson(Map<String, dynamic> json) => BackupData(
-    id: json['id'] as String,
-    storeId: json['storeId'] as String,
-    type: BackupType.values.firstWhere(
-      (t) => t.name == json['type'],
-      orElse: () => BackupType.full,
-    ),
-    data: json['data'] as Map<String, dynamic>,
-    createdAt: DateTime.tryParse(json['createdAt'] as String) ?? DateTime.now(),
-    version: json['version'] as String,
-  );
+        id: json['id'] as String,
+        storeId: json['storeId'] as String,
+        type: BackupType.values.firstWhere(
+          (t) => t.name == json['type'],
+          orElse: () => BackupType.full,
+        ),
+        data: json['data'] as Map<String, dynamic>,
+        createdAt:
+            DateTime.tryParse(json['createdAt'] as String) ?? DateTime.now(),
+        version: json['version'] as String,
+      );
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'storeId': storeId,
-    'type': type.name,
-    'data': data,
-    'createdAt': createdAt.toIso8601String(),
-    'version': version,
-  };
+        'id': id,
+        'storeId': storeId,
+        'type': type.name,
+        'data': data,
+        'createdAt': createdAt.toIso8601String(),
+        'version': version,
+      };
 }
 
 /// نوع النسخة الاحتياطية
 enum BackupType {
-  full,       // كل البيانات
-  products,   // المنتجات فقط
-  orders,     // الطلبات فقط
-  customers,  // العملاء فقط
-  settings,   // الإعدادات فقط
+  full, // كل البيانات
+  products, // المنتجات فقط
+  orders, // الطلبات فقط
+  customers, // العملاء فقط
+  settings, // الإعدادات فقط
 }
 
 /// نتيجة إنشاء نسخة احتياطية

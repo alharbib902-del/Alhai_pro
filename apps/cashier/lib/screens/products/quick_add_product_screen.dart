@@ -15,7 +15,8 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:uuid/uuid.dart';
 import 'package:drift/drift.dart' show Value;
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
+import 'package:alhai_design_system/alhai_design_system.dart'
+    show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 import '../../core/services/audit_service.dart';
@@ -29,8 +30,7 @@ class QuickAddProductScreen extends ConsumerStatefulWidget {
       _QuickAddProductScreenState();
 }
 
-class _QuickAddProductScreenState
-    extends ConsumerState<QuickAddProductScreen> {
+class _QuickAddProductScreenState extends ConsumerState<QuickAddProductScreen> {
   final _db = GetIt.I<AppDatabase>();
   final _nameController = TextEditingController();
   final _barcodeController = TextEditingController();
@@ -86,7 +86,8 @@ class _QuickAddProductScreenState
         });
       }
     } catch (e, stack) {
-      reportError(e, stackTrace: stack, hint: 'Load categories for quick add product');
+      reportError(e,
+          stackTrace: stack, hint: 'Load categories for quick add product');
       if (mounted) {
         setState(() {
           _error = '$e';
@@ -138,9 +139,8 @@ class _QuickAddProductScreenState
             subtitle: _getDateSubtitle(l10n),
             showSearch: false,
             searchHint: l10n.searchPlaceholder,
-            onMenuTap: isWideScreen
-                ? null
-                : () => Scaffold.of(context).openDrawer(),
+            onMenuTap:
+                isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
             onNotificationsTap: () => context.push('/notifications'),
             notificationsCount: 3,
             userName: user?.name ?? l10n.cashCustomer,
@@ -151,17 +151,19 @@ class _QuickAddProductScreenState
             child: _isLoading
                 ? const AppLoadingState()
                 : _error != null
-                    ? AppErrorState.general(context, message: _error!, onRetry: _loadCategories)
+                    ? AppErrorState.general(context,
+                        message: _error!, onRetry: _loadCategories)
                     : SingleChildScrollView(
-                    padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-                    child: Center(
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 900),
-                        child: _buildContent(
-                            isWideScreen, isMediumScreen, isDark, l10n),
+                        padding: EdgeInsets.all(
+                            isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+                        child: Center(
+                          child: ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 900),
+                            child: _buildContent(
+                                isWideScreen, isMediumScreen, isDark, l10n),
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
           ),
         ],
       ),
@@ -173,8 +175,8 @@ class _QuickAddProductScreenState
     return '${now.day}/${now.month}/${now.year} \u2022 ${l10n.mainBranch}';
   }
 
-  Widget _buildContent(
-      bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n) {
+  Widget _buildContent(bool isWideScreen, bool isMediumScreen, bool isDark,
+      AppLocalizations l10n) {
     if (isWideScreen) {
       return Form(
         key: _formKey,
@@ -269,7 +271,8 @@ class _QuickAddProductScreenState
             },
             style: TextStyle(color: AppColors.getTextPrimary(isDark)),
             maxLength: 200,
-            validator: FormValidators.requiredField(fieldName: l10n.productName),
+            validator:
+                FormValidators.requiredField(fieldName: l10n.productName),
             decoration: _inputDecoration(
               l10n.productName,
               Icons.label_rounded,
@@ -435,8 +438,7 @@ class _QuickAddProductScreenState
               ),
               suffixText: l10n.sar,
               suffixStyle: TextStyle(
-                  fontSize: 14,
-                  color: AppColors.getTextSecondary(isDark)),
+                  fontSize: 14, color: AppColors.getTextSecondary(isDark)),
               prefixIcon: const Padding(
                 padding: EdgeInsets.all(AlhaiSpacing.sm),
                 child: Icon(Icons.sell_rounded,
@@ -470,7 +472,8 @@ class _QuickAddProductScreenState
             },
             keyboardType: TextInputType.number,
             style: TextStyle(color: AppColors.getTextPrimary(isDark)),
-            validator: FormValidators.quantity(required: true, allowZero: false),
+            validator:
+                FormValidators.quantity(required: true, allowZero: false),
             decoration: _inputDecoration(
               l10n.quantity,
               Icons.numbers_rounded,
@@ -539,21 +542,19 @@ class _QuickAddProductScreenState
               )
             : const Icon(Icons.save_rounded, size: 20),
         label: Text(l10n.save,
-            style:
-                const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.primary,
           foregroundColor: AppColors.textOnPrimary,
           padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
       ),
     );
   }
 
-  InputDecoration _inputDecoration(
-      String hint, IconData icon, bool isDark) {
+  InputDecoration _inputDecoration(String hint, IconData icon, bool isDark) {
     return InputDecoration(
       hintText: hint,
       hintStyle: TextStyle(color: AppColors.getTextMuted(isDark)),
@@ -599,10 +600,16 @@ class _QuickAddProductScreenState
       if (storeId == null) throw Exception('No store selected');
 
       final productId = const Uuid().v4();
-      final price = double.tryParse(InputSanitizer.sanitizeDecimal(_priceController.text)) ?? 0.0;
-      final quantity = int.tryParse(InputSanitizer.sanitizeNumeric(_quantityController.text)) ?? 0;
-      final sanitizedName = InputSanitizer.sanitize(_nameController.text.trim());
-      final sanitizedBarcode = InputSanitizer.sanitize(_barcodeController.text.trim());
+      final price = double.tryParse(
+              InputSanitizer.sanitizeDecimal(_priceController.text)) ??
+          0.0;
+      final quantity = int.tryParse(
+              InputSanitizer.sanitizeNumeric(_quantityController.text)) ??
+          0;
+      final sanitizedName =
+          InputSanitizer.sanitize(_nameController.text.trim());
+      final sanitizedBarcode =
+          InputSanitizer.sanitize(_barcodeController.text.trim());
 
       await _db.productsDao.insertProduct(
         ProductsTableCompanion.insert(
@@ -610,9 +617,7 @@ class _QuickAddProductScreenState
           storeId: storeId,
           name: sanitizedName,
           price: price,
-          barcode: Value(sanitizedBarcode.isNotEmpty
-              ? sanitizedBarcode
-              : null),
+          barcode: Value(sanitizedBarcode.isNotEmpty ? sanitizedBarcode : null),
           categoryId: Value(_selectedCategoryId),
           stockQty: Value(quantity.toDouble()),
           createdAt: DateTime.now(),

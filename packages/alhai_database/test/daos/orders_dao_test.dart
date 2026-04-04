@@ -74,8 +74,7 @@ void main() {
     test('getOrderByNumber finds order', () async {
       await db.ordersDao.createOrder(_makeOrder());
 
-      final order =
-          await db.ordersDao.getOrderByNumber('ORD-20250615-001');
+      final order = await db.ordersDao.getOrderByNumber('ORD-20250615-001');
       expect(order, isNotNull);
       expect(order!.id, 'order-1');
     });
@@ -92,8 +91,7 @@ void main() {
     });
 
     test('getOrdersByStatus filters correctly', () async {
-      await db.ordersDao
-          .createOrder(_makeOrder(id: 'o1', status: 'created'));
+      await db.ordersDao.createOrder(_makeOrder(id: 'o1', status: 'created'));
       await db.ordersDao.createOrder(_makeOrder(
         id: 'o2',
         orderNumber: 'ORD-002',

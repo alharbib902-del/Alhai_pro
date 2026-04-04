@@ -23,16 +23,27 @@ class PosCategoryColumn extends StatelessWidget {
 
   IconData _getCategoryIcon(String name) {
     final lower = name.toLowerCase();
-    if (lower.contains('مشروبات ساخنة') || lower.contains('hot') || lower.contains('قهوة') || lower.contains('coffee')) {
+    if (lower.contains('مشروبات ساخنة') ||
+        lower.contains('hot') ||
+        lower.contains('قهوة') ||
+        lower.contains('coffee')) {
       return Icons.local_cafe_rounded;
     }
-    if (lower.contains('مشروبات باردة') || lower.contains('cold') || lower.contains('عصير') || lower.contains('juice')) {
+    if (lower.contains('مشروبات باردة') ||
+        lower.contains('cold') ||
+        lower.contains('عصير') ||
+        lower.contains('juice')) {
       return Icons.local_drink_rounded;
     }
-    if (lower.contains('مشروبات') || lower.contains('drink') || lower.contains('beverage')) {
+    if (lower.contains('مشروبات') ||
+        lower.contains('drink') ||
+        lower.contains('beverage')) {
       return Icons.local_drink_rounded;
     }
-    if (lower.contains('حلويات') || lower.contains('sweet') || lower.contains('سناك') || lower.contains('snack')) {
+    if (lower.contains('حلويات') ||
+        lower.contains('sweet') ||
+        lower.contains('سناك') ||
+        lower.contains('snack')) {
       return Icons.icecream_rounded;
     }
     if (lower.contains('فواكه') || lower.contains('fruit')) {
@@ -41,19 +52,25 @@ class PosCategoryColumn extends StatelessWidget {
     if (lower.contains('خضروات') || lower.contains('vegetable')) {
       return Icons.eco_rounded;
     }
-    if (lower.contains('ألبان') || lower.contains('dairy') || lower.contains('milk')) {
+    if (lower.contains('ألبان') ||
+        lower.contains('dairy') ||
+        lower.contains('milk')) {
       return Icons.water_drop_rounded;
     }
     if (lower.contains('لحوم') || lower.contains('meat')) {
       return Icons.restaurant_rounded;
     }
-    if (lower.contains('مخبوزات') || lower.contains('bakery') || lower.contains('خبز')) {
+    if (lower.contains('مخبوزات') ||
+        lower.contains('bakery') ||
+        lower.contains('خبز')) {
       return Icons.bakery_dining_rounded;
     }
     if (lower.contains('تنظيف') || lower.contains('cleaning')) {
       return Icons.cleaning_services_rounded;
     }
-    if (lower.contains('حبوب') || lower.contains('grain') || lower.contains('بقول')) {
+    if (lower.contains('حبوب') ||
+        lower.contains('grain') ||
+        lower.contains('بقول')) {
       return Icons.grain_rounded;
     }
     if (lower.contains('مجمد') || lower.contains('frozen')) {
@@ -105,7 +122,9 @@ class PosCategoryColumn extends StatelessWidget {
         },
         loading: () => const Center(
             child: SizedBox(
-                width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))),
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(strokeWidth: 2))),
         error: (e, _) => const Center(
             child: Icon(Icons.error_outline, color: AppColors.error, size: 20)),
       ),
@@ -149,9 +168,8 @@ class PosCategoryColumnItem extends StatelessWidget {
             duration: AlhaiDurations.standard,
             padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs),
             decoration: BoxDecoration(
-              color: isActive
-                  ? color.withValues(alpha: 0.15)
-                  : Colors.transparent,
+              color:
+                  isActive ? color.withValues(alpha: 0.15) : Colors.transparent,
               borderRadius: BorderRadius.circular(10),
               border: isActive
                   ? Border.all(color: color.withValues(alpha: 0.4), width: 1.5)
@@ -167,7 +185,8 @@ class PosCategoryColumnItem extends StatelessWidget {
                     color: isActive
                         ? color.withValues(alpha: 0.2)
                         : isDark
-                            ? colorScheme.surfaceContainerHigh.withValues(alpha: 0.5)
+                            ? colorScheme.surfaceContainerHigh
+                                .withValues(alpha: 0.5)
                             : colorScheme.surfaceContainerLow,
                     shape: BoxShape.circle,
                   ),
@@ -224,16 +243,28 @@ class PosCategoryBar extends StatelessWidget {
 
   IconData _getCategoryIcon(String name) {
     final lower = name.toLowerCase();
-    if (lower.contains('مشروبات ساخنة') || lower.contains('hot') || lower.contains('قهوة') || lower.contains('coffee')) {
+    if (lower.contains('مشروبات ساخنة') ||
+        lower.contains('hot') ||
+        lower.contains('قهوة') ||
+        lower.contains('coffee')) {
       return Icons.local_cafe_rounded;
     }
-    if (lower.contains('مشروبات باردة') || lower.contains('cold') || lower.contains('عصير') || lower.contains('juice')) {
+    if (lower.contains('مشروبات باردة') ||
+        lower.contains('cold') ||
+        lower.contains('عصير') ||
+        lower.contains('juice')) {
       return Icons.local_drink_rounded;
     }
-    if (lower.contains('حلويات') || lower.contains('sweet') || lower.contains('كيك') || lower.contains('cake')) {
+    if (lower.contains('حلويات') ||
+        lower.contains('sweet') ||
+        lower.contains('كيك') ||
+        lower.contains('cake')) {
       return Icons.cake_rounded;
     }
-    if (lower.contains('وجبات') || lower.contains('snack') || lower.contains('meal') || lower.contains('burger')) {
+    if (lower.contains('وجبات') ||
+        lower.contains('snack') ||
+        lower.contains('meal') ||
+        lower.contains('burger')) {
       return Icons.fastfood_rounded;
     }
     if (lower.contains('فواكه') || lower.contains('fruit')) {
@@ -242,13 +273,17 @@ class PosCategoryBar extends StatelessWidget {
     if (lower.contains('خضروات') || lower.contains('vegetable')) {
       return Icons.eco_rounded;
     }
-    if (lower.contains('ألبان') || lower.contains('dairy') || lower.contains('milk')) {
+    if (lower.contains('ألبان') ||
+        lower.contains('dairy') ||
+        lower.contains('milk')) {
       return Icons.water_drop_rounded;
     }
     if (lower.contains('لحوم') || lower.contains('meat')) {
       return Icons.restaurant_rounded;
     }
-    if (lower.contains('مخبوزات') || lower.contains('bakery') || lower.contains('خبز')) {
+    if (lower.contains('مخبوزات') ||
+        lower.contains('bakery') ||
+        lower.contains('خبز')) {
       return Icons.bakery_dining_rounded;
     }
     if (lower.contains('تنظيف') || lower.contains('cleaning')) {
@@ -294,7 +329,9 @@ class PosCategoryBar extends StatelessWidget {
         ),
         loading: () => const Center(
             child: SizedBox(
-                width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2))),
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(strokeWidth: 2))),
         error: (e, _) => Center(
             child: Text('${l10n.error}: $e',
                 style: const TextStyle(color: AppColors.error, fontSize: 12))),
@@ -346,7 +383,9 @@ class PosCategoryPill extends StatelessWidget {
               border: isActive
                   ? null
                   : Border.all(
-                      color: isDark ? AppColors.borderDark : colorScheme.outlineVariant,
+                      color: isDark
+                          ? AppColors.borderDark
+                          : colorScheme.outlineVariant,
                       width: 0.5,
                     ),
             ),
@@ -360,7 +399,8 @@ class PosCategoryPill extends StatelessWidget {
                     color: isActive
                         ? Colors.white.withValues(alpha: 0.25)
                         : isDark
-                            ? colorScheme.surfaceContainerHigh.withValues(alpha: 0.3)
+                            ? colorScheme.surfaceContainerHigh
+                                .withValues(alpha: 0.3)
                             : colorScheme.surfaceContainer,
                     shape: BoxShape.circle,
                   ),

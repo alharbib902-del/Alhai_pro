@@ -22,4 +22,3 @@ export 'remote/analytics_remote_datasource.dart';
 export 'local/auth_local_datasource.dart';
 export 'local/entities/auth_tokens_entity.dart';
 export 'local/entities/user_entity.dart';
-

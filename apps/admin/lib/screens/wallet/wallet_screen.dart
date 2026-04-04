@@ -59,11 +59,9 @@ class _WalletScreenState extends ConsumerState<WalletScreen>
       // Load balance from settings
       final balanceRow = await (db.select(db.settingsTable)
             ..where((s) =>
-                s.storeId.equals(storeId) &
-                s.key.equals('wallet_balance')))
+                s.storeId.equals(storeId) & s.key.equals('wallet_balance')))
           .getSingleOrNull();
-      final balance =
-          double.tryParse(balanceRow?.value ?? '0') ?? 0.0;
+      final balance = double.tryParse(balanceRow?.value ?? '0') ?? 0.0;
 
       // Load transactions
       final transactions =
@@ -74,8 +72,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen>
       double withdrawals = 0.0;
       double transfers = 0.0;
       for (final t in transactions) {
-        if (t.type == 'deposit' ||
-            (t.type == 'payment' && t.amount > 0)) {
+        if (t.type == 'deposit' || (t.type == 'payment' && t.amount > 0)) {
           deposits += t.amount.abs();
         } else if (t.type == 'withdrawal' ||
             (t.type == 'payment' && t.amount < 0)) {
@@ -106,9 +103,8 @@ class _WalletScreenState extends ConsumerState<WalletScreen>
   }
 
   List<TransactionsTableData> get _deposits => _allTransactions
-      .where((t) =>
-          t.type == 'deposit' ||
-          (t.type == 'payment' && t.amount > 0))
+      .where(
+          (t) => t.type == 'deposit' || (t.type == 'payment' && t.amount > 0))
       .toList();
 
   List<TransactionsTableData> get _transfers =>
@@ -125,16 +121,14 @@ class _WalletScreenState extends ConsumerState<WalletScreen>
       children: [
         AppHeader(
           title: l10n.wallet,
-          onMenuTap:
-              isWide ? null : () => Scaffold.of(context).openDrawer(),
+          onMenuTap: isWide ? null : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 0,
           userName: l10n.defaultUserName,
           userRole: l10n.branchManager,
           actions: [
             FilledButton.icon(
-              onPressed: () =>
-                  _showDepositDialog(context, isDark),
+              onPressed: () => _showDepositDialog(context, isDark),
               icon: const Icon(Icons.add, size: 18),
               label: Text(l10n.walletTopup),
             ),
@@ -155,8 +149,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen>
                 ),
                 child: _isLoading
                     ? const Center(
-                        child: CircularProgressIndicator(
-                            color: Colors.white))
+                        child: CircularProgressIndicator(color: Colors.white))
                     : Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -182,20 +175,17 @@ class _WalletScreenState extends ConsumerState<WalletScreen>
                               _WalletInfoChip(
                                 icon: Icons.arrow_downward,
                                 label: 'Deposits',
-                                value:
-                                    _totalDeposits.toStringAsFixed(2),
+                                value: _totalDeposits.toStringAsFixed(2),
                               ),
                               _WalletInfoChip(
                                 icon: Icons.arrow_upward,
                                 label: 'Withdrawals',
-                                value: _totalWithdrawals
-                                    .toStringAsFixed(2),
+                                value: _totalWithdrawals.toStringAsFixed(2),
                               ),
                               _WalletInfoChip(
                                 icon: Icons.swap_horiz,
                                 label: 'Transfers',
-                                value: _totalTransfers
-                                    .toStringAsFixed(2),
+                                value: _totalTransfers.toStringAsFixed(2),
                               ),
                             ],
                           ),
@@ -226,8 +216,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen>
                   : TabBarView(
                       controller: _tabController,
                       children: [
-                        _buildTransactionsTab(
-                            isDark, _allTransactions),
+                        _buildTransactionsTab(isDark, _allTransactions),
                         _buildTransactionsTab(isDark, _deposits),
                         _buildTransactionsTab(isDark, _transfers),
                       ],
@@ -243,8 +232,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen>
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(Icons.error_outline,
-              size: 64,
-              color: AppColors.error.withValues(alpha: 0.7)),
+              size: 64, color: AppColors.error.withValues(alpha: 0.7)),
           const SizedBox(height: AlhaiSpacing.md),
           Text(
             _error!,
@@ -298,8 +286,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen>
     );
   }
 
-  Widget _buildTransactionCard(
-      TransactionsTableData transaction, bool isDark) {
+  Widget _buildTransactionCard(TransactionsTableData transaction, bool isDark) {
     final isPositive = transaction.amount >= 0;
     final typeLabel = _getTypeLabel(transaction.type);
     final icon = _getTypeIcon(transaction.type);
@@ -310,8 +297,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen>
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-            color: Theme.of(context).dividerColor),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Row(
         children: [
@@ -353,7 +339,10 @@ class _WalletScreenState extends ConsumerState<WalletScreen>
                   style: TextStyle(
                       fontSize: 11,
                       color: isDark
-                          ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.38)
+                          ? Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withValues(alpha: 0.38)
                           : AppColors.textTertiary),
                 ),
               ],
@@ -377,7 +366,10 @@ class _WalletScreenState extends ConsumerState<WalletScreen>
                   style: TextStyle(
                       fontSize: 10,
                       color: isDark
-                          ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.38)
+                          ? Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withValues(alpha: 0.38)
                           : AppColors.textTertiary),
                 ),
             ],
@@ -478,12 +470,9 @@ class _WalletScreenState extends ConsumerState<WalletScreen>
                       borderRadius: BorderRadius.circular(12)),
                 ),
                 items: const [
-                  DropdownMenuItem(
-                      value: 'bank', child: Text('Bank Transfer')),
-                  DropdownMenuItem(
-                      value: 'card', child: Text('Credit Card')),
-                  DropdownMenuItem(
-                      value: 'cash', child: Text('Cash')),
+                  DropdownMenuItem(value: 'bank', child: Text('Bank Transfer')),
+                  DropdownMenuItem(value: 'card', child: Text('Credit Card')),
+                  DropdownMenuItem(value: 'cash', child: Text('Cash')),
                 ],
                 onChanged: (val) {
                   if (val != null) {
@@ -509,13 +498,11 @@ class _WalletScreenState extends ConsumerState<WalletScreen>
                 child: const Text('Cancel')),
             ElevatedButton(
               onPressed: () {
-                final amount =
-                    double.tryParse(amountController.text);
+                final amount = double.tryParse(amountController.text);
                 if (amount == null || amount <= 0) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                        content:
-                            Text('Please enter a valid amount')),
+                        content: Text('Please enter a valid amount')),
                   );
                   return;
                 }
@@ -561,8 +548,7 @@ class _WalletInfoChip extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(label,
-                style: const TextStyle(
-                    color: Colors.white54, fontSize: 10)),
+                style: const TextStyle(color: Colors.white54, fontSize: 10)),
             Text(value,
                 style: const TextStyle(
                     color: Colors.white,

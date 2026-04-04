@@ -16,7 +16,8 @@ class CustomerReportScreen extends ConsumerStatefulWidget {
   const CustomerReportScreen({super.key});
 
   @override
-  ConsumerState<CustomerReportScreen> createState() => _CustomerReportScreenState();
+  ConsumerState<CustomerReportScreen> createState() =>
+      _CustomerReportScreenState();
 }
 
 class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
@@ -59,25 +60,30 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
       final thirtyDaysAgo = _dateRange.start;
 
       _totalCustomers = accounts.length;
-      _activeCustomers = accounts.where((a) =>
-        a.lastTransactionAt != null && a.lastTransactionAt!.isAfter(thirtyDaysAgo)
-      ).length;
-      _newCustomers = accounts.where((a) =>
-        a.createdAt.isAfter(thirtyDaysAgo)
-      ).length;
+      _activeCustomers = accounts
+          .where((a) =>
+              a.lastTransactionAt != null &&
+              a.lastTransactionAt!.isAfter(thirtyDaysAgo))
+          .length;
+      _newCustomers =
+          accounts.where((a) => a.createdAt.isAfter(thirtyDaysAgo)).length;
 
       // Try to get sales stats for revenue
       try {
-        final salesStats = await db.salesDao.getSalesStats(storeId, startDate: thirtyDaysAgo, endDate: now);
+        final salesStats = await db.salesDao
+            .getSalesStats(storeId, startDate: thirtyDaysAgo, endDate: now);
         _totalRevenue = salesStats.total;
-        _avgOrderValue = _totalCustomers > 0 ? _totalRevenue / _totalCustomers : 0;
+        _avgOrderValue =
+            _totalCustomers > 0 ? _totalRevenue / _totalCustomers : 0;
       } catch (_) {
         _totalRevenue = accounts.fold(0.0, (sum, a) => sum + a.balance);
-        _avgOrderValue = _totalCustomers > 0 ? _totalRevenue / _totalCustomers : 0;
+        _avgOrderValue =
+            _totalCustomers > 0 ? _totalRevenue / _totalCustomers : 0;
       }
 
       // Map accounts to CustomerData, sorted by balance descending
-      final sorted = List.of(accounts)..sort((a, b) => b.balance.compareTo(a.balance));
+      final sorted = List.of(accounts)
+        ..sort((a, b) => b.balance.compareTo(a.balance));
       _topCustomers = sorted.take(20).map((a) {
         String tier;
         if (a.balance >= 10000) {
@@ -157,11 +163,14 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.error_outline_rounded, size: 64, color: AppColors.textMuted),
+                        const Icon(Icons.error_outline_rounded,
+                            size: 64, color: AppColors.textMuted),
                         const SizedBox(height: AlhaiSpacing.md),
                         Text(
-                          AppLocalizations.of(context)!.errorLoadingCustomerReport,
-                          style: AppTypography.bodyLarge.copyWith(color: AppColors.textMuted),
+                          AppLocalizations.of(context)!
+                              .errorLoadingCustomerReport,
+                          style: AppTypography.bodyLarge
+                              .copyWith(color: AppColors.textMuted),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: AlhaiSpacing.md),
@@ -175,24 +184,24 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
                   ),
                 )
               : Column(
-        children: [
-          // شريط الفترة الزمنية
-          _buildDateRangeBanner(),
+                  children: [
+                    // شريط الفترة الزمنية
+                    _buildDateRangeBanner(),
 
-          // محتوى التقرير
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                _buildOverviewTab(),
-                _buildTopCustomersTab(),
-                _buildGrowthTab(),
-                _buildLoyaltyTab(),
-              ],
-            ),
-          ),
-        ],
-      ),
+                    // محتوى التقرير
+                    Expanded(
+                      child: TabBarView(
+                        controller: _tabController,
+                        children: [
+                          _buildOverviewTab(),
+                          _buildTopCustomersTab(),
+                          _buildGrowthTab(),
+                          _buildLoyaltyTab(),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
     );
   }
 
@@ -345,17 +354,33 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
     int diamond = 0, gold = 0, silver = 0, bronze = 0;
     for (final c in _topCustomers) {
       switch (c.tier) {
-        case 'diamond': diamond++; break;
-        case 'gold': gold++; break;
-        case 'silver': silver++; break;
-        default: bronze++; break;
+        case 'diamond':
+          diamond++;
+          break;
+        case 'gold':
+          gold++;
+          break;
+        case 'silver':
+          silver++;
+          break;
+        default:
+          bronze++;
+          break;
       }
     }
     final tiers = [
-      {'name': l10n.diamondTier, 'count': diamond, 'color': const Color(0xFF9C27B0)},
+      {
+        'name': l10n.diamondTier,
+        'count': diamond,
+        'color': const Color(0xFF9C27B0)
+      },
       {'name': l10n.goldTier, 'count': gold, 'color': AppColors.warning},
       {'name': l10n.silverTier, 'count': silver, 'color': AppColors.grey500},
-      {'name': l10n.bronzeTier, 'count': bronze, 'color': const Color(0xFF795548)},
+      {
+        'name': l10n.bronzeTier,
+        'count': bronze,
+        'color': const Color(0xFF795548)
+      },
     ];
 
     return Card(
@@ -601,7 +626,9 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
                   child: Text(
                     '$rank',
                     style: AppTypography.titleSmall.copyWith(
-                      color: rank <= 3 ? Theme.of(context).colorScheme.surface : Theme.of(context).colorScheme.onSurface,
+                      color: rank <= 3
+                          ? Theme.of(context).colorScheme.surface
+                          : Theme.of(context).colorScheme.onSurface,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -610,7 +637,8 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
 
                 // الصورة والاسم
                 CircleAvatar(
-                  backgroundColor: _getTierColor(customer.tier).withValues(alpha: 0.1),
+                  backgroundColor:
+                      _getTierColor(customer.tier).withValues(alpha: 0.1),
                   child: Text(
                     customer.name[0],
                     style: TextStyle(
@@ -677,7 +705,8 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
                       ),
                     ),
                     Text(
-                      AppLocalizations.of(context)!.ordersCount(customer.totalOrders),
+                      AppLocalizations.of(context)!
+                          .ordersCount(customer.totalOrders),
                       style: AppTypography.bodySmall.copyWith(
                         color: AppColors.textMuted,
                       ),
@@ -764,9 +793,8 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
     List<Map<String, dynamic>> data,
     Color color,
   ) {
-    final maxValue = data
-        .map((d) => d['value'] as int)
-        .reduce((a, b) => a > b ? a : b);
+    final maxValue =
+        data.map((d) => d['value'] as int).reduce((a, b) => a > b ? a : b);
 
     return Card(
       child: Padding(
@@ -789,7 +817,8 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
                   final height = (d['value'] as int) / maxValue * 150;
                   return Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xxs),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: AlhaiSpacing.xxs),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
@@ -851,7 +880,9 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
                 Expanded(
                   child: _buildRetentionStat(
                     l10n.monthlyPeriod,
-                    _totalCustomers > 0 ? '${(_activeCustomers / _totalCustomers * 100).toStringAsFixed(0)}%' : '0%',
+                    _totalCustomers > 0
+                        ? '${(_activeCustomers / _totalCustomers * 100).toStringAsFixed(0)}%'
+                        : '0%',
                     AppColors.success,
                   ),
                 ),
@@ -876,7 +907,8 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
             const SizedBox(height: AppSizes.md),
             Row(
               children: [
-                const Icon(Icons.info_outline, size: 16, color: AppColors.textMuted),
+                const Icon(Icons.info_outline,
+                    size: 16, color: AppColors.textMuted),
                 const SizedBox(width: AppSizes.sm),
                 Expanded(
                   child: Text(
@@ -956,7 +988,10 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
               border: TableBorder.all(color: Theme.of(context).dividerColor),
               children: [
                 TableRow(
-                  decoration: BoxDecoration(color: Theme.of(context).colorScheme.surfaceContainerHighest),
+                  decoration: BoxDecoration(
+                      color: Theme.of(context)
+                          .colorScheme
+                          .surfaceContainerHighest),
                   children: [
                     _buildTableCell(l10n.cohortGroup, isHeader: true),
                     _buildTableCell(l10n.month1, isHeader: true),
@@ -1147,10 +1182,12 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
               ),
             ),
             const SizedBox(height: AppSizes.lg),
-            _buildPointsRow(l10n.diamondTier, 35000, 28, const Color(0xFF9C27B0)),
+            _buildPointsRow(
+                l10n.diamondTier, 35000, 28, const Color(0xFF9C27B0)),
             _buildPointsRow(l10n.goldTier, 45000, 35, AppColors.warning),
             _buildPointsRow(l10n.silverTier, 28000, 22, AppColors.grey500),
-            _buildPointsRow(l10n.bronzeTier, 17600, 15, const Color(0xFF795548)),
+            _buildPointsRow(
+                l10n.bronzeTier, 17600, 15, const Color(0xFF795548)),
           ],
         ),
       ),

@@ -44,7 +44,8 @@ Future<void> reportError(
   StackTrace? stackTrace,
   String? hint,
 }) async {
-  if (kDebugMode) debugPrint('Error: $exception${hint != null ? ' ($hint)' : ''}');
+  if (kDebugMode)
+    debugPrint('Error: $exception${hint != null ? ' ($hint)' : ''}');
   if (!isSentryConfigured) return;
 
   await Sentry.captureException(

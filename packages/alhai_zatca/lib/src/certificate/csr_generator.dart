@@ -338,9 +338,8 @@ class CsrGenerator {
     final base64Content = base64Encode(bytes);
     final lines = <String>[];
     for (var i = 0; i < base64Content.length; i += 64) {
-      final end = (i + 64 > base64Content.length)
-          ? base64Content.length
-          : i + 64;
+      final end =
+          (i + 64 > base64Content.length) ? base64Content.length : i + 64;
       lines.add(base64Content.substring(i, end));
     }
     return '-----BEGIN $label-----\n${lines.join('\n')}\n-----END $label-----';

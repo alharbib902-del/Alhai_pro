@@ -40,7 +40,8 @@ class ActivityLogService {
   }
 
   /// الحصول على سجلات كيان معين
-  Future<List<ActivityLog>> getEntityLogs(String entityType, String entityId) async {
+  Future<List<ActivityLog>> getEntityLogs(
+      String entityType, String entityId) async {
     return await _logsRepo.getEntityLogs(entityType, entityId);
   }
 

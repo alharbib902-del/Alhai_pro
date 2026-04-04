@@ -315,7 +315,8 @@ void main() {
       });
 
       test('returns error if no certificate found', () async {
-        when(() => mockCertStorage.getCertificate(storeId: any(named: 'storeId')))
+        when(() =>
+                mockCertStorage.getCertificate(storeId: any(named: 'storeId')))
             .thenAnswer((_) async => null);
 
         await queue.enqueue(
@@ -339,7 +340,8 @@ void main() {
       });
 
       test('submits simplified invoice via reporting API', () async {
-        when(() => mockCertStorage.getCertificate(storeId: any(named: 'storeId')))
+        when(() =>
+                mockCertStorage.getCertificate(storeId: any(named: 'storeId')))
             .thenAnswer((_) async => testCertificate);
         when(() => mockReportingApi.reportInvoice(
               signedXmlBase64: any(named: 'signedXmlBase64'),
@@ -372,7 +374,8 @@ void main() {
       });
 
       test('submits standard invoice via clearance API', () async {
-        when(() => mockCertStorage.getCertificate(storeId: any(named: 'storeId')))
+        when(() =>
+                mockCertStorage.getCertificate(storeId: any(named: 'storeId')))
             .thenAnswer((_) async => testCertificate);
         when(() => mockClearanceApi.clearInvoice(
               signedXmlBase64: any(named: 'signedXmlBase64'),
@@ -406,7 +409,8 @@ void main() {
       });
 
       test('increments retry on ZATCA rejection', () async {
-        when(() => mockCertStorage.getCertificate(storeId: any(named: 'storeId')))
+        when(() =>
+                mockCertStorage.getCertificate(storeId: any(named: 'storeId')))
             .thenAnswer((_) async => testCertificate);
         when(() => mockReportingApi.reportInvoice(
               signedXmlBase64: any(named: 'signedXmlBase64'),
@@ -439,7 +443,8 @@ void main() {
       });
 
       test('increments retry on network exception', () async {
-        when(() => mockCertStorage.getCertificate(storeId: any(named: 'storeId')))
+        when(() =>
+                mockCertStorage.getCertificate(storeId: any(named: 'storeId')))
             .thenAnswer((_) async => testCertificate);
         when(() => mockReportingApi.reportInvoice(
               signedXmlBase64: any(named: 'signedXmlBase64'),
@@ -468,7 +473,8 @@ void main() {
       });
 
       test('skips max-retried invoices during processing', () async {
-        when(() => mockCertStorage.getCertificate(storeId: any(named: 'storeId')))
+        when(() =>
+                mockCertStorage.getCertificate(storeId: any(named: 'storeId')))
             .thenAnswer((_) async => testCertificate);
 
         // Add invoice and exhaust retries

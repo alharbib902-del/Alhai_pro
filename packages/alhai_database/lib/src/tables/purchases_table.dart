@@ -9,15 +9,21 @@ import 'products_table.dart';
 @TableIndex(name: 'idx_purchases_supplier_id', columns: {#supplierId})
 @TableIndex(name: 'idx_purchases_status', columns: {#status})
 @TableIndex(name: 'idx_purchases_created_at', columns: {#createdAt})
-@TableIndex(name: 'idx_purchases_store_number_unique', columns: {#storeId, #purchaseNumber}, unique: true)
+@TableIndex(
+    name: 'idx_purchases_store_number_unique',
+    columns: {#storeId, #purchaseNumber},
+    unique: true)
 class PurchasesTable extends Table {
   @override
   String get tableName => 'purchases';
 
   TextColumn get id => text()();
   TextColumn get orgId => text().nullable()();
-  TextColumn get storeId => text().references(StoresTable, #id, onDelete: KeyAction.restrict)();
-  TextColumn get supplierId => text().nullable().references(SuppliersTable, #id, onDelete: KeyAction.setNull)();
+  TextColumn get storeId =>
+      text().references(StoresTable, #id, onDelete: KeyAction.restrict)();
+  TextColumn get supplierId => text()
+      .nullable()
+      .references(SuppliersTable, #id, onDelete: KeyAction.setNull)();
   TextColumn get supplierName => text().nullable()();
   TextColumn get purchaseNumber => text()();
   TextColumn get status => text().withDefault(const Constant('draft'))();
@@ -25,7 +31,8 @@ class PurchasesTable extends Table {
   RealColumn get tax => real().withDefault(const Constant(0))();
   RealColumn get discount => real().withDefault(const Constant(0))();
   RealColumn get total => real().withDefault(const Constant(0))();
-  TextColumn get paymentStatus => text().withDefault(const Constant('pending'))();
+  TextColumn get paymentStatus =>
+      text().withDefault(const Constant('pending'))();
   TextColumn get paymentMethod => text().nullable()();
   TextColumn get notes => text().nullable()();
   DateTimeColumn get receivedAt => dateTime().nullable()();
@@ -47,8 +54,10 @@ class PurchaseItemsTable extends Table {
 
   TextColumn get id => text()();
   TextColumn get orgId => text().nullable()();
-  TextColumn get purchaseId => text().references(PurchasesTable, #id, onDelete: KeyAction.cascade)();
-  TextColumn get productId => text().references(ProductsTable, #id, onDelete: KeyAction.restrict)();
+  TextColumn get purchaseId =>
+      text().references(PurchasesTable, #id, onDelete: KeyAction.cascade)();
+  TextColumn get productId =>
+      text().references(ProductsTable, #id, onDelete: KeyAction.restrict)();
   TextColumn get productName => text()();
   TextColumn get productBarcode => text().nullable()();
   RealColumn get qty => real()();

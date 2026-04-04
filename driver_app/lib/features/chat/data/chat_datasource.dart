@@ -27,7 +27,8 @@ class ChatDatasource {
     required String text,
     String? deliveryId,
   }) async {
-    final sanitized = text.trim()
+    final sanitized = text
+        .trim()
         .replaceAll('&', '&amp;')
         .replaceAll('<', '&lt;')
         .replaceAll('>', '&gt;');

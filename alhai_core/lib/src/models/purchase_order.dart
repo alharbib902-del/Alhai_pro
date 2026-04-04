@@ -7,12 +7,16 @@ part 'purchase_order.g.dart';
 enum PurchaseOrderStatus {
   /// Draft order
   draft,
+
   /// Order sent to supplier
   ordered,
+
   /// Partially received
   partiallyReceived,
+
   /// Fully received
   received,
+
   /// Cancelled
   cancelled,
 }

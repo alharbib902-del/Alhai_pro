@@ -113,8 +113,7 @@ void main() {
 
       notifier.acceptOrder(orderId);
 
-      final order =
-          notifier.state.orders.firstWhere((o) => o.id == orderId);
+      final order = notifier.state.orders.firstWhere((o) => o.id == orderId);
       expect(order.status, equals(OrderStatus.accepted));
       expect(order.acceptedAt, isNotNull);
     });
@@ -128,8 +127,7 @@ void main() {
 
       notifier.startPreparing(orderId);
 
-      final order =
-          notifier.state.orders.firstWhere((o) => o.id == orderId);
+      final order = notifier.state.orders.firstWhere((o) => o.id == orderId);
       expect(order.status, equals(OrderStatus.preparing));
     });
 
@@ -138,8 +136,7 @@ void main() {
 
       notifier.assignDriver(orderId, 'driver-1', 'Ahmed');
 
-      final order =
-          notifier.state.orders.firstWhere((o) => o.id == orderId);
+      final order = notifier.state.orders.firstWhere((o) => o.id == orderId);
       expect(order.status, equals(OrderStatus.outForDelivery));
       expect(order.driverId, equals('driver-1'));
       expect(order.driverName, equals('Ahmed'));
@@ -151,8 +148,7 @@ void main() {
 
       notifier.markDelivered(orderId);
 
-      final order =
-          notifier.state.orders.firstWhere((o) => o.id == orderId);
+      final order = notifier.state.orders.firstWhere((o) => o.id == orderId);
       expect(order.status, equals(OrderStatus.delivered));
       expect(order.deliveredAt, isNotNull);
     });
@@ -162,8 +158,7 @@ void main() {
 
       notifier.cancelOrder(orderId, reason: 'Customer request');
 
-      final order =
-          notifier.state.orders.firstWhere((o) => o.id == orderId);
+      final order = notifier.state.orders.firstWhere((o) => o.id == orderId);
       expect(order.status, equals(OrderStatus.cancelled));
       expect(order.cancellationReason, equals('Customer request'));
     });

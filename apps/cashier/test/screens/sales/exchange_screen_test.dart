@@ -48,8 +48,7 @@ void main() {
       expect(find.text('New Items to Add'), findsOneWidget);
     });
 
-    testWidgets('has two search bars for return and new items',
-        (tester) async {
+    testWidgets('has two search bars for return and new items', (tester) async {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
 

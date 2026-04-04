@@ -84,8 +84,7 @@ class Promotion with _$Promotion {
   }
 
   /// Check if promotion has usage remaining
-  bool get hasUsageRemaining =>
-      usageLimit == null || usageCount < usageLimit!;
+  bool get hasUsageRemaining => usageLimit == null || usageCount < usageLimit!;
 
   /// Calculate discount amount for a given order total
   double calculateDiscount(double orderTotal) {

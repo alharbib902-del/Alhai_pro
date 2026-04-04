@@ -76,8 +76,8 @@ void main() {
     });
 
     test('getDefaultTemplate returns default for type', () async {
-      await db.whatsAppTemplatesDao.insertTemplate(
-          _makeTemplate(id: 'tmpl-1', isDefault: false));
+      await db.whatsAppTemplatesDao
+          .insertTemplate(_makeTemplate(id: 'tmpl-1', isDefault: false));
       await db.whatsAppTemplatesDao.insertTemplate(_makeTemplate(
         id: 'tmpl-2',
         name: 'إيصال افتراضي',

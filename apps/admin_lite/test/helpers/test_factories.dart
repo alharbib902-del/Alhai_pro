@@ -28,9 +28,11 @@ LiteStatsData createTestLiteStats({
 
 ActivityEntry createTestActivity({
   String id = 'act-1',
-  String userName = '\u0645\u0648\u0638\u0641 \u062a\u062c\u0631\u064a\u0628\u064a',
+  String userName =
+      '\u0645\u0648\u0638\u0641 \u062a\u062c\u0631\u064a\u0628\u064a',
   String action = 'sale_completed',
-  String? description = '\u062a\u0645 \u0625\u062a\u0645\u0627\u0645 \u0639\u0645\u0644\u064a\u0629 \u0628\u064a\u0639',
+  String? description =
+      '\u062a\u0645 \u0625\u062a\u0645\u0627\u0645 \u0639\u0645\u0644\u064a\u0629 \u0628\u064a\u0639',
   DateTime? timestamp,
 }) {
   return ActivityEntry(
@@ -92,8 +94,10 @@ ReturnsTableData createTestReturn({
   String returnNumber = 'RET-001',
   String saleId = 'sale-1',
   String? customerId,
-  String? customerName = '\u0639\u0645\u064a\u0644 \u062a\u062c\u0631\u064a\u0628\u064a',
-  String? reason = '\u0639\u064a\u0628 \u0641\u064a \u0627\u0644\u0645\u0646\u062a\u062c',
+  String? customerName =
+      '\u0639\u0645\u064a\u0644 \u062a\u062c\u0631\u064a\u0628\u064a',
+  String? reason =
+      '\u0639\u064a\u0628 \u0641\u064a \u0627\u0644\u0645\u0646\u062a\u062c',
   double totalRefund = 50.0,
   String status = 'pending',
   String type = 'refund',
@@ -128,9 +132,11 @@ AuditLogTableData createTestAuditLog({
   String id = 'log-1',
   String storeId = 'test-store-1',
   String userId = 'test-user-1',
-  String userName = '\u0645\u0648\u0638\u0641 \u062a\u062c\u0631\u064a\u0628\u064a',
+  String userName =
+      '\u0645\u0648\u0638\u0641 \u062a\u062c\u0631\u064a\u0628\u064a',
   String action = 'sale_completed',
-  String? description = '\u062a\u0645 \u0625\u062a\u0645\u0627\u0645 \u0639\u0645\u0644\u064a\u0629 \u0628\u064a\u0639 \u0628\u0642\u064a\u0645\u0629 115 \u0631.\u0633',
+  String? description =
+      '\u062a\u0645 \u0625\u062a\u0645\u0627\u0645 \u0639\u0645\u0644\u064a\u0629 \u0628\u064a\u0639 \u0628\u0642\u064a\u0645\u0629 115 \u0631.\u0633',
   String? entityType = 'sale',
   String? entityId = 'sale-1',
   DateTime? createdAt,

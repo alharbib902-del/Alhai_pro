@@ -58,7 +58,8 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
         setState(() {
           _enableBarcodeScanner = settings[_kEnableBarcodeScanner] != 'false';
           _enableCameraScanner = settings[_kEnableCameraScanner] != 'false';
-          _enableBluetoothScanner = settings[_kEnableBluetoothScanner] == 'true';
+          _enableBluetoothScanner =
+              settings[_kEnableBluetoothScanner] == 'true';
           _beepOnScan = settings[_kBeepOnScan] != 'false';
           _vibrateOnScan = settings[_kVibrateOnScan] == 'true';
           _autoAddToCart = settings[_kAutoAddToCart] != 'false';
@@ -118,11 +119,13 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
     final l10n = AppLocalizations.of(context);
 
     if (_isLoading) {
-      return SafeArea(child: Column(
+      return SafeArea(
+          child: Column(
         children: [
           AppHeader(
             title: l10n.barcodeSettings,
-            onMenuTap: isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+            onMenuTap:
+                isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
             onNotificationsTap: () => context.push('/notifications'),
             notificationsCount: 3,
             userName: l10n.defaultUserName,
@@ -135,11 +138,13 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
       ));
     }
 
-    return SafeArea(child: Column(
+    return SafeArea(
+        child: Column(
       children: [
         AppHeader(
           title: l10n.barcodeSettings,
-          onMenuTap: isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onMenuTap:
+              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 3,
           userName: l10n.defaultUserName,
@@ -167,8 +172,8 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
             const Color(0xFFF59E0B), isDark, [
           SwitchListTile(
             title: Text(l10n.barcodeScanner,
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface)),
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
             subtitle: Text(l10n.barcodeScannerDesc),
             secondary: const Icon(Icons.qr_code_scanner),
             value: _enableBarcodeScanner,
@@ -207,13 +212,12 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
         ]),
 
         // Feedback settings
-        _buildSettingsGroup(
-            l10n.alerts, Icons.notifications_active_rounded,
+        _buildSettingsGroup(l10n.alerts, Icons.notifications_active_rounded,
             AppColors.info, isDark, [
           SwitchListTile(
             title: Text(l10n.beepOnScan,
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface)),
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
             secondary: const Icon(Icons.volume_up),
             value: _beepOnScan,
             onChanged: (v) {
@@ -223,8 +227,8 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
           ),
           SwitchListTile(
             title: Text(l10n.vibrateOnScan,
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface)),
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
             secondary: const Icon(Icons.vibration),
             value: _vibrateOnScan,
             onChanged: (v) {
@@ -236,12 +240,12 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
         ]),
 
         // Behavior settings
-        _buildSettingsGroup(l10n.behavior, Icons.tune_rounded,
-            AppColors.success, isDark, [
+        _buildSettingsGroup(
+            l10n.behavior, Icons.tune_rounded, AppColors.success, isDark, [
           SwitchListTile(
             title: Text(l10n.autoAddToCart,
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface)),
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
             subtitle: Text(l10n.autoAddToCartDesc),
             secondary: const Icon(Icons.add_shopping_cart),
             value: _autoAddToCart,
@@ -254,8 +258,8 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
           ListTile(
             leading: const Icon(Icons.format_list_numbered),
             title: Text(l10n.barcodeFormats,
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface)),
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
             subtitle: Text(_getBarcodeFormatName(l10n)),
             trailing: const AdaptiveIcon(Icons.chevron_right),
             onTap: _showBarcodeFormatPicker,
@@ -264,13 +268,13 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
         ]),
 
         // Test scanner
-        _buildSettingsGroup(l10n.testing, Icons.bug_report_rounded,
-            AppColors.primary, isDark, [
+        _buildSettingsGroup(
+            l10n.testing, Icons.bug_report_rounded, AppColors.primary, isDark, [
           ListTile(
             leading: const Icon(Icons.bug_report, color: AppColors.primary),
             title: Text(l10n.testScanner,
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface)),
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
             subtitle: Text(l10n.testScanBarcode),
             trailing: const AdaptiveIcon(Icons.chevron_right),
             onTap: _testScanner,
@@ -338,7 +342,8 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl, AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.xs),
+            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl,
+                AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.xs),
             child: Row(
               children: [
                 Container(
@@ -354,8 +359,7 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
                     style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color:
-                            Theme.of(context).colorScheme.onSurface)),
+                        color: Theme.of(context).colorScheme.onSurface)),
               ],
             ),
           ),
@@ -429,14 +433,12 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
         padding: const EdgeInsets.all(AlhaiSpacing.lg),
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
-          borderRadius:
-              const BorderRadius.vertical(top: Radius.circular(16)),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
         ),
         child: Column(
           children: [
             Icon(Icons.qr_code_scanner,
-                size: 64,
-                color: isDark ? Colors.white70 : AppColors.primary),
+                size: 64, color: isDark ? Colors.white70 : AppColors.primary),
             const SizedBox(height: AlhaiSpacing.md),
             Text(l10n.pointCameraAtBarcode,
                 style: TextStyle(
@@ -452,7 +454,8 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
                 child: Center(
                   child: Text(l10n.scanArea,
                       style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant)),
+                          color:
+                              Theme.of(context).colorScheme.onSurfaceVariant)),
                 ),
               ),
             ),

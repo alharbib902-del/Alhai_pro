@@ -35,8 +35,7 @@ class SABillingScreen extends ConsumerWidget {
 
             // Summary cards
             summaryAsync.when(
-              loading: () =>
-                  const Center(child: CircularProgressIndicator()),
+              loading: () => const Center(child: CircularProgressIndicator()),
               error: (e, _) => Text('Error: $e'),
               data: (summary) {
                 final paid = summary['paid'] ?? 0.0;
@@ -55,19 +54,25 @@ class SABillingScreen extends ConsumerWidget {
                       title: l10n.paid,
                       value: '${paid.toInt()} ${l10n.sar}',
                       icon: Icons.check_circle_rounded,
-                      color: isDark ? const Color(0xFF4ADE80) : const Color(0xFF16A34A),
+                      color: isDark
+                          ? const Color(0xFF4ADE80)
+                          : const Color(0xFF16A34A),
                     ),
                     _BillingStat(
                       title: l10n.unpaid,
                       value: '${unpaid.toInt()} ${l10n.sar}',
                       icon: Icons.pending_rounded,
-                      color: isDark ? const Color(0xFFFBBF24) : const Color(0xFFD97706),
+                      color: isDark
+                          ? const Color(0xFFFBBF24)
+                          : const Color(0xFFD97706),
                     ),
                     _BillingStat(
                       title: l10n.overdue,
                       value: '${overdue.toInt()} ${l10n.sar}',
                       icon: Icons.error_rounded,
-                      color: isDark ? const Color(0xFFF87171) : const Color(0xFFB91C1C),
+                      color: isDark
+                          ? const Color(0xFFF87171)
+                          : const Color(0xFFB91C1C),
                     ),
                   ],
                 );
@@ -84,8 +89,7 @@ class SABillingScreen extends ConsumerWidget {
             ),
             const SizedBox(height: AlhaiSpacing.md),
             invoicesAsync.when(
-              loading: () =>
-                  const Center(child: CircularProgressIndicator()),
+              loading: () => const Center(child: CircularProgressIndicator()),
               error: (e, _) => Text('Error loading invoices: $e'),
               data: (invoices) {
                 if (invoices.isEmpty) {
@@ -108,8 +112,7 @@ class SABillingScreen extends ConsumerWidget {
                 return Card(
                   elevation: 0,
                   shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.circular(AlhaiRadius.card),
+                    borderRadius: BorderRadius.circular(AlhaiRadius.card),
                     side: BorderSide(
                       color: theme.colorScheme.outlineVariant,
                       width: AlhaiSpacing.strokeXs,
@@ -131,8 +134,7 @@ class SABillingScreen extends ConsumerWidget {
                           label: Text(l10n.invoiceAmount),
                           numeric: true,
                         ),
-                        DataColumn(
-                            label: Text(l10n.invoiceStatus)),
+                        DataColumn(label: Text(l10n.invoiceStatus)),
                       ],
                       rows: invoices.map((inv) {
                         return DataRow(cells: [
@@ -140,8 +142,8 @@ class SABillingScreen extends ConsumerWidget {
                           DataCell(Text(inv.storeName)),
                           DataCell(Text(inv.planName)),
                           DataCell(Text(_fmtDate(inv.issuedAt))),
-                          DataCell(Text(
-                              '${inv.amount?.toInt() ?? 0} ${l10n.sar}')),
+                          DataCell(
+                              Text('${inv.amount?.toInt() ?? 0} ${l10n.sar}')),
                           DataCell(_InvoiceStatusChip(
                               status: inv.status ?? 'unknown')),
                         ]);
@@ -239,21 +241,21 @@ class _InvoiceStatusChip extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final (color, bgColor) = switch (status) {
       'paid' => (
-        isDark ? const Color(0xFF4ADE80) : const Color(0xFF15803D),
-        isDark ? const Color(0xFF1B3A2A) : const Color(0xFFDCFCE7),
-      ),
+          isDark ? const Color(0xFF4ADE80) : const Color(0xFF15803D),
+          isDark ? const Color(0xFF1B3A2A) : const Color(0xFFDCFCE7),
+        ),
       'unpaid' => (
-        isDark ? const Color(0xFFFBBF24) : const Color(0xFFB45309),
-        isDark ? const Color(0xFF3A2F1B) : const Color(0xFFFEF3C7),
-      ),
+          isDark ? const Color(0xFFFBBF24) : const Color(0xFFB45309),
+          isDark ? const Color(0xFF3A2F1B) : const Color(0xFFFEF3C7),
+        ),
       'overdue' => (
-        isDark ? const Color(0xFFF87171) : const Color(0xFFB91C1C),
-        isDark ? const Color(0xFF3A1B1B) : const Color(0xFFFEE2E2),
-      ),
+          isDark ? const Color(0xFFF87171) : const Color(0xFFB91C1C),
+          isDark ? const Color(0xFF3A1B1B) : const Color(0xFFFEE2E2),
+        ),
       _ => (
-        isDark ? const Color(0xFF9CA3AF) : const Color(0xFF4B5563),
-        isDark ? const Color(0xFF2A2A2A) : const Color(0xFFF3F4F6),
-      ),
+          isDark ? const Color(0xFF9CA3AF) : const Color(0xFF4B5563),
+          isDark ? const Color(0xFF2A2A2A) : const Color(0xFFF3F4F6),
+        ),
     };
 
     return Container(
@@ -268,9 +270,9 @@ class _InvoiceStatusChip extends StatelessWidget {
       child: Text(
         status.toUpperCase(),
         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-          color: color,
-          fontWeight: FontWeight.w600,
-        ),
+              color: color,
+              fontWeight: FontWeight.w600,
+            ),
       ),
     );
   }

@@ -13,7 +13,8 @@ import 'package:alhai_auth/alhai_auth.dart';
 // ============================================================================
 
 /// مزود أداء الموظفين
-final staffPerformanceProvider = FutureProvider<List<StaffPerformance>>((ref) async {
+final staffPerformanceProvider =
+    FutureProvider<List<StaffPerformance>>((ref) async {
   await Future.delayed(const Duration(milliseconds: 400));
   return AiStaffAnalyticsService.getStaffPerformance();
 });
@@ -42,7 +43,8 @@ final teamSummaryProvider = Provider<TeamPerformanceSummary>((ref) {
 final selectedStaffProvider = StateProvider<String?>((ref) => null);
 
 /// مزود فلتر الفترة
-final staffPeriodFilterProvider = StateProvider<StaffPeriod>((ref) => StaffPeriod.thisWeek);
+final staffPeriodFilterProvider =
+    StateProvider<StaffPeriod>((ref) => StaffPeriod.thisWeek);
 
 /// فترة العرض
 enum StaffPeriod {

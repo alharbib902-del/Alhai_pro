@@ -10,40 +10,82 @@ part 'returns_dao.g.dart';
 class ReturnsDao extends DatabaseAccessor<AppDatabase> with _$ReturnsDaoMixin {
   ReturnsDao(super.db);
 
-  Future<List<ReturnsTableData>> getAllReturns(String storeId, {int limit = 1000}) {
-    return (select(returnsTable)..where((r) => r.storeId.equals(storeId) & r.deletedAt.isNull())..orderBy([(r) => OrderingTerm.desc(r.createdAt)])..limit(limit)).get();
+  Future<List<ReturnsTableData>> getAllReturns(String storeId,
+      {int limit = 1000}) {
+    return (select(returnsTable)
+          ..where((r) => r.storeId.equals(storeId) & r.deletedAt.isNull())
+          ..orderBy([(r) => OrderingTerm.desc(r.createdAt)])
+          ..limit(limit))
+        .get();
   }
 
-  Future<List<ReturnsTableData>> getReturnsByStatus(String storeId, String status, {int limit = 1000}) {
-    return (select(returnsTable)..where((r) => r.storeId.equals(storeId) & r.status.equals(status) & r.deletedAt.isNull())..orderBy([(r) => OrderingTerm.desc(r.createdAt)])..limit(limit)).get();
+  Future<List<ReturnsTableData>> getReturnsByStatus(
+      String storeId, String status,
+      {int limit = 1000}) {
+    return (select(returnsTable)
+          ..where((r) =>
+              r.storeId.equals(storeId) &
+              r.status.equals(status) &
+              r.deletedAt.isNull())
+          ..orderBy([(r) => OrderingTerm.desc(r.createdAt)])
+          ..limit(limit))
+        .get();
   }
 
-  Future<List<ReturnsTableData>> getReturnsByStatuses(String storeId, List<String> statuses, {int limit = 1000}) {
-    return (select(returnsTable)..where((r) => r.storeId.equals(storeId) & r.status.isIn(statuses) & r.deletedAt.isNull())..orderBy([(r) => OrderingTerm.desc(r.createdAt)])..limit(limit)).get();
+  Future<List<ReturnsTableData>> getReturnsByStatuses(
+      String storeId, List<String> statuses,
+      {int limit = 1000}) {
+    return (select(returnsTable)
+          ..where((r) =>
+              r.storeId.equals(storeId) &
+              r.status.isIn(statuses) &
+              r.deletedAt.isNull())
+          ..orderBy([(r) => OrderingTerm.desc(r.createdAt)])
+          ..limit(limit))
+        .get();
   }
 
-  Future<List<ReturnsTableData>> getReturnsByDateRange(String storeId, DateTime startDate, DateTime endDate, {int limit = 5000}) {
-    return (select(returnsTable)..where((r) => r.storeId.equals(storeId) & r.createdAt.isBiggerOrEqualValue(startDate) & r.createdAt.isSmallerThanValue(endDate) & r.deletedAt.isNull())..orderBy([(r) => OrderingTerm.desc(r.createdAt)])..limit(limit)).get();
+  Future<List<ReturnsTableData>> getReturnsByDateRange(
+      String storeId, DateTime startDate, DateTime endDate,
+      {int limit = 5000}) {
+    return (select(returnsTable)
+          ..where((r) =>
+              r.storeId.equals(storeId) &
+              r.createdAt.isBiggerOrEqualValue(startDate) &
+              r.createdAt.isSmallerThanValue(endDate) &
+              r.deletedAt.isNull())
+          ..orderBy([(r) => OrderingTerm.desc(r.createdAt)])
+          ..limit(limit))
+        .get();
   }
 
-  Future<ReturnsTableData?> getReturnById(String id) => (select(returnsTable)..where((r) => r.id.equals(id))).getSingleOrNull();
+  Future<ReturnsTableData?> getReturnById(String id) =>
+      (select(returnsTable)..where((r) => r.id.equals(id))).getSingleOrNull();
 
-  Future<List<ReturnsTableData>> getReturnsBySaleId(String saleId, String storeId) {
-    return (select(returnsTable)..where((r) => r.saleId.equals(saleId) & r.storeId.equals(storeId))).get();
+  Future<List<ReturnsTableData>> getReturnsBySaleId(
+      String saleId, String storeId) {
+    return (select(returnsTable)
+          ..where((r) => r.saleId.equals(saleId) & r.storeId.equals(storeId)))
+        .get();
   }
 
-  Future<int> insertReturn(ReturnsTableCompanion returnData) => into(returnsTable).insert(returnData);
+  Future<int> insertReturn(ReturnsTableCompanion returnData) =>
+      into(returnsTable).insert(returnData);
 
   Future<int> markAsSynced(String id) {
-    return (update(returnsTable)..where((r) => r.id.equals(id))).write(ReturnsTableCompanion(syncedAt: Value(DateTime.now())));
+    return (update(returnsTable)..where((r) => r.id.equals(id)))
+        .write(ReturnsTableCompanion(syncedAt: Value(DateTime.now())));
   }
 
   Future<List<ReturnItemsTableData>> getReturnItems(String returnId) {
-    return (select(returnItemsTable)..where((i) => i.returnId.equals(returnId))).get();
+    return (select(returnItemsTable)..where((i) => i.returnId.equals(returnId)))
+        .get();
   }
 
   Future<void> insertReturnItems(List<ReturnItemsTableCompanion> items) async {
-    await batch((b) { b.insertAll(returnItemsTable, items); });
+    await batch((b) {
+      b.insertAll(returnItemsTable, items);
+    });
   }
 
   /// مجموع المرتجعات النقدية فقط خلال فترة الوردية
@@ -53,7 +95,8 @@ class ReturnsDao extends DatabaseAccessor<AppDatabase> with _$ReturnsDaoMixin {
     required DateTime startDate,
     DateTime? endDate,
   }) async {
-    var whereClause = "store_id = ? AND refund_method = 'cash' AND status = 'completed' AND deleted_at IS NULL AND created_at >= ?";
+    var whereClause =
+        "store_id = ? AND refund_method = 'cash' AND status = 'completed' AND deleted_at IS NULL AND created_at >= ?";
     final variables = <Variable>[
       Variable.withString(storeId),
       Variable.withDateTime(startDate),

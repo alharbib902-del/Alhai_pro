@@ -15,7 +15,8 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:uuid/uuid.dart';
 import 'package:drift/drift.dart' show Value;
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
+import 'package:alhai_design_system/alhai_design_system.dart'
+    show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 import '../../core/services/audit_service.dart';
@@ -31,8 +32,7 @@ class EditInventoryScreen extends ConsumerStatefulWidget {
       _EditInventoryScreenState();
 }
 
-class _EditInventoryScreenState
-    extends ConsumerState<EditInventoryScreen> {
+class _EditInventoryScreenState extends ConsumerState<EditInventoryScreen> {
   final _db = GetIt.I<AppDatabase>();
   final _adjustmentController = TextEditingController();
   final _noteController = TextEditingController();
@@ -71,7 +71,8 @@ class _EditInventoryScreenState
         });
       }
     } catch (e, stack) {
-      reportError(e, stackTrace: stack, hint: 'Load product for edit inventory');
+      reportError(e,
+          stackTrace: stack, hint: 'Load product for edit inventory');
       if (mounted) {
         setState(() {
           _isLoading = false;
@@ -97,9 +98,8 @@ class _EditInventoryScreenState
           subtitle: _product?.name ?? '',
           showSearch: false,
           searchHint: l10n.searchPlaceholder,
-          onMenuTap: isWideScreen
-              ? null
-              : () => Scaffold.of(context).openDrawer(),
+          onMenuTap:
+              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 3,
           userName: user?.name ?? l10n.cashCustomer,
@@ -110,11 +110,14 @@ class _EditInventoryScreenState
           child: _isLoading
               ? const AppLoadingState()
               : _error != null
-                  ? AppErrorState.general(context, message: _error!, onRetry: _loadProduct)
+                  ? AppErrorState.general(context,
+                      message: _error!, onRetry: _loadProduct)
                   : _product == null
                       ? _buildNotFound(isDark, l10n)
                       : SingleChildScrollView(
-                          padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+                          padding: EdgeInsets.all(isMediumScreen
+                              ? AlhaiSpacing.lg
+                              : AlhaiSpacing.md),
                           child: _buildContent(
                               isWideScreen, isMediumScreen, isDark, l10n),
                         ),
@@ -142,8 +145,8 @@ class _EditInventoryScreenState
     );
   }
 
-  Widget _buildContent(
-      bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n) {
+  Widget _buildContent(bool isWideScreen, bool isMediumScreen, bool isDark,
+      AppLocalizations l10n) {
     if (isWideScreen) {
       return Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -194,8 +197,7 @@ class _EditInventoryScreenState
   Widget _buildCurrentStockCard(bool isDark, AppLocalizations l10n) {
     final product = _product!;
     final stock = product.stockQty;
-    final adjustment =
-        int.tryParse(_adjustmentController.text) ?? 0;
+    final adjustment = int.tryParse(_adjustmentController.text) ?? 0;
     final newStock = _isAdding ? stock + adjustment : stock - adjustment;
 
     return Container(
@@ -245,11 +247,8 @@ class _EditInventoryScreenState
           Row(
             children: [
               Expanded(
-                child: _buildStockInfo(
-                    l10n.currentStock,
-                    '$stock',
-                    stock > 5 ? AppColors.success : AppColors.error,
-                    isDark),
+                child: _buildStockInfo(l10n.currentStock, '$stock',
+                    stock > 5 ? AppColors.success : AppColors.error, isDark),
               ),
               Container(
                 width: 1,
@@ -269,11 +268,8 @@ class _EditInventoryScreenState
                 color: AppColors.getBorder(isDark),
               ),
               Expanded(
-                child: _buildStockInfo(
-                    l10n.newStock,
-                    '$newStock',
-                    newStock >= 0 ? AppColors.info : AppColors.error,
-                    isDark),
+                child: _buildStockInfo(l10n.newStock, '$newStock',
+                    newStock >= 0 ? AppColors.info : AppColors.error, isDark),
               ),
             ],
           ),
@@ -282,20 +278,16 @@ class _EditInventoryScreenState
     );
   }
 
-  Widget _buildStockInfo(
-      String label, String value, Color color, bool isDark) {
+  Widget _buildStockInfo(String label, String value, Color color, bool isDark) {
     return Column(
       children: [
         Text(label,
             style: TextStyle(
-                fontSize: 11,
-                color: AppColors.getTextSecondary(isDark))),
+                fontSize: 11, color: AppColors.getTextSecondary(isDark))),
         const SizedBox(height: 6),
         Text(value,
             style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.w800,
-                color: color)),
+                fontSize: 22, fontWeight: FontWeight.w800, color: color)),
       ],
     );
   }
@@ -321,8 +313,7 @@ class _EditInventoryScreenState
                   color: activeColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Icon(Icons.tune_rounded,
-                    color: activeColor, size: 20),
+                child: Icon(Icons.tune_rounded, color: activeColor, size: 20),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Text(l10n.adjustQuantity,
@@ -342,7 +333,8 @@ class _EditInventoryScreenState
                   borderRadius: BorderRadius.circular(12),
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
-                    padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
+                    padding:
+                        const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
                     decoration: BoxDecoration(
                       color: _isAdding
                           ? AppColors.success.withValues(alpha: 0.1)
@@ -370,8 +362,7 @@ class _EditInventoryScreenState
                                     : FontWeight.w500,
                                 color: _isAdding
                                     ? AppColors.success
-                                    : AppColors.getTextSecondary(
-                                        isDark))),
+                                    : AppColors.getTextSecondary(isDark))),
                       ],
                     ),
                   ),
@@ -384,7 +375,8 @@ class _EditInventoryScreenState
                   borderRadius: BorderRadius.circular(12),
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
-                    padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
+                    padding:
+                        const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
                     decoration: BoxDecoration(
                       color: !_isAdding
                           ? AppColors.error.withValues(alpha: 0.1)
@@ -412,8 +404,7 @@ class _EditInventoryScreenState
                                     : FontWeight.w500,
                                 color: !_isAdding
                                     ? AppColors.error
-                                    : AppColors.getTextSecondary(
-                                        isDark))),
+                                    : AppColors.getTextSecondary(isDark))),
                       ],
                     ),
                   ),
@@ -442,9 +433,7 @@ class _EditInventoryScreenState
               prefixIcon: Padding(
                 padding: const EdgeInsets.all(AlhaiSpacing.sm),
                 child: Icon(
-                  _isAdding
-                      ? Icons.add_rounded
-                      : Icons.remove_rounded,
+                  _isAdding ? Icons.add_rounded : Icons.remove_rounded,
                   size: 28,
                   color: activeColor,
                 ),
@@ -472,9 +461,21 @@ class _EditInventoryScreenState
 
   Widget _buildReasonCard(bool isDark, AppLocalizations l10n) {
     final reasons = [
-      {'value': 'received', 'label': 'Received', 'icon': Icons.local_shipping_rounded},
-      {'value': 'damaged', 'label': l10n.damaged, 'icon': Icons.broken_image_rounded},
-      {'value': 'counted', 'label': l10n.counted, 'icon': Icons.checklist_rounded},
+      {
+        'value': 'received',
+        'label': 'Received',
+        'icon': Icons.local_shipping_rounded
+      },
+      {
+        'value': 'damaged',
+        'label': l10n.damaged,
+        'icon': Icons.broken_image_rounded
+      },
+      {
+        'value': 'counted',
+        'label': l10n.counted,
+        'icon': Icons.checklist_rounded
+      },
       {'value': 'other', 'label': l10n.other, 'icon': Icons.more_horiz_rounded},
     ];
 
@@ -514,13 +515,12 @@ class _EditInventoryScreenState
             children: reasons.map((r) {
               final isSelected = _reason == r['value'];
               return InkWell(
-                onTap: () =>
-                    setState(() => _reason = r['value'] as String),
+                onTap: () => setState(() => _reason = r['value'] as String),
                 borderRadius: BorderRadius.circular(10),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 14, vertical: 10),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                   decoration: BoxDecoration(
                     color: isSelected
                         ? AppColors.primary.withValues(alpha: 0.1)
@@ -625,14 +625,13 @@ class _EditInventoryScreenState
               )
             : const Icon(Icons.save_rounded, size: 20),
         label: Text(l10n.saveAdjustment,
-            style:
-                const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.primary,
           foregroundColor: AppColors.textOnPrimary,
           padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
       ),
     );
@@ -663,9 +662,8 @@ class _EditInventoryScreenState
             previousQty: currentStock.toDouble(),
             newQty: newStock.toDouble(),
             reason: Value(_reason),
-            notes: Value(_noteController.text.isNotEmpty
-                ? _noteController.text
-                : null),
+            notes: Value(
+                _noteController.text.isNotEmpty ? _noteController.text : null),
             createdAt: DateTime.now(),
           ),
         );

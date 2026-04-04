@@ -22,7 +22,7 @@ enum AlhaiProductCardCtaMode {
 }
 
 /// AlhaiProductCard - Reusable product card for e-commerce
-/// 
+///
 /// Features:
 /// - Product image with placeholder/error handling
 /// - Title with ellipsis
@@ -111,9 +111,9 @@ class AlhaiProductCard extends StatelessWidget {
     this.semanticsLabel,
     this.imageSemanticLabel,
   }) : assert(
-         ctaMode != AlhaiProductCardCtaMode.add || addButtonLabel != null,
-         'addButtonLabel is required when ctaMode is add',
-       );
+          ctaMode != AlhaiProductCardCtaMode.add || addButtonLabel != null,
+          'addButtonLabel is required when ctaMode is add',
+        );
 
   @override
   Widget build(BuildContext context) {
@@ -122,8 +122,8 @@ class AlhaiProductCard extends StatelessWidget {
     final textDirection = Directionality.of(context);
 
     // Separate discount logic
-    final hasPriceDiscount = originalPriceAmount != null && 
-        originalPriceAmount! > priceAmount;
+    final hasPriceDiscount =
+        originalPriceAmount != null && originalPriceAmount! > priceAmount;
     final showDiscountBadge = hasPriceDiscount && discountLabel != null;
 
     return Semantics(
@@ -154,7 +154,8 @@ class AlhaiProductCard extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   // Image section
-                  _buildImageSection(context, theme, colorScheme, showDiscountBadge),
+                  _buildImageSection(
+                      context, theme, colorScheme, showDiscountBadge),
 
                   // Content section
                   Padding(
@@ -180,7 +181,8 @@ class AlhaiProductCard extends StatelessWidget {
                         AlhaiPriceText.compact(
                           amount: priceAmount,
                           currency: currency,
-                          originalAmount: hasPriceDiscount ? originalPriceAmount : null,
+                          originalAmount:
+                              hasPriceDiscount ? originalPriceAmount : null,
                         ),
 
                         // CTA
@@ -226,7 +228,8 @@ class AlhaiProductCard extends StatelessWidget {
       imageWidget = Image(
         image: image!,
         fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) => _buildPlaceholder(colorScheme),
+        errorBuilder: (context, error, stackTrace) =>
+            _buildPlaceholder(colorScheme),
         frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
           if (wasSynchronouslyLoaded) return child;
           return AnimatedSwitcher(

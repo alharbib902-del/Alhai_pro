@@ -80,7 +80,9 @@ class ReturnsStatCard extends StatelessWidget {
                       style: TextStyle(
                         fontSize: compact ? 12 : 14,
                         fontWeight: FontWeight.w500,
-                        color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                        color: isDark
+                            ? AppColors.textSecondaryDark
+                            : AppColors.textSecondary,
                       ),
                     ),
                     const SizedBox(height: 6),
@@ -103,10 +105,13 @@ class ReturnsStatCard extends StatelessWidget {
                   width: compact ? 40 : 48,
                   height: compact ? 40 : 48,
                   decoration: BoxDecoration(
-                    color: isDark ? data.iconBgColor.withValues(alpha: 0.2) : data.iconBgColor,
+                    color: isDark
+                        ? data.iconBgColor.withValues(alpha: 0.2)
+                        : data.iconBgColor,
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(data.icon, size: compact ? 20 : 24, color: data.iconColor),
+                  child: Icon(data.icon,
+                      size: compact ? 20 : 24, color: data.iconColor),
                 ),
               ),
             ],
@@ -132,8 +137,10 @@ class ReturnsStatCard extends StatelessWidget {
               child: LinearProgressIndicator(
                 value: data.progressValue!,
                 minHeight: 6,
-                backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
-                valueColor: AlwaysStoppedAnimation(data.progressColor ?? AppColors.primary),
+                backgroundColor:
+                    Theme.of(context).colorScheme.surfaceContainerHighest,
+                valueColor: AlwaysStoppedAnimation(
+                    data.progressColor ?? AppColors.primary),
               ),
             ),
           ],
@@ -145,13 +152,16 @@ class ReturnsStatCard extends StatelessWidget {
             Row(
               children: [
                 if (data.changeIcon != null) ...[
-                  Icon(data.changeIcon!, size: 14, color: data.changeColor ?? AppColors.success),
+                  Icon(data.changeIcon!,
+                      size: 14, color: data.changeColor ?? AppColors.success),
                   const SizedBox(width: AlhaiSpacing.xxs),
                 ],
                 Flexible(
                   child: Text(
                     data.changeLabel!,
-                    style: TextStyle(fontSize: 11, color: data.changeColor ?? AppColors.success),
+                    style: TextStyle(
+                        fontSize: 11,
+                        color: data.changeColor ?? AppColors.success),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -163,19 +173,27 @@ class ReturnsStatCard extends StatelessWidget {
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 3),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: AlhaiSpacing.xs, vertical: 3),
                   decoration: BoxDecoration(
-                    color: (data.badgeColor ?? AppColors.success).withValues(alpha: isDark ? 0.2 : 0.1),
+                    color: (data.badgeColor ?? AppColors.success)
+                        .withValues(alpha: isDark ? 0.2 : 0.1),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.check, size: 12, color: data.badgeColor ?? AppColors.success, semanticLabel: data.badgeText),
+                      Icon(Icons.check,
+                          size: 12,
+                          color: data.badgeColor ?? AppColors.success,
+                          semanticLabel: data.badgeText),
                       const SizedBox(width: AlhaiSpacing.xxs),
                       Text(
                         data.badgeText!,
-                        style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: data.badgeColor ?? AppColors.success),
+                        style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            color: data.badgeColor ?? AppColors.success),
                       ),
                     ],
                   ),
@@ -184,7 +202,11 @@ class ReturnsStatCard extends StatelessWidget {
                   const SizedBox(width: AlhaiSpacing.xs),
                   Text(
                     data.subtitle!,
-                    style: TextStyle(fontSize: 11, color: isDark ? AppColors.textMutedDark : AppColors.textMuted),
+                    style: TextStyle(
+                        fontSize: 11,
+                        color: isDark
+                            ? AppColors.textMutedDark
+                            : AppColors.textMuted),
                   ),
                 ],
               ],
@@ -194,7 +216,10 @@ class ReturnsStatCard extends StatelessWidget {
             const SizedBox(height: AlhaiSpacing.xxs),
             Text(
               data.footerText!,
-              style: TextStyle(fontSize: 11, color: isDark ? AppColors.textMutedDark : AppColors.textMuted),
+              style: TextStyle(
+                  fontSize: 11,
+                  color:
+                      isDark ? AppColors.textMutedDark : AppColors.textMuted),
             ),
           ],
         ],

@@ -46,7 +46,8 @@ class AiQuickTemplates extends StatelessWidget {
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 16),
               itemCount: templates.length,
-              separatorBuilder: (_, __) => const SizedBox(width: AlhaiSpacing.xs),
+              separatorBuilder: (_, __) =>
+                  const SizedBox(width: AlhaiSpacing.xs),
               itemBuilder: (context, index) {
                 final template = templates[index];
                 return _buildChip(template, isDark);
@@ -65,7 +66,8 @@ class AiQuickTemplates extends StatelessWidget {
         onTap: () => onTap(template),
         borderRadius: BorderRadius.circular(20),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: AlhaiSpacing.xs),
+          padding: const EdgeInsets.symmetric(
+              horizontal: 14, vertical: AlhaiSpacing.xs),
           decoration: BoxDecoration(
             color: isDark
                 ? Colors.white.withValues(alpha: 0.08)

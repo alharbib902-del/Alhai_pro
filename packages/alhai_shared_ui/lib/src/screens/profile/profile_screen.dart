@@ -72,7 +72,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             limit: 1,
           );
           if (allSales.isNotEmpty) {
-            daysActive = DateTime.now().difference(allSales.last.createdAt).inDays;
+            daysActive =
+                DateTime.now().difference(allSales.last.createdAt).inDays;
           }
         }
       } catch (_) {
@@ -84,7 +85,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             limit: 1,
           );
           if (allSales.isNotEmpty) {
-            daysActive = DateTime.now().difference(allSales.last.createdAt).inDays;
+            daysActive =
+                DateTime.now().difference(allSales.last.createdAt).inDays;
           }
         } catch (_) {
           // Keep default 0
@@ -104,52 +106,67 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       }
     }
   }
+
   @override
   Widget build(BuildContext context) {
     final isWideScreen = context.screenWidth >= 1200;
     final isMediumScreen = !context.isMobile;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
-    final padding = context.isMobile ? 12.0 : isWideScreen ? 24.0 : 16.0;
+    final padding = context.isMobile
+        ? 12.0
+        : isWideScreen
+            ? 24.0
+            : 16.0;
     final user = ref.watch(currentUserProvider);
     final userName = user?.name ?? l10n.unknownUserName;
     final userEmail = user?.email ?? '';
     final userRole = user?.role?.name ?? l10n.defaultEmployeeRole;
 
     return Column(
-              children: [
-                AppHeader(
-                  title: l10n.profileScreenTitle,
-                  onMenuTap: isWideScreen
-                      ? null
-                      : () => Scaffold.of(context).openDrawer(),
-                  onNotificationsTap: () => context.push('/notifications'),
-                  notificationsCount: 3,
-                  userName: userName,
-                  userRole: l10n.branchManager,
-                  actions: [
-                    IconButton(
-                      icon: Icon(Icons.edit, color: Theme.of(context).colorScheme.onSurfaceVariant),
-                      onPressed: _editProfile,
-                    ),
-                  ],
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.all(padding),
-                    child: Center(
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(maxWidth: isWideScreen ? 800 : double.infinity),
-                        child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n, userName, userEmail, userRole, user),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            );
+      children: [
+        AppHeader(
+          title: l10n.profileScreenTitle,
+          onMenuTap:
+              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onNotificationsTap: () => context.push('/notifications'),
+          notificationsCount: 3,
+          userName: userName,
+          userRole: l10n.branchManager,
+          actions: [
+            IconButton(
+              icon: Icon(Icons.edit,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant),
+              onPressed: _editProfile,
+            ),
+          ],
+        ),
+        Expanded(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.all(padding),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                    maxWidth: isWideScreen ? 800 : double.infinity),
+                child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n,
+                    userName, userEmail, userRole, user),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
-  Widget _buildContent(bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n, String userName, String userEmail, String userRole, dynamic user) {
+  Widget _buildContent(
+      bool isWideScreen,
+      bool isMediumScreen,
+      bool isDark,
+      AppLocalizations l10n,
+      String userName,
+      String userEmail,
+      String userRole,
+      dynamic user) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -159,8 +176,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: isDark
-                  ? [AppColors.primary.withValues(alpha: 0.2), AppColors.primary.withValues(alpha: 0.1)]
-                  : [AppColors.primary, AppColors.primary.withValues(alpha: 0.8)],
+                  ? [
+                      AppColors.primary.withValues(alpha: 0.2),
+                      AppColors.primary.withValues(alpha: 0.1)
+                    ]
+                  : [
+                      AppColors.primary,
+                      AppColors.primary.withValues(alpha: 0.8)
+                    ],
               begin: AlignmentDirectional.topEnd,
               end: AlignmentDirectional.bottomStart,
             ),
@@ -170,7 +193,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             children: [
               CircleAvatar(
                 radius: 50,
-                backgroundColor: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.white,
+                backgroundColor:
+                    isDark ? Colors.white.withValues(alpha: 0.1) : Colors.white,
                 child: Text(
                   userName.isNotEmpty ? userName[0].toUpperCase() : '?',
                   style: TextStyle(
@@ -191,7 +215,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               ),
               Text(
                 _translateRole(userRole),
-                style: TextStyle(color: isDark ? Colors.white70 : Colors.white.withValues(alpha: 0.7)),
+                style: TextStyle(
+                    color: isDark
+                        ? Colors.white70
+                        : Colors.white.withValues(alpha: 0.7)),
               ),
               SizedBox(height: AlhaiSpacing.md),
               _isLoading
@@ -199,9 +226,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   : Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        _StatBadge(icon: Icons.receipt_long, value: _salesCount.toString(), label: l10n.transactionUnit),
+                        _StatBadge(
+                            icon: Icons.receipt_long,
+                            value: _salesCount.toString(),
+                            label: l10n.transactionUnit),
                         SizedBox(width: AlhaiSpacing.lg),
-                        _StatBadge(icon: Icons.calendar_today, value: _daysActive.toString(), label: l10n.dayUnit),
+                        _StatBadge(
+                            icon: Icons.calendar_today,
+                            value: _daysActive.toString(),
+                            label: l10n.dayUnit),
                       ],
                     ),
             ],
@@ -277,22 +310,34 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           child: Column(
             children: [
               ListTile(
-                leading: Icon(Icons.lock, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                leading: Icon(Icons.lock,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant),
                 title: Text(
                   l10n.changePasswordLabel,
-                  style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.onSurface),
                 ),
-                trailing: AdaptiveIcon(Icons.chevron_left, color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5)),
+                trailing: AdaptiveIcon(Icons.chevron_left,
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurfaceVariant
+                        .withValues(alpha: 0.5)),
                 onTap: _changePassword,
               ),
               Divider(height: 1, color: Theme.of(context).dividerColor),
               ListTile(
-                leading: Icon(Icons.history, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                leading: Icon(Icons.history,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant),
                 title: Text(
                   l10n.activityLogLabel,
-                  style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.onSurface),
                 ),
-                trailing: AdaptiveIcon(Icons.chevron_left, color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5)),
+                trailing: AdaptiveIcon(Icons.chevron_left,
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurfaceVariant
+                        .withValues(alpha: 0.5)),
                 onTap: () => context.push('/settings/activity-log'),
               ),
             ],
@@ -307,7 +352,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           child: OutlinedButton.icon(
             onPressed: _logout,
             icon: const Icon(Icons.logout, color: AppColors.error),
-            label: Text(l10n.logoutButton, style: const TextStyle(color: AppColors.error)),
+            label: Text(l10n.logoutButton,
+                style: const TextStyle(color: AppColors.error)),
             style: OutlinedButton.styleFrom(
               side: BorderSide(color: AppColors.error.withValues(alpha: 0.3)),
               padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
@@ -317,13 +363,18 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       ],
     );
   }
+
   String _translateRole(String role) {
     final l10n = AppLocalizations.of(context)!;
     switch (role) {
-      case 'admin': return l10n.roleAdmin;
-      case 'manager': return l10n.roleManager;
-      case 'cashier': return l10n.roleCashier;
-      default: return l10n.roleEmployee;
+      case 'admin':
+        return l10n.roleAdmin;
+      case 'manager':
+        return l10n.roleManager;
+      case 'cashier':
+        return l10n.roleCashier;
+      default:
+        return l10n.roleEmployee;
     }
   }
 
@@ -332,7 +383,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       );
 
   void _changePassword() => ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.changePasswordSnack)),
+        SnackBar(
+            content: Text(AppLocalizations.of(context)!.changePasswordSnack)),
       );
 
   Future<void> _logout() async {
@@ -343,7 +395,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         title: Text(l10n.logoutDialogTitle),
         content: Text(l10n.logoutDialogBody),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(dialogContext, false), child: Text(l10n.cancelButton)),
+          TextButton(
+              onPressed: () => Navigator.pop(dialogContext, false),
+              child: Text(l10n.cancelButton)),
           FilledButton(
             onPressed: () => Navigator.pop(dialogContext, true),
             style: FilledButton.styleFrom(backgroundColor: AppColors.error),
@@ -363,14 +417,20 @@ class _StatBadge extends StatelessWidget {
   final IconData icon;
   final String value;
   final String label;
-  const _StatBadge({required this.icon, required this.value, required this.label});
+  const _StatBadge(
+      {required this.icon, required this.value, required this.label});
 
   @override
   Widget build(BuildContext context) => Column(
         children: [
           Icon(icon, color: Colors.white70, size: 20),
-          Text(value, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20)),
-          Text(label, style: const TextStyle(color: Colors.white70, fontSize: 12)),
+          Text(value,
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20)),
+          Text(label,
+              style: const TextStyle(color: Colors.white70, fontSize: 12)),
         ],
       );
 }
@@ -380,12 +440,22 @@ class _InfoTile extends StatelessWidget {
   final String label;
   final String value;
   final bool isDark;
-  const _InfoTile({required this.icon, required this.label, required this.value, required this.isDark});
+  const _InfoTile(
+      {required this.icon,
+      required this.label,
+      required this.value,
+      required this.isDark});
 
   @override
   Widget build(BuildContext context) => ListTile(
         leading: Icon(icon, color: AppColors.info),
-        title: Text(label, style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant)),
-        subtitle: Text(value, style: TextStyle(fontWeight: FontWeight.w500, color: Theme.of(context).colorScheme.onSurface)),
+        title: Text(label,
+            style: TextStyle(
+                fontSize: 12,
+                color: Theme.of(context).colorScheme.onSurfaceVariant)),
+        subtitle: Text(value,
+            style: TextStyle(
+                fontWeight: FontWeight.w500,
+                color: Theme.of(context).colorScheme.onSurface)),
       );
 }

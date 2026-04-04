@@ -114,7 +114,8 @@ class InputSanitizer {
   /// تنظيف اسم الملف
   static String sanitizeFilename(String input) {
     // الأحرف المسموحة فقط
-    var result = input.replaceAll(RegExp(r'[^a-zA-Z0-9._\-\u0600-\u06FF ]'), '');
+    var result =
+        input.replaceAll(RegExp(r'[^a-zA-Z0-9._\-\u0600-\u06FF ]'), '');
 
     // إزالة النقاط المتعددة
     result = result.replaceAll(RegExp(r'\.{2,}'), '.');
@@ -252,8 +253,7 @@ extension StringSanitizer on String {
   String get sanitizedEmail => InputSanitizer.sanitizeEmail(this);
 
   /// هل يحتوي على محتوى خطر؟
-  bool get hasDangerousContent =>
-      InputSanitizer.containsDangerousContent(this);
+  bool get hasDangerousContent => InputSanitizer.containsDangerousContent(this);
 }
 
 // ============================================================================

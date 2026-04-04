@@ -104,9 +104,7 @@ class PaymentLoyaltyWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Don't show the widget if loyalty is not enabled, no customer, or no loyalty account
-    if (!loyaltySettings.isEnabled ||
-        loyaltyAccount == null ||
-        !hasCustomer) {
+    if (!loyaltySettings.isEnabled || loyaltyAccount == null || !hasCustomer) {
       return const SizedBox.shrink();
     }
 
@@ -118,8 +116,12 @@ class PaymentLoyaltyWidget extends StatelessWidget {
       duration: const Duration(milliseconds: 250),
       decoration: BoxDecoration(
         color: useLoyaltyPoints
-            ? (isDark ? AppColors.success.withValues(alpha: 0.1) : AppColors.successSurface)
-            : (isDark ? AppColors.warning.withValues(alpha: 0.1) : AppColors.warningSurface),
+            ? (isDark
+                ? AppColors.success.withValues(alpha: 0.1)
+                : AppColors.successSurface)
+            : (isDark
+                ? AppColors.warning.withValues(alpha: 0.1)
+                : AppColors.warningSurface),
         borderRadius: BorderRadius.circular(AppRadius.lg),
         border: Border.all(
           color: useLoyaltyPoints
@@ -142,7 +144,9 @@ class PaymentLoyaltyWidget extends StatelessWidget {
               ),
               const SizedBox(width: AppSpacing.sm),
               Text(
-                AppLocalizations.of(context)!.availableLoyaltyPoints(availablePoints.toString(), maxSarEquivalent.toStringAsFixed(2)),
+                AppLocalizations.of(context)!.availableLoyaltyPoints(
+                    availablePoints.toString(),
+                    maxSarEquivalent.toStringAsFixed(2)),
                 style: AppTypography.bodyMedium.copyWith(
                   color: AppColors.textPrimary,
                   fontWeight: FontWeight.w600,
@@ -176,14 +180,16 @@ class PaymentLoyaltyWidget extends StatelessWidget {
                     keyboardType: TextInputType.number,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     decoration: InputDecoration(
-                      hintText: AppLocalizations.of(context)!.pointsCountHint(availablePoints.toString()),
+                      hintText: AppLocalizations.of(context)!
+                          .pointsCountHint(availablePoints.toString()),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(AppRadius.md),
                         borderSide: const BorderSide(color: AppColors.border),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(AppRadius.md),
-                        borderSide: const BorderSide(color: AppColors.success, width: 2),
+                        borderSide: const BorderSide(
+                            color: AppColors.success, width: 2),
                       ),
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: AppSpacing.md,
@@ -198,9 +204,12 @@ class PaymentLoyaltyWidget extends StatelessWidget {
                       onPointsChanged(clamped);
                       // Correct value if it exceeds maximum
                       if (entered > availablePoints) {
-                        loyaltyPointsController.text = availablePoints.toString();
-                        loyaltyPointsController.selection = TextSelection.fromPosition(
-                          TextPosition(offset: loyaltyPointsController.text.length),
+                        loyaltyPointsController.text =
+                            availablePoints.toString();
+                        loyaltyPointsController.selection =
+                            TextSelection.fromPosition(
+                          TextPosition(
+                              offset: loyaltyPointsController.text.length),
                         );
                       }
                     },
@@ -216,10 +225,13 @@ class PaymentLoyaltyWidget extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: AppColors.successSurface,
                     borderRadius: BorderRadius.circular(AppRadius.md),
-                    border: Border.all(color: AppColors.success.withValues(alpha: 0.3)),
+                    border: Border.all(
+                        color: AppColors.success.withValues(alpha: 0.3)),
                   ),
                   child: Text(
-                    AppLocalizations.of(context)!.discountAmountSar((pointsToRedeem * loyaltySettings.pointValueSar).toStringAsFixed(2)),
+                    AppLocalizations.of(context)!.discountAmountSar(
+                        (pointsToRedeem * loyaltySettings.pointValueSar)
+                            .toStringAsFixed(2)),
                     style: AppTypography.labelLarge.copyWith(
                       color: AppColors.success,
                       fontWeight: FontWeight.w700,
@@ -242,13 +254,15 @@ class PaymentLoyaltyWidget extends StatelessWidget {
                   controller: loyaltyPointsController,
                 ),
                 LoyaltyQuickChip(
-                  label: AppLocalizations.of(context)!.pointsCountLabel((availablePoints * 0.5).floor().toString()),
+                  label: AppLocalizations.of(context)!.pointsCountLabel(
+                      (availablePoints * 0.5).floor().toString()),
                   points: (availablePoints * 0.5).floor(),
                   onSelected: onPointsChanged,
                   controller: loyaltyPointsController,
                 ),
                 LoyaltyQuickChip(
-                  label: AppLocalizations.of(context)!.pointsCountLabel((availablePoints * 0.25).floor().toString()),
+                  label: AppLocalizations.of(context)!.pointsCountLabel(
+                      (availablePoints * 0.25).floor().toString()),
                   points: (availablePoints * 0.25).floor(),
                   onSelected: onPointsChanged,
                   controller: loyaltyPointsController,

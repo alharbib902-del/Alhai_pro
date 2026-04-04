@@ -53,10 +53,12 @@ class CustomerAnalyticsScreen extends ConsumerStatefulWidget {
   const CustomerAnalyticsScreen({super.key});
 
   @override
-  ConsumerState<CustomerAnalyticsScreen> createState() => _CustomerAnalyticsScreenState();
+  ConsumerState<CustomerAnalyticsScreen> createState() =>
+      _CustomerAnalyticsScreenState();
 }
 
-class _CustomerAnalyticsScreenState extends ConsumerState<CustomerAnalyticsScreen> {
+class _CustomerAnalyticsScreenState
+    extends ConsumerState<CustomerAnalyticsScreen> {
   String _period = 'month';
   _CustomerAnalyticsData _data = const _CustomerAnalyticsData();
   bool _isLoading = true;
@@ -103,9 +105,11 @@ class _CustomerAnalyticsScreenState extends ConsumerState<CustomerAnalyticsScree
       final totalCustomers = allCustomers.length;
 
       // العملاء الجدد خلال الفترة المحددة
-      final newCustomers = allCustomers.where(
-        (c) => c.createdAt.isAfter(periodStart),
-      ).length;
+      final newCustomers = allCustomers
+          .where(
+            (c) => c.createdAt.isAfter(periodStart),
+          )
+          .length;
 
       // إجمالي الديون
       double totalDebt = 0;
@@ -130,7 +134,10 @@ class _CustomerAnalyticsScreenState extends ConsumerState<CustomerAnalyticsScree
              HAVING order_count > 0
              ORDER BY total_spent DESC
              LIMIT 5''',
-          variables: [Variable.withDateTime(periodStart), Variable.withString(storeId)],
+          variables: [
+            Variable.withDateTime(periodStart),
+            Variable.withString(storeId)
+          ],
         ).get();
 
         for (final row in topResult) {
@@ -287,16 +294,29 @@ class _CustomerAnalyticsScreenState extends ConsumerState<CustomerAnalyticsScree
     }
 
     // حساب النسب المئوية لتوزيع العملاء
-    final totalForDist = _data.vipCount + _data.regularCount + _data.normalCount;
-    final vipPct = totalForDist > 0 ? (_data.vipCount * 100 / totalForDist).round() : 0;
-    final regularPct = totalForDist > 0 ? (_data.regularCount * 100 / totalForDist).round() : 0;
-    final normalPct = totalForDist > 0 ? (_data.normalCount * 100 / totalForDist).round() : 0;
+    final totalForDist =
+        _data.vipCount + _data.regularCount + _data.normalCount;
+    final vipPct =
+        totalForDist > 0 ? (_data.vipCount * 100 / totalForDist).round() : 0;
+    final regularPct = totalForDist > 0
+        ? (_data.regularCount * 100 / totalForDist).round()
+        : 0;
+    final normalPct =
+        totalForDist > 0 ? (_data.normalCount * 100 / totalForDist).round() : 0;
 
     // حساب النسب المئوية لنشاط العملاء
-    final totalForActivity = _data.activeCustomers + _data.dormantCustomers + _data.inactiveCustomers;
-    final activePct = totalForActivity > 0 ? (_data.activeCustomers * 100 / totalForActivity).round() : 0;
-    final dormantPct = totalForActivity > 0 ? (_data.dormantCustomers * 100 / totalForActivity).round() : 0;
-    final inactivePct = totalForActivity > 0 ? (_data.inactiveCustomers * 100 / totalForActivity).round() : 0;
+    final totalForActivity = _data.activeCustomers +
+        _data.dormantCustomers +
+        _data.inactiveCustomers;
+    final activePct = totalForActivity > 0
+        ? (_data.activeCustomers * 100 / totalForActivity).round()
+        : 0;
+    final dormantPct = totalForActivity > 0
+        ? (_data.dormantCustomers * 100 / totalForActivity).round()
+        : 0;
+    final inactivePct = totalForActivity > 0
+        ? (_data.inactiveCustomers * 100 / totalForActivity).round()
+        : 0;
 
     return Scaffold(
       appBar: AppBar(
@@ -320,9 +340,12 @@ class _CustomerAnalyticsScreenState extends ConsumerState<CustomerAnalyticsScree
                   // اختيار الفترة الزمنية
                   SegmentedButton<String>(
                     segments: [
-                      ButtonSegment(value: 'week', label: Text(l10n.weekPeriod)),
-                      ButtonSegment(value: 'month', label: Text(l10n.monthPeriod)),
-                      ButtonSegment(value: 'year', label: Text(l10n.yearPeriod)),
+                      ButtonSegment(
+                          value: 'week', label: Text(l10n.weekPeriod)),
+                      ButtonSegment(
+                          value: 'month', label: Text(l10n.monthPeriod)),
+                      ButtonSegment(
+                          value: 'year', label: Text(l10n.yearPeriod)),
                     ],
                     selected: {_period},
                     onSelectionChanged: (v) {
@@ -354,14 +377,16 @@ class _CustomerAnalyticsScreenState extends ConsumerState<CustomerAnalyticsScree
                         _StatCard(
                           icon: Icons.account_balance_wallet,
                           label: l10n.totalDebts,
-                          value: l10n.priceWithCurrency(_data.totalDebt.toStringAsFixed(0)),
+                          value: l10n.priceWithCurrency(
+                              _data.totalDebt.toStringAsFixed(0)),
                           color: colorScheme.error,
                         ),
                         SizedBox(width: AlhaiSpacing.sm),
                         _StatCard(
                           icon: Icons.attach_money,
                           label: l10n.averageSpending,
-                          value: l10n.priceWithCurrency(_data.avgSpending.toStringAsFixed(0)),
+                          value: l10n.priceWithCurrency(
+                              _data.avgSpending.toStringAsFixed(0)),
                           color: colorScheme.secondary,
                         ),
                       ],
@@ -390,14 +415,16 @@ class _CustomerAnalyticsScreenState extends ConsumerState<CustomerAnalyticsScree
                         _StatCard(
                           icon: Icons.account_balance_wallet,
                           label: l10n.totalDebts,
-                          value: l10n.priceWithCurrency(_data.totalDebt.toStringAsFixed(0)),
+                          value: l10n.priceWithCurrency(
+                              _data.totalDebt.toStringAsFixed(0)),
                           color: colorScheme.error,
                         ),
                         SizedBox(width: AlhaiSpacing.sm),
                         _StatCard(
                           icon: Icons.attach_money,
                           label: l10n.averageSpending,
-                          value: l10n.priceWithCurrency(_data.avgSpending.toStringAsFixed(0)),
+                          value: l10n.priceWithCurrency(
+                              _data.avgSpending.toStringAsFixed(0)),
                           color: colorScheme.secondary,
                         ),
                       ],
@@ -420,21 +447,25 @@ class _CustomerAnalyticsScreenState extends ConsumerState<CustomerAnalyticsScree
                         // توزيع العملاء
                         Expanded(
                           flex: 2,
-                          child: _buildDistributionSection(l10n, colorScheme, vipPct, regularPct, normalPct),
+                          child: _buildDistributionSection(
+                              l10n, colorScheme, vipPct, regularPct, normalPct),
                         ),
                       ],
                     ),
                     SizedBox(height: AlhaiSpacing.lg),
-                    _buildActivitySection(l10n, colorScheme, activePct, dormantPct, inactivePct),
+                    _buildActivitySection(
+                        l10n, colorScheme, activePct, dormantPct, inactivePct),
                   ] else ...[
                     // أفضل العملاء
                     _buildTopCustomersSection(l10n, colorScheme),
                     SizedBox(height: AlhaiSpacing.lg),
                     // توزيع العملاء
-                    _buildDistributionSection(l10n, colorScheme, vipPct, regularPct, normalPct),
+                    _buildDistributionSection(
+                        l10n, colorScheme, vipPct, regularPct, normalPct),
                     SizedBox(height: AlhaiSpacing.lg),
                     // نشاط العملاء
-                    _buildActivitySection(l10n, colorScheme, activePct, dormantPct, inactivePct),
+                    _buildActivitySection(
+                        l10n, colorScheme, activePct, dormantPct, inactivePct),
                   ],
                 ],
               ),
@@ -445,7 +476,8 @@ class _CustomerAnalyticsScreenState extends ConsumerState<CustomerAnalyticsScree
     );
   }
 
-  Widget _buildTopCustomersSection(AppLocalizations l10n, ColorScheme colorScheme) {
+  Widget _buildTopCustomersSection(
+      AppLocalizations l10n, ColorScheme colorScheme) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -484,12 +516,13 @@ class _CustomerAnalyticsScreenState extends ConsumerState<CustomerAnalyticsScree
     );
   }
 
-  Widget _buildDistributionSection(
-      AppLocalizations l10n, ColorScheme colorScheme, int vipPct, int regularPct, int normalPct) {
+  Widget _buildDistributionSection(AppLocalizations l10n,
+      ColorScheme colorScheme, int vipPct, int regularPct, int normalPct) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(l10n.customerDistribution, style: Theme.of(context).textTheme.titleMedium),
+        Text(l10n.customerDistribution,
+            style: Theme.of(context).textTheme.titleMedium),
         SizedBox(height: AlhaiSpacing.sm),
         Card(
           child: Padding(
@@ -518,12 +551,13 @@ class _CustomerAnalyticsScreenState extends ConsumerState<CustomerAnalyticsScree
     );
   }
 
-  Widget _buildActivitySection(
-      AppLocalizations l10n, ColorScheme colorScheme, int activePct, int dormantPct, int inactivePct) {
+  Widget _buildActivitySection(AppLocalizations l10n, ColorScheme colorScheme,
+      int activePct, int dormantPct, int inactivePct) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(l10n.customerActivity, style: Theme.of(context).textTheme.titleMedium),
+        Text(l10n.customerActivity,
+            style: Theme.of(context).textTheme.titleMedium),
         SizedBox(height: AlhaiSpacing.sm),
         Card(
           child: Padding(
@@ -562,7 +596,11 @@ class _StatCard extends StatelessWidget {
   final IconData icon;
   final String label, value;
   final Color color;
-  const _StatCard({required this.icon, required this.label, required this.value, required this.color});
+  const _StatCard(
+      {required this.icon,
+      required this.label,
+      required this.value,
+      required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -595,7 +633,11 @@ class _CustomerTile extends StatelessWidget {
   final String name;
   final int orders;
   final double spent;
-  const _CustomerTile({required this.rank, required this.name, required this.orders, required this.spent});
+  const _CustomerTile(
+      {required this.rank,
+      required this.name,
+      required this.orders,
+      required this.spent});
 
   @override
   Widget build(BuildContext context) {
@@ -616,7 +658,8 @@ class _CustomerTile extends StatelessWidget {
       title: Text(name),
       subtitle: Text('$orders ${l10n.orders}'),
       trailing: Text(l10n.priceWithCurrency(spent.toStringAsFixed(0)),
-          style: TextStyle(fontWeight: FontWeight.bold, color: colorScheme.primary)),
+          style: TextStyle(
+              fontWeight: FontWeight.bold, color: colorScheme.primary)),
     );
   }
 }
@@ -625,7 +668,8 @@ class _DistributionRow extends StatelessWidget {
   final String label;
   final int percentage;
   final Color color;
-  const _DistributionRow({required this.label, required this.percentage, required this.color});
+  const _DistributionRow(
+      {required this.label, required this.percentage, required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -657,7 +701,11 @@ class _ActivityStat extends StatelessWidget {
   final String label, value;
   final int percentage;
   final Color color;
-  const _ActivityStat({required this.label, required this.value, required this.percentage, required this.color});
+  const _ActivityStat(
+      {required this.label,
+      required this.value,
+      required this.percentage,
+      required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -684,8 +732,8 @@ class _ActivityStat extends StatelessWidget {
             style: TextStyle(
                 fontWeight: FontWeight.bold, color: colorScheme.onSurface)),
         Text(label,
-            style: TextStyle(
-                fontSize: 11, color: colorScheme.onSurfaceVariant)),
+            style:
+                TextStyle(fontSize: 11, color: colorScheme.onSurfaceVariant)),
       ],
     );
   }

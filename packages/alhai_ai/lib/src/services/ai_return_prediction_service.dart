@@ -12,10 +12,13 @@ library;
 enum ReturnRiskLevel {
   /// خطر منخفض
   low,
+
   /// خطر متوسط
   medium,
+
   /// خطر عالي
   high,
+
   /// خطر عالي جداً
   veryHigh,
 }
@@ -24,14 +27,19 @@ enum ReturnRiskLevel {
 enum ReturnRiskFactor {
   /// سعر مرتفع
   highPriceItem,
+
   /// عميل جديد
   newCustomer,
+
   /// نهاية اليوم
   endOfDay,
+
   /// خصم كبير
   heavilyDiscounted,
+
   /// عميل يرجع كثيراً
   previousReturner,
+
   /// شراء بالجملة
   bulkPurchase,
 }
@@ -63,12 +71,16 @@ class ReturnProbability {
 enum PreventiveType {
   /// فحص جودة
   qualityCheck,
+
   /// متابعة
   followUp,
+
   /// ضمان ممتد
   extendedWarranty,
+
   /// عرض استبدال
   exchangeOffer,
+
   /// خصم على الشراء القادم
   discountOnNext,
 }
@@ -122,7 +134,6 @@ class ReturnTrend {
 
 /// خدمة التنبؤ بالمرتجعات
 class AiReturnPredictionService {
-
   AiReturnPredictionService();
 
   /// الحصول على احتمالات الإرجاع لجميع العمليات
@@ -137,7 +148,11 @@ class AiReturnPredictionService {
         amount: 487.50,
         probability: 0.85,
         riskLevel: ReturnRiskLevel.veryHigh,
-        factors: [ReturnRiskFactor.previousReturner, ReturnRiskFactor.highPriceItem, ReturnRiskFactor.endOfDay],
+        factors: [
+          ReturnRiskFactor.previousReturner,
+          ReturnRiskFactor.highPriceItem,
+          ReturnRiskFactor.endOfDay
+        ],
         customerName: 'فهد العتيبي',
         topRiskProduct: 'لحم بقري مبرد - 2 كجم',
       ),
@@ -167,7 +182,10 @@ class AiReturnPredictionService {
         amount: 89.25,
         probability: 0.45,
         riskLevel: ReturnRiskLevel.medium,
-        factors: [ReturnRiskFactor.endOfDay, ReturnRiskFactor.heavilyDiscounted],
+        factors: [
+          ReturnRiskFactor.endOfDay,
+          ReturnRiskFactor.heavilyDiscounted
+        ],
         customerName: 'خالد المالكي',
         topRiskProduct: 'خبز توست أبيض',
       ),
@@ -197,7 +215,11 @@ class AiReturnPredictionService {
         amount: 534.00,
         probability: 0.78,
         riskLevel: ReturnRiskLevel.high,
-        factors: [ReturnRiskFactor.highPriceItem, ReturnRiskFactor.bulkPurchase, ReturnRiskFactor.previousReturner],
+        factors: [
+          ReturnRiskFactor.highPriceItem,
+          ReturnRiskFactor.bulkPurchase,
+          ReturnRiskFactor.previousReturner
+        ],
         customerName: 'ياسر الغامدي',
         topRiskProduct: 'زيت زيتون أصلي - 3 لتر',
       ),
@@ -217,7 +239,12 @@ class AiReturnPredictionService {
         amount: 678.25,
         probability: 0.91,
         riskLevel: ReturnRiskLevel.veryHigh,
-        factors: [ReturnRiskFactor.previousReturner, ReturnRiskFactor.highPriceItem, ReturnRiskFactor.bulkPurchase, ReturnRiskFactor.heavilyDiscounted],
+        factors: [
+          ReturnRiskFactor.previousReturner,
+          ReturnRiskFactor.highPriceItem,
+          ReturnRiskFactor.bulkPurchase,
+          ReturnRiskFactor.heavilyDiscounted
+        ],
         customerName: 'سعد القرني',
         topRiskProduct: 'دجاج مجمد - كرتون 10 كجم',
       ),
@@ -242,7 +269,8 @@ class AiReturnPredictionService {
       const PreventiveAction(
         id: 'PA-001',
         title: 'فحص جودة اللحوم المبردة',
-        description: 'العميل فهد العتيبي لديه تاريخ إرجاع سابق. تأكد من جودة اللحوم المبردة قبل التسليم وأضف كيس ثلج إضافي.',
+        description:
+            'العميل فهد العتيبي لديه تاريخ إرجاع سابق. تأكد من جودة اللحوم المبردة قبل التسليم وأضف كيس ثلج إضافي.',
         targetTransactionId: 'TXN-2024-0891',
         type: PreventiveType.qualityCheck,
         estimatedSavings: 487.50,
@@ -250,7 +278,8 @@ class AiReturnPredictionService {
       const PreventiveAction(
         id: 'PA-002',
         title: 'متابعة عميل الجملة',
-        description: 'محمد الشمري عميل جديد اشترى بالجملة. تواصل معه بعد 24 ساعة للتأكد من رضاه عن جودة الحليب.',
+        description:
+            'محمد الشمري عميل جديد اشترى بالجملة. تواصل معه بعد 24 ساعة للتأكد من رضاه عن جودة الحليب.',
         targetTransactionId: 'TXN-2024-0887',
         type: PreventiveType.followUp,
         estimatedSavings: 312.00,
@@ -258,7 +287,8 @@ class AiReturnPredictionService {
       const PreventiveAction(
         id: 'PA-003',
         title: 'عرض استبدال الدجاج المجمد',
-        description: 'سعد القرني يعود للإرجاع بشكل متكرر. اعرض عليه استبدال الدجاج المجمد بمنتج طازج بدلاً من الإرجاع.',
+        description:
+            'سعد القرني يعود للإرجاع بشكل متكرر. اعرض عليه استبدال الدجاج المجمد بمنتج طازج بدلاً من الإرجاع.',
         targetTransactionId: 'TXN-2024-0860',
         type: PreventiveType.exchangeOffer,
         estimatedSavings: 678.25,
@@ -266,7 +296,8 @@ class AiReturnPredictionService {
       const PreventiveAction(
         id: 'PA-004',
         title: 'ضمان ممتد على زيت الزيتون',
-        description: 'ياسر الغامدي اشترى زيت زيتون بكمية كبيرة. قدم ضمان استبدال لمدة أسبوع إضافي لبناء الثقة.',
+        description:
+            'ياسر الغامدي اشترى زيت زيتون بكمية كبيرة. قدم ضمان استبدال لمدة أسبوع إضافي لبناء الثقة.',
         targetTransactionId: 'TXN-2024-0868',
         type: PreventiveType.extendedWarranty,
         estimatedSavings: 534.00,
@@ -274,7 +305,8 @@ class AiReturnPredictionService {
       const PreventiveAction(
         id: 'PA-005',
         title: 'خصم 10% على الزيارة القادمة',
-        description: 'سارة القحطاني اشترت زبادي بخصم. قدم لها كوبون 10% على الزيارة القادمة لتشجيعها على الاحتفاظ بالمنتج.',
+        description:
+            'سارة القحطاني اشترت زبادي بخصم. قدم لها كوبون 10% على الزيارة القادمة لتشجيعها على الاحتفاظ بالمنتج.',
         targetTransactionId: 'TXN-2024-0883',
         type: PreventiveType.discountOnNext,
         estimatedSavings: 156.75,
@@ -342,7 +374,9 @@ class AiReturnPredictionService {
   /// حساب إجمالي المبلغ المعرض للخطر
   double calculateAtRiskAmount(List<ReturnProbability> probabilities) {
     return probabilities
-        .where((p) => p.riskLevel == ReturnRiskLevel.high || p.riskLevel == ReturnRiskLevel.veryHigh)
+        .where((p) =>
+            p.riskLevel == ReturnRiskLevel.high ||
+            p.riskLevel == ReturnRiskLevel.veryHigh)
         .fold<double>(0, (sum, p) => sum + p.amount);
   }
 

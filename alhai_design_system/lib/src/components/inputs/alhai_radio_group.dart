@@ -30,7 +30,7 @@ class AlhaiRadioOption<T> {
 }
 
 /// AlhaiRadioGroup - Radio button group with options
-/// 
+///
 /// Features:
 /// - Vertical and horizontal layouts
 /// - Optional subtitle per option

@@ -25,7 +25,8 @@ enum MemoryPressureLevel {
 }
 
 /// نوع الإجراء عند ضغط الذاكرة
-typedef MemoryCleanupCallback = Future<void> Function(MemoryPressureLevel level);
+typedef MemoryCleanupCallback = Future<void> Function(
+    MemoryPressureLevel level);
 
 /// خدمة مراقبة الذاكرة
 class MemoryMonitor {

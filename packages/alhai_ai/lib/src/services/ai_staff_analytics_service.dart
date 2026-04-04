@@ -253,7 +253,15 @@ class AiStaffAnalyticsService {
 
   /// بيانات خريطة حرارية للورديات
   static ShiftHeatmapData getShiftHeatmap() {
-    final days = ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'];
+    final days = [
+      'السبت',
+      'الأحد',
+      'الإثنين',
+      'الثلاثاء',
+      'الأربعاء',
+      'الخميس',
+      'الجمعة'
+    ];
     final hours = List.generate(14, (i) => 7 + i); // 7 AM to 8 PM
 
     final intensity = List.generate(7, (dayIndex) {
@@ -291,25 +299,51 @@ class AiStaffAnalyticsService {
         day: 'Friday',
         dayAr: 'الجمعة',
         hourlyNeeds: [
-          HourlyStaffNeed(hour: 11, trafficIntensity: 0.9, currentStaff: 3, suggestedStaff: 5),
-          HourlyStaffNeed(hour: 12, trafficIntensity: 0.95, currentStaff: 3, suggestedStaff: 5),
-          HourlyStaffNeed(hour: 13, trafficIntensity: 0.85, currentStaff: 3, suggestedStaff: 4),
+          HourlyStaffNeed(
+              hour: 11,
+              trafficIntensity: 0.9,
+              currentStaff: 3,
+              suggestedStaff: 5),
+          HourlyStaffNeed(
+              hour: 12,
+              trafficIntensity: 0.95,
+              currentStaff: 3,
+              suggestedStaff: 5),
+          HourlyStaffNeed(
+              hour: 13,
+              trafficIntensity: 0.85,
+              currentStaff: 3,
+              suggestedStaff: 4),
         ],
         currentStaff: 3,
         suggestedStaff: 5,
-        suggestion: 'يوم الجمعة يحتاج موظفين إضافيين خلال فترة الظهر (11-13). اقتراح: إضافة أحمد ومحمد للوردية.',
+        suggestion:
+            'يوم الجمعة يحتاج موظفين إضافيين خلال فترة الظهر (11-13). اقتراح: إضافة أحمد ومحمد للوردية.',
       ),
       ShiftOptimization(
         day: 'Thursday',
         dayAr: 'الخميس',
         hourlyNeeds: [
-          HourlyStaffNeed(hour: 17, trafficIntensity: 0.85, currentStaff: 2, suggestedStaff: 4),
-          HourlyStaffNeed(hour: 18, trafficIntensity: 0.9, currentStaff: 2, suggestedStaff: 4),
-          HourlyStaffNeed(hour: 19, trafficIntensity: 0.8, currentStaff: 2, suggestedStaff: 3),
+          HourlyStaffNeed(
+              hour: 17,
+              trafficIntensity: 0.85,
+              currentStaff: 2,
+              suggestedStaff: 4),
+          HourlyStaffNeed(
+              hour: 18,
+              trafficIntensity: 0.9,
+              currentStaff: 2,
+              suggestedStaff: 4),
+          HourlyStaffNeed(
+              hour: 19,
+              trafficIntensity: 0.8,
+              currentStaff: 2,
+              suggestedStaff: 3),
         ],
         currentStaff: 2,
         suggestedStaff: 4,
-        suggestion: 'مساء الخميس يشهد ضغطاً عالياً (17-19). اقتراح: تأخير وردية فاطمة لتغطية المساء.',
+        suggestion:
+            'مساء الخميس يشهد ضغطاً عالياً (17-19). اقتراح: تأخير وردية فاطمة لتغطية المساء.',
       ),
     ];
   }
@@ -317,10 +351,13 @@ class AiStaffAnalyticsService {
   /// ملخص أداء الفريق
   static TeamPerformanceSummary getTeamSummary() {
     final staff = getStaffPerformance();
-    final avgScore = staff.map((s) => s.score).reduce((a, b) => a + b) / staff.length;
+    final avgScore =
+        staff.map((s) => s.score).reduce((a, b) => a + b) / staff.length;
     final totalSales = staff.map((s) => s.salesVolume).reduce((a, b) => a + b);
-    final totalTxn = staff.map((s) => s.totalTransactions).reduce((a, b) => a + b);
-    final avgVoid = staff.map((s) => s.voidRate).reduce((a, b) => a + b) / staff.length;
+    final totalTxn =
+        staff.map((s) => s.totalTransactions).reduce((a, b) => a + b);
+    final avgVoid =
+        staff.map((s) => s.voidRate).reduce((a, b) => a + b) / staff.length;
     final top = staff.reduce((a, b) => a.score > b.score ? a : b);
 
     return TeamPerformanceSummary(

@@ -31,30 +31,29 @@ class _ThemeScreenState extends ConsumerState<ThemeScreen> {
     final l10n = AppLocalizations.of(context)!;
 
     return Column(
-              children: [
-                AppHeader(
-                  title: l10n.theme,
-                  onMenuTap: isWideScreen
-                      ? null
-                      : () => Scaffold.of(context).openDrawer(),
-                  onNotificationsTap: () => context.push('/notifications'),
-                  notificationsCount: 3,
-                  userName:
-                      '\u0623\u062d\u0645\u062f \u0645\u062d\u0645\u062f',
-                  userRole: l10n.branchManager,
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-                    child: _buildContent(
-                        isWideScreen, isMediumScreen, isDark, l10n),
-                  ),
-                ),
-              ],
-            );
+      children: [
+        AppHeader(
+          title: l10n.theme,
+          onMenuTap:
+              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onNotificationsTap: () => context.push('/notifications'),
+          notificationsCount: 3,
+          userName: '\u0623\u062d\u0645\u062f \u0645\u062d\u0645\u062f',
+          userRole: l10n.branchManager,
+        ),
+        Expanded(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.all(
+                isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+            child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
+          ),
+        ),
+      ],
+    );
   }
-  Widget _buildContent(
-      bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n) {
+
+  Widget _buildContent(bool isWideScreen, bool isMediumScreen, bool isDark,
+      AppLocalizations l10n) {
     final themeState = ref.watch(themeProvider);
 
     return Column(
@@ -72,7 +71,8 @@ class _ThemeScreenState extends ConsumerState<ThemeScreen> {
             _buildThemeOptionTile(
               icon: Icons.light_mode_rounded,
               title: l10n.lightMode,
-              subtitle: '\u0645\u0638\u0647\u0631 \u0641\u0627\u062a\u062d \u0645\u0631\u064a\u062d \u0644\u0644\u0639\u064a\u0646',
+              subtitle:
+                  '\u0645\u0638\u0647\u0631 \u0641\u0627\u062a\u062d \u0645\u0631\u064a\u062d \u0644\u0644\u0639\u064a\u0646',
               isSelected: themeState.themeMode == ThemeMode.light,
               isDark: isDark,
               onTap: () {
@@ -80,7 +80,8 @@ class _ThemeScreenState extends ConsumerState<ThemeScreen> {
                 if (themeState.themeMode != ThemeMode.light) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('\u062A\u0645 \u062A\u0641\u0639\u064A\u0644 ${l10n.lightMode}'),
+                      content: Text(
+                          '\u062A\u0645 \u062A\u0641\u0639\u064A\u0644 ${l10n.lightMode}'),
                       backgroundColor: AppColors.success,
                       behavior: SnackBarBehavior.floating,
                       duration: const Duration(seconds: 2),
@@ -92,7 +93,8 @@ class _ThemeScreenState extends ConsumerState<ThemeScreen> {
             _buildThemeOptionTile(
               icon: Icons.dark_mode_rounded,
               title: l10n.darkMode,
-              subtitle: '\u0645\u0638\u0647\u0631 \u0645\u0638\u0644\u0645 \u064a\u062d\u0645\u064a \u0627\u0644\u0639\u064a\u0646',
+              subtitle:
+                  '\u0645\u0638\u0647\u0631 \u0645\u0638\u0644\u0645 \u064a\u062d\u0645\u064a \u0627\u0644\u0639\u064a\u0646',
               isSelected: themeState.themeMode == ThemeMode.dark,
               isDark: isDark,
               onTap: () {
@@ -100,7 +102,8 @@ class _ThemeScreenState extends ConsumerState<ThemeScreen> {
                 if (themeState.themeMode != ThemeMode.dark) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('\u062A\u0645 \u062A\u0641\u0639\u064A\u0644 ${l10n.darkMode}'),
+                      content: Text(
+                          '\u062A\u0645 \u062A\u0641\u0639\u064A\u0644 ${l10n.darkMode}'),
                       backgroundColor: AppColors.success,
                       behavior: SnackBarBehavior.floating,
                       duration: const Duration(seconds: 2),
@@ -112,7 +115,8 @@ class _ThemeScreenState extends ConsumerState<ThemeScreen> {
             _buildThemeOptionTile(
               icon: Icons.settings_suggest_rounded,
               title: l10n.systemMode,
-              subtitle: '\u064a\u062a\u0628\u0639 \u0625\u0639\u062f\u0627\u062f\u0627\u062a \u062c\u0647\u0627\u0632\u0643 \u062a\u0644\u0642\u0627\u0626\u064a\u0627\u064b',
+              subtitle:
+                  '\u064a\u062a\u0628\u0639 \u0625\u0639\u062f\u0627\u062f\u0627\u062a \u062c\u0647\u0627\u0632\u0643 \u062a\u0644\u0642\u0627\u0626\u064a\u0627\u064b',
               isSelected: themeState.themeMode == ThemeMode.system,
               isDark: isDark,
               onTap: () {
@@ -120,7 +124,8 @@ class _ThemeScreenState extends ConsumerState<ThemeScreen> {
                 if (themeState.themeMode != ThemeMode.system) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('\u062A\u0645 \u062A\u0641\u0639\u064A\u0644 ${l10n.systemMode}'),
+                      content: Text(
+                          '\u062A\u0645 \u062A\u0641\u0639\u064A\u0644 ${l10n.systemMode}'),
                       backgroundColor: AppColors.success,
                       behavior: SnackBarBehavior.floating,
                       duration: const Duration(seconds: 2),
@@ -136,16 +141,14 @@ class _ThemeScreenState extends ConsumerState<ThemeScreen> {
     );
   }
 
-  Widget _buildSettingsGroup(
-      String title, List<Widget> children, bool isDark) {
+  Widget _buildSettingsGroup(String title, List<Widget> children, bool isDark) {
     return Container(
       margin: const EdgeInsets.only(bottom: AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color:
-              Theme.of(context).dividerColor,
+          color: Theme.of(context).dividerColor,
         ),
       ),
       child: Column(
@@ -248,8 +251,7 @@ class _ThemePreview extends StatelessWidget {
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color:
-              Theme.of(context).dividerColor,
+          color: Theme.of(context).dividerColor,
         ),
         boxShadow: [
           BoxShadow(
@@ -296,8 +298,7 @@ class _ThemePreview extends StatelessWidget {
                   child: _MiniCard(isDark: isDark, color: AppColors.primary)),
               SizedBox(width: AlhaiSpacing.xs),
               Expanded(
-                  child:
-                      _MiniCard(isDark: isDark, color: AppColors.secondary)),
+                  child: _MiniCard(isDark: isDark, color: AppColors.secondary)),
             ],
           ),
           SizedBox(height: AlhaiSpacing.xs),

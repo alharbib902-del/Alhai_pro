@@ -45,7 +45,8 @@ class AlhaiDataTable<T> extends StatelessWidget {
             // Header
             if (showHeader)
               Container(
-                padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm, horizontal: AlhaiSpacing.md),
+                padding: const EdgeInsets.symmetric(
+                    vertical: AlhaiSpacing.sm, horizontal: AlhaiSpacing.md),
                 decoration: BoxDecoration(
                   color: colorScheme.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(8),
@@ -67,7 +68,8 @@ class AlhaiDataTable<T> extends StatelessWidget {
             const SizedBox(height: AlhaiSpacing.xs),
             // Body
             if (isLoading)
-              ...List.generate(loadingRowCount, (_) => _buildSkeletonRow(context))
+              ...List.generate(
+                  loadingRowCount, (_) => _buildSkeletonRow(context))
             else if (data.isEmpty)
               Padding(
                 padding: const EdgeInsets.all(AlhaiSpacing.xl),
@@ -104,10 +106,12 @@ class AlhaiDataTable<T> extends StatelessWidget {
       onTap: onRowTap != null ? () => onRowTap!(item) : null,
       borderRadius: BorderRadius.circular(8),
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm, horizontal: AlhaiSpacing.md),
+        padding: const EdgeInsets.symmetric(
+            vertical: AlhaiSpacing.sm, horizontal: AlhaiSpacing.md),
         decoration: BoxDecoration(
           border: Border(
-            bottom: BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
+            bottom: BorderSide(
+                color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
           ),
         ),
         child: Row(
@@ -123,7 +127,8 @@ class AlhaiDataTable<T> extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm, horizontal: AlhaiSpacing.md),
+      padding: const EdgeInsets.symmetric(
+          vertical: AlhaiSpacing.sm, horizontal: AlhaiSpacing.md),
       child: Row(
         children: columns.map((_) {
           return Expanded(

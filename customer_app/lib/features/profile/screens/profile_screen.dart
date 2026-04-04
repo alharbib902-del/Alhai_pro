@@ -19,114 +19,114 @@ class ProfileScreen extends ConsumerWidget {
       body: SafeArea(
         top: false,
         child: ListView(
-        padding: const EdgeInsets.all(AlhaiSpacing.md),
-        children: [
-          // User info card
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(AlhaiSpacing.md),
-              child: Row(
-                children: [
-                  CircleAvatar(
-                    radius: 32,
-                    backgroundColor: theme.colorScheme.primaryContainer,
-                    child: Text(
-                      user?.initials ?? '?',
-                      style: theme.textTheme.headlineSmall?.copyWith(
-                        color: theme.colorScheme.primary,
-                        fontWeight: FontWeight.bold,
+          padding: const EdgeInsets.all(AlhaiSpacing.md),
+          children: [
+            // User info card
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(AlhaiSpacing.md),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 32,
+                      backgroundColor: theme.colorScheme.primaryContainer,
+                      child: Text(
+                        user?.initials ?? '?',
+                        style: theme.textTheme.headlineSmall?.copyWith(
+                          color: theme.colorScheme.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: AlhaiSpacing.md),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          user?.name ?? 'مستخدم',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
+                    const SizedBox(width: AlhaiSpacing.md),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            user?.name ?? 'مستخدم',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: AlhaiSpacing.xxs),
-                        Text(
-                          user?.phone ?? '',
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.outline,
+                          const SizedBox(height: AlhaiSpacing.xxs),
+                          Text(
+                            user?.phone ?? '',
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.colorScheme.outline,
+                            ),
+                            textDirection: TextDirection.ltr,
                           ),
-                          textDirection: TextDirection.ltr,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: AlhaiSpacing.md),
-
-          // Menu items
-          _MenuItem(
-            icon: Icons.location_on_outlined,
-            title: 'عناويني',
-            onTap: () => context.push('/profile/addresses'),
-          ),
-          _MenuItem(
-            icon: Icons.receipt_long_outlined,
-            title: 'طلباتي',
-            onTap: () => context.push('/orders'),
-          ),
-          _MenuItem(
-            icon: Icons.settings_outlined,
-            title: 'الإعدادات',
-            onTap: () => context.push('/profile/settings'),
-          ),
-          _MenuItem(
-            icon: Icons.help_outline,
-            title: 'المساعدة',
-            onTap: () {},
-          ),
-          const SizedBox(height: AlhaiSpacing.lg),
-          OutlinedButton.icon(
-            onPressed: () async {
-              final confirmed = await showDialog<bool>(
-                context: context,
-                builder: (ctx) => AlertDialog(
-                  title: const Text('تسجيل الخروج'),
-                  content: const Text('هل تريد تسجيل الخروج؟'),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(ctx, false),
-                      child: const Text('إلغاء'),
-                    ),
-                    FilledButton(
-                      onPressed: () => Navigator.pop(ctx, true),
-                      child: const Text('تسجيل الخروج'),
+                        ],
+                      ),
                     ),
                   ],
                 ),
-              );
+              ),
+            ),
+            const SizedBox(height: AlhaiSpacing.md),
 
-              if (confirmed == true) {
-                await ref.read(logoutProvider.future);
-                if (context.mounted) context.go('/auth/login');
-              }
-            },
-            icon: Icon(Icons.logout, color: theme.colorScheme.error),
-            label: Text(
-              'تسجيل الخروج',
-              style: TextStyle(color: theme.colorScheme.error),
+            // Menu items
+            _MenuItem(
+              icon: Icons.location_on_outlined,
+              title: 'عناويني',
+              onTap: () => context.push('/profile/addresses'),
             ),
-            style: OutlinedButton.styleFrom(
-              minimumSize: const Size.fromHeight(48),
-              side: BorderSide(color: theme.colorScheme.error),
+            _MenuItem(
+              icon: Icons.receipt_long_outlined,
+              title: 'طلباتي',
+              onTap: () => context.push('/orders'),
             ),
-          ),
-        ],
-      ),
+            _MenuItem(
+              icon: Icons.settings_outlined,
+              title: 'الإعدادات',
+              onTap: () => context.push('/profile/settings'),
+            ),
+            _MenuItem(
+              icon: Icons.help_outline,
+              title: 'المساعدة',
+              onTap: () {},
+            ),
+            const SizedBox(height: AlhaiSpacing.lg),
+            OutlinedButton.icon(
+              onPressed: () async {
+                final confirmed = await showDialog<bool>(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    title: const Text('تسجيل الخروج'),
+                    content: const Text('هل تريد تسجيل الخروج؟'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(ctx, false),
+                        child: const Text('إلغاء'),
+                      ),
+                      FilledButton(
+                        onPressed: () => Navigator.pop(ctx, true),
+                        child: const Text('تسجيل الخروج'),
+                      ),
+                    ],
+                  ),
+                );
+
+                if (confirmed == true) {
+                  await ref.read(logoutProvider.future);
+                  if (context.mounted) context.go('/auth/login');
+                }
+              },
+              icon: Icon(Icons.logout, color: theme.colorScheme.error),
+              label: Text(
+                'تسجيل الخروج',
+                style: TextStyle(color: theme.colorScheme.error),
+              ),
+              style: OutlinedButton.styleFrom(
+                minimumSize: const Size.fromHeight(48),
+                side: BorderSide(color: theme.colorScheme.error),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

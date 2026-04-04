@@ -59,8 +59,10 @@ class OtpData {
         phone: json['phone'],
         otpHash: json['otpHash'],
         otpSalt: json['otpSalt'] ?? '',
-        createdAt: DateTime.tryParse(json['createdAt'] as String) ?? DateTime.now(),
-        expiresAt: DateTime.tryParse(json['expiresAt'] as String) ?? DateTime.now(),
+        createdAt:
+            DateTime.tryParse(json['createdAt'] as String) ?? DateTime.now(),
+        expiresAt:
+            DateTime.tryParse(json['expiresAt'] as String) ?? DateTime.now(),
         verifyAttempts: json['verifyAttempts'] ?? 0,
       );
 }
@@ -90,7 +92,8 @@ class WhatsAppOtpSendResult {
   });
 
   factory WhatsAppOtpSendResult.success({String? messageId, String? devOtp}) =>
-      WhatsAppOtpSendResult._(isSuccess: true, messageId: messageId, devOtp: devOtp);
+      WhatsAppOtpSendResult._(
+          isSuccess: true, messageId: messageId, devOtp: devOtp);
 
   factory WhatsAppOtpSendResult.error(String message) =>
       WhatsAppOtpSendResult._(isSuccess: false, error: message);
@@ -251,7 +254,8 @@ class WhatsAppOtpService {
           otpHash: otpHash,
           otpSalt: salt,
           createdAt: now,
-          expiresAt: now.add(const Duration(minutes: WhatsAppConfig.otpExpiryMinutes)),
+          expiresAt:
+              now.add(const Duration(minutes: WhatsAppConfig.otpExpiryMinutes)),
         );
 
         _otpCache[formattedPhone] = otpData;
@@ -259,7 +263,8 @@ class WhatsAppOtpService {
         _recordSend(formattedPhone);
         SecurityLogger.logOtpSent(formattedPhone);
 
-        return WhatsAppOtpSendResult.success(messageId: 'dev-mode', devOtp: otp);
+        return WhatsAppOtpSendResult.success(
+            messageId: 'dev-mode', devOtp: otp);
       }
 
       // إرسال عبر WaSenderAPI (الإنتاج فقط)
@@ -376,8 +381,7 @@ class WhatsAppOtpService {
     _otpCache[formattedPhone] = otpData;
     await _saveOtpToStorage(otpData);
 
-    final remaining =
-        WhatsAppConfig.maxVerifyAttempts - otpData.verifyAttempts;
+    final remaining = WhatsAppConfig.maxVerifyAttempts - otpData.verifyAttempts;
 
     if (remaining <= 0) {
       await _clearOtp(formattedPhone);
@@ -528,7 +532,8 @@ class WhatsAppOtpService {
       if (lastSendJson != null) {
         final lastSendMap = jsonDecode(lastSendJson) as Map<String, dynamic>;
         for (final entry in lastSendMap.entries) {
-          _lastSendTime[entry.key] = DateTime.tryParse(entry.value as String) ?? DateTime.now();
+          _lastSendTime[entry.key] =
+              DateTime.tryParse(entry.value as String) ?? DateTime.now();
         }
       }
     } catch (e) {
@@ -541,7 +546,8 @@ class WhatsAppOtpService {
     try {
       final historyMap = <String, List<String>>{};
       for (final entry in _sendHistory.entries) {
-        historyMap[entry.key] = entry.value.map((e) => e.toIso8601String()).toList();
+        historyMap[entry.key] =
+            entry.value.map((e) => e.toIso8601String()).toList();
       }
       await SecureStorageService.write(_sendHistoryKey, jsonEncode(historyMap));
 
@@ -549,7 +555,8 @@ class WhatsAppOtpService {
       for (final entry in _lastSendTime.entries) {
         lastSendMap[entry.key] = entry.value.toIso8601String();
       }
-      await SecureStorageService.write(_lastSendTimeKey, jsonEncode(lastSendMap));
+      await SecureStorageService.write(
+          _lastSendTimeKey, jsonEncode(lastSendMap));
     } catch (e) {
       AppLogger.debug('Failed to persist rate limit data: $e', tag: 'OTP');
     }

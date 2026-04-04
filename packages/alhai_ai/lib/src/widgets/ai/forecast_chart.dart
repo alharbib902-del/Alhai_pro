@@ -40,9 +40,8 @@ class _ForecastChartState extends State<ForecastChart> {
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.08)
-              : AppColors.border,
+          color:
+              isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.border,
         ),
         boxShadow: [
           BoxShadow(
@@ -79,8 +78,8 @@ class _ForecastChartState extends State<ForecastChart> {
               const SizedBox(width: AlhaiSpacing.md),
               _buildLegend(l10n.forecast, AppColors.primary, isDark),
               const SizedBox(width: AlhaiSpacing.md),
-              _buildLegend('نطاق الثقة', AppColors.primary.withValues(alpha: 0.2),
-                  isDark),
+              _buildLegend('نطاق الثقة',
+                  AppColors.primary.withValues(alpha: 0.2), isDark),
               // Confidence band
             ],
           ),
@@ -110,8 +109,7 @@ class _ForecastChartState extends State<ForecastChart> {
             ),
           ),
           // تفاصيل النقطة المحددة
-          if (_hoveredIndex != null &&
-              _hoveredIndex! < widget.forecasts.length)
+          if (_hoveredIndex != null && _hoveredIndex! < widget.forecasts.length)
             _buildTooltip(widget.forecasts[_hoveredIndex!], isDark),
         ],
       ),
@@ -144,12 +142,11 @@ class _ForecastChartState extends State<ForecastChart> {
 
   Widget _buildTooltip(DailyForecast forecast, bool isDark) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 6),
+      padding:
+          const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 6),
       margin: const EdgeInsets.only(top: AlhaiSpacing.xs),
       decoration: BoxDecoration(
-        color: isDark
-            ? Colors.white.withValues(alpha: 0.1)
-            : AppColors.grey50,
+        color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.grey50,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -224,7 +221,8 @@ class _ForecastChartPainter extends CustomPainter {
     final confidencePath = Path();
     for (var i = 0; i < forecasts.length; i++) {
       final x = i * stepX;
-      final upper = forecasts[i].predicted * (1 + (1 - forecasts[i].confidence) * 0.5);
+      final upper =
+          forecasts[i].predicted * (1 + (1 - forecasts[i].confidence) * 0.5);
       if (i == 0) {
         confidencePath.moveTo(x, toY(upper));
       } else {
@@ -233,7 +231,8 @@ class _ForecastChartPainter extends CustomPainter {
     }
     for (var i = forecasts.length - 1; i >= 0; i--) {
       final x = i * stepX;
-      final lower = forecasts[i].predicted * (1 - (1 - forecasts[i].confidence) * 0.5);
+      final lower =
+          forecasts[i].predicted * (1 - (1 - forecasts[i].confidence) * 0.5);
       confidencePath.lineTo(x, toY(lower));
     }
     confidencePath.close();

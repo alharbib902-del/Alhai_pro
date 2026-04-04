@@ -20,29 +20,29 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
   /// الحصول على جميع المبيعات للمتجر (باستثناء المحذوفة)
   Future<List<SalesTableData>> getAllSales(String storeId, {int limit = 1000}) {
     return (select(salesTable)
-      ..where((s) => s.storeId.equals(storeId) & s.deletedAt.isNull())
-      ..orderBy([(s) => OrderingTerm.desc(s.createdAt)])
-      ..limit(limit))
-      .get();
+          ..where((s) => s.storeId.equals(storeId) & s.deletedAt.isNull())
+          ..orderBy([(s) => OrderingTerm.desc(s.createdAt)])
+          ..limit(limit))
+        .get();
   }
-  
+
   /// الحصول على مبيعات بتاريخ (باستثناء المحذوفة)
-  Future<List<SalesTableData>> getSalesByDate(String storeId, DateTime date, {int limit = 1000}) {
+  Future<List<SalesTableData>> getSalesByDate(String storeId, DateTime date,
+      {int limit = 1000}) {
     final startOfDay = DateTime(date.year, date.month, date.day);
     final endOfDay = startOfDay.add(const Duration(days: 1));
 
     return (select(salesTable)
-      ..where((s) =>
-        s.storeId.equals(storeId) &
-        s.deletedAt.isNull() &
-        s.createdAt.isBiggerOrEqualValue(startOfDay) &
-        s.createdAt.isSmallerThanValue(endOfDay)
-      )
-      ..orderBy([(s) => OrderingTerm.desc(s.createdAt)])
-      ..limit(limit))
-      .get();
+          ..where((s) =>
+              s.storeId.equals(storeId) &
+              s.deletedAt.isNull() &
+              s.createdAt.isBiggerOrEqualValue(startOfDay) &
+              s.createdAt.isSmallerThanValue(endOfDay))
+          ..orderBy([(s) => OrderingTerm.desc(s.createdAt)])
+          ..limit(limit))
+        .get();
   }
-  
+
   /// الحصول على مبيعات الفترة (باستثناء المحذوفة)
   Future<List<SalesTableData>> getSalesByDateRange(
     String storeId,
@@ -51,40 +51,40 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
     int limit = 5000,
   }) {
     return (select(salesTable)
-      ..where((s) =>
-        s.storeId.equals(storeId) &
-        s.deletedAt.isNull() &
-        s.createdAt.isBiggerOrEqualValue(startDate) &
-        s.createdAt.isSmallerOrEqualValue(endDate)
-      )
-      ..orderBy([(s) => OrderingTerm.desc(s.createdAt)])
-      ..limit(limit))
-      .get();
+          ..where((s) =>
+              s.storeId.equals(storeId) &
+              s.deletedAt.isNull() &
+              s.createdAt.isBiggerOrEqualValue(startDate) &
+              s.createdAt.isSmallerOrEqualValue(endDate))
+          ..orderBy([(s) => OrderingTerm.desc(s.createdAt)])
+          ..limit(limit))
+        .get();
   }
-  
+
   /// الحصول على بيع بالمعرف
   Future<SalesTableData?> getSaleById(String id) {
     return (select(salesTable)..where((s) => s.id.equals(id)))
-      .getSingleOrNull();
+        .getSingleOrNull();
   }
-  
+
   /// الحصول على بيع برقم الإيصال
   Future<SalesTableData?> getSaleByReceiptNo(String receiptNo, String storeId) {
     return (select(salesTable)
-      ..where((s) => s.receiptNo.equals(receiptNo) & s.storeId.equals(storeId)))
-      .getSingleOrNull();
+          ..where(
+              (s) => s.receiptNo.equals(receiptNo) & s.storeId.equals(storeId)))
+        .getSingleOrNull();
   }
-  
+
   /// إدراج بيع
   Future<int> insertSale(SalesTableCompanion sale) {
     return into(salesTable).insert(sale);
   }
-  
+
   /// تحديث بيع
   Future<bool> updateSale(SalesTableData sale) {
     return update(salesTable).replace(sale);
   }
-  
+
   static const _uuid = Uuid();
 
   /// إلغاء بيع مع استعادة المخزون وتسجيل حركات المخزون ودلتا المزامنة
@@ -181,17 +181,17 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
 
         // 3. تحديث حالة البيع إلى ملغي
         return (update(salesTable)..where((s) => s.id.equals(id)))
-          .write(SalesTableCompanion(
-            status: const Value('voided'),
-            updatedAt: Value(now),
-          ));
+            .write(SalesTableCompanion(
+          status: const Value('voided'),
+          updatedAt: Value(now),
+        ));
       } catch (e) {
         debugPrint('[DB] voidSale transaction failed for $id: $e');
         rethrow;
       }
     });
   }
-  
+
   /// إجمالي مبيعات اليوم (cached for 30 seconds)
   Future<double> getTodayTotal(String storeId, String cashierId) async {
     final cacheKey = '${storeId}_$cashierId';
@@ -241,7 +241,7 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
 
     return value;
   }
-  
+
   /// عدد مبيعات اليوم للكاشير
   Future<int> getTodayCount(String storeId, String cashierId) async {
     final today = DateTime.now();
@@ -288,13 +288,13 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
 
     return result.data['count'] as int? ?? 0;
   }
-  
+
   /// تعيين تاريخ المزامنة
   Future<int> markAsSynced(String id) {
     return (update(salesTable)..where((s) => s.id.equals(id)))
-      .write(SalesTableCompanion(syncedAt: Value(DateTime.now())));
+        .write(SalesTableCompanion(syncedAt: Value(DateTime.now())));
   }
-  
+
   /// الحصول على المبيعات غير المزامنة
   Future<List<SalesTableData>> getUnsyncedSales({String? storeId}) {
     final q = select(salesTable)..where((s) => s.syncedAt.isNull());
@@ -306,22 +306,22 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
 
   /// مراقبة المبيعات (Stream)
   /// [limit] - الحد الأقصى للنتائج (افتراضي 200)
-  Stream<List<SalesTableData>> watchTodaySales(String storeId, {int limit = 200}) {
+  Stream<List<SalesTableData>> watchTodaySales(String storeId,
+      {int limit = 200}) {
     final today = DateTime.now();
     final startOfDay = DateTime(today.year, today.month, today.day);
     final endOfDay = startOfDay.add(const Duration(days: 1));
 
     return (select(salesTable)
-      ..where((s) =>
-        s.storeId.equals(storeId) &
-        s.deletedAt.isNull() &
-        s.status.equals('voided').not() &
-        s.createdAt.isBiggerOrEqualValue(startOfDay) &
-        s.createdAt.isSmallerThanValue(endOfDay)
-      )
-      ..orderBy([(s) => OrderingTerm.desc(s.createdAt)])
-      ..limit(limit))
-      .watch();
+          ..where((s) =>
+              s.storeId.equals(storeId) &
+              s.deletedAt.isNull() &
+              s.status.equals('voided').not() &
+              s.createdAt.isBiggerOrEqualValue(startOfDay) &
+              s.createdAt.isSmallerThanValue(endOfDay))
+          ..orderBy([(s) => OrderingTerm.desc(s.createdAt)])
+          ..limit(limit))
+        .watch();
   }
 
   // ============================================================================
@@ -449,7 +449,8 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
   }
 
   /// المبيعات بالساعة (للتقارير)
-  Future<List<HourlySales>> getHourlySales(String storeId, DateTime date) async {
+  Future<List<HourlySales>> getHourlySales(
+      String storeId, DateTime date) async {
     final startOfDay = DateTime(date.year, date.month, date.day);
     final endOfDay = startOfDay.add(const Duration(days: 1));
 
@@ -472,13 +473,15 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
       ],
     ).get();
 
-    return result.map((row) => HourlySales(
-      hour: int.tryParse(row.data['hour']?.toString() ?? '') ?? 0,
-      count: row.data['count'] as int,
-      total: (row.data['total'] is int)
-          ? (row.data['total'] as int).toDouble()
-          : row.data['total'] as double,
-    )).toList();
+    return result
+        .map((row) => HourlySales(
+              hour: int.tryParse(row.data['hour']?.toString() ?? '') ?? 0,
+              count: row.data['count'] as int,
+              total: (row.data['total'] is int)
+                  ? (row.data['total'] as int).toDouble()
+                  : row.data['total'] as double,
+            ))
+        .toList();
   }
 
   /// أفضل طرق الدفع
@@ -511,13 +514,15 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
       variables: variables,
     ).get();
 
-    return result.map((row) => PaymentMethodStats(
-      method: row.data['payment_method'] as String,
-      count: row.data['count'] as int,
-      total: (row.data['total'] is int)
-          ? (row.data['total'] as int).toDouble()
-          : row.data['total'] as double,
-    )).toList();
+    return result
+        .map((row) => PaymentMethodStats(
+              method: row.data['payment_method'] as String,
+              count: row.data['count'] as int,
+              total: (row.data['total'] is int)
+                  ? (row.data['total'] as int).toDouble()
+                  : row.data['total'] as double,
+            ))
+        .toList();
   }
 
   // ============================================================================
@@ -532,7 +537,8 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
     DateTime? startDate,
     DateTime? endDate,
   }) async {
-    var whereClause = "s.store_id = ? AND s.deleted_at IS NULL AND s.status = 'completed'";
+    var whereClause =
+        "s.store_id = ? AND s.deleted_at IS NULL AND s.status = 'completed'";
     final variables = <Variable>[Variable.withString(storeId)];
 
     if (startDate != null) {
@@ -553,19 +559,26 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
          WHERE $whereClause
          ORDER BY s.created_at DESC
          LIMIT ? OFFSET ?''',
-      variables: [...variables, Variable.withInt(limit), Variable.withInt(offset)],
+      variables: [
+        ...variables,
+        Variable.withInt(limit),
+        Variable.withInt(offset)
+      ],
     ).get();
 
-    return result.map((row) => SaleWithDetails(
-      id: row.data['id'] as String,
-      receiptNo: row.data['receipt_no'] as String,
-      total: _toDouble(row.data['total']),
-      paymentMethod: row.data['payment_method'] as String? ?? 'cash',
-      status: row.data['status'] as String,
-      createdAt: DateTime.tryParse(row.data['created_at'].toString()) ?? DateTime.now(),
-      customerName: row.data['customer_name'] as String?,
-      customerPhone: row.data['customer_phone'] as String?,
-    )).toList();
+    return result
+        .map((row) => SaleWithDetails(
+              id: row.data['id'] as String,
+              receiptNo: row.data['receipt_no'] as String,
+              total: _toDouble(row.data['total']),
+              paymentMethod: row.data['payment_method'] as String? ?? 'cash',
+              status: row.data['status'] as String,
+              createdAt: DateTime.tryParse(row.data['created_at'].toString()) ??
+                  DateTime.now(),
+              customerName: row.data['customer_name'] as String?,
+              customerPhone: row.data['customer_phone'] as String?,
+            ))
+        .toList();
   }
 
   /// بيع واحد مع التفاصيل
@@ -588,7 +601,8 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
       total: _toDouble(row.data['total']),
       paymentMethod: row.data['payment_method'] as String? ?? 'cash',
       status: row.data['status'] as String,
-      createdAt: DateTime.tryParse(row.data['created_at'].toString()) ?? DateTime.now(),
+      createdAt: DateTime.tryParse(row.data['created_at'].toString()) ??
+          DateTime.now(),
       customerName: row.data['customer_name'] as String?,
       customerPhone: row.data['customer_phone'] as String?,
     );
@@ -602,7 +616,8 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
     DateTime? endDate,
     String? cashierId,
   }) async {
-    var whereClause = "store_id = ? AND status = 'completed' AND payment_method = 'cash' AND created_at >= ?";
+    var whereClause =
+        "store_id = ? AND status = 'completed' AND payment_method = 'cash' AND created_at >= ?";
     final variables = <Variable>[
       Variable.withString(storeId),
       Variable.withDateTime(startDate),
@@ -635,7 +650,8 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
     DateTime? endDate,
     String? cashierId,
   }) async {
-    var whereClause = "store_id = ? AND status = 'completed' AND payment_method = 'mixed' AND cash_amount IS NOT NULL AND created_at >= ?";
+    var whereClause =
+        "store_id = ? AND status = 'completed' AND payment_method = 'mixed' AND cash_amount IS NOT NULL AND created_at >= ?";
     final variables = <Variable>[
       Variable.withString(storeId),
       Variable.withDateTime(startDate),

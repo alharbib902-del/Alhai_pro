@@ -28,109 +28,17 @@ class AdminHomeScreen extends ConsumerWidget {
       backgroundColor: colorScheme.surface,
       body: SafeArea(
         child: dashboardAsync.when(
-        loading: () => SingleChildScrollView(
-          padding: const EdgeInsets.all(AlhaiSpacing.mdl),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header skeleton
-              const SkeletonLoader(width: 160, height: 24),
-              const SizedBox(height: AlhaiSpacing.xxs),
-              const SkeletonLoader(width: 100, height: 14),
-              const SizedBox(height: AlhaiSpacing.lg),
-              // Stat cards skeleton
-              LayoutBuilder(
-                builder: (context, constraints) {
-                  final crossAxisCount =
-                      constraints.maxWidth >= AlhaiBreakpoints.desktop
-                          ? 4
-                          : constraints.maxWidth >= AlhaiBreakpoints.tablet
-                              ? 2
-                              : 1;
-                  return GridView.count(
-                    crossAxisCount: crossAxisCount,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    crossAxisSpacing: AlhaiSpacing.md,
-                    mainAxisSpacing: AlhaiSpacing.md,
-                    childAspectRatio: 1.8,
-                    children: List.generate(4, (_) => const SkeletonCard()),
-                  );
-                },
-              ),
-              const SizedBox(height: AlhaiSpacing.lg),
-              // Quick actions skeleton
-              const SkeletonLoader(width: 120, height: 16),
-              const SizedBox(height: AlhaiSpacing.md),
-              Wrap(
-                spacing: AlhaiSpacing.sm,
-                runSpacing: AlhaiSpacing.sm,
-                children: List.generate(
-                  4,
-                  (_) => const SkeletonLoader(width: 120, height: 38, borderRadius: 12),
-                ),
-              ),
-              const SizedBox(height: AlhaiSpacing.lg),
-              // Recent sales skeleton
-              const SkeletonLoader(width: 140, height: 16),
-              const SizedBox(height: AlhaiSpacing.md),
-              ...List.generate(5, (_) => const SkeletonListItem(hasTrailing: true)),
-            ],
-          ),
-        ),
-        error: (err, _) => Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ExcludeSemantics(
-                child: Icon(Icons.error_outline, size: 48, color: AppColors.error),
-              ),
-              const SizedBox(height: AlhaiSpacing.md),
-              Text(
-                l10n.errorWithDetails('$err'),
-                style: TextStyle(color: AppColors.getTextSecondary(isDark)),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: AlhaiSpacing.md),
-              FilledButton.icon(
-                onPressed: () => ref.invalidate(dashboardDataProvider),
-                icon: const Icon(Icons.refresh_rounded, size: 18),
-                label: Text(l10n.retry),
-              ),
-            ],
-          ),
-        ),
-        data: (data) {
-          final screenWidth = MediaQuery.of(context).size.width;
-          final isTablet = screenWidth >= AlhaiBreakpoints.tablet &&
-              screenWidth < AlhaiBreakpoints.desktop;
-
-          return RefreshIndicator(
-          onRefresh: () async => ref.invalidate(dashboardDataProvider),
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
+          loading: () => SingleChildScrollView(
             padding: const EdgeInsets.all(AlhaiSpacing.mdl),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Welcome header
-                Text(
-                  l10n.home,
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: colorScheme.onSurface,
-                      ),
-                ),
+                // Header skeleton
+                const SkeletonLoader(width: 160, height: 24),
                 const SizedBox(height: AlhaiSpacing.xxs),
-                Text(
-                  l10n.dashboardTitle,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: colorScheme.onSurfaceVariant,
-                      ),
-                ),
+                const SkeletonLoader(width: 100, height: 14),
                 const SizedBox(height: AlhaiSpacing.lg),
-
-                // Stat cards grid
+                // Stat cards skeleton
                 LayoutBuilder(
                   builder: (context, constraints) {
                     final crossAxisCount =
@@ -146,165 +54,277 @@ class AdminHomeScreen extends ConsumerWidget {
                       crossAxisSpacing: AlhaiSpacing.md,
                       mainAxisSpacing: AlhaiSpacing.md,
                       childAspectRatio: 1.8,
-                      children: [
-                        _StatTile(
-                          icon: Icons.attach_money_rounded,
-                          label: l10n.todaySales,
-                          value: '${AppNumberFormatter.currency(data.todaySales, locale: locale)} ${l10n.sar}',
-                          changePercent: data.salesChangePercent,
-                          color: AppColors.primary,
-                          isDark: isDark,
-                        ),
-                        _StatTile(
-                          icon: Icons.receipt_long_rounded,
-                          label: l10n.orders,
-                          value: AppNumberFormatter.integer(data.todayOrders, locale: locale),
-                          changePercent: data.ordersChangePercent,
-                          color: AppColors.info,
-                          isDark: isDark,
-                        ),
-                        _StatTile(
-                          icon: Icons.warning_amber_rounded,
-                          label: l10n.lowStockLabel,
-                          value: AppNumberFormatter.integer(data.lowStockCount, locale: locale),
-                          color: AppColors.warning,
-                          isDark: isDark,
-                        ),
-                        _StatTile(
-                          icon: Icons.people_outline_rounded,
-                          label: l10n.newCustomers,
-                          value: AppNumberFormatter.integer(data.newCustomersToday, locale: locale),
-                          color: AppColors.success,
-                          isDark: isDark,
-                        ),
-                      ],
+                      children: List.generate(4, (_) => const SkeletonCard()),
                     );
                   },
                 ),
                 const SizedBox(height: AlhaiSpacing.lg),
-
-                // Quick actions row
-                Text(
-                  l10n.quickActions,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: colorScheme.onSurface,
-                      ),
-                ),
+                // Quick actions skeleton
+                const SkeletonLoader(width: 120, height: 16),
                 const SizedBox(height: AlhaiSpacing.md),
                 Wrap(
                   spacing: AlhaiSpacing.sm,
                   runSpacing: AlhaiSpacing.sm,
-                  children: [
-                    _QuickAction(
-                      icon: Icons.dashboard_rounded,
-                      label: l10n.dashboardTitle,
-                      onTap: () => context.go(AppRoutes.dashboard),
-                      isDark: isDark,
-                    ),
-                    _QuickAction(
-                      icon: Icons.inventory_2_rounded,
-                      label: l10n.products,
-                      onTap: () => context.go(AppRoutes.products),
-                      isDark: isDark,
-                    ),
-                    _QuickAction(
-                      icon: Icons.analytics_rounded,
-                      label: l10n.reports,
-                      onTap: () => context.go(AppRoutes.reports),
-                      isDark: isDark,
-                    ),
-                    _QuickAction(
-                      icon: Icons.settings_rounded,
-                      label: l10n.settings,
-                      onTap: () => context.go(AppRoutes.settings),
-                      isDark: isDark,
-                    ),
-                  ],
+                  children: List.generate(
+                    4,
+                    (_) => const SkeletonLoader(
+                        width: 120, height: 38, borderRadius: 12),
+                  ),
                 ),
                 const SizedBox(height: AlhaiSpacing.lg),
-
-                // Recent sales -- tablet uses a 2-column side-by-side layout
-                if (isTablet && data.recentSales.isNotEmpty)
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        flex: 1,
-                        child: _RecentSalesColumn(
-                          sales: data.recentSales.take(5).toList(),
-                          title: l10n.recentTransactions,
-                          locale: locale,
-                          isDark: isDark,
-                          l10n: l10n,
-                        ),
-                      ),
-                    ],
-                  )
-                else if (data.recentSales.isNotEmpty) ...[
-                  Text(
-                    l10n.recentTransactions,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: colorScheme.onSurface,
-                        ),
-                  ),
-                  const SizedBox(height: AlhaiSpacing.md),
-                  ...data.recentSales.take(5).map((sale) {
-                    final receiptLabel = sale.receiptNo.isNotEmpty ? sale.receiptNo : sale.id.substring(0, 8);
-                    final totalLabel = '${AppNumberFormatter.currency(sale.total, locale: locale)} ${l10n.sar}';
-                    return Semantics(
-                      label: '${l10n.recentTransactions}: $receiptLabel, $totalLabel',
-                      child: Container(
-                        margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
-                        padding: const EdgeInsets.all(AlhaiSpacing.md),
-                        decoration: BoxDecoration(
-                          color: AppColors.getSurface(isDark),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: AppColors.getBorder(isDark)),
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(AlhaiSpacing.xs),
-                              decoration: BoxDecoration(
-                                color: AppColors.primary.withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: const ExcludeSemantics(
-                                child: Icon(Icons.receipt_rounded,
-                                    color: AppColors.primary, size: 18),
-                              ),
-                            ),
-                            const SizedBox(width: AlhaiSpacing.sm),
-                            Expanded(
-                              child: Text(
-                                receiptLabel,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  color: AppColors.getTextPrimary(isDark),
-                                ),
-                              ),
-                            ),
-                            Text(
-                              totalLabel,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.primary,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  }),
-                ],
+                // Recent sales skeleton
+                const SkeletonLoader(width: 140, height: 16),
+                const SizedBox(height: AlhaiSpacing.md),
+                ...List.generate(
+                    5, (_) => const SkeletonListItem(hasTrailing: true)),
               ],
             ),
           ),
-        );
-        },
-      ),
+          error: (err, _) => Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ExcludeSemantics(
+                  child: Icon(Icons.error_outline,
+                      size: 48, color: AppColors.error),
+                ),
+                const SizedBox(height: AlhaiSpacing.md),
+                Text(
+                  l10n.errorWithDetails('$err'),
+                  style: TextStyle(color: AppColors.getTextSecondary(isDark)),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: AlhaiSpacing.md),
+                FilledButton.icon(
+                  onPressed: () => ref.invalidate(dashboardDataProvider),
+                  icon: const Icon(Icons.refresh_rounded, size: 18),
+                  label: Text(l10n.retry),
+                ),
+              ],
+            ),
+          ),
+          data: (data) {
+            final screenWidth = MediaQuery.of(context).size.width;
+            final isTablet = screenWidth >= AlhaiBreakpoints.tablet &&
+                screenWidth < AlhaiBreakpoints.desktop;
+
+            return RefreshIndicator(
+              onRefresh: () async => ref.invalidate(dashboardDataProvider),
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.all(AlhaiSpacing.mdl),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Welcome header
+                    Text(
+                      l10n.home,
+                      style:
+                          Theme.of(context).textTheme.headlineMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: colorScheme.onSurface,
+                              ),
+                    ),
+                    const SizedBox(height: AlhaiSpacing.xxs),
+                    Text(
+                      l10n.dashboardTitle,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: colorScheme.onSurfaceVariant,
+                          ),
+                    ),
+                    const SizedBox(height: AlhaiSpacing.lg),
+
+                    // Stat cards grid
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        final crossAxisCount = constraints.maxWidth >=
+                                AlhaiBreakpoints.desktop
+                            ? 4
+                            : constraints.maxWidth >= AlhaiBreakpoints.tablet
+                                ? 2
+                                : 1;
+                        return GridView.count(
+                          crossAxisCount: crossAxisCount,
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          crossAxisSpacing: AlhaiSpacing.md,
+                          mainAxisSpacing: AlhaiSpacing.md,
+                          childAspectRatio: 1.8,
+                          children: [
+                            _StatTile(
+                              icon: Icons.attach_money_rounded,
+                              label: l10n.todaySales,
+                              value:
+                                  '${AppNumberFormatter.currency(data.todaySales, locale: locale)} ${l10n.sar}',
+                              changePercent: data.salesChangePercent,
+                              color: AppColors.primary,
+                              isDark: isDark,
+                            ),
+                            _StatTile(
+                              icon: Icons.receipt_long_rounded,
+                              label: l10n.orders,
+                              value: AppNumberFormatter.integer(
+                                  data.todayOrders,
+                                  locale: locale),
+                              changePercent: data.ordersChangePercent,
+                              color: AppColors.info,
+                              isDark: isDark,
+                            ),
+                            _StatTile(
+                              icon: Icons.warning_amber_rounded,
+                              label: l10n.lowStockLabel,
+                              value: AppNumberFormatter.integer(
+                                  data.lowStockCount,
+                                  locale: locale),
+                              color: AppColors.warning,
+                              isDark: isDark,
+                            ),
+                            _StatTile(
+                              icon: Icons.people_outline_rounded,
+                              label: l10n.newCustomers,
+                              value: AppNumberFormatter.integer(
+                                  data.newCustomersToday,
+                                  locale: locale),
+                              color: AppColors.success,
+                              isDark: isDark,
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                    const SizedBox(height: AlhaiSpacing.lg),
+
+                    // Quick actions row
+                    Text(
+                      l10n.quickActions,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: colorScheme.onSurface,
+                          ),
+                    ),
+                    const SizedBox(height: AlhaiSpacing.md),
+                    Wrap(
+                      spacing: AlhaiSpacing.sm,
+                      runSpacing: AlhaiSpacing.sm,
+                      children: [
+                        _QuickAction(
+                          icon: Icons.dashboard_rounded,
+                          label: l10n.dashboardTitle,
+                          onTap: () => context.go(AppRoutes.dashboard),
+                          isDark: isDark,
+                        ),
+                        _QuickAction(
+                          icon: Icons.inventory_2_rounded,
+                          label: l10n.products,
+                          onTap: () => context.go(AppRoutes.products),
+                          isDark: isDark,
+                        ),
+                        _QuickAction(
+                          icon: Icons.analytics_rounded,
+                          label: l10n.reports,
+                          onTap: () => context.go(AppRoutes.reports),
+                          isDark: isDark,
+                        ),
+                        _QuickAction(
+                          icon: Icons.settings_rounded,
+                          label: l10n.settings,
+                          onTap: () => context.go(AppRoutes.settings),
+                          isDark: isDark,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: AlhaiSpacing.lg),
+
+                    // Recent sales -- tablet uses a 2-column side-by-side layout
+                    if (isTablet && data.recentSales.isNotEmpty)
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: _RecentSalesColumn(
+                              sales: data.recentSales.take(5).toList(),
+                              title: l10n.recentTransactions,
+                              locale: locale,
+                              isDark: isDark,
+                              l10n: l10n,
+                            ),
+                          ),
+                        ],
+                      )
+                    else if (data.recentSales.isNotEmpty) ...[
+                      Text(
+                        l10n.recentTransactions,
+                        style:
+                            Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: colorScheme.onSurface,
+                                ),
+                      ),
+                      const SizedBox(height: AlhaiSpacing.md),
+                      ...data.recentSales.take(5).map((sale) {
+                        final receiptLabel = sale.receiptNo.isNotEmpty
+                            ? sale.receiptNo
+                            : sale.id.substring(0, 8);
+                        final totalLabel =
+                            '${AppNumberFormatter.currency(sale.total, locale: locale)} ${l10n.sar}';
+                        return Semantics(
+                          label:
+                              '${l10n.recentTransactions}: $receiptLabel, $totalLabel',
+                          child: Container(
+                            margin:
+                                const EdgeInsets.only(bottom: AlhaiSpacing.xs),
+                            padding: const EdgeInsets.all(AlhaiSpacing.md),
+                            decoration: BoxDecoration(
+                              color: AppColors.getSurface(isDark),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                  color: AppColors.getBorder(isDark)),
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  padding:
+                                      const EdgeInsets.all(AlhaiSpacing.xs),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primary
+                                        .withValues(alpha: 0.1),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: const ExcludeSemantics(
+                                    child: Icon(Icons.receipt_rounded,
+                                        color: AppColors.primary, size: 18),
+                                  ),
+                                ),
+                                const SizedBox(width: AlhaiSpacing.sm),
+                                Expanded(
+                                  child: Text(
+                                    receiptLabel,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      color: AppColors.getTextPrimary(isDark),
+                                    ),
+                                  ),
+                                ),
+                                Text(
+                                  totalLabel,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.primary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }),
+                    ],
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -340,8 +360,11 @@ class _RecentSalesColumn extends StatelessWidget {
         ),
         const SizedBox(height: AlhaiSpacing.md),
         ...sales.map((sale) {
-          final receiptLabel = sale.receiptNo.isNotEmpty ? sale.receiptNo : sale.id.substring(0, 8);
-          final totalLabel = '${AppNumberFormatter.currency(sale.total, locale: locale)} ${l10n.sar}';
+          final receiptLabel = sale.receiptNo.isNotEmpty
+              ? sale.receiptNo
+              : sale.id.substring(0, 8);
+          final totalLabel =
+              '${AppNumberFormatter.currency(sale.total, locale: locale)} ${l10n.sar}';
           return Semantics(
             label: '${l10n.recentTransactions}: $receiptLabel, $totalLabel',
             child: Container(
@@ -450,14 +473,18 @@ class _StatTile extends StatelessWidget {
                               ? Icons.arrow_upward_rounded
                               : Icons.arrow_downward_rounded,
                           size: 14,
-                          color: changePercent! >= 0 ? AppColors.success : AppColors.error,
+                          color: changePercent! >= 0
+                              ? AppColors.success
+                              : AppColors.error,
                         ),
                         Text(
                           '${changePercent!.abs().toStringAsFixed(0)}%',
                           style: TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.bold,
-                            color: changePercent! >= 0 ? AppColors.success : AppColors.error,
+                            color: changePercent! >= 0
+                                ? AppColors.success
+                                : AppColors.error,
                           ),
                         ),
                       ],

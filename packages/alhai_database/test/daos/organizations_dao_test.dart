@@ -39,8 +39,7 @@ void main() {
     });
 
     test('getOrganizationById returns null for non-existent', () async {
-      final org =
-          await db.organizationsDao.getOrganizationById('non-existent');
+      final org = await db.organizationsDao.getOrganizationById('non-existent');
       expect(org, isNull);
     });
 
@@ -61,8 +60,7 @@ void main() {
       var org = await db.organizationsDao.getOrganizationById('org-1');
       expect(org!.name, 'مؤسسة الألهاي التجارية');
 
-      await db.organizationsDao
-          .upsertOrganization(_makeOrg(name: 'اسم محدّث'));
+      await db.organizationsDao.upsertOrganization(_makeOrg(name: 'اسم محدّث'));
       org = await db.organizationsDao.getOrganizationById('org-1');
       expect(org!.name, 'اسم محدّث');
     });

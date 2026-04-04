@@ -57,7 +57,8 @@ Future<List<String>> listBackupIds() async {
   final dir = await _getBackupDir();
   if (!dir.existsSync()) return [];
 
-  final files = dir.listSync()
+  final files = dir
+      .listSync()
       .whereType<File>()
       .where((f) => f.path.endsWith('.sqlite'))
       .toList();
@@ -128,7 +129,8 @@ Future<void> copyDatabaseFile(String backupId, {String? dbName}) async {
 
   if (kDebugMode) {
     final size = backupFile.lengthSync();
-    debugPrint('[Backup] Native: copied DB file (${(size / 1024).toStringAsFixed(1)} KB)');
+    debugPrint(
+        '[Backup] Native: copied DB file (${(size / 1024).toStringAsFixed(1)} KB)');
   }
 }
 

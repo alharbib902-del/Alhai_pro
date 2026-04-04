@@ -201,7 +201,8 @@ class OfflineQueueService {
             try {
               return QueueItem.fromJson(e as Map<String, dynamic>);
             } catch (e) {
-              debugPrint('[OfflineQueueService] item deserialization failed: $e');
+              debugPrint(
+                  '[OfflineQueueService] item deserialization failed: $e');
               return null;
             }
           })
@@ -381,8 +382,7 @@ class OfflineQueueService {
       for (final item in batch) {
         // Enforce backoff: skip if last attempt was too recent
         if (item.lastAttempt != null) {
-          final waitUntil =
-              item.lastAttempt!.add(_backoffFor(item.retryCount));
+          final waitUntil = item.lastAttempt!.add(_backoffFor(item.retryCount));
           if (DateTime.now().isBefore(waitUntil)) {
             if (kDebugMode) {
               debugPrint(

@@ -19,10 +19,12 @@ class LiteActiveOrdersScreen extends ConsumerStatefulWidget {
   const LiteActiveOrdersScreen({super.key});
 
   @override
-  ConsumerState<LiteActiveOrdersScreen> createState() => _LiteActiveOrdersScreenState();
+  ConsumerState<LiteActiveOrdersScreen> createState() =>
+      _LiteActiveOrdersScreenState();
 }
 
-class _LiteActiveOrdersScreenState extends ConsumerState<LiteActiveOrdersScreen> {
+class _LiteActiveOrdersScreenState
+    extends ConsumerState<LiteActiveOrdersScreen> {
   int _filterIndex = 0;
 
   @override
@@ -55,13 +57,21 @@ class _LiteActiveOrdersScreenState extends ConsumerState<LiteActiveOrdersScreen>
                 final filtered = _filterOrders(orders);
                 if (filtered.isEmpty) {
                   return Center(
-                    child: Text(l10n.noResults, style: TextStyle(color: isDark ? Colors.white54 : Theme.of(context).colorScheme.onSurfaceVariant)),
+                    child: Text(l10n.noResults,
+                        style: TextStyle(
+                            color: isDark
+                                ? Colors.white54
+                                : Theme.of(context)
+                                    .colorScheme
+                                    .onSurfaceVariant)),
                   );
                 }
                 return RefreshIndicator(
-                  onRefresh: () async => ref.invalidate(liteActiveOrdersProvider),
+                  onRefresh: () async =>
+                      ref.invalidate(liteActiveOrdersProvider),
                   child: ListView.builder(
-                    padding: EdgeInsets.all(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
+                    padding: EdgeInsets.all(
+                        isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
                     itemCount: filtered.length,
                     itemBuilder: (context, index) {
                       final order = filtered[index];
@@ -96,7 +106,12 @@ class _LiteActiveOrdersScreenState extends ConsumerState<LiteActiveOrdersScreen>
 
   List<OrderWithCustomer> _filterOrders(List<OrderWithCustomer> orders) {
     if (_filterIndex == 0) return orders;
-    final statusFilter = ['confirmed', 'preparing', 'ready', 'out_for_delivery'][_filterIndex - 1];
+    final statusFilter = [
+      'confirmed',
+      'preparing',
+      'ready',
+      'out_for_delivery'
+    ][_filterIndex - 1];
     return orders.where((o) => o.status == statusFilter).toList();
   }
 
@@ -110,12 +125,17 @@ class _LiteActiveOrdersScreenState extends ConsumerState<LiteActiveOrdersScreen>
     ];
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
+      padding: const EdgeInsets.symmetric(
+          horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.03) : Theme.of(context).colorScheme.surfaceContainerLowest,
+        color: isDark
+            ? Colors.white.withValues(alpha: 0.03)
+            : Theme.of(context).colorScheme.surfaceContainerLowest,
         border: Border(
           bottom: BorderSide(
-            color: isDark ? Colors.white12 : Theme.of(context).colorScheme.outlineVariant,
+            color: isDark
+                ? Colors.white12
+                : Theme.of(context).colorScheme.outlineVariant,
           ),
         ),
       ),
@@ -133,14 +153,23 @@ class _LiteActiveOrdersScreenState extends ConsumerState<LiteActiveOrdersScreen>
                 selectedColor: AlhaiColors.primary.withValues(alpha: 0.15),
                 checkmarkColor: AlhaiColors.primary,
                 labelStyle: TextStyle(
-                  color: isSelected ? AlhaiColors.primary : (isDark ? Colors.white70 : Theme.of(context).colorScheme.onSurface),
+                  color: isSelected
+                      ? AlhaiColors.primary
+                      : (isDark
+                          ? Colors.white70
+                          : Theme.of(context).colorScheme.onSurface),
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                   fontSize: 13,
                 ),
                 side: BorderSide(
-                  color: isSelected ? AlhaiColors.primary : (isDark ? Colors.white24 : Theme.of(context).colorScheme.outlineVariant),
+                  color: isSelected
+                      ? AlhaiColors.primary
+                      : (isDark
+                          ? Colors.white24
+                          : Theme.of(context).colorScheme.outlineVariant),
                 ),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20)),
               ),
             );
           }).toList(),
@@ -169,10 +198,12 @@ class _LiteActiveOrdersScreenState extends ConsumerState<LiteActiveOrdersScreen>
     };
   }
 
-  Widget _buildOrderCard(BuildContext context, OrderWithCustomer order, bool isDark) {
+  Widget _buildOrderCard(
+      BuildContext context, OrderWithCustomer order, bool isDark) {
     final statusColor = _statusColor(order.status);
     final statusLabel = _statusLabel(order.status);
-    final time = '${order.orderDate.hour.toString().padLeft(2, '0')}:${order.orderDate.minute.toString().padLeft(2, '0')}';
+    final time =
+        '${order.orderDate.hour.toString().padLeft(2, '0')}:${order.orderDate.minute.toString().padLeft(2, '0')}';
 
     return InkWell(
       onTap: () => context.go('/lite/orders/${order.id}'),
@@ -181,10 +212,14 @@ class _LiteActiveOrdersScreenState extends ConsumerState<LiteActiveOrdersScreen>
         margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
         padding: const EdgeInsets.all(AlhaiSpacing.md),
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.06) : Theme.of(context).colorScheme.surface,
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.06)
+              : Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: isDark ? Colors.white12 : Theme.of(context).colorScheme.outlineVariant,
+            color: isDark
+                ? Colors.white12
+                : Theme.of(context).colorScheme.outlineVariant,
           ),
         ),
         child: Column(
@@ -208,35 +243,56 @@ class _LiteActiveOrdersScreenState extends ConsumerState<LiteActiveOrdersScreen>
                     children: [
                       Text(
                         '#${order.orderNumber}',
-                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface),
+                        style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.onSurface),
                       ),
                       Text(
                         order.customerName ?? '',
-                        style: TextStyle(fontSize: 13, color: isDark ? Colors.white54 : Theme.of(context).colorScheme.onSurfaceVariant),
+                        style: TextStyle(
+                            fontSize: 13,
+                            color: isDark
+                                ? Colors.white54
+                                : Theme.of(context)
+                                    .colorScheme
+                                    .onSurfaceVariant),
                       ),
                     ],
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: AlhaiSpacing.xxxs),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 10, vertical: AlhaiSpacing.xxxs),
                   decoration: BoxDecoration(
                     color: statusColor.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Text(statusLabel, style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: statusColor)),
+                  child: Text(statusLabel,
+                      style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: statusColor)),
                 ),
               ],
             ),
             const SizedBox(height: AlhaiSpacing.sm),
             Row(
               children: [
-                Icon(Icons.access_time, size: 14, color: Theme.of(context).colorScheme.outline),
+                Icon(Icons.access_time,
+                    size: 14, color: Theme.of(context).colorScheme.outline),
                 const SizedBox(width: AlhaiSpacing.xxs),
-                Text(time, style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.outline)),
+                Text(time,
+                    style: TextStyle(
+                        fontSize: 12,
+                        color: Theme.of(context).colorScheme.outline)),
                 const Spacer(),
                 Text(
                   '${order.total.toStringAsFixed(0)} SAR',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Theme.of(context).colorScheme.onSurface),
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                      color: Theme.of(context).colorScheme.onSurface),
                 ),
               ],
             ),

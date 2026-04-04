@@ -5,17 +5,21 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:alhai_l10n/alhai_l10n.dart' show AppLocalizations, SupportedLocales, localeProvider;
-import 'package:alhai_shared_ui/alhai_shared_ui.dart' show ThemeNotifier, themeProvider, AppTheme;
+import 'package:alhai_l10n/alhai_l10n.dart'
+    show AppLocalizations, SupportedLocales, localeProvider;
+import 'package:alhai_shared_ui/alhai_shared_ui.dart'
+    show ThemeNotifier, themeProvider, AppTheme;
 // M-THEME-FIX: استيراد مزود الثيم من auth لمزامنته مع shared_ui
 import 'package:alhai_auth/alhai_auth.dart' as auth_theme;
 import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/services.dart';
-import 'package:alhai_database/alhai_database.dart' show setDatabaseEncryptionKey, DatabaseSeeder, AppDatabase;
+import 'package:alhai_database/alhai_database.dart'
+    show setDatabaseEncryptionKey, DatabaseSeeder, AppDatabase;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:alhai_core/alhai_core.dart' show SupabaseConfig;
-import 'package:alhai_auth/alhai_auth.dart' show SecureStorageService, currentStoreIdProvider;
+import 'package:alhai_auth/alhai_auth.dart'
+    show SecureStorageService, currentStoreIdProvider;
 import 'package:alhai_pos/alhai_pos.dart' show clockOffsetProvider;
 import 'di/injection.dart';
 import 'dart:async';
@@ -73,7 +77,8 @@ void main() {
 
     final supabaseFuture = () async {
       try {
-        debugPrint('🔧 Supabase config: url=${SupabaseConfig.url.isNotEmpty}, key=${SupabaseConfig.anonKey.isNotEmpty}');
+        debugPrint(
+            '🔧 Supabase config: url=${SupabaseConfig.url.isNotEmpty}, key=${SupabaseConfig.anonKey.isNotEmpty}');
         if (!SupabaseConfig.isConfigured) {
           throw StateError(
             'Supabase not configured. ${SupabaseConfig.configurationError}',
@@ -126,7 +131,8 @@ void main() {
       // SESSION-FIX: تشخيص حالة SecureStorage قبل runApp
       final isValid = await SecureStorageService.isSessionValid();
       final ssUserId = await SecureStorageService.getUserId();
-      debugPrint('📋 Pre-runApp SecureStorage: valid=$isValid, userId=${ssUserId ?? "null"}');
+      debugPrint(
+          '📋 Pre-runApp SecureStorage: valid=$isValid, userId=${ssUserId ?? "null"}');
     }
 
     // DI must run before runApp (Riverpod providers use getIt synchronously)
@@ -160,7 +166,8 @@ void main() {
         overrides: [
           themeProvider.overrideWith((ref) => ThemeNotifier(initialThemeMode)),
           // M-THEME-FIX: تهيئة مزود auth بنفس القيمة الأولية
-          auth_theme.themeProvider.overrideWith((ref) => auth_theme.ThemeNotifier(initialThemeMode)),
+          auth_theme.themeProvider.overrideWith(
+              (ref) => auth_theme.ThemeNotifier(initialThemeMode)),
           onboardingSeenProvider.overrideWith((ref) => hasSeenOnboardingFlag),
           // SESSION-FIX: تهيئة store ID المحفوظ قبل أن يعمل router guard
           // هذا يمنع إعادة التوجيه إلى /store-select عند تحديث الصفحة (F5)
@@ -199,7 +206,8 @@ Future<String> _getOrCreateDbKey() async {
     // Native: use FlutterSecureStorage (encrypted keychain)
     const storage = FlutterSecureStorage(
       aOptions: AndroidOptions(encryptedSharedPreferences: true),
-      iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock_this_device),
+      iOptions: IOSOptions(
+          accessibility: KeychainAccessibility.first_unlock_this_device),
     );
     var key = await storage.read(key: keyName);
     if (key == null) {

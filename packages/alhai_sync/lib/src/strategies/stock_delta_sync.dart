@@ -89,9 +89,8 @@ class StockDeltaSync {
       // معالجة النتيجة بنموذج مُهيكل (typed response model)
       if (response is List) {
         for (final item in response) {
-          final json = item is Map<String, dynamic>
-              ? item
-              : <String, dynamic>{};
+          final json =
+              item is Map<String, dynamic> ? item : <String, dynamic>{};
           final parsed = _StockDeltaRpcResult.fromJson(json);
 
           if (parsed.productId.isEmpty) continue;
@@ -128,8 +127,7 @@ class StockDeltaSync {
       }
 
       // في حالة فشل RPC، نحاول الطريقة البديلة
-      if (e.toString().contains('function') ||
-          e.toString().contains('rpc')) {
+      if (e.toString().contains('function') || e.toString().contains('rpc')) {
         try {
           final fallbackResult = await _fallbackSync(
             orgId: orgId,
@@ -212,7 +210,8 @@ class StockDeltaSync {
             .timeout(_networkTimeout);
 
         if (response != null) {
-          final serverStock = (response['stock_qty'] as num?)?.toDouble() ?? 0.0;
+          final serverStock =
+              (response['stock_qty'] as num?)?.toDouble() ?? 0.0;
           await _updateLocalStock(productId, serverStock);
           productsUpdated++;
         }

@@ -164,7 +164,8 @@ void main() {
       suppressOverflowErrors();
 
       await tester.pumpWidget(buildScreen(
-        statsValue: AsyncValue.error(Exception('Network error'), StackTrace.current),
+        statsValue:
+            AsyncValue.error(Exception('Network error'), StackTrace.current),
       ));
       await tester.pumpAndSettle();
 
@@ -182,8 +183,10 @@ void main() {
       suppressOverflowErrors();
 
       final activities = [
-        createTestActivity(id: 'a1', action: 'saleCreate', description: 'Sale completed'),
-        createTestActivity(id: 'a2', action: 'login', description: 'User logged in'),
+        createTestActivity(
+            id: 'a1', action: 'saleCreate', description: 'Sale completed'),
+        createTestActivity(
+            id: 'a2', action: 'login', description: 'User logged in'),
       ];
 
       await tester.pumpWidget(buildScreen(

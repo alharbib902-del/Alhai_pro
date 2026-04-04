@@ -4,8 +4,7 @@ import 'package:get_it/get_it.dart';
 import '../data/shifts_datasource.dart';
 
 /// Current active shift.
-final activeShiftProvider =
-    FutureProvider<Map<String, dynamic>?>((ref) async {
+final activeShiftProvider = FutureProvider<Map<String, dynamic>?>((ref) async {
   final ds = GetIt.instance<ShiftsDatasource>();
   return ds.getActiveShift();
 });

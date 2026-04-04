@@ -87,9 +87,12 @@ class AppTheme {
     final brightness = isDark ? Brightness.dark : Brightness.light;
     final scaffoldBg = isDark ? AppColors.backgroundDark : AppColors.background;
     final surface = isDark ? AppColors.surfaceDark : AppColors.surface;
-    final surfaceVariant = isDark ? AppColors.surfaceVariantDark : AppColors.surfaceVariant;
-    final textPrimary = isDark ? AppColors.textPrimaryDark : AppColors.textPrimary;
-    final textSecondary = isDark ? AppColors.textSecondaryDark : AppColors.textSecondary;
+    final surfaceVariant =
+        isDark ? AppColors.surfaceVariantDark : AppColors.surfaceVariant;
+    final textPrimary =
+        isDark ? AppColors.textPrimaryDark : AppColors.textPrimary;
+    final textSecondary =
+        isDark ? AppColors.textSecondaryDark : AppColors.textSecondary;
     final textMuted = isDark ? AppColors.textMutedDark : AppColors.textMuted;
     final border = isDark ? AppColors.borderDark : AppColors.border;
     final disabledBg = isDark ? AppColors.grey700 : AppColors.grey200;
@@ -152,7 +155,8 @@ class AppTheme {
           foregroundColor: AppColors.textOnPrimary,
           disabledBackgroundColor: disabledBg,
           disabledForegroundColor: disabledFg,
-          minimumSize: const Size(AppButtonSize.minWidth, AppButtonSize.heightMd),
+          minimumSize:
+              const Size(AppButtonSize.minWidth, AppButtonSize.heightMd),
           padding: const EdgeInsets.symmetric(
             horizontal: AppButtonSize.paddingHorizontal,
             vertical: AppButtonSize.paddingVertical,
@@ -173,7 +177,8 @@ class AppTheme {
           foregroundColor: AppColors.textOnPrimary,
           disabledBackgroundColor: disabledBg,
           disabledForegroundColor: disabledFg,
-          minimumSize: const Size(AppButtonSize.minWidth, AppButtonSize.heightMd),
+          minimumSize:
+              const Size(AppButtonSize.minWidth, AppButtonSize.heightMd),
           padding: const EdgeInsets.symmetric(
             horizontal: AppButtonSize.paddingHorizontal,
             vertical: AppButtonSize.paddingVertical,
@@ -192,7 +197,8 @@ class AppTheme {
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.primary,
           disabledForegroundColor: disabledFg,
-          minimumSize: const Size(AppButtonSize.minWidth, AppButtonSize.heightMd),
+          minimumSize:
+              const Size(AppButtonSize.minWidth, AppButtonSize.heightMd),
           padding: const EdgeInsets.symmetric(
             horizontal: AppButtonSize.paddingHorizontal,
             vertical: AppButtonSize.paddingVertical,
@@ -225,8 +231,12 @@ class AppTheme {
       iconButtonTheme: IconButtonThemeData(
         style: IconButton.styleFrom(
           foregroundColor: textSecondary,
-          hoverColor: isDark ? AppColors.primary.withValues(alpha: 0.15) : AppColors.primarySurface,
-          highlightColor: isDark ? AppColors.primary.withValues(alpha: 0.2) : AppColors.primarySurface,
+          hoverColor: isDark
+              ? AppColors.primary.withValues(alpha: 0.15)
+              : AppColors.primarySurface,
+          highlightColor: isDark
+              ? AppColors.primary.withValues(alpha: 0.2)
+              : AppColors.primarySurface,
         ),
       ),
 
@@ -316,7 +326,8 @@ class AppTheme {
         backgroundColor: surface,
         surfaceTintColor: Colors.transparent,
         shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadiusDirectional.horizontal(start: Radius.circular(0)),
+          borderRadius:
+              BorderRadiusDirectional.horizontal(start: Radius.circular(0)),
         ),
       ),
 
@@ -331,7 +342,8 @@ class AppTheme {
           borderRadius: BorderRadius.circular(AppDialogSize.radius),
         ),
         titleTextStyle: AppTypography.titleLarge.copyWith(color: textPrimary),
-        contentTextStyle: AppTypography.bodyMedium.copyWith(color: textSecondary),
+        contentTextStyle:
+            AppTypography.bodyMedium.copyWith(color: textSecondary),
       ),
 
       // ====================================================================
@@ -373,8 +385,12 @@ class AppTheme {
       // ====================================================================
       chipTheme: ChipThemeData(
         backgroundColor: surfaceVariant,
-        selectedColor: isDark ? AppColors.primary.withValues(alpha: 0.2) : AppColors.primarySurface,
-        secondarySelectedColor: isDark ? AppColors.primary.withValues(alpha: 0.2) : AppColors.primarySurface,
+        selectedColor: isDark
+            ? AppColors.primary.withValues(alpha: 0.2)
+            : AppColors.primarySurface,
+        secondarySelectedColor: isDark
+            ? AppColors.primary.withValues(alpha: 0.2)
+            : AppColors.primarySurface,
         labelStyle: AppTypography.labelMedium,
         secondaryLabelStyle: AppTypography.labelMedium,
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
@@ -402,7 +418,8 @@ class AppTheme {
           borderRadius: BorderRadius.circular(AppRadius.md),
         ),
         titleTextStyle: AppTypography.bodyLarge.copyWith(color: textPrimary),
-        subtitleTextStyle: AppTypography.bodySmall.copyWith(color: textSecondary),
+        subtitleTextStyle:
+            AppTypography.bodySmall.copyWith(color: textSecondary),
         leadingAndTrailingTextStyle: AppTypography.labelMedium.copyWith(
           color: textSecondary,
         ),
@@ -428,7 +445,8 @@ class AppTheme {
       progressIndicatorTheme: ProgressIndicatorThemeData(
         color: AppColors.primary,
         linearTrackColor: isDark ? AppColors.grey700 : AppColors.primarySurface,
-        circularTrackColor: isDark ? AppColors.grey700 : AppColors.primarySurface,
+        circularTrackColor:
+            isDark ? AppColors.grey700 : AppColors.primarySurface,
       ),
 
       // ====================================================================
@@ -440,7 +458,8 @@ class AppTheme {
           return AppColors.grey400;
         }),
         trackColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.selected)) return AppColors.primarySurface;
+          if (states.contains(WidgetState.selected))
+            return AppColors.primarySurface;
           return AppColors.grey200;
         }),
         trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
@@ -487,7 +506,8 @@ class AppTheme {
       dataTableTheme: DataTableThemeData(
         headingRowColor: WidgetStateProperty.all(surfaceVariant),
         dataRowColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.selected)) return AppColors.primarySurface;
+          if (states.contains(WidgetState.selected))
+            return AppColors.primarySurface;
           if (states.contains(WidgetState.hovered)) return surfaceVariant;
           return surface;
         }),

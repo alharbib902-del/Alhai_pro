@@ -17,7 +17,8 @@ class AiSmartReportsScreen extends ConsumerStatefulWidget {
   const AiSmartReportsScreen({super.key});
 
   @override
-  ConsumerState<AiSmartReportsScreen> createState() => _AiSmartReportsScreenState();
+  ConsumerState<AiSmartReportsScreen> createState() =>
+      _AiSmartReportsScreenState();
 }
 
 class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
@@ -30,14 +31,15 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Column(
-              children: [
-                AppHeader(
-                  title: AppLocalizations.of(context)!.aiSmartReportsTitle,
-                  onMenuTap: !isWideScreen ? () => Scaffold.of(context).openDrawer() : null,
-                ),
-                Expanded(child: _buildContent(isDark, isWideScreen)),
-              ],
-            );
+      children: [
+        AppHeader(
+          title: AppLocalizations.of(context)!.aiSmartReportsTitle,
+          onMenuTap:
+              !isWideScreen ? () => Scaffold.of(context).openDrawer() : null,
+        ),
+        Expanded(child: _buildContent(isDark, isWideScreen)),
+      ],
+    );
   }
 
   Widget _buildContent(bool isDark, bool isWideScreen) {
@@ -47,7 +49,10 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
     final categoryFilter = ref.watch(templateCategoryFilterProvider);
 
     final l10n = AppLocalizations.of(context)!;
-    final categories = [kAllCategoryFilter, ...templates.map((t) => t.category).toSet()];
+    final categories = [
+      kAllCategoryFilter,
+      ...templates.map((t) => t.category).toSet()
+    ];
     final filteredTemplates = categoryFilter == kAllCategoryFilter
         ? templates
         : templates.where((t) => t.category == categoryFilter).toList();
@@ -56,11 +61,14 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
       children: [
         // Query input
         Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl, AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.zero),
+          padding: EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl,
+              AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.zero),
           child: ReportQueryInput(
             suggestions: suggestions,
             onSubmit: (query) {
-              ref.read(generatedReportProvider.notifier).generateFromQuery(query);
+              ref
+                  .read(generatedReportProvider.notifier)
+                  .generateFromQuery(query);
             },
           ),
         ),
@@ -84,7 +92,10 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
                         SizedBox(
                           width: 320,
                           child: _buildTemplatesSidebar(
-                            filteredTemplates, categories, categoryFilter, isDark,
+                            filteredTemplates,
+                            categories,
+                            categoryFilter,
+                            isDark,
                           ),
                         ),
                     ],
@@ -96,12 +107,17 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           TextButton.icon(
-                            onPressed: () => setState(() => _showTemplates = !_showTemplates),
+                            onPressed: () => setState(
+                                () => _showTemplates = !_showTemplates),
                             icon: Icon(
-                              _showTemplates ? Icons.close_rounded : Icons.dashboard_customize_rounded,
+                              _showTemplates
+                                  ? Icons.close_rounded
+                                  : Icons.dashboard_customize_rounded,
                               size: 18,
                             ),
-                            label: Text(_showTemplates ? l10n.hideTemplates : l10n.showTemplates),
+                            label: Text(_showTemplates
+                                ? l10n.hideTemplates
+                                : l10n.showTemplates),
                             style: TextButton.styleFrom(
                               foregroundColor: const Color(0xFF8B5CF6),
                             ),
@@ -112,7 +128,10 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
                         SizedBox(
                           height: 200,
                           child: _buildTemplatesSidebar(
-                            filteredTemplates, categories, categoryFilter, isDark,
+                            filteredTemplates,
+                            categories,
+                            categoryFilter,
+                            isDark,
                           ),
                         ),
                         const SizedBox(height: AlhaiSpacing.md),
@@ -147,7 +166,8 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.border,
+          color:
+              isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.border,
         ),
       ),
       child: Center(
@@ -180,7 +200,9 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
               AppLocalizations.of(context)!.writeQuestionHint,
               style: TextStyle(
                 fontSize: 14,
-                color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textMuted,
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.5)
+                    : AppColors.textMuted,
               ),
             ),
             const SizedBox(height: AlhaiSpacing.lg),
@@ -189,9 +211,18 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
               runSpacing: 8,
               alignment: WrapAlignment.center,
               children: [
-                _buildQuickAction(AppLocalizations.of(context)!.quickActionTodaySales, Icons.receipt_long_rounded, isDark),
-                _buildQuickAction(AppLocalizations.of(context)!.quickActionTop10, Icons.star_rounded, isDark),
-                _buildQuickAction(AppLocalizations.of(context)!.quickActionMonthlyCompare, Icons.compare_arrows_rounded, isDark),
+                _buildQuickAction(
+                    AppLocalizations.of(context)!.quickActionTodaySales,
+                    Icons.receipt_long_rounded,
+                    isDark),
+                _buildQuickAction(
+                    AppLocalizations.of(context)!.quickActionTop10,
+                    Icons.star_rounded,
+                    isDark),
+                _buildQuickAction(
+                    AppLocalizations.of(context)!.quickActionMonthlyCompare,
+                    Icons.compare_arrows_rounded,
+                    isDark),
               ],
             ),
           ],
@@ -204,10 +235,12 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () => ref.read(generatedReportProvider.notifier).generateFromQuery(text),
+        onTap: () =>
+            ref.read(generatedReportProvider.notifier).generateFromQuery(text),
         borderRadius: BorderRadius.circular(10),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: AlhaiSpacing.xs),
+          padding: const EdgeInsets.symmetric(
+              horizontal: 14, vertical: AlhaiSpacing.xs),
           decoration: BoxDecoration(
             color: isDark
                 ? const Color(0xFF8B5CF6).withValues(alpha: 0.1)
@@ -243,7 +276,8 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.border,
+          color:
+              isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.border,
         ),
       ),
       child: Center(
@@ -263,7 +297,9 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
               AppLocalizations.of(context)!.analyzingData,
               style: TextStyle(
                 fontSize: 14,
-                color: isDark ? Colors.white.withValues(alpha: 0.6) : AppColors.textSecondary,
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.6)
+                    : AppColors.textSecondary,
               ),
             ),
           ],
@@ -283,10 +319,14 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.error_outline_rounded, size: 48, color: AppColors.error),
+            const Icon(Icons.error_outline_rounded,
+                size: 48, color: AppColors.error),
             const SizedBox(height: AlhaiSpacing.sm),
             Text(AppLocalizations.of(context)!.errorOccurredShort(error),
-              style: TextStyle(color: isDark ? Colors.white.withValues(alpha: 0.7) : AppColors.textSecondary)),
+                style: TextStyle(
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.7)
+                        : AppColors.textSecondary)),
           ],
         ),
       ),
@@ -294,14 +334,18 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
   }
 
   Widget _buildTemplatesSidebar(
-    List templates, List<String> categories, String categoryFilter, bool isDark,
+    List templates,
+    List<String> categories,
+    String categoryFilter,
+    bool isDark,
   ) {
     return Container(
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.border,
+          color:
+              isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.border,
         ),
       ),
       child: Column(
@@ -311,7 +355,8 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
             padding: const EdgeInsets.all(14),
             child: Row(
               children: [
-                const Icon(Icons.dashboard_customize_rounded, size: 18, color: Color(0xFF8B5CF6)),
+                const Icon(Icons.dashboard_customize_rounded,
+                    size: 18, color: Color(0xFF8B5CF6)),
                 const SizedBox(width: AlhaiSpacing.xs),
                 Text(
                   AppLocalizations.of(context)!.readyTemplates,
@@ -338,19 +383,29 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
                   padding: const EdgeInsetsDirectional.only(start: 6),
                   child: FilterChip(
                     selected: isSelected,
-                    label: Text(cat == kAllCategoryFilter ? AppLocalizations.of(context)!.filterAllLabel : cat),
+                    label: Text(cat == kAllCategoryFilter
+                        ? AppLocalizations.of(context)!.filterAllLabel
+                        : cat),
                     labelStyle: TextStyle(
-                      color: isSelected ? Colors.white : (isDark ? Colors.white.withValues(alpha: 0.6) : AppColors.textSecondary),
+                      color: isSelected
+                          ? Colors.white
+                          : (isDark
+                              ? Colors.white.withValues(alpha: 0.6)
+                              : AppColors.textSecondary),
                       fontSize: 11,
-                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                      fontWeight:
+                          isSelected ? FontWeight.w600 : FontWeight.w500,
                     ),
                     selectedColor: const Color(0xFF8B5CF6),
-                    backgroundColor: isDark ? const Color(0xFF0F172A) : AppColors.grey50,
+                    backgroundColor:
+                        isDark ? const Color(0xFF0F172A) : AppColors.grey50,
                     side: BorderSide.none,
                     visualDensity: VisualDensity.compact,
                     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     padding: const EdgeInsets.symmetric(horizontal: 4),
-                    onSelected: (_) => ref.read(templateCategoryFilterProvider.notifier).state = cat,
+                    onSelected: (_) => ref
+                        .read(templateCategoryFilterProvider.notifier)
+                        .state = cat,
                   ),
                 );
               },
@@ -359,7 +414,8 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
           const SizedBox(height: AlhaiSpacing.xs),
           Expanded(
             child: ListView.builder(
-              padding: EdgeInsetsDirectional.fromSTEB(14, AlhaiSpacing.xxs, 14, 14),
+              padding:
+                  EdgeInsetsDirectional.fromSTEB(14, AlhaiSpacing.xxs, 14, 14),
               itemCount: templates.length,
               itemBuilder: (context, index) {
                 return Padding(
@@ -367,7 +423,8 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
                   child: ReportTemplateCard(
                     template: templates[index],
                     onRun: () {
-                      ref.read(generatedReportProvider.notifier)
+                      ref
+                          .read(generatedReportProvider.notifier)
                           .generateFromTemplate(templates[index].id);
                     },
                   ),

@@ -125,10 +125,12 @@ class CategoriesDao extends DatabaseAccessor<AppDatabase>
       readsFrom: {categoriesTable},
     ).get();
 
-    return result.map((row) => CategoryWithProductCount(
-      category: categoriesTable.map(row.data),
-      productCount: row.data['product_count'] as int? ?? 0,
-    )).toList();
+    return result
+        .map((row) => CategoryWithProductCount(
+              category: categoriesTable.map(row.data),
+              productCount: row.data['product_count'] as int? ?? 0,
+            ))
+        .toList();
   }
 
   /// مراقبة التصنيفات (Stream)

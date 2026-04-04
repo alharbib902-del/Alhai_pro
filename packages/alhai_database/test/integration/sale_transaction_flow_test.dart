@@ -97,7 +97,8 @@ void main() {
     for (final entry in stockDeductions.entries) {
       final product = await db.productsDao.getProductById(entry.key);
       if (product != null) {
-        await db.productsDao.updateStock(entry.key, (product.stockQty - entry.value).toDouble());
+        await db.productsDao.updateStock(
+            entry.key, (product.stockQty - entry.value).toDouble());
       }
     }
   }
@@ -112,7 +113,8 @@ void main() {
   }
 
   group('Complete Sale Transaction Flow', () {
-    test('sale creates sale record, items, and updates stock correctly', () async {
+    test('sale creates sale record, items, and updates stock correctly',
+        () async {
       // Step 1: Insert products into database
       await db.productsDao.insertProduct(_makeProduct(
         id: 'prod-A',
@@ -168,11 +170,13 @@ void main() {
       // Step 3: Verify stock was decremented
       final productA = await db.productsDao.getProductById('prod-A');
       expect(productA, isNotNull);
-      expect(productA!.stockQty, 48, reason: 'prod-A stock should be 50 - 2 = 48');
+      expect(productA!.stockQty, 48,
+          reason: 'prod-A stock should be 50 - 2 = 48');
 
       final productB = await db.productsDao.getProductById('prod-B');
       expect(productB, isNotNull);
-      expect(productB!.stockQty, 29, reason: 'prod-B stock should be 30 - 1 = 29');
+      expect(productB!.stockQty, 29,
+          reason: 'prod-B stock should be 30 - 1 = 29');
 
       // Step 4: Verify sale was saved correctly
       final sale = await db.salesDao.getSaleById('sale-tx-1');
@@ -248,7 +252,9 @@ void main() {
           reason: 'Stock should be restored to original 100 after void');
     });
 
-    test('sale with multiple items preserves data integrity across all products', () async {
+    test(
+        'sale with multiple items preserves data integrity across all products',
+        () async {
       // Setup: 5 products
       for (int i = 0; i < 5; i++) {
         await db.productsDao.insertProduct(_makeProduct(
@@ -299,7 +305,8 @@ void main() {
         final product = await db.productsDao.getProductById('multi-prod-$i');
         expect(product, isNotNull);
         expect(product!.stockQty, 50 - (i + 1),
-            reason: 'Product $i stock should be 50 - ${i + 1} = ${50 - (i + 1)}');
+            reason:
+                'Product $i stock should be 50 - ${i + 1} = ${50 - (i + 1)}');
       }
 
       // Verify total sale amount
@@ -352,7 +359,8 @@ void main() {
       );
 
       product = await db.productsDao.getProductById('cycle-prod');
-      expect(product!.stockQty, 100, reason: 'Stock should be back to 100 after void');
+      expect(product!.stockQty, 100,
+          reason: 'Stock should be back to 100 after void');
 
       // Second sale: sell 5 units
       await performSaleTransaction(
@@ -392,7 +400,8 @@ void main() {
       expect(activeSale!.status, 'completed');
     });
 
-    test('sale items are queryable with product details after transaction', () async {
+    test('sale items are queryable with product details after transaction',
+        () async {
       await db.productsDao.insertProduct(_makeProduct(
         id: 'detail-prod-1',
         name: 'منتج مفصل',
@@ -424,7 +433,8 @@ void main() {
       );
 
       // Verify items with product details (JOIN query)
-      final itemsWithDetails = await db.saleItemsDao.getItemsWithProductDetails('detail-sale-1');
+      final itemsWithDetails =
+          await db.saleItemsDao.getItemsWithProductDetails('detail-sale-1');
       expect(itemsWithDetails, hasLength(1));
       expect(itemsWithDetails.first.productName, 'منتج مفصل');
       expect(itemsWithDetails.first.productBarcode, 'DET-001');
@@ -433,11 +443,11 @@ void main() {
 
       // Verify stock was deducted
       final product = await db.productsDao.getProductById('detail-prod-1');
-      expect(product!.stockQty, 77,
-          reason: 'Stock should be 80 - 3 = 77');
+      expect(product!.stockQty, 77, reason: 'Stock should be 80 - 3 = 77');
 
       // Verify sale is retrievable with details (JOIN)
-      final saleWithDetails = await db.salesDao.getSaleWithDetails('detail-sale-1');
+      final saleWithDetails =
+          await db.salesDao.getSaleWithDetails('detail-sale-1');
       expect(saleWithDetails, isNotNull);
       expect(saleWithDetails!.receiptNo, 'DET-REC-001');
       expect(saleWithDetails.total, 75.0);

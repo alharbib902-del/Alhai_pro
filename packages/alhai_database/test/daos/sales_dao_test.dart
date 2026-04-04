@@ -138,12 +138,12 @@ void main() {
         ));
       }
 
-      final page1 = await db.salesDao
-          .getSalesPaginated('store-1', offset: 0, limit: 3);
+      final page1 =
+          await db.salesDao.getSalesPaginated('store-1', offset: 0, limit: 3);
       expect(page1, hasLength(3));
 
-      final page2 = await db.salesDao
-          .getSalesPaginated('store-1', offset: 3, limit: 3);
+      final page2 =
+          await db.salesDao.getSalesPaginated('store-1', offset: 3, limit: 3);
       expect(page2, hasLength(3));
     });
 
@@ -160,19 +160,19 @@ void main() {
     });
 
     test('getSalesPaginated filters by status', () async {
-      await db.salesDao.insertSale(_makeSale(id: 'sale-1', status: 'completed'));
-      await db.salesDao.insertSale(_makeSale(
-          id: 'sale-2', receiptNo: 'REC-002', status: 'voided'));
+      await db.salesDao
+          .insertSale(_makeSale(id: 'sale-1', status: 'completed'));
+      await db.salesDao.insertSale(
+          _makeSale(id: 'sale-2', receiptNo: 'REC-002', status: 'voided'));
 
-      final completedSales = await db.salesDao
-          .getSalesPaginated('store-1', status: 'completed');
+      final completedSales =
+          await db.salesDao.getSalesPaginated('store-1', status: 'completed');
       expect(completedSales, hasLength(1));
       expect(completedSales.first.id, 'sale-1');
     });
 
     test('getSalesStats returns correct statistics', () async {
-      await db.salesDao
-          .insertSale(_makeSale(id: 'sale-1', total: 50.0));
+      await db.salesDao.insertSale(_makeSale(id: 'sale-1', total: 50.0));
       await db.salesDao.insertSale(
           _makeSale(id: 'sale-2', receiptNo: 'REC-002', total: 150.0));
 

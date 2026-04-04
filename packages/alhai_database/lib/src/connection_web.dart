@@ -49,7 +49,8 @@ QueryExecutor openNativeConnection({String? dbName, String? encryptionKey}) {
       final impl = result.chosenImplementation;
       final isOpfs = impl == WasmStorageImplementation.opfsShared ||
           impl == WasmStorageImplementation.opfsLocks;
-      debugPrint('DB Storage: $impl ${isOpfs ? "(OPFS - optimal)" : "(fallback)"}');
+      debugPrint(
+          'DB Storage: $impl ${isOpfs ? "(OPFS - optimal)" : "(fallback)"}');
 
       if (result.missingFeatures.isNotEmpty) {
         debugPrint('Missing browser features: ${result.missingFeatures}');

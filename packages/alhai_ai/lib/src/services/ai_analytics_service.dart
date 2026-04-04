@@ -7,7 +7,6 @@
 /// - تنبيهات ذكية
 library;
 
-
 // ============================================================================
 // AI INSIGHT MODELS
 // ============================================================================
@@ -16,22 +15,31 @@ library;
 enum InsightType {
   /// اقتراح إعادة تخزين
   restockSuggestion,
+
   /// منتج الأكثر مبيعاً
   topSelling,
+
   /// منتج بطيء الحركة
   slowMoving,
+
   /// فرصة ربح
   profitOpportunity,
+
   /// تحذير مخزون
   stockWarning,
+
   /// اتجاه مبيعات
   salesTrend,
+
   /// توقع طلب
   demandForecast,
+
   /// تحسين سعر
   pricingOptimization,
+
   /// وقت الذروة
   peakTime,
+
   /// عميل VIP
   vipCustomer,
 }
@@ -140,8 +148,7 @@ class ProductAnalyticsData {
   double get profitMargin => price > 0 ? ((price - cost) / price) * 100 : 0;
 
   /// معدل الدوران الأسبوعي
-  double get weeklyTurnover =>
-      stockQty > 0 ? soldThisWeek / stockQty : 0;
+  double get weeklyTurnover => stockQty > 0 ? soldThisWeek / stockQty : 0;
 
   /// نسبة التغير في المبيعات
   double get salesChangePercent {
@@ -333,8 +340,9 @@ class AiAnalyticsService {
       }
 
       // 6. اقتراح إعادة التخزين بناءً على معدل البيع
-      final daysOfStock =
-          product.soldThisWeek > 0 ? (product.stockQty / (product.soldThisWeek / 7)).round() : 999;
+      final daysOfStock = product.soldThisWeek > 0
+          ? (product.stockQty / (product.soldThisWeek / 7)).round()
+          : 999;
       if (daysOfStock <= 7 && daysOfStock > 0) {
         insights.add(AiInsight(
           id: 'restock_${product.id}',
@@ -390,8 +398,7 @@ class AiAnalyticsService {
         id: 'weekly_trend_${now.millisecondsSinceEpoch}',
         type: InsightType.salesTrend,
         priority: InsightPriority.medium,
-        title:
-            isUp ? '📊 أداء أسبوعي ممتاز' : '📊 أداء أسبوعي يحتاج تحسين',
+        title: isUp ? '📊 أداء أسبوعي ممتاز' : '📊 أداء أسبوعي يحتاج تحسين',
         description: isUp
             ? 'مبيعات الأسبوع أعلى بـ ${sales.weeklyChangePercent.toStringAsFixed(0)}% من الأسبوع الماضي!'
             : 'مبيعات الأسبوع أقل بـ ${sales.weeklyChangePercent.abs().toStringAsFixed(0)}% من الأسبوع الماضي.',
@@ -486,8 +493,9 @@ class AiAnalyticsService {
     SalesAnalyticsData sales,
   ) {
     // المنتجات منخفضة المخزون
-    final lowStockCount =
-        products.where((p) => p.stockQty <= p.minStock && p.stockQty > 0).length;
+    final lowStockCount = products
+        .where((p) => p.stockQty <= p.minStock && p.stockQty > 0)
+        .length;
 
     // المنتجات النافدة
     final outOfStockCount = products.where((p) => p.stockQty == 0).length;
@@ -497,9 +505,8 @@ class AiAnalyticsService {
       ..sort((a, b) => b.soldThisWeek.compareTo(a.soldThisWeek));
 
     // المنتجات بطيئة الحركة
-    final slowProducts = products
-        .where((p) => p.stockQty > 0 && p.soldThisMonth == 0)
-        .length;
+    final slowProducts =
+        products.where((p) => p.stockQty > 0 && p.soldThisMonth == 0).length;
 
     // متوسط هامش الربح
     final avgMargin = products.isNotEmpty
@@ -579,8 +586,7 @@ class AiAnalyticsService {
         type: InsightType.salesTrend,
         priority: InsightPriority.medium,
         title: 'المبيعات أقل من الأمس',
-        description:
-            'جرب تفعيل عروض لزيادة المبيعات',
+        description: 'جرب تفعيل عروض لزيادة المبيعات',
         createdAt: now,
       ));
     }

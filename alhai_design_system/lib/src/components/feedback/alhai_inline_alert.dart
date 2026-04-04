@@ -173,8 +173,8 @@ class AlhaiInlineAlert extends StatelessWidget {
     final textDirection = Directionality.of(context);
 
     final colors = _getColors(colorScheme, statusColors);
-    final effectivePadding = paddingOverride ??
-        const EdgeInsetsDirectional.all(AlhaiSpacing.md);
+    final effectivePadding =
+        paddingOverride ?? const EdgeInsetsDirectional.all(AlhaiSpacing.md);
 
     final effectiveIcon = leadingIcon ?? _buildDefaultIcon(colors);
 
@@ -276,8 +276,8 @@ class AlhaiInlineAlert extends StatelessWidget {
     switch (type) {
       case AlhaiInlineAlertType.success:
         final successColor = statusColors?.success ?? colorScheme.primary;
-        final successLight = statusColors?.successLight ??
-            successColor.withValues(alpha: 0.1);
+        final successLight =
+            statusColors?.successLight ?? successColor.withValues(alpha: 0.1);
         return _AlertColors(
           background: successLight,
           foreground: statusColors?.onSuccess ?? successColor,
@@ -295,8 +295,8 @@ class AlhaiInlineAlert extends StatelessWidget {
 
       case AlhaiInlineAlertType.warning:
         final warningColor = statusColors?.warning ?? colorScheme.tertiary;
-        final warningLight = statusColors?.warningLight ??
-            warningColor.withValues(alpha: 0.1);
+        final warningLight =
+            statusColors?.warningLight ?? warningColor.withValues(alpha: 0.1);
         return _AlertColors(
           background: warningLight,
           foreground: statusColors?.onWarning ?? warningColor,

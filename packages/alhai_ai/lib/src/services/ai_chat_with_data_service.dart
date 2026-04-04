@@ -14,12 +14,16 @@ import 'package:flutter/material.dart';
 enum QueryResultType {
   /// رقم واحد
   number,
+
   /// جدول بيانات
   table,
+
   /// رسم بياني أعمدة
   barChart,
+
   /// رسم بياني خطي
   lineChart,
+
   /// رسم بياني دائري
   pieChart,
 }
@@ -94,43 +98,63 @@ class AiChatWithDataService {
     final lowerQuery = query.trim();
 
     // مطابقة الأنماط
-    if (_matchesPattern(lowerQuery, ['مبيعات اليوم', 'مبيعات هذا اليوم', 'كم بعنا اليوم', 'إجمالي اليوم'])) {
-      return _createNumberResult(query, 'إجمالي مبيعات اليوم', '12,450', 'ر.س', 45);
+    if (_matchesPattern(lowerQuery, [
+      'مبيعات اليوم',
+      'مبيعات هذا اليوم',
+      'كم بعنا اليوم',
+      'إجمالي اليوم'
+    ])) {
+      return _createNumberResult(
+          query, 'إجمالي مبيعات اليوم', '12,450', 'ر.س', 45);
     }
 
-    if (_matchesPattern(lowerQuery, ['أفضل 10 منتجات', 'أكثر المنتجات مبيعاً', 'المنتجات الأكثر', 'top 10'])) {
+    if (_matchesPattern(lowerQuery, [
+      'أفضل 10 منتجات',
+      'أكثر المنتجات مبيعاً',
+      'المنتجات الأكثر',
+      'top 10'
+    ])) {
       return _createTableResult(query, 'أفضل 10 منتجات مبيعاً', 78);
     }
 
-    if (_matchesPattern(lowerQuery, ['مبيعات الأسبوع', 'مبيعات هذا الأسبوع', 'أسبوعي'])) {
+    if (_matchesPattern(
+        lowerQuery, ['مبيعات الأسبوع', 'مبيعات هذا الأسبوع', 'أسبوعي'])) {
       return _createLineChartResult(query, 'مبيعات الأسبوع الحالي', 62);
     }
 
-    if (_matchesPattern(lowerQuery, ['طرق الدفع', 'توزيع الدفع', 'نسبة الدفع', 'كيف يدفع'])) {
+    if (_matchesPattern(
+        lowerQuery, ['طرق الدفع', 'توزيع الدفع', 'نسبة الدفع', 'كيف يدفع'])) {
       return _createPieChartResult(query, 'توزيع طرق الدفع', 55);
     }
 
-    if (_matchesPattern(lowerQuery, ['مقارنة المنتجات', 'مقارنة الأقسام', 'مقارنة التصنيفات', 'أقسام'])) {
+    if (_matchesPattern(lowerQuery,
+        ['مقارنة المنتجات', 'مقارنة الأقسام', 'مقارنة التصنيفات', 'أقسام'])) {
       return _createBarChartResult(query, 'مقارنة مبيعات الأقسام', 70);
     }
 
-    if (_matchesPattern(lowerQuery, ['عدد العملاء', 'كم عميل', 'العملاء اليوم'])) {
+    if (_matchesPattern(
+        lowerQuery, ['عدد العملاء', 'كم عميل', 'العملاء اليوم'])) {
       return _createNumberResult(query, 'عدد العملاء اليوم', '87', 'عميل', 35);
     }
 
-    if (_matchesPattern(lowerQuery, ['متوسط الفاتورة', 'معدل الفاتورة', 'متوسط البيع'])) {
-      return _createNumberResult(query, 'متوسط قيمة الفاتورة', '143.10', 'ر.س', 40);
+    if (_matchesPattern(
+        lowerQuery, ['متوسط الفاتورة', 'معدل الفاتورة', 'متوسط البيع'])) {
+      return _createNumberResult(
+          query, 'متوسط قيمة الفاتورة', '143.10', 'ر.س', 40);
     }
 
-    if (_matchesPattern(lowerQuery, ['المخزون المنخفض', 'نقص المخزون', 'منتجات تنقص', 'مخزون قليل'])) {
+    if (_matchesPattern(lowerQuery,
+        ['المخزون المنخفض', 'نقص المخزون', 'منتجات تنقص', 'مخزون قليل'])) {
       return _createLowStockTable(query, 85);
     }
 
-    if (_matchesPattern(lowerQuery, ['مبيعات الشهر', 'مبيعات هذا الشهر', 'شهري'])) {
+    if (_matchesPattern(
+        lowerQuery, ['مبيعات الشهر', 'مبيعات هذا الشهر', 'شهري'])) {
       return _createMonthlyLineChart(query, 72);
     }
 
-    if (_matchesPattern(lowerQuery, ['ساعات الذروة', 'أوقات الذروة', 'أكثر الأوقات', 'ساعات البيع'])) {
+    if (_matchesPattern(lowerQuery,
+        ['ساعات الذروة', 'أوقات الذروة', 'أكثر الأوقات', 'ساعات البيع'])) {
       return _createPeakHoursChart(query, 58);
     }
 
@@ -175,7 +199,8 @@ class AiChatWithDataService {
     return false;
   }
 
-  QueryResult _createNumberResult(String queryText, String title, String value, String unit, int ms) {
+  QueryResult _createNumberResult(
+      String queryText, String title, String value, String unit, int ms) {
     final result = QueryResult(
       query: DataQuery(
         id: 'Q-${DateTime.now().millisecondsSinceEpoch}',
@@ -236,8 +261,10 @@ class AiChatWithDataService {
         ChartDataPoint(label: 'السبت', value: 8500, color: Color(0xFF10B981)),
         ChartDataPoint(label: 'الأحد', value: 12300, color: Color(0xFF10B981)),
         ChartDataPoint(label: 'الإثنين', value: 9800, color: Color(0xFF10B981)),
-        ChartDataPoint(label: 'الثلاثاء', value: 11200, color: Color(0xFF10B981)),
-        ChartDataPoint(label: 'الأربعاء', value: 14500, color: Color(0xFF10B981)),
+        ChartDataPoint(
+            label: 'الثلاثاء', value: 11200, color: Color(0xFF10B981)),
+        ChartDataPoint(
+            label: 'الأربعاء', value: 14500, color: Color(0xFF10B981)),
         ChartDataPoint(label: 'الخميس', value: 16800, color: Color(0xFF10B981)),
         ChartDataPoint(label: 'الجمعة', value: 13200, color: Color(0xFF10B981)),
       ],
@@ -285,7 +312,8 @@ class AiChatWithDataService {
         ChartDataPoint(label: 'خضروات', value: 12800, color: Color(0xFF22C55E)),
         ChartDataPoint(label: 'فواكه', value: 9600, color: Color(0xFFF97316)),
         ChartDataPoint(label: 'مخبوزات', value: 7400, color: Color(0xFFF59E0B)),
-        ChartDataPoint(label: 'مشروبات', value: 11300, color: Color(0xFF06B6D4)),
+        ChartDataPoint(
+            label: 'مشروبات', value: 11300, color: Color(0xFF06B6D4)),
         ChartDataPoint(label: 'تنظيف', value: 5200, color: Color(0xFF14B8A6)),
       ],
       executionTimeMs: ms,
@@ -329,10 +357,14 @@ class AiChatWithDataService {
       resultType: QueryResultType.lineChart,
       title: 'مبيعات الشهر الحالي',
       chartData: const [
-        ChartDataPoint(label: 'أسبوع 1', value: 42000, color: Color(0xFF10B981)),
-        ChartDataPoint(label: 'أسبوع 2', value: 38500, color: Color(0xFF10B981)),
-        ChartDataPoint(label: 'أسبوع 3', value: 51200, color: Color(0xFF10B981)),
-        ChartDataPoint(label: 'أسبوع 4', value: 47800, color: Color(0xFF10B981)),
+        ChartDataPoint(
+            label: 'أسبوع 1', value: 42000, color: Color(0xFF10B981)),
+        ChartDataPoint(
+            label: 'أسبوع 2', value: 38500, color: Color(0xFF10B981)),
+        ChartDataPoint(
+            label: 'أسبوع 3', value: 51200, color: Color(0xFF10B981)),
+        ChartDataPoint(
+            label: 'أسبوع 4', value: 47800, color: Color(0xFF10B981)),
       ],
       executionTimeMs: ms,
     );

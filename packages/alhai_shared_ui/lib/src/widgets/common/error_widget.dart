@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiColors, AlhaiSpacing;
+import 'package:alhai_design_system/alhai_design_system.dart'
+    show AlhaiColors, AlhaiSpacing;
 import 'package:alhai_l10n/alhai_l10n.dart';
 
 /// Widget موحد لعرض الأخطاء
@@ -71,8 +72,8 @@ class AppErrorWidget extends StatelessWidget {
             Text(
               _resolveMessage(l10n),
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface,
-              ),
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
               textAlign: TextAlign.center,
             ),
             if (onRetry != null) ...[
@@ -96,7 +97,7 @@ enum _ErrorType { custom, network, loading, generic }
 class ErrorMessage extends StatelessWidget {
   /// رسالة الخطأ
   final String message;
-  
+
   /// حدث الإغلاق
   final VoidCallback? onDismiss;
 
@@ -109,7 +110,8 @@ class ErrorMessage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+      padding: const EdgeInsets.symmetric(
+          horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
       margin: const EdgeInsets.all(AlhaiSpacing.xs),
       decoration: BoxDecoration(
         color: AlhaiColors.error.withValues(alpha: 0.08),
@@ -118,7 +120,8 @@ class ErrorMessage extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(Icons.error_outline, color: AlhaiColors.error.withValues(alpha: 0.7), size: 20),
+          Icon(Icons.error_outline,
+              color: AlhaiColors.error.withValues(alpha: 0.7), size: 20),
           SizedBox(width: AlhaiSpacing.sm),
           Expanded(
             child: Text(

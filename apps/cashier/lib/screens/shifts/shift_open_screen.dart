@@ -10,7 +10,8 @@ import 'package:go_router/go_router.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
+import 'package:alhai_design_system/alhai_design_system.dart'
+    show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import 'package:alhai_core/alhai_core.dart' show UserRole;
 import '../../core/services/sentry_service.dart';
@@ -66,9 +67,8 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
           subtitle: _getDateSubtitle(l10n),
           showSearch: false,
           searchHint: l10n.searchPlaceholder,
-          onMenuTap: isWideScreen
-              ? null
-              : () => Scaffold.of(context).openDrawer(),
+          onMenuTap:
+              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: ref.watch(unreadNotificationsCountProvider),
           userName: ref.watch(currentUserProvider)?.name ?? l10n.cashCustomer,
@@ -77,7 +77,8 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
         ),
         Expanded(
           child: SingleChildScrollView(
-            padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+            padding: EdgeInsets.all(
+                isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
             child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
           ),
         ),
@@ -91,8 +92,8 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
     return '$dateStr \u2022 ${l10n.mainBranch}';
   }
 
-  Widget _buildContent(
-      bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n) {
+  Widget _buildContent(bool isWideScreen, bool isMediumScreen, bool isDark,
+      AppLocalizations l10n) {
     final user = ref.watch(currentUserProvider);
 
     if (isWideScreen) {
@@ -165,7 +166,9 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
                     ? user!.name[0].toUpperCase()
                     : '?',
                 style: const TextStyle(
-                    fontSize: 22, color: AppColors.textOnPrimary, fontWeight: FontWeight.bold),
+                    fontSize: 22,
+                    color: AppColors.textOnPrimary,
+                    fontWeight: FontWeight.bold),
               ),
             ),
           ),
@@ -286,7 +289,8 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: AppColors.primary, width: 2),
+                borderSide:
+                    const BorderSide(color: AppColors.primary, width: 2),
               ),
               filled: true,
               fillColor: AppColors.getSurfaceVariant(isDark),
@@ -298,7 +302,8 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
             spacing: 8,
             runSpacing: 8,
             children: [100, 200, 500, 1000].map((amount) {
-              final isSelected = _openingCashController.text == amount.toString();
+              final isSelected =
+                  _openingCashController.text == amount.toString();
               return Material(
                 color: Colors.transparent,
                 child: InkWell(
@@ -308,8 +313,8 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
                   },
                   borderRadius: BorderRadius.circular(10),
                   child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: AlhaiSpacing.md, vertical: 10),
                     decoration: BoxDecoration(
                       color: isSelected
                           ? AppColors.primary.withValues(alpha: 0.1)

@@ -56,7 +56,8 @@ final invoicesStatsProvider =
     FutureProvider.autoDispose<SalesStats>((ref) async {
   final storeId = ref.watch(currentStoreIdProvider);
   if (storeId == null) {
-    return const SalesStats(count: 0, total: 0, average: 0, maxSale: 0, minSale: 0);
+    return const SalesStats(
+        count: 0, total: 0, average: 0, maxSale: 0, minSale: 0);
   }
   final db = GetIt.I<AppDatabase>();
   return db.salesDao.getSalesStats(storeId);
@@ -72,9 +73,8 @@ final paymentMethodStatsProvider =
 });
 
 /// تفاصيل فاتورة واحدة (بيع + عناصر)
-final invoiceDetailProvider =
-    FutureProvider.autoDispose.family<InvoiceDetailData?, String>(
-        (ref, saleId) async {
+final invoiceDetailProvider = FutureProvider.autoDispose
+    .family<InvoiceDetailData?, String>((ref, saleId) async {
   final db = GetIt.I<AppDatabase>();
   final sale = await db.salesDao.getSaleById(saleId);
   if (sale == null) return null;

@@ -64,7 +64,8 @@ class RecommendationCard extends StatelessWidget {
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color: isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.border,
+          color:
+              isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.border,
         ),
         boxShadow: [
           BoxShadow(
@@ -87,7 +88,8 @@ class RecommendationCard extends StatelessWidget {
                   color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(_getCategoryIcon(), color: AppColors.primary, size: 24),
+                child: Icon(_getCategoryIcon(),
+                    color: AppColors.primary, size: 24),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
@@ -106,7 +108,9 @@ class RecommendationCard extends StatelessWidget {
                       Text(
                         product.category!,
                         style: TextStyle(
-                          color: isDark ? Colors.white.withValues(alpha: 0.4) : AppColors.textMuted,
+                          color: isDark
+                              ? Colors.white.withValues(alpha: 0.4)
+                              : AppColors.textMuted,
                           fontSize: 11,
                         ),
                       ),
@@ -132,18 +136,23 @@ class RecommendationCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: isDark ? Colors.white.withValues(alpha: 0.03) : AppColors.grey50,
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.03)
+                  : AppColors.grey50,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
               children: [
-                const Icon(Icons.auto_awesome_rounded, size: 14, color: AppColors.warning),
+                const Icon(Icons.auto_awesome_rounded,
+                    size: 14, color: AppColors.warning),
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(
                     product.reason,
                     style: TextStyle(
-                      color: isDark ? Colors.white.withValues(alpha: 0.7) : AppColors.textSecondary,
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.7)
+                          : AppColors.textSecondary,
                       fontSize: 11,
                       height: 1.4,
                     ),
@@ -160,7 +169,8 @@ class RecommendationCard extends StatelessWidget {
             children: [
               // Confidence
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
                 decoration: BoxDecoration(
                   color: confColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -187,9 +197,12 @@ class RecommendationCard extends StatelessWidget {
               // Purchase interval
               if (product.avgPurchaseInterval > 0)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
                   decoration: BoxDecoration(
-                    color: isDark ? Colors.white.withValues(alpha: 0.05) : AppColors.grey100,
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.05)
+                        : AppColors.grey100,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(
@@ -198,13 +211,17 @@ class RecommendationCard extends StatelessWidget {
                       Icon(
                         Icons.schedule_rounded,
                         size: 12,
-                        color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textMuted,
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.5)
+                            : AppColors.textMuted,
                       ),
                       const SizedBox(width: AlhaiSpacing.xxs),
                       Text(
                         'كل ${product.avgPurchaseInterval} يوم', // Every X days
                         style: TextStyle(
-                          color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textMuted,
+                          color: isDark
+                              ? Colors.white.withValues(alpha: 0.5)
+                              : AppColors.textMuted,
                           fontSize: 10,
                         ),
                       ),
@@ -237,7 +254,8 @@ class RecommendationCard extends StatelessWidget {
 
   Widget _buildCompact(bool isDark, Color confColor) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xs),
+      padding: const EdgeInsets.symmetric(
+          horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xs),
       decoration: BoxDecoration(
         color: isDark ? Colors.white.withValues(alpha: 0.03) : AppColors.grey50,
         borderRadius: BorderRadius.circular(10),
@@ -265,14 +283,16 @@ class RecommendationCard extends StatelessWidget {
             ),
           ),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: AlhaiSpacing.xxxs),
+            padding: const EdgeInsets.symmetric(
+                horizontal: 6, vertical: AlhaiSpacing.xxxs),
             decoration: BoxDecoration(
               color: confColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(6),
             ),
             child: Text(
               '${(product.confidence * 100).toInt()}%',
-              style: TextStyle(color: confColor, fontSize: 10, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  color: confColor, fontSize: 10, fontWeight: FontWeight.bold),
             ),
           ),
         ],

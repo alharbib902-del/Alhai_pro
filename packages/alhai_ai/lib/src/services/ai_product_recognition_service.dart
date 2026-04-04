@@ -197,8 +197,10 @@ class AiProductRecognitionService {
       ),
     ];
 
-    final matched = products.where((p) => p.status == RecognitionStatus.matched).length;
-    final avgConf = products.map((p) => p.confidence).reduce((a, b) => a + b) / products.length;
+    final matched =
+        products.where((p) => p.status == RecognitionStatus.matched).length;
+    final avgConf = products.map((p) => p.confidence).reduce((a, b) => a + b) /
+        products.length;
 
     return RecognitionResult(
       id: 'scan_${now.millisecondsSinceEpoch}',
@@ -221,7 +223,8 @@ class AiProductRecognitionService {
       brand: 'المراعي',
       weight: '1 لتر',
       confidence: 0.92,
-      rawText: 'حليب المراعي كامل الدسم\n1 لتر\nSAR 6.50\nEXP: 2026/05/15\nBarcode: 6281007028479',
+      rawText:
+          'حليب المراعي كامل الدسم\n1 لتر\nSAR 6.50\nEXP: 2026/05/15\nBarcode: 6281007028479',
     );
   }
 
@@ -231,8 +234,15 @@ class AiProductRecognitionService {
       totalSlots: 48,
       filledSlots: 39,
       emptySlots: 9,
-      outOfStockProducts: ['حليب المراعي 2 لتر', 'زبادي قليل الدسم', 'عصير تروبيكانا'],
-      misplacedProducts: ['شاي ربيع (يجب أن يكون في رف المشروبات)', 'صابون لوكس (في رف الأغذية)'],
+      outOfStockProducts: [
+        'حليب المراعي 2 لتر',
+        'زبادي قليل الدسم',
+        'عصير تروبيكانا'
+      ],
+      misplacedProducts: [
+        'شاي ربيع (يجب أن يكون في رف المشروبات)',
+        'صابون لوكس (في رف الأغذية)'
+      ],
       fillRate: 81.25,
     );
   }

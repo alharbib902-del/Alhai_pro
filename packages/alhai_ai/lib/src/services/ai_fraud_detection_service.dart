@@ -17,10 +17,13 @@ import 'package:alhai_database/alhai_database.dart';
 enum FraudSeverity {
   /// منخفض - Low
   low,
+
   /// متوسط - Medium
   medium,
+
   /// عالي - High
   high,
+
   /// حرج - Critical
   critical,
 }
@@ -29,14 +32,19 @@ enum FraudSeverity {
 enum FraudPattern {
   /// استرجاع غير اعتيادي - Unusual Refund
   unusualRefund,
+
   /// معاملة بعد الدوام - After Hours Transaction
   afterHoursTransaction,
+
   /// إلغاء متكرر - Repeated Void
   repeatedVoid,
+
   /// خصم كبير - Large Discount
   largeDiscount,
+
   /// تقسيم معاملة - Split Transaction
   splitTransaction,
+
   /// شذوذ درج النقد - Cash Drawer Anomaly
   cashDrawerAnomaly,
 }
@@ -45,10 +53,13 @@ enum FraudPattern {
 enum InvestigationStatus {
   /// مفتوح - Open
   open,
+
   /// قيد التحقيق - Under Investigation
   underInvestigation,
+
   /// مغلق - Closed
   closed,
+
   /// تصعيد - Escalated
   escalated,
 }
@@ -57,8 +68,10 @@ enum InvestigationStatus {
 enum BehaviorTrend {
   /// تحسن - Up (improving)
   up,
+
   /// تراجع - Down (declining)
   down,
+
   /// مستقر - Stable
   stable,
 }
@@ -210,12 +223,23 @@ class AiFraudDetectionService {
         id: 'FA001',
         pattern: FraudPattern.unusualRefund,
         severity: FraudSeverity.critical,
-        description: 'تم إرجاع 8 معاملات خلال ساعة واحدة بقيمة إجمالية 2,340 ر.س', // 8 refunds in 1 hour totaling 2,340 SAR
-        transactionIds: ['TXN-001', 'TXN-002', 'TXN-003', 'TXN-004', 'TXN-005', 'TXN-006', 'TXN-007', 'TXN-008'],
+        description:
+            'تم إرجاع 8 معاملات خلال ساعة واحدة بقيمة إجمالية 2,340 ر.س', // 8 refunds in 1 hour totaling 2,340 SAR
+        transactionIds: [
+          'TXN-001',
+          'TXN-002',
+          'TXN-003',
+          'TXN-004',
+          'TXN-005',
+          'TXN-006',
+          'TXN-007',
+          'TXN-008'
+        ],
         cashierId: 'CSH-003',
         cashierName: 'سعد الحربي', // Saad Al-Harbi
         timestamp: now.subtract(const Duration(hours: 2)),
-        suggestedAction: 'مراجعة فورية وإيقاف الكاشير مؤقتاً', // Immediate review and suspend cashier
+        suggestedAction:
+            'مراجعة فورية وإيقاف الكاشير مؤقتاً', // Immediate review and suspend cashier
         confidence: 0.94,
         amount: 2340.0,
       ),
@@ -224,12 +248,14 @@ class AiFraudDetectionService {
         id: 'FA002',
         pattern: FraudPattern.repeatedVoid,
         severity: FraudSeverity.high,
-        description: 'معدل إلغاء 18% (أعلى من الحد المسموح 10%) - 12 إلغاء من 67 معاملة', // 18% void rate, 12 voids out of 67
+        description:
+            'معدل إلغاء 18% (أعلى من الحد المسموح 10%) - 12 إلغاء من 67 معاملة', // 18% void rate, 12 voids out of 67
         transactionIds: ['TXN-101', 'TXN-102', 'TXN-103'],
         cashierId: 'CSH-005',
         cashierName: 'نورة العتيبي', // Noura Al-Otaibi
         timestamp: now.subtract(const Duration(hours: 4)),
-        suggestedAction: 'مراجعة سجل الإلغاءات ومقابلة الموظف', // Review void log and interview employee
+        suggestedAction:
+            'مراجعة سجل الإلغاءات ومقابلة الموظف', // Review void log and interview employee
         confidence: 0.88,
         amount: 890.0,
       ),
@@ -238,12 +264,14 @@ class AiFraudDetectionService {
         id: 'FA003',
         pattern: FraudPattern.largeDiscount,
         severity: FraudSeverity.high,
-        description: 'خصم 45% على فاتورة بقيمة 1,200 ر.س بدون موافقة المدير', // 45% discount on 1,200 SAR without manager approval
+        description:
+            'خصم 45% على فاتورة بقيمة 1,200 ر.س بدون موافقة المدير', // 45% discount on 1,200 SAR without manager approval
         transactionIds: ['TXN-201'],
         cashierId: 'CSH-002',
         cashierName: 'فهد القحطاني', // Fahad Al-Qahtani
         timestamp: now.subtract(const Duration(hours: 6)),
-        suggestedAction: 'التحقق من صلاحيات الخصم ومراجعة السياسة', // Verify discount permissions and review policy
+        suggestedAction:
+            'التحقق من صلاحيات الخصم ومراجعة السياسة', // Verify discount permissions and review policy
         confidence: 0.92,
         amount: 540.0,
       ),
@@ -252,12 +280,14 @@ class AiFraudDetectionService {
         id: 'FA004',
         pattern: FraudPattern.afterHoursTransaction,
         severity: FraudSeverity.medium,
-        description: 'تمت 3 معاملات بعد إغلاق الوردية الساعة 11:45 مساءً', // 3 transactions after shift end at 11:45 PM
+        description:
+            'تمت 3 معاملات بعد إغلاق الوردية الساعة 11:45 مساءً', // 3 transactions after shift end at 11:45 PM
         transactionIds: ['TXN-301', 'TXN-302', 'TXN-303'],
         cashierId: 'CSH-001',
         cashierName: 'أحمد المالكي', // Ahmed Al-Malki
         timestamp: now.subtract(const Duration(hours: 12)),
-        suggestedAction: 'مراجعة أسباب البقاء بعد الدوام', // Review reasons for staying after shift
+        suggestedAction:
+            'مراجعة أسباب البقاء بعد الدوام', // Review reasons for staying after shift
         confidence: 0.76,
         amount: 350.0,
       ),
@@ -266,12 +296,14 @@ class AiFraudDetectionService {
         id: 'FA005',
         pattern: FraudPattern.splitTransaction,
         severity: FraudSeverity.medium,
-        description: 'تقسيم فاتورة 950 ر.س إلى 3 فواتير أقل من 350 ر.س (حد الخصم)', // Split 950 SAR into 3 invoices under 350 SAR discount limit
+        description:
+            'تقسيم فاتورة 950 ر.س إلى 3 فواتير أقل من 350 ر.س (حد الخصم)', // Split 950 SAR into 3 invoices under 350 SAR discount limit
         transactionIds: ['TXN-401', 'TXN-402', 'TXN-403'],
         cashierId: 'CSH-004',
         cashierName: 'خالد الشمري', // Khaled Al-Shammari
         timestamp: now.subtract(const Duration(days: 1)),
-        suggestedAction: 'مراجعة سياسة تقسيم الفواتير', // Review invoice splitting policy
+        suggestedAction:
+            'مراجعة سياسة تقسيم الفواتير', // Review invoice splitting policy
         confidence: 0.71,
         amount: 950.0,
       ),
@@ -280,12 +312,14 @@ class AiFraudDetectionService {
         id: 'FA006',
         pattern: FraudPattern.cashDrawerAnomaly,
         severity: FraudSeverity.low,
-        description: 'فرق 45 ر.س في درج النقد عند إغلاق الوردية', // 45 SAR discrepancy in cash drawer at shift close
+        description:
+            'فرق 45 ر.س في درج النقد عند إغلاق الوردية', // 45 SAR discrepancy in cash drawer at shift close
         transactionIds: ['SHIFT-001'],
         cashierId: 'CSH-006',
         cashierName: 'ريم السبيعي', // Reem Al-Subaie
         timestamp: now.subtract(const Duration(days: 1, hours: 8)),
-        suggestedAction: 'مراقبة ومتابعة في الأيام القادمة', // Monitor in the coming days
+        suggestedAction:
+            'مراقبة ومتابعة في الأيام القادمة', // Monitor in the coming days
         confidence: 0.65,
         amount: 45.0,
       ),
@@ -407,17 +441,20 @@ class AiFraudDetectionService {
         TimelineEvent(
           timestamp: now.subtract(const Duration(hours: 2)),
           title: 'تم إنشاء التنبيه', // Alert created
-          description: 'تم اكتشاف نمط مشبوه بواسطة النظام', // Suspicious pattern detected by system
+          description:
+              'تم اكتشاف نمط مشبوه بواسطة النظام', // Suspicious pattern detected by system
         ),
         TimelineEvent(
           timestamp: now.subtract(const Duration(hours: 1, minutes: 45)),
           title: 'تحليل تلقائي', // Auto analysis
-          description: 'تم تحليل المعاملات المرتبطة وتأكيد النمط', // Related transactions analyzed and pattern confirmed
+          description:
+              'تم تحليل المعاملات المرتبطة وتأكيد النمط', // Related transactions analyzed and pattern confirmed
         ),
         TimelineEvent(
           timestamp: now.subtract(const Duration(hours: 1, minutes: 30)),
           title: 'إشعار المدير', // Manager notified
-          description: 'تم إرسال إشعار للمدير المسؤول', // Notification sent to responsible manager
+          description:
+              'تم إرسال إشعار للمدير المسؤول', // Notification sent to responsible manager
         ),
       ],
     );
@@ -426,7 +463,8 @@ class AiFraudDetectionService {
   /// الحصول على الملخص - Get Summary
   Future<FraudDetectionSummary> getSummary(String storeId) async {
     final alerts = await getAlerts(storeId);
-    final criticalCount = alerts.where((a) => a.severity == FraudSeverity.critical).length;
+    final criticalCount =
+        alerts.where((a) => a.severity == FraudSeverity.critical).length;
     final unreviewedCount = alerts.where((a) => !a.isReviewed).length;
 
     final patternCounts = <FraudPattern, int>{};

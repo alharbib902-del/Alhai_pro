@@ -17,7 +17,8 @@ class InvalidSupplierRatingException implements Exception {
 
 /// DAO for suppliers
 @DriftAccessor(tables: [SuppliersTable])
-class SuppliersDao extends DatabaseAccessor<AppDatabase> with _$SuppliersDaoMixin {
+class SuppliersDao extends DatabaseAccessor<AppDatabase>
+    with _$SuppliersDaoMixin {
   SuppliersDao(super.db);
 
   /// Valid rating range: 0 (unrated) to 5 (excellent).
@@ -36,17 +37,32 @@ class SuppliersDao extends DatabaseAccessor<AppDatabase> with _$SuppliersDaoMixi
   static int clampRating(int rating) => rating.clamp(minRating, maxRating);
 
   Future<List<SuppliersTableData>> getAllSuppliers(String storeId) {
-    return (select(suppliersTable)..where((s) => s.storeId.equals(storeId))..orderBy([(s) => OrderingTerm.asc(s.name)])..limit(500)).get();
+    return (select(suppliersTable)
+          ..where((s) => s.storeId.equals(storeId))
+          ..orderBy([(s) => OrderingTerm.asc(s.name)])
+          ..limit(500))
+        .get();
   }
 
   Future<List<SuppliersTableData>> getActiveSuppliers(String storeId) {
-    return (select(suppliersTable)..where((s) => s.storeId.equals(storeId) & s.isActive.equals(true))..orderBy([(s) => OrderingTerm.asc(s.name)])..limit(500)).get();
+    return (select(suppliersTable)
+          ..where((s) => s.storeId.equals(storeId) & s.isActive.equals(true))
+          ..orderBy([(s) => OrderingTerm.asc(s.name)])
+          ..limit(500))
+        .get();
   }
 
-  Future<SuppliersTableData?> getSupplierById(String id) => (select(suppliersTable)..where((s) => s.id.equals(id))).getSingleOrNull();
+  Future<SuppliersTableData?> getSupplierById(String id) =>
+      (select(suppliersTable)..where((s) => s.id.equals(id))).getSingleOrNull();
 
-  Future<List<SuppliersTableData>> searchSuppliers(String query, String storeId) {
-    return (select(suppliersTable)..where((s) => s.storeId.equals(storeId) & (s.name.contains(query) | s.phone.contains(query)))..limit(20)).get();
+  Future<List<SuppliersTableData>> searchSuppliers(
+      String query, String storeId) {
+    return (select(suppliersTable)
+          ..where((s) =>
+              s.storeId.equals(storeId) &
+              (s.name.contains(query) | s.phone.contains(query)))
+          ..limit(20))
+        .get();
   }
 
   /// Inserts a supplier after validating the rating is within 0-5.
@@ -66,7 +82,9 @@ class SuppliersDao extends DatabaseAccessor<AppDatabase> with _$SuppliersDaoMixi
   }
 
   Future<int> updateBalance(String id, double newBalance) {
-    return (update(suppliersTable)..where((s) => s.id.equals(id))).write(SuppliersTableCompanion(balance: Value(newBalance), updatedAt: Value(DateTime.now())));
+    return (update(suppliersTable)..where((s) => s.id.equals(id))).write(
+        SuppliersTableCompanion(
+            balance: Value(newBalance), updatedAt: Value(DateTime.now())));
   }
 
   /// Updates the supplier rating (0-5).
@@ -81,13 +99,18 @@ class SuppliersDao extends DatabaseAccessor<AppDatabase> with _$SuppliersDaoMixi
     );
   }
 
-  Future<int> deleteSupplier(String id) => (delete(suppliersTable)..where((s) => s.id.equals(id))).go();
+  Future<int> deleteSupplier(String id) =>
+      (delete(suppliersTable)..where((s) => s.id.equals(id))).go();
 
   Future<int> markAsSynced(String id) {
-    return (update(suppliersTable)..where((s) => s.id.equals(id))).write(SuppliersTableCompanion(syncedAt: Value(DateTime.now())));
+    return (update(suppliersTable)..where((s) => s.id.equals(id)))
+        .write(SuppliersTableCompanion(syncedAt: Value(DateTime.now())));
   }
 
   Stream<List<SuppliersTableData>> watchSuppliers(String storeId) {
-    return (select(suppliersTable)..where((s) => s.storeId.equals(storeId))..orderBy([(s) => OrderingTerm.asc(s.name)])).watch();
+    return (select(suppliersTable)
+          ..where((s) => s.storeId.equals(storeId))
+          ..orderBy([(s) => OrderingTerm.asc(s.name)]))
+        .watch();
   }
 }

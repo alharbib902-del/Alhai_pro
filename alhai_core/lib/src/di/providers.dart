@@ -137,8 +137,7 @@ final authRemoteDataSourceProvider = Provider<AuthRemoteDataSource>((ref) {
 });
 
 /// Orders remote - implementation exists
-final ordersRemoteDataSourceProvider =
-    Provider<OrdersRemoteDataSource>((ref) {
+final ordersRemoteDataSourceProvider = Provider<OrdersRemoteDataSource>((ref) {
   return OrdersRemoteDataSourceImpl(dio: ref.read(apiDioProvider));
 });
 
@@ -179,8 +178,7 @@ final addressesRemoteDataSourceProvider =
 });
 
 /// Stores remote - override in ProviderScope when Impl is created
-final storesRemoteDataSourceProvider =
-    Provider<StoresRemoteDataSource>((ref) {
+final storesRemoteDataSourceProvider = Provider<StoresRemoteDataSource>((ref) {
   throw UnimplementedError(
     'storesRemoteDataSourceProvider: StoresRemoteDataSourceImpl not yet created. '
     'Override this provider in ProviderScope.',
@@ -215,8 +213,7 @@ final purchasesRemoteDataSourceProvider =
 });
 
 /// Debts remote - override in ProviderScope when Impl is created
-final debtsRemoteDataSourceProvider =
-    Provider<DebtsRemoteDataSource>((ref) {
+final debtsRemoteDataSourceProvider = Provider<DebtsRemoteDataSource>((ref) {
   throw UnimplementedError(
     'debtsRemoteDataSourceProvider: DebtsRemoteDataSourceImpl not yet created. '
     'Override this provider in ProviderScope.',

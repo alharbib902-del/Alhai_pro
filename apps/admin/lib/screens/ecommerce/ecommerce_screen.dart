@@ -70,8 +70,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
       }
       final products = await db.productsDao.getAllProducts(storeId);
       final settingsRows = await (db.select(db.settingsTable)
-            ..where((s) =>
-                s.storeId.equals(storeId) & s.key.like('ecom_%')))
+            ..where((s) => s.storeId.equals(storeId) & s.key.like('ecom_%')))
           .get();
       final settings = <String, String>{};
       for (final row in settingsRows) {
@@ -85,7 +84,8 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
           _activeCount = _products.where((p) => p.isActive).length;
           _minOrderController.text = settings['ecom_min_order'] ?? '50';
           _deliveryFeeController.text = settings['ecom_delivery_fee'] ?? '15';
-          _freeShippingLimitController.text = settings['ecom_free_shipping_limit'] ?? '200';
+          _freeShippingLimitController.text =
+              settings['ecom_free_shipping_limit'] ?? '200';
           _isLoading = false;
         });
       }
@@ -314,7 +314,8 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: _products.length,
-            separatorBuilder: (_, __) => const SizedBox(height: AlhaiSpacing.xs),
+            separatorBuilder: (_, __) =>
+                const SizedBox(height: AlhaiSpacing.xs),
             itemBuilder: (context, index) {
               final product = _products[index];
               return _buildProductCard(product, isDark);
@@ -343,7 +344,10 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
             height: 56,
             decoration: BoxDecoration(
               color: isDark
-                  ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05)
+                  ? Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.05)
                   : AppColors.border.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(10),
             ),
@@ -359,15 +363,22 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
                       errorWidget: (_, __, ___) => Icon(
                         Icons.image_not_supported_outlined,
                         color: isDark
-                            ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.24)
+                            ? Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withValues(alpha: 0.24)
                             : AppColors.textTertiary,
                       ),
                     ),
                   )
                 : Icon(
                     Icons.inventory_2_outlined,
-                    color:
-                        isDark ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.24) : AppColors.textTertiary,
+                    color: isDark
+                        ? Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withValues(alpha: 0.24)
+                        : AppColors.textTertiary,
                   ),
           ),
           const SizedBox(width: AlhaiSpacing.sm),
@@ -379,8 +390,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
                   product.name,
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
-                    color:
-                        Theme.of(context).colorScheme.onSurface,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
                 const SizedBox(height: AlhaiSpacing.xxs),
@@ -444,14 +454,12 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
                 'Online',
                 style: TextStyle(
                   fontSize: 11,
-                  color:
-                      Theme.of(context).colorScheme.onSurfaceVariant,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
               Switch(
                 value: isOnline,
-                onChanged: (val) =>
-                    _toggleOnlineAvailability(product.id, val),
+                onChanged: (val) => _toggleOnlineAvailability(product.id, val),
                 activeTrackColor: AppColors.primary,
                 activeThumbColor: Theme.of(context).colorScheme.onPrimary,
               ),
@@ -570,8 +578,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
             Icons.store_outlined,
             storeEnabled,
             isDark,
-            (val) =>
-                _saveEcomSetting('ecom_store_enabled', val.toString()),
+            (val) => _saveEcomSetting('ecom_store_enabled', val.toString()),
           ),
           _buildSettingTile(
             'Order Notifications',
@@ -579,8 +586,8 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
             Icons.notifications_outlined,
             notificationsEnabled,
             isDark,
-            (val) => _saveEcomSetting(
-                'ecom_notifications_enabled', val.toString()),
+            (val) =>
+                _saveEcomSetting('ecom_notifications_enabled', val.toString()),
           ),
           _buildSettingTile(
             'Cash on Delivery',
@@ -588,8 +595,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
             Icons.payments_outlined,
             codEnabled,
             isDark,
-            (val) =>
-                _saveEcomSetting('ecom_cod_enabled', val.toString()),
+            (val) => _saveEcomSetting('ecom_cod_enabled', val.toString()),
           ),
           _buildSettingTile(
             'Free Shipping',
@@ -597,8 +603,8 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
             Icons.local_shipping_outlined,
             freeShippingEnabled,
             isDark,
-            (val) => _saveEcomSetting(
-                'ecom_free_shipping_enabled', val.toString()),
+            (val) =>
+                _saveEcomSetting('ecom_free_shipping_enabled', val.toString()),
           ),
           const SizedBox(height: AlhaiSpacing.lg),
           Text(
@@ -610,21 +616,20 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
             ),
           ),
           const SizedBox(height: AlhaiSpacing.sm),
-          _buildInputField(
-              'Min Order Amount', _minOrderController, isDark),
+          _buildInputField('Min Order Amount', _minOrderController, isDark),
+          const SizedBox(height: AlhaiSpacing.sm),
+          _buildInputField('Delivery Fee', _deliveryFeeController, isDark),
           const SizedBox(height: AlhaiSpacing.sm),
           _buildInputField(
-              'Delivery Fee', _deliveryFeeController, isDark),
-          const SizedBox(height: AlhaiSpacing.sm),
-          _buildInputField('Free Shipping Limit',
-              _freeShippingLimitController, isDark),
+              'Free Shipping Limit', _freeShippingLimitController, isDark),
           const SizedBox(height: AlhaiSpacing.md),
           // Delivery Zones Link
           Card(
             child: ListTile(
               leading: const Icon(Icons.map_rounded, color: AppColors.primary),
               title: Text(AppLocalizations.of(context).deliveryZones),
-              subtitle: Text(AppLocalizations.of(context).manageDeliveryZonesAndPricing),
+              subtitle: Text(
+                  AppLocalizations.of(context).manageDeliveryZonesAndPricing),
               trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
               onTap: () => context.push('/ecommerce/delivery-zones'),
             ),
@@ -642,8 +647,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
                     _freeShippingLimitController.text);
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                        content: Text(l10n.settingsSaved)),
+                    SnackBar(content: Text(l10n.settingsSaved)),
                   );
                 }
               },
@@ -707,7 +711,10 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
             Icon(icon,
                 size: 80,
                 color: isDark
-                    ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.24)
+                    ? Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withValues(alpha: 0.24)
                     : AppColors.textTertiary),
             const SizedBox(height: AlhaiSpacing.md),
             Text(
@@ -723,7 +730,10 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
               style: TextStyle(
                 fontSize: 13,
                 color: isDark
-                    ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.38)
+                    ? Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withValues(alpha: 0.38)
                     : AppColors.textTertiary,
               ),
               textAlign: TextAlign.center,
@@ -821,7 +831,10 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
               ? Icons.chevron_left_rounded
               : Icons.chevron_right_rounded,
           size: 16,
-          color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+          color: Theme.of(context)
+              .colorScheme
+              .onSurfaceVariant
+              .withValues(alpha: 0.5),
         ),
       ),
     );

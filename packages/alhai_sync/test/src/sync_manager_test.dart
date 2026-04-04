@@ -205,7 +205,8 @@ void main() {
         await Future<void>.delayed(Duration.zero);
 
         // Should emit syncing, then idle
-        expect(statuses, containsAllInOrder([SyncStatus.syncing, SyncStatus.idle]));
+        expect(statuses,
+            containsAllInOrder([SyncStatus.syncing, SyncStatus.idle]));
       });
 
       test('emits error status on failure', () async {
@@ -311,4 +312,3 @@ void main() {
     });
   });
 }
-

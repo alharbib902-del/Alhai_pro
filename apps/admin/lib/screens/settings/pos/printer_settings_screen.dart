@@ -23,7 +23,6 @@ class PrinterSettingsScreen extends ConsumerStatefulWidget {
 }
 
 class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
-
   String _printerType = 'usb';
   bool _autoPrint = true;
   String _template = 'compact';
@@ -114,13 +113,13 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
     final l10n = AppLocalizations.of(context);
 
     if (_isLoading) {
-      return SafeArea(child: Column(
+      return SafeArea(
+          child: Column(
         children: [
           AppHeader(
             title: l10n.printerSettings,
-            onMenuTap: isWideScreen
-                ? null
-                : () => Scaffold.of(context).openDrawer(),
+            onMenuTap:
+                isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
             onNotificationsTap: () => context.push('/notifications'),
             notificationsCount: 3,
             userName: l10n.defaultUserName,
@@ -133,34 +132,34 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
       ));
     }
 
-    return SafeArea(child: Column(
-              children: [
-                AppHeader(
-                  title: l10n.printerSettings,
-                  onMenuTap: isWideScreen
-                      ? null
-                      : () => Scaffold.of(context).openDrawer(),
-                  onNotificationsTap: () => context.push('/notifications'),
-                  notificationsCount: 3,
-                  userName: l10n.defaultUserName,
-                  userRole: l10n.branchManager,
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-                    child: _buildContent(isDark, l10n),
-                  ),
-                ),
-              ],
-            ));
+    return SafeArea(
+        child: Column(
+      children: [
+        AppHeader(
+          title: l10n.printerSettings,
+          onMenuTap:
+              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onNotificationsTap: () => context.push('/notifications'),
+          notificationsCount: 3,
+          userName: l10n.defaultUserName,
+          userRole: l10n.branchManager,
+        ),
+        Expanded(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+            child: _buildContent(isDark, l10n),
+          ),
+        ),
+      ],
+    ));
   }
+
   Widget _buildContent(bool isDark, AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildPageHeader(isDark, l10n),
         const SizedBox(height: AlhaiSpacing.mdl),
-
         _buildSettingsGroup(l10n.printerType, Icons.print_rounded,
             const Color(0xFF8B5CF6), isDark, [
           RadioGroup<String>(
@@ -194,7 +193,6 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
           ),
           const SizedBox(height: AlhaiSpacing.xs),
         ]),
-
         _buildSettingsGroup(l10n.receiptTemplate, Icons.receipt_long_rounded,
             AppColors.info, isDark, [
           RadioGroup<String>(
@@ -221,22 +219,19 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
           ),
           const SizedBox(height: AlhaiSpacing.xs),
         ]),
-
         _buildSettingsGroup(l10n.printOptions, Icons.settings_rounded,
             AppColors.success, isDark, [
           SwitchListTile(
             title: Text(l10n.autoPrinting,
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface)),
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
             subtitle: Text(l10n.autoPrintAfterSale),
             value: _autoPrint,
             onChanged: (v) => setState(() => _autoPrint = v),
           ),
           const SizedBox(height: AlhaiSpacing.xs),
         ]),
-
         const SizedBox(height: AlhaiSpacing.md),
-
         SizedBox(
           width: double.infinity,
           child: OutlinedButton.icon(
@@ -255,7 +250,6 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
           ),
         ),
         const SizedBox(height: AlhaiSpacing.md),
-
         SizedBox(
           width: double.infinity,
           child: FilledButton.icon(
@@ -339,7 +333,8 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl, AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.xs),
+            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl,
+                AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.xs),
             child: Row(
               children: [
                 Container(
@@ -355,8 +350,7 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
                     style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color:
-                            Theme.of(context).colorScheme.onSurface)),
+                        color: Theme.of(context).colorScheme.onSurface)),
               ],
             ),
           ),

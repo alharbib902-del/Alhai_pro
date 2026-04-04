@@ -36,7 +36,8 @@ abstract class RatingsRepository {
   Future<void> deleteRating(String id);
 
   /// Gets average rating for an entity
-  Future<RatingSummary> getRatingSummary(RatingEntityType entityType, String entityId);
+  Future<RatingSummary> getRatingSummary(
+      RatingEntityType entityType, String entityId);
 
   /// Gets ratings by customer
   Future<List<Rating>> getCustomerRatings(String customerId);

@@ -166,7 +166,8 @@ Future<List<String>> _idbGetAllKeys() async {
     final result = (event['target'] as JSObject)['result'];
     if (result != null) {
       final jsArray = result as JSArray;
-      final arrayLength = (jsArray.getProperty('length'.toJS) as JSNumber).toDartInt;
+      final arrayLength =
+          (jsArray.getProperty('length'.toJS) as JSNumber).toDartInt;
       keys = List.generate(
         arrayLength,
         (i) => (jsArray.getProperty(i.toJS) as JSString).toDart,
@@ -286,7 +287,8 @@ Future<void> copyDatabaseFile(String backupId, {String? dbName}) async {
   // على الويب لا يمكن نسخ ملف OPFS مباشرة
   // يجب استخدام exportToJson من DatabaseBackupService
   if (kDebugMode) {
-    debugPrint('[Backup] Web: copyDatabaseFile not supported, use exportToJson');
+    debugPrint(
+        '[Backup] Web: copyDatabaseFile not supported, use exportToJson');
   }
 }
 
@@ -294,6 +296,7 @@ Future<void> copyDatabaseFile(String backupId, {String? dbName}) async {
 /// على الويب نستخدم importFromJson بدلاً من استعادة الملف
 Future<void> restoreDatabaseFile(String backupId, {String? dbName}) async {
   if (kDebugMode) {
-    debugPrint('[Backup] Web: restoreDatabaseFile not supported, use importFromJson');
+    debugPrint(
+        '[Backup] Web: restoreDatabaseFile not supported, use importFromJson');
   }
 }

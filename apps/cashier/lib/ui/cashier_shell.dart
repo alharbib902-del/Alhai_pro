@@ -10,9 +10,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
+import 'package:alhai_design_system/alhai_design_system.dart'
+    show AlhaiBreakpoints, AlhaiSpacing;
 import 'package:alhai_auth/alhai_auth.dart' show authStateProvider, AuthStatus;
-import 'package:alhai_pos/alhai_pos.dart' show cartStateProvider, heldInvoicesProvider;
+import 'package:alhai_pos/alhai_pos.dart'
+    show cartStateProvider, heldInvoicesProvider;
 import '../widgets/clock_invalid_banner.dart';
 
 /// Navigation item model for the cashier shell
@@ -89,9 +91,21 @@ class _CashierShellState extends ConsumerState<CashierShell> {
       icon: Icons.point_of_sale,
       route: AppRoutes.pos,
       children: [
-        _NavItem(id: 'cash-drawer', label: 'Cash Drawer', icon: Icons.point_of_sale_outlined, route: AppRoutes.cashDrawer),
-        _NavItem(id: 'returns', label: 'Returns', icon: Icons.assignment_return_outlined, route: AppRoutes.returns),
-        _NavItem(id: 'invoices', label: 'Invoices', icon: Icons.receipt_outlined, route: AppRoutes.invoices),
+        _NavItem(
+            id: 'cash-drawer',
+            label: 'Cash Drawer',
+            icon: Icons.point_of_sale_outlined,
+            route: AppRoutes.cashDrawer),
+        _NavItem(
+            id: 'returns',
+            label: 'Returns',
+            icon: Icons.assignment_return_outlined,
+            route: AppRoutes.returns),
+        _NavItem(
+            id: 'invoices',
+            label: 'Invoices',
+            icon: Icons.receipt_outlined,
+            route: AppRoutes.invoices),
       ],
     ),
     _NavItem(
@@ -112,8 +126,16 @@ class _CashierShellState extends ConsumerState<CashierShell> {
       icon: Icons.inventory_2_outlined,
       route: AppRoutes.products,
       children: [
-        _NavItem(id: 'inventory', label: 'Inventory', icon: Icons.warehouse_outlined, route: AppRoutes.inventory),
-        _NavItem(id: 'purchases', label: 'Purchases', icon: Icons.shopping_cart_checkout, route: AppRoutes.cashierReceiving),
+        _NavItem(
+            id: 'inventory',
+            label: 'Inventory',
+            icon: Icons.warehouse_outlined,
+            route: AppRoutes.inventory),
+        _NavItem(
+            id: 'purchases',
+            label: 'Purchases',
+            icon: Icons.shopping_cart_checkout,
+            route: AppRoutes.cashierReceiving),
       ],
     ),
     _NavItem(
@@ -140,8 +162,16 @@ class _CashierShellState extends ConsumerState<CashierShell> {
       icon: Icons.settings_outlined,
       route: AppRoutes.settings,
       children: [
-        _NavItem(id: 'sync', label: 'Sync', icon: Icons.sync_outlined, route: AppRoutes.syncStatus),
-        _NavItem(id: 'notifications', label: 'Notifications', icon: Icons.notifications_outlined, route: AppRoutes.notificationsCenter),
+        _NavItem(
+            id: 'sync',
+            label: 'Sync',
+            icon: Icons.sync_outlined,
+            route: AppRoutes.syncStatus),
+        _NavItem(
+            id: 'notifications',
+            label: 'Notifications',
+            icon: Icons.notifications_outlined,
+            route: AppRoutes.notificationsCenter),
       ],
     ),
     _NavItem(
@@ -159,23 +189,40 @@ class _CashierShellState extends ConsumerState<CashierShell> {
   String _getLocalizedLabel(BuildContext context, _NavItem item) {
     final l10n = AppLocalizations.of(context);
     switch (item.id) {
-      case 'pos': return l10n.pos;
-      case 'sales': return l10n.salesHistory;
-      case 'dashboard': return l10n.dashboard;
-      case 'customers': return l10n.customers;
-      case 'shifts': return l10n.shiftsTitle;
-      case 'cash-drawer': return l10n.cashDrawer;
-      case 'products': return l10n.products;
-      case 'inventory': return l10n.inventory;
-      case 'purchases': return l10n.purchases;
-      case 'returns': return l10n.returns;
-      case 'invoices': return l10n.invoices;
-      case 'reports': return l10n.reports;
-      case 'sync': return l10n.syncStatusTitle;
-      case 'notifications': return l10n.notifications;
-      case 'settings': return l10n.settings;
-      case 'profile': return l10n.profileTitle;
-      default: return item.label;
+      case 'pos':
+        return l10n.pos;
+      case 'sales':
+        return l10n.salesHistory;
+      case 'dashboard':
+        return l10n.dashboard;
+      case 'customers':
+        return l10n.customers;
+      case 'shifts':
+        return l10n.shiftsTitle;
+      case 'cash-drawer':
+        return l10n.cashDrawer;
+      case 'products':
+        return l10n.products;
+      case 'inventory':
+        return l10n.inventory;
+      case 'purchases':
+        return l10n.purchases;
+      case 'returns':
+        return l10n.returns;
+      case 'invoices':
+        return l10n.invoices;
+      case 'reports':
+        return l10n.reports;
+      case 'sync':
+        return l10n.syncStatusTitle;
+      case 'notifications':
+        return l10n.notifications;
+      case 'settings':
+        return l10n.settings;
+      case 'profile':
+        return l10n.profileTitle;
+      default:
+        return item.label;
     }
   }
 
@@ -192,7 +239,8 @@ class _CashierShellState extends ConsumerState<CashierShell> {
     if (location.startsWith('/shifts')) return 'shifts';
     if (location.startsWith('/products')) return 'products';
     if (location.startsWith('/inventory')) return 'inventory';
-    if (location.startsWith('/cashier-receiving') || location.startsWith('/purchase-request')) return 'purchases';
+    if (location.startsWith('/cashier-receiving') ||
+        location.startsWith('/purchase-request')) return 'purchases';
     if (location.startsWith('/returns')) return 'returns';
     if (location.startsWith('/invoices')) return 'invoices';
     if (location.startsWith('/reports')) return 'reports';
@@ -220,7 +268,8 @@ class _CashierShellState extends ConsumerState<CashierShell> {
   @override
   Widget build(BuildContext context) {
     // M115: Use shared breakpoint from design system (905px)
-    final isDesktop = MediaQuery.sizeOf(context).width >= AlhaiBreakpoints.desktop;
+    final isDesktop =
+        MediaQuery.sizeOf(context).width >= AlhaiBreakpoints.desktop;
     final selectedId = _getSelectedId(context);
 
     final layout = isDesktop
@@ -286,10 +335,11 @@ class _CashierShellState extends ConsumerState<CashierShell> {
                       const SizedBox(width: 10),
                       Text(
                         'Al-HAI Cashier',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.primary,
-                        ),
+                        style:
+                            Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.primary,
+                                ),
                       ),
                     ],
                   ),
@@ -299,7 +349,8 @@ class _CashierShellState extends ConsumerState<CashierShell> {
                 // Nav items (grouped)
                 Expanded(
                   child: ListView(
-                    padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs),
+                    padding:
+                        const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs),
                     children: _buildSidebarItems(selectedId),
                   ),
                 ),
@@ -335,10 +386,11 @@ class _CashierShellState extends ConsumerState<CashierShell> {
     final widgets = <Widget>[];
     for (final item in _navItems) {
       final isSelected = item.id == selectedId;
-      final isGroupActive = isSelected ||
-          item.children.any((c) => c.id == selectedId);
+      final isGroupActive =
+          isSelected || item.children.any((c) => c.id == selectedId);
 
-      widgets.add(_buildSidebarItem(item, isSelected || (isGroupActive && !item.hasChildren)));
+      widgets.add(_buildSidebarItem(
+          item, isSelected || (isGroupActive && !item.hasChildren)));
 
       // Render children if group is expanded
       if (item.hasChildren && _expandedGroups.contains(item.id)) {
@@ -360,7 +412,8 @@ class _CashierShellState extends ConsumerState<CashierShell> {
       button: true,
       selected: isSelected,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxxs),
+        padding: const EdgeInsets.symmetric(
+            horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxxs),
         child: Material(
           color: isSelected
               ? AppColors.primary.withValues(alpha: 0.1)
@@ -381,7 +434,8 @@ class _CashierShellState extends ConsumerState<CashierShell> {
               _onNavItemTapped(item.route);
             },
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 10),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AlhaiSpacing.sm, vertical: 10),
               child: Row(
                 children: [
                   Icon(
@@ -396,11 +450,13 @@ class _CashierShellState extends ConsumerState<CashierShell> {
                     child: Text(
                       label,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                        color: isSelected
-                            ? AppColors.primary
-                            : Theme.of(context).colorScheme.onSurface,
-                      ),
+                            fontWeight: isSelected
+                                ? FontWeight.w600
+                                : FontWeight.normal,
+                            color: isSelected
+                                ? AppColors.primary
+                                : Theme.of(context).colorScheme.onSurface,
+                          ),
                     ),
                   ),
                   if (item.hasChildren)
@@ -427,8 +483,10 @@ class _CashierShellState extends ConsumerState<CashierShell> {
       selected: isSelected,
       child: Padding(
         padding: const EdgeInsetsDirectional.only(
-          start: AlhaiSpacing.mdl, end: AlhaiSpacing.xs,
-          top: AlhaiSpacing.xxxs, bottom: AlhaiSpacing.xxxs,
+          start: AlhaiSpacing.mdl,
+          end: AlhaiSpacing.xs,
+          top: AlhaiSpacing.xxxs,
+          bottom: AlhaiSpacing.xxxs,
         ),
         child: Material(
           color: isSelected
@@ -439,7 +497,8 @@ class _CashierShellState extends ConsumerState<CashierShell> {
             borderRadius: BorderRadius.circular(8),
             onTap: () => _onNavItemTapped(item.route),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 8),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AlhaiSpacing.sm, vertical: 8),
               child: Row(
                 children: [
                   Icon(
@@ -453,11 +512,12 @@ class _CashierShellState extends ConsumerState<CashierShell> {
                   Text(
                     label,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                      color: isSelected
-                          ? AppColors.primary
-                          : Theme.of(context).colorScheme.onSurface,
-                    ),
+                          fontWeight:
+                              isSelected ? FontWeight.w600 : FontWeight.normal,
+                          color: isSelected
+                              ? AppColors.primary
+                              : Theme.of(context).colorScheme.onSurface,
+                        ),
                   ),
                 ],
               ),
@@ -505,8 +565,8 @@ class _CashierShellState extends ConsumerState<CashierShell> {
                     Text(
                       'Al-HAI Cashier',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
                   ],
                 ),
@@ -531,33 +591,65 @@ class _CashierShellState extends ConsumerState<CashierShell> {
                         title: Text(
                           label,
                           style: TextStyle(
-                            fontWeight: isGroupActive ? FontWeight.w600 : FontWeight.normal,
+                            fontWeight: isGroupActive
+                                ? FontWeight.w600
+                                : FontWeight.normal,
                             color: isGroupActive ? AppColors.primary : null,
                           ),
                         ),
                         initiallyExpanded: isGroupActive,
                         tilePadding: const EdgeInsets.symmetric(horizontal: 16),
-                        childrenPadding: const EdgeInsetsDirectional.only(start: 16),
+                        childrenPadding:
+                            const EdgeInsetsDirectional.only(start: 16),
                         children: [
                           // Parent route itself
                           ListTile(
-                            leading: Icon(item.icon, size: 20, color: isSelected ? AppColors.primary : null),
-                            title: Text(label, style: TextStyle(fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal, color: isSelected ? AppColors.primary : null, fontSize: 14)),
+                            leading: Icon(item.icon,
+                                size: 20,
+                                color: isSelected ? AppColors.primary : null),
+                            title: Text(label,
+                                style: TextStyle(
+                                    fontWeight: isSelected
+                                        ? FontWeight.w600
+                                        : FontWeight.normal,
+                                    color:
+                                        isSelected ? AppColors.primary : null,
+                                    fontSize: 14)),
                             dense: true,
                             selected: isSelected,
-                            selectedTileColor: AppColors.primary.withValues(alpha: 0.08),
-                            onTap: () { Navigator.of(context).pop(); _onNavItemTapped(item.route); },
+                            selectedTileColor:
+                                AppColors.primary.withValues(alpha: 0.08),
+                            onTap: () {
+                              Navigator.of(context).pop();
+                              _onNavItemTapped(item.route);
+                            },
                           ),
                           ...item.children.map((child) {
                             final childSelected = child.id == selectedId;
-                            final childLabel = _getLocalizedLabel(context, child);
+                            final childLabel =
+                                _getLocalizedLabel(context, child);
                             return ListTile(
-                              leading: Icon(child.icon, size: 20, color: childSelected ? AppColors.primary : null),
-                              title: Text(childLabel, style: TextStyle(fontWeight: childSelected ? FontWeight.w600 : FontWeight.normal, color: childSelected ? AppColors.primary : null, fontSize: 14)),
+                              leading: Icon(child.icon,
+                                  size: 20,
+                                  color:
+                                      childSelected ? AppColors.primary : null),
+                              title: Text(childLabel,
+                                  style: TextStyle(
+                                      fontWeight: childSelected
+                                          ? FontWeight.w600
+                                          : FontWeight.normal,
+                                      color: childSelected
+                                          ? AppColors.primary
+                                          : null,
+                                      fontSize: 14)),
                               dense: true,
                               selected: childSelected,
-                              selectedTileColor: AppColors.primary.withValues(alpha: 0.08),
-                              onTap: () { Navigator.of(context).pop(); _onNavItemTapped(child.route); },
+                              selectedTileColor:
+                                  AppColors.primary.withValues(alpha: 0.08),
+                              onTap: () {
+                                Navigator.of(context).pop();
+                                _onNavItemTapped(child.route);
+                              },
                             );
                           }),
                         ],
@@ -578,7 +670,8 @@ class _CashierShellState extends ConsumerState<CashierShell> {
                         ),
                       ),
                       selected: isSelected,
-                      selectedTileColor: AppColors.primary.withValues(alpha: 0.08),
+                      selectedTileColor:
+                          AppColors.primary.withValues(alpha: 0.08),
                       onTap: () {
                         Navigator.of(context).pop(); // close drawer
                         _onNavItemTapped(item.route);

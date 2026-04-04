@@ -109,7 +109,8 @@ class AiApiService {
         );
       }
       throw AiApiException(
-        message: 'تم تجاوز الحد الأقصى للطلبات. يرجى الانتظار دقيقة ثم المحاولة مرة أخرى.',
+        message:
+            'تم تجاوز الحد الأقصى للطلبات. يرجى الانتظار دقيقة ثم المحاولة مرة أخرى.',
         endpoint: endpoint,
       );
     }
@@ -347,11 +348,14 @@ class AiApiService {
     required String storeId,
     String? saleId,
   }) async {
-    return _post('/ai/fraud', {
-      'org_id': orgId,
-      'store_id': storeId,
-      if (saleId != null) 'sale_id': saleId,
-    }, useCache: false);
+    return _post(
+        '/ai/fraud',
+        {
+          'org_id': orgId,
+          'store_id': storeId,
+          if (saleId != null) 'sale_id': saleId,
+        },
+        useCache: false);
   }
 
   // ==========================================================================
@@ -465,13 +469,16 @@ class AiApiService {
     String? barcode,
     String? description,
   }) async {
-    return _post('/ai/recognize', {
-      'org_id': orgId,
-      'store_id': storeId,
-      if (imageBase64 != null) 'image_base64': imageBase64,
-      if (barcode != null) 'barcode': barcode,
-      if (description != null) 'description': description,
-    }, useCache: false);
+    return _post(
+        '/ai/recognize',
+        {
+          'org_id': orgId,
+          'store_id': storeId,
+          if (imageBase64 != null) 'image_base64': imageBase64,
+          if (barcode != null) 'barcode': barcode,
+          if (description != null) 'description': description,
+        },
+        useCache: false);
   }
 
   // ==========================================================================
@@ -539,13 +546,16 @@ class AiApiService {
     String? conversationId,
     String language = 'ar',
   }) async {
-    return _post('/ai/chat', {
-      'org_id': orgId,
-      'store_id': storeId,
-      'message': message,
-      'language': language,
-      if (conversationId != null) 'conversation_id': conversationId,
-    }, useCache: false);
+    return _post(
+        '/ai/chat',
+        {
+          'org_id': orgId,
+          'store_id': storeId,
+          'message': message,
+          'language': language,
+          if (conversationId != null) 'conversation_id': conversationId,
+        },
+        useCache: false);
   }
 
   // ==========================================================================
@@ -558,12 +568,15 @@ class AiApiService {
     required String query,
     String context = 'general',
   }) async {
-    return _post('/ai/assistant', {
-      'org_id': orgId,
-      'store_id': storeId,
-      'query': query,
-      'context': context,
-    }, useCache: false);
+    return _post(
+        '/ai/assistant',
+        {
+          'org_id': orgId,
+          'store_id': storeId,
+          'query': query,
+          'context': context,
+        },
+        useCache: false);
   }
 }
 
@@ -614,5 +627,6 @@ class AiApiException implements Exception {
               DioExceptionType.receiveTimeout);
 
   /// هل الخطأ بسبب تجاوز حد الطلبات (Rate Limited)؟
-  bool get isRateLimited => originalError == null && message.contains('الحد الأقصى للطلبات');
+  bool get isRateLimited =>
+      originalError == null && message.contains('الحد الأقصى للطلبات');
 }

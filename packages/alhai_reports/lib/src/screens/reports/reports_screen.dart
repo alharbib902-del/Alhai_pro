@@ -19,35 +19,41 @@ import 'zakat_report_screen.dart';
 // ============================================================================
 
 /// Provider for today's sales stats, querying DB directly
-final _reportsTodayStatsProvider = FutureProvider.autoDispose<SalesStats?>((ref) async {
+final _reportsTodayStatsProvider =
+    FutureProvider.autoDispose<SalesStats?>((ref) async {
   final storeId = ref.watch(currentStoreIdProvider);
   if (storeId == null) return null;
   final db = GetIt.I<AppDatabase>();
   final today = DateTime.now();
   final startOfDay = DateTime(today.year, today.month, today.day);
   final endOfDay = startOfDay.add(const Duration(days: 1));
-  return db.salesDao.getSalesStats(storeId, startDate: startOfDay, endDate: endOfDay);
+  return db.salesDao
+      .getSalesStats(storeId, startDate: startOfDay, endDate: endOfDay);
 });
 
 /// Provider for this week's sales stats
-final _reportsWeekStatsProvider = FutureProvider.autoDispose<SalesStats?>((ref) async {
+final _reportsWeekStatsProvider =
+    FutureProvider.autoDispose<SalesStats?>((ref) async {
   final storeId = ref.watch(currentStoreIdProvider);
   if (storeId == null) return null;
   final db = GetIt.I<AppDatabase>();
   final now = DateTime.now();
   final today = DateTime(now.year, now.month, now.day);
   final startOfWeek = today.subtract(Duration(days: today.weekday % 7));
-  return db.salesDao.getSalesStats(storeId, startDate: startOfWeek, endDate: now);
+  return db.salesDao
+      .getSalesStats(storeId, startDate: startOfWeek, endDate: now);
 });
 
 /// Provider for this month's sales stats
-final _reportsMonthStatsProvider = FutureProvider.autoDispose<SalesStats?>((ref) async {
+final _reportsMonthStatsProvider =
+    FutureProvider.autoDispose<SalesStats?>((ref) async {
   final storeId = ref.watch(currentStoreIdProvider);
   if (storeId == null) return null;
   final db = GetIt.I<AppDatabase>();
   final now = DateTime.now();
   final startOfMonth = DateTime(now.year, now.month, 1);
-  return db.salesDao.getSalesStats(storeId, startDate: startOfMonth, endDate: now);
+  return db.salesDao
+      .getSalesStats(storeId, startDate: startOfMonth, endDate: now);
 });
 
 /// Provider for custom date range stats
@@ -56,20 +62,25 @@ final _reportsCustomStatsProvider = FutureProvider.autoDispose
   final storeId = ref.watch(currentStoreIdProvider);
   if (storeId == null) return null;
   final db = GetIt.I<AppDatabase>();
-  return db.salesDao.getSalesStats(storeId, startDate: range.start, endDate: range.end);
+  return db.salesDao
+      .getSalesStats(storeId, startDate: range.start, endDate: range.end);
 });
 
 /// Provider for payment method stats for the period
 final _reportsPeriodPaymentStatsProvider = FutureProvider.autoDispose
-    .family<List<PaymentMethodStats>, ({DateTime start, DateTime end})>((ref, range) async {
+    .family<List<PaymentMethodStats>, ({DateTime start, DateTime end})>(
+        (ref, range) async {
   final storeId = ref.watch(currentStoreIdProvider);
   if (storeId == null) return [];
   final db = GetIt.I<AppDatabase>();
-  return db.salesDao.getPaymentMethodStats(storeId, startDate: range.start, endDate: range.end);
+  return db.salesDao.getPaymentMethodStats(storeId,
+      startDate: range.start, endDate: range.end);
 });
 
 /// Provider for inventory summary
-final _reportsInventorySummaryProvider = FutureProvider.autoDispose<({int total, int lowStock, int outOfStock})>((ref) async {
+final _reportsInventorySummaryProvider =
+    FutureProvider.autoDispose<({int total, int lowStock, int outOfStock})>(
+        (ref) async {
   final storeId = ref.watch(currentStoreIdProvider);
   if (storeId == null) return (total: 0, lowStock: 0, outOfStock: 0);
   final db = GetIt.I<AppDatabase>();
@@ -119,7 +130,10 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
         return (start: startOfMonth, end: now);
       case 'custom':
         if (_startDate != null && _endDate != null) {
-          return (start: _startDate!, end: _endDate!.add(const Duration(days: 1)));
+          return (
+            start: _startDate!,
+            end: _endDate!.add(const Duration(days: 1))
+          );
         }
         return (start: today, end: today.add(const Duration(days: 1)));
       case 'today':
@@ -139,8 +153,10 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
         return ref.watch(_reportsMonthStatsProvider);
       case 'custom':
         if (_startDate != null && _endDate != null) {
-          return ref.watch(_reportsCustomStatsProvider(
-              (start: _startDate!, end: _endDate!.add(const Duration(days: 1)))));
+          return ref.watch(_reportsCustomStatsProvider((
+            start: _startDate!,
+            end: _endDate!.add(const Duration(days: 1))
+          )));
         }
         return ref.watch(_reportsTodayStatsProvider);
       default:
@@ -182,7 +198,8 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
       padding: const EdgeInsets.all(AppSizes.md),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor)),
+        border:
+            Border(bottom: BorderSide(color: Theme.of(context).dividerColor)),
       ),
       child: Row(
         children: [
@@ -207,9 +224,10 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                     const SizedBox(width: AppSizes.sm),
                     Text(
                       l10n.reports,
-                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style:
+                          Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
                     ),
                   ],
                 ),
@@ -217,8 +235,8 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                 Text(
                   l10n.reportsAnalysis,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AppColors.textSecondary,
-                  ),
+                        color: AppColors.textSecondary,
+                      ),
                 ),
               ],
             ),
@@ -267,7 +285,9 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
             isSelected: _selectedPeriod == 'month',
             onTap: () => setState(() => _selectedPeriod = 'month'),
           ),
-          if (_selectedPeriod == 'custom' && _startDate != null && _endDate != null) ...[
+          if (_selectedPeriod == 'custom' &&
+              _startDate != null &&
+              _endDate != null) ...[
             const SizedBox(width: AppSizes.sm),
             _PeriodChip(
               label: '${_formatDate(_startDate!)} - ${_formatDate(_endDate!)}',
@@ -285,7 +305,8 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
     final statsAsync = _getActiveStats();
     final inventoryAsync = ref.watch(_reportsInventorySummaryProvider);
     final dateRange = _getDateRange();
-    final paymentAsync = ref.watch(_reportsPeriodPaymentStatsProvider(dateRange));
+    final paymentAsync =
+        ref.watch(_reportsPeriodPaymentStatsProvider(dateRange));
 
     // Derive sales data from the stats provider
     return statsAsync.when(
@@ -335,9 +356,11 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
             subtitle: l10n.salesReportDesc,
             color: AppColors.primary,
             stats: [
-              _ReportStat(l10n.totalSales, '${salesTotal.toStringAsFixed(0)} ${l10n.sar}'),
+              _ReportStat(l10n.totalSales,
+                  '${salesTotal.toStringAsFixed(0)} ${l10n.sar}'),
               _ReportStat(l10n.invoices, '$salesCount'),
-              _ReportStat(l10n.averageAmount, '${salesAvg.toStringAsFixed(0)} ${l10n.sar}'),
+              _ReportStat(l10n.averageAmount,
+                  '${salesAvg.toStringAsFixed(0)} ${l10n.sar}'),
             ],
           ),
           _ReportData(
@@ -347,7 +370,8 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
             subtitle: l10n.profitReportDesc,
             color: AppColors.success,
             stats: [
-              _ReportStat(l10n.revenue, '${salesTotal.toStringAsFixed(0)} ${l10n.sar}'),
+              _ReportStat(
+                  l10n.revenue, '${salesTotal.toStringAsFixed(0)} ${l10n.sar}'),
               _ReportStat(l10n.costs, '-'),
               _ReportStat(l10n.netProfit, '-'),
             ],
@@ -371,9 +395,11 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
             subtitle: l10n.vatReportDesc,
             color: AppColors.secondary,
             stats: [
-              _ReportStat(l10n.salesTax, '${taxEstimate.toStringAsFixed(0)} ${l10n.sar}'),
+              _ReportStat(l10n.salesTax,
+                  '${taxEstimate.toStringAsFixed(0)} ${l10n.sar}'),
               _ReportStat(l10n.purchasesTax, '-'),
-              _ReportStat(l10n.taxDue, '${taxEstimate.toStringAsFixed(0)} ${l10n.sar}'),
+              _ReportStat(
+                  l10n.taxDue, '${taxEstimate.toStringAsFixed(0)} ${l10n.sar}'),
             ],
           ),
           _ReportData(
@@ -484,7 +510,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
               onTap: () {
                 if (report.screen != null) {
                   Navigator.push(context,
-                    MaterialPageRoute(builder: (_) => report.screen!));
+                      MaterialPageRoute(builder: (_) => report.screen!));
                 } else {
                   _showReportDialog(report);
                 }
@@ -556,13 +582,15 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                       children: [
                         Text(
                           report.title,
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style:
+                              Theme.of(context).textTheme.titleLarge?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                         ),
                         Text(
                           _getPeriodLabel(),
-                          style: const TextStyle(color: AppColors.textSecondary),
+                          style:
+                              const TextStyle(color: AppColors.textSecondary),
                         ),
                       ],
                     ),
@@ -622,12 +650,17 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                     Icon(
                       Icons.bar_chart_rounded,
                       size: 64,
-                      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+                      color: Theme.of(context)
+                          .colorScheme
+                          .primary
+                          .withValues(alpha: 0.3),
                     ),
                     const SizedBox(height: AppSizes.md),
                     Text(
                       l10n.viewReport,
-                      style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                      style: TextStyle(
+                          color:
+                              Theme.of(context).colorScheme.onSurfaceVariant),
                     ),
                   ],
                 ),
@@ -856,7 +889,9 @@ class _ReportCardState extends State<_ReportCard> {
           color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(AppSizes.radiusLg),
           border: Border.all(
-            color: _isHovered ? widget.report.color : Theme.of(context).dividerColor,
+            color: _isHovered
+                ? widget.report.color
+                : Theme.of(context).dividerColor,
           ),
           boxShadow: _isHovered ? AppSizes.shadowMd : AppSizes.shadowSm,
         ),
@@ -890,9 +925,12 @@ class _ReportCardState extends State<_ReportCard> {
                         children: [
                           Text(
                             widget.report.title,
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
                           ),
                           Text(
                             widget.report.subtitle,

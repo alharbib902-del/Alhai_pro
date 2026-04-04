@@ -131,13 +131,11 @@ void main() {
     });
 
     test('AppRoutes defines AI product recognition route', () {
-      expect(
-          AppRoutes.aiProductRecognition, equals('/ai/product-recognition'));
+      expect(AppRoutes.aiProductRecognition, equals('/ai/product-recognition'));
     });
 
     test('AppRoutes defines AI sentiment analysis route', () {
-      expect(
-          AppRoutes.aiSentimentAnalysis, equals('/ai/sentiment-analysis'));
+      expect(AppRoutes.aiSentimentAnalysis, equals('/ai/sentiment-analysis'));
     });
 
     test('AppRoutes defines AI return prediction route', () {
@@ -145,8 +143,7 @@ void main() {
     });
 
     test('AppRoutes defines AI promotion designer route', () {
-      expect(
-          AppRoutes.aiPromotionDesigner, equals('/ai/promotion-designer'));
+      expect(AppRoutes.aiPromotionDesigner, equals('/ai/promotion-designer'));
     });
 
     test('AppRoutes defines AI chat with data route', () {

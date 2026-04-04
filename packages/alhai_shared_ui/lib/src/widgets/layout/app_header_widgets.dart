@@ -28,9 +28,7 @@ class _DarkModeToggle extends StatelessWidget {
                   ? AppColors.surfaceVariantDark
                   : AppColors.backgroundSecondary,
               borderRadius: BorderRadius.circular(8),
-              border: isDarkMode
-                  ? Border.all(color: Colors.white12)
-                  : null,
+              border: isDarkMode ? Border.all(color: Colors.white12) : null,
             ),
             child: AnimatedSwitcher(
               duration: AlhaiDurations.slow,
@@ -105,7 +103,9 @@ class _SearchFieldState extends State<_SearchField> {
         decoration: BoxDecoration(
           color: _isFocused
               ? (Theme.of(context).colorScheme.surface)
-              : (isDarkMode ? AppColors.surfaceDark : AppColors.backgroundSecondary),
+              : (isDarkMode
+                  ? AppColors.surfaceDark
+                  : AppColors.backgroundSecondary),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: _isFocused
@@ -236,7 +236,9 @@ class _HeaderIconButtonState extends State<_HeaderIconButton> {
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: _isHovered
-                  ? (widget.isDark ? Colors.white.withAlpha(26) : AppColors.backgroundSecondary)
+                  ? (widget.isDark
+                      ? Colors.white.withAlpha(26)
+                      : AppColors.backgroundSecondary)
                   : Colors.transparent,
               borderRadius: BorderRadius.circular(10),
             ),
@@ -281,63 +283,67 @@ class _NotificationButtonState extends State<_NotificationButton> {
     return Tooltip(
       message: l10n.notifications,
       child: MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: widget.onTap,
-          borderRadius: BorderRadius.circular(10),
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 150),
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: _isHovered
-                  ? (widget.isDark ? Colors.white.withAlpha(26) : AppColors.backgroundSecondary)
-                  : Colors.transparent,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Icon(
-                  Icons.notifications_outlined,
-                  color: AppColors.getTextSecondary(widget.isDark),
-                  size: 22,
-                ),
-                if (widget.count > 0)
-                  PositionedDirectional(
-                    top: -4,
-                    end: -4,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 5,
-                        vertical: AlhaiSpacing.xxxs,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.error,
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          color: widget.isDark ? AppColors.backgroundDark : Colors.white,
-                          width: 2,
+        onEnter: (_) => setState(() => _isHovered = true),
+        onExit: (_) => setState(() => _isHovered = false),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: widget.onTap,
+            borderRadius: BorderRadius.circular(10),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 150),
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: _isHovered
+                    ? (widget.isDark
+                        ? Colors.white.withAlpha(26)
+                        : AppColors.backgroundSecondary)
+                    : Colors.transparent,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Icon(
+                    Icons.notifications_outlined,
+                    color: AppColors.getTextSecondary(widget.isDark),
+                    size: 22,
+                  ),
+                  if (widget.count > 0)
+                    PositionedDirectional(
+                      top: -4,
+                      end: -4,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 5,
+                          vertical: AlhaiSpacing.xxxs,
                         ),
-                      ),
-                      child: Text(
-                        widget.count > 9 ? '9+' : widget.count.toString(),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
+                        decoration: BoxDecoration(
+                          color: AppColors.error,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: widget.isDark
+                                ? AppColors.backgroundDark
+                                : Colors.white,
+                            width: 2,
+                          ),
+                        ),
+                        child: Text(
+                          widget.count > 9 ? '9+' : widget.count.toString(),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
       ),
-    ),
     );
   }
 }
@@ -382,7 +388,9 @@ class _UserInfoState extends State<_UserInfo> {
             ),
             decoration: BoxDecoration(
               color: _isHovered
-                  ? (isDark ? Colors.white.withAlpha(26) : AppColors.backgroundSecondary)
+                  ? (isDark
+                      ? Colors.white.withAlpha(26)
+                      : AppColors.backgroundSecondary)
                   : Colors.transparent,
               borderRadius: BorderRadius.circular(12),
             ),
@@ -413,7 +421,8 @@ class _UserInfoState extends State<_UserInfo> {
 
                 // الاسم والدور
                 Builder(builder: (context) {
-                  final isDark = Theme.of(context).brightness == Brightness.dark;
+                  final isDark =
+                      Theme.of(context).brightness == Brightness.dark;
                   return Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -442,7 +451,8 @@ class _UserInfoState extends State<_UserInfo> {
 
                 // السهم
                 Builder(builder: (context) {
-                  final isDark = Theme.of(context).brightness == Brightness.dark;
+                  final isDark =
+                      Theme.of(context).brightness == Brightness.dark;
                   return Icon(
                     Icons.keyboard_arrow_down_rounded,
                     color: AppColors.getTextMuted(isDark),

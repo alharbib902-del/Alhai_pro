@@ -51,8 +51,7 @@ class EnvConfig {
       String.fromEnvironment('SUPABASE_ANON_KEY');
 
   /// AI Server
-  static const String aiServerUrl =
-      String.fromEnvironment('AI_SERVER_URL');
+  static const String aiServerUrl = String.fromEnvironment('AI_SERVER_URL');
 
   /// Sentry DSN (error tracking)
   static const String sentryDsn = String.fromEnvironment('SENTRY_DSN');

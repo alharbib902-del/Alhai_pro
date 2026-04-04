@@ -10,9 +10,8 @@ final newAssignmentProvider =
   final ds = GetIt.instance<DeliveryDatasource>();
 
   await for (final deliveries in ds.streamNewAssignments()) {
-    final assigned = deliveries
-        .where((d) => d['status'] == 'assigned')
-        .toList();
+    final assigned =
+        deliveries.where((d) => d['status'] == 'assigned').toList();
 
     if (assigned.isNotEmpty) {
       yield assigned.first;

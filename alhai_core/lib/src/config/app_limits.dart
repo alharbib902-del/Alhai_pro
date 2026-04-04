@@ -10,7 +10,8 @@ class AppLimits {
   static const int maxRetryAttempts = 3;
   static const int maxBackoffMinutes = 60;
   static const int networkTimeoutSeconds = 30;
-  static const Duration networkTimeout = Duration(seconds: networkTimeoutSeconds);
+  static const Duration networkTimeout =
+      Duration(seconds: networkTimeoutSeconds);
 
   // Memory & Cache
   static const int maxAuditLogEntries = 1000;

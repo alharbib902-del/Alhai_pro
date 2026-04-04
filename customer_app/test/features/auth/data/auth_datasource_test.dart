@@ -259,7 +259,8 @@ void main() {
       verify(() => mockAuth.signOut()).called(1);
     });
 
-    test('session null check after logout does not throw (no assert)', () async {
+    test('session null check after logout does not throw (no assert)',
+        () async {
       // Arrange
       when(() => mockAuth.signOut()).thenAnswer((_) async {});
       when(() => mockAuth.currentSession).thenReturn(null);

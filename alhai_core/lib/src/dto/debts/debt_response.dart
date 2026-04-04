@@ -46,8 +46,8 @@ class DebtResponse {
     return Debt(
       id: id,
       storeId: storeId,
-      type: type == 'customer' || type == 'customerDebt' 
-          ? DebtType.customerDebt 
+      type: type == 'customer' || type == 'customerDebt'
+          ? DebtType.customerDebt
           : DebtType.supplierDebt,
       partyId: partyId,
       partyName: partyName,

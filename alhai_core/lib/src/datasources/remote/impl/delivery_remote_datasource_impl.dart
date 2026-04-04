@@ -35,7 +35,8 @@ class DeliveryRemoteDataSourceImpl implements DeliveryRemoteDataSource {
   }
 
   @override
-  Future<DeliveryResponse> updateStatus(String id, DeliveryStatus status) async {
+  Future<DeliveryResponse> updateStatus(
+      String id, DeliveryStatus status) async {
     final response = await _dio.patch('/deliveries/$id/status', data: {
       'status': status.name,
     });

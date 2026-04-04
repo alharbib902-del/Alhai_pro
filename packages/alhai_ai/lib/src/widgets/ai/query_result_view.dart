@@ -30,9 +30,8 @@ class QueryResultView extends StatelessWidget {
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.06)
-              : AppColors.border,
+          color:
+              isDark ? Colors.white.withValues(alpha: 0.06) : AppColors.border,
         ),
         boxShadow: [
           BoxShadow(
@@ -65,7 +64,8 @@ class QueryResultView extends StatelessWidget {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 3),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: AlhaiSpacing.xs, vertical: 3),
                 decoration: BoxDecoration(
                   color: isDark
                       ? Colors.white.withValues(alpha: 0.05)
@@ -164,9 +164,7 @@ class QueryResultView extends StatelessWidget {
       scrollDirection: Axis.horizontal,
       child: DataTable(
         headingRowColor: WidgetStateProperty.all(
-          isDark
-              ? Colors.white.withValues(alpha: 0.04)
-              : AppColors.grey50,
+          isDark ? Colors.white.withValues(alpha: 0.04) : AppColors.grey50,
         ),
         dataRowColor: WidgetStateProperty.all(Colors.transparent),
         border: TableBorder(
@@ -358,12 +356,15 @@ class _BarChartPainter extends CustomPainter {
 
     for (int i = 0; i <= 4; i++) {
       final y = paddingTop + (chartHeight * i / 4);
-      canvas.drawLine(Offset(paddingLeft, y), Offset(size.width - 10, y), gridPaint);
+      canvas.drawLine(
+          Offset(paddingLeft, y), Offset(size.width - 10, y), gridPaint);
 
       final val = maxValue - (maxValue * i / 4);
       final tp = TextPainter(
         text: TextSpan(
-          text: val >= 1000 ? '${(val / 1000).toStringAsFixed(0)}K' : val.toStringAsFixed(0),
+          text: val >= 1000
+              ? '${(val / 1000).toStringAsFixed(0)}K'
+              : val.toStringAsFixed(0),
           style: labelStyle,
         ),
         textDirection: TextDirection.rtl,
@@ -401,7 +402,8 @@ class _BarChartPainter extends CustomPainter {
       )..layout();
       tp.paint(
         canvas,
-        Offset(x + barWidth / 2 - tp.width / 2, size.height - paddingBottom + 8),
+        Offset(
+            x + barWidth / 2 - tp.width / 2, size.height - paddingBottom + 8),
       );
     }
   }
@@ -456,7 +458,8 @@ class _LineChartPainter extends CustomPainter {
 
     // المنطقة المظللة
     if (points.length >= 2) {
-      final areaPath = Path()..moveTo(points.first.dx, paddingTop + chartHeight);
+      final areaPath = Path()
+        ..moveTo(points.first.dx, paddingTop + chartHeight);
       for (final p in points) {
         areaPath.lineTo(p.dx, p.dy);
       }

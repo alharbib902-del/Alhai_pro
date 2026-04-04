@@ -78,16 +78,14 @@ void main() {
 
       final container = ProviderContainer(
         overrides: [
-          customerRecommendationsProvider
-              .overrideWith((ref) async => recs),
+          customerRecommendationsProvider.overrideWith((ref) async => recs),
         ],
       );
       addTearDown(container.dispose);
 
       container.read(customerRecommendationsProvider);
 
-      final filtered =
-          container.read(filteredCustomerRecommendationsProvider);
+      final filtered = container.read(filteredCustomerRecommendationsProvider);
       filtered.whenData((data) {
         expect(data.length, 2);
       });
@@ -120,8 +118,7 @@ void main() {
 
       final container = ProviderContainer(
         overrides: [
-          customerRecommendationsProvider
-              .overrideWith((ref) async => recs),
+          customerRecommendationsProvider.overrideWith((ref) async => recs),
         ],
       );
       addTearDown(container.dispose);
@@ -129,8 +126,7 @@ void main() {
       container.read(segmentFilterProvider.notifier).state =
           CustomerSegment.vip;
 
-      final filtered =
-          container.read(filteredCustomerRecommendationsProvider);
+      final filtered = container.read(filteredCustomerRecommendationsProvider);
       filtered.whenData((data) {
         expect(data.length, 1);
         expect(data.first.segment, CustomerSegment.vip);

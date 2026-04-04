@@ -214,7 +214,9 @@ class ZatcaComplianceChecker {
       if (invoice.buyer!.vatNumber != null &&
           invoice.buyer!.vatNumber!.isNotEmpty) {
         final vat = invoice.buyer!.vatNumber!;
-        if (vat.length != 15 || !vat.startsWith('3') || !RegExp(r'^\d+$').hasMatch(vat)) {
+        if (vat.length != 15 ||
+            !vat.startsWith('3') ||
+            !RegExp(r'^\d+$').hasMatch(vat)) {
           errors.add(const ComplianceError(
             code: 'BT-48',
             field: 'buyer.vatNumber',
@@ -321,8 +323,7 @@ class ZatcaComplianceChecker {
         errors.add(ComplianceError(
           code: 'BT-136',
           field: 'lines[$i].discountAmount',
-          message:
-              'Line ${line.lineId}: discount exceeds line gross amount',
+          message: 'Line ${line.lineId}: discount exceeds line gross amount',
           severity: ComplianceSeverity.error,
         ));
       }
@@ -361,8 +362,7 @@ class ZatcaComplianceChecker {
         errors.add(ComplianceError(
           code: 'KSA-EN16931-09',
           field: 'totalVatAmount',
-          message:
-              'VAT amount ($computedVat) does not match expected '
+          message: 'VAT amount ($computedVat) does not match expected '
               '(${expectedVat.toStringAsFixed(2)}) for taxable amount $taxableAmount',
           severity: ComplianceSeverity.warning,
         ));

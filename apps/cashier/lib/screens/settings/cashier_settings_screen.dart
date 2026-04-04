@@ -12,7 +12,8 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import '../../core/utils/cache_cleaner.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
+import 'package:alhai_design_system/alhai_design_system.dart'
+    show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 
 /// Main settings hub screen
@@ -24,8 +25,7 @@ class CashierSettingsScreen extends ConsumerStatefulWidget {
       _CashierSettingsScreenState();
 }
 
-class _CashierSettingsScreenState
-    extends ConsumerState<CashierSettingsScreen> {
+class _CashierSettingsScreenState extends ConsumerState<CashierSettingsScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -40,20 +40,20 @@ class _CashierSettingsScreenState
           title: l10n.settings,
           subtitle: l10n.managePreferencesSubtitle,
           showSearch: false,
-          onMenuTap: isWideScreen
-              ? null
-              : () => Scaffold.of(context).openDrawer(),
+          onMenuTap:
+              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push(AppRoutes.notificationsCenter),
           notificationsCount: 0,
-          userName:
-              ref.watch(currentUserProvider)?.name ?? l10n.cashCustomer,
+          userName: ref.watch(currentUserProvider)?.name ?? l10n.cashCustomer,
           userRole: l10n.cashier,
           onUserTap: () => context.push(AppRoutes.profile),
         ),
         Expanded(
           child: SingleChildScrollView(
-            padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-            child: _buildGridWithCacheClear(isWideScreen, isMediumScreen, isDark, l10n),
+            padding: EdgeInsets.all(
+                isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+            child: _buildGridWithCacheClear(
+                isWideScreen, isMediumScreen, isDark, l10n),
           ),
         ),
       ],
@@ -243,7 +243,7 @@ class _CashierSettingsScreenState
             content: Row(
               children: [
                 const SizedBox(
-                  width:20,
+                  width: 20,
                   height: 20,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
@@ -357,7 +357,8 @@ class _SettingsTileState extends State<_SettingsTile> {
                 width: 52,
                 height: 52,
                 decoration: BoxDecoration(
-                  color: widget.color.withValues(alpha: widget.isDark ? 0.2 : 0.1),
+                  color:
+                      widget.color.withValues(alpha: widget.isDark ? 0.2 : 0.1),
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: Icon(

@@ -79,8 +79,7 @@ void main() {
         phone: '0507777777',
       ));
 
-      final results =
-          await db.customersDao.searchCustomers('أحمد', 'store-1');
+      final results = await db.customersDao.searchCustomers('أحمد', 'store-1');
       expect(results, hasLength(2));
     });
 
@@ -144,8 +143,7 @@ void main() {
         ),
       );
 
-      final addresses =
-          await db.customersDao.getCustomerAddresses('cust-1');
+      final addresses = await db.customersDao.getCustomerAddresses('cust-1');
       expect(addresses, hasLength(1));
       expect(addresses.first.address, 'شارع الملك فهد، الرياض');
       expect(addresses.first.isDefault, true);
@@ -164,8 +162,7 @@ void main() {
 
       await db.customersDao.deleteAddress('addr-1');
 
-      final addresses =
-          await db.customersDao.getCustomerAddresses('cust-1');
+      final addresses = await db.customersDao.getCustomerAddresses('cust-1');
       expect(addresses, isEmpty);
     });
   });

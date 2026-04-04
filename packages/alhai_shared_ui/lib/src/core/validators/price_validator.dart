@@ -92,7 +92,8 @@ class PriceValidator {
       final decimalPart = cleanPrice.split('.')[1];
       if (decimalPart.length > maxDecimalPlaces) {
         return const ValidationResult.failure(
-          messageAr: 'السعر يجب أن يحتوي على $maxDecimalPlaces منازل عشرية كحد أقصى',
+          messageAr:
+              'السعر يجب أن يحتوي على $maxDecimalPlaces منازل عشرية كحد أقصى',
           messageEn: 'Price can have at most $maxDecimalPlaces decimal places',
           code: 'PRICE_TOO_MANY_DECIMALS',
         );
@@ -124,8 +125,12 @@ class PriceValidator {
 
     if (numericValue == null) {
       return ValidationResult.failure(
-        messageAr: allowDecimal ? 'الكمية غير صحيحة' : 'الكمية يجب أن تكون رقماً صحيحاً',
-        messageEn: allowDecimal ? 'Invalid quantity' : 'Quantity must be a whole number',
+        messageAr: allowDecimal
+            ? 'الكمية غير صحيحة'
+            : 'الكمية يجب أن تكون رقماً صحيحاً',
+        messageEn: allowDecimal
+            ? 'Invalid quantity'
+            : 'Quantity must be a whole number',
         code: 'QUANTITY_INVALID',
       );
     }

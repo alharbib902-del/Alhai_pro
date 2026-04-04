@@ -48,7 +48,8 @@ export 'package:alhai_design_system/alhai_design_system.dart' show AppColors;
 // TODO(cleanup): Many consumer files rely on currentStoreIdProvider through this re-export.
 //   Migrate consumers to: import 'package:alhai_auth/alhai_auth.dart';
 //   Then remove this line.
-export 'package:alhai_auth/alhai_auth.dart' show currentStoreIdProvider, kDefaultStoreId;
+export 'package:alhai_auth/alhai_auth.dart'
+    show currentStoreIdProvider, kDefaultStoreId;
 
 // ─── Providers ──────────────────────────────────────────────────
 export 'src/providers/products_providers.dart';
@@ -132,7 +133,8 @@ export 'src/widgets/common/error_widget.dart';
 export 'src/widgets/common/gradient_button.dart';
 export 'src/widgets/common/language_selector.dart';
 export 'src/widgets/common/lazy_screen.dart';
-export 'src/widgets/common/loading_widget.dart' hide ShimmerList, ShimmerGrid, ShimmerCard;
+export 'src/widgets/common/loading_widget.dart'
+    hide ShimmerList, ShimmerGrid, ShimmerCard;
 export 'src/widgets/common/modern_card.dart';
 export 'src/widgets/common/offline_banner.dart';
 export 'src/widgets/common/performance_dashboard.dart';

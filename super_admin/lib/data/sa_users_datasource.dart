@@ -18,16 +18,14 @@ class SAUsersDatasource {
     var query = _client
         .from('users')
         .select('id, name, phone, email, role, created_at, last_login_at')
-        .inFilter('role', ['super_admin', 'support', 'viewer'])
-        .order('created_at', ascending: false);
+        .inFilter('role', ['super_admin', 'support', 'viewer']);
 
     if (search != null && search.isNotEmpty) {
-      // Escape special PostgREST wildcard characters to prevent injection
       final sanitized = search.replaceAll('%', r'\%').replaceAll('_', r'\_');
       query = query.or('name.ilike.%$sanitized%,email.ilike.%$sanitized%');
     }
 
-    final data = await query;
+    final data = await query.order('created_at', ascending: false);
     return (data as List)
         .map((e) => SAUser.fromJson(e as Map<String, dynamic>))
         .toList();
@@ -35,28 +33,20 @@ class SAUsersDatasource {
 
   /// Fetch a single user by ID.
   Future<SAUser> getUser(String userId) async {
-    final data = await _client
-        .from('users')
-        .select('*')
-        .eq('id', userId)
-        .single();
+    final data =
+        await _client.from('users').select('*').eq('id', userId).single();
     return SAUser.fromJson(data);
   }
 
   /// Update user role.
   Future<void> updateUserRole(String userId, String role) async {
-    await _client
-        .from('users')
-        .update({'role': role})
-        .eq('id', userId);
+    await _client.from('users').update({'role': role}).eq('id', userId);
   }
 
   /// Get total platform user count (all roles across all stores).
   Future<int> getTotalUserCount() async {
-    final result = await _client
-        .from('users')
-        .select('id')
-        .count(CountOption.exact);
+    final result =
+        await _client.from('users').select('id').count(CountOption.exact);
     return result.count;
   }
 
@@ -86,18 +76,12 @@ class SAUsersDatasource {
 
   /// Soft delete a user (set is_active = false).
   Future<void> softDeleteUser(String userId) async {
-    await _client
-        .from('users')
-        .update({'is_active': false})
-        .eq('id', userId);
+    await _client.from('users').update({'is_active': false}).eq('id', userId);
   }
 
   /// Restore a soft-deleted user.
   Future<void> restoreUser(String userId) async {
-    await _client
-        .from('users')
-        .update({'is_active': true})
-        .eq('id', userId);
+    await _client.from('users').update({'is_active': true}).eq('id', userId);
   }
 
   /// Check if a user is currently online (last_sign_in within 5 minutes).

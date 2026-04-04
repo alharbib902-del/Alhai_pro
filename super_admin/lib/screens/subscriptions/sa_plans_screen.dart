@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
+import '../../data/models/sa_subscription_model.dart';
 import '../../providers/sa_providers.dart';
 
 /// Plans management -- real plan data from Supabase.
@@ -43,34 +44,39 @@ class SAPlansScreen extends ConsumerWidget {
               ],
             ),
             const SizedBox(height: AlhaiSpacing.lg),
-
             plansAsync.when(
-              loading: () =>
-                  const Center(child: CircularProgressIndicator()),
+              loading: () => const Center(child: CircularProgressIndicator()),
               error: (e, _) => Center(child: Text('Error: $e')),
               data: (plans) {
                 final subCounts = subCountsAsync.valueOrNull ?? {};
 
                 final planColors = {
-                  'basic': isDark ? const Color(0xFF60A5FA) : const Color(0xFF2563EB),
-                  'advanced': isDark ? const Color(0xFFA78BFA) : const Color(0xFF7C3AED),
-                  'professional': isDark ? const Color(0xFF2DD4BF) : const Color(0xFF0D9488),
+                  'basic': isDark
+                      ? const Color(0xFF60A5FA)
+                      : const Color(0xFF2563EB),
+                  'advanced': isDark
+                      ? const Color(0xFFA78BFA)
+                      : const Color(0xFF7C3AED),
+                  'professional': isDark
+                      ? const Color(0xFF2DD4BF)
+                      : const Color(0xFF0D9488),
                 };
 
                 final planCards = plans.map((plan) {
                   final slug = plan.slug ?? '';
                   final name = plan.name ?? slug;
-                  final monthlyPrice =
-                      plan.monthlyPrice?.toInt() ?? 0;
+                  final monthlyPrice = plan.monthlyPrice?.toInt() ?? 0;
                   final yearlyPrice =
-                      plan.yearlyPrice?.toInt() ??
-                          (monthlyPrice * 10);
+                      plan.yearlyPrice?.toInt() ?? (monthlyPrice * 10);
                   final maxBranches = plan.maxBranches ?? 0;
                   final maxProducts = plan.maxProducts ?? 0;
                   final maxUsers = plan.maxUsers ?? 0;
                   final features = plan.features ?? [];
                   final subscribers = subCounts[slug] ?? 0;
-                  final color = planColors[slug] ?? (isDark ? const Color(0xFF9CA3AF) : const Color(0xFF4B5563));
+                  final color = planColors[slug] ??
+                      (isDark
+                          ? const Color(0xFF9CA3AF)
+                          : const Color(0xFF4B5563));
 
                   return _PlanCard(
                     name: name,
@@ -80,12 +86,16 @@ class SAPlansScreen extends ConsumerWidget {
                         maxBranches == 0 ? 'Unlimited' : '$maxBranches',
                     maxProducts:
                         maxProducts == 0 ? 'Unlimited' : _fmt(maxProducts),
-                    maxUsers:
-                        maxUsers == 0 ? 'Unlimited' : '$maxUsers',
+                    maxUsers: maxUsers == 0 ? 'Unlimited' : '$maxUsers',
                     color: color,
                     subscribers: subscribers,
                     isPopular: slug == 'advanced',
                     features: features,
+                    onEdit: () => _showEditPlanDialog(
+                      context,
+                      ref,
+                      plan,
+                    ),
                   );
                 }).toList();
 
@@ -107,8 +117,7 @@ class SAPlansScreen extends ConsumerWidget {
                 return Column(
                   children: planCards.map((card) {
                     return Padding(
-                      padding: const EdgeInsets.only(
-                          bottom: AlhaiSpacing.md),
+                      padding: const EdgeInsets.only(bottom: AlhaiSpacing.md),
                       child: card,
                     );
                   }).toList(),
@@ -132,6 +141,113 @@ class SAPlansScreen extends ConsumerWidget {
       return buffer.toString();
     }
     return n.toString();
+  }
+
+  void _showEditPlanDialog(
+    BuildContext context,
+    WidgetRef ref,
+    SAPlan plan,
+  ) {
+    final l10n = AppLocalizations.of(context);
+    final nameCtrl = TextEditingController(text: plan.name ?? '');
+    final priceCtrl = TextEditingController(
+        text: plan.monthlyPrice?.toStringAsFixed(0) ?? '');
+    final yearlyCtrl =
+        TextEditingController(text: plan.yearlyPrice?.toStringAsFixed(0) ?? '');
+    final branchCtrl = TextEditingController(text: '${plan.maxBranches ?? 0}');
+    final productCtrl = TextEditingController(text: '${plan.maxProducts ?? 0}');
+    final userCtrl = TextEditingController(text: '${plan.maxUsers ?? 0}');
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.editPlan),
+        content: SizedBox(
+          width: 400,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nameCtrl,
+                decoration: InputDecoration(labelText: l10n.planName),
+              ),
+              const SizedBox(height: AlhaiSpacing.md),
+              TextField(
+                controller: priceCtrl,
+                decoration: InputDecoration(labelText: l10n.monthlyPrice),
+                keyboardType: TextInputType.number,
+              ),
+              const SizedBox(height: AlhaiSpacing.md),
+              TextField(
+                controller: yearlyCtrl,
+                decoration: InputDecoration(labelText: l10n.yearlyPrice),
+                keyboardType: TextInputType.number,
+              ),
+              const SizedBox(height: AlhaiSpacing.md),
+              TextField(
+                controller: branchCtrl,
+                decoration: InputDecoration(labelText: l10n.maxBranches),
+                keyboardType: TextInputType.number,
+              ),
+              const SizedBox(height: AlhaiSpacing.md),
+              TextField(
+                controller: productCtrl,
+                decoration: InputDecoration(labelText: l10n.maxProducts),
+                keyboardType: TextInputType.number,
+              ),
+              const SizedBox(height: AlhaiSpacing.md),
+              TextField(
+                controller: userCtrl,
+                decoration: InputDecoration(labelText: l10n.maxUsers),
+                keyboardType: TextInputType.number,
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () async {
+              final ds = ref.read(saSubscriptionsDatasourceProvider);
+              final updates = <String, dynamic>{};
+              final newName = nameCtrl.text.trim();
+              if (newName.isNotEmpty && newName != plan.name) {
+                updates['name'] = newName;
+              }
+              final newPrice = double.tryParse(priceCtrl.text);
+              if (newPrice != null && newPrice != plan.monthlyPrice) {
+                updates['monthly_price'] = newPrice;
+              }
+              final newYearly = double.tryParse(yearlyCtrl.text);
+              if (newYearly != null && newYearly != plan.yearlyPrice) {
+                updates['yearly_price'] = newYearly;
+              }
+              final newBranches = int.tryParse(branchCtrl.text);
+              if (newBranches != null && newBranches != plan.maxBranches) {
+                updates['max_branches'] = newBranches;
+              }
+              final newProducts = int.tryParse(productCtrl.text);
+              if (newProducts != null && newProducts != plan.maxProducts) {
+                updates['max_products'] = newProducts;
+              }
+              final newUsers = int.tryParse(userCtrl.text);
+              if (newUsers != null && newUsers != plan.maxUsers) {
+                updates['max_users'] = newUsers;
+              }
+              if (updates.isNotEmpty) {
+                await ds.updatePlan(plan.id, updates);
+                ref.invalidate(saPlansListProvider);
+              }
+              if (ctx.mounted) Navigator.pop(ctx);
+            },
+            child: Text(l10n.save),
+          ),
+        ],
+      ),
+    );
   }
 
   void _showPlanDialog(BuildContext context, WidgetRef ref) {
@@ -158,22 +274,19 @@ class SAPlansScreen extends ConsumerWidget {
               const SizedBox(height: AlhaiSpacing.md),
               TextField(
                 controller: priceCtrl,
-                decoration:
-                    InputDecoration(labelText: l10n.monthlyPrice),
+                decoration: InputDecoration(labelText: l10n.monthlyPrice),
                 keyboardType: TextInputType.number,
               ),
               const SizedBox(height: AlhaiSpacing.md),
               TextField(
                 controller: branchCtrl,
-                decoration:
-                    InputDecoration(labelText: l10n.maxBranches),
+                decoration: InputDecoration(labelText: l10n.maxBranches),
                 keyboardType: TextInputType.number,
               ),
               const SizedBox(height: AlhaiSpacing.md),
               TextField(
                 controller: productCtrl,
-                decoration:
-                    InputDecoration(labelText: l10n.maxProducts),
+                decoration: InputDecoration(labelText: l10n.maxProducts),
                 keyboardType: TextInputType.number,
               ),
               const SizedBox(height: AlhaiSpacing.md),
@@ -195,17 +308,14 @@ class SAPlansScreen extends ConsumerWidget {
               final ds = ref.read(saSubscriptionsDatasourceProvider);
               final name = nameCtrl.text.trim();
               final slug = name.toLowerCase().replaceAll(' ', '_');
-              final price =
-                  double.tryParse(priceCtrl.text) ?? 0;
+              final price = double.tryParse(priceCtrl.text) ?? 0;
               await ds.createPlan(
                 name: name,
                 slug: slug,
                 monthlyPrice: price,
                 yearlyPrice: price * 10,
-                maxBranches:
-                    int.tryParse(branchCtrl.text) ?? 0,
-                maxProducts:
-                    int.tryParse(productCtrl.text) ?? 0,
+                maxBranches: int.tryParse(branchCtrl.text) ?? 0,
+                maxProducts: int.tryParse(productCtrl.text) ?? 0,
                 maxUsers: int.tryParse(userCtrl.text) ?? 0,
               );
               ref.invalidate(saPlansListProvider);
@@ -230,6 +340,7 @@ class _PlanCard extends StatelessWidget {
   final int subscribers;
   final bool isPopular;
   final List<String> features;
+  final VoidCallback? onEdit;
 
   const _PlanCard({
     required this.name,
@@ -242,6 +353,7 @@ class _PlanCard extends StatelessWidget {
     required this.subscribers,
     this.isPopular = false,
     required this.features,
+    this.onEdit,
   });
 
   @override
@@ -289,22 +401,20 @@ class _PlanCard extends StatelessWidget {
                     ),
                     decoration: BoxDecoration(
                       color: color.withValues(alpha: 0.1),
-                      borderRadius:
-                          BorderRadius.circular(AlhaiRadius.chip),
+                      borderRadius: BorderRadius.circular(AlhaiRadius.chip),
                     ),
                     child: Text(
                       'POPULAR',
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: color,
-                        fontWeight: FontWeight.bold,
-                      ),
+                            color: color,
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
                   ),
                 ],
               ],
             ),
             const SizedBox(height: AlhaiSpacing.md),
-
             Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
@@ -333,7 +443,6 @@ class _PlanCard extends StatelessWidget {
               ),
             ),
             const SizedBox(height: AlhaiSpacing.md),
-
             Container(
               padding: const EdgeInsets.symmetric(
                 horizontal: AlhaiSpacing.sm,
@@ -352,11 +461,9 @@ class _PlanCard extends StatelessWidget {
               ),
             ),
             const Divider(height: AlhaiSpacing.xl),
-
             _LimitRow(label: l10n.maxBranches, value: maxBranches),
             _LimitRow(label: l10n.maxProducts, value: maxProducts),
             _LimitRow(label: l10n.maxUsers, value: maxUsers),
-
             if (features.isNotEmpty) ...[
               const Divider(height: AlhaiSpacing.xl),
               Text(
@@ -367,27 +474,24 @@ class _PlanCard extends StatelessWidget {
               ),
               const SizedBox(height: AlhaiSpacing.xs),
               ...features.map((f) => Padding(
-                    padding:
-                        const EdgeInsets.only(bottom: AlhaiSpacing.xxs),
+                    padding: const EdgeInsets.only(bottom: AlhaiSpacing.xxs),
                     child: Row(
                       children: [
                         Icon(Icons.check_circle_rounded,
                             size: 16, color: color),
                         const SizedBox(width: AlhaiSpacing.xs),
                         Expanded(
-                          child: Text(f,
-                              style: theme.textTheme.bodySmall),
+                          child: Text(f, style: theme.textTheme.bodySmall),
                         ),
                       ],
                     ),
                   )),
             ],
             const SizedBox(height: AlhaiSpacing.md),
-
             SizedBox(
               width: double.infinity,
               child: OutlinedButton.icon(
-                onPressed: () {},
+                onPressed: onEdit,
                 icon: const Icon(Icons.edit_rounded, size: 16),
                 label: Text(l10n.editPlan),
               ),

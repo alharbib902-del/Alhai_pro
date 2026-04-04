@@ -51,8 +51,7 @@ void main() {
         expect(PhoneValidationService.isValidPhone('512345678'), isTrue);
         expect(PhoneValidationService.isValidPhone('966512345678'), isTrue);
         expect(PhoneValidationService.isValidPhone('+966512345678'), isTrue);
-        expect(
-            PhoneValidationService.isValidPhone('00966512345678'), isTrue);
+        expect(PhoneValidationService.isValidPhone('00966512345678'), isTrue);
       });
 
       test('should reject empty strings', () {

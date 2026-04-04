@@ -6,7 +6,8 @@
 library;
 
 import 'dart:async';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
+import 'package:alhai_design_system/alhai_design_system.dart'
+    show AlhaiBreakpoints, AlhaiSpacing;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -96,7 +97,8 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(AppLocalizations.of(context).productSearchFailed('$e')),
+            content:
+                Text(AppLocalizations.of(context).productSearchFailed('$e')),
             backgroundColor: AppColors.error,
           ),
         );
@@ -112,8 +114,7 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
     try {
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) return;
-      final results =
-          await _db.customersDao.searchCustomers(query, storeId);
+      final results = await _db.customersDao.searchCustomers(query, storeId);
       if (mounted) {
         setState(() => _customerResults = results.take(5).toList());
       }
@@ -122,7 +123,8 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(AppLocalizations.of(context).customerSearchFailed('$e')),
+            content:
+                Text(AppLocalizations.of(context).customerSearchFailed('$e')),
             backgroundColor: AppColors.error,
           ),
         );
@@ -188,9 +190,8 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
           subtitle: _getDateSubtitle(l10n),
           showSearch: false,
           searchHint: l10n.searchPlaceholder,
-          onMenuTap: isWideScreen
-              ? null
-              : () => Scaffold.of(context).openDrawer(),
+          onMenuTap:
+              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 3,
           userName: user?.name ?? l10n.cashCustomer,
@@ -199,7 +200,8 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
         ),
         Expanded(
           child: SingleChildScrollView(
-            padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+            padding: EdgeInsets.all(
+                isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
             child: isWideScreen
                 ? Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -231,9 +233,15 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       _buildCustomerCard(colorScheme, l10n),
-                      SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+                      SizedBox(
+                          height: isMediumScreen
+                              ? AlhaiSpacing.lg
+                              : AlhaiSpacing.md),
                       _buildItemsCard(colorScheme, l10n),
-                      SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+                      SizedBox(
+                          height: isMediumScreen
+                              ? AlhaiSpacing.lg
+                              : AlhaiSpacing.md),
                       _buildTotalsCard(colorScheme, l10n),
                       const SizedBox(height: AlhaiSpacing.lg),
                       _buildActionsCard(colorScheme, l10n),
@@ -294,7 +302,8 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
     );
   }
 
-  Widget _buildSelectedCustomerChip(ColorScheme colorScheme, AppLocalizations l10n) {
+  Widget _buildSelectedCustomerChip(
+      ColorScheme colorScheme, AppLocalizations l10n) {
     final customer = _selectedCustomer!;
     return InkWell(
       onTap: () => setState(() => _showCustomerSearch = true),
@@ -302,7 +311,10 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
       child: Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: AppColors.primary.withValues(alpha: Theme.of(context).brightness == Brightness.dark ? 0.12 : 0.06),
+          color: AppColors.primary.withValues(
+              alpha: Theme.of(context).brightness == Brightness.dark
+                  ? 0.12
+                  : 0.06),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
               color: AppColors.primary.withValues(alpha: 0.4), width: 2),
@@ -339,14 +351,12 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                     textDirection: TextDirection.ltr,
                     child: Text(customer.phone ?? '',
                         style: TextStyle(
-                            fontSize: 12,
-                            color: colorScheme.onSurfaceVariant)),
+                            fontSize: 12, color: colorScheme.onSurfaceVariant)),
                   ),
                 ],
               ),
             ),
-            const Icon(Icons.edit_rounded,
-                size: 18, color: AppColors.primary),
+            const Icon(Icons.edit_rounded, size: 18, color: AppColors.primary),
           ],
         ),
       ),
@@ -363,8 +373,7 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
           decoration: InputDecoration(
             hintText: l10n.searchPlaceholder,
             hintStyle: TextStyle(color: colorScheme.outline),
-            prefixIcon: Icon(Icons.search_rounded,
-                color: colorScheme.outline),
+            prefixIcon: Icon(Icons.search_rounded, color: colorScheme.outline),
             filled: true,
             fillColor: colorScheme.surfaceContainerHighest,
             border: OutlineInputBorder(
@@ -377,11 +386,10 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide:
-                  const BorderSide(color: AppColors.primary, width: 2),
+              borderSide: const BorderSide(color: AppColors.primary, width: 2),
             ),
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: 14),
+            contentPadding: const EdgeInsets.symmetric(
+                horizontal: AlhaiSpacing.md, vertical: 14),
           ),
         ),
         if (_customerResults.isNotEmpty)
@@ -417,14 +425,12 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                     child: Row(
                       children: [
                         Icon(Icons.person_outline_rounded,
-                            size: 18,
-                            color: colorScheme.outline),
+                            size: 18, color: colorScheme.outline),
                         const SizedBox(width: AlhaiSpacing.sm),
                         Expanded(
                           child: Text(customer.name,
                               style: TextStyle(
-                                  fontSize: 14,
-                                  color: colorScheme.onSurface)),
+                                  fontSize: 14, color: colorScheme.onSurface)),
                         ),
                         Directionality(
                           textDirection: TextDirection.ltr,
@@ -500,26 +506,23 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
             onChanged: _onProductSearchChanged,
             decoration: InputDecoration(
               hintText: l10n.searchPlaceholder,
-              hintStyle:
-                  TextStyle(color: colorScheme.outline),
-              prefixIcon: Icon(Icons.search_rounded,
-                  color: colorScheme.outline),
+              hintStyle: TextStyle(color: colorScheme.outline),
+              prefixIcon:
+                  Icon(Icons.search_rounded, color: colorScheme.outline),
               filled: true,
               fillColor: colorScheme.surfaceContainerHighest,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide:
-                    BorderSide(color: colorScheme.outlineVariant),
+                borderSide: BorderSide(color: colorScheme.outlineVariant),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide:
-                    BorderSide(color: colorScheme.outlineVariant),
+                borderSide: BorderSide(color: colorScheme.outlineVariant),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(
-                    color: AppColors.primary, width: 2),
+                borderSide:
+                    const BorderSide(color: AppColors.primary, width: 2),
               ),
               contentPadding: const EdgeInsets.symmetric(
                   horizontal: AlhaiSpacing.md, vertical: 14),
@@ -547,18 +550,17 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                     borderRadius: BorderRadius.circular(12),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+                          horizontal: AlhaiSpacing.md,
+                          vertical: AlhaiSpacing.sm),
                       child: Row(
                         children: [
                           Icon(Icons.inventory_2_outlined,
-                              size: 18,
-                              color: colorScheme.outline),
+                              size: 18, color: colorScheme.outline),
                           const SizedBox(width: AlhaiSpacing.sm),
                           Expanded(
                             child: Text(product.name,
                                 style: TextStyle(
-                                    fontSize: 14,
-                                    color: colorScheme.onSurface),
+                                    fontSize: 14, color: colorScheme.onSurface),
                                 overflow: TextOverflow.ellipsis),
                           ),
                           Text(
@@ -587,8 +589,7 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                 color: colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                    color: colorScheme.outlineVariant
-                        .withValues(alpha: 0.5)),
+                    color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
               ),
               child: Row(
                 children: [
@@ -602,8 +603,7 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                                 fontWeight: FontWeight.w600,
                                 color: colorScheme.onSurface),
                             overflow: TextOverflow.ellipsis),
-                        Text(
-                            '${item.price.toStringAsFixed(2)} ${l10n.sar}',
+                        Text('${item.price.toStringAsFixed(2)} ${l10n.sar}',
                             style: TextStyle(
                                 fontSize: 12,
                                 color: colorScheme.onSurfaceVariant)),
@@ -614,14 +614,12 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       IconButton(
-                        onPressed: () =>
-                            _updateQty(index, item.qty - 1),
-                        icon: const Icon(
-                            Icons.remove_circle_outline_rounded),
+                        onPressed: () => _updateQty(index, item.qty - 1),
+                        icon: const Icon(Icons.remove_circle_outline_rounded),
                         iconSize: 22,
                         color: colorScheme.onSurfaceVariant,
-                        constraints: const BoxConstraints(
-                            minWidth: 48, minHeight: 48),
+                        constraints:
+                            const BoxConstraints(minWidth: 48, minHeight: 48),
                         padding: EdgeInsets.zero,
                         tooltip: l10n.decreaseQuantity,
                       ),
@@ -635,14 +633,12 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                                 color: colorScheme.onSurface)),
                       ),
                       IconButton(
-                        onPressed: () =>
-                            _updateQty(index, item.qty + 1),
-                        icon: const Icon(
-                            Icons.add_circle_outline_rounded),
+                        onPressed: () => _updateQty(index, item.qty + 1),
+                        icon: const Icon(Icons.add_circle_outline_rounded),
                         iconSize: 22,
                         color: AppColors.primary,
-                        constraints: const BoxConstraints(
-                            minWidth: 48, minHeight: 48),
+                        constraints:
+                            const BoxConstraints(minWidth: 48, minHeight: 48),
                         padding: EdgeInsets.zero,
                         tooltip: l10n.increaseQuantity,
                       ),
@@ -658,8 +654,8 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                     onPressed: () => _removeItem(index),
                     icon: const Icon(Icons.close_rounded, size: 18),
                     color: AppColors.error,
-                    constraints: const BoxConstraints(
-                        minWidth: 48, minHeight: 48),
+                    constraints:
+                        const BoxConstraints(minWidth: 48, minHeight: 48),
                     padding: EdgeInsets.zero,
                     tooltip: l10n.delete,
                   ),
@@ -714,8 +710,7 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
             children: [
               Text(l10n.discount,
                   style: TextStyle(
-                      fontSize: 13,
-                      color: colorScheme.onSurfaceVariant)),
+                      fontSize: 13, color: colorScheme.onSurfaceVariant)),
               const Spacer(),
               SizedBox(
                 width: 120,
@@ -733,24 +728,21 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                     hintText: '0',
                     suffixText: l10n.sar,
                     suffixStyle: TextStyle(
-                        fontSize: 12,
-                        color: colorScheme.onSurfaceVariant),
+                        fontSize: 12, color: colorScheme.onSurfaceVariant),
                     contentPadding: const EdgeInsets.symmetric(
                         horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xs),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(
-                          color: colorScheme.outlineVariant),
+                      borderSide: BorderSide(color: colorScheme.outlineVariant),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(
-                          color: colorScheme.outlineVariant),
+                      borderSide: BorderSide(color: colorScheme.outlineVariant),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
-                      borderSide: const BorderSide(
-                          color: AppColors.primary, width: 2),
+                      borderSide:
+                          const BorderSide(color: AppColors.primary, width: 2),
                     ),
                     filled: true,
                     fillColor: colorScheme.surfaceContainerHighest,
@@ -761,10 +753,8 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
             ],
           ),
           const SizedBox(height: AlhaiSpacing.xs),
-          _buildTotalRow(
-              '${l10n.tax} (15%)',
-              '${_tax.toStringAsFixed(2)} ${l10n.sar}',
-              colorScheme),
+          _buildTotalRow('${l10n.tax} (15%)',
+              '${_tax.toStringAsFixed(2)} ${l10n.sar}', colorScheme),
           Divider(height: 24, color: colorScheme.outlineVariant),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -793,9 +783,8 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(label,
-            style: TextStyle(
-                fontSize: 13,
-                color: colorScheme.onSurfaceVariant)),
+            style:
+                TextStyle(fontSize: 13, color: colorScheme.onSurfaceVariant)),
         Text(value,
             style: TextStyle(
                 fontSize: 13,
@@ -826,8 +815,8 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                   )
                 : const Icon(Icons.check_circle_rounded, size: 20),
             label: Text(l10n.finalizeInvoice,
-                style: const TextStyle(
-                    fontSize: 16, fontWeight: FontWeight.w600)),
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
             style: FilledButton.styleFrom(
               backgroundColor: AppColors.primary,
               foregroundColor: colorScheme.onPrimary,
@@ -846,8 +835,8 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                 : () => _saveInvoice(true, l10n),
             icon: const Icon(Icons.save_outlined, size: 20),
             label: Text(l10n.saveAsDraft,
-                style: const TextStyle(
-                    fontSize: 16, fontWeight: FontWeight.w600)),
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
             style: OutlinedButton.styleFrom(
               foregroundColor: colorScheme.onSurfaceVariant,
               side: BorderSide(color: colorScheme.outlineVariant),

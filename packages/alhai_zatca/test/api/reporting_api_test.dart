@@ -15,7 +15,7 @@ void main() {
   late ReportingApi reportingApi;
   late MockZatcaApiClient mockClient;
 
-  final testCertificate = CertificateInfo(
+  const testCertificate = CertificateInfo(
     certificatePem: 'cert',
     privateKeyPem: 'key',
     csid: 'csid',
@@ -27,19 +27,6 @@ void main() {
     isSuccess: true,
     statusCode: 200,
     reportingStatus: ReportingStatus.reported,
-  );
-
-  const warningResponse = ZatcaResponse(
-    isSuccess: true,
-    statusCode: 202,
-    reportingStatus: ReportingStatus.reported,
-    warnings: [
-      ZatcaValidationResult(
-        type: 'WARNING',
-        code: 'BR-KSA-01',
-        message: 'Minor formatting issue',
-      ),
-    ],
   );
 
   const rejectedResponse = ZatcaResponse(

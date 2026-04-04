@@ -105,6 +105,7 @@ class OfflineManager {
   static OfflineManager get instance => _instance ??= OfflineManager._();
 
   final Connectivity _connectivity = Connectivity();
+
   /// Subscription type is dynamic to support both connectivity_plus v5
   /// (StreamSubscription<ConnectivityResult>) and v6+ (StreamSubscription<List<ConnectivityResult>>).
   StreamSubscription<dynamic>? _subscription;
@@ -244,8 +245,10 @@ mixin OfflineAwareMixin {
   StreamSubscription<NetworkConnectionState>? _offlineSubscription;
 
   /// الاشتراك في تغيرات الاتصال
-  void subscribeToConnectivity(void Function(NetworkConnectionState) onChanged) {
-    _offlineSubscription = OfflineManager.instance.stateStream.listen(onChanged);
+  void subscribeToConnectivity(
+      void Function(NetworkConnectionState) onChanged) {
+    _offlineSubscription =
+        OfflineManager.instance.stateStream.listen(onChanged);
   }
 
   /// إلغاء الاشتراك
@@ -298,7 +301,8 @@ class PendingOperationsManager {
   static const String _storageKey = 'pending_offline_operations';
 
   /// Map of operation type → executor factory for restoring persisted ops
-  final Map<String, Future<dynamic> Function(Map<String, dynamic>)> _executors = {};
+  final Map<String, Future<dynamic> Function(Map<String, dynamic>)> _executors =
+      {};
 
   List<OfflineOperation> get operations => List.unmodifiable(_operations);
 
@@ -350,7 +354,8 @@ class PendingOperationsManager {
           execute: executor != null
               ? () => executor(payload)
               : () async {
-                  debugPrint('[PendingOps] No executor registered for type: $type');
+                  debugPrint(
+                      '[PendingOps] No executor registered for type: $type');
                 },
           createdAt: createdAt,
           retryCount: retryCount,
@@ -358,7 +363,8 @@ class PendingOperationsManager {
       }
 
       OfflineManager.instance.updatePendingCount(_operations.length);
-      debugPrint('[PendingOps] Restored ${_operations.length} operations from storage');
+      debugPrint(
+          '[PendingOps] Restored ${_operations.length} operations from storage');
     } catch (e) {
       debugPrint('[PendingOps] Failed to restore from storage: $e');
     }
@@ -368,12 +374,14 @@ class PendingOperationsManager {
   Future<void> _persistToStorage() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final items = _operations.map((op) => {
-        'id': op.id,
-        'type': op.type,
-        'retryCount': op.retryCount,
-        'createdAt': op.createdAt.toIso8601String(),
-      }).toList();
+      final items = _operations
+          .map((op) => {
+                'id': op.id,
+                'type': op.type,
+                'retryCount': op.retryCount,
+                'createdAt': op.createdAt.toIso8601String(),
+              })
+          .toList();
       await prefs.setString(_storageKey, jsonEncode(items));
     } catch (e) {
       debugPrint('[PendingOps] Failed to persist to storage: $e');

@@ -22,13 +22,13 @@ class SASubscriptionsDatasource {
     var query = _client.from('subscriptions').select('''
       id, status, plan, org_id, amount, currency, billing_cycle,
       current_period_start, current_period_end, created_at
-    ''').order('created_at', ascending: false);
+    ''');
 
     if (statusFilter != null && statusFilter != 'all') {
       query = query.eq('status', statusFilter);
     }
 
-    final data = await query;
+    final data = await query.order('created_at', ascending: false);
     // Enrich with org/store name lookup
     final subs = <SASubscription>[];
     for (final row in data as List) {
@@ -117,8 +117,9 @@ class SASubscriptionsDatasource {
   }
 
   List<String> _parseFeatures(dynamic raw) {
-    if (raw is List) return raw.map((e) => e.toString()).toList();
-    if (raw is Map) return raw.keys.toList();
+    if (raw is List)
+      return raw.map((e) => e.toString()).toList().cast<String>();
+    if (raw is Map) return raw.keys.map((k) => k.toString()).toList();
     return [];
   }
 
@@ -149,16 +150,20 @@ class SASubscriptionsDatasource {
     List<String> features = const [],
   }) async {
     try {
-      final data = await _client.from('sa_plans').insert({
-        'name': name,
-        'slug': slug,
-        'monthly_price': monthlyPrice,
-        'yearly_price': yearlyPrice,
-        'max_branches': maxBranches,
-        'max_products': maxProducts,
-        'max_users': maxUsers,
-        'features': features,
-      }).select().single();
+      final data = await _client
+          .from('sa_plans')
+          .insert({
+            'name': name,
+            'slug': slug,
+            'monthly_price': monthlyPrice,
+            'yearly_price': yearlyPrice,
+            'max_branches': maxBranches,
+            'max_products': maxProducts,
+            'max_users': maxUsers,
+            'features': features,
+          })
+          .select()
+          .single();
       return SAPlan.fromJson(data);
     } catch (e) {
       // sa_plans table may not exist; return the plan object anyway
@@ -205,8 +210,10 @@ class SASubscriptionsDatasource {
     } catch (_) {
       // invoices table may not have FK to stores; try without join
       try {
-        final data = await _client.from('invoices').select(
-            'id, invoice_number, total, status, issued_at, due_at, store_id')
+        final data = await _client
+            .from('invoices')
+            .select(
+                'id, invoice_number, total, status, issued_at, due_at, store_id')
             .order('issued_at', ascending: false)
             .limit(100);
         return (data as List)
@@ -224,9 +231,7 @@ class SASubscriptionsDatasource {
   /// Get billing summary (paid, unpaid, overdue totals).
   Future<Map<String, double>> getBillingSummary() async {
     try {
-      final data = await _client
-          .from('invoices')
-          .select('total, status');
+      final data = await _client.from('invoices').select('total, status');
 
       double paid = 0, unpaid = 0, overdue = 0;
       for (final row in data as List) {

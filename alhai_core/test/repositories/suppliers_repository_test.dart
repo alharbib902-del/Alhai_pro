@@ -16,6 +16,7 @@ class MockSuppliersRemoteDataSource extends Mock
 
 // Fake classes
 class FakeCreateSupplierRequest extends Fake implements CreateSupplierRequest {}
+
 class FakeUpdateSupplierRequest extends Fake implements UpdateSupplierRequest {}
 
 void main() {
@@ -57,13 +58,15 @@ void main() {
             )).thenAnswer((_) async => [testSupplierResponse]);
 
         // Act
-        final result = await repository.getSuppliers('store-1', page: 1, limit: 20);
+        final result =
+            await repository.getSuppliers('store-1', page: 1, limit: 20);
 
         // Assert
         expect(result.items, hasLength(1));
         expect(result.items.first.id, equals('sup-1'));
         expect(result.items.first.name, equals('Test Supplier'));
-        verify(() => mockRemote.getSuppliers('store-1', page: 1, limit: 20)).called(1);
+        verify(() => mockRemote.getSuppliers('store-1', page: 1, limit: 20))
+            .called(1);
       });
 
       test('throws NetworkException on connection error', () async {

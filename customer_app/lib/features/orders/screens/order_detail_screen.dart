@@ -106,7 +106,8 @@ class OrderDetailScreen extends ConsumerWidget {
                   children: order.items.map((item) {
                     return ListTile(
                       title: Text(item.name),
-                      subtitle: Text('${item.unitPrice.toStringAsFixed(2)} ر.س × ${item.qty}'),
+                      subtitle: Text(
+                          '${item.unitPrice.toStringAsFixed(2)} ر.س × ${item.qty}'),
                       trailing: Text(
                         '${item.lineTotal.toStringAsFixed(2)} ر.س',
                         style: theme.textTheme.titleSmall?.copyWith(
@@ -125,12 +126,15 @@ class OrderDetailScreen extends ConsumerWidget {
                   padding: const EdgeInsets.all(AlhaiSpacing.md),
                   child: Column(
                     children: [
-                      _TotalRow(label: 'المجموع الفرعي',
+                      _TotalRow(
+                          label: 'المجموع الفرعي',
                           value: '${order.subtotal.toStringAsFixed(2)} ر.س'),
                       if (order.discount > 0)
-                        _TotalRow(label: 'الخصم',
+                        _TotalRow(
+                            label: 'الخصم',
                             value: '-${order.discount.toStringAsFixed(2)} ر.س'),
-                      _TotalRow(label: 'التوصيل',
+                      _TotalRow(
+                          label: 'التوصيل',
                           value: order.deliveryFee > 0
                               ? '${order.deliveryFee.toStringAsFixed(2)} ر.س'
                               : 'مجاني'),
@@ -194,7 +198,8 @@ class OrderDetailScreen extends ConsumerWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 6),
+      padding:
+          const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 6),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
@@ -283,7 +288,8 @@ class _OrderTimeline extends StatelessWidget {
                             : theme.colorScheme.surfaceContainerHighest,
                       ),
                       child: isComplete
-                          ? Icon(Icons.check, size: 14, color: theme.colorScheme.onPrimary)
+                          ? Icon(Icons.check,
+                              size: 14, color: theme.colorScheme.onPrimary)
                           : null,
                     ),
                     if (index < steps.length - 1)

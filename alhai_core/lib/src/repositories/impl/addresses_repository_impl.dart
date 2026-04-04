@@ -29,7 +29,9 @@ class AddressesRepositoryImpl implements AddressesRepository {
       final addresses = await getAddresses();
       return addresses.firstWhere(
         (a) => a.isDefault,
-        orElse: () => addresses.isNotEmpty ? addresses.first : throw Exception('No addresses'),
+        orElse: () => addresses.isNotEmpty
+            ? addresses.first
+            : throw Exception('No addresses'),
       );
     } catch (e) {
       return null;
@@ -79,8 +81,10 @@ class AddressesRepositoryImpl implements AddressesRepository {
       if (params.city != null) data['city'] = params.city;
       if (params.district != null) data['district'] = params.district;
       if (params.street != null) data['street'] = params.street;
-      if (params.buildingNumber != null) data['building_number'] = params.buildingNumber;
-      if (params.apartmentNumber != null) data['apartment_number'] = params.apartmentNumber;
+      if (params.buildingNumber != null)
+        data['building_number'] = params.buildingNumber;
+      if (params.apartmentNumber != null)
+        data['apartment_number'] = params.apartmentNumber;
       if (params.landmark != null) data['landmark'] = params.landmark;
       if (params.lat != null) data['lat'] = params.lat;
       if (params.lng != null) data['lng'] = params.lng;

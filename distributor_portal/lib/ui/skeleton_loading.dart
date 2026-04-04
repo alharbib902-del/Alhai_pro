@@ -127,7 +127,9 @@ class DashboardSkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.sizeOf(context).width;
-    final crossCount = width >= AlhaiBreakpoints.desktop ? 4 : (width >= AlhaiBreakpoints.tablet ? 2 : 1);
+    final crossCount = width >= AlhaiBreakpoints.desktop
+        ? 4
+        : (width >= AlhaiBreakpoints.tablet ? 2 : 1);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
@@ -186,8 +188,8 @@ class TableSkeleton extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(16)),
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(16)),
               ),
               child: Row(
                 children: List.generate(columns, (_) {

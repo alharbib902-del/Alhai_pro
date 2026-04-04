@@ -145,8 +145,7 @@ class SyncStatusTracker {
             .where((t) => t.lastPullAt != null)
             .map((t) => t.lastPullAt!);
         if (pullTimes.isNotEmpty) {
-          lastFullSync = pullTimes.reduce(
-              (a, b) => a.isBefore(b) ? a : b);
+          lastFullSync = pullTimes.reduce((a, b) => a.isBefore(b) ? a : b);
         }
       }
 

@@ -78,7 +78,8 @@ class DailySalesData {
 /// مزود بيانات لوحة التحكم الرئيسي
 /// يجمع كل البيانات المطلوبة في استعلام واحد
 /// Keeps data alive for 5 minutes to avoid re-fetching on tab switches.
-final dashboardDataProvider = FutureProvider.autoDispose<DashboardData>((ref) async {
+final dashboardDataProvider =
+    FutureProvider.autoDispose<DashboardData>((ref) async {
   // Keep the provider alive for 5 minutes after last listener detaches,
   // so navigating away and back doesn't trigger a re-fetch.
   final link = ref.keepAlive();
@@ -183,7 +184,8 @@ Future<List<DailySalesData>> _getWeeklySales(
 ) async {
   final days = <DailySalesData>[];
   for (int i = 6; i >= 0; i--) {
-    final date = DateTime(now.year, now.month, now.day).subtract(Duration(days: i));
+    final date =
+        DateTime(now.year, now.month, now.day).subtract(Duration(days: i));
     final nextDate = date.add(const Duration(days: 1));
     try {
       final stats = await db.salesDao.getSalesStats(
@@ -191,7 +193,8 @@ Future<List<DailySalesData>> _getWeeklySales(
         startDate: date,
         endDate: nextDate,
       );
-      days.add(DailySalesData(date: date, total: stats.total, count: stats.count));
+      days.add(
+          DailySalesData(date: date, total: stats.total, count: stats.count));
     } catch (_) {
       days.add(DailySalesData(date: date, total: 0, count: 0));
     }
@@ -207,7 +210,8 @@ Future<List<DailySalesData>> _getMonthlySales(
 ) async {
   final weeks = <DailySalesData>[];
   for (int i = 3; i >= 0; i--) {
-    final weekStart = DateTime(now.year, now.month, now.day).subtract(Duration(days: (i + 1) * 7));
+    final weekStart = DateTime(now.year, now.month, now.day)
+        .subtract(Duration(days: (i + 1) * 7));
     final weekEnd = weekStart.add(const Duration(days: 7));
     try {
       final stats = await db.salesDao.getSalesStats(
@@ -215,7 +219,8 @@ Future<List<DailySalesData>> _getMonthlySales(
         startDate: weekStart,
         endDate: weekEnd,
       );
-      weeks.add(DailySalesData(date: weekStart, total: stats.total, count: stats.count));
+      weeks.add(DailySalesData(
+          date: weekStart, total: stats.total, count: stats.count));
     } catch (_) {
       weeks.add(DailySalesData(date: weekStart, total: 0, count: 0));
     }
@@ -250,7 +255,8 @@ Future<int> _getExpiringProductsCount(
 }
 
 /// مزود مراقبة مبيعات اليوم (Stream) - للتحديث التلقائي
-final todaySalesStreamProvider = StreamProvider.autoDispose<List<SalesTableData>>((ref) {
+final todaySalesStreamProvider =
+    StreamProvider.autoDispose<List<SalesTableData>>((ref) {
   final storeId = ref.watch(currentStoreIdProvider);
   if (storeId == null) return const Stream.empty();
 

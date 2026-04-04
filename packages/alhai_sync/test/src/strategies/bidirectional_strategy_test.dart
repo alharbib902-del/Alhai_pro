@@ -36,9 +36,8 @@ void main() {
   group('BidirectionalStrategy', () {
     group('tableConfigs', () {
       test('contains expected tables', () {
-        final tableNames = BidirectionalStrategy.tableConfigs
-            .map((c) => c.tableName)
-            .toList();
+        final tableNames =
+            BidirectionalStrategy.tableConfigs.map((c) => c.tableName).toList();
         expect(tableNames, contains('customers'));
         expect(tableNames, contains('expenses'));
         expect(tableNames, contains('returns'));
@@ -91,17 +90,15 @@ void main() {
         // Mock server pull: no records
         final queryBuilder = MockSupabaseQueryBuilder();
         final filterBuilder = MockPostgrestFilterBuilder();
-        when(() => mockClient.from('customers')).thenAnswer((_) => queryBuilder);
+        when(() => mockClient.from('customers'))
+            .thenAnswer((_) => queryBuilder);
         setupSelectChain(queryBuilder, filterBuilder, data: []);
 
         when(() => mockMetadataDao.updateLastPushAt(any(), any(),
-                syncCount: any(named: 'syncCount')))
-            .thenAnswer((_) async {});
+            syncCount: any(named: 'syncCount'))).thenAnswer((_) async {});
         when(() => mockMetadataDao.updateLastPullAt(any(), any(),
-                syncCount: any(named: 'syncCount')))
-            .thenAnswer((_) async {});
-        when(() => mockMetadataDao.clearError(any()))
-            .thenAnswer((_) async {});
+            syncCount: any(named: 'syncCount'))).thenAnswer((_) async {});
+        when(() => mockMetadataDao.clearError(any())).thenAnswer((_) async {});
 
         final result = await strategy.syncTable(
           config: const BidirectionalTableConfig(
@@ -140,18 +137,16 @@ void main() {
 
         final queryBuilder = MockSupabaseQueryBuilder();
         final filterBuilder = MockPostgrestFilterBuilder();
-        when(() => mockClient.from('customers')).thenAnswer((_) => queryBuilder);
+        when(() => mockClient.from('customers'))
+            .thenAnswer((_) => queryBuilder);
         setupUpsertChain(queryBuilder);
         setupSelectChain(queryBuilder, filterBuilder, data: []);
 
         when(() => mockMetadataDao.updateLastPushAt(any(), any(),
-                syncCount: any(named: 'syncCount')))
-            .thenAnswer((_) async {});
+            syncCount: any(named: 'syncCount'))).thenAnswer((_) async {});
         when(() => mockMetadataDao.updateLastPullAt(any(), any(),
-                syncCount: any(named: 'syncCount')))
-            .thenAnswer((_) async {});
-        when(() => mockMetadataDao.clearError(any()))
-            .thenAnswer((_) async {});
+            syncCount: any(named: 'syncCount'))).thenAnswer((_) async {});
+        when(() => mockMetadataDao.clearError(any())).thenAnswer((_) async {});
 
         final result = await strategy.syncTable(
           config: const BidirectionalTableConfig(
@@ -183,11 +178,9 @@ void main() {
           setupSelectChain(queryBuilder, filterBuilder, data: []);
 
           when(() => mockMetadataDao.updateLastPushAt(config.tableName, any(),
-                  syncCount: any(named: 'syncCount')))
-              .thenAnswer((_) async {});
+              syncCount: any(named: 'syncCount'))).thenAnswer((_) async {});
           when(() => mockMetadataDao.updateLastPullAt(config.tableName, any(),
-                  syncCount: any(named: 'syncCount')))
-              .thenAnswer((_) async {});
+              syncCount: any(named: 'syncCount'))).thenAnswer((_) async {});
           when(() => mockMetadataDao.clearError(config.tableName))
               .thenAnswer((_) async {});
         }
@@ -197,8 +190,7 @@ void main() {
           storeId: 'store-1',
         );
 
-        expect(results,
-            hasLength(BidirectionalStrategy.tableConfigs.length));
+        expect(results, hasLength(BidirectionalStrategy.tableConfigs.length));
       });
     });
   });

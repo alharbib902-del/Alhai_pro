@@ -32,8 +32,7 @@ void main() {
         );
 
         verify(() => queryBuilder.upsert(any(),
-                onConflict: any(named: 'onConflict')))
-            .called(1);
+            onConflict: any(named: 'onConflict'))).called(1);
       });
 
       test('performs upsert for UPDATE operation', () async {
@@ -48,8 +47,7 @@ void main() {
         );
 
         verify(() => queryBuilder.upsert(any(),
-                onConflict: any(named: 'onConflict')))
-            .called(1);
+            onConflict: any(named: 'onConflict'))).called(1);
       });
 
       test('performs delete for DELETE operation', () async {
@@ -151,8 +149,7 @@ void main() {
         );
 
         verify(() => queryBuilder.upsert(any(),
-                onConflict: any(named: 'onConflict')))
-            .called(1);
+            onConflict: any(named: 'onConflict'))).called(1);
       });
     });
 
@@ -192,16 +189,14 @@ void main() {
 
         var callCount = 0;
         when(() => queryBuilder.upsert(any(),
-                onConflict: any(named: 'onConflict')))
-            .thenAnswer((_) {
+            onConflict: any(named: 'onConflict'))).thenAnswer((_) {
           callCount++;
           if (callCount == 2) {
             throw Exception('Network error');
           }
           final upsertBuilder = MockPostgrestFilterBuilderDynamic();
           when(() => upsertBuilder.then<dynamic>(any(),
-                  onError: any(named: 'onError')))
-              .thenAnswer((invocation) {
+              onError: any(named: 'onError'))).thenAnswer((invocation) {
             final onValue = invocation.positionalArguments[0] as Function;
             return Future.value(onValue(null));
           });
@@ -246,7 +241,8 @@ void main() {
         final filterBuilder = MockPostgrestFilterBuilder();
         when(() => mockClient.from('products')).thenAnswer((_) => queryBuilder);
         when(() => queryBuilder.select(any())).thenAnswer((_) => filterBuilder);
-        when(() => filterBuilder.eq(any(), any())).thenAnswer((_) => filterBuilder);
+        when(() => filterBuilder.eq(any(), any()))
+            .thenAnswer((_) => filterBuilder);
         setupMaybeSingle(filterBuilder, data: {'id': 'p-1', 'name': 'Test'});
 
         final result =
@@ -261,7 +257,8 @@ void main() {
         final filterBuilder = MockPostgrestFilterBuilder();
         when(() => mockClient.from('products')).thenAnswer((_) => queryBuilder);
         when(() => queryBuilder.select(any())).thenAnswer((_) => filterBuilder);
-        when(() => filterBuilder.eq(any(), any())).thenAnswer((_) => filterBuilder);
+        when(() => filterBuilder.eq(any(), any()))
+            .thenAnswer((_) => filterBuilder);
         setupMaybeSingle(filterBuilder, data: null);
 
         final result =
@@ -275,7 +272,8 @@ void main() {
         final filterBuilder = MockPostgrestFilterBuilder();
         when(() => mockClient.from('products')).thenAnswer((_) => queryBuilder);
         when(() => queryBuilder.select(any())).thenAnswer((_) => filterBuilder);
-        when(() => filterBuilder.eq(any(), any())).thenAnswer((_) => filterBuilder);
+        when(() => filterBuilder.eq(any(), any()))
+            .thenAnswer((_) => filterBuilder);
         // Mock maybeSingle to throw synchronously
         when(() => filterBuilder.maybeSingle())
             .thenThrow(Exception('Network error'));

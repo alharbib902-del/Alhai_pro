@@ -23,10 +23,8 @@ void main() {
     db = setupMockDatabase(storesDao: storesDao, syncQueueDao: syncQueueDao);
     setupTestGetIt(mockDb: db);
 
-    when(() => storesDao.getStoreById(any()))
-        .thenAnswer((_) async => null);
-    when(() => syncQueueDao.getPendingCount())
-        .thenAnswer((_) async => 0);
+    when(() => storesDao.getStoreById(any())).thenAnswer((_) async => null);
+    when(() => syncQueueDao.getPendingCount()).thenAnswer((_) async => 0);
   });
 
   tearDown(() => tearDownTestGetIt());

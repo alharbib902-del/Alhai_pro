@@ -74,17 +74,17 @@ class PinService {
   /// إصدار الـ hashing المستخدم (للترحيل في المستقبل)
   static const String _pinVersionKey = 'pin_version';
   static const int _currentVersion = 2; // v1 = SHA256, v2 = PBKDF2
-  
+
   // ============================================================================
   // SETTINGS
   // ============================================================================
-  
+
   /// التحقق من تفعيل PIN
   static Future<bool> isEnabled() async {
     final enabled = await SecureStorageService.read(_pinEnabledKey);
     return enabled == 'true';
   }
-  
+
   /// إنشاء PIN جديد
   static Future<PinResult> createPin(String pin) async {
     // التحقق من الطول
@@ -107,13 +107,14 @@ class PinService {
     // حفظ الـ hash والـ salt والإصدار
     await SecureStorageService.write(_pinHashKey, hash);
     await SecureStorageService.write(_pinSaltKey, saltBase64);
-    await SecureStorageService.write(_pinVersionKey, _currentVersion.toString());
+    await SecureStorageService.write(
+        _pinVersionKey, _currentVersion.toString());
     await SecureStorageService.write(_pinEnabledKey, 'true');
     await _resetAttempts();
 
     return PinResult.success();
   }
-  
+
   /// تغيير PIN
   static Future<PinResult> changePin(String currentPin, String newPin) async {
     // التحقق من PIN الحالي
@@ -121,11 +122,11 @@ class PinService {
     if (!verifyResult.isSuccess) {
       return verifyResult;
     }
-    
+
     // إنشاء PIN جديد
     return createPin(newPin);
   }
-  
+
   /// حذف PIN
   static Future<void> removePin() async {
     await SecureStorageService.delete(_pinHashKey);
@@ -134,11 +135,11 @@ class PinService {
     await SecureStorageService.delete(_pinEnabledKey);
     await _resetAttempts();
   }
-  
+
   // ============================================================================
   // VERIFICATION
   // ============================================================================
-  
+
   /// التحقق من PIN
   static Future<PinResult> verifyPin(String pin) async {
     // التحقق من القفل
@@ -209,62 +210,64 @@ class PinService {
 
     await SecureStorageService.write(_pinHashKey, hash);
     await SecureStorageService.write(_pinSaltKey, saltBase64);
-    await SecureStorageService.write(_pinVersionKey, _currentVersion.toString());
+    await SecureStorageService.write(
+        _pinVersionKey, _currentVersion.toString());
   }
-  
+
   // ============================================================================
   // LOCKOUT
   // ============================================================================
-  
+
   /// التحقق من القفل
   static Future<bool> isLockedOut() async {
     final lockedUntilStr = await SecureStorageService.read(_pinLockedUntilKey);
     if (lockedUntilStr == null) return false;
-    
+
     final lockedUntil = DateTime.tryParse(lockedUntilStr);
     if (lockedUntil == null) return false;
-    
+
     if (DateTime.now().isAfter(lockedUntil)) {
       // انتهى القفل
       await _resetAttempts();
       return false;
     }
-    
+
     return true;
   }
-  
+
   /// الحصول على وقت انتهاء القفل
   static Future<DateTime?> _getLockedUntil() async {
     final lockedUntilStr = await SecureStorageService.read(_pinLockedUntilKey);
     if (lockedUntilStr == null) return null;
     return DateTime.tryParse(lockedUntilStr);
   }
-  
+
   /// قفل PIN
   static Future<void> _lockOut() async {
     final lockedUntil = DateTime.now().add(kLockoutDuration);
-    await SecureStorageService.write(_pinLockedUntilKey, lockedUntil.toIso8601String());
+    await SecureStorageService.write(
+        _pinLockedUntilKey, lockedUntil.toIso8601String());
   }
-  
+
   /// الحصول على عدد المحاولات
   static Future<int> _getAttempts() async {
     final attemptsStr = await SecureStorageService.read(_pinAttemptsKey);
     return int.tryParse(attemptsStr ?? '0') ?? 0;
   }
-  
+
   /// زيادة عدد المحاولات
   static Future<int> _incrementAttempts() async {
     final attempts = await _getAttempts() + 1;
     await SecureStorageService.write(_pinAttemptsKey, attempts.toString());
     return attempts;
   }
-  
+
   /// إعادة تعيين المحاولات
   static Future<void> _resetAttempts() async {
     await SecureStorageService.delete(_pinAttemptsKey);
     await SecureStorageService.delete(_pinLockedUntilKey);
   }
-  
+
   // ============================================================================
   // HELPERS
   // ============================================================================
@@ -358,38 +361,38 @@ class PinResult {
   });
 
   factory PinResult.success() => const PinResult._(isSuccess: true);
-  
+
   factory PinResult.incorrect(int remaining) => PinResult._(
-    isSuccess: false,
-    error: 'رمز PIN غير صحيح',
-    errorType: PinError.incorrect,
-    remainingAttempts: remaining,
-  );
-  
+        isSuccess: false,
+        error: 'رمز PIN غير صحيح',
+        errorType: PinError.incorrect,
+        remainingAttempts: remaining,
+      );
+
   factory PinResult.invalidLength() => const PinResult._(
-    isSuccess: false,
-    error: 'يجب أن يكون رمز PIN من 4-6 أرقام',
-    errorType: PinError.invalidLength,
-  );
-  
+        isSuccess: false,
+        error: 'يجب أن يكون رمز PIN من 4-6 أرقام',
+        errorType: PinError.invalidLength,
+      );
+
   factory PinResult.invalidFormat() => const PinResult._(
-    isSuccess: false,
-    error: 'يجب أن يحتوي رمز PIN على أرقام فقط',
-    errorType: PinError.invalidFormat,
-  );
-  
+        isSuccess: false,
+        error: 'يجب أن يحتوي رمز PIN على أرقام فقط',
+        errorType: PinError.invalidFormat,
+      );
+
   factory PinResult.notEnabled() => const PinResult._(
-    isSuccess: false,
-    error: 'رمز PIN غير مفعل',
-    errorType: PinError.notEnabled,
-  );
-  
+        isSuccess: false,
+        error: 'رمز PIN غير مفعل',
+        errorType: PinError.notEnabled,
+      );
+
   factory PinResult.lockedOut(DateTime? until) => PinResult._(
-    isSuccess: false,
-    error: 'تم قفل PIN بسبب كثرة المحاولات',
-    errorType: PinError.lockedOut,
-    lockedUntil: until,
-  );
+        isSuccess: false,
+        error: 'تم قفل PIN بسبب كثرة المحاولات',
+        errorType: PinError.lockedOut,
+        lockedUntil: until,
+      );
 }
 
 /// أنواع أخطاء PIN

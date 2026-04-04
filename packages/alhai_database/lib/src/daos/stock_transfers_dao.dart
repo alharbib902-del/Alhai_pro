@@ -40,8 +40,7 @@ class StockTransfersDao extends DatabaseAccessor<AppDatabase>
   Future<List<StockTransfersTableData>> getPendingIncoming(String storeId) {
     return (select(stockTransfersTable)
           ..where((t) =>
-              t.toStoreId.equals(storeId) &
-              t.approvalStatus.equals('pending'))
+              t.toStoreId.equals(storeId) & t.approvalStatus.equals('pending'))
           ..orderBy([(t) => OrderingTerm.desc(t.createdAt)]))
         .get();
   }
@@ -65,7 +64,8 @@ class StockTransfersDao extends DatabaseAccessor<AppDatabase>
     return (update(stockTransfersTable)..where((t) => t.id.equals(id))).write(
       StockTransfersTableCompanion(
         approvalStatus: Value(approvalStatus),
-        approvedBy: approvedBy != null ? Value(approvedBy) : const Value.absent(),
+        approvedBy:
+            approvedBy != null ? Value(approvedBy) : const Value.absent(),
         approvedAt: approvalStatus == 'approved'
             ? Value(DateTime.now())
             : const Value.absent(),

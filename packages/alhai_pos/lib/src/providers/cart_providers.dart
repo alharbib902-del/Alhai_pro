@@ -57,10 +57,10 @@ class PosCartItem {
 
   /// تحويل لـ JSON للتخزين
   Map<String, dynamic> toJson() => {
-    'product': product.toJson(),
-    'quantity': quantity,
-    'customPrice': customPrice,
-  };
+        'product': product.toJson(),
+        'quantity': quantity,
+        'customPrice': customPrice,
+      };
 
   /// إنشاء من JSON
   factory PosCartItem.fromJson(Map<String, dynamic> json) {
@@ -137,21 +137,22 @@ class CartState {
 
   /// تحويل لـ JSON للتخزين
   Map<String, dynamic> toJson() => {
-    'items': items.map((item) => item.toJson()).toList(),
-    'discount': discount,
-    'paymentMethod': paymentMethod.name,
-    'customerId': customerId,
-    'customerName': customerName,
-    'notes': notes,
-    'lastModified': lastModified?.toIso8601String(),
-  };
+        'items': items.map((item) => item.toJson()).toList(),
+        'discount': discount,
+        'paymentMethod': paymentMethod.name,
+        'customerId': customerId,
+        'customerName': customerName,
+        'notes': notes,
+        'lastModified': lastModified?.toIso8601String(),
+      };
 
   /// إنشاء من JSON
   factory CartState.fromJson(Map<String, dynamic> json) {
     return CartState(
       items: (json['items'] as List<dynamic>?)
-          ?.map((e) => PosCartItem.fromJson(e as Map<String, dynamic>))
-          .toList() ?? [],
+              ?.map((e) => PosCartItem.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
       discount: (json['discount'] as num?)?.toDouble() ?? 0,
       paymentMethod: PaymentMethod.values.firstWhere(
         (e) => e.name == json['paymentMethod'],
@@ -193,11 +194,11 @@ class HeldInvoice {
   }
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'cart': cart.toJson(),
-    'name': name,
-    'createdAt': createdAt.toIso8601String(),
-  };
+        'id': id,
+        'cart': cart.toJson(),
+        'name': name,
+        'createdAt': createdAt.toIso8601String(),
+      };
 
   factory HeldInvoice.fromJson(Map<String, dynamic> json) {
     return HeldInvoice(
@@ -316,10 +317,10 @@ class UndoAction {
   final CartUndoType type;
   final String productId;
   final String productName;
-  final Product? product;       // needed to re-add after remove
-  final int? previousQuantity;  // for qty changes
-  final int? newQuantity;       // for qty changes
-  final double? customPrice;    // preserve custom price on re-add
+  final Product? product; // needed to re-add after remove
+  final int? previousQuantity; // for qty changes
+  final int? newQuantity; // for qty changes
+  final double? customPrice; // preserve custom price on re-add
 
   const UndoAction({
     required this.type,
@@ -361,7 +362,8 @@ class CartNotifier extends StateNotifier<CartState> {
     final savedCart = await _persistence.loadCart();
     if (savedCart != null && savedCart.isNotEmpty) {
       _pendingDraft = savedCart;
-      debugPrint('[Cart] Found draft with ${savedCart.itemCount} items — awaiting user confirmation');
+      debugPrint(
+          '[Cart] Found draft with ${savedCart.itemCount} items — awaiting user confirmation');
     }
     _isInitialized = true;
   }
@@ -445,9 +447,11 @@ class CartNotifier extends StateNotifier<CartState> {
           } else {
             // Was a brand new item → remove entirely
             state = state.copyWith(
-              items: state.items.where(
-                (item) => item.product.id != action.productId,
-              ).toList(),
+              items: state.items
+                  .where(
+                    (item) => item.product.id != action.productId,
+                  )
+                  .toList(),
             );
           }
         }
@@ -517,7 +521,8 @@ class CartNotifier extends StateNotifier<CartState> {
       final updatedItems = [...state.items];
       final existingItem = updatedItems[existingIndex];
       // Clamp new quantity to max
-      final newQty = (existingItem.quantity + quantity).clamp(1, _maxQuantityPerItem);
+      final newQty =
+          (existingItem.quantity + quantity).clamp(1, _maxQuantityPerItem);
       if (newQty == existingItem.quantity) return; // already at max
       _pushUndo(UndoAction(
         type: CartUndoType.add,
@@ -556,9 +561,11 @@ class CartNotifier extends StateNotifier<CartState> {
 
   /// إزالة منتج من السلة
   void removeProduct(String productId) {
-    final removedItem = state.items.where(
-      (item) => item.product.id == productId,
-    ).firstOrNull;
+    final removedItem = state.items
+        .where(
+          (item) => item.product.id == productId,
+        )
+        .firstOrNull;
     if (removedItem != null) {
       _pushUndo(UndoAction(
         type: CartUndoType.remove,
@@ -585,9 +592,11 @@ class CartNotifier extends StateNotifier<CartState> {
     // Clamp to max quantity per item
     final clampedQty = quantity.clamp(1, _maxQuantityPerItem);
 
-    final existing = state.items.where(
-      (item) => item.product.id == productId,
-    ).firstOrNull;
+    final existing = state.items
+        .where(
+          (item) => item.product.id == productId,
+        )
+        .firstOrNull;
     if (existing != null) {
       if (clampedQty == existing.quantity) return; // no change
       _pushUndo(UndoAction(
@@ -758,8 +767,7 @@ final cartPersistenceProvider = Provider<CartPersistenceService>((ref) {
 });
 
 /// مزود حالة السلة
-final cartStateProvider =
-    StateNotifierProvider<CartNotifier, CartState>((ref) {
+final cartStateProvider = StateNotifierProvider<CartNotifier, CartState>((ref) {
   final persistence = ref.watch(cartPersistenceProvider);
   return CartNotifier(persistence);
 });
@@ -796,4 +804,3 @@ final cartItemByProductIdProvider =
 final heldInvoicesCountProvider = Provider<int>((ref) {
   return ref.watch(heldInvoicesProvider).length;
 });
-

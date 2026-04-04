@@ -2,19 +2,19 @@ import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 
 /// Location Service for Driver App
-/// 
+///
 /// Handles GPS tracking, permissions, and background location updates.
 class LocationService {
   LocationService._();
-  
+
   static final LocationService instance = LocationService._();
-  
+
   bool _isInitialized = false;
   Position? _currentPosition;
-  
+
   Position? get currentPosition => _currentPosition;
   bool get isInitialized => _isInitialized;
-  
+
   /// Initialize location service and request permissions.
   ///
   /// Throws a [LocationServiceException] if location services are disabled
@@ -61,7 +61,7 @@ class LocationService {
       debugPrint('LocationService initialization error: $e');
     }
   }
-  
+
   /// Start listening to location updates
   Stream<Position> getPositionStream() {
     return Geolocator.getPositionStream(
@@ -71,7 +71,7 @@ class LocationService {
       ),
     );
   }
-  
+
   /// Get current position
   Future<Position?> getCurrentPosition() async {
     try {
@@ -83,7 +83,7 @@ class LocationService {
       return null;
     }
   }
-  
+
   /// Calculate distance between two points (in meters)
   double distanceBetween(
     double startLatitude,

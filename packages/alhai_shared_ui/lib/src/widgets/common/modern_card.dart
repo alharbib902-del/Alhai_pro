@@ -133,7 +133,9 @@ class ModernCard extends ConsumerStatefulWidget {
   }) {
     return ModernCard(
       key: key,
-      variant: gradient != null ? ModernCardVariant.gradient : ModernCardVariant.elevated,
+      variant: gradient != null
+          ? ModernCardVariant.gradient
+          : ModernCardVariant.elevated,
       gradient: gradient,
       onTap: onTap,
       child: _StatContent(
@@ -234,7 +236,8 @@ class _ModernCardState extends ConsumerState<ModernCard>
     }
   }
 
-  Widget _buildGlassCard(BuildContext context, bool isDark, double borderRadius) {
+  Widget _buildGlassCard(
+      BuildContext context, bool isDark, double borderRadius) {
     return Container(
       width: widget.width,
       height: widget.height,
@@ -305,14 +308,15 @@ class _ModernCardState extends ConsumerState<ModernCard>
             padding: widget.padding ?? const EdgeInsets.all(AppSizes.lg),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(borderRadius),
-              gradient: widget.gradient ?? LinearGradient(
-                begin: AlignmentDirectional.topStart,
-                end: AlignmentDirectional.bottomEnd,
-                colors: [
-                  AppColors.primary,
-                  AppColors.primary.withValues(alpha: 0.8),
-                ],
-              ),
+              gradient: widget.gradient ??
+                  LinearGradient(
+                    begin: AlignmentDirectional.topStart,
+                    end: AlignmentDirectional.bottomEnd,
+                    colors: [
+                      AppColors.primary,
+                      AppColors.primary.withValues(alpha: 0.8),
+                    ],
+                  ),
               boxShadow: [
                 BoxShadow(
                   color: (widget.gradient?.colors.first ?? AppColors.primary)
@@ -329,7 +333,8 @@ class _ModernCardState extends ConsumerState<ModernCard>
     );
   }
 
-  Widget _buildElevatedCard(BuildContext context, bool isDark, double borderRadius) {
+  Widget _buildElevatedCard(
+      BuildContext context, bool isDark, double borderRadius) {
     return Container(
       width: widget.width,
       height: widget.height,
@@ -359,7 +364,8 @@ class _ModernCardState extends ConsumerState<ModernCard>
               boxShadow: widget.customShadow ??
                   [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.08),
+                      color:
+                          Colors.black.withValues(alpha: isDark ? 0.3 : 0.08),
                       blurRadius: _isHovered ? 24 : 16,
                       offset: Offset(0, _isHovered ? 8 : 4),
                     ),
@@ -378,7 +384,8 @@ class _ModernCardState extends ConsumerState<ModernCard>
     );
   }
 
-  Widget _buildFlatCard(BuildContext context, bool isDark, double borderRadius) {
+  Widget _buildFlatCard(
+      BuildContext context, bool isDark, double borderRadius) {
     return Container(
       width: widget.width,
       height: widget.height,
@@ -415,7 +422,8 @@ class _ModernCardState extends ConsumerState<ModernCard>
     );
   }
 
-  Widget _buildNormalCard(BuildContext context, bool isDark, double borderRadius) {
+  Widget _buildNormalCard(
+      BuildContext context, bool isDark, double borderRadius) {
     return Container(
       width: widget.width,
       height: widget.height,
@@ -481,7 +489,8 @@ class _StatContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final textColor = hasGradient ? colorScheme.onPrimary : colorScheme.onSurface;
+    final textColor =
+        hasGradient ? colorScheme.onPrimary : colorScheme.onSurface;
     final mutedColor = hasGradient
         ? colorScheme.onPrimary.withValues(alpha: 0.8)
         : colorScheme.onSurfaceVariant;
@@ -556,8 +565,12 @@ class _StatContent extends StatelessWidget {
                       change! >= 0 ? Icons.trending_up : Icons.trending_down,
                       size: 14,
                       color: change! >= 0
-                          ? (hasGradient ? colorScheme.onPrimary : AppColors.success)
-                          : (hasGradient ? colorScheme.onPrimary : AppColors.error),
+                          ? (hasGradient
+                              ? colorScheme.onPrimary
+                              : AppColors.success)
+                          : (hasGradient
+                              ? colorScheme.onPrimary
+                              : AppColors.error),
                     ),
                     SizedBox(width: AlhaiSpacing.xxxs),
                     Text(

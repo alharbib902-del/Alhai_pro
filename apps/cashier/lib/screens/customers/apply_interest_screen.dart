@@ -13,7 +13,8 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
+import 'package:alhai_design_system/alhai_design_system.dart'
+    show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 import '../../core/services/audit_service.dart';
@@ -58,8 +59,7 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
       if (storeId == null) return;
       final accounts = await _db.accountsDao.getReceivableAccounts(storeId);
       // Only accounts with outstanding balance
-      final withDebt =
-          accounts.where((a) => a.balance > 0).toList();
+      final withDebt = accounts.where((a) => a.balance > 0).toList();
       withDebt.sort((a, b) => b.balance.compareTo(a.balance));
       if (mounted) {
         setState(() {
@@ -134,9 +134,8 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
           subtitle: _getDateSubtitle(l10n),
           showSearch: false,
           searchHint: l10n.searchPlaceholder,
-          onMenuTap: isWideScreen
-              ? null
-              : () => Scaffold.of(context).openDrawer(),
+          onMenuTap:
+              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 3,
           userName: user?.name ?? l10n.cashCustomer,
@@ -147,53 +146,60 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
           child: _isLoading
               ? const AppLoadingState()
               : _error != null
-                  ? AppErrorState.general(context, message: _error!, onRetry: _loadAccounts)
+                  ? AppErrorState.general(context,
+                      message: _error!, onRetry: _loadAccounts)
                   : _accounts.isEmpty
-                  ? _buildNoAccountsMessage(isDark, l10n)
-                  : SingleChildScrollView(
-                      padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-                      child: isWideScreen
-                          ? Row(
-                              crossAxisAlignment:
-                                  CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  flex: 3,
-                                  child: _buildCustomersList(
-                                      isDark, l10n),
+                      ? _buildNoAccountsMessage(isDark, l10n)
+                      : SingleChildScrollView(
+                          padding: EdgeInsets.all(isMediumScreen
+                              ? AlhaiSpacing.lg
+                              : AlhaiSpacing.md),
+                          child: isWideScreen
+                              ? Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                      flex: 3,
+                                      child: _buildCustomersList(isDark, l10n),
+                                    ),
+                                    const SizedBox(width: AlhaiSpacing.lg),
+                                    Expanded(
+                                      flex: 2,
+                                      child: Column(
+                                        children: [
+                                          _buildRateCard(isDark, l10n),
+                                          const SizedBox(
+                                              height: AlhaiSpacing.lg),
+                                          _buildPreviewCard(isDark, l10n),
+                                          const SizedBox(
+                                              height: AlhaiSpacing.lg),
+                                          _buildApplyButton(isDark, l10n),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    _buildRateCard(isDark, l10n),
+                                    SizedBox(
+                                        height: isMediumScreen
+                                            ? AlhaiSpacing.lg
+                                            : AlhaiSpacing.md),
+                                    _buildCustomersList(isDark, l10n),
+                                    SizedBox(
+                                        height: isMediumScreen
+                                            ? AlhaiSpacing.lg
+                                            : AlhaiSpacing.md),
+                                    _buildPreviewCard(isDark, l10n),
+                                    const SizedBox(height: AlhaiSpacing.lg),
+                                    _buildApplyButton(isDark, l10n),
+                                    const SizedBox(height: AlhaiSpacing.lg),
+                                  ],
                                 ),
-                                const SizedBox(width: AlhaiSpacing.lg),
-                                Expanded(
-                                  flex: 2,
-                                  child: Column(
-                                    children: [
-                                      _buildRateCard(isDark, l10n),
-                                      const SizedBox(height: AlhaiSpacing.lg),
-                                      _buildPreviewCard(isDark, l10n),
-                                      const SizedBox(height: AlhaiSpacing.lg),
-                                      _buildApplyButton(isDark, l10n),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            )
-                          : Column(
-                              crossAxisAlignment:
-                                  CrossAxisAlignment.stretch,
-                              children: [
-                                _buildRateCard(isDark, l10n),
-                                SizedBox(
-                                    height:isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-                                _buildCustomersList(isDark, l10n),
-                                SizedBox(
-                                    height:isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-                                _buildPreviewCard(isDark, l10n),
-                                const SizedBox(height: AlhaiSpacing.lg),
-                                _buildApplyButton(isDark, l10n),
-                                const SizedBox(height: AlhaiSpacing.lg),
-                              ],
-                            ),
-                    ),
+                        ),
         ),
       ],
     );
@@ -220,8 +226,7 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
           const SizedBox(height: AlhaiSpacing.xs),
           Text(l10n.allAccountsSettled,
               style: TextStyle(
-                  fontSize: 13,
-                  color: AppColors.getTextMuted(isDark))),
+                  fontSize: 13, color: AppColors.getTextMuted(isDark))),
         ],
       ),
     );
@@ -284,18 +289,16 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
                   color: AppColors.warning),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide:
-                    BorderSide(color: AppColors.getBorder(isDark)),
+                borderSide: BorderSide(color: AppColors.getBorder(isDark)),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide:
-                    BorderSide(color: AppColors.getBorder(isDark)),
+                borderSide: BorderSide(color: AppColors.getBorder(isDark)),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(
-                    color: AppColors.warning, width: 2),
+                borderSide:
+                    const BorderSide(color: AppColors.warning, width: 2),
               ),
               filled: true,
               fillColor: AppColors.getSurfaceVariant(isDark),
@@ -463,14 +466,12 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
                                 style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,
-                                    color: AppColors.getTextPrimary(
-                                        isDark))),
+                                    color: AppColors.getTextPrimary(isDark))),
                             Text(
                               '${l10n.balanceCol}: ${account.balance.toStringAsFixed(0)} ${l10n.sar}',
                               style: TextStyle(
                                   fontSize: 12,
-                                  color: AppColors.getTextSecondary(
-                                      isDark)),
+                                  color: AppColors.getTextSecondary(isDark)),
                             ),
                           ],
                         ),
@@ -491,8 +492,7 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
                               l10n.sar,
                               style: TextStyle(
                                   fontSize: 10,
-                                  color:
-                                      AppColors.getTextMuted(isDark)),
+                                  color: AppColors.getTextMuted(isDark)),
                             ),
                           ],
                         ),
@@ -582,8 +582,7 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
       children: [
         Text(label,
             style: TextStyle(
-                fontSize: 13,
-                color: AppColors.getTextSecondary(isDark))),
+                fontSize: 13, color: AppColors.getTextSecondary(isDark))),
         Text(value,
             style: TextStyle(
                 fontSize: 13,
@@ -609,14 +608,13 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
               )
             : const Icon(Icons.percent_rounded, size: 20),
         label: Text(l10n.applyInterest,
-            style: const TextStyle(
-                fontSize: 16, fontWeight: FontWeight.w600)),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.warning,
           foregroundColor: AppColors.textOnPrimary,
           padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
       ),
     );
@@ -627,11 +625,8 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(l10n.confirmInterest),
-        content: Text(l10n.confirmInterestMessage(
-            _rate.toStringAsFixed(1),
-            _selectedIds.length,
-            _totalInterest.toStringAsFixed(2),
-            l10n.sar)),
+        content: Text(l10n.confirmInterestMessage(_rate.toStringAsFixed(1),
+            _selectedIds.length, _totalInterest.toStringAsFixed(2), l10n.sar)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
@@ -639,8 +634,7 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
-            style: FilledButton.styleFrom(
-                backgroundColor: AppColors.warning),
+            style: FilledButton.styleFrom(backgroundColor: AppColors.warning),
             child: Text(l10n.confirm),
           ),
         ],
@@ -655,8 +649,7 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
       final storeId = ref.read(currentStoreIdProvider)!;
       final user = ref.read(currentUserProvider);
       final now = DateTime.now();
-      final periodKey =
-          '${now.year}-${now.month.toString().padLeft(2, '0')}';
+      final periodKey = '${now.year}-${now.month.toString().padLeft(2, '0')}';
 
       await _db.transaction(() async {
         for (final accountId in _selectedIds) {
@@ -706,7 +699,8 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
       showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
-          icon: const Icon(Icons.error_outline, color: AppColors.error, size: 48),
+          icon:
+              const Icon(Icons.error_outline, color: AppColors.error, size: 48),
           title: Text(l10n.error),
           content: Text(l10n.errorWithDetails('$e')),
           actions: [

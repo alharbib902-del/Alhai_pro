@@ -28,7 +28,9 @@ import 'categories_table.dart';
 @TableIndex(name: 'idx_products_synced_at', columns: {#syncedAt})
 @TableIndex(name: 'idx_products_is_active', columns: {#isActive})
 @TableIndex(name: 'idx_products_store_barcode', columns: {#storeId, #barcode})
-@TableIndex(name: 'idx_products_store_category_active', columns: {#storeId, #categoryId, #isActive})
+@TableIndex(
+    name: 'idx_products_store_category_active',
+    columns: {#storeId, #categoryId, #isActive})
 class ProductsTable extends Table {
   @override
   String get tableName => 'products';
@@ -36,7 +38,8 @@ class ProductsTable extends Table {
   // المعرفات
   TextColumn get id => text()();
   TextColumn get orgId => text().nullable()();
-  TextColumn get storeId => text().references(StoresTable, #id, onDelete: KeyAction.restrict)();
+  TextColumn get storeId =>
+      text().references(StoresTable, #id, onDelete: KeyAction.restrict)();
 
   // البيانات الأساسية
   TextColumn get name => text()();
@@ -62,9 +65,12 @@ class ProductsTable extends Table {
   TextColumn get imageHash => text().nullable()();
 
   // التصنيف والحالة
-  TextColumn get categoryId => text().nullable().references(CategoriesTable, #id, onDelete: KeyAction.setNull)();
+  TextColumn get categoryId => text()
+      .nullable()
+      .references(CategoriesTable, #id, onDelete: KeyAction.setNull)();
   BoolColumn get isActive => boolean().withDefault(const Constant(true))();
-  BoolColumn get trackInventory => boolean().withDefault(const Constant(true))();
+  BoolColumn get trackInventory =>
+      boolean().withDefault(const Constant(true))();
 
   // صور المنظمة المركزية (مشتركة بين الفروع)
   TextColumn get orgImageThumbnail => text().nullable()();
@@ -76,7 +82,8 @@ class ProductsTable extends Table {
   TextColumn get orgProductId => text().nullable()();
 
   // إعدادات الطلب الأونلاين
-  BoolColumn get onlineAvailable => boolean().withDefault(const Constant(false))();
+  BoolColumn get onlineAvailable =>
+      boolean().withDefault(const Constant(false))();
   RealColumn get onlineMaxQty => real().nullable()();
   RealColumn get onlineReservedQty => real().withDefault(const Constant(0))();
   RealColumn get minAlertQty => real().nullable()();

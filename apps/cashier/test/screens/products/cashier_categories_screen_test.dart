@@ -44,8 +44,8 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const CashierCategoriesScreen()));
+      await tester
+          .pumpWidget(createTestWidget(const CashierCategoriesScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(CashierCategoriesScreen), findsOneWidget);
@@ -64,8 +64,8 @@ void main() {
       when(() => categoriesDao.getAllCategories(any()))
           .thenAnswer((_) => completer.future);
 
-      await tester.pumpWidget(
-          createTestWidget(const CashierCategoriesScreen()));
+      await tester
+          .pumpWidget(createTestWidget(const CashierCategoriesScreen()));
       await tester.pump();
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
@@ -78,8 +78,7 @@ void main() {
       tester.view.resetDevicePixelRatio();
     });
 
-    testWidgets('displays category grid when categories load',
-        (tester) async {
+    testWidgets('displays category grid when categories load', (tester) async {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
@@ -88,8 +87,8 @@ void main() {
       when(() => categoriesDao.getAllCategories(any()))
           .thenAnswer((_) async => categories);
 
-      await tester.pumpWidget(
-          createTestWidget(const CashierCategoriesScreen()));
+      await tester
+          .pumpWidget(createTestWidget(const CashierCategoriesScreen()));
       await tester.pumpAndSettle();
 
       // Verify category names are displayed
@@ -108,8 +107,8 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const CashierCategoriesScreen()));
+      await tester
+          .pumpWidget(createTestWidget(const CashierCategoriesScreen()));
       await tester.pumpAndSettle();
 
       // Search field should be present
@@ -127,8 +126,8 @@ void main() {
       when(() => categoriesDao.getAllCategories(any()))
           .thenAnswer((_) async => []);
 
-      await tester.pumpWidget(
-          createTestWidget(const CashierCategoriesScreen()));
+      await tester
+          .pumpWidget(createTestWidget(const CashierCategoriesScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.category_outlined), findsOneWidget);
@@ -152,8 +151,8 @@ void main() {
       when(() => productsDao.getProductsByCategory('cat-1', any()))
           .thenAnswer((_) async => products);
 
-      await tester.pumpWidget(
-          createTestWidget(const CashierCategoriesScreen()));
+      await tester
+          .pumpWidget(createTestWidget(const CashierCategoriesScreen()));
       await tester.pumpAndSettle();
 
       // Tap the category card
@@ -163,8 +162,7 @@ void main() {
       // Products for the category should be loaded.
       // Called once during _loadCategories() to count products,
       // and once more in _loadCategoryProducts() when tapped.
-      verify(() =>
-              productsDao.getProductsByCategory('cat-1', 'test-store-1'))
+      verify(() => productsDao.getProductsByCategory('cat-1', 'test-store-1'))
           .called(2);
 
       tester.view.resetPhysicalSize();

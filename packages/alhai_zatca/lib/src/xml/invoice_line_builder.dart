@@ -1,7 +1,6 @@
 import 'package:xml/xml.dart';
 
 import 'package:alhai_zatca/src/models/zatca_invoice_line.dart';
-import 'package:alhai_zatca/src/xml/ubl_namespaces.dart';
 
 /// Builds UBL InvoiceLine XML elements from [ZatcaInvoiceLine] models
 class InvoiceLineBuilder {

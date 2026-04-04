@@ -24,8 +24,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const DamagedGoodsScreen()));
+      await tester.pumpWidget(createTestWidget(const DamagedGoodsScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(DamagedGoodsScreen), findsOneWidget);
@@ -39,8 +38,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const DamagedGoodsScreen()));
+      await tester.pumpWidget(createTestWidget(const DamagedGoodsScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.add_rounded), findsWidgets);
@@ -54,8 +52,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const DamagedGoodsScreen()));
+      await tester.pumpWidget(createTestWidget(const DamagedGoodsScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.broken_image_rounded), findsWidgets);
@@ -69,8 +66,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const DamagedGoodsScreen()));
+      await tester.pumpWidget(createTestWidget(const DamagedGoodsScreen()));
       await tester.pumpAndSettle();
 
       // Loss type breakdown always shows these icons in the summary row

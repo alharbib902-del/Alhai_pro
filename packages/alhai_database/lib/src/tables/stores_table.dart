@@ -18,7 +18,8 @@ class StoresTable extends Table {
   TextColumn get taxNumber => text().nullable()();
   TextColumn get commercialReg => text().nullable()();
   TextColumn get currency => text().withDefault(const Constant('SAR'))();
-  TextColumn get timezone => text().withDefault(const Constant('Asia/Riyadh'))();
+  TextColumn get timezone =>
+      text().withDefault(const Constant('Asia/Riyadh'))();
   BoolColumn get isActive => boolean().withDefault(const Constant(true))();
   DateTimeColumn get createdAt => dateTime()();
   DateTimeColumn get updatedAt => dateTime().nullable()();

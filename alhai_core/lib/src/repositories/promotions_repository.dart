@@ -21,7 +21,8 @@ abstract class PromotionsRepository {
   Future<Promotion?> getByCode(String storeId, String code);
 
   /// Validates and applies a promotion code
-  Future<Promotion?> validateCode(String storeId, String code, double orderTotal);
+  Future<Promotion?> validateCode(
+      String storeId, String code, double orderTotal);
 
   /// Creates a new promotion
   Future<Promotion> createPromotion({
@@ -38,7 +39,8 @@ abstract class PromotionsRepository {
   });
 
   /// Updates an existing promotion
-  Future<Promotion> updatePromotion(String id, {
+  Future<Promotion> updatePromotion(
+    String id, {
     String? name,
     String? code,
     PromoType? type,

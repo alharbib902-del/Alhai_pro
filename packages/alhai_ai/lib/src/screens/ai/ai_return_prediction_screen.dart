@@ -21,10 +21,12 @@ class AiReturnPredictionScreen extends ConsumerStatefulWidget {
   const AiReturnPredictionScreen({super.key});
 
   @override
-  ConsumerState<AiReturnPredictionScreen> createState() => _AiReturnPredictionScreenState();
+  ConsumerState<AiReturnPredictionScreen> createState() =>
+      _AiReturnPredictionScreenState();
 }
 
-class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScreen>
+class _AiReturnPredictionScreenState
+    extends ConsumerState<AiReturnPredictionScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
@@ -48,42 +50,46 @@ class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScr
     final l10n = AppLocalizations.of(context)!;
 
     return Column(
-              children: [
-                AppHeader(
-                  title: l10n.aiReturnPredictionTitle,
-                  onMenuTap: isWideScreen
-                      ? null
-                      : () => Scaffold.of(context).openDrawer(),
-                  onNotificationsTap: () => context.push('/notifications'),
-                  notificationsCount: 3,
-                  userName: l10n.defaultUserName,
-                  userRole: l10n.branchManager,
-                ),
-                // التبويبات
-                Container(
-                  color: isDark ? const Color(0xFF1E293B) : Colors.white,
-                  child: TabBar(
-                    controller: _tabController,
-                    labelColor: AppColors.primary,
-                    unselectedLabelColor: isDark ? Colors.white60 : AppColors.textSecondary,
-                    indicatorColor: AppColors.primary,
-                    tabs: [
-                      Tab(icon: const Icon(Icons.warning_amber_rounded), text: l10n.riskAnalysisTab),
-                      Tab(icon: const Icon(Icons.shield_outlined), text: l10n.preventiveActionsTab),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: TabBarView(
-                    controller: _tabController,
-                    children: [
-                      _buildRiskAnalysisTab(isDark, isWideScreen),
-                      _buildPreventiveActionsTab(isDark, isWideScreen),
-                    ],
-                  ),
-                ),
-              ],
-            );
+      children: [
+        AppHeader(
+          title: l10n.aiReturnPredictionTitle,
+          onMenuTap:
+              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onNotificationsTap: () => context.push('/notifications'),
+          notificationsCount: 3,
+          userName: l10n.defaultUserName,
+          userRole: l10n.branchManager,
+        ),
+        // التبويبات
+        Container(
+          color: isDark ? const Color(0xFF1E293B) : Colors.white,
+          child: TabBar(
+            controller: _tabController,
+            labelColor: AppColors.primary,
+            unselectedLabelColor:
+                isDark ? Colors.white60 : AppColors.textSecondary,
+            indicatorColor: AppColors.primary,
+            tabs: [
+              Tab(
+                  icon: const Icon(Icons.warning_amber_rounded),
+                  text: l10n.riskAnalysisTab),
+              Tab(
+                  icon: const Icon(Icons.shield_outlined),
+                  text: l10n.preventiveActionsTab),
+            ],
+          ),
+        ),
+        Expanded(
+          child: TabBarView(
+            controller: _tabController,
+            children: [
+              _buildRiskAnalysisTab(isDark, isWideScreen),
+              _buildPreventiveActionsTab(isDark, isWideScreen),
+            ],
+          ),
+        ),
+      ],
+    );
   }
 
   // ============================================================================
@@ -100,15 +106,19 @@ class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScr
 
     return probabilities.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (e, _) => Center(child: Text(AppLocalizations.of(context)!.errorOccurredDetail(e.toString()))),
+      error: (e, _) => Center(
+          child: Text(
+              AppLocalizations.of(context)!.errorOccurredDetail(e.toString()))),
       data: (probs) {
         return SingleChildScrollView(
-          padding: EdgeInsets.all(isWideScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+          padding:
+              EdgeInsets.all(isWideScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // بطاقات الملخص
-              _buildSummaryCards(isDark, isWideScreen, avgRate, atRisk, highRiskCount),
+              _buildSummaryCards(
+                  isDark, isWideScreen, avgRate, atRisk, highRiskCount),
               const SizedBox(height: AlhaiSpacing.lg),
 
               // رسم بياني للاتجاه
@@ -125,7 +135,8 @@ class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScr
 
               // قائمة العمليات
               Text(
-                AppLocalizations.of(context)!.operationsAtRiskCount(probs.length),
+                AppLocalizations.of(context)!
+                    .operationsAtRiskCount(probs.length),
                 style: TextStyle(
                   color: isDark ? Colors.white : AppColors.textPrimary,
                   fontSize: 18,
@@ -218,9 +229,8 @@ class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScr
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.06)
-              : AppColors.border,
+          color:
+              isDark ? Colors.white.withValues(alpha: 0.06) : AppColors.border,
         ),
         boxShadow: [
           BoxShadow(
@@ -288,9 +298,8 @@ class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScr
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.06)
-              : AppColors.border,
+          color:
+              isDark ? Colors.white.withValues(alpha: 0.06) : AppColors.border,
         ),
       ),
       child: Column(
@@ -375,9 +384,11 @@ class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScr
     final l10n = AppLocalizations.of(context)!;
     final filters = [
       _FilterOption(label: l10n.riskFilterAll, value: null),
-      _FilterOption(label: l10n.riskFilterVeryHigh, value: ReturnRiskLevel.veryHigh),
+      _FilterOption(
+          label: l10n.riskFilterVeryHigh, value: ReturnRiskLevel.veryHigh),
       _FilterOption(label: l10n.riskFilterHigh, value: ReturnRiskLevel.high),
-      _FilterOption(label: l10n.riskFilterMedium, value: ReturnRiskLevel.medium),
+      _FilterOption(
+          label: l10n.riskFilterMedium, value: ReturnRiskLevel.medium),
       _FilterOption(label: l10n.riskFilterLow, value: ReturnRiskLevel.low),
     ];
 
@@ -399,9 +410,7 @@ class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScr
                 ref.read(selectedRiskFilterProvider.notifier).state = f.value;
               },
               selectedColor: chipColor.withValues(alpha: 0.15),
-              backgroundColor: isDark
-                  ? const Color(0xFF1E293B)
-                  : Colors.white,
+              backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
               labelStyle: TextStyle(
                 color: isSelected
                     ? chipColor
@@ -435,7 +444,9 @@ class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScr
 
     return actions.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (e, _) => Center(child: Text(AppLocalizations.of(context)!.errorOccurredDetail(e.toString()))),
+      error: (e, _) => Center(
+          child: Text(
+              AppLocalizations.of(context)!.errorOccurredDetail(e.toString()))),
       data: (actionsList) {
         final totalSavings = actionsList.fold<double>(
           0,
@@ -443,7 +454,8 @@ class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScr
         );
 
         return SingleChildScrollView(
-          padding: EdgeInsets.all(isWideScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+          padding:
+              EdgeInsets.all(isWideScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -497,7 +509,8 @@ class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScr
                           ),
                           const SizedBox(height: AlhaiSpacing.xxs),
                           Text(
-                            AppLocalizations.of(context)!.amountSar(totalSavings.toStringAsFixed(2)),
+                            AppLocalizations.of(context)!
+                                .amountSar(totalSavings.toStringAsFixed(2)),
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 28,
@@ -505,7 +518,8 @@ class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScr
                             ),
                           ),
                           Text(
-                            AppLocalizations.of(context)!.fromPreventiveActions(actionsList.length),
+                            AppLocalizations.of(context)!
+                                .fromPreventiveActions(actionsList.length),
                             style: TextStyle(
                               color: Colors.white.withValues(alpha: 0.7),
                               fontSize: 12,
@@ -515,7 +529,8 @@ class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScr
                       ),
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: AlhaiSpacing.sm, vertical: 6),
                       decoration: BoxDecoration(
                         color: Colors.white.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(20),
@@ -523,7 +538,8 @@ class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScr
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(Icons.auto_awesome, color: Colors.white, size: 16),
+                          const Icon(Icons.auto_awesome,
+                              color: Colors.white, size: 16),
                           const SizedBox(width: AlhaiSpacing.xxs),
                           Text(
                             'AI',
@@ -570,7 +586,8 @@ class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScr
                       onApply: () {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text(AppLocalizations.of(context)!.actionApplied(action.title)),
+                            content: Text(AppLocalizations.of(context)!
+                                .actionApplied(action.title)),
                             backgroundColor: AppColors.success,
                             behavior: SnackBarBehavior.floating,
                             shape: RoundedRectangleBorder(
@@ -582,7 +599,8 @@ class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScr
                       onDismiss: () {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text(AppLocalizations.of(context)!.actionDismissed(action.title)),
+                            content: Text(AppLocalizations.of(context)!
+                                .actionDismissed(action.title)),
                             behavior: SnackBarBehavior.floating,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
@@ -673,7 +691,8 @@ class _TrendChartPainter extends CustomPainter {
 
     // المنطقة المظللة
     if (points.length >= 2) {
-      final areaPath = Path()..moveTo(points.first.dx, size.height - paddingBottom);
+      final areaPath = Path()
+        ..moveTo(points.first.dx, size.height - paddingBottom);
       for (final p in points) {
         areaPath.lineTo(p.dx, p.dy);
       }

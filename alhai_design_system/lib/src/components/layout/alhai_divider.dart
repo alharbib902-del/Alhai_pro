@@ -15,7 +15,7 @@ enum AlhaiDividerLabelPosition {
 }
 
 /// AlhaiDivider - Unified visual separator
-/// 
+///
 /// Features:
 /// - Horizontal and vertical variants
 /// - Optional label with position
@@ -172,11 +172,11 @@ class AlhaiDivider extends StatelessWidget {
     // RTL-aware: determine which visual side to hide
     final hideLeftLine =
         (!isRtl && position == AlhaiDividerLabelPosition.start) ||
-        (isRtl && position == AlhaiDividerLabelPosition.end);
+            (isRtl && position == AlhaiDividerLabelPosition.end);
 
     final hideRightLine =
         (!isRtl && position == AlhaiDividerLabelPosition.end) ||
-        (isRtl && position == AlhaiDividerLabelPosition.start);
+            (isRtl && position == AlhaiDividerLabelPosition.start);
 
     Widget line() => Container(height: thickness, color: effectiveColor);
 
@@ -184,12 +184,18 @@ class AlhaiDivider extends StatelessWidget {
       padding: EdgeInsetsDirectional.only(start: indent, end: endIndent),
       child: Row(
         children: [
-          if (hideLeftLine) const SizedBox.shrink() else Expanded(child: line()),
+          if (hideLeftLine)
+            const SizedBox.shrink()
+          else
+            Expanded(child: line()),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm),
             child: Text(_label!, style: effectiveTextStyle),
           ),
-          if (hideRightLine) const SizedBox.shrink() else Expanded(child: line()),
+          if (hideRightLine)
+            const SizedBox.shrink()
+          else
+            Expanded(child: line()),
         ],
       ),
     );

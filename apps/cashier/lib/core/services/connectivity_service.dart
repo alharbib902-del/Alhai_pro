@@ -52,12 +52,14 @@ class ConnectivityService {
       final results = await _connectivity.checkConnectivity();
       _isOnline = results.any((r) => r != ConnectivityResult.none);
     } catch (e) {
-      if (kDebugMode) debugPrint('ConnectivityService: فشل فحص الاتصال الأولي: $e');
+      if (kDebugMode)
+        debugPrint('ConnectivityService: فشل فحص الاتصال الأولي: $e');
       _isOnline = true; // optimistic default
     }
 
     if (kDebugMode) {
-      debugPrint('ConnectivityService: الحالة الأولية: ${_isOnline ? "متصل" : "غير متصل"}');
+      debugPrint(
+          'ConnectivityService: الحالة الأولية: ${_isOnline ? "متصل" : "غير متصل"}');
     }
 
     // Listen for changes
@@ -126,7 +128,8 @@ class ConnectivityService {
   /// Triggers queue flush to sync pending operations.
   void _onBackOnline() {
     if (kDebugMode) {
-      debugPrint('ConnectivityService: عاد الاتصال -- بدء مزامنة قائمة الانتظار');
+      debugPrint(
+          'ConnectivityService: عاد الاتصال -- بدء مزامنة قائمة الانتظار');
     }
 
     // Fire-and-forget: flush the offline queue

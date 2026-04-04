@@ -147,8 +147,8 @@ class AlhaiStateView extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    final effectivePadding = padding ??
-        const EdgeInsetsDirectional.all(AlhaiSpacing.lg);
+    final effectivePadding =
+        padding ?? const EdgeInsetsDirectional.all(AlhaiSpacing.lg);
 
     // If custom content provided, use it
     if (customContent != null) {

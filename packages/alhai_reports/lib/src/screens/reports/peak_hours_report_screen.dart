@@ -16,7 +16,8 @@ class PeakHoursReportScreen extends ConsumerStatefulWidget {
   const PeakHoursReportScreen({super.key});
 
   @override
-  ConsumerState<PeakHoursReportScreen> createState() => _PeakHoursReportScreenState();
+  ConsumerState<PeakHoursReportScreen> createState() =>
+      _PeakHoursReportScreenState();
 }
 
 class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
@@ -46,12 +47,15 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
       final storeId = ref.read(currentStoreIdProvider) ?? kDefaultStoreId;
 
       // Load hourly data for today
-      final hourlySales = await db.salesDao.getHourlySales(storeId, DateTime.now());
-      _hourlyData = hourlySales.map((h) => HourlyData(
-        hour: h.hour,
-        transactions: h.count,
-        revenue: h.total,
-      )).toList();
+      final hourlySales =
+          await db.salesDao.getHourlySales(storeId, DateTime.now());
+      _hourlyData = hourlySales
+          .map((h) => HourlyData(
+                hour: h.hour,
+                transactions: h.count,
+                revenue: h.total,
+              ))
+          .toList();
 
       // Load daily data by iterating last 7 days
       // Day indices: 0=Saturday, 1=Sunday, ..., 6=Friday
@@ -106,32 +110,32 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : ListView(
-        padding: const EdgeInsets.all(AppSizes.lg),
-        children: [
-          // شريط الفترة والعرض
-          _buildHeaderBar(),
-          const SizedBox(height: AppSizes.lg),
+              padding: const EdgeInsets.all(AppSizes.lg),
+              children: [
+                // شريط الفترة والعرض
+                _buildHeaderBar(),
+                const SizedBox(height: AppSizes.lg),
 
-          // ملخص الذروة
-          if (_hourlyData.isNotEmpty && _dailyData.isNotEmpty)
-            _buildPeakSummary(),
-          if (_hourlyData.isNotEmpty && _dailyData.isNotEmpty)
-            const SizedBox(height: AppSizes.lg),
+                // ملخص الذروة
+                if (_hourlyData.isNotEmpty && _dailyData.isNotEmpty)
+                  _buildPeakSummary(),
+                if (_hourlyData.isNotEmpty && _dailyData.isNotEmpty)
+                  const SizedBox(height: AppSizes.lg),
 
-          // الرسم البياني الرئيسي
-          if (_hourlyData.isNotEmpty || _dailyData.isNotEmpty)
-            _buildMainChart(),
-          if (_hourlyData.isNotEmpty || _dailyData.isNotEmpty)
-            const SizedBox(height: AppSizes.lg),
+                // الرسم البياني الرئيسي
+                if (_hourlyData.isNotEmpty || _dailyData.isNotEmpty)
+                  _buildMainChart(),
+                if (_hourlyData.isNotEmpty || _dailyData.isNotEmpty)
+                  const SizedBox(height: AppSizes.lg),
 
-          // خريطة الحرارة
-          _buildHeatmap(),
-          const SizedBox(height: AppSizes.lg),
+                // خريطة الحرارة
+                _buildHeatmap(),
+                const SizedBox(height: AppSizes.lg),
 
-          // توصيات
-          _buildRecommendations(),
-        ],
-      ),
+                // توصيات
+                _buildRecommendations(),
+              ],
+            ),
     );
   }
 
@@ -149,7 +153,8 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.calendar_today, size: 16, color: AppColors.primary),
+                const Icon(Icons.calendar_today,
+                    size: 16, color: AppColors.primary),
                 const SizedBox(width: AppSizes.sm),
                 Text(
                   '${_formatDate(_dateRange.start)} - ${_formatDate(_dateRange.end)}',
@@ -197,7 +202,9 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
     final peakDay = _dailyData.reduce(
       (a, b) => a.transactions > b.transactions ? a : b,
     );
-    final avgTransactions = _hourlyData.fold(0, (sum, h) => sum + h.transactions) ~/ _hourlyData.length;
+    final avgTransactions =
+        _hourlyData.fold(0, (sum, h) => sum + h.transactions) ~/
+            _hourlyData.length;
 
     return Row(
       children: [
@@ -205,7 +212,8 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
           child: _buildSummaryCard(
             AppLocalizations.of(context)!.peakHourLabel,
             '${peakHour.hour}:00',
-            AppLocalizations.of(context)!.transactionsWithCount(peakHour.transactions),
+            AppLocalizations.of(context)!
+                .transactionsWithCount(peakHour.transactions),
             Icons.schedule,
             AppColors.error,
           ),
@@ -215,7 +223,8 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
           child: _buildSummaryCard(
             AppLocalizations.of(context)!.peakDayLabel,
             peakDay.day,
-            AppLocalizations.of(context)!.transactionsWithCount(peakDay.transactions),
+            AppLocalizations.of(context)!
+                .transactionsWithCount(peakDay.transactions),
             Icons.event,
             AppColors.primary,
           ),
@@ -297,7 +306,6 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
               ),
             ),
             const SizedBox(height: AppSizes.lg),
-
             if (_viewMode == 'hourly')
               _buildHourlyChart()
             else
@@ -312,7 +320,8 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
     if (_hourlyData.isEmpty) return const SizedBox.shrink();
     final maxTransactions = _hourlyData
         .map((h) => h.transactions)
-        .reduce((a, b) => a > b ? a : b).clamp(1, double.maxFinite.toInt());
+        .reduce((a, b) => a > b ? a : b)
+        .clamp(1, double.maxFinite.toInt());
 
     return SizedBox(
       height: 250,
@@ -324,7 +333,8 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
 
           return Expanded(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xxxs),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xxxs),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -369,7 +379,8 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
     if (_dailyData.isEmpty) return const SizedBox.shrink();
     final maxTransactions = _dailyData
         .map((d) => d.transactions)
-        .reduce((a, b) => a > b ? a : b).clamp(1, double.maxFinite.toInt());
+        .reduce((a, b) => a > b ? a : b)
+        .clamp(1, double.maxFinite.toInt());
 
     return SizedBox(
       height: 250,
@@ -443,7 +454,15 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
 
     final hours = List.generate(15, (i) => '${8 + i}:00');
     final l10n = AppLocalizations.of(context)!;
-    final days = [l10n.satShort, l10n.sunShort, l10n.monShort, l10n.tueShort, l10n.wedShort, l10n.thuShort, l10n.friShort];
+    final days = [
+      l10n.satShort,
+      l10n.sunShort,
+      l10n.monShort,
+      l10n.tueShort,
+      l10n.wedShort,
+      l10n.thuShort,
+      l10n.friShort
+    ];
 
     return Card(
       child: Padding(
@@ -593,7 +612,6 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
             ),
             const SizedBox(height: AppSizes.md),
             const Divider(),
-
             _buildRecommendationItem(
               AppLocalizations.of(context)!.staffRecommendation,
               AppLocalizations.of(context)!.staffRecommendationDesc,
@@ -672,28 +690,44 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
   String _getDayName(BuildContext context, String key) {
     final l10n = AppLocalizations.of(context)!;
     switch (key) {
-      case 'sat': return l10n.saturdayDay;
-      case 'sun': return l10n.sundayDay;
-      case 'mon': return l10n.mondayDay;
-      case 'tue': return l10n.tuesdayDay;
-      case 'wed': return l10n.wednesdayDay;
-      case 'thu': return l10n.thursdayDay;
-      case 'fri': return l10n.fridayDay;
-      default: return key;
+      case 'sat':
+        return l10n.saturdayDay;
+      case 'sun':
+        return l10n.sundayDay;
+      case 'mon':
+        return l10n.mondayDay;
+      case 'tue':
+        return l10n.tuesdayDay;
+      case 'wed':
+        return l10n.wednesdayDay;
+      case 'thu':
+        return l10n.thursdayDay;
+      case 'fri':
+        return l10n.fridayDay;
+      default:
+        return key;
     }
   }
 
   String _getDayShort(BuildContext context, String key) {
     final l10n = AppLocalizations.of(context)!;
     switch (key) {
-      case 'sat': return l10n.satShort;
-      case 'sun': return l10n.sunShort;
-      case 'mon': return l10n.monShort;
-      case 'tue': return l10n.tueShort;
-      case 'wed': return l10n.wedShort;
-      case 'thu': return l10n.thuShort;
-      case 'fri': return l10n.friShort;
-      default: return key;
+      case 'sat':
+        return l10n.satShort;
+      case 'sun':
+        return l10n.sunShort;
+      case 'mon':
+        return l10n.monShort;
+      case 'tue':
+        return l10n.tueShort;
+      case 'wed':
+        return l10n.wedShort;
+      case 'thu':
+        return l10n.thuShort;
+      case 'fri':
+        return l10n.friShort;
+      default:
+        return key;
     }
   }
 

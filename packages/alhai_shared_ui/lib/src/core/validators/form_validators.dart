@@ -216,9 +216,7 @@ class FormValidators {
             : 'Number must be greater than zero';
       }
       if (max != null && num > max) {
-        return locale == 'ar'
-            ? 'الحد الأقصى $max'
-            : 'Maximum value is $max';
+        return locale == 'ar' ? 'الحد الأقصى $max' : 'Maximum value is $max';
       }
       return null;
     };

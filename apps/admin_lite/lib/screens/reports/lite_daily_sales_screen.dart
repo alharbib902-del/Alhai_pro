@@ -45,7 +45,8 @@ class LiteDailySalesScreen extends ConsumerWidget {
         child: dataAsync.when(
           data: (data) => SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
-            padding: EdgeInsets.all(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
+            padding:
+                EdgeInsets.all(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -53,18 +54,28 @@ class LiteDailySalesScreen extends ConsumerWidget {
                 const SizedBox(height: AlhaiSpacing.md),
                 _buildTotalsRow(context, isDark, isMobile, l10n, data),
                 const SizedBox(height: AlhaiSpacing.lg),
-                _buildSection(context, l10n.paymentMethod, Icons.payment, isDark,
+                _buildSection(
+                  context,
+                  l10n.paymentMethod,
+                  Icons.payment,
+                  isDark,
                   data.paymentMethods.map((pm) {
                     final pct = data.todayStats.total > 0
                         ? '${(pm.total / data.todayStats.total * 100).toStringAsFixed(0)}%'
                         : '';
-                    return _BreakdownRow(pm.method, pm.total.toStringAsFixed(0), pct, AlhaiColors.info);
+                    return _BreakdownRow(pm.method, pm.total.toStringAsFixed(0),
+                        pct, AlhaiColors.info);
                   }).toList(),
                 ),
                 const SizedBox(height: AlhaiSpacing.lg),
-                _buildSection(context, l10n.products, Icons.star_rounded, isDark,
+                _buildSection(
+                  context,
+                  l10n.products,
+                  Icons.star_rounded,
+                  isDark,
                   data.topProducts.map((p) {
-                    return _BreakdownRow(p.name, p.price.toStringAsFixed(0), '', AlhaiColors.primary);
+                    return _BreakdownRow(p.name, p.price.toStringAsFixed(0), '',
+                        AlhaiColors.primary);
                   }).toList(),
                 ),
                 const SizedBox(height: AlhaiSpacing.lg),
@@ -85,16 +96,25 @@ class LiteDailySalesScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildError(BuildContext context, WidgetRef ref, bool isDark, AppLocalizations l10n) {
+  Widget _buildError(
+      BuildContext context, WidgetRef ref, bool isDark, AppLocalizations l10n) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(AlhaiSpacing.massive),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.error_outline_rounded, size: 48, color: isDark ? Colors.white30 : Theme.of(context).colorScheme.outlineVariant),
+            Icon(Icons.error_outline_rounded,
+                size: 48,
+                color: isDark
+                    ? Colors.white30
+                    : Theme.of(context).colorScheme.outlineVariant),
             const SizedBox(height: AlhaiSpacing.md),
-            Text(l10n.errorOccurred, style: TextStyle(color: isDark ? Colors.white54 : Theme.of(context).colorScheme.onSurfaceVariant)),
+            Text(l10n.errorOccurred,
+                style: TextStyle(
+                    color: isDark
+                        ? Colors.white54
+                        : Theme.of(context).colorScheme.onSurfaceVariant)),
             const SizedBox(height: AlhaiSpacing.sm),
             TextButton.icon(
               onPressed: () => ref.invalidate(liteDailySalesProvider),
@@ -109,20 +129,25 @@ class LiteDailySalesScreen extends ConsumerWidget {
 
   Widget _buildDateHeader(bool isDark, AppLocalizations l10n) {
     final now = DateTime.now();
-    return Builder(builder: (context) => Text(
-      '${l10n.today} \u2022 ${now.day}/${now.month}/${now.year}',
-      style: TextStyle(
-        fontSize: 14,
-        color: Theme.of(context).colorScheme.onSurfaceVariant,
-      ),
-    ));
+    return Builder(
+        builder: (context) => Text(
+              '${l10n.today} \u2022 ${now.day}/${now.month}/${now.year}',
+              style: TextStyle(
+                fontSize: 14,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ));
   }
 
-  Widget _buildTotalsRow(BuildContext context, bool isDark, bool isMobile, AppLocalizations l10n, DailySalesData data) {
+  Widget _buildTotalsRow(BuildContext context, bool isDark, bool isMobile,
+      AppLocalizations l10n, DailySalesData data) {
     final items = [
-      _TotalItem(l10n.totalSales, data.todayStats.total.toStringAsFixed(0), AlhaiColors.success, Icons.trending_up),
-      _TotalItem(l10n.orders, '${data.todayStats.count}', AlhaiColors.info, Icons.receipt),
-      _TotalItem(l10n.refund, data.refundStats.total.toStringAsFixed(0), AlhaiColors.error, Icons.undo),
+      _TotalItem(l10n.totalSales, data.todayStats.total.toStringAsFixed(0),
+          AlhaiColors.success, Icons.trending_up),
+      _TotalItem(l10n.orders, '${data.todayStats.count}', AlhaiColors.info,
+          Icons.receipt),
+      _TotalItem(l10n.refund, data.refundStats.total.toStringAsFixed(0),
+          AlhaiColors.error, Icons.undo),
     ];
 
     return Row(
@@ -135,10 +160,14 @@ class LiteDailySalesScreen extends ConsumerWidget {
             child: Container(
               padding: const EdgeInsets.all(AlhaiSpacing.md),
               decoration: BoxDecoration(
-                color: isDark ? Colors.white.withValues(alpha: 0.06) : Theme.of(context).colorScheme.surface,
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.06)
+                    : Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
-                  color: isDark ? Colors.white12 : Theme.of(context).colorScheme.outlineVariant,
+                  color: isDark
+                      ? Colors.white12
+                      : Theme.of(context).colorScheme.outlineVariant,
                 ),
               ),
               child: Column(
@@ -151,7 +180,9 @@ class LiteDailySalesScreen extends ConsumerWidget {
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: isDark ? Colors.white : Theme.of(context).colorScheme.onSurface,
+                      color: isDark
+                          ? Colors.white
+                          : Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: AlhaiSpacing.xxxs),
@@ -159,7 +190,9 @@ class LiteDailySalesScreen extends ConsumerWidget {
                     entry.value.label,
                     style: TextStyle(
                       fontSize: 12,
-                      color: isDark ? Colors.white54 : Theme.of(context).colorScheme.onSurfaceVariant,
+                      color: isDark
+                          ? Colors.white54
+                          : Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -185,10 +218,14 @@ class LiteDailySalesScreen extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.06) : Theme.of(context).colorScheme.surface,
+        color: isDark
+            ? Colors.white.withValues(alpha: 0.06)
+            : Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark ? Colors.white12 : Theme.of(context).colorScheme.outlineVariant,
+          color: isDark
+              ? Colors.white12
+              : Theme.of(context).colorScheme.outlineVariant,
         ),
       ),
       child: Column(
@@ -227,7 +264,9 @@ class LiteDailySalesScreen extends ConsumerWidget {
                         row.label,
                         style: TextStyle(
                           fontSize: 14,
-                          color: isDark ? Colors.white : Theme.of(context).colorScheme.onSurface,
+                          color: isDark
+                              ? Colors.white
+                              : Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
                     ),
@@ -236,7 +275,9 @@ class LiteDailySalesScreen extends ConsumerWidget {
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 14,
-                        color: isDark ? Colors.white : Theme.of(context).colorScheme.onSurface,
+                        color: isDark
+                            ? Colors.white
+                            : Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                     if (row.extra.isNotEmpty) ...[
@@ -257,10 +298,13 @@ class LiteDailySalesScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildHourlyChart(BuildContext context, bool isDark, AppLocalizations l10n, List<dynamic> hourlySales) {
+  Widget _buildHourlyChart(BuildContext context, bool isDark,
+      AppLocalizations l10n, List<dynamic> hourlySales) {
     // Build normalized bars from hourly sales data
-    final maxTotal = hourlySales.isEmpty ? 1.0 :
-        hourlySales.fold<double>(0, (max, h) => h.total > max ? h.total : max);
+    final maxTotal = hourlySales.isEmpty
+        ? 1.0
+        : hourlySales.fold<double>(
+            0, (max, h) => h.total > max ? h.total : max);
     final bars = hourlySales.isEmpty
         ? List.filled(12, 0.0)
         : List.generate(12, (i) {
@@ -273,10 +317,14 @@ class LiteDailySalesScreen extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.06) : Theme.of(context).colorScheme.surface,
+        color: isDark
+            ? Colors.white.withValues(alpha: 0.06)
+            : Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark ? Colors.white12 : Theme.of(context).colorScheme.outlineVariant,
+          color: isDark
+              ? Colors.white12
+              : Theme.of(context).colorScheme.outlineVariant,
         ),
       ),
       child: Column(
@@ -284,7 +332,8 @@ class LiteDailySalesScreen extends ConsumerWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.access_time, size: 18, color: AlhaiColors.primary),
+              const Icon(Icons.access_time,
+                  size: 18, color: AlhaiColors.primary),
               const SizedBox(width: AlhaiSpacing.xs),
               Text(
                 l10n.sales,
@@ -309,7 +358,8 @@ class LiteDailySalesScreen extends ConsumerWidget {
                       height: (120.0 * v.clamp(0.0, 1.0)).toDouble(),
                       decoration: BoxDecoration(
                         color: AlhaiColors.info.withValues(alpha: 0.6),
-                        borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
+                        borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(4)),
                       ),
                     ),
                   ),
@@ -323,7 +373,8 @@ class LiteDailySalesScreen extends ConsumerWidget {
             children: _hourLabels.map((h) {
               return Text(
                 h,
-                style: TextStyle(fontSize: 10, color: Theme.of(context).colorScheme.outline),
+                style: TextStyle(
+                    fontSize: 10, color: Theme.of(context).colorScheme.outline),
               );
             }).toList(),
           ),

@@ -89,8 +89,8 @@ class _ShimmerLoadingState extends State<ShimmerLoading>
     }
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final baseColor = widget.baseColor ??
-        (isDark ? AppColors.grey700 : AppColors.grey200);
+    final baseColor =
+        widget.baseColor ?? (isDark ? AppColors.grey700 : AppColors.grey200);
     final highlightColor = widget.highlightColor ??
         (isDark ? AppColors.grey600 : AppColors.grey100);
 

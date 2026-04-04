@@ -38,7 +38,8 @@ class PurchasesRemoteDataSourceImpl implements PurchasesRemoteDataSource {
   @override
   Future<PurchaseOrderResponse> getPurchaseOrder(String id) async {
     final response = await _dio.get('/purchase-orders/$id');
-    return PurchaseOrderResponse.fromJson(response.data as Map<String, dynamic>);
+    return PurchaseOrderResponse.fromJson(
+        response.data as Map<String, dynamic>);
   }
 
   @override
@@ -49,7 +50,8 @@ class PurchasesRemoteDataSourceImpl implements PurchasesRemoteDataSource {
       '/purchase-orders',
       data: request.toJson(),
     );
-    return PurchaseOrderResponse.fromJson(response.data as Map<String, dynamic>);
+    return PurchaseOrderResponse.fromJson(
+        response.data as Map<String, dynamic>);
   }
 
   @override
@@ -61,7 +63,8 @@ class PurchasesRemoteDataSourceImpl implements PurchasesRemoteDataSource {
       '/purchase-orders/$id',
       data: data,
     );
-    return PurchaseOrderResponse.fromJson(response.data as Map<String, dynamic>);
+    return PurchaseOrderResponse.fromJson(
+        response.data as Map<String, dynamic>);
   }
 
   @override
@@ -83,7 +86,8 @@ class PurchasesRemoteDataSourceImpl implements PurchasesRemoteDataSource {
       '/purchase-orders/$id/receive',
       data: request.toJson(),
     );
-    return PurchaseOrderResponse.fromJson(response.data as Map<String, dynamic>);
+    return PurchaseOrderResponse.fromJson(
+        response.data as Map<String, dynamic>);
   }
 
   @override
@@ -92,6 +96,7 @@ class PurchasesRemoteDataSourceImpl implements PurchasesRemoteDataSource {
       '/purchase-orders/$id/payment',
       data: {'amount': amount},
     );
-    return PurchaseOrderResponse.fromJson(response.data as Map<String, dynamic>);
+    return PurchaseOrderResponse.fromJson(
+        response.data as Map<String, dynamic>);
   }
 }

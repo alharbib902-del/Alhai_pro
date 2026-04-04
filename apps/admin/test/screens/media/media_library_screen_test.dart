@@ -18,8 +18,7 @@ void main() {
     db = setupMockDatabase(productsDao: productsDao);
     setupTestGetIt(mockDb: db);
 
-    when(() => productsDao.getAllProducts(any()))
-        .thenAnswer((_) async => []);
+    when(() => productsDao.getAllProducts(any())).thenAnswer((_) async => []);
   });
 
   tearDown(() => tearDownTestGetIt());
@@ -30,8 +29,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const MediaLibraryScreen()));
+      await tester.pumpWidget(createTestWidget(const MediaLibraryScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(MediaLibraryScreen), findsOneWidget);
@@ -45,8 +43,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const MediaLibraryScreen()));
+      await tester.pumpWidget(createTestWidget(const MediaLibraryScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.cloud_upload), findsWidgets);
@@ -60,8 +57,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const MediaLibraryScreen()));
+      await tester.pumpWidget(createTestWidget(const MediaLibraryScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.search), findsWidgets);
@@ -75,8 +71,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const MediaLibraryScreen()));
+      await tester.pumpWidget(createTestWidget(const MediaLibraryScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.storage), findsWidgets);

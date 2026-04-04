@@ -252,8 +252,7 @@ void main() {
       expect(patched['status'], 'delivered');
 
       // Other items unchanged
-      final unchanged =
-          deliveries.firstWhere((d) => d['id'] == 'list-patch-2');
+      final unchanged = deliveries.firstWhere((d) => d['id'] == 'list-patch-2');
       expect(unchanged['status'], 'picked_up');
     });
 

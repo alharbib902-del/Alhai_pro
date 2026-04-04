@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:alhai_l10n/alhai_l10n.dart';
 
 import '../../providers/sa_dashboard_providers.dart';
-import '../../providers/sa_stores_providers.dart';
 import '../../providers/sa_subscriptions_providers.dart';
-import '../../providers/sa_users_providers.dart';
 
 /// Platform reports screen.
 /// Shows summary reports and export options.
@@ -14,12 +13,13 @@ class SAReportsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     final kpis = ref.watch(saDashboardKPIsProvider);
     final subCounts = ref.watch(saSubscriptionCountsProvider);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Reports'),
+        title: Text(l10n.saReportsTitle),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -27,7 +27,7 @@ class SAReportsScreen extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Quick Stats Section
-            Text('Platform Summary',
+            Text(l10n.saPlatformSummary,
                 style: theme.textTheme.titleLarge
                     ?.copyWith(fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
@@ -38,7 +38,7 @@ class SAReportsScreen extends ConsumerWidget {
                 runSpacing: 16,
                 children: [
                   _StatCard(
-                    title: 'Active Stores',
+                    title: l10n.saActiveStores,
                     value: '${data.activeStores}',
                     icon: Icons.store_rounded,
                     color: Colors.blue,
@@ -218,5 +218,4 @@ class _ExportButton extends StatelessWidget {
       icon: Icon(icon),
       label: Text(label),
     );
-  }
-}
+  

@@ -27,8 +27,7 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
 
   List<AccountsTableData> _debtors = [];
 
-  double get _totalDebt =>
-      _debtors.fold(0.0, (sum, d) => sum + d.balance);
+  double get _totalDebt => _debtors.fold(0.0, (sum, d) => sum + d.balance);
   int get _overdueCount => _debtors.where((d) {
         if (d.lastTransactionAt == null) return true;
         return d.lastTransactionAt!
@@ -74,8 +73,7 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
       final db = GetIt.I<AppDatabase>();
       final accounts = await db.accountsDao.getReceivableAccounts(storeId);
       // Filter to only those with positive balance (actual debtors)
-      final debtors =
-          accounts.where((a) => a.balance > 0).toList();
+      final debtors = accounts.where((a) => a.balance > 0).toList();
       if (mounted) {
         setState(() {
           _debtors = debtors;
@@ -162,12 +160,9 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
             tooltip: l10n.sortLabel,
             onSelected: (v) => setState(() => _sortBy = v),
             itemBuilder: (context) => [
-              PopupMenuItem(
-                  value: 'amount', child: Text(l10n.sortByAmount)),
-              PopupMenuItem(
-                  value: 'date', child: Text(l10n.sortByDate)),
-              PopupMenuItem(
-                  value: 'name', child: Text(l10n.sortByName)),
+              PopupMenuItem(value: 'amount', child: Text(l10n.sortByAmount)),
+              PopupMenuItem(value: 'date', child: Text(l10n.sortByDate)),
+              PopupMenuItem(value: 'name', child: Text(l10n.sortByName)),
             ],
           ),
           IconButton(
@@ -220,7 +215,8 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
                     icon: Icons.account_balance_wallet,
                     title: l10n.totalDebts,
                     value: l10n.debtAmountWithCurrency(
-                        CurrencyFormatter.formatNumber(_totalDebt, decimalDigits: 0)),
+                        CurrencyFormatter.formatNumber(_totalDebt,
+                            decimalDigits: 0)),
                     color: colorScheme.error,
                   ),
                 ),
@@ -258,7 +254,8 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
                       icon: Icons.account_balance_wallet,
                       title: l10n.totalDebts,
                       value: l10n.debtAmountWithCurrency(
-                          CurrencyFormatter.formatNumber(_totalDebt, decimalDigits: 0)),
+                          CurrencyFormatter.formatNumber(_totalDebt,
+                              decimalDigits: 0)),
                       color: colorScheme.error,
                     ),
                   ),
@@ -287,7 +284,8 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
     );
   }
 
-  Widget _buildDebtList(String filter, AppLocalizations l10n, ColorScheme colorScheme) {
+  Widget _buildDebtList(
+      String filter, AppLocalizations l10n, ColorScheme colorScheme) {
     final debts = _getFilteredDebts(filter);
     if (debts.isEmpty) {
       return AppEmptyState.noDebts(context);
@@ -299,7 +297,8 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
         if (isWide) {
           // Grid layout for wide screens
           return GridView.builder(
-            padding: const EdgeInsetsDirectional.only(start: 16, end: 16, top: 8, bottom: 16),
+            padding: const EdgeInsetsDirectional.only(
+                start: 16, end: 16, top: 8, bottom: 16),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               childAspectRatio: 2.5,
@@ -307,7 +306,8 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
               mainAxisSpacing: 12,
             ),
             itemCount: debts.length,
-            itemBuilder: (context, index) => _buildDebtCard(debts[index], l10n, colorScheme),
+            itemBuilder: (context, index) =>
+                _buildDebtCard(debts[index], l10n, colorScheme),
           );
         }
         return ListView.builder(
@@ -320,7 +320,8 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
     );
   }
 
-  Widget _buildDebtCard(AccountsTableData debt, AppLocalizations l10n, ColorScheme colorScheme) {
+  Widget _buildDebtCard(
+      AccountsTableData debt, AppLocalizations l10n, ColorScheme colorScheme) {
     final status = _getStatus(debt);
     final isOverdue = status == 'overdue';
     final dueDate = _getDueDate(debt);
@@ -355,8 +356,7 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
                   SizedBox(width: AlhaiSpacing.sm),
                   Expanded(
                     child: Column(
-                      crossAxisAlignment:
-                          CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           debt.name,
@@ -378,7 +378,8 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
                     children: [
                       Text(
                         l10n.debtAmountWithCurrency(
-                            CurrencyFormatter.formatNumber(debt.balance, decimalDigits: 0)),
+                            CurrencyFormatter.formatNumber(debt.balance,
+                                decimalDigits: 0)),
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
@@ -389,13 +390,13 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
                       ),
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxxs),
+                            horizontal: AlhaiSpacing.xs,
+                            vertical: AlhaiSpacing.xxxs),
                         decoration: BoxDecoration(
                           color: isOverdue
                               ? colorScheme.errorContainer
                               : colorScheme.primaryContainer,
-                          borderRadius:
-                              BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
                           isOverdue
@@ -425,14 +426,12 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
                       l10n.lastPaymentDate(
                           _formatDate(debt.lastTransactionAt!)),
                       style: TextStyle(
-                          fontSize: 12,
-                          color: colorScheme.onSurfaceVariant),
+                          fontSize: 12, color: colorScheme.onSurfaceVariant),
                     ),
                     const Spacer(),
                     TextButton.icon(
                       onPressed: () => _recordPayment(debt),
-                      icon:
-                          const Icon(Icons.payment, size: 16),
+                      icon: const Icon(Icons.payment, size: 16),
                       label: Text(l10n.recordPayment),
                       style: TextButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
@@ -486,8 +485,7 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
               children: [
                 CircleAvatar(
                   radius: 32,
-                  child: Text(
-                      debt.name.isNotEmpty ? debt.name[0] : '?',
+                  child: Text(debt.name.isNotEmpty ? debt.name[0] : '?',
                       style: const TextStyle(fontSize: 24)),
                 ),
                 SizedBox(width: AlhaiSpacing.md),
@@ -496,14 +494,12 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(debt.name,
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleLarge),
+                          style: Theme.of(context).textTheme.titleLarge),
                       Directionality(
                         textDirection: TextDirection.ltr,
                         child: Text(debt.phone ?? '',
-                            style: TextStyle(
-                                color: colorScheme.onSurfaceVariant)),
+                            style:
+                                TextStyle(color: colorScheme.onSurfaceVariant)),
                       ),
                     ],
                   ),
@@ -522,8 +518,9 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
               child: Column(
                 children: [
                   Text(
-                    l10n.debtAmountWithCurrency(
-                        CurrencyFormatter.formatNumber(debt.balance, decimalDigits: 0)),
+                    l10n.debtAmountWithCurrency(CurrencyFormatter.formatNumber(
+                        debt.balance,
+                        decimalDigits: 0)),
                     style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
@@ -541,9 +538,7 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
               ),
             ),
             SizedBox(height: AlhaiSpacing.lg),
-            _DetailRow(
-                label: l10n.dueDate,
-                value: _formatDate(dueDate)),
+            _DetailRow(label: l10n.dueDate, value: _formatDate(dueDate)),
             if (debt.lastTransactionAt != null)
               _DetailRow(
                   label: l10n.lastPaymentLabel,
@@ -591,8 +586,8 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(l10n.currentDebt(
-                  CurrencyFormatter.formatNumber(debt.balance, decimalDigits: 0))),
+              Text(l10n.currentDebt(CurrencyFormatter.formatNumber(debt.balance,
+                  decimalDigits: 0))),
               SizedBox(height: AlhaiSpacing.md),
               TextField(
                 controller: amountController,
@@ -611,18 +606,12 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
                   prefixIcon: const Icon(Icons.payment),
                 ),
                 items: [
+                  DropdownMenuItem(value: 'cash', child: Text(l10n.cashMethod)),
+                  DropdownMenuItem(value: 'card', child: Text(l10n.cardMethod)),
                   DropdownMenuItem(
-                      value: 'cash',
-                      child: Text(l10n.cashMethod)),
-                  DropdownMenuItem(
-                      value: 'card',
-                      child: Text(l10n.cardMethod)),
-                  DropdownMenuItem(
-                      value: 'transfer',
-                      child: Text(l10n.transferMethod)),
+                      value: 'transfer', child: Text(l10n.transferMethod)),
                 ],
-                onChanged: (v) =>
-                    setDialogState(() => paymentMethod = v!),
+                onChanged: (v) => setDialogState(() => paymentMethod = v!),
               ),
             ],
           ),
@@ -633,31 +622,26 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
             ),
             FilledButton(
               onPressed: () async {
-                final amount =
-                    double.tryParse(amountController.text);
+                final amount = double.tryParse(amountController.text);
                 if (amount == null || amount <= 0) return;
                 Navigator.pop(context);
                 try {
                   final db = GetIt.I<AppDatabase>();
                   final storeId =
-                      ref.read(currentStoreIdProvider) ??
-                          kDefaultStoreId;
+                      ref.read(currentStoreIdProvider) ?? kDefaultStoreId;
                   final newBalance = debt.balance - amount;
-                  final txnId =
-                      'PAY-${DateTime.now().millisecondsSinceEpoch}';
+                  final txnId = 'PAY-${DateTime.now().millisecondsSinceEpoch}';
                   await db.transactionsDao.recordPayment(
                     id: txnId,
                     storeId: storeId,
                     accountId: debt.id,
                     amount: amount,
-                    balanceAfter:
-                        newBalance < 0 ? 0 : newBalance,
+                    balanceAfter: newBalance < 0 ? 0 : newBalance,
                     paymentMethod: paymentMethod,
                     description: l10n.recordPayment,
                   );
-                  await db.accountsDao.updateBalance(
-                      debt.id,
-                      newBalance < 0 ? 0 : newBalance);
+                  await db.accountsDao
+                      .updateBalance(debt.id, newBalance < 0 ? 0 : newBalance);
 
                   // Enqueue sync for transaction and account update
                   ref.read(syncServiceProvider).enqueueCreate(
@@ -682,19 +666,14 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
 
                   await _loadData();
                   if (mounted) {
-                    ScaffoldMessenger.of(this.context)
-                        .showSnackBar(
-                      SnackBar(
-                          content: Text(
-                              l10n.paymentRecordedSuccess)),
+                    ScaffoldMessenger.of(this.context).showSnackBar(
+                      SnackBar(content: Text(l10n.paymentRecordedSuccess)),
                     );
                   }
                 } catch (e) {
                   if (mounted) {
-                    ScaffoldMessenger.of(this.context)
-                        .showSnackBar(
-                      SnackBar(
-                          content: Text('${l10n.errorOccurred}: $e')),
+                    ScaffoldMessenger.of(this.context).showSnackBar(
+                      SnackBar(content: Text('${l10n.errorOccurred}: $e')),
                     );
                   }
                 }
@@ -715,8 +694,7 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
       context: context,
       builder: (context) => AlertDialog(
         title: Text(l10n.sendRemindersTitle),
-        content:
-            Text(l10n.sendRemindersConfirm(overdueDebts.length)),
+        content: Text(l10n.sendRemindersConfirm(overdueDebts.length)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -727,8 +705,7 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                    content: Text(
-                        l10n.remindersSent(overdueDebts.length))),
+                    content: Text(l10n.remindersSent(overdueDebts.length))),
               );
             },
             child: Text(l10n.sendAction),
@@ -768,14 +745,11 @@ class _SummaryCard extends StatelessWidget {
           SizedBox(height: AlhaiSpacing.xxs),
           Text(
             value,
-            style: TextStyle(
-                fontWeight: FontWeight.bold, color: color),
+            style: TextStyle(fontWeight: FontWeight.bold, color: color),
           ),
           Text(
             title,
-            style: TextStyle(
-                fontSize: 11,
-                color: colorScheme.onSurfaceVariant),
+            style: TextStyle(fontSize: 11, color: colorScheme.onSurfaceVariant),
             textAlign: TextAlign.center,
           ),
         ],
@@ -798,12 +772,10 @@ class _DetailRow extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label,
-              style: TextStyle(color: colorScheme.onSurfaceVariant)),
+          Text(label, style: TextStyle(color: colorScheme.onSurfaceVariant)),
           Text(value,
               style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  color: colorScheme.onSurface)),
+                  fontWeight: FontWeight.w500, color: colorScheme.onSurface)),
         ],
       ),
     );

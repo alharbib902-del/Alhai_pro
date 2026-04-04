@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_core/alhai_core.dart' show StoreSettings;
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiColors, AlhaiSpacing;
+import 'package:alhai_design_system/alhai_design_system.dart'
+    show AlhaiColors, AlhaiSpacing;
 import 'package:alhai_l10n/alhai_l10n.dart';
 import '../../providers/performance_provider.dart';
 
 /// Widget لعرض لوحة KPIs الأداء
-/// 
+///
 /// يعرض:
 /// - متوسط وقت البيع
 /// - عمليات/ساعة
@@ -57,7 +58,7 @@ class PerformanceDashboard extends ConsumerWidget {
             ),
             const Divider(),
             SizedBox(height: AlhaiSpacing.xs),
-            
+
             // الإحصائيات
             Row(
               children: [
@@ -93,12 +94,13 @@ class PerformanceDashboard extends ConsumerWidget {
               ],
             ),
             SizedBox(height: AlhaiSpacing.md),
-            
+
             // ملخص اليوم
             Container(
               padding: const EdgeInsets.all(AlhaiSpacing.sm),
               decoration: BoxDecoration(
-                color: theme.colorScheme.primaryContainer.withValues(alpha: 0.3),
+                color:
+                    theme.colorScheme.primaryContainer.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
@@ -110,19 +112,28 @@ class PerformanceDashboard extends ConsumerWidget {
                     icon: Icons.check_circle,
                     color: AlhaiColors.success,
                   ),
-                  Container(width: 1, height: 30, color: Theme.of(context).dividerColor),
+                  Container(
+                      width: 1,
+                      height: 30,
+                      color: Theme.of(context).dividerColor),
                   _SummaryItem(
                     label: l10n.totalSales,
-                    value: '${stats.totalSales.toStringAsFixed(0)} ${StoreSettings.defaultCurrencySymbol}',
+                    value:
+                        '${stats.totalSales.toStringAsFixed(0)} ${StoreSettings.defaultCurrencySymbol}',
                     icon: Icons.attach_money,
                     color: AlhaiColors.info,
                   ),
-                  Container(width: 1, height: 30, color: Theme.of(context).dividerColor),
+                  Container(
+                      width: 1,
+                      height: 30,
+                      color: Theme.of(context).dividerColor),
                   _SummaryItem(
                     label: l10n.errors,
                     value: '${stats.errorCount}',
                     icon: Icons.warning_amber,
-                    color: stats.errorCount > 0 ? AlhaiColors.error : Theme.of(context).colorScheme.outline,
+                    color: stats.errorCount > 0
+                        ? AlhaiColors.error
+                        : Theme.of(context).colorScheme.outline,
                   ),
                 ],
               ),
@@ -200,7 +211,8 @@ class _MiniKpi extends StatelessWidget {
     return Tooltip(
       message: tooltip,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
+        padding: const EdgeInsets.symmetric(
+            horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(8),
@@ -208,7 +220,9 @@ class _MiniKpi extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 14, color: Theme.of(context).colorScheme.onSurfaceVariant),
+            Icon(icon,
+                size: 14,
+                color: Theme.of(context).colorScheme.onSurfaceVariant),
             SizedBox(width: AlhaiSpacing.xxs),
             Text(value, style: const TextStyle(fontSize: 12)),
           ],

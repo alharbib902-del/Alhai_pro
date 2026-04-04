@@ -16,6 +16,7 @@ class StockTakesTable extends Table {
   IntColumn get countedItems => integer().withDefault(const Constant(0))();
   IntColumn get varianceItems => integer().withDefault(const Constant(0))();
   TextColumn get notes => text().nullable()();
+
   /// NOTE: Naming inconsistency - this column is called [createdBy] but other
   /// tables (audit_log, notifications, inventory_movements, org_members) use
   /// [userId] for the same concept. Preferred standard: [userId] to match

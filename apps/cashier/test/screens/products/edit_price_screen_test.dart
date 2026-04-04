@@ -42,8 +42,7 @@ void main() {
     // Default stubs
     when(() => productsDao.getProductById(any()))
         .thenAnswer((_) async => testProduct);
-    when(() => productsDao.updateProduct(any()))
-        .thenAnswer((_) async => true);
+    when(() => productsDao.updateProduct(any())).thenAnswer((_) async => true);
   });
 
   tearDown(() => tearDownTestGetIt());

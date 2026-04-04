@@ -25,7 +25,8 @@ class ChatService {
   }
 
   /// محادثات العميل
-  Future<List<StoreConversation>> getCustomerConversations(String customerId) async {
+  Future<List<StoreConversation>> getCustomerConversations(
+      String customerId) async {
     return await _chatsRepo.getCustomerConversations(customerId);
   }
 

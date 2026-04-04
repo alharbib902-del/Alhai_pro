@@ -18,7 +18,8 @@ final salesAnalyticsProvider = FutureProvider.autoDispose
     .family<SalesStats, DateRange?>((ref, dateRange) async {
   final storeId = ref.watch(currentStoreIdProvider);
   if (storeId == null) {
-    return const SalesStats(count: 0, total: 0, average: 0, maxSale: 0, minSale: 0);
+    return const SalesStats(
+        count: 0, total: 0, average: 0, maxSale: 0, minSale: 0);
   }
   final db = GetIt.I<AppDatabase>();
   return db.salesDao.getSalesStats(
@@ -92,7 +93,8 @@ final activityLogByDateProvider = FutureProvider.autoDispose
   final storeId = ref.watch(currentStoreIdProvider);
   if (storeId == null) return [];
   final db = GetIt.I<AppDatabase>();
-  return db.auditLogDao.getLogsByDateRange(storeId, dateRange.start, dateRange.end);
+  return db.auditLogDao
+      .getLogsByDateRange(storeId, dateRange.start, dateRange.end);
 });
 
 // ============================================================================

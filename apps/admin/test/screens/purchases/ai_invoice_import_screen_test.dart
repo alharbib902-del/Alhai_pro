@@ -21,16 +21,14 @@ void main() {
 
   group('AiInvoiceImportScreen', () {
     testWidgets('renders the screen', (tester) async {
-      await tester.pumpWidget(
-          createTestWidget(const AiInvoiceImportScreen()));
+      await tester.pumpWidget(createTestWidget(const AiInvoiceImportScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(AiInvoiceImportScreen), findsOneWidget);
     });
 
     testWidgets('shows upload area by default', (tester) async {
-      await tester.pumpWidget(
-          createTestWidget(const AiInvoiceImportScreen()));
+      await tester.pumpWidget(createTestWidget(const AiInvoiceImportScreen()));
       await tester.pumpAndSettle();
 
       // Upload view shows camera and gallery icons
@@ -38,16 +36,14 @@ void main() {
     });
 
     testWidgets('has back navigation', (tester) async {
-      await tester.pumpWidget(
-          createTestWidget(const AiInvoiceImportScreen()));
+      await tester.pumpWidget(createTestWidget(const AiInvoiceImportScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.arrow_back_rounded), findsWidgets);
     });
 
     testWidgets('shows document scanner icon in upload view', (tester) async {
-      await tester.pumpWidget(
-          createTestWidget(const AiInvoiceImportScreen()));
+      await tester.pumpWidget(createTestWidget(const AiInvoiceImportScreen()));
       await tester.pumpAndSettle();
 
       // Upload view shows document scanner icon

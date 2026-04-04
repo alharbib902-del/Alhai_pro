@@ -12220,6 +12220,21 @@ class AppLocalizationsHi extends AppLocalizations {
   String get editPlan => 'تعديل الخطة';
 
   @override
+  String get selectPlan => 'اختر الخطة';
+
+  @override
+  String get currentPlan => 'الخطة الحالية';
+
+  @override
+  String get noPlansAvailable => 'لا توجد خطط متاحة. أنشئ خططاً أولاً.';
+
+  @override
+  String get alreadyOnHighestPlan => 'هذا المتجر على أعلى خطة بالفعل.';
+
+  @override
+  String get alreadyOnLowestPlan => 'هذا المتجر على أدنى خطة بالفعل.';
+
+  @override
   String get activeSubscriptions => 'الاشتراكات النشطة';
 
   @override
@@ -13245,4 +13260,160 @@ class AppLocalizationsHi extends AppLocalizations {
   String deviceClockInaccurate(int minutes) {
     return 'ساعة الجهاز غير دقيقة - يرجى ضبط الوقت (فرق: $minutes دقيقة)';
   }
+
+  @override
+  String get saSignInFailed => 'فشل تسجيل الدخول';
+
+  @override
+  String get saAccessDenied => 'الوصول مرفوض. يلزم صلاحية المشرف العام.';
+
+  @override
+  String get saPlatformManagement => 'إدارة منصة الحي نقطة البيع';
+
+  @override
+  String get saSuperAdmin => 'المشرف العام';
+
+  @override
+  String get saEnterCredentials => 'أدخل البريد الإلكتروني وكلمة المرور';
+
+  @override
+  String get saSignIn => 'تسجيل الدخول';
+
+  @override
+  String get saSuperAdminOnly =>
+      'فقط المستخدمين بصلاحية المشرف العام يمكنهم الوصول لهذه اللوحة.';
+
+  @override
+  String get saNoSubscriptionsYet => 'لا توجد اشتراكات بعد';
+
+  @override
+  String get saNoRevenueData => 'لا توجد بيانات إيرادات';
+
+  @override
+  String get saNoLogsFound => 'لا توجد سجلات';
+
+  @override
+  String get saPlatformSummary => 'ملخص المنصة';
+
+  @override
+  String get saSubscriptionStatus => 'حالة الاشتراكات';
+
+  @override
+  String get saExportData => 'تصدير البيانات';
+
+  @override
+  String get saExportComingSoon => 'التصدير قريباً';
+
+  @override
+  String get saStoresReport => 'تقرير المتاجر';
+
+  @override
+  String get saUsersReport => 'تقرير المستخدمين';
+
+  @override
+  String get saRevenueReport => 'تقرير الإيرادات';
+
+  @override
+  String get saActivityLogs => 'سجل النشاط';
+
+  @override
+  String get saWarnings => 'تحذيرات';
+
+  @override
+  String get saZatcaEInvoicing => 'الفوترة الإلكترونية ZATCA';
+
+  @override
+  String get saEnableEInvoicing => 'تفعيل الفوترة الإلكترونية لجميع المتاجر';
+
+  @override
+  String get saApiEnvironment => 'بيئة API';
+
+  @override
+  String get saTaxRateVat => 'نسبة الضريبة (VAT)';
+
+  @override
+  String get saDefaultLanguage => 'اللغة الافتراضية';
+
+  @override
+  String get saDefaultCurrency => 'العملة الافتراضية';
+
+  @override
+  String get saTrialPeriodDays => 'فترة التجربة (أيام)';
+
+  @override
+  String get saResourceUsage => 'استخدام الموارد';
+
+  @override
+  String get saResponseTime => 'وقت الاستجابة';
+
+  @override
+  String get saDbRoundTrip => 'رحلة قاعدة البيانات';
+
+  @override
+  String get saExcellent => 'ممتاز';
+
+  @override
+  String get saGood => 'جيد';
+
+  @override
+  String get saSlow => 'بطيء';
+
+  @override
+  String get saRoleUpdated => 'تم تحديث الصلاحية';
+
+  @override
+  String get saNoInvoices => 'لا توجد فواتير';
+
+  @override
+  String get saErrorLoading => 'خطأ في تحميل البيانات';
+
+  @override
+  String get saUpgradePlan => 'ترقية الخطة';
+
+  @override
+  String get saDowngradePlan => 'تخفيض الخطة';
+
+  @override
+  String get saEditPlan => 'تعديل الخطة';
+
+  @override
+  String get saPaymentGateways => 'بوابات الدفع';
+
+  @override
+  String get saCreditDebitProcessing => 'معالجة بطاقات الائتمان والخصم';
+
+  @override
+  String get saMultiMethodGateway => 'بوابة دفع متعددة الطرق';
+
+  @override
+  String get saBuyNowPayLater => 'اشتر الآن وادفع لاحقاً';
+
+  @override
+  String get saInstallmentPayments => 'الدفع بالتقسيط';
+
+  @override
+  String get saActiveStores => 'المتاجر النشطة';
+
+  @override
+  String get saActiveSubscriptions => 'الاشتراكات النشطة';
+
+  @override
+  String get saTrialSubscriptions => 'اشتراكات تجريبية';
+
+  @override
+  String get saNewSignups30d => 'تسجيلات جديدة (30 يوم)';
+
+  @override
+  String get saSubscribers => 'المشتركون';
+
+  @override
+  String get saPercentOfTotal => '% من الإجمالي';
+
+  @override
+  String get saDeactivateUserConfirm =>
+      'هل أنت متأكد من تعطيل هذا المستخدم؟ سيتم إلغاء وصوله فوراً.';
+
+  @override
+  String get saSuspendStoreConfirm =>
+      'هل أنت متأكد من إيقاف هذا المتجر؟ سيتم تعطيل الوصول لجميع المستخدمين فوراً.';
 }

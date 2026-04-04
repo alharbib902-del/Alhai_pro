@@ -27,8 +27,7 @@ void main() {
         ),
       );
 
-      final txns =
-          await db.transactionsDao.getAccountTransactions('acc-1');
+      final txns = await db.transactionsDao.getAccountTransactions('acc-1');
       expect(txns, hasLength(1));
       expect(txns.first.amount, 500.0);
       expect(txns.first.type, 'invoice');
@@ -107,8 +106,7 @@ void main() {
         saleId: 'sale-1',
       );
 
-      final txns =
-          await db.transactionsDao.getAccountTransactions('acc-1');
+      final txns = await db.transactionsDao.getAccountTransactions('acc-1');
       expect(txns, hasLength(1));
       expect(txns.first.type, 'invoice');
       expect(txns.first.referenceId, 'sale-1');
@@ -125,8 +123,7 @@ void main() {
         paymentMethod: 'cash',
       );
 
-      final txns =
-          await db.transactionsDao.getAccountTransactions('acc-1');
+      final txns = await db.transactionsDao.getAccountTransactions('acc-1');
       expect(txns, hasLength(1));
       expect(txns.first.type, 'payment');
       expect(txns.first.amount, -150.0); // negative for payments
@@ -142,8 +139,7 @@ void main() {
         periodKey: '2025-06',
       );
 
-      final txns =
-          await db.transactionsDao.getAccountTransactions('acc-1');
+      final txns = await db.transactionsDao.getAccountTransactions('acc-1');
       expect(txns.first.type, 'interest');
       expect(txns.first.periodKey, '2025-06');
     });
@@ -158,12 +154,12 @@ void main() {
         periodKey: '2025-06',
       );
 
-      final hasInterest = await db.transactionsDao
-          .hasInterestForPeriod('acc-1', '2025-06');
+      final hasInterest =
+          await db.transactionsDao.hasInterestForPeriod('acc-1', '2025-06');
       expect(hasInterest, true);
 
-      final noInterest = await db.transactionsDao
-          .hasInterestForPeriod('acc-1', '2025-07');
+      final noInterest =
+          await db.transactionsDao.hasInterestForPeriod('acc-1', '2025-07');
       expect(noInterest, false);
     });
 
@@ -185,8 +181,7 @@ void main() {
         paymentMethod: 'card',
       );
 
-      final total =
-          await db.transactionsDao.getTotalPayments('acc-1');
+      final total = await db.transactionsDao.getTotalPayments('acc-1');
       expect(total, 300.0);
     });
   });

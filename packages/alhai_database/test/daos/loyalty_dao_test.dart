@@ -72,8 +72,7 @@ void main() {
     test('redeemPoints decreases currentPoints', () async {
       await db.loyaltyDao.createLoyalty(_makeLoyalty(currentPoints: 200));
 
-      final result =
-          await db.loyaltyDao.redeemPoints('cust-1', 'store-1', 50);
+      final result = await db.loyaltyDao.redeemPoints('cust-1', 'store-1', 50);
       expect(result, true);
 
       final loyalty =
@@ -84,8 +83,7 @@ void main() {
     test('redeemPoints fails when insufficient points', () async {
       await db.loyaltyDao.createLoyalty(_makeLoyalty(currentPoints: 30));
 
-      final result =
-          await db.loyaltyDao.redeemPoints('cust-1', 'store-1', 50);
+      final result = await db.loyaltyDao.redeemPoints('cust-1', 'store-1', 50);
       expect(result, false);
     });
 
@@ -97,8 +95,7 @@ void main() {
         currentPoints: 500,
       ));
 
-      final accounts =
-          await db.loyaltyDao.getAllLoyaltyAccounts('store-1');
+      final accounts = await db.loyaltyDao.getAllLoyaltyAccounts('store-1');
       expect(accounts, hasLength(2));
       // ordered by currentPoints desc
       expect(accounts.first.currentPoints, 500);
@@ -129,8 +126,7 @@ void main() {
         tierLevel: 'bronze',
       ));
 
-      final gold =
-          await db.loyaltyDao.getCustomersByTier('store-1', 'gold');
+      final gold = await db.loyaltyDao.getCustomersByTier('store-1', 'gold');
       expect(gold, hasLength(1));
       expect(gold.first.customerId, 'cust-1');
     });
@@ -151,8 +147,8 @@ void main() {
         ),
       );
 
-      final txns = await db.loyaltyDao
-          .getCustomerTransactions('cust-1', 'store-1');
+      final txns =
+          await db.loyaltyDao.getCustomerTransactions('cust-1', 'store-1');
       expect(txns, hasLength(1));
       expect(txns.first.transactionType, 'earn');
       expect(txns.first.points, 50);

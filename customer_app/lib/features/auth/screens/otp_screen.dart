@@ -98,8 +98,8 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
     }
 
     if (_isLockedOut) {
-      setState(() => _error =
-          'تم تجاوز عدد المحاولات. انتظر $_lockoutSeconds ثانية');
+      setState(() =>
+          _error = 'تم تجاوز عدد المحاولات. انتظر $_lockoutSeconds ثانية');
       return;
     }
 
@@ -117,19 +117,20 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
 
       if (mounted) context.go('/home');
     } on SocketException catch (_) {
-      setState(() => _error = 'لا يوجد اتصال بالإنترنت. تحقق من الشبكة وحاول مرة أخرى');
+      setState(() =>
+          _error = 'لا يوجد اتصال بالإنترنت. تحقق من الشبكة وحاول مرة أخرى');
     } on TimeoutException catch (_) {
       setState(() => _error = 'انتهت مهلة الاتصال. حاول مرة أخرى');
     } catch (e) {
       _failedAttempts++;
       if (_failedAttempts >= _maxAttempts) {
         _startLockout();
-        setState(() => _error =
-            'تم تجاوز عدد المحاولات. انتظر $_lockoutSeconds ثانية');
+        setState(() =>
+            _error = 'تم تجاوز عدد المحاولات. انتظر $_lockoutSeconds ثانية');
       } else {
         final remaining = _maxAttempts - _failedAttempts;
-        setState(() => _error =
-            'رمز التحقق غير صحيح ($remaining محاولات متبقية)');
+        setState(
+            () => _error = 'رمز التحقق غير صحيح ($remaining محاولات متبقية)');
       }
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -256,9 +257,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                         ),
                       )
                     : Text(
-                        _isLockedOut
-                            ? 'انتظر $_lockoutSeconds ثانية'
-                            : 'تأكيد',
+                        _isLockedOut ? 'انتظر $_lockoutSeconds ثانية' : 'تأكيد',
                         style: const TextStyle(fontSize: 16),
                       ),
               ),

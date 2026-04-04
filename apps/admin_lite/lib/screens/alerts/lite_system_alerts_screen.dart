@@ -17,7 +17,8 @@ import '../../providers/lite_screen_providers.dart';
 class LiteSystemAlertsScreen extends ConsumerWidget {
   const LiteSystemAlertsScreen({super.key});
 
-  void _handleAlertAction(BuildContext context, WidgetRef ref, SystemAlertData alert) {
+  void _handleAlertAction(
+      BuildContext context, WidgetRef ref, SystemAlertData alert) {
     if (alert.title.contains('Sync') || alert.title.contains('Unsynced')) {
       context.go('/sync-status');
     } else {
@@ -44,7 +45,8 @@ class LiteSystemAlertsScreen extends ConsumerWidget {
           return RefreshIndicator(
             onRefresh: () async => ref.invalidate(liteSystemAlertsProvider),
             child: ListView.builder(
-              padding: EdgeInsets.all(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
+              padding:
+                  EdgeInsets.all(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
               itemCount: alerts.length,
               itemBuilder: (context, index) {
                 return _buildAlertTile(context, ref, alerts[index], isDark);
@@ -58,7 +60,10 @@ class LiteSystemAlertsScreen extends ConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(l10n.errorOccurred),
-              TextButton.icon(onPressed: () => ref.invalidate(liteSystemAlertsProvider), icon: const Icon(Icons.refresh_rounded), label: Text(l10n.tryAgain)),
+              TextButton.icon(
+                  onPressed: () => ref.invalidate(liteSystemAlertsProvider),
+                  icon: const Icon(Icons.refresh_rounded),
+                  label: Text(l10n.tryAgain)),
             ],
           ),
         ),
@@ -66,14 +71,24 @@ class LiteSystemAlertsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildEmptyState(BuildContext context, bool isDark, AppLocalizations l10n) {
+  Widget _buildEmptyState(
+      BuildContext context, bool isDark, AppLocalizations l10n) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.verified_outlined, size: 64, color: isDark ? Colors.white24 : AlhaiColors.success.withValues(alpha: 0.5)),
+          Icon(Icons.verified_outlined,
+              size: 64,
+              color: isDark
+                  ? Colors.white24
+                  : AlhaiColors.success.withValues(alpha: 0.5)),
           const SizedBox(height: AlhaiSpacing.md),
-          Text(l10n.noResults, style: TextStyle(fontSize: 16, color: isDark ? Colors.white54 : Theme.of(context).colorScheme.onSurfaceVariant)),
+          Text(l10n.noResults,
+              style: TextStyle(
+                  fontSize: 16,
+                  color: isDark
+                      ? Colors.white54
+                      : Theme.of(context).colorScheme.onSurfaceVariant)),
         ],
       ),
     );
@@ -88,13 +103,15 @@ class LiteSystemAlertsScreen extends ConsumerWidget {
   }
 
   IconData _alertIcon(String title) {
-    if (title.contains('Sync') || title.contains('Unsynced')) return Icons.sync_problem;
+    if (title.contains('Sync') || title.contains('Unsynced'))
+      return Icons.sync_problem;
     if (title.contains('Inventory')) return Icons.inventory_2_outlined;
     if (title.contains('Storage')) return Icons.storage;
     return Icons.warning_amber_rounded;
   }
 
-  Widget _buildAlertTile(BuildContext context, WidgetRef ref, SystemAlertData alert, bool isDark) {
+  Widget _buildAlertTile(
+      BuildContext context, WidgetRef ref, SystemAlertData alert, bool isDark) {
     final color = _severityColor(alert.severity);
     final icon = _alertIcon(alert.title);
 
@@ -104,7 +121,10 @@ class LiteSystemAlertsScreen extends ConsumerWidget {
       decoration: BoxDecoration(
         color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.white,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: isDark ? Colors.white12 : Theme.of(context).colorScheme.outlineVariant),
+        border: Border.all(
+            color: isDark
+                ? Colors.white12
+                : Theme.of(context).colorScheme.outlineVariant),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -112,23 +132,42 @@ class LiteSystemAlertsScreen extends ConsumerWidget {
           Row(
             children: [
               Container(
-                width: 40, height: 40,
-                decoration: BoxDecoration(color: color.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(10)),
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(10)),
                 child: Icon(icon, color: color, size: 20),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
-                child: Text(alert.title, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: isDark ? Colors.white : Colors.black87)),
+                child: Text(alert.title,
+                    style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: isDark ? Colors.white : Colors.black87)),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxxs),
-                decoration: BoxDecoration(color: color.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(8)),
-                child: Text(alert.severity, style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: color)),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxxs),
+                decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(8)),
+                child: Text(alert.severity,
+                    style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        color: color)),
               ),
             ],
           ),
           const SizedBox(height: AlhaiSpacing.sm),
-          Text(alert.description, style: TextStyle(fontSize: 13, color: isDark ? Colors.white54 : Theme.of(context).colorScheme.onSurfaceVariant)),
+          Text(alert.description,
+              style: TextStyle(
+                  fontSize: 13,
+                  color: isDark
+                      ? Colors.white54
+                      : Theme.of(context).colorScheme.onSurfaceVariant)),
           if (alert.actionLabel != null) ...[
             const SizedBox(height: AlhaiSpacing.sm),
             Align(
@@ -136,10 +175,12 @@ class LiteSystemAlertsScreen extends ConsumerWidget {
               child: TextButton(
                 onPressed: () => _handleAlertAction(context, ref, alert),
                 style: TextButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm),
                   minimumSize: const Size(0, 32),
                 ),
-                child: Text(alert.actionLabel!, style: const TextStyle(fontSize: 13)),
+                child: Text(alert.actionLabel!,
+                    style: const TextStyle(fontSize: 13)),
               ),
             ),
           ],

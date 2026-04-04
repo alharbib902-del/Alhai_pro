@@ -29,8 +29,7 @@ void main() {
     // Default stubs
     when(() => productsDao.searchProducts(any(), any()))
         .thenAnswer((_) async => []);
-    when(() => inventoryDao.insertMovement(any()))
-        .thenAnswer((_) async => 1);
+    when(() => inventoryDao.insertMovement(any())).thenAnswer((_) async => 1);
     when(() => productsDao.updateStock(any(), any()))
         .thenAnswer((_) async => 1);
   });
@@ -90,8 +89,7 @@ void main() {
       tester.view.resetDevicePixelRatio();
     });
 
-    testWidgets('displays supplier reference and note fields',
-        (tester) async {
+    testWidgets('displays supplier reference and note fields', (tester) async {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();

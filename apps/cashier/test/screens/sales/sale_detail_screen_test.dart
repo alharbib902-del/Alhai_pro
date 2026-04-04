@@ -34,8 +34,7 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => ordersDao.getOrderById(any()))
-          .thenAnswer((_) async => null);
+      when(() => ordersDao.getOrderById(any())).thenAnswer((_) async => null);
 
       await tester.pumpWidget(
         createTestWidget(const SaleDetailScreen(saleId: 'sale-1')),
@@ -50,8 +49,7 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => ordersDao.getOrderById(any()))
-          .thenAnswer((_) async => null);
+      when(() => ordersDao.getOrderById(any())).thenAnswer((_) async => null);
 
       await tester.pumpWidget(
         createTestWidget(const SaleDetailScreen(saleId: 'nonexistent')),
@@ -105,7 +103,10 @@ void main() {
       final order = createTestOrder(id: 'sale-1', total: 50.0);
       final items = [
         createTestSaleItem(id: 'item-1', saleId: 'sale-1'),
-        createTestSaleItem(id: 'item-2', saleId: 'sale-1', productName: '\u0645\u0646\u062a\u062c 2'),
+        createTestSaleItem(
+            id: 'item-2',
+            saleId: 'sale-1',
+            productName: '\u0645\u0646\u062a\u062c 2'),
       ];
 
       when(() => ordersDao.getOrderById('sale-1'))
@@ -152,8 +153,7 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => ordersDao.getOrderById(any()))
-          .thenAnswer((_) async => null);
+      when(() => ordersDao.getOrderById(any())).thenAnswer((_) async => null);
 
       await tester.pumpWidget(
         createTestWidget(const SaleDetailScreen(saleId: 'sale-1')),

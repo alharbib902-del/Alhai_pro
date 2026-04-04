@@ -17,7 +17,9 @@ class CreateInvoiceDialog extends StatelessWidget {
     return Dialog(
       backgroundColor: colorScheme.surface,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      insetPadding: EdgeInsets.symmetric(horizontal: isWide ? 100 : AlhaiSpacing.md, vertical: AlhaiSpacing.lg),
+      insetPadding: EdgeInsets.symmetric(
+          horizontal: isWide ? 100 : AlhaiSpacing.md,
+          vertical: AlhaiSpacing.lg),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 640, maxHeight: 600),
         child: Column(
@@ -28,14 +30,23 @@ class CreateInvoiceDialog extends StatelessWidget {
               padding: const EdgeInsets.all(AlhaiSpacing.mdl),
               decoration: BoxDecoration(
                 color: colorScheme.surfaceContainerLowest,
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-                border: Border(bottom: BorderSide(color: colorScheme.outlineVariant)),
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(20)),
+                border: Border(
+                    bottom: BorderSide(color: colorScheme.outlineVariant)),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(l10n.newInvoice, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: colorScheme.onSurface)),
-                  IconButton(onPressed: () => Navigator.pop(context), icon: Icon(Icons.close, color: colorScheme.onSurfaceVariant)),
+                  Text(l10n.newInvoice,
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: colorScheme.onSurface)),
+                  IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      icon: Icon(Icons.close,
+                          color: colorScheme.onSurfaceVariant)),
                 ],
               ),
             ),
@@ -48,10 +59,15 @@ class CreateInvoiceDialog extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Customer
-                    Text(l10n.selectCustomer, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: colorScheme.onSurface)),
+                    Text(l10n.selectCustomer,
+                        style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: colorScheme.onSurface)),
                     SizedBox(height: AlhaiSpacing.xs),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: AlhaiSpacing.sm),
                       decoration: BoxDecoration(
                         color: colorScheme.surfaceContainerLowest,
                         borderRadius: BorderRadius.circular(12),
@@ -61,11 +77,21 @@ class CreateInvoiceDialog extends StatelessWidget {
                         child: DropdownButton<String>(
                           value: 'general',
                           isExpanded: true,
-                          icon: Icon(Icons.keyboard_arrow_down, color: colorScheme.onSurfaceVariant),
-                          style: TextStyle(fontSize: 14, color: colorScheme.onSurface),
+                          icon: Icon(Icons.keyboard_arrow_down,
+                              color: colorScheme.onSurfaceVariant),
+                          style: TextStyle(
+                              fontSize: 14, color: colorScheme.onSurface),
                           dropdownColor: colorScheme.surface,
                           items: [
-                            DropdownMenuItem(value: 'general', child: Row(children: [Icon(Icons.person_outline, size: 18, color: colorScheme.onSurfaceVariant), SizedBox(width: AlhaiSpacing.xs), Text(l10n.cashCustomerGeneral)])),
+                            DropdownMenuItem(
+                                value: 'general',
+                                child: Row(children: [
+                                  Icon(Icons.person_outline,
+                                      size: 18,
+                                      color: colorScheme.onSurfaceVariant),
+                                  SizedBox(width: AlhaiSpacing.xs),
+                                  Text(l10n.cashCustomerGeneral)
+                                ])),
                           ],
                           onChanged: (v) {},
                         ),
@@ -77,8 +103,18 @@ class CreateInvoiceDialog extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(l10n.productsSection, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: colorScheme.onSurface)),
-                        TextButton(onPressed: () {}, child: Text(l10n.addProductToInvoice, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.primary))),
+                        Text(l10n.productsSection,
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: colorScheme.onSurface)),
+                        TextButton(
+                            onPressed: () {},
+                            child: Text(l10n.addProductToInvoice,
+                                style: const TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.primary))),
                       ],
                     ),
                     SizedBox(height: AlhaiSpacing.xs),
@@ -88,9 +124,14 @@ class CreateInvoiceDialog extends StatelessWidget {
                         border: Border.all(color: colorScheme.outlineVariant),
                       ),
                       child: DataTable(
-                        headingRowColor: WidgetStateProperty.all(colorScheme.surfaceContainerLowest),
-                        headingTextStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: colorScheme.onSurfaceVariant),
-                        dataTextStyle: TextStyle(fontSize: 14, color: colorScheme.onSurface),
+                        headingRowColor: WidgetStateProperty.all(
+                            colorScheme.surfaceContainerLowest),
+                        headingTextStyle: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: colorScheme.onSurfaceVariant),
+                        dataTextStyle: TextStyle(
+                            fontSize: 14, color: colorScheme.onSurface),
                         columnSpacing: 16,
                         columns: [
                           DataColumn(label: Text(l10n.productCol)),
@@ -100,10 +141,21 @@ class CreateInvoiceDialog extends StatelessWidget {
                         ],
                         rows: [
                           DataRow(cells: [
-                            DataCell(Text('\u0637\u0645\u0627\u0637\u0645 (1KG)', style: TextStyle(color: colorScheme.onSurface))),
-                            DataCell(Text('2', style: TextStyle(fontWeight: FontWeight.bold, color: colorScheme.onSurface))),
-                            DataCell(Text('5.00', style: TextStyle(color: colorScheme.onSurface))),
-                            DataCell(IconButton(onPressed: () {}, icon: const Icon(Icons.delete_outline, size: 18, color: AppColors.error))),
+                            DataCell(Text(
+                                '\u0637\u0645\u0627\u0637\u0645 (1KG)',
+                                style:
+                                    TextStyle(color: colorScheme.onSurface))),
+                            DataCell(Text('2',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: colorScheme.onSurface))),
+                            DataCell(Text('5.00',
+                                style:
+                                    TextStyle(color: colorScheme.onSurface))),
+                            DataCell(IconButton(
+                                onPressed: () {},
+                                icon: const Icon(Icons.delete_outline,
+                                    size: 18, color: AppColors.error))),
                           ]),
                         ],
                       ),
@@ -117,12 +169,39 @@ class CreateInvoiceDialog extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(l10n.paymentMethod, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: colorScheme.onSurface)),
+                              Text(l10n.paymentMethod,
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: colorScheme.onSurface)),
                               SizedBox(height: AlhaiSpacing.xs),
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm),
-                                decoration: BoxDecoration(color: colorScheme.surfaceContainerLowest, borderRadius: BorderRadius.circular(12), border: Border.all(color: colorScheme.outlineVariant)),
-                                child: DropdownButtonHideUnderline(child: DropdownButton<String>(value: 'cash', isExpanded: true, style: TextStyle(fontSize: 14, color: colorScheme.onSurface), dropdownColor: colorScheme.surface, items: const [DropdownMenuItem(value: 'cash', child: Text('\u0646\u0642\u062F\u0627\u064B')), DropdownMenuItem(value: 'card', child: Text('\u0628\u0637\u0627\u0642\u0629'))], onChanged: (v) {})),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: AlhaiSpacing.sm),
+                                decoration: BoxDecoration(
+                                    color: colorScheme.surfaceContainerLowest,
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                        color: colorScheme.outlineVariant)),
+                                child: DropdownButtonHideUnderline(
+                                    child: DropdownButton<String>(
+                                        value: 'cash',
+                                        isExpanded: true,
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            color: colorScheme.onSurface),
+                                        dropdownColor: colorScheme.surface,
+                                        items: const [
+                                          DropdownMenuItem(
+                                              value: 'cash',
+                                              child: Text(
+                                                  '\u0646\u0642\u062F\u0627\u064B')),
+                                          DropdownMenuItem(
+                                              value: 'card',
+                                              child: Text(
+                                                  '\u0628\u0637\u0627\u0642\u0629'))
+                                        ],
+                                        onChanged: (v) {})),
                               ),
                             ],
                           ),
@@ -132,15 +211,29 @@ class CreateInvoiceDialog extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(l10n.dueDate, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: colorScheme.onSurface)),
+                              Text(l10n.dueDate,
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: colorScheme.onSurface)),
                               SizedBox(height: AlhaiSpacing.xs),
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 14),
-                                decoration: BoxDecoration(color: colorScheme.surfaceContainerLowest, borderRadius: BorderRadius.circular(12), border: Border.all(color: colorScheme.outlineVariant)),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: AlhaiSpacing.sm, vertical: 14),
+                                decoration: BoxDecoration(
+                                    color: colorScheme.surfaceContainerLowest,
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                        color: colorScheme.outlineVariant)),
                                 child: Row(children: [
-                                  Icon(Icons.calendar_today, size: 16, color: colorScheme.onSurfaceVariant),
+                                  Icon(Icons.calendar_today,
+                                      size: 16,
+                                      color: colorScheme.onSurfaceVariant),
                                   SizedBox(width: AlhaiSpacing.xs),
-                                  Text('2026-02-15', style: TextStyle(fontSize: 14, color: colorScheme.onSurface)),
+                                  Text('2026-02-15',
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          color: colorScheme.onSurface)),
                                 ]),
                               ),
                             ],
@@ -158,27 +251,49 @@ class CreateInvoiceDialog extends StatelessWidget {
               padding: const EdgeInsets.all(AlhaiSpacing.mdl),
               decoration: BoxDecoration(
                 color: colorScheme.surfaceContainerLowest,
-                borderRadius: const BorderRadius.vertical(bottom: Radius.circular(20)),
-                border: Border(top: BorderSide(color: colorScheme.outlineVariant)),
+                borderRadius:
+                    const BorderRadius.vertical(bottom: Radius.circular(20)),
+                border:
+                    Border(top: BorderSide(color: colorScheme.outlineVariant)),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Row(children: [
-                    Text(l10n.invoiceTotal, style: TextStyle(fontSize: 14, color: colorScheme.onSurfaceVariant)),
+                    Text(l10n.invoiceTotal,
+                        style: TextStyle(
+                            fontSize: 14, color: colorScheme.onSurfaceVariant)),
                     SizedBox(width: AlhaiSpacing.xs),
-                    Text('10.00 \u0631.\u0633', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: colorScheme.onSurface)),
+                    Text('10.00 \u0631.\u0633',
+                        style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: colorScheme.onSurface)),
                   ]),
                   Row(children: [
                     OutlinedButton(
                       onPressed: () => Navigator.pop(context),
-                      style: OutlinedButton.styleFrom(foregroundColor: colorScheme.onSurface, side: BorderSide(color: colorScheme.outlineVariant), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)), padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.mdl, vertical: AlhaiSpacing.sm)),
+                      style: OutlinedButton.styleFrom(
+                          foregroundColor: colorScheme.onSurface,
+                          side: BorderSide(color: colorScheme.outlineVariant),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12)),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: AlhaiSpacing.mdl,
+                              vertical: AlhaiSpacing.sm)),
                       child: Text(l10n.cancel),
                     ),
                     SizedBox(width: AlhaiSpacing.sm),
                     FilledButton(
                       onPressed: () => Navigator.pop(context),
-                      style: FilledButton.styleFrom(backgroundColor: AppColors.primary, foregroundColor: colorScheme.onPrimary, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)), padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.mdl, vertical: AlhaiSpacing.sm)),
+                      style: FilledButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          foregroundColor: colorScheme.onPrimary,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12)),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: AlhaiSpacing.mdl,
+                              vertical: AlhaiSpacing.sm)),
                       child: Text(l10n.saveInvoice),
                     ),
                   ]),

@@ -32,7 +32,8 @@ void main() {
       expect(find.textContaining('99.99'), findsOneWidget);
     });
 
-    testWidgets('shows original price with strikethrough when discounted', (tester) async {
+    testWidgets('shows original price with strikethrough when discounted',
+        (tester) async {
       await tester.pumpWidget(createTestWidget(
         const AlhaiPriceText(
           amount: 75,
@@ -46,7 +47,8 @@ void main() {
       expect(find.textContaining('100'), findsAtLeast(1));
     });
 
-    testWidgets('does not show original price when not discounted', (tester) async {
+    testWidgets('does not show original price when not discounted',
+        (tester) async {
       await tester.pumpWidget(createTestWidget(
         const AlhaiPriceText(
           amount: 100,

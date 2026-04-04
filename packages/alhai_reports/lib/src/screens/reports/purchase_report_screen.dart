@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:get_it/get_it.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiColors, AlhaiSpacing;
+import 'package:alhai_design_system/alhai_design_system.dart'
+    show AlhaiColors, AlhaiSpacing;
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 
 /// شاشة تقرير المشتريات الكاملة
@@ -11,7 +12,8 @@ class PurchaseReportScreen extends ConsumerStatefulWidget {
   const PurchaseReportScreen({super.key});
 
   @override
-  ConsumerState<PurchaseReportScreen> createState() => _PurchaseReportScreenState();
+  ConsumerState<PurchaseReportScreen> createState() =>
+      _PurchaseReportScreenState();
 }
 
 class _PurchaseReportScreenState extends ConsumerState<PurchaseReportScreen> {
@@ -52,11 +54,17 @@ class _PurchaseReportScreenState extends ConsumerState<PurchaseReportScreen> {
 
   Future<void> _loadData() async {
     try {
-      setState(() { _isLoading = true; _error = null; });
+      setState(() {
+        _isLoading = true;
+        _error = null;
+      });
       final db = GetIt.I<AppDatabase>();
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) {
-        setState(() { _error = 'لم يتم تحديد المتجر'; _isLoading = false; });
+        setState(() {
+          _error = 'لم يتم تحديد المتجر';
+          _isLoading = false;
+        });
         return;
       }
       final dr = _getDateRange();
@@ -130,25 +138,34 @@ class _PurchaseReportScreenState extends ConsumerState<PurchaseReportScreen> {
           _totalPurchases = total;
           _totalTax = tax;
           _avgInvoice = cnt > 0 ? total / cnt : 0;
-          _bySupplier = bySup.map((r) => _SupplierPurchase(
-            name: r.data['sup_name'] as String,
-            count: (r.data['cnt'] as int?) ?? 0,
-            total: _toDouble(r.data['total']),
-          )).toList();
-          _recent = recent.map((r) => _PurchaseRow(
-            id: r.data['id'] as String,
-            invoiceNumber: r.data['invoice_number'] as String? ?? '-',
-            supplier: r.data['sup_name'] as String,
-            total: _toDouble(r.data['total']),
-            date: r.data['created_at'] is String
-                ? DateTime.tryParse(r.data['created_at'] as String) ?? DateTime.now()
-                : (r.data['created_at'] as DateTime? ?? DateTime.now()),
-          )).toList();
+          _bySupplier = bySup
+              .map((r) => _SupplierPurchase(
+                    name: r.data['sup_name'] as String,
+                    count: (r.data['cnt'] as int?) ?? 0,
+                    total: _toDouble(r.data['total']),
+                  ))
+              .toList();
+          _recent = recent
+              .map((r) => _PurchaseRow(
+                    id: r.data['id'] as String,
+                    invoiceNumber: r.data['invoice_number'] as String? ?? '-',
+                    supplier: r.data['sup_name'] as String,
+                    total: _toDouble(r.data['total']),
+                    date: r.data['created_at'] is String
+                        ? DateTime.tryParse(r.data['created_at'] as String) ??
+                            DateTime.now()
+                        : (r.data['created_at'] as DateTime? ?? DateTime.now()),
+                  ))
+              .toList();
           _isLoading = false;
         });
       }
     } catch (e) {
-      if (mounted) setState(() { _error = e.toString(); _isLoading = false; });
+      if (mounted)
+        setState(() {
+          _error = e.toString();
+          _isLoading = false;
+        });
     }
   }
 
@@ -160,11 +177,16 @@ class _PurchaseReportScreenState extends ConsumerState<PurchaseReportScreen> {
 
   String _periodLabel() {
     switch (_period) {
-      case 'week': return 'هذا الأسبوع';
-      case 'month': return 'هذا الشهر';
-      case 'quarter': return 'هذا الربع';
-      case 'year': return 'هذه السنة';
-      default: return 'هذا الشهر';
+      case 'week':
+        return 'هذا الأسبوع';
+      case 'month':
+        return 'هذا الشهر';
+      case 'quarter':
+        return 'هذا الربع';
+      case 'year':
+        return 'هذه السنة';
+      default:
+        return 'هذا الشهر';
     }
   }
 
@@ -187,7 +209,8 @@ class _PurchaseReportScreenState extends ConsumerState<PurchaseReportScreen> {
               const SizedBox(height: AlhaiSpacing.sm),
               Text(_error!),
               const SizedBox(height: AlhaiSpacing.sm),
-              ElevatedButton(onPressed: _loadData, child: const Text('إعادة المحاولة')),
+              ElevatedButton(
+                  onPressed: _loadData, child: const Text('إعادة المحاولة')),
             ],
           ),
         ),
@@ -198,7 +221,10 @@ class _PurchaseReportScreenState extends ConsumerState<PurchaseReportScreen> {
         title: const Text('تقرير المشتريات'),
         actions: [
           PopupMenuButton<String>(
-            onSelected: (v) { setState(() => _period = v); _loadData(); },
+            onSelected: (v) {
+              setState(() => _period = v);
+              _loadData();
+            },
             itemBuilder: (_) => [
               const PopupMenuItem(value: 'week', child: Text('هذا الأسبوع')),
               const PopupMenuItem(value: 'month', child: Text('هذا الشهر')),
@@ -222,14 +248,16 @@ class _PurchaseReportScreenState extends ConsumerState<PurchaseReportScreen> {
           children: [
             // Summary cards
             Row(children: [
-              Expanded(child: _SummaryCard(
+              Expanded(
+                  child: _SummaryCard(
                 label: 'إجمالي المشتريات',
                 value: '${_totalPurchases.toStringAsFixed(0)} ر.س',
                 icon: Icons.shopping_cart_rounded,
                 color: AlhaiColors.info,
               )),
               const SizedBox(width: AlhaiSpacing.sm),
-              Expanded(child: _SummaryCard(
+              Expanded(
+                  child: _SummaryCard(
                 label: 'عدد الفواتير',
                 value: _invoiceCount.toString(),
                 icon: Icons.receipt_long_rounded,
@@ -238,14 +266,16 @@ class _PurchaseReportScreenState extends ConsumerState<PurchaseReportScreen> {
             ]),
             const SizedBox(height: AlhaiSpacing.sm),
             Row(children: [
-              Expanded(child: _SummaryCard(
+              Expanded(
+                  child: _SummaryCard(
                 label: 'متوسط الفاتورة',
                 value: '${_avgInvoice.toStringAsFixed(0)} ر.س',
                 icon: Icons.calculate_rounded,
                 color: AlhaiColors.success,
               )),
               const SizedBox(width: AlhaiSpacing.sm),
-              Expanded(child: _SummaryCard(
+              Expanded(
+                  child: _SummaryCard(
                 label: 'إجمالي الضريبة',
                 value: '${_totalTax.toStringAsFixed(0)} ر.س',
                 icon: Icons.percent_rounded,
@@ -262,27 +292,37 @@ class _PurchaseReportScreenState extends ConsumerState<PurchaseReportScreen> {
               Card(
                 child: Column(
                   children: _bySupplier.map((s) {
-                    final pct = _totalPurchases > 0 ? s.total / _totalPurchases : 0.0;
+                    final pct =
+                        _totalPurchases > 0 ? s.total / _totalPurchases : 0.0;
                     return ListTile(
                       dense: true,
                       leading: CircleAvatar(
                         radius: 18,
-                        backgroundColor: AlhaiColors.info.withValues(alpha: 0.1),
-                        child: Icon(Icons.business_rounded, size: 16, color: AlhaiColors.info),
+                        backgroundColor:
+                            AlhaiColors.info.withValues(alpha: 0.1),
+                        child: Icon(Icons.business_rounded,
+                            size: 16, color: AlhaiColors.info),
                       ),
-                      title: Text(s.name, style: const TextStyle(fontWeight: FontWeight.w500)),
+                      title: Text(s.name,
+                          style: const TextStyle(fontWeight: FontWeight.w500)),
                       subtitle: LinearProgressIndicator(
                         value: pct.toDouble(),
-                        backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
+                        backgroundColor:
+                            Theme.of(context).colorScheme.surfaceContainerLow,
                       ),
                       trailing: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text('${s.total.toStringAsFixed(0)} ر.س',
-                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 13)),
                           Text('${s.count} فاتورة',
-                              style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant)),
+                              style: TextStyle(
+                                  fontSize: 11,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurfaceVariant)),
                         ],
                       ),
                     );
@@ -299,20 +339,25 @@ class _PurchaseReportScreenState extends ConsumerState<PurchaseReportScreen> {
               const SizedBox(height: AlhaiSpacing.xs),
               Card(
                 child: Column(
-                  children: _recent.map((p) => ListTile(
-                    dense: true,
-                    leading: Icon(Icons.receipt_rounded, color: AlhaiColors.info),
-                    title: Text('${p.invoiceNumber} - ${p.supplier}',
-                        style: const TextStyle(fontSize: 13)),
-                    subtitle: Text(
-                      '${p.date.day}/${p.date.month}/${p.date.year}',
-                      style: const TextStyle(fontSize: 11),
-                    ),
-                    trailing: Text(
-                      '${p.total.toStringAsFixed(0)} ر.س',
-                      style: TextStyle(fontWeight: FontWeight.bold, color: AlhaiColors.info),
-                    ),
-                  )).toList(),
+                  children: _recent
+                      .map((p) => ListTile(
+                            dense: true,
+                            leading: Icon(Icons.receipt_rounded,
+                                color: AlhaiColors.info),
+                            title: Text('${p.invoiceNumber} - ${p.supplier}',
+                                style: const TextStyle(fontSize: 13)),
+                            subtitle: Text(
+                              '${p.date.day}/${p.date.month}/${p.date.year}',
+                              style: const TextStyle(fontSize: 11),
+                            ),
+                            trailing: Text(
+                              '${p.total.toStringAsFixed(0)} ر.س',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: AlhaiColors.info),
+                            ),
+                          ))
+                      .toList(),
                 ),
               ),
             ],
@@ -323,10 +368,16 @@ class _PurchaseReportScreenState extends ConsumerState<PurchaseReportScreen> {
                   padding: const EdgeInsets.all(AlhaiSpacing.xl),
                   child: Column(
                     children: [
-                      Icon(Icons.shopping_cart_outlined, size: 64, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                      Icon(Icons.shopping_cart_outlined,
+                          size: 64,
+                          color:
+                              Theme.of(context).colorScheme.onSurfaceVariant),
                       const SizedBox(height: AlhaiSpacing.sm),
                       Text('لا توجد مشتريات في هذه الفترة',
-                          style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
+                          style: TextStyle(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurfaceVariant)),
                     ],
                   ),
                 ),
@@ -361,8 +412,13 @@ class _SummaryCard extends StatelessWidget {
           children: [
             Icon(icon, color: color, size: 28),
             const SizedBox(height: AlhaiSpacing.xs),
-            Text(value, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: color)),
-            Text(label, style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant)),
+            Text(value,
+                style: TextStyle(
+                    fontSize: 20, fontWeight: FontWeight.bold, color: color)),
+            Text(label,
+                style: TextStyle(
+                    fontSize: 12,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant)),
           ],
         ),
       ),
@@ -374,7 +430,8 @@ class _SupplierPurchase {
   final String name;
   final int count;
   final double total;
-  const _SupplierPurchase({required this.name, required this.count, required this.total});
+  const _SupplierPurchase(
+      {required this.name, required this.count, required this.total});
 }
 
 class _PurchaseRow {

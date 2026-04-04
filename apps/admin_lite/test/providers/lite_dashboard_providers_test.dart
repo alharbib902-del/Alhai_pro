@@ -83,25 +83,25 @@ void main() {
       // Stub pending approvals (customSelect)
       final pendingSelectable = MockSelectable();
       when(() => db.customSelect(
-        any(),
-        variables: any(named: 'variables'),
-      )).thenReturn(pendingSelectable);
+            any(),
+            variables: any(named: 'variables'),
+          )).thenReturn(pendingSelectable);
       when(() => pendingSelectable.getSingle()).thenAnswer(
         (_) async => FakeQueryRow({'count': 3}),
       );
 
       // Stub today's sales stats
       when(() => salesDao.getSalesStats(
-        any(),
-        startDate: any(named: 'startDate'),
-        endDate: any(named: 'endDate'),
-      )).thenAnswer((_) async => const SalesStats(
-        count: 12,
-        total: 1500.0,
-        average: 125.0,
-        maxSale: 300.0,
-        minSale: 50.0,
-      ));
+            any(),
+            startDate: any(named: 'startDate'),
+            endDate: any(named: 'endDate'),
+          )).thenAnswer((_) async => const SalesStats(
+            count: 12,
+            total: 1500.0,
+            average: 125.0,
+            maxSale: 300.0,
+            minSale: 50.0,
+          ));
 
       // Stub low stock products
       when(() => productsDao.getLowStockProducts(any())).thenAnswer(
@@ -128,9 +128,9 @@ void main() {
     test('calculates sales change percent correctly', () async {
       final pendingSelectable = MockSelectable();
       when(() => db.customSelect(
-        any(),
-        variables: any(named: 'variables'),
-      )).thenReturn(pendingSelectable);
+            any(),
+            variables: any(named: 'variables'),
+          )).thenReturn(pendingSelectable);
       when(() => pendingSelectable.getSingle()).thenAnswer(
         (_) async => FakeQueryRow({'count': 0}),
       );
@@ -138,21 +138,32 @@ void main() {
       // Yesterday: 1000, Today: 1500 => change = 50%
       var callCount = 0;
       when(() => salesDao.getSalesStats(
-        any(),
-        startDate: any(named: 'startDate'),
-        endDate: any(named: 'endDate'),
-      )).thenAnswer((_) async {
+            any(),
+            startDate: any(named: 'startDate'),
+            endDate: any(named: 'endDate'),
+          )).thenAnswer((_) async {
         callCount++;
         if (callCount == 1) {
           // Today's stats
-          return const SalesStats(count: 10, total: 1500.0, average: 150.0, maxSale: 300.0, minSale: 50.0);
+          return const SalesStats(
+              count: 10,
+              total: 1500.0,
+              average: 150.0,
+              maxSale: 300.0,
+              minSale: 50.0);
         } else {
           // Yesterday's stats
-          return const SalesStats(count: 8, total: 1000.0, average: 125.0, maxSale: 200.0, minSale: 30.0);
+          return const SalesStats(
+              count: 8,
+              total: 1000.0,
+              average: 125.0,
+              maxSale: 200.0,
+              minSale: 30.0);
         }
       });
 
-      when(() => productsDao.getLowStockProducts(any())).thenAnswer((_) async => []);
+      when(() => productsDao.getLowStockProducts(any()))
+          .thenAnswer((_) async => []);
 
       setupTestGetIt(mockDb: db);
       final container = ProviderContainer(overrides: [
@@ -165,31 +176,39 @@ void main() {
       expect(result.salesChangePercent, 50.0);
     });
 
-    test('sales change is 100% when yesterday is 0 but today has sales', () async {
+    test('sales change is 100% when yesterday is 0 but today has sales',
+        () async {
       final pendingSelectable = MockSelectable();
       when(() => db.customSelect(
-        any(),
-        variables: any(named: 'variables'),
-      )).thenReturn(pendingSelectable);
+            any(),
+            variables: any(named: 'variables'),
+          )).thenReturn(pendingSelectable);
       when(() => pendingSelectable.getSingle()).thenAnswer(
         (_) async => FakeQueryRow({'count': 0}),
       );
 
       var callCount = 0;
       when(() => salesDao.getSalesStats(
-        any(),
-        startDate: any(named: 'startDate'),
-        endDate: any(named: 'endDate'),
-      )).thenAnswer((_) async {
+            any(),
+            startDate: any(named: 'startDate'),
+            endDate: any(named: 'endDate'),
+          )).thenAnswer((_) async {
         callCount++;
         if (callCount == 1) {
-          return const SalesStats(count: 5, total: 500.0, average: 100.0, maxSale: 200.0, minSale: 50.0);
+          return const SalesStats(
+              count: 5,
+              total: 500.0,
+              average: 100.0,
+              maxSale: 200.0,
+              minSale: 50.0);
         } else {
-          return const SalesStats(count: 0, total: 0, average: 0, maxSale: 0, minSale: 0);
+          return const SalesStats(
+              count: 0, total: 0, average: 0, maxSale: 0, minSale: 0);
         }
       });
 
-      when(() => productsDao.getLowStockProducts(any())).thenAnswer((_) async => []);
+      when(() => productsDao.getLowStockProducts(any()))
+          .thenAnswer((_) async => []);
 
       setupTestGetIt(mockDb: db);
       final container = ProviderContainer(overrides: [
@@ -205,20 +224,23 @@ void main() {
     test('sales change is 0% when both days have zero sales', () async {
       final pendingSelectable = MockSelectable();
       when(() => db.customSelect(
-        any(),
-        variables: any(named: 'variables'),
-      )).thenReturn(pendingSelectable);
+            any(),
+            variables: any(named: 'variables'),
+          )).thenReturn(pendingSelectable);
       when(() => pendingSelectable.getSingle()).thenAnswer(
         (_) async => FakeQueryRow({'count': 0}),
       );
 
       when(() => salesDao.getSalesStats(
-        any(),
-        startDate: any(named: 'startDate'),
-        endDate: any(named: 'endDate'),
-      )).thenAnswer((_) async => const SalesStats(count: 0, total: 0, average: 0, maxSale: 0, minSale: 0));
+                any(),
+                startDate: any(named: 'startDate'),
+                endDate: any(named: 'endDate'),
+              ))
+          .thenAnswer((_) async => const SalesStats(
+              count: 0, total: 0, average: 0, maxSale: 0, minSale: 0));
 
-      when(() => productsDao.getLowStockProducts(any())).thenAnswer((_) async => []);
+      when(() => productsDao.getLowStockProducts(any()))
+          .thenAnswer((_) async => []);
 
       setupTestGetIt(mockDb: db);
       final container = ProviderContainer(overrides: [
@@ -251,8 +273,10 @@ void main() {
 
     test('returns activities mapped from audit log', () async {
       final logs = [
-        createTestAuditLog(id: 'log-1', action: 'saleCreate', description: 'Created sale'),
-        createTestAuditLog(id: 'log-2', action: 'login', description: 'User logged in'),
+        createTestAuditLog(
+            id: 'log-1', action: 'saleCreate', description: 'Created sale'),
+        createTestAuditLog(
+            id: 'log-2', action: 'login', description: 'User logged in'),
       ];
 
       when(() => auditLogDao.getLogs(any(), limit: any(named: 'limit')))
@@ -288,7 +312,8 @@ void main() {
       expect(result, isEmpty);
     });
 
-    test('maps all fields correctly from AuditLogTableData to ActivityEntry', () async {
+    test('maps all fields correctly from AuditLogTableData to ActivityEntry',
+        () async {
       final timestamp = DateTime(2026, 2, 20, 10, 30);
       final logs = [
         createTestAuditLog(

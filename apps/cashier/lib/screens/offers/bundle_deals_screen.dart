@@ -13,7 +13,8 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
+import 'package:alhai_design_system/alhai_design_system.dart'
+    show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 
@@ -22,8 +23,7 @@ class BundleDealsScreen extends ConsumerStatefulWidget {
   const BundleDealsScreen({super.key});
 
   @override
-  ConsumerState<BundleDealsScreen> createState() =>
-      _BundleDealsScreenState();
+  ConsumerState<BundleDealsScreen> createState() => _BundleDealsScreenState();
 }
 
 class _BundleDealsScreenState extends ConsumerState<BundleDealsScreen> {
@@ -80,12 +80,12 @@ class _BundleDealsScreenState extends ConsumerState<BundleDealsScreen> {
       children: [
         AppHeader(
           title: l10n.bundleDeals,
-          subtitle: '${_bundles.length} ${l10n.activeOffers} \u2022 ${l10n.mainBranch}',
+          subtitle:
+              '${_bundles.length} ${l10n.activeOffers} \u2022 ${l10n.mainBranch}',
           showSearch: false,
           searchHint: l10n.searchPlaceholder,
-          onMenuTap: isWideScreen
-              ? null
-              : () => Scaffold.of(context).openDrawer(),
+          onMenuTap:
+              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 3,
           userName: user?.name ?? l10n.cashCustomer,
@@ -96,7 +96,8 @@ class _BundleDealsScreenState extends ConsumerState<BundleDealsScreen> {
           child: _isLoading
               ? const AppLoadingState()
               : _error != null
-                  ? AppErrorState.general(context, message: _error!, onRetry: _loadBundles)
+                  ? AppErrorState.general(context,
+                      message: _error!, onRetry: _loadBundles)
                   : _bundles.isEmpty
                       ? _buildEmptyState(isDark, l10n)
                       : _buildBundlesList(isMediumScreen, isDark, l10n),
@@ -110,7 +111,8 @@ class _BundleDealsScreenState extends ConsumerState<BundleDealsScreen> {
     return RefreshIndicator(
       onRefresh: _loadBundles,
       child: ListView.separated(
-        padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+        padding:
+            EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
         itemCount: _bundles.length,
         separatorBuilder: (_, __) => const SizedBox(height: AlhaiSpacing.md),
         itemBuilder: (context, index) =>
@@ -119,11 +121,12 @@ class _BundleDealsScreenState extends ConsumerState<BundleDealsScreen> {
     );
   }
 
-  Widget _buildBundleCard(
-      DiscountsTableData bundle, int index, bool isDark, AppLocalizations l10n) {
+  Widget _buildBundleCard(DiscountsTableData bundle, int index, bool isDark,
+      AppLocalizations l10n) {
     // Simulate bundle product details
     final bundlePrice = bundle.value;
-    final individualTotal = bundlePrice * 1.4; // Simulate higher individual price
+    final individualTotal =
+        bundlePrice * 1.4; // Simulate higher individual price
     final savings = individualTotal - bundlePrice;
     final savingsPercent = (savings / individualTotal * 100).toStringAsFixed(0);
 
@@ -183,11 +186,15 @@ class _BundleDealsScreenState extends ConsumerState<BundleDealsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(bundle.name,
-                          style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700,
+                          style: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w700,
                               color: AppColors.getTextPrimary(isDark))),
                       const SizedBox(height: AlhaiSpacing.xxs),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxxs),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: AlhaiSpacing.xs,
+                            vertical: AlhaiSpacing.xxxs),
                         decoration: BoxDecoration(
                           color: color.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(999),
@@ -196,7 +203,9 @@ class _BundleDealsScreenState extends ConsumerState<BundleDealsScreen> {
                           bundle.type == 'buy_x_get_y'
                               ? l10n.buyXGetY
                               : l10n.bundle,
-                          style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600,
+                          style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
                               color: color),
                         ),
                       ),
@@ -205,7 +214,8 @@ class _BundleDealsScreenState extends ConsumerState<BundleDealsScreen> {
                 ),
                 // Savings badge
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: AlhaiSpacing.sm, vertical: 6),
                   decoration: BoxDecoration(
                     color: AppColors.success.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(999),
@@ -213,11 +223,13 @@ class _BundleDealsScreenState extends ConsumerState<BundleDealsScreen> {
                   child: Column(
                     children: [
                       Text(l10n.save,
-                          style: const TextStyle(fontSize: 10,
+                          style: const TextStyle(
+                              fontSize: 10,
                               fontWeight: FontWeight.w500,
                               color: AppColors.success)),
                       Text('$savingsPercent%',
-                          style: const TextStyle(fontSize: 16,
+                          style: const TextStyle(
+                              fontSize: 16,
                               fontWeight: FontWeight.w800,
                               color: AppColors.success)),
                     ],
@@ -233,7 +245,9 @@ class _BundleDealsScreenState extends ConsumerState<BundleDealsScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(l10n.includedProducts,
-                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600,
+                    style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
                         color: AppColors.getTextSecondary(isDark))),
                 const SizedBox(height: AlhaiSpacing.sm),
                 // Simulated products in bundle
@@ -256,11 +270,13 @@ class _BundleDealsScreenState extends ConsumerState<BundleDealsScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(l10n.individualTotal,
-                              style: TextStyle(fontSize: 13,
+                              style: TextStyle(
+                                  fontSize: 13,
                                   color: AppColors.getTextSecondary(isDark))),
                           Text(
                             '${individualTotal.toStringAsFixed(0)} ${l10n.sar}',
-                            style: TextStyle(fontSize: 14,
+                            style: TextStyle(
+                                fontSize: 14,
                                 color: AppColors.getTextSecondary(isDark),
                                 decoration: TextDecoration.lineThrough),
                           ),
@@ -271,12 +287,14 @@ class _BundleDealsScreenState extends ConsumerState<BundleDealsScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(l10n.bundlePrice,
-                              style: TextStyle(fontSize: 14,
+                              style: TextStyle(
+                                  fontSize: 14,
                                   fontWeight: FontWeight.w600,
                                   color: AppColors.getTextPrimary(isDark))),
                           Text(
                             '${bundlePrice.toStringAsFixed(0)} ${l10n.sar}',
-                            style: const TextStyle(fontSize: 18,
+                            style: const TextStyle(
+                                fontSize: 18,
                                 fontWeight: FontWeight.w800,
                                 color: AppColors.primary),
                           ),
@@ -287,12 +305,14 @@ class _BundleDealsScreenState extends ConsumerState<BundleDealsScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(l10n.youSave,
-                              style: const TextStyle(fontSize: 13,
+                              style: const TextStyle(
+                                  fontSize: 13,
                                   fontWeight: FontWeight.w600,
                                   color: AppColors.success)),
                           Text(
                             '${savings.toStringAsFixed(0)} ${l10n.sar}',
-                            style: const TextStyle(fontSize: 16,
+                            style: const TextStyle(
+                                fontSize: 16,
                                 fontWeight: FontWeight.w700,
                                 color: AppColors.success),
                           ),
@@ -306,12 +326,14 @@ class _BundleDealsScreenState extends ConsumerState<BundleDealsScreen> {
                   const SizedBox(height: AlhaiSpacing.sm),
                   Row(
                     children: [
-                      Icon(Icons.schedule_rounded, size: 14,
-                          color: AppColors.getTextMuted(isDark)),
+                      Icon(Icons.schedule_rounded,
+                          size: 14, color: AppColors.getTextMuted(isDark)),
                       const SizedBox(width: 6),
                       Text(
-                        l10n.validUntilDate('${bundle.endDate!.day}/${bundle.endDate!.month}/${bundle.endDate!.year}'),
-                        style: TextStyle(fontSize: 12,
+                        l10n.validUntilDate(
+                            '${bundle.endDate!.day}/${bundle.endDate!.month}/${bundle.endDate!.year}'),
+                        style: TextStyle(
+                            fontSize: 12,
                             color: AppColors.getTextMuted(isDark)),
                       ),
                     ],
@@ -329,7 +351,8 @@ class _BundleDealsScreenState extends ConsumerState<BundleDealsScreen> {
     return Row(
       children: [
         Container(
-          width: 6, height: 6,
+          width: 6,
+          height: 6,
           decoration: BoxDecoration(
             color: AppColors.primary.withValues(alpha: 0.5),
             shape: BoxShape.circle,
@@ -338,11 +361,13 @@ class _BundleDealsScreenState extends ConsumerState<BundleDealsScreen> {
         const SizedBox(width: 10),
         Expanded(
           child: Text('$baseLabel $index',
-              style: TextStyle(fontSize: 13,
-                  color: AppColors.getTextPrimary(isDark))),
+              style: TextStyle(
+                  fontSize: 13, color: AppColors.getTextPrimary(isDark))),
         ),
         Text('x1',
-            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600,
+            style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
                 color: AppColors.getTextSecondary(isDark))),
       ],
     );
@@ -353,16 +378,19 @@ class _BundleDealsScreenState extends ConsumerState<BundleDealsScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.inventory_2_outlined, size: 64,
+          Icon(Icons.inventory_2_outlined,
+              size: 64,
               color: AppColors.getTextMuted(isDark).withValues(alpha: 0.4)),
           const SizedBox(height: AlhaiSpacing.md),
           Text(l10n.noBundleDeals,
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500,
+              style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
                   color: AppColors.getTextMuted(isDark))),
           const SizedBox(height: AlhaiSpacing.xs),
           Text(l10n.bundleDealsWillAppear,
-              style: TextStyle(fontSize: 13,
-                  color: AppColors.getTextMuted(isDark))),
+              style: TextStyle(
+                  fontSize: 13, color: AppColors.getTextMuted(isDark))),
         ],
       ),
     );

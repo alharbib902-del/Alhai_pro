@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_core/alhai_core.dart' show UserRole;
-
-import '../../core/router/app_router.dart';
+import 'package:alhai_l10n/alhai_l10n.dart';
 
 /// Super Admin login screen.
 /// Shows phone + OTP flow, then verifies the user has superAdmin role.
@@ -28,10 +27,11 @@ class _SALoginScreenState extends ConsumerState<SALoginScreen> {
   }
 
   Future<void> _login() async {
+    final l10n = AppLocalizations.of(context);
     final phone = _phoneController.text.trim();
     final password = _passwordController.text.trim();
     if (phone.isEmpty || password.isEmpty) {
-      setState(() => _error = 'Please enter phone and password');
+      setState(() => _error = l10n.saEnterCredentials);
       return;
     }
 
@@ -42,17 +42,16 @@ class _SALoginScreenState extends ConsumerState<SALoginScreen> {
 
     try {
       // Super admin uses email/password auth
-      final result = await ref
-          .read(authStateProvider.notifier)
-          .signInWithEmailPassword(
-            email: phone, // phone field doubles as email for SA
-            password: password,
-          );
+      final result =
+          await ref.read(authStateProvider.notifier).signInWithEmailPassword(
+                email: phone, // phone field doubles as email for SA
+                password: password,
+              );
 
       if (!result.success) {
         if (mounted) {
           setState(() {
-            _error = result.error ?? 'Sign in failed';
+            _error = result.error ?? l10n.saSignInFailed;
             _isLoading = false;
           });
         }
@@ -65,7 +64,7 @@ class _SALoginScreenState extends ConsumerState<SALoginScreen> {
         await ref.read(authStateProvider.notifier).logout();
         if (mounted) {
           setState(() {
-            _error = 'Access denied. Super Admin role required.';
+            _error = l10n.saAccessDenied;
             _isLoading = false;
           });
         }
@@ -88,6 +87,7 @@ class _SALoginScreenState extends ConsumerState<SALoginScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       body: Center(
@@ -115,14 +115,14 @@ class _SALoginScreenState extends ConsumerState<SALoginScreen> {
                 const SizedBox(height: 24),
 
                 Text(
-                  'Super Admin',
+                  l10n.saSuperAdmin,
                   style: theme.textTheme.headlineMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Alhai POS Platform Management',
+                  l10n.saPlatformManagement,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
@@ -134,7 +134,7 @@ class _SALoginScreenState extends ConsumerState<SALoginScreen> {
                   controller: _phoneController,
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
-                    labelText: 'Email',
+                    labelText: l10n.email,
                     prefixIcon: const Icon(Icons.email_rounded),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -148,7 +148,7 @@ class _SALoginScreenState extends ConsumerState<SALoginScreen> {
                   controller: _passwordController,
                   obscureText: true,
                   decoration: InputDecoration(
-                    labelText: 'Password',
+                    labelText: l10n.password,
                     prefixIcon: const Icon(Icons.lock_rounded),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -183,7 +183,7 @@ class _SALoginScreenState extends ConsumerState<SALoginScreen> {
                             height: 20,
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
-                        : const Text('Sign In'),
+                        : Text(l10n.saSignIn),
                   ),
                 ),
 
@@ -208,7 +208,7 @@ class _SALoginScreenState extends ConsumerState<SALoginScreen> {
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
-                          'Only users with Super Admin role can access this panel.',
+                          l10n.saSuperAdminOnly,
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: isDark
                                 ? Colors.amber.shade300

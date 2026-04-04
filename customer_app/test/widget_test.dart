@@ -27,9 +27,9 @@ void main() {
         ),
       ),
     );
-    
+
     await tester.pumpAndSettle();
-    
+
     expect(find.text('Customer App'), findsOneWidget);
   });
 }

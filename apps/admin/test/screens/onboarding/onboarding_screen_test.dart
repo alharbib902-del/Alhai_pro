@@ -24,8 +24,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const OnboardingScreen()));
+      await tester.pumpWidget(createTestWidget(const OnboardingScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(OnboardingScreen), findsOneWidget);
@@ -39,8 +38,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const OnboardingScreen()));
+      await tester.pumpWidget(createTestWidget(const OnboardingScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(PageView), findsOneWidget);
@@ -54,8 +52,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const OnboardingScreen()));
+      await tester.pumpWidget(createTestWidget(const OnboardingScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.dashboard_rounded), findsWidgets);
@@ -69,8 +66,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const OnboardingScreen()));
+      await tester.pumpWidget(createTestWidget(const OnboardingScreen()));
       await tester.pumpAndSettle();
 
       // Navigation buttons (skip + next) should be visible

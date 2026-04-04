@@ -251,10 +251,8 @@ class DistributorDatasource {
     if (_cachedStoreIds != null) return _cachedStoreIds!;
 
     try {
-      final stores = await _client
-          .from('stores')
-          .select('id')
-          .eq('org_id', orgId);
+      final stores =
+          await _client.from('stores').select('id').eq('org_id', orgId);
 
       _cachedStoreIds = (stores as List)
           .map((s) => (s as Map<String, dynamic>)['id'] as String)
@@ -306,8 +304,8 @@ class DistributorDatasource {
           .order('created_at', ascending: false)
           .range(offset, offset + limit - 1);
       return (data as List)
-          .map((json) =>
-              DistributorOrder.fromJson(json as Map<String, dynamic>))
+          .map(
+              (json) => DistributorOrder.fromJson(json as Map<String, dynamic>))
           .toList();
     } catch (e) {
       if (e is DatasourceError) rethrow;
@@ -457,8 +455,10 @@ class DistributorDatasource {
   }) async {
     try {
       // Return cached data for default pagination if available
-      if (offset == 0 && limit == 50 &&
-          _productsCache != null && !_productsCache!.isExpired) {
+      if (offset == 0 &&
+          limit == 50 &&
+          _productsCache != null &&
+          !_productsCache!.isExpired) {
         return _productsCache!.data;
       }
 
@@ -508,10 +508,14 @@ class DistributorDatasource {
 
       final orgId = await _requireOrgId('updateProductPrice');
 
-      await _client.from('products').update({
-        'price': newPrice,
-        'updated_at': DateTime.now().toIso8601String(),
-      }).eq('id', productId).eq('org_id', orgId);
+      await _client
+          .from('products')
+          .update({
+            'price': newPrice,
+            'updated_at': DateTime.now().toIso8601String(),
+          })
+          .eq('id', productId)
+          .eq('org_id', orgId);
 
       return true;
     } catch (e) {
@@ -585,8 +589,7 @@ class DistributorDatasource {
         );
       }
 
-      final sixMonthsAgo =
-          DateTime.now().subtract(const Duration(days: 180));
+      final sixMonthsAgo = DateTime.now().subtract(const Duration(days: 180));
 
       final data = await _client
           .from('orders')
@@ -598,8 +601,8 @@ class DistributorDatasource {
           .range(0, 499);
 
       final allOrders = (data as List)
-          .map((json) =>
-              DistributorOrder.fromJson(json as Map<String, dynamic>))
+          .map(
+              (json) => DistributorOrder.fromJson(json as Map<String, dynamic>))
           .toList();
 
       final totalOrders = allOrders.length;
@@ -608,8 +611,7 @@ class DistributorDatasource {
           .length;
       final approvedOrders =
           allOrders.where((o) => o.status == 'approved').length;
-      final totalRevenue =
-          allOrders.fold<double>(0, (sum, o) => sum + o.total);
+      final totalRevenue = allOrders.fold<double>(0, (sum, o) => sum + o.total);
 
       // Group by month for chart
       final monthMap = <int, double>{};
@@ -637,9 +639,8 @@ class DistributorDatasource {
       final monthlySales = monthMap.entries
           .map((e) => MonthlySales(monthNames[e.key], e.value))
           .toList()
-        ..sort((a, b) => monthNames
-            .indexOf(a.month)
-            .compareTo(monthNames.indexOf(b.month)));
+        ..sort((a, b) =>
+            monthNames.indexOf(a.month).compareTo(monthNames.indexOf(b.month)));
 
       // Recent 5 orders
       final recentOrders = allOrders.take(5).toList();
@@ -723,15 +724,13 @@ class DistributorDatasource {
           .range(offset, offset + limit - 1);
 
       final orderList = (orders as List)
-          .map((json) =>
-              DistributorOrder.fromJson(json as Map<String, dynamic>))
+          .map(
+              (json) => DistributorOrder.fromJson(json as Map<String, dynamic>))
           .toList();
 
-      final totalSales =
-          orderList.fold<double>(0, (sum, o) => sum + o.total);
+      final totalSales = orderList.fold<double>(0, (sum, o) => sum + o.total);
       final orderCount = orderList.length;
-      final avgOrderValue =
-          orderCount > 0 ? totalSales / orderCount : 0.0;
+      final avgOrderValue = orderCount > 0 ? totalSales / orderCount : 0.0;
 
       // Daily sales aggregation
       final dailyMap = <String, double>{};
@@ -763,8 +762,7 @@ class DistributorDatasource {
           .select('product_id, quantity, unit_price, products(name)')
           .filter('order_id', 'in', orderIds);
 
-      final productStats =
-          <String, (String name, int count, double revenue)>{};
+      final productStats = <String, (String name, int count, double revenue)>{};
       for (final item in (itemsData as List)) {
         final productId = item['product_id'] as String? ?? '';
         final name = item['products'] is Map
@@ -793,8 +791,7 @@ class DistributorDatasource {
         totalSales: totalSales,
         orderCount: orderCount,
         avgOrderValue: avgOrderValue,
-        topProduct:
-            topProducts.isNotEmpty ? topProducts.first.name : '-',
+        topProduct: topProducts.isNotEmpty ? topProducts.first.name : '-',
         topProductOrders:
             topProducts.isNotEmpty ? topProducts.first.orderCount : 0,
         dailySales: dailySales,
@@ -970,8 +967,8 @@ class DistributorDatasource {
           .range(0, limit - 1);
 
       final results = (data as List)
-          .map((json) =>
-              (json as Map<String, dynamic>)['name'] as String? ?? '')
+          .map(
+              (json) => (json as Map<String, dynamic>)['name'] as String? ?? '')
           .where((name) => name.isNotEmpty)
           .toList();
 

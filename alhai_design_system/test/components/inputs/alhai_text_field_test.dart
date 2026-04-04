@@ -218,7 +218,8 @@ void main() {
         expect(find.byIcon(Icons.lock_outline), findsOneWidget);
       });
 
-      testWidgets('password factory has toggle visibility button', (tester) async {
+      testWidgets('password factory has toggle visibility button',
+          (tester) async {
         await tester.pumpWidget(createTestWidget(
           AlhaiTextField.password(),
         ));

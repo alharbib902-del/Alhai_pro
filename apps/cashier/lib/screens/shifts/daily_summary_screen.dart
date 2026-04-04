@@ -11,7 +11,8 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
+import 'package:alhai_design_system/alhai_design_system.dart'
+    show AlhaiBreakpoints, AlhaiSpacing;
 import 'package:alhai_core/alhai_core.dart' show UserRole;
 // alhai_design_system is re-exported via alhai_shared_ui
 
@@ -53,9 +54,8 @@ class DailySummaryScreen extends ConsumerWidget {
           subtitle: _getDateSubtitle(l10n),
           showSearch: false,
           searchHint: l10n.searchPlaceholder,
-          onMenuTap: isWideScreen
-              ? null
-              : () => Scaffold.of(context).openDrawer(),
+          onMenuTap:
+              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: ref.watch(unreadNotificationsCountProvider),
           userName: user?.name ?? l10n.cashCustomer,
@@ -64,18 +64,19 @@ class DailySummaryScreen extends ConsumerWidget {
         ),
         Expanded(
           child: ref.watch(todayShiftsProvider).when(
-            data: (shifts) => SingleChildScrollView(
-              padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-              child: _buildContent(
-                  context, ref, shifts, isWideScreen, isMediumScreen, isDark, l10n),
-            ),
-            loading: () => const AppLoadingState(),
-            error: (e, _) => AppErrorState.general(
-              context,
-              message: '$e',
-              onRetry: () => ref.invalidate(todayShiftsProvider),
-            ),
-          ),
+                data: (shifts) => SingleChildScrollView(
+                  padding: EdgeInsets.all(
+                      isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+                  child: _buildContent(context, ref, shifts, isWideScreen,
+                      isMediumScreen, isDark, l10n),
+                ),
+                loading: () => const AppLoadingState(),
+                error: (e, _) => AppErrorState.general(
+                  context,
+                  message: '$e',
+                  onRetry: () => ref.invalidate(todayShiftsProvider),
+                ),
+              ),
         ),
       ],
     );
@@ -151,13 +152,14 @@ class DailySummaryScreen extends ConsumerWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(flex: 3, child: _buildShiftsTable(context, shifts, isDark, l10n)),
+              Expanded(
+                  flex: 3,
+                  child: _buildShiftsTable(context, shifts, isDark, l10n)),
               const SizedBox(width: AlhaiSpacing.lg),
               Expanded(
                   flex: 2,
-                  child: _buildSummaryCard(
-                      totalOpeningCash, totalSales, totalRefunds, netRevenue,
-                      shifts.length, isDark, l10n)),
+                  child: _buildSummaryCard(totalOpeningCash, totalSales,
+                      totalRefunds, netRevenue, shifts.length, isDark, l10n)),
             ],
           ),
         ],
@@ -246,8 +248,7 @@ class DailySummaryScreen extends ConsumerWidget {
                   const SizedBox(height: AlhaiSpacing.xxxs),
                   Text(subtitle,
                       style: TextStyle(
-                          fontSize: 11,
-                          color: AppColors.getTextMuted(isDark))),
+                          fontSize: 11, color: AppColors.getTextMuted(isDark))),
                 ],
               ],
             ),
@@ -342,8 +343,8 @@ class DailySummaryScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildShiftsTable(
-      BuildContext context, List<ShiftsTableData> shifts, bool isDark, AppLocalizations l10n) {
+  Widget _buildShiftsTable(BuildContext context, List<ShiftsTableData> shifts,
+      bool isDark, AppLocalizations l10n) {
     if (shifts.isEmpty) {
       return Container(
         padding: const EdgeInsets.all(AlhaiSpacing.xxxl),
@@ -357,13 +358,11 @@ class DailySummaryScreen extends ConsumerWidget {
             children: [
               Icon(Icons.timer_off_rounded,
                   size: 48,
-                  color:
-                      AppColors.getTextMuted(isDark).withValues(alpha: 0.4)),
+                  color: AppColors.getTextMuted(isDark).withValues(alpha: 0.4)),
               const SizedBox(height: AlhaiSpacing.sm),
               Text(l10n.noShiftsToday,
                   style: TextStyle(
-                      fontSize: 15,
-                      color: AppColors.getTextMuted(isDark))),
+                      fontSize: 15, color: AppColors.getTextMuted(isDark))),
             ],
           ),
         ),
@@ -385,8 +384,7 @@ class DailySummaryScreen extends ConsumerWidget {
             child: Row(
               children: [
                 Icon(Icons.schedule_rounded,
-                    size: 20,
-                    color: AppColors.getTextSecondary(isDark)),
+                    size: 20, color: AppColors.getTextSecondary(isDark)),
                 const SizedBox(width: 10),
                 Text(l10n.todayShifts,
                     style: TextStyle(
@@ -412,16 +410,18 @@ class DailySummaryScreen extends ConsumerWidget {
           ),
           const Divider(height: 1),
           // Shift items
-          ...shifts.map((shift) => _buildShiftItem(context, shift, isDark, l10n)),
+          ...shifts
+              .map((shift) => _buildShiftItem(context, shift, isDark, l10n)),
         ],
       ),
     );
   }
 
-  Widget _buildShiftItem(
-      BuildContext context, ShiftsTableData shift, bool isDark, AppLocalizations l10n) {
+  Widget _buildShiftItem(BuildContext context, ShiftsTableData shift,
+      bool isDark, AppLocalizations l10n) {
     final isOpen = shift.status == 'open';
-    final statusColor = isOpen ? AppColors.success : Theme.of(context).colorScheme.outline;
+    final statusColor =
+        isOpen ? AppColors.success : Theme.of(context).colorScheme.outline;
 
     final openTime =
         '${shift.openedAt.hour.toString().padLeft(2, '0')}:${shift.openedAt.minute.toString().padLeft(2, '0')}';
@@ -430,7 +430,8 @@ class DailySummaryScreen extends ConsumerWidget {
         : l10n.ongoing;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.mdl, vertical: 14),
+      padding: const EdgeInsets.symmetric(
+          horizontal: AlhaiSpacing.mdl, vertical: 14),
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
@@ -443,8 +444,8 @@ class DailySummaryScreen extends ConsumerWidget {
           Container(
             width: 10,
             height: 10,
-            decoration: BoxDecoration(
-                color: statusColor, shape: BoxShape.circle),
+            decoration:
+                BoxDecoration(color: statusColor, shape: BoxShape.circle),
           ),
           const SizedBox(width: 14),
           // Info
@@ -469,8 +470,7 @@ class DailySummaryScreen extends ConsumerWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(
-                  CurrencyFormatter.formatCompact(shift.totalSalesAmount),
+              Text(CurrencyFormatter.formatCompact(shift.totalSalesAmount),
                   style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
@@ -478,8 +478,7 @@ class DailySummaryScreen extends ConsumerWidget {
               const SizedBox(height: AlhaiSpacing.xxxs),
               Text('${shift.totalSales} ${l10n.invoices}',
                   style: TextStyle(
-                      fontSize: 11,
-                      color: AppColors.getTextMuted(isDark))),
+                      fontSize: 11, color: AppColors.getTextMuted(isDark))),
             ],
           ),
         ],
@@ -509,18 +508,15 @@ class _SummaryLine extends StatelessWidget {
           Container(
             width: 8,
             height: 8,
-            decoration:
-                BoxDecoration(color: color, shape: BoxShape.circle),
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
           ),
           const SizedBox(width: 10),
           Expanded(
             child: Text(label,
-                style: TextStyle(
-                    color: AppColors.getTextSecondary(isDark))),
+                style: TextStyle(color: AppColors.getTextSecondary(isDark))),
           ),
           Text(value,
-              style:
-                  TextStyle(color: color, fontWeight: FontWeight.w600)),
+              style: TextStyle(color: color, fontWeight: FontWeight.w600)),
         ],
       ),
     );

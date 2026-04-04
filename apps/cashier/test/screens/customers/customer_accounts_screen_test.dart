@@ -63,8 +63,7 @@ void main() {
       when(() => accountsDao.getReceivableAccounts(any()))
           .thenAnswer((_) async => <AccountsTableData>[]);
 
-      await tester.pumpWidget(
-          createTestWidget(const CustomerAccountsScreen()));
+      await tester.pumpWidget(createTestWidget(const CustomerAccountsScreen()));
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
@@ -78,8 +77,7 @@ void main() {
       when(() => accountsDao.getReceivableAccounts(any()))
           .thenAnswer((_) async => <AccountsTableData>[]);
 
-      await tester.pumpWidget(
-          createTestWidget(const CustomerAccountsScreen()));
+      await tester.pumpWidget(createTestWidget(const CustomerAccountsScreen()));
       await tester.pumpAndSettle();
 
       expect(
@@ -95,8 +93,7 @@ void main() {
       when(() => accountsDao.getReceivableAccounts(any()))
           .thenAnswer((_) async => <AccountsTableData>[]);
 
-      await tester.pumpWidget(
-          createTestWidget(const CustomerAccountsScreen()));
+      await tester.pumpWidget(createTestWidget(const CustomerAccountsScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(TextField), findsOneWidget);
@@ -125,8 +122,7 @@ void main() {
       when(() => accountsDao.getReceivableAccounts(any()))
           .thenAnswer((_) async => accounts);
 
-      await tester.pumpWidget(
-          createTestWidget(const CustomerAccountsScreen()));
+      await tester.pumpWidget(createTestWidget(const CustomerAccountsScreen()));
       await tester.pumpAndSettle();
 
       // Chevron icons on each card
@@ -146,8 +142,7 @@ void main() {
       when(() => accountsDao.getReceivableAccounts(any()))
           .thenAnswer((_) async => accounts);
 
-      await tester.pumpWidget(
-          createTestWidget(const CustomerAccountsScreen()));
+      await tester.pumpWidget(createTestWidget(const CustomerAccountsScreen()));
       await tester.pumpAndSettle();
 
       // Summary stats should show "Customers" text
@@ -164,15 +159,13 @@ void main() {
       when(() => accountsDao.getReceivableAccounts(any()))
           .thenAnswer((_) async => <AccountsTableData>[]);
 
-      await tester.pumpWidget(
-          createTestWidget(const CustomerAccountsScreen()));
+      await tester.pumpWidget(createTestWidget(const CustomerAccountsScreen()));
       await tester.pumpAndSettle();
 
       // Filter chip icons
       expect(find.byIcon(Icons.warning_amber_rounded), findsOneWidget);
       expect(find.byIcon(Icons.schedule_rounded), findsOneWidget);
-      expect(
-          find.byIcon(Icons.check_circle_outline_rounded), findsOneWidget);
+      expect(find.byIcon(Icons.check_circle_outline_rounded), findsOneWidget);
     });
   });
 }

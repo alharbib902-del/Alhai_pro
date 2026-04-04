@@ -51,7 +51,8 @@ class SunmiPrintService implements ThermalPrintService {
 
       if (hasPrinter == true) {
         _isSunmiDevice = true;
-        final model = await _channel.invokeMethod<String>('getModel') ?? 'Sunmi';
+        final model =
+            await _channel.invokeMethod<String>('getModel') ?? 'Sunmi';
 
         return [
           DiscoveredPrinter(
@@ -66,7 +67,8 @@ class SunmiPrintService implements ThermalPrintService {
       if (kDebugMode) debugPrint('Sunmi scan error: ${e.message}');
     } on MissingPluginException {
       if (kDebugMode) {
-        debugPrint('Sunmi: platform channel not available (not a Sunmi device)');
+        debugPrint(
+            'Sunmi: platform channel not available (not a Sunmi device)');
       }
     }
 
@@ -161,8 +163,10 @@ class SunmiPrintService implements ThermalPrintService {
 
       // ─── Items ─────────────────────────────────────
       for (final item in receipt.items) {
-        final qtyPrice = '${_formatQty(item.quantity)} × ${_formatMoney(item.unitPrice)}';
-        await _sunmiPrintThreeCol(item.name, qtyPrice, _formatMoney(item.total));
+        final qtyPrice =
+            '${_formatQty(item.quantity)} × ${_formatMoney(item.unitPrice)}';
+        await _sunmiPrintThreeCol(
+            item.name, qtyPrice, _formatMoney(item.total));
       }
       await _sunmiPrintDivider();
 
@@ -171,7 +175,8 @@ class SunmiPrintService implements ThermalPrintService {
       if (receipt.discount > 0) {
         await _sunmiPrintRow('الخصم:', '- ${_formatMoney(receipt.discount)}');
       }
-      await _sunmiPrintRow('ضريبة القيمة المضافة (15%):', _formatMoney(receipt.tax));
+      await _sunmiPrintRow(
+          'ضريبة القيمة المضافة (15%):', _formatMoney(receipt.tax));
 
       await _sunmiSetBold(true);
       await _sunmiSetFontSize(26);
@@ -181,9 +186,11 @@ class SunmiPrintService implements ThermalPrintService {
       await _sunmiPrintDivider();
 
       // ─── Payment Info ──────────────────────────────
-      await _sunmiPrintRow('طريقة الدفع:', _translatePaymentMethod(receipt.paymentMethod));
+      await _sunmiPrintRow(
+          'طريقة الدفع:', _translatePaymentMethod(receipt.paymentMethod));
       if (receipt.amountReceived != null && receipt.amountReceived! > 0) {
-        await _sunmiPrintRow('المبلغ المدفوع:', _formatMoney(receipt.amountReceived!));
+        await _sunmiPrintRow(
+            'المبلغ المدفوع:', _formatMoney(receipt.amountReceived!));
       }
       if (receipt.changeAmount != null && receipt.changeAmount! > 0) {
         await _sunmiPrintRow('الباقي:', _formatMoney(receipt.changeAmount!));
@@ -268,7 +275,8 @@ class SunmiPrintService implements ThermalPrintService {
       await _sunmiPrintText('نظام الحي - نقاط البيع\n');
       await _sunmiPrintText('Al-HAI POS System\n');
       await _sunmiPrintDivider();
-      await _sunmiPrintRow('حجم الورق:', _paperSize == PaperSize.mm58 ? '58mm' : '80mm');
+      await _sunmiPrintRow(
+          'حجم الورق:', _paperSize == PaperSize.mm58 ? '58mm' : '80mm');
       await _sunmiPrintRow('التاريخ:', _formatDate(DateTime.now()));
       await _sunmiPrintRow('الوقت:', _formatTime(DateTime.now()));
       await _sunmiPrintDivider();

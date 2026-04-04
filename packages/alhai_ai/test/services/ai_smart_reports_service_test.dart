@@ -122,8 +122,7 @@ void main() {
     });
 
     test('generates monthly comparison report', () {
-      final report =
-          AiSmartReportsService.generateReport('monthly_comparison');
+      final report = AiSmartReportsService.generateReport('monthly_comparison');
       expect(report.chartType, ChartType.lineChart);
       expect(report.data.length, 12);
     });
@@ -167,9 +166,14 @@ void main() {
 
     test('all reports have required fields', () {
       final templateIds = [
-        'daily_sales', 'top_products', 'monthly_comparison',
-        'category_distribution', 'hourly_traffic', 'profit_margin',
-        'low_stock', 'total_revenue',
+        'daily_sales',
+        'top_products',
+        'monthly_comparison',
+        'category_distribution',
+        'hourly_traffic',
+        'profit_margin',
+        'low_stock',
+        'total_revenue',
       ];
 
       for (final id in templateIds) {

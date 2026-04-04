@@ -12,7 +12,8 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_core/alhai_core.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' hide User, AuthException;
+import 'package:supabase_flutter/supabase_flutter.dart'
+    hide User, AuthException;
 import 'package:uuid/uuid.dart';
 import '../security/secure_storage_service.dart';
 import '../security/session_manager.dart';
@@ -81,7 +82,7 @@ enum AuthStatus {
 
   /// غير مصادق عليه
   unauthenticated,
-  
+
   /// الجلسة منتهية
   sessionExpired,
 }
@@ -119,13 +120,13 @@ class AuthState {
   bool get isAuthenticated => status == AuthStatus.authenticated;
   bool get isLoading => status == AuthStatus.unknown;
   bool get isSessionExpired => status == AuthStatus.sessionExpired;
-  
+
   /// التحقق من صلاحية الجلسة
   bool get isSessionValid {
     if (sessionExpiry == null) return false;
     return DateTime.now().isBefore(sessionExpiry!);
   }
-  
+
   /// هل تحتاج الجلسة للتجديد؟
   bool get needsRefresh {
     if (sessionExpiry == null) return true;
@@ -147,7 +148,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
   final Completer<void> _initCompleter = Completer<void>();
   Future<void> get initComplete => _initCompleter.future;
 
-  AuthNotifier(this._authRepository, [this._supabaseClient]) : super(const AuthState()) {
+  AuthNotifier(this._authRepository, [this._supabaseClient])
+      : super(const AuthState()) {
     _listenToSupabaseAuth();
     _checkAuthStatus();
   }
@@ -187,7 +189,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
               final refreshed = _supabaseClient.auth.currentSession;
               if (refreshed != null) {
                 final newExpiry = refreshed.expiresAt != null
-                    ? DateTime.fromMillisecondsSinceEpoch(refreshed.expiresAt! * 1000)
+                    ? DateTime.fromMillisecondsSinceEpoch(
+                        refreshed.expiresAt! * 1000)
                     : DateTime.now().add(kSessionDuration);
                 await SecureStorageService.saveTokens(
                   accessToken: refreshed.accessToken,
@@ -245,13 +248,14 @@ class AuthNotifier extends StateNotifier<AuthState> {
       final event = data.event;
 
       if (kDebugMode) {
-        debugPrint('🔄 Supabase auth event: $event, session: ${session != null}');
+        debugPrint(
+            '🔄 Supabase auth event: $event, session: ${session != null}');
       }
 
       // استعادة الجلسة الأولية أو تجديد التوكن → تحديث الحالة إذا لم نكن مصادقين
       if ((event == AuthChangeEvent.initialSession ||
-           event == AuthChangeEvent.tokenRefreshed ||
-           event == AuthChangeEvent.signedIn) &&
+              event == AuthChangeEvent.tokenRefreshed ||
+              event == AuthChangeEvent.signedIn) &&
           session != null &&
           state.status != AuthStatus.authenticated) {
         final expiry = session.expiresAt != null
@@ -264,7 +268,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
             id: session.user.id,
             phone: session.user.phone ?? '',
             name: session.user.userMetadata?['name'] as String? ??
-                session.user.phone ?? '',
+                session.user.phone ??
+                '',
             email: session.user.email,
             role: UserRole.employee,
             createdAt: DateTime.now(),
@@ -333,7 +338,9 @@ class AuthNotifier extends StateNotifier<AuthState> {
             user: User(
               id: session.user.id,
               phone: session.user.phone ?? '',
-              name: session.user.userMetadata?['name'] as String? ?? session.user.phone ?? '',
+              name: session.user.userMetadata?['name'] as String? ??
+                  session.user.phone ??
+                  '',
               email: session.user.email,
               role: UserRole.employee,
               createdAt: DateTime.now(),
@@ -373,7 +380,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
       if (!isSessionValid) {
         if (_supabaseClient != null && kIsWeb) {
           if (kDebugMode) {
-            debugPrint('⏳ SecureStorage session expired, waiting for Supabase auth event...');
+            debugPrint(
+                '⏳ SecureStorage session expired, waiting for Supabase auth event...');
           }
           state = const AuthState(status: AuthStatus.unauthenticated);
           return;
@@ -386,7 +394,9 @@ class AuthNotifier extends StateNotifier<AuthState> {
       // SESSION-FIX: استعادة الجلسة مباشرة من SecureStorageService
       // هذا يحل مشكلة F5 على الويب حيث verifyLocalOtp() يحفظ التوكنات
       // في SecureStorageService فقط (وليس في _authRepository/AuthLocalDatasource)
-      if (savedUserId != null && savedUserId.isNotEmpty && savedExpiry != null) {
+      if (savedUserId != null &&
+          savedUserId.isNotEmpty &&
+          savedExpiry != null) {
         // محاولة جلب بيانات المستخدم الكاملة من repository
         User? user;
         try {
@@ -412,7 +422,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
         _startSessionMonitor();
 
         if (kDebugMode) {
-          debugPrint('✅ Auth restored from SecureStorage for user: $savedUserId');
+          debugPrint(
+              '✅ Auth restored from SecureStorage for user: $savedUserId');
         }
 
         if (state.needsRefresh) {
@@ -480,7 +491,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
         state = state.copyWith(
           error: sessionCheck.reason ??
               'تم تجاوز الحد الأقصى للأجهزة المتصلة ($_maxConcurrentSessions). '
-              'يرجى تسجيل الخروج من جهاز آخر أولاً.',
+                  'يرجى تسجيل الخروج من جهاز آخر أولاً.',
         );
         return;
       }
@@ -489,20 +500,20 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
       // حساب وقت انتهاء الجلسة
       final expiry = DateTime.now().add(kSessionDuration);
-      
+
       // حفظ الـ tokens بشكل آمن
       await SecureStorageService.saveTokens(
         accessToken: result.tokens.accessToken,
         refreshToken: result.tokens.refreshToken,
         expiry: expiry,
       );
-      
+
       // حفظ بيانات المستخدم
       await SecureStorageService.saveUserData(
         userId: result.user.id,
         storeId: result.user.storeId ?? '',
       );
-      
+
       state = AuthState(
         status: AuthStatus.authenticated,
         user: result.user,
@@ -608,7 +619,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
       // تنظيف الرقم: إزالة + لأن Supabase يخزّن بدون +
       final cleanPhone = phone.replaceAll('+', '');
 
-      debugPrint('📞 checkCashierByPhone: phone=$phone → cleanPhone=$cleanPhone');
+      debugPrint(
+          '📞 checkCashierByPhone: phone=$phone → cleanPhone=$cleanPhone');
 
       final result = await _supabaseClient.rpc(
         'check_cashier_by_phone',
@@ -787,20 +799,20 @@ class AuthNotifier extends StateNotifier<AuthState> {
       state = state.copyWith(error: e.toString());
     }
   }
-  
+
   /// تجديد التوكن
   Future<bool> _refreshToken() async {
     try {
       final tokens = await _authRepository.refreshToken();
-      
+
       final newExpiry = DateTime.now().add(kSessionDuration);
-      
+
       await SecureStorageService.saveTokens(
         accessToken: tokens.accessToken,
         refreshToken: tokens.refreshToken,
         expiry: newExpiry,
       );
-      
+
       state = state.copyWith(sessionExpiry: newExpiry);
       return true;
     } catch (e) {
@@ -809,11 +821,11 @@ class AuthNotifier extends StateNotifier<AuthState> {
       return false;
     }
   }
-  
+
   /// بدء مراقبة الجلسة
   void _startSessionMonitor() {
     _stopSessionMonitor();
-    
+
     // تحقق كل دقيقة
     _sessionTimer = Timer.periodic(const Duration(minutes: 1), (_) async {
       if (!state.isSessionValid) {
@@ -823,13 +835,13 @@ class AuthNotifier extends StateNotifier<AuthState> {
       }
     });
   }
-  
+
   /// إيقاف مراقبة الجلسة
   void _stopSessionMonitor() {
     _sessionTimer?.cancel();
     _sessionTimer = null;
   }
-  
+
   /// معالجة انتهاء الجلسة
   Future<void> _handleSessionExpired() async {
     _stopSessionMonitor();
@@ -841,7 +853,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   void clearError() {
     state = state.copyWith(clearError: true);
   }
-  
+
   @override
   void dispose() {
     _supabaseAuthSub?.cancel();
@@ -914,8 +926,7 @@ class ConcurrentSessionGuard {
         return SessionCheckResult(
           allowed: false,
           activeSessions: activeSessions,
-          reason:
-              'لديك $activeSessions أجهزة متصلة حالياً. '
+          reason: 'لديك $activeSessions أجهزة متصلة حالياً. '
               'الحد الأقصى هو $_maxConcurrentSessions أجهزة. '
               'يرجى تسجيل الخروج من جهاز آخر أولاً.',
         );
@@ -980,8 +991,7 @@ class ConcurrentSessionGuard {
 // ============================================================================
 
 /// مزود حالة المصادقة
-final authStateProvider =
-    StateNotifierProvider<AuthNotifier, AuthState>((ref) {
+final authStateProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
   final authRepository = ref.watch(authRepositoryProvider);
   final supabase = ref.watch(supabaseClientProvider);
   return AuthNotifier(authRepository, supabase);
@@ -1011,7 +1021,7 @@ final isAdminProvider = Provider<bool>((ref) {
 /// مزود حالة الجلسة
 final sessionStatusProvider = Provider<SessionStatus>((ref) {
   final authState = ref.watch(authStateProvider);
-  
+
   if (authState.status == AuthStatus.unauthenticated) {
     return SessionStatus.notAuthenticated;
   }

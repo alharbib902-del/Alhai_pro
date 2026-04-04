@@ -59,11 +59,14 @@ enum ReportPeriod {
         final yesterday = today.subtract(const Duration(days: 1));
         return DateRange(yesterday, today);
       case ReportPeriod.thisWeek:
-        final startOfWeek = today.subtract(Duration(days: today.weekday - 6)); // السبت
+        final startOfWeek =
+            today.subtract(Duration(days: today.weekday - 6)); // السبت
         return DateRange(startOfWeek, now);
       case ReportPeriod.lastWeek:
-        final startOfThisWeek = today.subtract(Duration(days: today.weekday - 6));
-        final startOfLastWeek = startOfThisWeek.subtract(const Duration(days: 7));
+        final startOfThisWeek =
+            today.subtract(Duration(days: today.weekday - 6));
+        final startOfLastWeek =
+            startOfThisWeek.subtract(const Duration(days: 7));
         return DateRange(startOfLastWeek, startOfThisWeek);
       case ReportPeriod.thisMonth:
         final startOfMonth = DateTime(now.year, now.month, 1);
@@ -121,7 +124,8 @@ class SalesReport {
   double get averageSale => stats.count > 0 ? stats.total / stats.count : 0;
 
   /// متوسط المبيعات اليومي
-  double get dailyAverage => period.days > 0 ? stats.total / period.days : stats.total;
+  double get dailyAverage =>
+      period.days > 0 ? stats.total / period.days : stats.total;
 }
 
 /// مبيعات يومية
@@ -225,10 +229,10 @@ class InventoryReport {
   });
 
   double get outOfStockPercentage =>
-    totalProducts > 0 ? (outOfStockCount / totalProducts) * 100 : 0;
+      totalProducts > 0 ? (outOfStockCount / totalProducts) * 100 : 0;
 
   double get lowStockPercentage =>
-    totalProducts > 0 ? (lowStockCount / totalProducts) * 100 : 0;
+      totalProducts > 0 ? (lowStockCount / totalProducts) * 100 : 0;
 }
 
 /// منتج منخفض المخزون
@@ -287,8 +291,10 @@ class ProfitReport {
     this.dailyProfits = const [],
   });
 
-  double get grossMargin => grossRevenue > 0 ? (grossProfit / grossRevenue) * 100 : 0;
-  double get netMargin => grossRevenue > 0 ? (netProfit / grossRevenue) * 100 : 0;
+  double get grossMargin =>
+      grossRevenue > 0 ? (grossProfit / grossRevenue) * 100 : 0;
+  double get netMargin =>
+      grossRevenue > 0 ? (netProfit / grossRevenue) * 100 : 0;
 }
 
 /// ربح يومي
@@ -381,7 +387,8 @@ class ReportsService {
     // أفضل المنتجات
     final topProducts = await _getTopProducts(storeId, range, limit: 10);
 
-    debugPrint('[ReportsService] Sales report generated: ${stats.count} sales, ${stats.total} SAR');
+    debugPrint(
+        '[ReportsService] Sales report generated: ${stats.count} sales, ${stats.total} SAR');
 
     return SalesReport(
       period: range,
@@ -411,7 +418,8 @@ class ReportsService {
   /// مبيعات يومية للفترة
   // TODO(M96): Once SalesDao results are isolate-sendable, offload the
   // aggregation loop to compute() for long date ranges (30+ days).
-  Future<List<DailySales>> _getDailySales(String storeId, DateRange range) async {
+  Future<List<DailySales>> _getDailySales(
+      String storeId, DateRange range) async {
     final dailySales = <DailySales>[];
     var currentDate = range.start;
 
@@ -436,7 +444,8 @@ class ReportsService {
   }
 
   /// مقارنة مع الفترة السابقة
-  Future<SalesComparison> _getSalesComparison(String storeId, DateRange currentRange) async {
+  Future<SalesComparison> _getSalesComparison(
+      String storeId, DateRange currentRange) async {
     final currentStats = await _salesDao.getSalesStats(
       storeId,
       startDate: currentRange.start,
@@ -473,14 +482,17 @@ class ReportsService {
     int limit = 10,
   }) async {
     // استعلام مركب للحصول على أفضل المنتجات
-    final products = await _productsDao.getTopSellingProducts(storeId, limit: limit);
+    final products =
+        await _productsDao.getTopSellingProducts(storeId, limit: limit);
 
-    return products.map((p) => TopProduct(
-      productId: p.id,
-      productName: p.name,
-      quantitySold: 0, // يمكن حسابه من sale_items
-      revenue: 0, // يمكن حسابه من sale_items
-    )).toList();
+    return products
+        .map((p) => TopProduct(
+              productId: p.id,
+              productName: p.name,
+              quantitySold: 0, // يمكن حسابه من sale_items
+              revenue: 0, // يمكن حسابه من sale_items
+            ))
+        .toList();
   }
 
   /// المنتجات الأقل مبيعاً

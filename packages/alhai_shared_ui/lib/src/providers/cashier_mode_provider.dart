@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// حالة وضع الكاشير
-/// 
+///
 /// عند تفعيله:
 /// - تكبير الأزرار 150%
 /// - تباين عالي WCAG AAA
@@ -37,7 +37,7 @@ class CashierModeState {
   /// إعدادات وضع الكاشير الافتراضية
   static const CashierModeState cashierDefaults = CashierModeState(
     isEnabled: true,
-    textScale: 1.3,  // تكبير 130%
+    textScale: 1.3, // تكبير 130%
     highContrast: true,
     reducedAnimations: true,
   );
@@ -63,7 +63,7 @@ class CashierModeNotifier extends StateNotifier<CashierModeState> {
     final newEnabled = !state.isEnabled;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_prefKey, newEnabled);
-    
+
     if (newEnabled) {
       state = CashierModeState.cashierDefaults;
     } else {
@@ -85,7 +85,8 @@ class CashierModeNotifier extends StateNotifier<CashierModeState> {
 }
 
 /// مزود وضع الكاشير
-final cashierModeProvider = StateNotifierProvider<CashierModeNotifier, CashierModeState>(
+final cashierModeProvider =
+    StateNotifierProvider<CashierModeNotifier, CashierModeState>(
   (ref) => CashierModeNotifier(),
 );
 

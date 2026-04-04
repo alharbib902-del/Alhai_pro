@@ -34,8 +34,7 @@ void main() {
 
   group('NotificationsDao', () {
     test('insertNotification and getAllNotifications', () async {
-      await db.notificationsDao
-          .insertNotification(_makeNotification());
+      await db.notificationsDao.insertNotification(_makeNotification());
 
       final notifications =
           await db.notificationsDao.getAllNotifications('store-1');
@@ -68,8 +67,7 @@ void main() {
     });
 
     test('markAsRead sets isRead to true', () async {
-      await db.notificationsDao
-          .insertNotification(_makeNotification());
+      await db.notificationsDao.insertNotification(_makeNotification());
 
       await db.notificationsDao.markAsRead('notif-1');
 
@@ -79,12 +77,12 @@ void main() {
     });
 
     test('markAllAsRead marks all as read for store', () async {
-      await db.notificationsDao.insertNotification(
-          _makeNotification(id: 'n-1'));
-      await db.notificationsDao.insertNotification(
-          _makeNotification(id: 'n-2'));
-      await db.notificationsDao.insertNotification(
-          _makeNotification(id: 'n-3'));
+      await db.notificationsDao
+          .insertNotification(_makeNotification(id: 'n-1'));
+      await db.notificationsDao
+          .insertNotification(_makeNotification(id: 'n-2'));
+      await db.notificationsDao
+          .insertNotification(_makeNotification(id: 'n-3'));
 
       await db.notificationsDao.markAllAsRead('store-1');
 
@@ -94,8 +92,7 @@ void main() {
     });
 
     test('deleteNotification removes notification', () async {
-      await db.notificationsDao
-          .insertNotification(_makeNotification());
+      await db.notificationsDao.insertNotification(_makeNotification());
 
       final deleted = await db.notificationsDao.deleteNotification('notif-1');
       expect(deleted, 1);

@@ -326,8 +326,7 @@ class _AppScaffoldState extends State<AppScaffold> {
               title: Text(
                 item.label,
                 style: TextStyle(
-                  color:
-                      isSelected ? AppColors.primary : AppColors.textPrimary,
+                  color: isSelected ? AppColors.primary : AppColors.textPrimary,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                 ),
               ),

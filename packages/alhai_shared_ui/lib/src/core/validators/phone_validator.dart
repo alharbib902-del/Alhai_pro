@@ -107,7 +107,9 @@ class PhoneValidator {
     }
 
     if (cleanPhone.startsWith('+966') || cleanPhone.startsWith('00966')) {
-      return cleanPhone.startsWith('+') ? cleanPhone : '+${cleanPhone.substring(2)}';
+      return cleanPhone.startsWith('+')
+          ? cleanPhone
+          : '+${cleanPhone.substring(2)}';
     }
 
     return phone;

@@ -14,7 +14,8 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
+import 'package:alhai_design_system/alhai_design_system.dart'
+    show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 
@@ -100,8 +101,7 @@ class _StoreInfoScreenState extends ConsumerState<StoreInfoScreen> {
             tooltip: l10n.back,
           ),
           onNotificationsTap: () => context.push(AppRoutes.notificationsCenter),
-          userName:
-              ref.watch(currentUserProvider)?.name ?? l10n.cashCustomer,
+          userName: ref.watch(currentUserProvider)?.name ?? l10n.cashCustomer,
           userRole: l10n.cashier,
           onUserTap: () => context.push(AppRoutes.profile),
         ),
@@ -109,12 +109,14 @@ class _StoreInfoScreenState extends ConsumerState<StoreInfoScreen> {
           child: _isLoading
               ? const AppLoadingState()
               : _error != null
-                  ? AppErrorState.general(context, message: _error!, onRetry: _loadStoreData)
-              : SingleChildScrollView(
-                  padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-                  child: _buildContent(
-                      isWideScreen, isMediumScreen, isDark, l10n),
-                ),
+                  ? AppErrorState.general(context,
+                      message: _error!, onRetry: _loadStoreData)
+                  : SingleChildScrollView(
+                      padding: EdgeInsets.all(
+                          isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+                      child: _buildContent(
+                          isWideScreen, isMediumScreen, isDark, l10n),
+                    ),
         ),
       ],
     );
@@ -221,7 +223,8 @@ class _StoreInfoScreenState extends ConsumerState<StoreInfoScreen> {
           ],
           const SizedBox(height: AlhaiSpacing.md),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
+            padding: const EdgeInsets.symmetric(
+                horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
             decoration: BoxDecoration(
               color: AppColors.primary.withValues(alpha: isDark ? 0.15 : 0.08),
               borderRadius: BorderRadius.circular(20),

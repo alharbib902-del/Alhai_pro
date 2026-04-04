@@ -63,8 +63,7 @@ void main() {
       when(() => accountsDao.getReceivableAccounts(any()))
           .thenAnswer((_) async => <AccountsTableData>[]);
 
-      await tester.pumpWidget(
-          createTestWidget(const NewTransactionScreen()));
+      await tester.pumpWidget(createTestWidget(const NewTransactionScreen()));
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
@@ -82,8 +81,7 @@ void main() {
       when(() => accountsDao.getReceivableAccounts(any()))
           .thenAnswer((_) async => accounts);
 
-      await tester.pumpWidget(
-          createTestWidget(const NewTransactionScreen()));
+      await tester.pumpWidget(createTestWidget(const NewTransactionScreen()));
       await tester.pumpAndSettle();
 
       // Person icon for customer card
@@ -102,8 +100,7 @@ void main() {
       when(() => accountsDao.getReceivableAccounts(any()))
           .thenAnswer((_) async => [_createTestAccount()]);
 
-      await tester.pumpWidget(
-          createTestWidget(const NewTransactionScreen()));
+      await tester.pumpWidget(createTestWidget(const NewTransactionScreen()));
       await tester.pumpAndSettle();
 
       // Type selector icon (may appear in header too)
@@ -122,8 +119,7 @@ void main() {
       when(() => accountsDao.getReceivableAccounts(any()))
           .thenAnswer((_) async => [_createTestAccount()]);
 
-      await tester.pumpWidget(
-          createTestWidget(const NewTransactionScreen()));
+      await tester.pumpWidget(createTestWidget(const NewTransactionScreen()));
       await tester.pumpAndSettle();
 
       // Amount card icon
@@ -139,8 +135,7 @@ void main() {
       when(() => accountsDao.getReceivableAccounts(any()))
           .thenAnswer((_) async => [_createTestAccount()]);
 
-      await tester.pumpWidget(
-          createTestWidget(const NewTransactionScreen()));
+      await tester.pumpWidget(createTestWidget(const NewTransactionScreen()));
       await tester.pumpAndSettle();
 
       // Note icon
@@ -157,8 +152,7 @@ void main() {
       when(() => accountsDao.getReceivableAccounts(any()))
           .thenAnswer((_) async => [_createTestAccount()]);
 
-      await tester.pumpWidget(
-          createTestWidget(const NewTransactionScreen()));
+      await tester.pumpWidget(createTestWidget(const NewTransactionScreen()));
       await tester.pumpAndSettle();
 
       // Submit button should be disabled (no account selected, no amount)

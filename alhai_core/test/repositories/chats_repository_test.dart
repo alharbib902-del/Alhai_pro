@@ -120,7 +120,8 @@ void main() {
     test('should have store and customer values', () {
       expect(StoreChatSenderType.values, hasLength(2));
       expect(StoreChatSenderType.values, contains(StoreChatSenderType.store));
-      expect(StoreChatSenderType.values, contains(StoreChatSenderType.customer));
+      expect(
+          StoreChatSenderType.values, contains(StoreChatSenderType.customer));
     });
   });
 
@@ -131,7 +132,8 @@ void main() {
       expect(StoreChatMessageType.values, contains(StoreChatMessageType.image));
       expect(StoreChatMessageType.values, contains(StoreChatMessageType.voice));
       expect(StoreChatMessageType.values, contains(StoreChatMessageType.order));
-      expect(StoreChatMessageType.values, contains(StoreChatMessageType.location));
+      expect(
+          StoreChatMessageType.values, contains(StoreChatMessageType.location));
     });
   });
 }

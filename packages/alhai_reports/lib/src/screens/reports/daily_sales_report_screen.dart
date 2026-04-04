@@ -6,7 +6,8 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:get_it/get_it.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiColors, AlhaiSpacing;
+import 'package:alhai_design_system/alhai_design_system.dart'
+    show AlhaiColors, AlhaiSpacing;
 import 'package:alhai_l10n/alhai_l10n.dart';
 import '../../utils/csv_export_helper.dart';
 import '../../utils/pdf_font_helper.dart';
@@ -16,10 +17,12 @@ class DailySalesReportScreen extends ConsumerStatefulWidget {
   const DailySalesReportScreen({super.key});
 
   @override
-  ConsumerState<DailySalesReportScreen> createState() => _DailySalesReportScreenState();
+  ConsumerState<DailySalesReportScreen> createState() =>
+      _DailySalesReportScreenState();
 }
 
-class _DailySalesReportScreenState extends ConsumerState<DailySalesReportScreen> {
+class _DailySalesReportScreenState
+    extends ConsumerState<DailySalesReportScreen> {
   DateTime _selectedDate = DateTime.now();
   bool _isLoading = true;
 
@@ -62,7 +65,9 @@ class _DailySalesReportScreenState extends ConsumerState<DailySalesReportScreen>
           tax += sale.tax;
 
           // استخدام الأعمدة الجديدة إن وجدت (المبيعات الجديدة)
-          if (sale.cashAmount != null || sale.cardAmount != null || sale.creditAmount != null) {
+          if (sale.cashAmount != null ||
+              sale.cardAmount != null ||
+              sale.creditAmount != null) {
             cash += sale.cashAmount ?? 0;
             card += sale.cardAmount ?? 0;
             credit += sale.creditAmount ?? 0;
@@ -158,14 +163,16 @@ class _DailySalesReportScreenState extends ConsumerState<DailySalesReportScreen>
           ? const Center(child: CircularProgressIndicator())
           : ResponsiveBuilder(
               builder: (context, deviceType, width) {
-                final padding = getResponsiveValue<double>(context, mobile: 16, desktop: 24);
+                final padding = getResponsiveValue<double>(context,
+                    mobile: 16, desktop: 24);
                 return ListView(
                   padding: EdgeInsets.all(padding),
                   children: [
                     // Date selector
                     Card(
                       child: ListTile(
-                        leading: Icon(Icons.calendar_today, color: colorScheme.primary),
+                        leading: Icon(Icons.calendar_today,
+                            color: colorScheme.primary),
                         title: Text(l10n.date),
                         subtitle: Text(_formatDate(_selectedDate)),
                         trailing: Row(
@@ -174,7 +181,8 @@ class _DailySalesReportScreenState extends ConsumerState<DailySalesReportScreen>
                             IconButton(
                               icon: const AdaptiveIcon(Icons.chevron_left),
                               onPressed: () {
-                                setState(() => _selectedDate = _selectedDate.subtract(const Duration(days: 1)));
+                                setState(() => _selectedDate = _selectedDate
+                                    .subtract(const Duration(days: 1)));
                                 _loadReportData();
                               },
                             ),
@@ -182,7 +190,9 @@ class _DailySalesReportScreenState extends ConsumerState<DailySalesReportScreen>
                               icon: const AdaptiveIcon(Icons.chevron_right),
                               onPressed: _selectedDate.isBefore(DateTime.now())
                                   ? () {
-                                      setState(() => _selectedDate = _selectedDate.add(const Duration(days: 1)));
+                                      setState(() => _selectedDate =
+                                          _selectedDate
+                                              .add(const Duration(days: 1)));
                                       _loadReportData();
                                     }
                                   : null,
@@ -201,9 +211,12 @@ class _DailySalesReportScreenState extends ConsumerState<DailySalesReportScreen>
                           padding: const EdgeInsets.all(AlhaiSpacing.xl),
                           child: Column(
                             children: [
-                              Icon(Icons.hourglass_empty, size: 64, color: theme.disabledColor),
+                              Icon(Icons.hourglass_empty,
+                                  size: 64, color: theme.disabledColor),
                               const SizedBox(height: AlhaiSpacing.md),
-                              Text(l10n.noData, style: TextStyle(color: colorScheme.onSurfaceVariant)),
+                              Text(l10n.noData,
+                                  style: TextStyle(
+                                      color: colorScheme.onSurfaceVariant)),
                             ],
                           ),
                         ),
@@ -221,7 +234,8 @@ class _DailySalesReportScreenState extends ConsumerState<DailySalesReportScreen>
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(l10n.paymentMethod, style: theme.textTheme.titleMedium),
+                                Text(l10n.paymentMethod,
+                                    style: theme.textTheme.titleMedium),
                                 const Divider(),
                                 _PaymentRow(
                                   icon: Icons.money,
@@ -259,7 +273,8 @@ class _DailySalesReportScreenState extends ConsumerState<DailySalesReportScreen>
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('${l10n.discount} & ${l10n.vat}', style: theme.textTheme.titleMedium),
+                              Text('${l10n.discount} & ${l10n.vat}',
+                                  style: theme.textTheme.titleMedium),
                               const Divider(),
                               ListTile(
                                 leading: Container(
@@ -269,12 +284,15 @@ class _DailySalesReportScreenState extends ConsumerState<DailySalesReportScreen>
                                     color: Colors.orange.withValues(alpha: 0.1),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
-                                  child: const Icon(Icons.local_offer, color: Colors.orange),
+                                  child: const Icon(Icons.local_offer,
+                                      color: Colors.orange),
                                 ),
                                 title: Text(l10n.discount),
                                 trailing: Text(
                                   '-${CurrencyFormatter.formatCompactWithContext(context, _discounts)}',
-                                  style: const TextStyle(color: Colors.orange, fontWeight: FontWeight.bold),
+                                  style: const TextStyle(
+                                      color: Colors.orange,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ),
                               ListTile(
@@ -285,12 +303,16 @@ class _DailySalesReportScreenState extends ConsumerState<DailySalesReportScreen>
                                     color: Colors.purple.withValues(alpha: 0.1),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
-                                  child: const Icon(Icons.receipt, color: Colors.purple),
+                                  child: const Icon(Icons.receipt,
+                                      color: Colors.purple),
                                 ),
                                 title: Text(l10n.vat),
                                 trailing: Text(
-                                  CurrencyFormatter.formatWithContext(context, _vat),
-                                  style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.purple),
+                                  CurrencyFormatter.formatWithContext(
+                                      context, _vat),
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.purple),
                                 ),
                               ),
                             ],
@@ -310,12 +332,17 @@ class _DailySalesReportScreenState extends ConsumerState<DailySalesReportScreen>
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(l10n.netProfit, style: const TextStyle(fontSize: 16)),
-                                  Text(l10n.discount, style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 12)),
+                                  Text(l10n.netProfit,
+                                      style: const TextStyle(fontSize: 16)),
+                                  Text(l10n.discount,
+                                      style: TextStyle(
+                                          color: colorScheme.onSurfaceVariant,
+                                          fontSize: 12)),
                                 ],
                               ),
                               Text(
-                                CurrencyFormatter.formatCompactWithContext(context, _totalSales - _discounts),
+                                CurrencyFormatter.formatCompactWithContext(
+                                    context, _totalSales - _discounts),
                                 style: TextStyle(
                                   fontSize: 24,
                                   fontWeight: FontWeight.bold,
@@ -334,7 +361,8 @@ class _DailySalesReportScreenState extends ConsumerState<DailySalesReportScreen>
     );
   }
 
-  Widget _buildSummaryGrid(BuildContext context, AppLocalizations l10n, DeviceType deviceType) {
+  Widget _buildSummaryGrid(
+      BuildContext context, AppLocalizations l10n, DeviceType deviceType) {
     final columns = deviceType == DeviceType.mobile ? 2 : 4;
     final cards = [
       _SummaryCard(
@@ -358,7 +386,8 @@ class _DailySalesReportScreenState extends ConsumerState<DailySalesReportScreen>
       _SummaryCard(
         title: l10n.averageSale,
         value: _totalTransactions > 0
-            ? CurrencyFormatter.formatCompactWithContext(context, _totalSales / _totalTransactions)
+            ? CurrencyFormatter.formatCompactWithContext(
+                context, _totalSales / _totalTransactions)
             : CurrencyFormatter.formatCompactWithContext(context, 0),
         icon: Icons.analytics,
         color: Colors.purple,
@@ -367,10 +396,14 @@ class _DailySalesReportScreenState extends ConsumerState<DailySalesReportScreen>
 
     if (columns == 4) {
       return Row(
-        children: cards.map((card) => Expanded(child: Padding(
-          padding: const EdgeInsetsDirectional.only(end: AlhaiSpacing.sm),
-          child: card,
-        ))).toList(),
+        children: cards
+            .map((card) => Expanded(
+                    child: Padding(
+                  padding:
+                      const EdgeInsetsDirectional.only(end: AlhaiSpacing.sm),
+                  child: card,
+                )))
+            .toList(),
       );
     }
 
@@ -396,7 +429,15 @@ class _DailySalesReportScreenState extends ConsumerState<DailySalesReportScreen>
   }
 
   String _formatDate(DateTime date) {
-    final days = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+    final days = [
+      'الأحد',
+      'الإثنين',
+      'الثلاثاء',
+      'الأربعاء',
+      'الخميس',
+      'الجمعة',
+      'السبت'
+    ];
     return '${days[date.weekday % 7]} ${date.day}/${date.month}/${date.year}';
   }
 
@@ -422,8 +463,8 @@ class _DailySalesReportScreenState extends ConsumerState<DailySalesReportScreen>
         crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: [
           pw.Text('تقرير المبيعات اليومي',
-              style: pw.TextStyle(
-                  fontSize: 20, fontWeight: pw.FontWeight.bold)),
+              style:
+                  pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold)),
           pw.SizedBox(height: 10),
           pw.Text('التاريخ: ${_formatDate(_selectedDate)}'),
           pw.Divider(),
@@ -485,12 +526,9 @@ class _DailySalesReportScreenState extends ConsumerState<DailySalesReportScreen>
               mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
               children: [
                 pw.Text('صافي المبيعات',
-                    style:
-                        pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-                pw.Text(
-                    '${(_totalSales - _discounts).toStringAsFixed(0)} ر.س',
-                    style:
-                        pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                    style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                pw.Text('${(_totalSales - _discounts).toStringAsFixed(0)} ر.س',
+                    style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
               ]),
         ],
       ),
@@ -499,7 +537,8 @@ class _DailySalesReportScreenState extends ConsumerState<DailySalesReportScreen>
   }
 
   Future<void> _exportCsv() async {
-    final dateStr = '${_selectedDate.year}-${_selectedDate.month.toString().padLeft(2, '0')}-${_selectedDate.day.toString().padLeft(2, '0')}';
+    final dateStr =
+        '${_selectedDate.year}-${_selectedDate.month.toString().padLeft(2, '0')}-${_selectedDate.day.toString().padLeft(2, '0')}';
     final result = await CsvExportHelper.exportAndShare(
       context: context,
       fileName: 'مبيعات_$dateStr',
@@ -531,8 +570,7 @@ class _DailySalesReportScreenState extends ConsumerState<DailySalesReportScreen>
     final pdf = await _buildReportPdf();
     await Printing.layoutPdf(
       onLayout: (_) => pdf.save(),
-      name:
-          'sales_report_${_selectedDate.toIso8601String().split('T').first}',
+      name: 'sales_report_${_selectedDate.toIso8601String().split('T').first}',
     );
   }
 }
@@ -561,9 +599,13 @@ class _SummaryCard extends StatelessWidget {
           children: [
             Icon(icon, color: color),
             const SizedBox(height: AlhaiSpacing.xs),
-            Text(title, style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 12)),
+            Text(title,
+                style: TextStyle(
+                    color: theme.colorScheme.onSurfaceVariant, fontSize: 12)),
             const SizedBox(height: AlhaiSpacing.xxs),
-            Text(value, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            Text(value,
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
           ],
         ),
       ),
@@ -598,9 +640,12 @@ class _PaymentRow extends StatelessWidget {
             const SizedBox(width: AlhaiSpacing.xs),
             Text(label),
             const Spacer(),
-            Text(CurrencyFormatter.formatCompact(amount), style: const TextStyle(fontWeight: FontWeight.bold)),
+            Text(CurrencyFormatter.formatCompact(amount),
+                style: const TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(width: AlhaiSpacing.xs),
-            Text('(${(percentage * 100).toStringAsFixed(0)}%)', style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 12)),
+            Text('(${(percentage * 100).toStringAsFixed(0)}%)',
+                style: TextStyle(
+                    color: theme.colorScheme.onSurfaceVariant, fontSize: 12)),
           ],
         ),
         const SizedBox(height: AlhaiSpacing.xxs),

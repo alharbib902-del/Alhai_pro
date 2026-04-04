@@ -2,17 +2,17 @@
 /// تستخدم من: جميع التطبيقات
 class CacheService {
   final Map<String, _CacheEntry> _cache = {};
-  
+
   /// الحصول على قيمة من الكاش
   T? get<T>(String key) {
     final entry = _cache[key];
     if (entry == null) return null;
-    
+
     if (entry.isExpired) {
       _cache.remove(key);
       return null;
     }
-    
+
     return entry.value as T?;
   }
 
@@ -43,12 +43,12 @@ class CacheService {
   bool containsKey(String key) {
     final entry = _cache[key];
     if (entry == null) return false;
-    
+
     if (entry.isExpired) {
       _cache.remove(key);
       return false;
     }
-    
+
     return true;
   }
 
@@ -60,7 +60,7 @@ class CacheService {
   }) async {
     final cached = get<T>(key);
     if (cached != null) return cached;
-    
+
     final value = await loader();
     set(key, value, expiry: expiry);
     return value;

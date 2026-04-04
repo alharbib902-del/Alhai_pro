@@ -165,8 +165,7 @@ void main() {
 
     group('WhatsAppReceiptResult', () {
       test('success factory creates success result', () {
-        final result =
-            WhatsAppReceiptResult.success(messageId: 'msg-123');
+        final result = WhatsAppReceiptResult.success(messageId: 'msg-123');
 
         expect(result.isSuccess, isTrue);
         expect(result.messageId, equals('msg-123'));

@@ -246,7 +246,8 @@ class NetworkPrintService implements ThermalPrintService {
           return PrintResult.ok();
         } on SocketException catch (e2) {
           _status = PrinterStatus.error;
-          return PrintResult.fail('فشلت الطباعة بعد إعادة الاتصال: ${e2.message}');
+          return PrintResult.fail(
+              'فشلت الطباعة بعد إعادة الاتصال: ${e2.message}');
         }
       }
 

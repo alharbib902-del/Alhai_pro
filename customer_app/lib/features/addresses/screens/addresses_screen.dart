@@ -90,76 +90,76 @@ class AddressesScreen extends ConsumerWidget {
                   ref.invalidate(addressesListProvider);
                 },
                 child: Card(
-                margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
-                child: ListTile(
-                  leading: Icon(
-                    address.isDefault
-                        ? Icons.location_on
-                        : Icons.location_on_outlined,
-                    color:
-                        address.isDefault ? theme.colorScheme.primary : null,
-                  ),
-                  title: Row(
-                    children: [
-                      Flexible(
-                        child: Text(
-                          address.label,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      if (address.isDefault) ...[
-                        const SizedBox(width: AlhaiSpacing.xs),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: AlhaiSpacing.xs,
-                            vertical: AlhaiSpacing.xxxs,
-                          ),
-                          decoration: BoxDecoration(
-                            color: theme.colorScheme.primaryContainer,
-                            borderRadius: AlhaiRadius.borderXs,
-                          ),
+                  margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
+                  child: ListTile(
+                    leading: Icon(
+                      address.isDefault
+                          ? Icons.location_on
+                          : Icons.location_on_outlined,
+                      color:
+                          address.isDefault ? theme.colorScheme.primary : null,
+                    ),
+                    title: Row(
+                      children: [
+                        Flexible(
                           child: Text(
-                            'الافتراضي',
-                            style: theme.textTheme.labelSmall?.copyWith(
-                              color: theme.colorScheme.primary,
+                            address.label,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        if (address.isDefault) ...[
+                          const SizedBox(width: AlhaiSpacing.xs),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: AlhaiSpacing.xs,
+                              vertical: AlhaiSpacing.xxxs,
+                            ),
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.primaryContainer,
+                              borderRadius: AlhaiRadius.borderXs,
+                            ),
+                            child: Text(
+                              'الافتراضي',
+                              style: theme.textTheme.labelSmall?.copyWith(
+                                color: theme.colorScheme.primary,
+                              ),
                             ),
                           ),
+                        ],
+                      ],
+                    ),
+                    subtitle: Text(
+                      address.fullAddress,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    trailing: PopupMenuButton<String>(
+                      onSelected: (value) async {
+                        if (value == 'default') {
+                          final ds = locator<AddressesDatasource>();
+                          await ds.setDefaultAddress(address.id);
+                          ref.invalidate(addressesListProvider);
+                        } else if (value == 'delete') {
+                          final ds = locator<AddressesDatasource>();
+                          await ds.deleteAddress(address.id);
+                          ref.invalidate(addressesListProvider);
+                        }
+                      },
+                      itemBuilder: (context) => [
+                        if (!address.isDefault)
+                          const PopupMenuItem(
+                            value: 'default',
+                            child: Text('تعيين كافتراضي'),
+                          ),
+                        const PopupMenuItem(
+                          value: 'delete',
+                          child: Text('حذف'),
                         ),
                       ],
-                    ],
-                  ),
-                  subtitle: Text(
-                    address.fullAddress,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  trailing: PopupMenuButton<String>(
-                    onSelected: (value) async {
-                      if (value == 'default') {
-                        final ds = locator<AddressesDatasource>();
-                        await ds.setDefaultAddress(address.id);
-                        ref.invalidate(addressesListProvider);
-                      } else if (value == 'delete') {
-                        final ds = locator<AddressesDatasource>();
-                        await ds.deleteAddress(address.id);
-                        ref.invalidate(addressesListProvider);
-                      }
-                    },
-                    itemBuilder: (context) => [
-                      if (!address.isDefault)
-                        const PopupMenuItem(
-                          value: 'default',
-                          child: Text('تعيين كافتراضي'),
-                        ),
-                      const PopupMenuItem(
-                        value: 'delete',
-                        child: Text('حذف'),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
-              ),
               );
             },
           );

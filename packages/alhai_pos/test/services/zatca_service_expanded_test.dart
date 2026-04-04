@@ -122,20 +122,15 @@ void main() {
       });
 
       test('should reject VAT numbers with spaces', () {
-        expect(
-            ZatcaService.isValidVatNumber('300 000 000 000 003'), isFalse);
+        expect(ZatcaService.isValidVatNumber('300 000 000 000 003'), isFalse);
       });
 
-      test('should reject VAT numbers with leading/trailing whitespace',
-          () {
-        expect(
-            ZatcaService.isValidVatNumber(' 300000000000003'), isFalse);
-        expect(
-            ZatcaService.isValidVatNumber('300000000000003 '), isFalse);
+      test('should reject VAT numbers with leading/trailing whitespace', () {
+        expect(ZatcaService.isValidVatNumber(' 300000000000003'), isFalse);
+        expect(ZatcaService.isValidVatNumber('300000000000003 '), isFalse);
       });
 
-      test('should accept various valid 15-digit numbers starting with 3',
-          () {
+      test('should accept various valid 15-digit numbers starting with 3', () {
         expect(ZatcaService.isValidVatNumber('300000000000003'), isTrue);
         expect(ZatcaService.isValidVatNumber('399999999999999'), isTrue);
         expect(ZatcaService.isValidVatNumber('312345678901234'), isTrue);
@@ -161,7 +156,8 @@ void main() {
       test('should return input unchanged for various invalid lengths', () {
         expect(ZatcaService.formatVatNumber(''), equals(''));
         expect(ZatcaService.formatVatNumber('3'), equals('3'));
-        expect(ZatcaService.formatVatNumber('300000000000'), equals('300000000000'));
+        expect(ZatcaService.formatVatNumber('300000000000'),
+            equals('300000000000'));
         expect(ZatcaService.formatVatNumber('3000000000000030'),
             equals('3000000000000030'));
       });
@@ -205,8 +201,7 @@ void main() {
         expect(invoice.vatAmount, closeTo(0.15, 0.01));
       });
 
-      test('constructor should generate QR code matching generateQrData',
-          () {
+      test('constructor should generate QR code matching generateQrData', () {
         final timestamp = DateTime(2026, 3, 15, 12, 0);
         final invoice = ZatcaInvoiceData(
           sellerName: 'My Store',

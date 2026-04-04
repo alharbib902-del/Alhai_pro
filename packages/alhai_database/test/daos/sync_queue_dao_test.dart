@@ -114,15 +114,13 @@ void main() {
         idempotencyKey: 'unique-key-123',
       );
 
-      final item =
-          await db.syncQueueDao.findByIdempotencyKey('unique-key-123');
+      final item = await db.syncQueueDao.findByIdempotencyKey('unique-key-123');
       expect(item, isNotNull);
       expect(item!.id, 'sq-1');
     });
 
     test('findByIdempotencyKey returns null when not found', () async {
-      final item =
-          await db.syncQueueDao.findByIdempotencyKey('non-existent');
+      final item = await db.syncQueueDao.findByIdempotencyKey('non-existent');
       expect(item, isNull);
     });
 

@@ -73,8 +73,7 @@ class _SAUsersListScreenState extends ConsumerState<SAUsersListScreen> {
                   hintText: l10n.searchUsers,
                   prefixIcon: const Icon(Icons.search_rounded),
                   border: OutlineInputBorder(
-                    borderRadius:
-                        BorderRadius.circular(AlhaiRadius.input),
+                    borderRadius: BorderRadius.circular(AlhaiRadius.input),
                   ),
                   isDense: true,
                 ),
@@ -91,8 +90,7 @@ class _SAUsersListScreenState extends ConsumerState<SAUsersListScreen> {
                   return Card(
                     elevation: 0,
                     shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(AlhaiRadius.card),
+                      borderRadius: BorderRadius.circular(AlhaiRadius.card),
                       side: BorderSide(
                         color: colorScheme.outlineVariant,
                         width: AlhaiSpacing.strokeXs,
@@ -111,10 +109,14 @@ class _SAUsersListScreenState extends ConsumerState<SAUsersListScreen> {
                       dataRowHeight: 56,
                       empty: SAEmptyState.users(),
                       columns: [
-                        DataColumn2(label: Text(l10n.userName), size: ColumnSize.L),
-                        DataColumn2(label: Text(l10n.userEmail), size: ColumnSize.L),
-                        DataColumn2(label: Text(l10n.userRole), fixedWidth: 130),
-                        DataColumn2(label: Text(l10n.userLastActive), fixedWidth: 150),
+                        DataColumn2(
+                            label: Text(l10n.userName), size: ColumnSize.L),
+                        DataColumn2(
+                            label: Text(l10n.userEmail), size: ColumnSize.L),
+                        DataColumn2(
+                            label: Text(l10n.userRole), fixedWidth: 130),
+                        DataColumn2(
+                            label: Text(l10n.userLastActive), fixedWidth: 150),
                         const DataColumn2(label: SizedBox(), fixedWidth: 56),
                       ],
                       source: _UsersDataSource(
@@ -172,9 +174,8 @@ class _UsersDataSource extends DataTableSource {
     final lastActive = user.lastActiveFormatted;
     final userId = user.id;
 
-    final onlineColor = isDark
-        ? const Color(0xFF4ADE80)
-        : const Color(0xFF16A34A);
+    final onlineColor =
+        isDark ? const Color(0xFF4ADE80) : const Color(0xFF16A34A);
 
     return DataRow2(
       cells: [
@@ -187,9 +188,9 @@ class _UsersDataSource extends DataTableSource {
               child: Text(
                 name.isNotEmpty ? name[0] : '?',
                 style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                  color: colorScheme.primary,
-                  fontWeight: FontWeight.bold,
-                ),
+                      color: colorScheme.primary,
+                      fontWeight: FontWeight.bold,
+                    ),
               ),
             ),
             const SizedBox(width: AlhaiSpacing.xs),
@@ -242,7 +243,10 @@ class _RoleBadge extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final colorScheme = Theme.of(context).colorScheme;
     final (color, label) = switch (role) {
-      'super_admin' => (isDark ? const Color(0xFFF87171) : Colors.red, 'Super Admin'),
+      'super_admin' => (
+          isDark ? const Color(0xFFF87171) : Colors.red,
+          'Super Admin'
+        ),
       'support' => (isDark ? const Color(0xFF60A5FA) : Colors.blue, 'Support'),
       'viewer' => (colorScheme.outline, 'Viewer'),
       _ => (colorScheme.outline, role),
@@ -261,9 +265,9 @@ class _RoleBadge extends StatelessWidget {
       child: Text(
         label,
         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-          color: color,
-          fontWeight: FontWeight.w600,
-        ),
+              color: color,
+              fontWeight: FontWeight.w600,
+            ),
       ),
     );
   }

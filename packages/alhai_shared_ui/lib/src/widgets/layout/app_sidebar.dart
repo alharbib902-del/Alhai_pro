@@ -125,9 +125,7 @@ class _AppSidebarState extends ConsumerState<AppSidebar> {
         color: Theme.of(context).colorScheme.surface,
         border: BorderDirectional(
           start: BorderSide(
-            color: isDarkMode
-                ? Colors.white.withAlpha(26)
-                : AppColors.border,
+            color: isDarkMode ? Colors.white.withAlpha(26) : AppColors.border,
           ),
         ),
         boxShadow: AppShadows.of(context, size: ShadowSize.md),
@@ -172,14 +170,16 @@ class _AppSidebarState extends ConsumerState<AppSidebar> {
                           child: Icon(
                             Icons.close_rounded,
                             size: 16,
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                         )
                       : null,
                   filled: true,
-                  fillColor: Theme.of(context).colorScheme.surfaceContainerHighest,
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 10),
+                  fillColor:
+                      Theme.of(context).colorScheme.surfaceContainerHighest,
+                  contentPadding: const EdgeInsets.symmetric(
+                      horizontal: AlhaiSpacing.sm, vertical: 10),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide: BorderSide.none,
@@ -218,7 +218,8 @@ class _AppSidebarState extends ConsumerState<AppSidebar> {
                           l10n.noResults,
                           style: TextStyle(
                             fontSize: 12,
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                         ),
                       ],

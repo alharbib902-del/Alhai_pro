@@ -226,8 +226,10 @@ void main() {
 
       // secp256k1 OID in DER: 06 05 2B 81 04 00 0A
       final secp256k1Oid = [0x06, 0x05, 0x2B, 0x81, 0x04, 0x00, 0x0A];
-      final csrHex = csrBytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
-      final oidHex = secp256k1Oid.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
+      final csrHex =
+          csrBytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
+      final oidHex =
+          secp256k1Oid.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
 
       expect(csrHex, contains(oidHex),
           reason: 'CSR must embed secp256k1 OID (1.3.132.0.10)');
@@ -306,7 +308,8 @@ void main() {
       csrGenerator = CsrGenerator();
     });
 
-    test('obtains compliance CSID with OTP 123456', tags: ['sandbox'], () async {
+    test('obtains compliance CSID with OTP 123456', tags: ['sandbox'],
+        () async {
       // 1. Generate CSR
       final csrResult = await csrGenerator.generateCsr(
         commonName: _csrConfig.solutionName,
@@ -383,7 +386,8 @@ void main() {
         csrBase64: csrBase64,
         otp: _sandboxOtp,
       );
-      assert(response.isSuccess, 'Failed to get compliance CSID: ${response.errorMessage}');
+      assert(response.isSuccess,
+          'Failed to get compliance CSID: ${response.errorMessage}');
 
       complianceCert = CertificateInfo(
         certificatePem: response.binarySecurityToken!,
@@ -442,7 +446,8 @@ void main() {
       return resp;
     }
 
-    test('1/6 - Standard tax invoice (388 / 0100000)', tags: ['sandbox'], () async {
+    test('1/6 - Standard tax invoice (388 / 0100000)', tags: ['sandbox'],
+        () async {
       final resp = await submitComplianceInvoice(
         invoiceNumber: 'INV-COMP-1',
         typeCode: InvoiceTypeCode.standard,
@@ -454,7 +459,8 @@ void main() {
               '${resp.errors.map((e) => e.message).join(', ')}');
     }, timeout: const Timeout(Duration(seconds: 30)));
 
-    test('2/6 - Standard credit note (381 / 0100000)', tags: ['sandbox'], () async {
+    test('2/6 - Standard credit note (381 / 0100000)', tags: ['sandbox'],
+        () async {
       final resp = await submitComplianceInvoice(
         invoiceNumber: 'INV-COMP-2',
         typeCode: InvoiceTypeCode.creditNote,
@@ -467,7 +473,8 @@ void main() {
               '${resp.errors.map((e) => e.message).join(', ')}');
     }, timeout: const Timeout(Duration(seconds: 30)));
 
-    test('3/6 - Standard debit note (383 / 0100000)', tags: ['sandbox'], () async {
+    test('3/6 - Standard debit note (383 / 0100000)', tags: ['sandbox'],
+        () async {
       final resp = await submitComplianceInvoice(
         invoiceNumber: 'INV-COMP-3',
         typeCode: InvoiceTypeCode.debitNote,
@@ -480,7 +487,8 @@ void main() {
               '${resp.errors.map((e) => e.message).join(', ')}');
     }, timeout: const Timeout(Duration(seconds: 30)));
 
-    test('4/6 - Simplified tax invoice (388 / 0200000)', tags: ['sandbox'], () async {
+    test('4/6 - Simplified tax invoice (388 / 0200000)', tags: ['sandbox'],
+        () async {
       final resp = await submitComplianceInvoice(
         invoiceNumber: 'INV-COMP-4',
         typeCode: InvoiceTypeCode.standard,
@@ -492,7 +500,8 @@ void main() {
               '${resp.errors.map((e) => e.message).join(', ')}');
     }, timeout: const Timeout(Duration(seconds: 30)));
 
-    test('5/6 - Simplified credit note (381 / 0200000)', tags: ['sandbox'], () async {
+    test('5/6 - Simplified credit note (381 / 0200000)', tags: ['sandbox'],
+        () async {
       final resp = await submitComplianceInvoice(
         invoiceNumber: 'INV-COMP-5',
         typeCode: InvoiceTypeCode.creditNote,
@@ -505,7 +514,8 @@ void main() {
               '${resp.errors.map((e) => e.message).join(', ')}');
     }, timeout: const Timeout(Duration(seconds: 30)));
 
-    test('6/6 - Simplified debit note (383 / 0200000)', tags: ['sandbox'], () async {
+    test('6/6 - Simplified debit note (383 / 0200000)', tags: ['sandbox'],
+        () async {
       final resp = await submitComplianceInvoice(
         invoiceNumber: 'INV-COMP-6',
         typeCode: InvoiceTypeCode.debitNote,
@@ -566,7 +576,8 @@ void main() {
       expect(xml, contains('InvoiceTypeCode'));
 
       // Currencies
-      expect(xml, contains('<cbc:DocumentCurrencyCode>SAR</cbc:DocumentCurrencyCode>'));
+      expect(xml,
+          contains('<cbc:DocumentCurrencyCode>SAR</cbc:DocumentCurrencyCode>'));
       expect(xml, contains('<cbc:TaxCurrencyCode>SAR</cbc:TaxCurrencyCode>'));
 
       // Parties
@@ -574,13 +585,17 @@ void main() {
       expect(xml, contains('<cac:AccountingCustomerParty>'));
 
       // Supplier details
-      expect(xml, contains('<cbc:RegistrationName>Alhai Test Company</cbc:RegistrationName>'));
+      expect(
+          xml,
+          contains(
+              '<cbc:RegistrationName>Alhai Test Company</cbc:RegistrationName>'));
       expect(xml, contains('<cbc:CompanyID>300000000000003</cbc:CompanyID>'));
       expect(xml, contains('<cbc:StreetName>King Fahd Road</cbc:StreetName>'));
       expect(xml, contains('<cbc:BuildingNumber>1234</cbc:BuildingNumber>'));
       expect(xml, contains('<cbc:CityName>Riyadh</cbc:CityName>'));
       expect(xml, contains('<cbc:PostalZone>12345</cbc:PostalZone>'));
-      expect(xml, contains('<cbc:IdentificationCode>SA</cbc:IdentificationCode>'));
+      expect(
+          xml, contains('<cbc:IdentificationCode>SA</cbc:IdentificationCode>'));
 
       // Payment
       expect(xml, contains('<cac:PaymentMeans>'));
@@ -604,7 +619,8 @@ void main() {
       expect(xml, contains('<ext:UBLExtensions>'));
 
       // Signature placeholder
-      expect(xml, contains('urn:oasis:names:specification:ubl:signature:Invoice'));
+      expect(
+          xml, contains('urn:oasis:names:specification:ubl:signature:Invoice'));
     });
 
     test('credit note includes BillingReference', () {
@@ -670,7 +686,10 @@ void main() {
       );
       final xml = xmlBuilder.build(invoice);
 
-      expect(xml, contains('xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"'));
+      expect(
+          xml,
+          contains(
+              'xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"'));
       expect(xml, contains('xmlns:cac='));
       expect(xml, contains('xmlns:cbc='));
       expect(xml, contains('xmlns:ext='));
@@ -862,10 +881,12 @@ void main() {
       expect(tags.containsKey(3), isTrue, reason: 'Missing tag 3: timestamp');
       expect(tags.containsKey(4), isTrue, reason: 'Missing tag 4: total');
       expect(tags.containsKey(5), isTrue, reason: 'Missing tag 5: VAT amount');
-      expect(tags.containsKey(6), isTrue, reason: 'Missing tag 6: invoice hash');
+      expect(tags.containsKey(6), isTrue,
+          reason: 'Missing tag 6: invoice hash');
       expect(tags.containsKey(7), isTrue, reason: 'Missing tag 7: signature');
       expect(tags.containsKey(8), isTrue, reason: 'Missing tag 8: public key');
-      expect(tags.containsKey(9), isTrue, reason: 'Missing tag 9: cert signature');
+      expect(tags.containsKey(9), isTrue,
+          reason: 'Missing tag 9: cert signature');
 
       // Verify string tags
       final strings = tlvEncoder.decodeToStrings(qrData);

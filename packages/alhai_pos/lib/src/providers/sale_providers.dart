@@ -43,7 +43,8 @@ final saleServiceProvider = Provider<SaleService>((ref) {
 });
 
 /// إصلاح عناصر البيع المفقودة في طابور المزامنة (يعمل مرة واحدة عند بدء التشغيل)
-final saleItemsSyncRepairProvider = FutureProvider.autoDispose<int>((ref) async {
+final saleItemsSyncRepairProvider =
+    FutureProvider.autoDispose<int>((ref) async {
   final saleService = ref.watch(saleServiceProvider);
   // إصلاح المبيعات الفاشلة بسبب customer_id غير موجود
   await saleService.repairFailedSalesSync();

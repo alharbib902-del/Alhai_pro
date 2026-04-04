@@ -24,8 +24,8 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const DiscountsSettingsScreen()));
+      await tester
+          .pumpWidget(createTestWidget(const DiscountsSettingsScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(DiscountsSettingsScreen), findsOneWidget);
@@ -39,8 +39,8 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const DiscountsSettingsScreen()));
+      await tester
+          .pumpWidget(createTestWidget(const DiscountsSettingsScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.local_offer_rounded), findsWidgets);
@@ -54,8 +54,8 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const DiscountsSettingsScreen()));
+      await tester
+          .pumpWidget(createTestWidget(const DiscountsSettingsScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(SwitchListTile), findsWidgets);
@@ -69,8 +69,8 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const DiscountsSettingsScreen()));
+      await tester
+          .pumpWidget(createTestWidget(const DiscountsSettingsScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.save_rounded), findsWidgets);

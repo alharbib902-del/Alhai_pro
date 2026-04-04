@@ -14,7 +14,8 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
+import 'package:alhai_design_system/alhai_design_system.dart'
+    show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 
@@ -140,16 +141,13 @@ class _UsersPermissionsScreenState
             const SizedBox(height: AlhaiSpacing.lg),
             CircleAvatar(
               radius: 36,
-              backgroundColor:
-                  _getRoleColor(user.role).withValues(alpha: 0.15),
+              backgroundColor: _getRoleColor(user.role).withValues(alpha: 0.15),
               backgroundImage: user.avatarUrl != null
                   ? CachedNetworkImageProvider(user.avatarUrl!)
                   : null,
               child: user.avatarUrl == null
                   ? Text(
-                      user.name.isNotEmpty
-                          ? user.name[0].toUpperCase()
-                          : '?',
+                      user.name.isNotEmpty ? user.name[0].toUpperCase() : '?',
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -194,8 +192,7 @@ class _UsersPermissionsScreenState
               l10n.status,
               user.isActive ? l10n.active : l10n.inactive,
               isDark,
-              valueColor:
-                  user.isActive ? AppColors.success : AppColors.error,
+              valueColor: user.isActive ? AppColors.success : AppColors.error,
             ),
             if (user.lastLogin != null)
               _detailRow(
@@ -209,11 +206,10 @@ class _UsersPermissionsScreenState
               width: double.infinity,
               padding: const EdgeInsets.all(AlhaiSpacing.sm),
               decoration: BoxDecoration(
-                color:
-                    AppColors.info.withValues(alpha: isDark ? 0.12 : 0.06),
+                color: AppColors.info.withValues(alpha: isDark ? 0.12 : 0.06),
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(
-                    color: AppColors.info.withValues(alpha: 0.3)),
+                border:
+                    Border.all(color: AppColors.info.withValues(alpha: 0.3)),
               ),
               child: Row(
                 children: [
@@ -300,8 +296,7 @@ class _UsersPermissionsScreenState
             tooltip: l10n.back,
           ),
           onNotificationsTap: () => context.push(AppRoutes.notificationsCenter),
-          userName:
-              ref.watch(currentUserProvider)?.name ?? l10n.cashCustomer,
+          userName: ref.watch(currentUserProvider)?.name ?? l10n.cashCustomer,
           userRole: l10n.cashier,
           onUserTap: () => context.push(AppRoutes.profile),
         ),
@@ -309,12 +304,14 @@ class _UsersPermissionsScreenState
           child: _isLoading
               ? const AppLoadingState()
               : _error != null
-                  ? AppErrorState.general(context, message: _error!, onRetry: _loadUsers)
+                  ? AppErrorState.general(context,
+                      message: _error!, onRetry: _loadUsers)
                   : SingleChildScrollView(
-                  padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-                  child: _buildContent(
-                      isWideScreen, isMediumScreen, isDark, l10n),
-                ),
+                      padding: EdgeInsets.all(
+                          isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+                      child: _buildContent(
+                          isWideScreen, isMediumScreen, isDark, l10n),
+                    ),
         ),
       ],
     );
@@ -521,20 +518,18 @@ class _UsersPermissionsScreenState
               children: [
                 Expanded(
                     flex: 3,
-                    child: Text(l10n.userName,
-                        style: _tableHeaderStyle(isDark))),
+                    child:
+                        Text(l10n.userName, style: _tableHeaderStyle(isDark))),
                 Expanded(
                     flex: 2,
-                    child: Text(l10n.role,
-                        style: _tableHeaderStyle(isDark))),
+                    child: Text(l10n.role, style: _tableHeaderStyle(isDark))),
                 Expanded(
                     flex: 2,
-                    child: Text(l10n.status,
-                        style: _tableHeaderStyle(isDark))),
+                    child: Text(l10n.status, style: _tableHeaderStyle(isDark))),
                 Expanded(
                     flex: 2,
-                    child: Text(l10n.lastLogin,
-                        style: _tableHeaderStyle(isDark))),
+                    child:
+                        Text(l10n.lastLogin, style: _tableHeaderStyle(isDark))),
               ],
             ),
           ),
@@ -645,8 +640,7 @@ class _UsersPermissionsScreenState
     );
   }
 
-  Widget _buildUserCard(
-      _UserInfo user, bool isDark, AppLocalizations l10n) {
+  Widget _buildUserCard(_UserInfo user, bool isDark, AppLocalizations l10n) {
     return GestureDetector(
       onTap: () => _showUserDetail(user, isDark, l10n),
       child: Container(
@@ -660,16 +654,13 @@ class _UsersPermissionsScreenState
           children: [
             CircleAvatar(
               radius: 22,
-              backgroundColor:
-                  _getRoleColor(user.role).withValues(alpha: 0.15),
+              backgroundColor: _getRoleColor(user.role).withValues(alpha: 0.15),
               backgroundImage: user.avatarUrl != null
                   ? CachedNetworkImageProvider(user.avatarUrl!)
                   : null,
               child: user.avatarUrl == null
                   ? Text(
-                      user.name.isNotEmpty
-                          ? user.name[0].toUpperCase()
-                          : '?',
+                      user.name.isNotEmpty ? user.name[0].toUpperCase() : '?',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -696,10 +687,11 @@ class _UsersPermissionsScreenState
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxxs),
+                            horizontal: AlhaiSpacing.xs,
+                            vertical: AlhaiSpacing.xxxs),
                         decoration: BoxDecoration(
-                          color: _getRoleColor(user.role)
-                              .withValues(alpha: 0.1),
+                          color:
+                              _getRoleColor(user.role).withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Text(

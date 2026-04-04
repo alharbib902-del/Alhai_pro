@@ -24,8 +24,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const SupplierFormScreen()));
+      await tester.pumpWidget(createTestWidget(const SupplierFormScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(SupplierFormScreen), findsOneWidget);
@@ -39,8 +38,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const SupplierFormScreen()));
+      await tester.pumpWidget(createTestWidget(const SupplierFormScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(TextFormField), findsWidgets);
@@ -54,8 +52,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const SupplierFormScreen()));
+      await tester.pumpWidget(createTestWidget(const SupplierFormScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.save_rounded), findsWidgets);
@@ -69,8 +66,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const SupplierFormScreen()));
+      await tester.pumpWidget(createTestWidget(const SupplierFormScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.person), findsWidgets);

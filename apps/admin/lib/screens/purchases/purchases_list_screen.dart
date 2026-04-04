@@ -41,7 +41,8 @@ class _PurchasesListScreenState extends ConsumerState<PurchasesListScreen>
   }
 
   /// Filter purchases by search query (supplier name, purchase number, amount)
-  List<PurchasesTableData> _filterPurchases(List<PurchasesTableData> purchases) {
+  List<PurchasesTableData> _filterPurchases(
+      List<PurchasesTableData> purchases) {
     if (_searchQuery.isEmpty) return purchases;
     final query = _searchQuery.toLowerCase();
     return purchases.where((p) {
@@ -119,8 +120,7 @@ class _PurchasesListScreenState extends ConsumerState<PurchasesListScreen>
         AppHeader(
           title: l10n.purchaseOrders,
           onMenuTap: isWide ? null : () => Scaffold.of(context).openDrawer(),
-          onNotificationsTap: () =>
-              context.push(AppRoutes.notificationsCenter),
+          onNotificationsTap: () => context.push(AppRoutes.notificationsCenter),
           notificationsCount: 0,
           userName: l10n.cashCustomer,
           userRole: l10n.branchManager,
@@ -220,7 +220,8 @@ class _PurchasesListScreenState extends ConsumerState<PurchasesListScreen>
 class _AllPurchasesTab extends ConsumerStatefulWidget {
   final bool isWide;
   final bool isDark;
-  final List<PurchasesTableData> Function(List<PurchasesTableData>) filterPurchases;
+  final List<PurchasesTableData> Function(List<PurchasesTableData>)
+      filterPurchases;
 
   const _AllPurchasesTab({
     required this.isWide,
@@ -287,7 +288,8 @@ class _FilteredPurchasesTab extends ConsumerStatefulWidget {
   final String status;
   final bool isWide;
   final bool isDark;
-  final List<PurchasesTableData> Function(List<PurchasesTableData>) filterPurchases;
+  final List<PurchasesTableData> Function(List<PurchasesTableData>)
+      filterPurchases;
 
   const _FilteredPurchasesTab({
     required this.status,
@@ -306,8 +308,8 @@ class _FilteredPurchasesTabState extends ConsumerState<_FilteredPurchasesTab> {
 
   @override
   Widget build(BuildContext context) {
-    final params = PurchasesPageParams(
-        page: _currentPage, status: widget.status);
+    final params =
+        PurchasesPageParams(page: _currentPage, status: widget.status);
     final asyncData = ref.watch(paginatedPurchasesProvider(params));
     return asyncData.when(
       loading: () => const Padding(
@@ -387,7 +389,8 @@ class _PurchasesContent extends StatelessWidget {
   }
 
   Widget _buildDataTable(BuildContext context) {
-    final dateFormat = DateFormat('yyyy/MM/dd', Localizations.localeOf(context).languageCode);
+    final dateFormat =
+        DateFormat('yyyy/MM/dd', Localizations.localeOf(context).languageCode);
     return SingleChildScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
       padding: const EdgeInsets.all(AlhaiSpacing.lg),
@@ -408,9 +411,12 @@ class _PurchasesContent extends StatelessWidget {
               isDark ? Theme.of(context).colorScheme.surface : AppColors.grey50,
             ),
             columns: [
-              DataColumn(label: Text(AppLocalizations.of(context).orderNumberColumn)),
-              DataColumn(label: Text(AppLocalizations.of(context).supplierInfoLabel)),
-              DataColumn(label: Text(AppLocalizations.of(context).statusColumn)),
+              DataColumn(
+                  label: Text(AppLocalizations.of(context).orderNumberColumn)),
+              DataColumn(
+                  label: Text(AppLocalizations.of(context).supplierInfoLabel)),
+              DataColumn(
+                  label: Text(AppLocalizations.of(context).statusColumn)),
               DataColumn(label: Text(AppLocalizations.of(context).totalLabel)),
               DataColumn(label: Text(AppLocalizations.of(context).dateLabel)),
             ],
@@ -430,7 +436,10 @@ class _PurchasesContent extends StatelessWidget {
                     p.supplierName ?? '-',
                     style: TextStyle(
                       color: isDark
-                          ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8)
+                          ? Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withValues(alpha: 0.8)
                           : AppColors.textSecondary,
                     ),
                   )),
@@ -439,7 +448,8 @@ class _PurchasesContent extends StatelessWidget {
                     isDark: isDark,
                   )),
                   DataCell(Text(
-                    AppLocalizations.of(context).amountSar(p.total.toStringAsFixed(2)),
+                    AppLocalizations.of(context)
+                        .amountSar(p.total.toStringAsFixed(2)),
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: isDark
@@ -451,7 +461,10 @@ class _PurchasesContent extends StatelessWidget {
                     dateFormat.format(p.createdAt),
                     style: TextStyle(
                       color: isDark
-                          ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)
+                          ? Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withValues(alpha: 0.6)
                           : AppColors.textTertiary,
                     ),
                   )),
@@ -465,7 +478,8 @@ class _PurchasesContent extends StatelessWidget {
   }
 
   Widget _buildCardList(BuildContext context) {
-    final dateFormat = DateFormat('yyyy/MM/dd', Localizations.localeOf(context).languageCode);
+    final dateFormat =
+        DateFormat('yyyy/MM/dd', Localizations.localeOf(context).languageCode);
     return ListView.separated(
       physics: const AlwaysScrollableScrollPhysics(),
       padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 80),
@@ -497,8 +511,7 @@ class _PurchasesContent extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
-                          color:
-                              Theme.of(context).colorScheme.onSurface,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
                     ),
@@ -525,7 +538,10 @@ class _PurchasesContent extends StatelessWidget {
                         p.supplierName ?? '-',
                         style: TextStyle(
                           color: isDark
-                              ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7)
+                              ? Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withValues(alpha: 0.7)
                               : AppColors.textSecondary,
                         ),
                       ),
@@ -538,7 +554,8 @@ class _PurchasesContent extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      AppLocalizations.of(context).amountSar(p.total.toStringAsFixed(2)),
+                      AppLocalizations.of(context)
+                          .amountSar(p.total.toStringAsFixed(2)),
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -604,7 +621,8 @@ class _StatusBadge extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(_statusIcon(status), size: 14, color: isDark ? color.withValues(alpha: 0.9) : color),
+          Icon(_statusIcon(status),
+              size: 14, color: isDark ? color.withValues(alpha: 0.9) : color),
           const SizedBox(width: 4),
           Text(
             label,
@@ -642,9 +660,8 @@ class _PaginationControls extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           IconButton(
-            onPressed: currentPage > 1
-                ? () => onPageChanged(currentPage - 1)
-                : null,
+            onPressed:
+                currentPage > 1 ? () => onPageChanged(currentPage - 1) : null,
             icon: const Icon(Icons.chevron_left_rounded),
             tooltip: AppLocalizations.of(context).previous,
           ),
@@ -703,7 +720,8 @@ class _ErrorView extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             const ExcludeSemantics(
-              child: Icon(Icons.error_outline, size: 48, color: AppColors.error),
+              child:
+                  Icon(Icons.error_outline, size: 48, color: AppColors.error),
             ),
             const SizedBox(height: AlhaiSpacing.md),
             Text(

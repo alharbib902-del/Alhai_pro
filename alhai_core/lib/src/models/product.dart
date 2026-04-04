@@ -24,9 +24,9 @@ class Product with _$Product {
     String? imageUrl,
     // R2 Image Storage (Cloudflare CDN)
     String? imageThumbnail, // 300×300 - for Grid/List
-    String? imageMedium,    // 600×600 - for Quick View
-    String? imageLarge,     // 1200×1200 - for Detail/Zoom
-    String? imageHash,      // For cache versioning
+    String? imageMedium, // 600×600 - for Quick View
+    String? imageLarge, // 1200×1200 - for Detail/Zoom
+    String? imageHash, // For cache versioning
     String? categoryId,
     required bool isActive,
     @Default(true) bool trackInventory,

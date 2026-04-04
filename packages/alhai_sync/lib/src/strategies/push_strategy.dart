@@ -143,7 +143,8 @@ class PushStrategy {
           );
 
           // حماية المبيعات: لا نحذف من الطابور حتى نتأكد من وجود البيع محلياً
-          if (_isSacredTable(item.tableName_) && item.operation.toUpperCase() != 'DELETE') {
+          if (_isSacredTable(item.tableName_) &&
+              item.operation.toUpperCase() != 'DELETE') {
             final localId = payload['id'] as String?;
             if (localId != null) {
               // فحص بسيط: تأكد أن الـ ID موجود وصالح
@@ -154,10 +155,11 @@ class PushStrategy {
                   'Sacred data protection: empty ID after push',
                 );
                 failedCount++;
-                errors.add('${item.tableName_}/${item.recordId}: Sacred data verification failed');
+                errors.add(
+                    '${item.tableName_}/${item.recordId}: Sacred data verification failed');
                 if (kDebugMode) {
                   debugPrint(
-                    'PushStrategy: Sacred data (${ item.tableName_}) verification failed - re-queued');
+                      'PushStrategy: Sacred data (${item.tableName_}) verification failed - re-queued');
                 }
                 continue;
               }
@@ -194,7 +196,8 @@ class PushStrategy {
               localData: payload,
               errorMessage: errorMsg,
             );
-            await _syncQueueDao.markAsConflict(item.id, conflict.toJsonString());
+            await _syncQueueDao.markAsConflict(
+                item.id, conflict.toJsonString());
             if (kDebugMode) {
               debugPrint(
                   'PushStrategy: Table "${item.tableName_}" missing from Supabase - '
@@ -235,7 +238,8 @@ class PushStrategy {
                 localData: payload,
                 errorMessage: 'UPSERT fallback failed: $upsertError',
               );
-              await _syncQueueDao.markAsConflict(item.id, conflict.toJsonString());
+              await _syncQueueDao.markAsConflict(
+                  item.id, conflict.toJsonString());
             }
             continue;
           }
@@ -287,18 +291,19 @@ class PushStrategy {
                       'for ${item.tableName_}/${item.recordId}: ${resolution.description}');
                 }
               } catch (resolveError) {
-                await _syncQueueDao.markAsConflict(item.id, conflict.toJsonString());
+                await _syncQueueDao.markAsConflict(
+                    item.id, conflict.toJsonString());
               }
             } else {
-              await _syncQueueDao.markAsConflict(item.id, conflict.toJsonString());
+              await _syncQueueDao.markAsConflict(
+                  item.id, conflict.toJsonString());
             }
             continue;
           }
 
           // D. Delete-Update conflict: local UPDATE but server record deleted (404 on row)
           final isRecordNotFound = e.code == 'PGRST116' ||
-              (e.message.contains('not found') ||
-                  e.message.contains('0 rows'));
+              (e.message.contains('not found') || e.message.contains('0 rows'));
           if (isRecordNotFound && item.operation.toUpperCase() == 'UPDATE') {
             final conflict = SyncConflict(
               syncQueueId: item.id,
@@ -308,7 +313,8 @@ class PushStrategy {
               operation: item.operation,
               localData: payload,
               serverData: null, // record was deleted on server
-              errorMessage: 'Record deleted on server, local has update: $errorMsg',
+              errorMessage:
+                  'Record deleted on server, local has update: $errorMsg',
             );
 
             final resolution = await _conflictResolver.resolve(conflict);
@@ -329,10 +335,12 @@ class PushStrategy {
                       'for ${item.tableName_}/${item.recordId}');
                 }
               } catch (resolveError) {
-                await _syncQueueDao.markAsConflict(item.id, conflict.toJsonString());
+                await _syncQueueDao.markAsConflict(
+                    item.id, conflict.toJsonString());
               }
             } else {
-              await _syncQueueDao.markAsConflict(item.id, conflict.toJsonString());
+              await _syncQueueDao.markAsConflict(
+                  item.id, conflict.toJsonString());
             }
             continue;
           }
@@ -349,12 +357,12 @@ class PushStrategy {
               localData: payload,
               errorMessage: 'Max retries reached (DB error): ${e.message}',
             );
-            await _syncQueueDao.markAsConflict(item.id, conflict.toJsonString());
+            await _syncQueueDao.markAsConflict(
+                item.id, conflict.toJsonString());
           }
         } on TimeoutException {
           if (kDebugMode) {
-            debugPrint(
-                'Push timeout for ${item.tableName_}/${item.recordId}');
+            debugPrint('Push timeout for ${item.tableName_}/${item.recordId}');
           }
 
           // Idempotency check: the server may have already processed the
@@ -362,10 +370,11 @@ class PushStrategy {
           // avoid creating duplicates.
           final payload = jsonDecode(item.payload) as Map<String, dynamic>;
           final recordId = payload['id'] as String? ?? item.recordId;
-          final storeId = payload['storeId'] as String? ?? payload['store_id'] as String? ?? '';
+          final storeId = payload['storeId'] as String? ??
+              payload['store_id'] as String? ??
+              '';
 
-          if (storeId.isNotEmpty &&
-              item.operation.toUpperCase() != 'DELETE') {
+          if (storeId.isNotEmpty && item.operation.toUpperCase() != 'DELETE') {
             final alreadySynced = await _apiService.isRecordSynced(
               item.tableName_,
               recordId,
@@ -426,9 +435,8 @@ class PushStrategy {
 
       // تحديث بيانات المزامنة الوصفية لكل جدول
       for (final tableName in pushTables) {
-        final pushed = itemsToPush
-            .where((i) => i.tableName_ == tableName)
-            .length;
+        final pushed =
+            itemsToPush.where((i) => i.tableName_ == tableName).length;
         if (pushed > 0) {
           await _metadataDao.updateLastPushAt(
             tableName,
@@ -482,10 +490,13 @@ class PushStrategy {
     switch (operation.toUpperCase()) {
       case 'CREATE':
       case 'UPDATE':
-        await _client.from(tableName).upsert(
+        await _client
+            .from(tableName)
+            .upsert(
               mappedPayload,
               onConflict: 'id',
-            ).timeout(timeout);
+            )
+            .timeout(timeout);
         break;
       case 'DELETE':
         final id = mappedPayload['id'] as String?;
@@ -516,10 +527,13 @@ class PushStrategy {
     final payloadBytes = utf8.encode(jsonEncode(mappedPayload)).length;
     final timeout = SyncApiService.getAdaptiveTimeout(payloadBytes);
 
-    await _client.from(tableName).upsert(
+    await _client
+        .from(tableName)
+        .upsert(
           mappedPayload,
           onConflict: 'id',
-        ).timeout(timeout);
+        )
+        .timeout(timeout);
   }
 
   /// الجداول المقدسة التي لا يجوز فقدان بياناتها

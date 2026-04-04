@@ -104,7 +104,9 @@ class _AppCardState extends State<AppCard> {
               width: widget.isSelected ? 2 : 1,
             ),
             boxShadow: widget.boxShadow ??
-                (widget.elevation > 0 || _isHovered ? AppShadows.md : AppShadows.sm),
+                (widget.elevation > 0 || _isHovered
+                    ? AppShadows.md
+                    : AppShadows.sm),
           ),
           child: Material(
             color: Colors.transparent,
@@ -336,9 +338,7 @@ class ProductCard extends StatelessWidget {
       onTap: onTap,
       isSelected: isSelected,
       padding: EdgeInsets.zero,
-      cornerWidget: category != null
-          ? _buildCategoryBadge()
-          : null,
+      cornerWidget: category != null ? _buildCategoryBadge() : null,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -452,9 +452,8 @@ class ProductCard extends StatelessWidget {
               child: SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
-                  onPressed: quantity != null && quantity! > 0
-                      ? onAddToCart
-                      : null,
+                  onPressed:
+                      quantity != null && quantity! > 0 ? onAddToCart : null,
                   icon: const Icon(Icons.add_shopping_cart, size: 18),
                   label: Text(l10n.add),
                   style: ElevatedButton.styleFrom(
@@ -509,7 +508,10 @@ class ProductCard extends StatelessWidget {
     if (quantity! <= 5) {
       return (label: '${l10n.lowStock} ($quantity)', color: AppColors.stockLow);
     }
-    return (label: '${l10n.inStock} ($quantity)', color: AppColors.stockAvailable);
+    return (
+      label: '${l10n.inStock} ($quantity)',
+      color: AppColors.stockAvailable
+    );
   }
 }
 
@@ -561,9 +563,8 @@ class CustomerCard extends StatelessWidget {
           // Avatar
           CircleAvatar(
             radius: 24,
-            backgroundColor: isSelected
-                ? AppColors.primary
-                : AppColors.primarySurface,
+            backgroundColor:
+                isSelected ? AppColors.primary : AppColors.primarySurface,
             child: Text(
               displayInitials,
               style: AppTypography.titleMedium.copyWith(
@@ -605,7 +606,11 @@ class CustomerCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  balance! > 0 ? l10n.owes : balance! < 0 ? l10n.due : l10n.balanced,
+                  balance! > 0
+                      ? l10n.owes
+                      : balance! < 0
+                          ? l10n.due
+                          : l10n.balanced,
                   style: AppTypography.labelSmall.copyWith(
                     color: AppColors.textMuted,
                   ),

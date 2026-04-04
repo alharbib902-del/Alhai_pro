@@ -18,6 +18,7 @@ class SuppliersTable extends Table {
   TextColumn get city => text().nullable()();
   TextColumn get taxNumber => text().nullable()();
   TextColumn get paymentTerms => text().nullable()();
+
   /// Rating from 0 to 5. Range validation (0 <= rating <= 5) is enforced
   /// in [SuppliersDao.insertSupplier] and [SuppliersDao.updateSupplier]
   /// which throw [InvalidSupplierRatingException] for out-of-range values.

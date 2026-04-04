@@ -98,10 +98,10 @@ void main() {
       });
 
       test('should reject signature with wrong digest', () {
-        final originalDigest = Uint8List.fromList(
-            sha256.convert(utf8.encode('original')).bytes);
-        final tamperedDigest = Uint8List.fromList(
-            sha256.convert(utf8.encode('tampered')).bytes);
+        final originalDigest =
+            Uint8List.fromList(sha256.convert(utf8.encode('original')).bytes);
+        final tamperedDigest =
+            Uint8List.fromList(sha256.convert(utf8.encode('tampered')).bytes);
 
         final signatureBase64 = signer.sign(
           digest: originalDigest,
@@ -118,8 +118,8 @@ void main() {
       });
 
       test('should reject signature with wrong public key', () {
-        final digest = Uint8List.fromList(
-            sha256.convert(utf8.encode('test')).bytes);
+        final digest =
+            Uint8List.fromList(sha256.convert(utf8.encode('test')).bytes);
 
         final signatureBase64 = signer.sign(
           digest: digest,
@@ -145,8 +145,8 @@ void main() {
         // Simulate the ZATCA signing flow:
         // 1. Compute SHA-256 of invoice data
         final invoiceData = 'invoice-xml-content-here';
-        final digest = Uint8List.fromList(
-            sha256.convert(utf8.encode(invoiceData)).bytes);
+        final digest =
+            Uint8List.fromList(sha256.convert(utf8.encode(invoiceData)).bytes);
 
         // 2. Sign the digest
         final signatureBase64 = signer.sign(
@@ -165,8 +165,7 @@ void main() {
       });
 
       test('should work with empty digest', () {
-        final emptyDigest =
-            Uint8List.fromList(sha256.convert(<int>[]).bytes);
+        final emptyDigest = Uint8List.fromList(sha256.convert(<int>[]).bytes);
 
         final signatureBase64 = signer.sign(
           digest: emptyDigest,
@@ -184,8 +183,8 @@ void main() {
 
       test('should handle multiple sign/verify cycles', () {
         for (int i = 0; i < 5; i++) {
-          final digest = Uint8List.fromList(
-              sha256.convert(utf8.encode('cycle $i')).bytes);
+          final digest =
+              Uint8List.fromList(sha256.convert(utf8.encode('cycle $i')).bytes);
 
           final sig = signer.sign(
             digest: digest,
@@ -269,7 +268,13 @@ String _encodeEcPrivateKeyPem(ECPrivateKey key) {
   final octetString = <int>[0x04, dBytes.length, ...dBytes];
 
   final innerLen = versionBytes.length + octetString.length + contextOid.length;
-  final sequence = <int>[0x30, ..._derLength(innerLen), ...versionBytes, ...octetString, ...contextOid];
+  final sequence = <int>[
+    0x30,
+    ..._derLength(innerLen),
+    ...versionBytes,
+    ...octetString,
+    ...contextOid
+  ];
 
   final b64 = base64Encode(sequence);
   final lines = <String>[];
@@ -288,12 +293,40 @@ String _encodeEcPublicKeyPem(ECPublicKey key) {
   //   SEQUENCE { OID ecPublicKey, OID secp256k1 }
   //   BIT STRING (public key point)
   // }
-  final ecPubKeyOid = <int>[0x06, 0x07, 0x2A, 0x86, 0x48, 0xCE, 0x3D, 0x02, 0x01]; // 1.2.840.10045.2.1
-  final secp256k1Oid = <int>[0x06, 0x05, 0x2B, 0x81, 0x04, 0x00, 0x0A]; // 1.3.132.0.10
+  final ecPubKeyOid = <int>[
+    0x06,
+    0x07,
+    0x2A,
+    0x86,
+    0x48,
+    0xCE,
+    0x3D,
+    0x02,
+    0x01
+  ]; // 1.2.840.10045.2.1
+  final secp256k1Oid = <int>[
+    0x06,
+    0x05,
+    0x2B,
+    0x81,
+    0x04,
+    0x00,
+    0x0A
+  ]; // 1.3.132.0.10
   final algIdLen = ecPubKeyOid.length + secp256k1Oid.length;
-  final algId = <int>[0x30, ..._derLength(algIdLen), ...ecPubKeyOid, ...secp256k1Oid];
+  final algId = <int>[
+    0x30,
+    ..._derLength(algIdLen),
+    ...ecPubKeyOid,
+    ...secp256k1Oid
+  ];
 
-  final bitString = <int>[0x03, ..._derLength(point.length + 1), 0x00, ...point];
+  final bitString = <int>[
+    0x03,
+    ..._derLength(point.length + 1),
+    0x00,
+    ...point
+  ];
 
   final outerLen = algId.length + bitString.length;
   final sequence = <int>[0x30, ..._derLength(outerLen), ...algId, ...bitString];

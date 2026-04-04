@@ -41,7 +41,8 @@ class LiteOrderDetailScreen extends ConsumerWidget {
           final order = data.order;
           final items = data.items;
           return SingleChildScrollView(
-            padding: EdgeInsets.all(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
+            padding:
+                EdgeInsets.all(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -66,7 +67,8 @@ class LiteOrderDetailScreen extends ConsumerWidget {
             children: [
               Text(l10n.errorOccurred),
               TextButton.icon(
-                onPressed: () => ref.invalidate(liteOrderDetailProvider(orderId)),
+                onPressed: () =>
+                    ref.invalidate(liteOrderDetailProvider(orderId)),
                 icon: const Icon(Icons.refresh_rounded),
                 label: Text(l10n.tryAgain),
               ),
@@ -89,9 +91,11 @@ class LiteOrderDetailScreen extends ConsumerWidget {
     };
   }
 
-  Widget _buildStatusCard(BuildContext context, bool isDark, AppLocalizations l10n, OrdersTableData order) {
+  Widget _buildStatusCard(BuildContext context, bool isDark,
+      AppLocalizations l10n, OrdersTableData order) {
     final color = _statusColor(order.status);
-    final time = '${order.orderDate.hour.toString().padLeft(2, '0')}:${order.orderDate.minute.toString().padLeft(2, '0')}';
+    final time =
+        '${order.orderDate.hour.toString().padLeft(2, '0')}:${order.orderDate.minute.toString().padLeft(2, '0')}';
 
     return Container(
       width: double.infinity,
@@ -106,7 +110,9 @@ class LiteOrderDetailScreen extends ConsumerWidget {
           Container(
             width: 48,
             height: 48,
-            decoration: BoxDecoration(color: color.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(12)),
+            decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(12)),
             child: Icon(Icons.check_circle, color: color, size: 24),
           ),
           const SizedBox(width: AlhaiSpacing.md),
@@ -116,11 +122,18 @@ class LiteOrderDetailScreen extends ConsumerWidget {
               children: [
                 Text(
                   '#${order.orderNumber}',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: isDark ? Colors.white : color),
+                  style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white : color),
                 ),
                 Text(
                   '$time \u2022 ${order.status}',
-                  style: TextStyle(fontSize: 13, color: isDark ? Colors.white54 : color.withValues(alpha: 0.7)),
+                  style: TextStyle(
+                      fontSize: 13,
+                      color: isDark
+                          ? Colors.white54
+                          : color.withValues(alpha: 0.7)),
                 ),
               ],
             ),
@@ -130,22 +143,35 @@ class LiteOrderDetailScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildItemsSection(BuildContext context, bool isDark, AppLocalizations l10n, List<OrderItemWithProduct> items) {
+  Widget _buildItemsSection(BuildContext context, bool isDark,
+      AppLocalizations l10n, List<OrderItemWithProduct> items) {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.06) : Theme.of(context).colorScheme.surface,
+        color: isDark
+            ? Colors.white.withValues(alpha: 0.06)
+            : Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: isDark ? Colors.white12 : Theme.of(context).colorScheme.outlineVariant),
+        border: Border.all(
+            color: isDark
+                ? Colors.white12
+                : Theme.of(context).colorScheme.outlineVariant),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Text(l10n.products, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: isDark ? Colors.white : null)),
+              Text(l10n.products,
+                  style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white : null)),
               const Spacer(),
-              Text(l10n.nItems(items.length), style: TextStyle(fontSize: 13, color: Theme.of(context).colorScheme.onSurfaceVariant)),
+              Text(l10n.nItems(items.length),
+                  style: TextStyle(
+                      fontSize: 13,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant)),
             ],
           ),
           const SizedBox(height: AlhaiSpacing.sm),
@@ -153,10 +179,24 @@ class LiteOrderDetailScreen extends ConsumerWidget {
                 padding: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
                 child: Row(
                   children: [
-                    Expanded(child: Text(item.productName, style: TextStyle(fontSize: 14, color: Theme.of(context).colorScheme.onSurface))),
-                    Text('x${item.qty.toStringAsFixed(0)}', style: TextStyle(fontSize: 13, color: Theme.of(context).colorScheme.onSurfaceVariant)),
+                    Expanded(
+                        child: Text(item.productName,
+                            style: TextStyle(
+                                fontSize: 14,
+                                color:
+                                    Theme.of(context).colorScheme.onSurface))),
+                    Text('x${item.qty.toStringAsFixed(0)}',
+                        style: TextStyle(
+                            fontSize: 13,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurfaceVariant)),
                     const SizedBox(width: AlhaiSpacing.md),
-                    Text('${item.total.toStringAsFixed(0)} ${l10n.sar}', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: Theme.of(context).colorScheme.onSurface)),
+                    Text('${item.total.toStringAsFixed(0)} ${l10n.sar}',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                            color: Theme.of(context).colorScheme.onSurface)),
                   ],
                 ),
               )),
@@ -165,7 +205,8 @@ class LiteOrderDetailScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildTimeline(BuildContext context, bool isDark, AppLocalizations l10n, OrdersTableData order) {
+  Widget _buildTimeline(BuildContext context, bool isDark,
+      AppLocalizations l10n, OrdersTableData order) {
     final steps = [
       _TimelineStep(l10n.orderStatusConfirmed, order.confirmedAt),
       _TimelineStep(l10n.orderStatusPreparing, order.preparingAt),
@@ -177,14 +218,23 @@ class LiteOrderDetailScreen extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.06) : Theme.of(context).colorScheme.surface,
+        color: isDark
+            ? Colors.white.withValues(alpha: 0.06)
+            : Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: isDark ? Colors.white12 : Theme.of(context).colorScheme.outlineVariant),
+        border: Border.all(
+            color: isDark
+                ? Colors.white12
+                : Theme.of(context).colorScheme.outlineVariant),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(l10n.status, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: isDark ? Colors.white : null)),
+          Text(l10n.status,
+              style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : null)),
           const SizedBox(height: AlhaiSpacing.md),
           ...steps.asMap().entries.map((entry) {
             final step = entry.value;
@@ -202,13 +252,29 @@ class LiteOrderDetailScreen extends ConsumerWidget {
                       width: 24,
                       height: 24,
                       decoration: BoxDecoration(
-                        color: completed ? AlhaiColors.success : (isDark ? Colors.white12 : Theme.of(context).colorScheme.outlineVariant),
+                        color: completed
+                            ? AlhaiColors.success
+                            : (isDark
+                                ? Colors.white12
+                                : Theme.of(context).colorScheme.outlineVariant),
                         shape: BoxShape.circle,
                       ),
-                      child: completed ? const Icon(Icons.check, size: 14, color: Colors.white) : null,
+                      child: completed
+                          ? const Icon(Icons.check,
+                              size: 14, color: Colors.white)
+                          : null,
                     ),
                     if (!isLast)
-                      Container(width: 2, height: 24, color: completed ? AlhaiColors.success : (isDark ? Colors.white12 : Theme.of(context).colorScheme.outlineVariant)),
+                      Container(
+                          width: 2,
+                          height: 24,
+                          color: completed
+                              ? AlhaiColors.success
+                              : (isDark
+                                  ? Colors.white12
+                                  : Theme.of(context)
+                                      .colorScheme
+                                      .outlineVariant)),
                   ],
                 ),
                 const SizedBox(width: AlhaiSpacing.sm),
@@ -217,10 +283,22 @@ class LiteOrderDetailScreen extends ConsumerWidget {
                     padding: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
                     child: Row(
                       children: [
-                        Text(step.label, style: TextStyle(fontSize: 14, fontWeight: completed ? FontWeight.w600 : FontWeight.normal, color: completed ? Theme.of(context).colorScheme.onSurface : Theme.of(context).colorScheme.outline)),
+                        Text(step.label,
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: completed
+                                    ? FontWeight.w600
+                                    : FontWeight.normal,
+                                color: completed
+                                    ? Theme.of(context).colorScheme.onSurface
+                                    : Theme.of(context).colorScheme.outline)),
                         if (timeStr.isNotEmpty) ...[
                           const Spacer(),
-                          Text(timeStr, style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.outline)),
+                          Text(timeStr,
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  color:
+                                      Theme.of(context).colorScheme.outline)),
                         ],
                       ],
                     ),
@@ -234,43 +312,67 @@ class LiteOrderDetailScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildTotals(BuildContext context, bool isDark, AppLocalizations l10n, OrdersTableData order) {
+  Widget _buildTotals(BuildContext context, bool isDark, AppLocalizations l10n,
+      OrdersTableData order) {
     final vat = order.total * 0.15 / 1.15;
     final subtotal = order.total - vat;
 
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.06) : Theme.of(context).colorScheme.surface,
+        color: isDark
+            ? Colors.white.withValues(alpha: 0.06)
+            : Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: isDark ? Colors.white12 : Theme.of(context).colorScheme.outlineVariant),
+        border: Border.all(
+            color: isDark
+                ? Colors.white12
+                : Theme.of(context).colorScheme.outlineVariant),
       ),
       child: Column(
         children: [
-          _buildTotalRow(l10n.subtotal, '${subtotal.toStringAsFixed(0)} ${l10n.sar}', isDark, context),
-          _buildTotalRow(l10n.vat, '${vat.toStringAsFixed(0)} ${l10n.sar}', isDark, context),
+          _buildTotalRow(l10n.subtotal,
+              '${subtotal.toStringAsFixed(0)} ${l10n.sar}', isDark, context),
+          _buildTotalRow(l10n.vat, '${vat.toStringAsFixed(0)} ${l10n.sar}',
+              isDark, context),
           const Divider(height: AlhaiSpacing.lg),
-          _buildTotalRow(l10n.grandTotal, '${order.total.toStringAsFixed(0)} ${l10n.sar}', isDark, context, isBold: true),
+          _buildTotalRow(l10n.grandTotal,
+              '${order.total.toStringAsFixed(0)} ${l10n.sar}', isDark, context,
+              isBold: true),
         ],
       ),
     );
   }
 
-  Widget _buildTotalRow(String label, String value, bool isDark, BuildContext context, {bool isBold = false}) {
+  Widget _buildTotalRow(
+      String label, String value, bool isDark, BuildContext context,
+      {bool isBold = false}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
       child: Row(
         children: [
-          Text(label, style: TextStyle(fontSize: isBold ? 16 : 14, fontWeight: isBold ? FontWeight.bold : FontWeight.normal, color: isBold ? Theme.of(context).colorScheme.onSurface : Theme.of(context).colorScheme.onSurfaceVariant)),
+          Text(label,
+              style: TextStyle(
+                  fontSize: isBold ? 16 : 14,
+                  fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+                  color: isBold
+                      ? Theme.of(context).colorScheme.onSurface
+                      : Theme.of(context).colorScheme.onSurfaceVariant)),
           const Spacer(),
-          Text(value, style: TextStyle(fontSize: isBold ? 18 : 14, fontWeight: isBold ? FontWeight.bold : FontWeight.w600, color: Theme.of(context).colorScheme.onSurface)),
+          Text(value,
+              style: TextStyle(
+                  fontSize: isBold ? 18 : 14,
+                  fontWeight: isBold ? FontWeight.bold : FontWeight.w600,
+                  color: Theme.of(context).colorScheme.onSurface)),
         ],
       ),
     );
   }
 
-  Widget _buildActions(BuildContext context, bool isDark, AppLocalizations l10n, OrdersTableData order, WidgetRef ref) {
-    if (order.status == 'delivered' || order.status == 'cancelled') return const SizedBox.shrink();
+  Widget _buildActions(BuildContext context, bool isDark, AppLocalizations l10n,
+      OrdersTableData order, WidgetRef ref) {
+    if (order.status == 'delivered' || order.status == 'cancelled')
+      return const SizedBox.shrink();
 
     final nextStatus = switch (order.status) {
       'created' => 'confirmed',
@@ -300,7 +402,8 @@ class LiteOrderDetailScreen extends ConsumerWidget {
               foregroundColor: AlhaiColors.error,
               side: const BorderSide(color: AlhaiColors.error),
               padding: const EdgeInsets.symmetric(vertical: 14),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
             ),
           ),
         ),
@@ -321,7 +424,8 @@ class LiteOrderDetailScreen extends ConsumerWidget {
               style: FilledButton.styleFrom(
                 backgroundColor: AlhaiColors.success,
                 padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
               ),
             ),
           ),

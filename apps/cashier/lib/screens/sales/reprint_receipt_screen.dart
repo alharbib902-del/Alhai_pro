@@ -12,7 +12,8 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
+import 'package:alhai_design_system/alhai_design_system.dart'
+    show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 import '../../widgets/zatca_qr_widget.dart';
@@ -115,9 +116,8 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
           subtitle: _getDateSubtitle(l10n),
           showSearch: false,
           searchHint: l10n.searchPlaceholder,
-          onMenuTap: isWideScreen
-              ? null
-              : () => Scaffold.of(context).openDrawer(),
+          onMenuTap:
+              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 3,
           userName: user?.name ?? l10n.cashCustomer,
@@ -128,8 +128,8 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
           child: _isLoading
               ? const AppLoadingState()
               : _error != null
-                  ? AppErrorState.general(
-                      context, message: _error!, onRetry: _loadOrders)
+                  ? AppErrorState.general(context,
+                      message: _error!, onRetry: _loadOrders)
                   : isWideScreen
                       ? _buildWideLayout(isDark, l10n, isMediumScreen)
                       : _buildNarrowLayout(isDark, l10n, isMediumScreen),
@@ -175,18 +175,17 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
     return Column(
       children: [
         Padding(
-          padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+          padding: EdgeInsets.all(
+              isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
           child: _buildSearchBar(isDark, l10n),
         ),
         Expanded(
           child: Padding(
-            padding: EdgeInsets.symmetric(
-                horizontal: isMediumScreen ? 24 : 16),
+            padding: EdgeInsets.symmetric(horizontal: isMediumScreen ? 24 : 16),
             child: _buildOrdersList(isDark, l10n),
           ),
         ),
-        if (_selectedOrderId != null)
-          _buildMobileReprintBar(isDark, l10n),
+        if (_selectedOrderId != null) _buildMobileReprintBar(isDark, l10n),
       ],
     );
   }
@@ -198,8 +197,8 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
       decoration: InputDecoration(
         hintText: l10n.searchByInvoiceOrCustomer,
         hintStyle: TextStyle(color: AppColors.getTextMuted(isDark)),
-        prefixIcon: Icon(Icons.search_rounded,
-            color: AppColors.getTextMuted(isDark)),
+        prefixIcon:
+            Icon(Icons.search_rounded, color: AppColors.getTextMuted(isDark)),
         suffixIcon: _searchController.text.isNotEmpty
             ? IconButton(
                 onPressed: () => _searchController.clear(),
@@ -222,8 +221,8 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: AppColors.primary, width: 2),
         ),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(
+            horizontal: AlhaiSpacing.md, vertical: 14),
       ),
     );
   }
@@ -236,8 +235,7 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
           children: [
             Icon(Icons.receipt_long_outlined,
                 size: 64,
-                color: AppColors.getTextMuted(isDark)
-                    .withValues(alpha: 0.4)),
+                color: AppColors.getTextMuted(isDark).withValues(alpha: 0.4)),
             const SizedBox(height: AlhaiSpacing.md),
             Text(l10n.noTransactions,
                 style: TextStyle(
@@ -290,9 +288,7 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
               width: 24,
               height: 24,
               decoration: BoxDecoration(
-                color: isSelected
-                    ? AppColors.primary
-                    : Colors.transparent,
+                color: isSelected ? AppColors.primary : Colors.transparent,
                 shape: BoxShape.circle,
                 border: Border.all(
                   color: isSelected
@@ -337,16 +333,14 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
                   Row(
                     children: [
                       Icon(Icons.person_outline_rounded,
-                          size: 12,
-                          color: AppColors.getTextMuted(isDark)),
+                          size: 12, color: AppColors.getTextMuted(isDark)),
                       const SizedBox(width: AlhaiSpacing.xxs),
                       Flexible(
                         child: Text(
                           order.customerId ?? l10n.cashCustomer,
                           style: TextStyle(
                               fontSize: 12,
-                              color:
-                                  AppColors.getTextSecondary(isDark)),
+                              color: AppColors.getTextSecondary(isDark)),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
@@ -355,8 +349,7 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
                   Row(
                     children: [
                       Icon(Icons.access_time_rounded,
-                          size: 12,
-                          color: AppColors.getTextMuted(isDark)),
+                          size: 12, color: AppColors.getTextMuted(isDark)),
                       const SizedBox(width: AlhaiSpacing.xxs),
                       Text('$date $time',
                           style: TextStyle(
@@ -384,8 +377,7 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
     );
   }
 
-  Widget _buildSelectedOrderPreview(
-      bool isDark, AppLocalizations l10n) {
+  Widget _buildSelectedOrderPreview(bool isDark, AppLocalizations l10n) {
     if (_selectedOrderId == null) {
       return Container(
         padding: const EdgeInsets.all(AlhaiSpacing.xxxl),
@@ -400,8 +392,7 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
             children: [
               Icon(Icons.print_outlined,
                   size: 64,
-                  color: AppColors.getTextMuted(isDark)
-                      .withValues(alpha: 0.4)),
+                  color: AppColors.getTextMuted(isDark).withValues(alpha: 0.4)),
               const SizedBox(height: AlhaiSpacing.md),
               Text(l10n.selectInvoiceToPrint,
                   textAlign: TextAlign.center,
@@ -415,8 +406,7 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
       );
     }
 
-    final order =
-        _allOrders.firstWhere((o) => o.id == _selectedOrderId);
+    final order = _allOrders.firstWhere((o) => o.id == _selectedOrderId);
 
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
@@ -453,16 +443,21 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
           ),
           const SizedBox(height: AlhaiSpacing.mdl),
           // Order info
-          _buildPreviewRow(l10n.invoiceNumber,
-              '#${order.id.length > 8 ? order.id.substring(0, 8) : order.id}', isDark),
-          _buildPreviewRow(l10n.customerName,
-              order.customerId ?? l10n.cashCustomer, isDark),
-          _buildPreviewRow(l10n.date,
-              '${order.createdAt.day}/${order.createdAt.month}/${order.createdAt.year}', isDark),
-          _buildPreviewRow(l10n.time,
-              '${order.createdAt.hour.toString().padLeft(2, '0')}:${order.createdAt.minute.toString().padLeft(2, '0')}', isDark),
-          _buildPreviewRow(l10n.paymentMethod,
-              order.paymentMethod, isDark),
+          _buildPreviewRow(
+              l10n.invoiceNumber,
+              '#${order.id.length > 8 ? order.id.substring(0, 8) : order.id}',
+              isDark),
+          _buildPreviewRow(
+              l10n.customerName, order.customerId ?? l10n.cashCustomer, isDark),
+          _buildPreviewRow(
+              l10n.date,
+              '${order.createdAt.day}/${order.createdAt.month}/${order.createdAt.year}',
+              isDark),
+          _buildPreviewRow(
+              l10n.time,
+              '${order.createdAt.hour.toString().padLeft(2, '0')}:${order.createdAt.minute.toString().padLeft(2, '0')}',
+              isDark),
+          _buildPreviewRow(l10n.paymentMethod, order.paymentMethod, isDark),
           Divider(height: 24, color: AppColors.getBorder(isDark)),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxs),
@@ -474,8 +469,7 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
                         fontWeight: FontWeight.bold,
                         fontSize: 15,
                         color: AppColors.getTextPrimary(isDark))),
-                Text(
-                    '${order.total.toStringAsFixed(2)} ${l10n.sar}',
+                Text('${order.total.toStringAsFixed(2)} ${l10n.sar}',
                     style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
@@ -533,8 +527,7 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
         children: [
           Text('$label:',
               style: TextStyle(
-                  fontSize: 13,
-                  color: AppColors.getTextSecondary(isDark))),
+                  fontSize: 13, color: AppColors.getTextSecondary(isDark))),
           const Spacer(),
           Text(value,
               style: TextStyle(
@@ -552,8 +545,7 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         border: Border(
-            top: BorderSide(
-                color: AppColors.getBorder(isDark), width: 1)),
+            top: BorderSide(color: AppColors.getBorder(isDark), width: 1)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.06),
@@ -570,8 +562,8 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
             onPressed: _isPrinting
                 ? null
                 : () {
-                    final order = _allOrders
-                        .firstWhere((o) => o.id == _selectedOrderId);
+                    final order =
+                        _allOrders.firstWhere((o) => o.id == _selectedOrderId);
                     _printReceipt(order, l10n);
                   },
             icon: _isPrinting
@@ -583,8 +575,8 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
                   )
                 : const Icon(Icons.print_rounded, size: 20),
             label: Text(l10n.reprintReceipt,
-                style: const TextStyle(
-                    fontSize: 16, fontWeight: FontWeight.w600)),
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
             style: FilledButton.styleFrom(
               backgroundColor: AppColors.primary,
               foregroundColor: AppColors.textOnPrimary,

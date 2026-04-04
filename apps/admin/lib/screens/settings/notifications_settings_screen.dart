@@ -22,11 +22,12 @@ class NotificationsSettingsScreen extends ConsumerStatefulWidget {
   const NotificationsSettingsScreen({super.key});
 
   @override
-  ConsumerState<NotificationsSettingsScreen> createState() => _NotificationsSettingsScreenState();
+  ConsumerState<NotificationsSettingsScreen> createState() =>
+      _NotificationsSettingsScreenState();
 }
 
-class _NotificationsSettingsScreenState extends ConsumerState<NotificationsSettingsScreen> {
-
+class _NotificationsSettingsScreenState
+    extends ConsumerState<NotificationsSettingsScreen> {
   bool _pushEnabled = true;
   bool _emailEnabled = false;
   bool _smsEnabled = false;
@@ -115,9 +116,8 @@ class _NotificationsSettingsScreenState extends ConsumerState<NotificationsSetti
         children: [
           AppHeader(
             title: l10n.notificationSettings,
-            onMenuTap: isWideScreen
-                ? null
-                : () => Scaffold.of(context).openDrawer(),
+            onMenuTap:
+                isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
             onNotificationsTap: () => context.push('/notifications'),
             notificationsCount: 3,
             userName: l10n.defaultUserName,
@@ -131,71 +131,76 @@ class _NotificationsSettingsScreenState extends ConsumerState<NotificationsSetti
     }
 
     return Column(children: [
-          AppHeader(
-            title: l10n.notificationSettings,
-            onMenuTap: isWideScreen
-                      ? null
-                      : () => Scaffold.of(context).openDrawer(),
-            onNotificationsTap: () => context.push('/notifications'),
-            notificationsCount: 3, userName: l10n.defaultUserName, userRole: l10n.branchManager,
-          ),
-          Expanded(child: SingleChildScrollView(
-            padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-            child: _buildContent(isDark, l10n),
-          )),
-        ]);
+      AppHeader(
+        title: l10n.notificationSettings,
+        onMenuTap:
+            isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+        onNotificationsTap: () => context.push('/notifications'),
+        notificationsCount: 3,
+        userName: l10n.defaultUserName,
+        userRole: l10n.branchManager,
+      ),
+      Expanded(
+          child: SingleChildScrollView(
+        padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+        child: _buildContent(isDark, l10n),
+      )),
+    ]);
   }
+
   Widget _buildContent(bool isDark, AppLocalizations l10n) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       // Channels
-      _buildGroup(l10n.notificationChannels, [
-        _switchTile(Icons.notifications_active_rounded, l10n.pushNotifications,
-            l10n.instantNotifications, _pushEnabled,
-            (v) {
+      _buildGroup(
+          l10n.notificationChannels,
+          [
+            _switchTile(
+                Icons.notifications_active_rounded,
+                l10n.pushNotifications,
+                l10n.instantNotifications,
+                _pushEnabled, (v) {
               setState(() => _pushEnabled = v);
               _saveSingleSetting(_kNotifPushEnabled, v.toString());
             }, isDark),
-        _switchTile(Icons.email_rounded, l10n.emailNotifications,
-            l10n.emailNotificationsDesc, _emailEnabled,
-            (v) {
+            _switchTile(Icons.email_rounded, l10n.emailNotifications,
+                l10n.emailNotificationsDesc, _emailEnabled, (v) {
               setState(() => _emailEnabled = v);
               _saveSingleSetting(_kNotifEmailEnabled, v.toString());
             }, isDark),
-        _switchTile(Icons.sms_rounded, l10n.smsNotifications,
-            l10n.smsNotificationsDesc, _smsEnabled,
-            (v) {
+            _switchTile(Icons.sms_rounded, l10n.smsNotifications,
+                l10n.smsNotificationsDesc, _smsEnabled, (v) {
               setState(() => _smsEnabled = v);
               _saveSingleSetting(_kNotifSmsEnabled, v.toString());
             }, isDark),
-      ], isDark),
+          ],
+          isDark),
 
       // Alert types
-      _buildGroup(l10n.alertTypes, [
-        _switchTile(Icons.receipt_long_rounded, l10n.salesAlerts,
-            l10n.salesAlertsDesc, _salesAlerts,
-            (v) {
+      _buildGroup(
+          l10n.alertTypes,
+          [
+            _switchTile(Icons.receipt_long_rounded, l10n.salesAlerts,
+                l10n.salesAlertsDesc, _salesAlerts, (v) {
               setState(() => _salesAlerts = v);
               _saveSingleSetting(_kNotifSalesAlert, v.toString());
             }, isDark),
-        _switchTile(Icons.inventory_2_rounded, l10n.inventoryAlerts,
-            l10n.inventoryAlertsDesc, _inventoryAlerts,
-            (v) {
+            _switchTile(Icons.inventory_2_rounded, l10n.inventoryAlerts,
+                l10n.inventoryAlertsDesc, _inventoryAlerts, (v) {
               setState(() => _inventoryAlerts = v);
               _saveSingleSetting(_kNotifLowStockAlert, v.toString());
             }, isDark),
-        _switchTile(Icons.security_rounded, l10n.securityAlerts,
-            l10n.securityAlertsDesc, _securityAlerts,
-            (v) {
+            _switchTile(Icons.security_rounded, l10n.securityAlerts,
+                l10n.securityAlertsDesc, _securityAlerts, (v) {
               setState(() => _securityAlerts = v);
               _saveSingleSetting(_kNotifSecurityAlert, v.toString());
             }, isDark),
-        _switchTile(Icons.analytics_rounded, l10n.reportAlerts,
-            l10n.reportAlertsDesc, _reportAlerts,
-            (v) {
+            _switchTile(Icons.analytics_rounded, l10n.reportAlerts,
+                l10n.reportAlertsDesc, _reportAlerts, (v) {
               setState(() => _reportAlerts = v);
               _saveSingleSetting(_kNotifReportAlert, v.toString());
             }, isDark),
-      ], isDark),
+          ],
+          isDark),
     ]);
   }
 
@@ -208,9 +213,14 @@ class _NotificationsSettingsScreenState extends ConsumerState<NotificationsSetti
         border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Padding(padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl, AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.xs),
-          child: Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.onSurface))),
+        Padding(
+            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl,
+                AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.xs),
+            child: Text(title,
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onSurface))),
         ...children,
       ]),
     );
@@ -219,13 +229,24 @@ class _NotificationsSettingsScreenState extends ConsumerState<NotificationsSetti
   Widget _switchTile(IconData icon, String title, String subtitle, bool value,
       ValueChanged<bool> onChanged, bool isDark) {
     return SwitchListTile(
-      secondary: Container(padding: const EdgeInsets.all(AlhaiSpacing.xs),
-        decoration: BoxDecoration(color: AppColors.primary.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
-        child: Icon(icon, color: value ? AppColors.primary : AppColors.textSecondary, size: 20)),
-      title: Text(title, style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.w500)),
-      subtitle: Text(subtitle, style: TextStyle(
-          color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 12)),
-      value: value, onChanged: onChanged,
+      secondary: Container(
+          padding: const EdgeInsets.all(AlhaiSpacing.xs),
+          decoration: BoxDecoration(
+              color: AppColors.primary.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(8)),
+          child: Icon(icon,
+              color: value ? AppColors.primary : AppColors.textSecondary,
+              size: 20)),
+      title: Text(title,
+          style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurface,
+              fontWeight: FontWeight.w500)),
+      subtitle: Text(subtitle,
+          style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              fontSize: 12)),
+      value: value,
+      onChanged: onChanged,
     );
   }
 }

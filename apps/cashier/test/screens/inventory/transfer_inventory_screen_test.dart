@@ -53,8 +53,7 @@ void main() {
         ]);
     when(() => productsDao.searchProducts(any(), any()))
         .thenAnswer((_) async => []);
-    when(() => inventoryDao.insertMovement(any()))
-        .thenAnswer((_) async => 1);
+    when(() => inventoryDao.insertMovement(any())).thenAnswer((_) async => 1);
     when(() => productsDao.updateStock(any(), any()))
         .thenAnswer((_) async => 1);
   });
@@ -67,8 +66,8 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const TransferInventoryScreen()));
+      await tester
+          .pumpWidget(createTestWidget(const TransferInventoryScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(TransferInventoryScreen), findsOneWidget);
@@ -77,19 +76,17 @@ void main() {
       tester.view.resetDevicePixelRatio();
     });
 
-    testWidgets('shows loading indicator while loading stores',
-        (tester) async {
+    testWidgets('shows loading indicator while loading stores', (tester) async {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
       // Use Completer to hold the future without pending timers
       final completer = Completer<List<StoresTableData>>();
-      when(() => storesDao.getAllStores())
-          .thenAnswer((_) => completer.future);
+      when(() => storesDao.getAllStores()).thenAnswer((_) => completer.future);
 
-      await tester.pumpWidget(
-          createTestWidget(const TransferInventoryScreen()));
+      await tester
+          .pumpWidget(createTestWidget(const TransferInventoryScreen()));
       await tester.pump();
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
@@ -107,8 +104,8 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const TransferInventoryScreen()));
+      await tester
+          .pumpWidget(createTestWidget(const TransferInventoryScreen()));
       await tester.pumpAndSettle();
 
       expect(find.text('Transfer Details'), findsOneWidget);
@@ -126,8 +123,8 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const TransferInventoryScreen()));
+      await tester
+          .pumpWidget(createTestWidget(const TransferInventoryScreen()));
       await tester.pumpAndSettle();
 
       // The dropdown should be present
@@ -143,8 +140,8 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const TransferInventoryScreen()));
+      await tester
+          .pumpWidget(createTestWidget(const TransferInventoryScreen()));
       await tester.pumpAndSettle();
 
       expect(find.text('Submit Transfer'), findsOneWidget);
@@ -163,8 +160,8 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const TransferInventoryScreen()));
+      await tester
+          .pumpWidget(createTestWidget(const TransferInventoryScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.search_rounded), findsWidgets);

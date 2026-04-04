@@ -109,7 +109,8 @@ class AdaptiveIcon extends StatelessWidget {
     if (isRtl && _flipIcons.contains(icon)) {
       return Transform.flip(
         flipX: true,
-        child: Icon(icon, size: size, color: color, semanticLabel: semanticLabel),
+        child:
+            Icon(icon, size: size, color: color, semanticLabel: semanticLabel),
       );
     }
 

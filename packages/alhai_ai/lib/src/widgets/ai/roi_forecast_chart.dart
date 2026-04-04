@@ -65,9 +65,8 @@ class RoiForecastChart extends StatelessWidget {
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.06)
-              : AppColors.border,
+          color:
+              isDark ? Colors.white.withValues(alpha: 0.06) : AppColors.border,
         ),
       ),
       child: Column(
@@ -88,7 +87,8 @@ class RoiForecastChart extends StatelessWidget {
               ),
               const Spacer(),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: AlhaiSpacing.xxs),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 10, vertical: AlhaiSpacing.xxs),
                 decoration: BoxDecoration(
                   color: AppColors.success.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -249,7 +249,8 @@ class _RoiChartPainter extends CustomPainter {
     final minRoi = forecasts.map((f) => f.cumulativeRoi).reduce(math.min);
     final roiRange = (maxRoi - minRoi).clamp(10.0, double.infinity);
 
-    final stepX = chartWidth / (forecasts.length - 1).clamp(1, forecasts.length);
+    final stepX =
+        chartWidth / (forecasts.length - 1).clamp(1, forecasts.length);
 
     // خطوط الشبكة الأفقية
     final gridPaint = Paint()
@@ -273,7 +274,8 @@ class _RoiChartPainter extends CustomPainter {
 
       final roiValue = maxRoi - (roiRange * i / 4);
       final tp = TextPainter(
-        text: TextSpan(text: '${roiValue.toStringAsFixed(0)}%', style: labelStyle),
+        text: TextSpan(
+            text: '${roiValue.toStringAsFixed(0)}%', style: labelStyle),
         textDirection: TextDirection.rtl,
       )..layout();
       tp.paint(canvas, Offset(0, y - tp.height / 2));
@@ -281,7 +283,8 @@ class _RoiChartPainter extends CustomPainter {
 
     // خط التعادل (ROI = 0)
     if (minRoi <= 0 && maxRoi >= 0) {
-      final zeroY = paddingTop + chartHeight - ((0 - minRoi) / roiRange * chartHeight);
+      final zeroY =
+          paddingTop + chartHeight - ((0 - minRoi) / roiRange * chartHeight);
       final breakEvenPaint = Paint()
         ..color = const Color(0xFFF59E0B).withValues(alpha: 0.5)
         ..strokeWidth = 1.5
@@ -361,7 +364,13 @@ class _RoiChartPainter extends CustomPainter {
     }
 
     // تسميات المحور السيني
-    final daysToShow = [0, forecasts.length ~/ 4, forecasts.length ~/ 2, (forecasts.length * 3) ~/ 4, forecasts.length - 1];
+    final daysToShow = [
+      0,
+      forecasts.length ~/ 4,
+      forecasts.length ~/ 2,
+      (forecasts.length * 3) ~/ 4,
+      forecasts.length - 1
+    ];
     for (final idx in daysToShow) {
       if (idx >= 0 && idx < forecasts.length) {
         final x = paddingLeft + idx * stepX;
@@ -369,7 +378,8 @@ class _RoiChartPainter extends CustomPainter {
           text: TextSpan(text: 'ي${forecasts[idx].day}', style: labelStyle),
           textDirection: TextDirection.rtl,
         )..layout();
-        tp.paint(canvas, Offset(x - tp.width / 2, size.height - paddingBottom + 6));
+        tp.paint(
+            canvas, Offset(x - tp.width / 2, size.height - paddingBottom + 6));
       }
     }
   }

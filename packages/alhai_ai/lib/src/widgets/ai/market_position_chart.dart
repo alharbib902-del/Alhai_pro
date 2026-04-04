@@ -38,7 +38,8 @@ class _MarketPositionChartState extends State<MarketPositionChart>
       vsync: this,
       duration: const Duration(milliseconds: 1200),
     );
-    _animation = CurvedAnimation(parent: _controller, curve: Curves.easeOutBack);
+    _animation =
+        CurvedAnimation(parent: _controller, curve: Curves.easeOutBack);
     _controller.forward();
   }
 
@@ -58,7 +59,10 @@ class _MarketPositionChartState extends State<MarketPositionChart>
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
+        border: Border.all(
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.1)
+                : AppColors.border),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
@@ -82,7 +86,8 @@ class _MarketPositionChartState extends State<MarketPositionChart>
                     ),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: const Icon(Icons.scatter_plot_rounded, color: Colors.white, size: 18),
+                  child: const Icon(Icons.scatter_plot_rounded,
+                      color: Colors.white, size: 18),
                 ),
                 const SizedBox(width: AlhaiSpacing.sm),
                 Expanded(
@@ -101,14 +106,17 @@ class _MarketPositionChartState extends State<MarketPositionChart>
                         'السعر مقابل الجودة',
                         style: TextStyle(
                           fontSize: 12,
-                          color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textMuted,
+                          color: isDark
+                              ? Colors.white.withValues(alpha: 0.5)
+                              : AppColors.textMuted,
                         ),
                       ),
                     ],
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   decoration: BoxDecoration(
                     color: AppColors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
@@ -127,7 +135,8 @@ class _MarketPositionChartState extends State<MarketPositionChart>
           ),
           Expanded(
             child: Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.xxl, AlhaiSpacing.zero, AlhaiSpacing.mdl, AlhaiSpacing.xxl),
+              padding: EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.xxl,
+                  AlhaiSpacing.zero, AlhaiSpacing.mdl, AlhaiSpacing.xxl),
               child: AnimatedBuilder(
                 animation: _animation,
                 builder: (context, _) {
@@ -139,7 +148,8 @@ class _MarketPositionChartState extends State<MarketPositionChart>
                         },
                         onExit: (_) => setState(() => _hoveredIndex = null),
                         child: CustomPaint(
-                          size: Size(constraints.maxWidth, constraints.maxHeight),
+                          size:
+                              Size(constraints.maxWidth, constraints.maxHeight),
                           painter: _MarketPositionPainter(
                             points: widget.position.competitors,
                             animationValue: _animation.value,
@@ -163,12 +173,15 @@ class _MarketPositionChartState extends State<MarketPositionChart>
           ),
           // Legend
           Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.md, AlhaiSpacing.zero, AlhaiSpacing.md, AlhaiSpacing.sm),
+            padding: EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.md,
+                AlhaiSpacing.zero, AlhaiSpacing.md, AlhaiSpacing.sm),
             child: Wrap(
               spacing: 16,
               runSpacing: 6,
               children: widget.position.competitors.map((point) {
-                final color = point.isUs ? AppColors.primary : _getCompetitorColor(point.name);
+                final color = point.isUs
+                    ? AppColors.primary
+                    : _getCompetitorColor(point.name);
                 return Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -178,9 +191,15 @@ class _MarketPositionChartState extends State<MarketPositionChart>
                       decoration: BoxDecoration(
                         color: color,
                         shape: BoxShape.circle,
-                        border: point.isUs ? Border.all(color: Colors.white, width: 2) : null,
+                        border: point.isUs
+                            ? Border.all(color: Colors.white, width: 2)
+                            : null,
                         boxShadow: point.isUs
-                            ? [BoxShadow(color: color.withValues(alpha: 0.4), blurRadius: 4)]
+                            ? [
+                                BoxShadow(
+                                    color: color.withValues(alpha: 0.4),
+                                    blurRadius: 4)
+                              ]
                             : null,
                       ),
                     ),
@@ -189,8 +208,11 @@ class _MarketPositionChartState extends State<MarketPositionChart>
                       point.name,
                       style: TextStyle(
                         fontSize: 11,
-                        fontWeight: point.isUs ? FontWeight.w700 : FontWeight.w500,
-                        color: isDark ? Colors.white.withValues(alpha: 0.7) : AppColors.textSecondary,
+                        fontWeight:
+                            point.isUs ? FontWeight.w700 : FontWeight.w500,
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.7)
+                            : AppColors.textSecondary,
                       ),
                     ),
                   ],
@@ -275,7 +297,8 @@ class _MarketPositionPainter extends CustomPainter {
 
   void _drawGrid(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = isDark ? Colors.white.withValues(alpha: 0.06) : AppColors.grey200
+      ..color =
+          isDark ? Colors.white.withValues(alpha: 0.06) : AppColors.grey200
       ..strokeWidth = 1;
 
     for (int i = 0; i <= 4; i++) {
@@ -287,31 +310,37 @@ class _MarketPositionPainter extends CustomPainter {
 
     // Center lines (dashed)
     final centerPaint = Paint()
-      ..color = isDark ? Colors.white.withValues(alpha: 0.15) : AppColors.grey300
+      ..color =
+          isDark ? Colors.white.withValues(alpha: 0.15) : AppColors.grey300
       ..strokeWidth = 1.5;
 
     final cx = size.width / 2;
     final cy = size.height / 2;
     for (double i = 0; i < size.width; i += 8) {
-      canvas.drawLine(Offset(i, cy), Offset(min(i + 4, size.width), cy), centerPaint);
+      canvas.drawLine(
+          Offset(i, cy), Offset(min(i + 4, size.width), cy), centerPaint);
     }
     for (double i = 0; i < size.height; i += 8) {
-      canvas.drawLine(Offset(cx, i), Offset(cx, min(i + 4, size.height)), centerPaint);
+      canvas.drawLine(
+          Offset(cx, i), Offset(cx, min(i + 4, size.height)), centerPaint);
     }
   }
 
   void _drawAxisLabels(Canvas canvas, Size size) {
-    final color = isDark ? Colors.white.withValues(alpha: 0.4) : AppColors.textMuted;
+    final color =
+        isDark ? Colors.white.withValues(alpha: 0.4) : AppColors.textMuted;
 
     // X axis labels
     final xLabels = [lowLabel, '', mediumLabel, '', highLabel];
     for (int i = 0; i < xLabels.length; i++) {
       if (xLabels[i].isEmpty) continue;
       final tp = TextPainter(
-        text: TextSpan(text: xLabels[i], style: TextStyle(color: color, fontSize: 10)),
+        text: TextSpan(
+            text: xLabels[i], style: TextStyle(color: color, fontSize: 10)),
         textDirection: TextDirection.rtl,
       )..layout();
-      tp.paint(canvas, Offset(size.width * i / 4 - tp.width / 2, size.height + 8));
+      tp.paint(
+          canvas, Offset(size.width * i / 4 - tp.width / 2, size.height + 8));
     }
 
     // Y axis labels
@@ -319,27 +348,32 @@ class _MarketPositionPainter extends CustomPainter {
     for (int i = 0; i < yLabels.length; i++) {
       if (yLabels[i].isEmpty) continue;
       final tp = TextPainter(
-        text: TextSpan(text: yLabels[i], style: TextStyle(color: color, fontSize: 10)),
+        text: TextSpan(
+            text: yLabels[i], style: TextStyle(color: color, fontSize: 10)),
         textDirection: TextDirection.rtl,
       )..layout();
-      tp.paint(canvas, Offset(-tp.width - 6, size.height * i / 4 - tp.height / 2));
+      tp.paint(
+          canvas, Offset(-tp.width - 6, size.height * i / 4 - tp.height / 2));
     }
 
     // X axis title
     final xTitle = TextPainter(
       text: TextSpan(
         text: 'السعر ',
-        style: TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.w600),
+        style:
+            TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.w600),
       ),
       textDirection: TextDirection.rtl,
     )..layout();
-    xTitle.paint(canvas, Offset(size.width / 2 - xTitle.width / 2, size.height + 22));
+    xTitle.paint(
+        canvas, Offset(size.width / 2 - xTitle.width / 2, size.height + 22));
 
     // Y axis title
     final yTitle = TextPainter(
       text: TextSpan(
         text: qualityLabel,
-        style: TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.w600),
+        style:
+            TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.w600),
       ),
       textDirection: TextDirection.rtl,
     )..layout();
@@ -351,14 +385,37 @@ class _MarketPositionPainter extends CustomPainter {
   }
 
   void _drawQuadrantLabels(Canvas canvas, Size size) {
-    final color = isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.grey200;
-    final textColor = isDark ? Colors.white.withValues(alpha: 0.15) : AppColors.textMuted.withValues(alpha: 0.5);
+    final color =
+        isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.grey200;
+    final textColor = isDark
+        ? Colors.white.withValues(alpha: 0.15)
+        : AppColors.textMuted.withValues(alpha: 0.5);
 
     final quadrants = [
-      {'label': 'قيمة ممتازة', 'x': size.width * 0.20, 'y': size.height * 0.20, 'color': AppColors.success},
-      {'label': luxuryLabel, 'x': size.width * 0.75, 'y': size.height * 0.20, 'color': AppColors.info},
-      {'label': economicLabel, 'x': size.width * 0.20, 'y': size.height * 0.80, 'color': AppColors.warning},
-      {'label': 'مبالغ فيه', 'x': size.width * 0.75, 'y': size.height * 0.80, 'color': AppColors.error},
+      {
+        'label': 'قيمة ممتازة',
+        'x': size.width * 0.20,
+        'y': size.height * 0.20,
+        'color': AppColors.success
+      },
+      {
+        'label': luxuryLabel,
+        'x': size.width * 0.75,
+        'y': size.height * 0.20,
+        'color': AppColors.info
+      },
+      {
+        'label': economicLabel,
+        'x': size.width * 0.20,
+        'y': size.height * 0.80,
+        'color': AppColors.warning
+      },
+      {
+        'label': 'مبالغ فيه',
+        'x': size.width * 0.75,
+        'y': size.height * 0.80,
+        'color': AppColors.error
+      },
     ];
 
     for (final q in quadrants) {
@@ -382,10 +439,12 @@ class _MarketPositionPainter extends CustomPainter {
         const Radius.circular(6),
       );
       canvas.drawRRect(bgRect, Paint()..color = color);
-      tp.paint(canvas, Offset(
-        (q['x'] as double) - tp.width / 2,
-        (q['y'] as double) - tp.height / 2,
-      ));
+      tp.paint(
+          canvas,
+          Offset(
+            (q['x'] as double) - tp.width / 2,
+            (q['y'] as double) - tp.height / 2,
+          ));
     }
   }
 
@@ -402,7 +461,8 @@ class _MarketPositionPainter extends CustomPainter {
     for (int i = 0; i < points.length; i++) {
       final point = points[i];
       final x = point.priceIndex * size.width * animationValue;
-      final y = size.height - (point.qualityIndex * size.height * animationValue);
+      final y =
+          size.height - (point.qualityIndex * size.height * animationValue);
       final radius = max(15.0, point.marketShare * 120) * animationValue;
       final color = competitorColors[point.name] ?? AppColors.grey400;
       final isHovered = hoveredIndex == i;
@@ -445,7 +505,9 @@ class _MarketPositionPainter extends CustomPainter {
         text: TextSpan(
           text: point.name,
           style: TextStyle(
-            color: isDark ? Colors.white.withValues(alpha: 0.8) : AppColors.textPrimary,
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.8)
+                : AppColors.textPrimary,
             fontSize: isHovered ? 12 : 10,
             fontWeight: point.isUs ? FontWeight.w700 : FontWeight.w500,
           ),
@@ -456,7 +518,8 @@ class _MarketPositionPainter extends CustomPainter {
 
       // Tooltip on hover
       if (isHovered) {
-        final tooltipText = '${point.name}\nسعر: ${(point.priceIndex * 100).toInt()}% | جودة: ${(point.qualityIndex * 100).toInt()}%\nحصة: ${(point.marketShare * 100).toInt()}%';
+        final tooltipText =
+            '${point.name}\nسعر: ${(point.priceIndex * 100).toInt()}% | جودة: ${(point.qualityIndex * 100).toInt()}%\nحصة: ${(point.marketShare * 100).toInt()}%';
         final tooltipTp = TextPainter(
           text: TextSpan(
             text: tooltipText,
@@ -487,10 +550,12 @@ class _MarketPositionPainter extends CustomPainter {
             ..style = PaintingStyle.stroke
             ..strokeWidth = 1,
         );
-        tooltipTp.paint(canvas, Offset(
-          x - tooltipTp.width / 2,
-          y - actualRadius - tooltipTp.height - 10,
-        ));
+        tooltipTp.paint(
+            canvas,
+            Offset(
+              x - tooltipTp.width / 2,
+              y - actualRadius - tooltipTp.height - 10,
+            ));
       }
     }
   }

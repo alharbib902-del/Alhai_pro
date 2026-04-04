@@ -62,10 +62,14 @@ class OrgSyncService {
   ) async {
     final cleanPayload = _cleanPayload(payload, tableName: tableName);
     try {
-      await _client.from(tableName).upsert(cleanPayload, onConflict: 'id').timeout(const Duration(seconds: 30));
+      await _client
+          .from(tableName)
+          .upsert(cleanPayload, onConflict: 'id')
+          .timeout(const Duration(seconds: 30));
     } on PostgrestException catch (e) {
       if (kDebugMode) {
-        debugPrint('OrgSync upsert DB error for $tableName: ${e.code} ${e.message}');
+        debugPrint(
+            'OrgSync upsert DB error for $tableName: ${e.code} ${e.message}');
       }
       rethrow;
     } on TimeoutException {
@@ -90,10 +94,15 @@ class OrgSyncService {
       throw ArgumentError('Delete operation requires an "id" field');
     }
     try {
-      await _client.from(tableName).delete().eq('id', id).timeout(const Duration(seconds: 30));
+      await _client
+          .from(tableName)
+          .delete()
+          .eq('id', id)
+          .timeout(const Duration(seconds: 30));
     } on PostgrestException catch (e) {
       if (kDebugMode) {
-        debugPrint('OrgSync delete DB error for $tableName: ${e.code} ${e.message}');
+        debugPrint(
+            'OrgSync delete DB error for $tableName: ${e.code} ${e.message}');
       }
       rethrow;
     } on TimeoutException {
@@ -133,7 +142,8 @@ class OrgSyncService {
       return _jsonConverter.batchToLocal(tableName, records);
     } on PostgrestException catch (e) {
       if (kDebugMode) {
-        debugPrint('OrgSync fetch DB error for $tableName: ${e.code} ${e.message}');
+        debugPrint(
+            'OrgSync fetch DB error for $tableName: ${e.code} ${e.message}');
       }
       rethrow;
     } on TimeoutException {
@@ -156,8 +166,7 @@ class OrgSyncService {
     DateTime? since,
   }) async {
     try {
-      var query =
-          _client.from(tableName).select().eq('store_id', storeId);
+      var query = _client.from(tableName).select().eq('store_id', storeId);
 
       if (since != null) {
         query = query.gte('updated_at', since.toIso8601String());
@@ -168,7 +177,8 @@ class OrgSyncService {
       return _jsonConverter.batchToLocal(tableName, records);
     } on PostgrestException catch (e) {
       if (kDebugMode) {
-        debugPrint('OrgSync fetch DB error for $tableName: ${e.code} ${e.message}');
+        debugPrint(
+            'OrgSync fetch DB error for $tableName: ${e.code} ${e.message}');
       }
       rethrow;
     } on TimeoutException {

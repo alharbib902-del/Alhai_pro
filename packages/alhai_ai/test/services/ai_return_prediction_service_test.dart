@@ -77,19 +77,16 @@ void main() {
               p.riskLevel == ReturnRiskLevel.high ||
               p.riskLevel == ReturnRiskLevel.veryHigh)
           .toList();
-      final lowRisk = probs
-          .where((p) => p.riskLevel == ReturnRiskLevel.low)
-          .toList();
+      final lowRisk =
+          probs.where((p) => p.riskLevel == ReturnRiskLevel.low).toList();
 
       if (highRisk.isNotEmpty && lowRisk.isNotEmpty) {
-        final avgHigh = highRisk
-                .map((p) => p.probability)
-                .reduce((a, b) => a + b) /
-            highRisk.length;
-        final avgLow = lowRisk
-                .map((p) => p.probability)
-                .reduce((a, b) => a + b) /
-            lowRisk.length;
+        final avgHigh =
+            highRisk.map((p) => p.probability).reduce((a, b) => a + b) /
+                highRisk.length;
+        final avgLow =
+            lowRisk.map((p) => p.probability).reduce((a, b) => a + b) /
+                lowRisk.length;
         expect(avgHigh, greaterThan(avgLow));
       }
     });

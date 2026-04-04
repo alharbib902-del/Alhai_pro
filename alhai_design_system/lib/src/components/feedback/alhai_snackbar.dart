@@ -166,7 +166,8 @@ class AlhaiSnackbar extends StatelessWidget {
               onPressed: onAction,
               style: TextButton.styleFrom(
                 foregroundColor: colors.foreground,
-                padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm),
                 minimumSize: Size.zero,
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
@@ -190,7 +191,8 @@ class AlhaiSnackbar extends StatelessWidget {
     );
   }
 
-  _SnackbarColors _getColors(ColorScheme colorScheme, AlhaiStatusColors statusColors) {
+  _SnackbarColors _getColors(
+      ColorScheme colorScheme, AlhaiStatusColors statusColors) {
     switch (variant) {
       case AlhaiSnackbarVariant.neutral:
         return _SnackbarColors(

@@ -25,28 +25,29 @@ class AuditLogTable extends Table {
   TextColumn get storeId => text()();
   TextColumn get userId => text()();
   TextColumn get userName => text()();
-  
+
   // نوع العملية
-  TextColumn get action => text()(); 
-  // login, logout, sale_create, sale_cancel, refund, 
-  // price_change, stock_adjust, payment_record, 
+  TextColumn get action => text()();
+  // login, logout, sale_create, sale_cancel, refund,
+  // price_change, stock_adjust, payment_record,
   // shift_open, shift_close, settings_change
-  
+
   // تفاصيل العملية
-  TextColumn get entityType => text().nullable()(); // sale, product, customer, etc.
+  TextColumn get entityType =>
+      text().nullable()(); // sale, product, customer, etc.
   TextColumn get entityId => text().nullable()();
   TextColumn get oldValue => text().nullable()(); // JSON
   TextColumn get newValue => text().nullable()(); // JSON
   TextColumn get description => text().nullable()();
-  
+
   // معلومات إضافية
   TextColumn get ipAddress => text().nullable()();
   TextColumn get deviceInfo => text().nullable()();
-  
+
   // التاريخ
   DateTimeColumn get createdAt => dateTime()();
   DateTimeColumn get syncedAt => dateTime().nullable()();
-  
+
   @override
   Set<Column> get primaryKey => {id};
 }

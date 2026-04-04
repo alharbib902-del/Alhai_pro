@@ -22670,6 +22670,36 @@ abstract class AppLocalizations {
   /// **'تعديل الخطة'**
   String get editPlan;
 
+  /// No description provided for @selectPlan.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر الخطة'**
+  String get selectPlan;
+
+  /// No description provided for @currentPlan.
+  ///
+  /// In ar, this message translates to:
+  /// **'الخطة الحالية'**
+  String get currentPlan;
+
+  /// No description provided for @noPlansAvailable.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد خطط متاحة. أنشئ خططاً أولاً.'**
+  String get noPlansAvailable;
+
+  /// No description provided for @alreadyOnHighestPlan.
+  ///
+  /// In ar, this message translates to:
+  /// **'هذا المتجر على أعلى خطة بالفعل.'**
+  String get alreadyOnHighestPlan;
+
+  /// No description provided for @alreadyOnLowestPlan.
+  ///
+  /// In ar, this message translates to:
+  /// **'هذا المتجر على أدنى خطة بالفعل.'**
+  String get alreadyOnLowestPlan;
+
   /// No description provided for @activeSubscriptions.
   ///
   /// In ar, this message translates to:
@@ -24638,6 +24668,312 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'ساعة الجهاز غير دقيقة - يرجى ضبط الوقت (فرق: {minutes} دقيقة)'**
   String deviceClockInaccurate(int minutes);
+
+  /// No description provided for @saSignInFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'فشل تسجيل الدخول'**
+  String get saSignInFailed;
+
+  /// No description provided for @saAccessDenied.
+  ///
+  /// In ar, this message translates to:
+  /// **'الوصول مرفوض. يلزم صلاحية المشرف العام.'**
+  String get saAccessDenied;
+
+  /// No description provided for @saPlatformManagement.
+  ///
+  /// In ar, this message translates to:
+  /// **'إدارة منصة الحي نقطة البيع'**
+  String get saPlatformManagement;
+
+  /// No description provided for @saSuperAdmin.
+  ///
+  /// In ar, this message translates to:
+  /// **'المشرف العام'**
+  String get saSuperAdmin;
+
+  /// No description provided for @saEnterCredentials.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدخل البريد الإلكتروني وكلمة المرور'**
+  String get saEnterCredentials;
+
+  /// No description provided for @saSignIn.
+  ///
+  /// In ar, this message translates to:
+  /// **'تسجيل الدخول'**
+  String get saSignIn;
+
+  /// No description provided for @saSuperAdminOnly.
+  ///
+  /// In ar, this message translates to:
+  /// **'فقط المستخدمين بصلاحية المشرف العام يمكنهم الوصول لهذه اللوحة.'**
+  String get saSuperAdminOnly;
+
+  /// No description provided for @saNoSubscriptionsYet.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد اشتراكات بعد'**
+  String get saNoSubscriptionsYet;
+
+  /// No description provided for @saNoRevenueData.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد بيانات إيرادات'**
+  String get saNoRevenueData;
+
+  /// No description provided for @saNoLogsFound.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد سجلات'**
+  String get saNoLogsFound;
+
+  /// No description provided for @saPlatformSummary.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملخص المنصة'**
+  String get saPlatformSummary;
+
+  /// No description provided for @saSubscriptionStatus.
+  ///
+  /// In ar, this message translates to:
+  /// **'حالة الاشتراكات'**
+  String get saSubscriptionStatus;
+
+  /// No description provided for @saExportData.
+  ///
+  /// In ar, this message translates to:
+  /// **'تصدير البيانات'**
+  String get saExportData;
+
+  /// No description provided for @saExportComingSoon.
+  ///
+  /// In ar, this message translates to:
+  /// **'التصدير قريباً'**
+  String get saExportComingSoon;
+
+  /// No description provided for @saStoresReport.
+  ///
+  /// In ar, this message translates to:
+  /// **'تقرير المتاجر'**
+  String get saStoresReport;
+
+  /// No description provided for @saUsersReport.
+  ///
+  /// In ar, this message translates to:
+  /// **'تقرير المستخدمين'**
+  String get saUsersReport;
+
+  /// No description provided for @saRevenueReport.
+  ///
+  /// In ar, this message translates to:
+  /// **'تقرير الإيرادات'**
+  String get saRevenueReport;
+
+  /// No description provided for @saActivityLogs.
+  ///
+  /// In ar, this message translates to:
+  /// **'سجل النشاط'**
+  String get saActivityLogs;
+
+  /// No description provided for @saWarnings.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحذيرات'**
+  String get saWarnings;
+
+  /// No description provided for @saZatcaEInvoicing.
+  ///
+  /// In ar, this message translates to:
+  /// **'الفوترة الإلكترونية ZATCA'**
+  String get saZatcaEInvoicing;
+
+  /// No description provided for @saEnableEInvoicing.
+  ///
+  /// In ar, this message translates to:
+  /// **'تفعيل الفوترة الإلكترونية لجميع المتاجر'**
+  String get saEnableEInvoicing;
+
+  /// No description provided for @saApiEnvironment.
+  ///
+  /// In ar, this message translates to:
+  /// **'بيئة API'**
+  String get saApiEnvironment;
+
+  /// No description provided for @saTaxRateVat.
+  ///
+  /// In ar, this message translates to:
+  /// **'نسبة الضريبة (VAT)'**
+  String get saTaxRateVat;
+
+  /// No description provided for @saDefaultLanguage.
+  ///
+  /// In ar, this message translates to:
+  /// **'اللغة الافتراضية'**
+  String get saDefaultLanguage;
+
+  /// No description provided for @saDefaultCurrency.
+  ///
+  /// In ar, this message translates to:
+  /// **'العملة الافتراضية'**
+  String get saDefaultCurrency;
+
+  /// No description provided for @saTrialPeriodDays.
+  ///
+  /// In ar, this message translates to:
+  /// **'فترة التجربة (أيام)'**
+  String get saTrialPeriodDays;
+
+  /// No description provided for @saResourceUsage.
+  ///
+  /// In ar, this message translates to:
+  /// **'استخدام الموارد'**
+  String get saResourceUsage;
+
+  /// No description provided for @saResponseTime.
+  ///
+  /// In ar, this message translates to:
+  /// **'وقت الاستجابة'**
+  String get saResponseTime;
+
+  /// No description provided for @saDbRoundTrip.
+  ///
+  /// In ar, this message translates to:
+  /// **'رحلة قاعدة البيانات'**
+  String get saDbRoundTrip;
+
+  /// No description provided for @saExcellent.
+  ///
+  /// In ar, this message translates to:
+  /// **'ممتاز'**
+  String get saExcellent;
+
+  /// No description provided for @saGood.
+  ///
+  /// In ar, this message translates to:
+  /// **'جيد'**
+  String get saGood;
+
+  /// No description provided for @saSlow.
+  ///
+  /// In ar, this message translates to:
+  /// **'بطيء'**
+  String get saSlow;
+
+  /// No description provided for @saRoleUpdated.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم تحديث الصلاحية'**
+  String get saRoleUpdated;
+
+  /// No description provided for @saNoInvoices.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد فواتير'**
+  String get saNoInvoices;
+
+  /// No description provided for @saErrorLoading.
+  ///
+  /// In ar, this message translates to:
+  /// **'خطأ في تحميل البيانات'**
+  String get saErrorLoading;
+
+  /// No description provided for @saUpgradePlan.
+  ///
+  /// In ar, this message translates to:
+  /// **'ترقية الخطة'**
+  String get saUpgradePlan;
+
+  /// No description provided for @saDowngradePlan.
+  ///
+  /// In ar, this message translates to:
+  /// **'تخفيض الخطة'**
+  String get saDowngradePlan;
+
+  /// No description provided for @saEditPlan.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعديل الخطة'**
+  String get saEditPlan;
+
+  /// No description provided for @saPaymentGateways.
+  ///
+  /// In ar, this message translates to:
+  /// **'بوابات الدفع'**
+  String get saPaymentGateways;
+
+  /// No description provided for @saCreditDebitProcessing.
+  ///
+  /// In ar, this message translates to:
+  /// **'معالجة بطاقات الائتمان والخصم'**
+  String get saCreditDebitProcessing;
+
+  /// No description provided for @saMultiMethodGateway.
+  ///
+  /// In ar, this message translates to:
+  /// **'بوابة دفع متعددة الطرق'**
+  String get saMultiMethodGateway;
+
+  /// No description provided for @saBuyNowPayLater.
+  ///
+  /// In ar, this message translates to:
+  /// **'اشتر الآن وادفع لاحقاً'**
+  String get saBuyNowPayLater;
+
+  /// No description provided for @saInstallmentPayments.
+  ///
+  /// In ar, this message translates to:
+  /// **'الدفع بالتقسيط'**
+  String get saInstallmentPayments;
+
+  /// No description provided for @saActiveStores.
+  ///
+  /// In ar, this message translates to:
+  /// **'المتاجر النشطة'**
+  String get saActiveStores;
+
+  /// No description provided for @saActiveSubscriptions.
+  ///
+  /// In ar, this message translates to:
+  /// **'الاشتراكات النشطة'**
+  String get saActiveSubscriptions;
+
+  /// No description provided for @saTrialSubscriptions.
+  ///
+  /// In ar, this message translates to:
+  /// **'اشتراكات تجريبية'**
+  String get saTrialSubscriptions;
+
+  /// No description provided for @saNewSignups30d.
+  ///
+  /// In ar, this message translates to:
+  /// **'تسجيلات جديدة (30 يوم)'**
+  String get saNewSignups30d;
+
+  /// No description provided for @saSubscribers.
+  ///
+  /// In ar, this message translates to:
+  /// **'المشتركون'**
+  String get saSubscribers;
+
+  /// No description provided for @saPercentOfTotal.
+  ///
+  /// In ar, this message translates to:
+  /// **'% من الإجمالي'**
+  String get saPercentOfTotal;
+
+  /// No description provided for @saDeactivateUserConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'هل أنت متأكد من تعطيل هذا المستخدم؟ سيتم إلغاء وصوله فوراً.'**
+  String get saDeactivateUserConfirm;
+
+  /// No description provided for @saSuspendStoreConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'هل أنت متأكد من إيقاف هذا المتجر؟ سيتم تعطيل الوصول لجميع المستخدمين فوراً.'**
+  String get saSuspendStoreConfirm;
 }
 
 class _AppLocalizationsDelegate

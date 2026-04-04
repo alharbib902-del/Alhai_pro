@@ -49,9 +49,8 @@ class AbTestConfigPanel extends StatelessWidget {
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.06)
-              : AppColors.border,
+          color:
+              isDark ? Colors.white.withValues(alpha: 0.06) : AppColors.border,
         ),
       ),
       child: Column(
@@ -259,7 +258,8 @@ class AbTestConfigPanel extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton.icon(
-              onPressed: (promotionA != null && promotionB != null) ? onLaunch : null,
+              onPressed:
+                  (promotionA != null && promotionB != null) ? onLaunch : null,
               icon: const Icon(Icons.rocket_launch, size: 18),
               label: const Text('إطلاق اختبار A/B'),
               style: ElevatedButton.styleFrom(
@@ -302,7 +302,8 @@ class AbTestConfigPanel extends StatelessWidget {
           shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
           ),
-          builder: (ctx) => _buildPromotionPicker(ctx, isDark, options, onSelect),
+          builder: (ctx) =>
+              _buildPromotionPicker(ctx, isDark, options, onSelect),
         );
       },
       child: Container(
@@ -320,7 +321,8 @@ class AbTestConfigPanel extends StatelessWidget {
         child: Column(
           children: [
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 3),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AlhaiSpacing.xs, vertical: 3),
               decoration: BoxDecoration(
                 color: color.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(6),
@@ -405,11 +407,13 @@ class AbTestConfigPanel extends StatelessWidget {
             child: ListView.separated(
               shrinkWrap: true,
               itemCount: options.length,
-              separatorBuilder: (_, __) => const SizedBox(height: AlhaiSpacing.xs),
+              separatorBuilder: (_, __) =>
+                  const SizedBox(height: AlhaiSpacing.xs),
               itemBuilder: (ctx, i) {
                 final promo = options[i];
                 final typeColor = Color(
-                  AiPromotionDesignerService.getPromotionTypeColorValue(promo.type),
+                  AiPromotionDesignerService.getPromotionTypeColorValue(
+                      promo.type),
                 );
                 return ListTile(
                   onTap: () {
@@ -431,7 +435,8 @@ class AbTestConfigPanel extends StatelessWidget {
                     ),
                     child: Center(
                       child: Text(
-                        AiPromotionDesignerService.getPromotionTypeEmoji(promo.type),
+                        AiPromotionDesignerService.getPromotionTypeEmoji(
+                            promo.type),
                         style: TextStyle(
                           color: typeColor,
                           fontWeight: FontWeight.bold,
@@ -466,7 +471,8 @@ class AbTestConfigPanel extends StatelessWidget {
     );
   }
 
-  Widget _buildGroupIndicator(String label, double percent, Color color, bool isDark) {
+  Widget _buildGroupIndicator(
+      String label, double percent, Color color, bool isDark) {
     return Expanded(
       flex: percent.round().clamp(1, 100),
       child: Container(

@@ -37,9 +37,8 @@ class _PrintQueueScreenState extends ConsumerState<PrintQueueScreen> {
       children: [
         AppHeader(
           title: l10n.printQueueTitle,
-          onMenuTap: isWideScreen
-              ? null
-              : () => Scaffold.of(context).openDrawer(),
+          onMenuTap:
+              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 3,
           userName: l10n.defaultUserName,
@@ -61,9 +60,8 @@ class _PrintQueueScreenState extends ConsumerState<PrintQueueScreen> {
                     children: [
                       Icon(Icons.print_disabled,
                           size: 64,
-                          color: isDark
-                              ? Colors.white24
-                              : AppColors.textTertiary),
+                          color:
+                              isDark ? Colors.white24 : AppColors.textTertiary),
                       const SizedBox(height: AlhaiSpacing.md),
                       Text(
                         l10n.noPrintJobsPending,
@@ -122,8 +120,7 @@ class _PrintQueueScreenState extends ConsumerState<PrintQueueScreen> {
               Text(
                 'XP-80C',
                 style: TextStyle(
-                    color:
-                        Theme.of(context).colorScheme.onSurfaceVariant),
+                    color: Theme.of(context).colorScheme.onSurfaceVariant),
               ),
             ],
           ),
@@ -218,19 +215,16 @@ class _PrintQueueScreenState extends ConsumerState<PrintQueueScreen> {
               ),
             ),
             child: ListTile(
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xxs),
+              contentPadding: const EdgeInsets.symmetric(
+                  horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xxs),
               leading: CircleAvatar(
                 backgroundColor: job.status == 'failed'
                     ? AppColors.error.withValues(alpha: 0.1)
                     : AppColors.info.withValues(alpha: 0.1),
                 child: Icon(
-                  job.type == 'receipt'
-                      ? Icons.receipt
-                      : Icons.description,
-                  color: job.status == 'failed'
-                      ? AppColors.error
-                      : AppColors.info,
+                  job.type == 'receipt' ? Icons.receipt : Icons.description,
+                  color:
+                      job.status == 'failed' ? AppColors.error : AppColors.info,
                 ),
               ),
               title: Text(
@@ -243,9 +237,7 @@ class _PrintQueueScreenState extends ConsumerState<PrintQueueScreen> {
               subtitle: Row(
                 children: [
                   Icon(
-                    job.status == 'failed'
-                        ? Icons.error
-                        : Icons.schedule,
+                    job.status == 'failed' ? Icons.error : Icons.schedule,
                     size: 14,
                     color: job.status == 'failed'
                         ? AppColors.error
@@ -316,8 +308,7 @@ class _PrintQueueScreenState extends ConsumerState<PrintQueueScreen> {
           ),
           Text(
             label,
-            style:
-                TextStyle(fontSize: 12, color: color.withValues(alpha: 0.8)),
+            style: TextStyle(fontSize: 12, color: color.withValues(alpha: 0.8)),
           ),
         ],
       ),
@@ -405,8 +396,7 @@ class _PrintQueueScreenState extends ConsumerState<PrintQueueScreen> {
         content: Text(l10n.clearPrintQueueConfirm),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: Text(l10n.cancel)),
+              onPressed: () => Navigator.pop(ctx), child: Text(l10n.cancel)),
           FilledButton(
             onPressed: () {
               Navigator.pop(ctx);

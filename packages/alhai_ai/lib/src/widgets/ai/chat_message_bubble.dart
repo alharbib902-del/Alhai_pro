@@ -30,7 +30,8 @@ class ChatMessageBubble extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xxs),
+      padding: const EdgeInsets.symmetric(
+          horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xxs),
       child: Row(
         mainAxisAlignment:
             _isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
@@ -88,7 +89,8 @@ class ChatMessageBubble extends StatelessWidget {
   }
 
   /// الفقاعة الرئيسية
-  Widget _buildBubble(BuildContext context, bool isDark, AppLocalizations l10n) {
+  Widget _buildBubble(
+      BuildContext context, bool isDark, AppLocalizations l10n) {
     final bgColor = _isUser
         ? AppColors.primary
         : isDark
@@ -135,7 +137,8 @@ class ChatMessageBubble extends StatelessWidget {
         children: [
           // محتوى الرسالة
           Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(14, AlhaiSpacing.sm, 14, AlhaiSpacing.xs),
+            padding: EdgeInsetsDirectional.fromSTEB(
+                14, AlhaiSpacing.sm, 14, AlhaiSpacing.xs),
             child: SelectableText(
               message.content,
               style: TextStyle(
@@ -157,7 +160,8 @@ class ChatMessageBubble extends StatelessWidget {
 
           // الوقت + زر النسخ
           Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(14, AlhaiSpacing.zero, AlhaiSpacing.xs, AlhaiSpacing.xs),
+            padding: EdgeInsetsDirectional.fromSTEB(
+                14, AlhaiSpacing.zero, AlhaiSpacing.xs, AlhaiSpacing.xs),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -176,8 +180,7 @@ class ChatMessageBubble extends StatelessWidget {
                   const SizedBox(width: AlhaiSpacing.xxs),
                   InkWell(
                     onTap: () {
-                      Clipboard.setData(
-                          ClipboardData(text: message.content));
+                      Clipboard.setData(ClipboardData(text: message.content));
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text('تم النسخ'), // Copied
@@ -210,17 +213,15 @@ class ChatMessageBubble extends StatelessWidget {
     if (data.isEmpty) return const SizedBox.shrink();
 
     return Container(
-      margin: EdgeInsetsDirectional.fromSTEB(14, AlhaiSpacing.zero, 14, AlhaiSpacing.xs),
+      margin: EdgeInsetsDirectional.fromSTEB(
+          14, AlhaiSpacing.zero, 14, AlhaiSpacing.xs),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: isDark
-            ? Colors.white.withValues(alpha: 0.05)
-            : AppColors.grey50,
+        color: isDark ? Colors.white.withValues(alpha: 0.05) : AppColors.grey50,
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.08)
-              : AppColors.border,
+          color:
+              isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.border,
         ),
       ),
       child: Column(
@@ -263,7 +264,8 @@ class ChatMessageBubble extends StatelessWidget {
   /// إجراءات مقترحة
   Widget _buildSuggestedActions(bool isDark) {
     return Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(14, AlhaiSpacing.zero, 14, AlhaiSpacing.xs),
+      padding: EdgeInsetsDirectional.fromSTEB(
+          14, AlhaiSpacing.zero, 14, AlhaiSpacing.xs),
       child: Wrap(
         spacing: 6,
         runSpacing: 6,
@@ -278,7 +280,8 @@ class ChatMessageBubble extends StatelessWidget {
             },
             borderRadius: BorderRadius.circular(20),
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 6),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AlhaiSpacing.sm, vertical: 6),
               decoration: BoxDecoration(
                 color: AppColors.primary.withValues(alpha: isDark ? 0.2 : 0.1),
                 borderRadius: BorderRadius.circular(20),

@@ -269,8 +269,7 @@ class OfflineQueueService {
       for (final item in batch) {
         // Enforce backoff: skip if last attempt was too recent
         if (item.lastAttempt != null) {
-          final waitUntil =
-              item.lastAttempt!.add(_backoffFor(item.retryCount));
+          final waitUntil = item.lastAttempt!.add(_backoffFor(item.retryCount));
           if (DateTime.now().isBefore(waitUntil)) {
             _notify(
                 'Backoff active for ${item.deliveryId} (retry ${item.retryCount})');
@@ -292,8 +291,7 @@ class OfflineQueueService {
           if (result['success'] == true) {
             items.remove(item);
             processed++;
-            _notify(
-                'Synced ${item.status} for delivery ${item.deliveryId}');
+            _notify('Synced ${item.status} for delivery ${item.deliveryId}');
           } else {
             // Server rejected (validation / invalid transition)
             items.remove(item); // discard – retrying won't help

@@ -28,12 +28,10 @@ final isAuthenticatedProvider = Provider<bool>((ref) {
 });
 
 /// Current app User model (loaded from `users` table).
-final currentUserProvider =
-    StateProvider<core.User?>((ref) => null);
+final currentUserProvider = StateProvider<core.User?>((ref) => null);
 
 /// Selected store for browsing.
-final selectedStoreProvider =
-    StateProvider<core.Store?>((ref) => null);
+final selectedStoreProvider = StateProvider<core.Store?>((ref) => null);
 
 /// Connectivity state stream.
 final connectivityProvider = StreamProvider<bool>((ref) {

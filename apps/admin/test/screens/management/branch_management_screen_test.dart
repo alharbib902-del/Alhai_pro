@@ -36,8 +36,7 @@ void main() {
       when(() => mockStoresDao.getAllStores())
           .thenAnswer((_) => completer.future);
 
-      await tester.pumpWidget(
-          createTestWidget(const BranchManagementScreen()));
+      await tester.pumpWidget(createTestWidget(const BranchManagementScreen()));
       await tester.pump();
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
@@ -50,11 +49,9 @@ void main() {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
 
-      when(() => mockStoresDao.getAllStores())
-          .thenAnswer((_) async => []);
+      when(() => mockStoresDao.getAllStores()).thenAnswer((_) async => []);
 
-      await tester.pumpWidget(
-          createTestWidget(const BranchManagementScreen()));
+      await tester.pumpWidget(createTestWidget(const BranchManagementScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(BranchManagementScreen), findsOneWidget);
@@ -67,11 +64,9 @@ void main() {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
 
-      when(() => mockStoresDao.getAllStores())
-          .thenThrow(Exception('DB error'));
+      when(() => mockStoresDao.getAllStores()).thenThrow(Exception('DB error'));
 
-      await tester.pumpWidget(
-          createTestWidget(const BranchManagementScreen()));
+      await tester.pumpWidget(createTestWidget(const BranchManagementScreen()));
       await tester.pumpAndSettle();
 
       // AppErrorState should be shown
@@ -85,11 +80,9 @@ void main() {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
 
-      when(() => mockStoresDao.getAllStores())
-          .thenAnswer((_) async => []);
+      when(() => mockStoresDao.getAllStores()).thenAnswer((_) async => []);
 
-      await tester.pumpWidget(
-          createTestWidget(const BranchManagementScreen()));
+      await tester.pumpWidget(createTestWidget(const BranchManagementScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.add), findsWidgets);
@@ -120,11 +113,9 @@ void main() {
           createdAt: DateTime(2026, 1, 1),
         ),
       ];
-      when(() => mockStoresDao.getAllStores())
-          .thenAnswer((_) async => stores);
+      when(() => mockStoresDao.getAllStores()).thenAnswer((_) async => stores);
 
-      await tester.pumpWidget(
-          createTestWidget(const BranchManagementScreen()));
+      await tester.pumpWidget(createTestWidget(const BranchManagementScreen()));
       await tester.pumpAndSettle();
 
       expect(find.text('الفرع الرئيسي'), findsOneWidget);

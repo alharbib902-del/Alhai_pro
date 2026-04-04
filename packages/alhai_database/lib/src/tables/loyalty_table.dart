@@ -14,7 +14,10 @@ import 'users_table.dart';
 @TableIndex(name: 'idx_loyalty_customer_id', columns: {#customerId})
 @TableIndex(name: 'idx_loyalty_store_id', columns: {#storeId})
 @TableIndex(name: 'idx_loyalty_synced_at', columns: {#syncedAt})
-@TableIndex(name: 'idx_loyalty_customer_store_unique', columns: {#customerId, #storeId}, unique: true)
+@TableIndex(
+    name: 'idx_loyalty_customer_store_unique',
+    columns: {#customerId, #storeId},
+    unique: true)
 class LoyaltyPointsTable extends Table {
   @override
   String get tableName => 'loyalty_points';

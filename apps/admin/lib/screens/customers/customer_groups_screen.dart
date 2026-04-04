@@ -12,7 +12,8 @@ class CustomerGroupsScreen extends ConsumerStatefulWidget {
   const CustomerGroupsScreen({super.key});
 
   @override
-  ConsumerState<CustomerGroupsScreen> createState() => _CustomerGroupsScreenState();
+  ConsumerState<CustomerGroupsScreen> createState() =>
+      _CustomerGroupsScreenState();
 }
 
 class _CustomerGroupsScreenState extends ConsumerState<CustomerGroupsScreen> {
@@ -25,12 +26,42 @@ class _CustomerGroupsScreenState extends ConsumerState<CustomerGroupsScreen> {
   List<_CustomerGroup> _buildDefaultGroups() {
     final l10n = AppLocalizations.of(context)!;
     return [
-      _CustomerGroup(id: 'all', name: l10n.allCustomersGroup, icon: Icons.group_rounded, color: AppColors.info, minPurchase: 0),
-      _CustomerGroup(id: 'vip', name: l10n.vipCustomersGroup, icon: Icons.star_rounded, color: AppColors.warning, minPurchase: 10000),
-      _CustomerGroup(id: 'regular', name: l10n.regularCustomersGroup, icon: Icons.person_rounded, color: AppColors.success, minPurchase: 1000),
-      _CustomerGroup(id: 'new', name: l10n.newCustomersGroup, icon: Icons.person_add_rounded, color: const Color(0xFF06B6D4), minPurchase: 0), // segment status color - Cyan 500
-      _CustomerGroup(id: 'debt', name: l10n.customersWithDebt, icon: Icons.account_balance_rounded, color: AppColors.error, minPurchase: 0),
-      _CustomerGroup(id: 'inactive', name: l10n.inactive, icon: Icons.person_off_rounded, color: Theme.of(context).colorScheme.outline, minPurchase: 0),
+      _CustomerGroup(
+          id: 'all',
+          name: l10n.allCustomersGroup,
+          icon: Icons.group_rounded,
+          color: AppColors.info,
+          minPurchase: 0),
+      _CustomerGroup(
+          id: 'vip',
+          name: l10n.vipCustomersGroup,
+          icon: Icons.star_rounded,
+          color: AppColors.warning,
+          minPurchase: 10000),
+      _CustomerGroup(
+          id: 'regular',
+          name: l10n.regularCustomersGroup,
+          icon: Icons.person_rounded,
+          color: AppColors.success,
+          minPurchase: 1000),
+      _CustomerGroup(
+          id: 'new',
+          name: l10n.newCustomersGroup,
+          icon: Icons.person_add_rounded,
+          color: const Color(0xFF06B6D4),
+          minPurchase: 0), // segment status color - Cyan 500
+      _CustomerGroup(
+          id: 'debt',
+          name: l10n.customersWithDebt,
+          icon: Icons.account_balance_rounded,
+          color: AppColors.error,
+          minPurchase: 0),
+      _CustomerGroup(
+          id: 'inactive',
+          name: l10n.inactive,
+          icon: Icons.person_off_rounded,
+          color: Theme.of(context).colorScheme.outline,
+          minPurchase: 0),
     ];
   }
 
@@ -85,18 +116,48 @@ class _CustomerGroupsScreenState extends ConsumerState<CustomerGroupsScreen> {
         final l10n = AppLocalizations.of(context)!;
         setState(() {
           _groups = [
-            _CustomerGroup(id: 'all', name: l10n.allCustomersGroup, icon: Icons.group_rounded,
-                color: AppColors.info, minPurchase: 0, count: total),
-            _CustomerGroup(id: 'vip', name: l10n.vipCustomersGroup, icon: Icons.star_rounded,
-                color: AppColors.warning, minPurchase: 10000, count: vipCount),
-            _CustomerGroup(id: 'regular', name: l10n.regularCustomersGroup, icon: Icons.person_rounded,
-                color: AppColors.success, minPurchase: 1000, count: regularCount),
-            _CustomerGroup(id: 'new', name: l10n.newCustomers30Days, icon: Icons.person_add_rounded,
-                color: Colors.cyan, minPurchase: 0, count: newCount), // segment status color
-            _CustomerGroup(id: 'debt', name: l10n.haveDebts, icon: Icons.account_balance_rounded,
-                color: AppColors.error, minPurchase: 0, count: debtCount),
-            _CustomerGroup(id: 'inactive', name: l10n.inactive90Days, icon: Icons.person_off_rounded,
-                color: Theme.of(context).colorScheme.outline, minPurchase: 0, count: inactiveCount),
+            _CustomerGroup(
+                id: 'all',
+                name: l10n.allCustomersGroup,
+                icon: Icons.group_rounded,
+                color: AppColors.info,
+                minPurchase: 0,
+                count: total),
+            _CustomerGroup(
+                id: 'vip',
+                name: l10n.vipCustomersGroup,
+                icon: Icons.star_rounded,
+                color: AppColors.warning,
+                minPurchase: 10000,
+                count: vipCount),
+            _CustomerGroup(
+                id: 'regular',
+                name: l10n.regularCustomersGroup,
+                icon: Icons.person_rounded,
+                color: AppColors.success,
+                minPurchase: 1000,
+                count: regularCount),
+            _CustomerGroup(
+                id: 'new',
+                name: l10n.newCustomers30Days,
+                icon: Icons.person_add_rounded,
+                color: Colors.cyan,
+                minPurchase: 0,
+                count: newCount), // segment status color
+            _CustomerGroup(
+                id: 'debt',
+                name: l10n.haveDebts,
+                icon: Icons.account_balance_rounded,
+                color: AppColors.error,
+                minPurchase: 0,
+                count: debtCount),
+            _CustomerGroup(
+                id: 'inactive',
+                name: l10n.inactive90Days,
+                icon: Icons.person_off_rounded,
+                color: Theme.of(context).colorScheme.outline,
+                minPurchase: 0,
+                count: inactiveCount),
           ];
           _isLoading = false;
         });
@@ -107,7 +168,10 @@ class _CustomerGroupsScreenState extends ConsumerState<CustomerGroupsScreen> {
   }
 
   Future<void> _loadCustomersForGroup(int groupIndex) async {
-    setState(() { _selectedGroup = groupIndex; _isLoadingCustomers = true; });
+    setState(() {
+      _selectedGroup = groupIndex;
+      _isLoadingCustomers = true;
+    });
     try {
       final db = GetIt.I<AppDatabase>();
       final storeId = ref.read(currentStoreIdProvider)!;
@@ -122,7 +186,8 @@ class _CustomerGroupsScreenState extends ConsumerState<CustomerGroupsScreen> {
           whereClause = 'AND a.balance > 0';
           break;
         case 'inactive':
-          whereClause = "AND (c.last_purchase_at < datetime('now', '-90 days') OR c.last_purchase_at IS NULL)";
+          whereClause =
+              "AND (c.last_purchase_at < datetime('now', '-90 days') OR c.last_purchase_at IS NULL)";
           break;
         default:
           whereClause = '';
@@ -146,13 +211,15 @@ class _CustomerGroupsScreenState extends ConsumerState<CustomerGroupsScreen> {
 
       if (mounted) {
         setState(() {
-          _customers = result.map((row) => _CustomerSummary(
-            id: row.data['id'] as String,
-            name: row.data['name'] as String,
-            phone: row.data['phone'] as String? ?? '',
-            debt: _toDouble(row.data['debt']),
-            lastPurchaseAt: _parseDate(row.data['last_purchase_at']),
-          )).toList();
+          _customers = result
+              .map((row) => _CustomerSummary(
+                    id: row.data['id'] as String,
+                    name: row.data['name'] as String,
+                    phone: row.data['phone'] as String? ?? '',
+                    debt: _toDouble(row.data['debt']),
+                    lastPurchaseAt: _parseDate(row.data['last_purchase_at']),
+                  ))
+              .toList();
           _isLoadingCustomers = false;
         });
       }
@@ -181,138 +248,173 @@ class _CustomerGroupsScreenState extends ConsumerState<CustomerGroupsScreen> {
       appBar: AppBar(
         title: Text(l10n.customerGroups),
         actions: [
-          IconButton(icon: const Icon(Icons.refresh_rounded), onPressed: _loadGroupStats),
+          IconButton(
+              icon: const Icon(Icons.refresh_rounded),
+              onPressed: _loadGroupStats),
         ],
       ),
       body: SafeArea(
         top: false,
         child: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Row(
-              children: [
-                // Groups panel
-                SizedBox(
-                  width: MediaQuery.of(context).size.width > 600 ? 180 : MediaQuery.of(context).size.width * 0.4,
-                  child: Card(
-                    margin: const EdgeInsets.all(AlhaiSpacing.xs),
-                    child: ListView.builder(
-                      itemCount: _groups.length,
-                      itemBuilder: (ctx, i) {
-                        final g = _groups[i];
-                        final isSelected = i == _selectedGroup;
-                        return InkWell(
-                          onTap: () => _loadCustomersForGroup(i),
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 150),
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                            decoration: BoxDecoration(
-                              color: isSelected ? g.color.withValues(alpha: 0.15) : null,
-                              border: isSelected
-                                  ? BorderDirectional(end: BorderSide(color: g.color, width: 3))
-                                  : null,
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Icon(g.icon, size: 16, color: g.color),
-                                    const SizedBox(width: 6),
-                                    Expanded(
-                                      child: Text(
-                                        g.name,
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                                          color: isSelected ? g.color : null,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: AlhaiSpacing.xxxs),
-                                Text(
-                                  l10n.customerCountLabel(g.count),
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    color: g.color,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-
-                // Customers list
-                Expanded(
-                  child: _selectedGroup < 0
-                      ? Center(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(Icons.touch_app_rounded, size: 48, color: Theme.of(context).hintColor),
-                              SizedBox(height: AlhaiSpacing.sm),
-                              Text(l10n.selectGroupToViewCustomers,
-                                  style: TextStyle(color: Theme.of(context).hintColor)),
-                            ],
-                          ),
-                        )
-                      : _isLoadingCustomers
-                          ? const Center(child: CircularProgressIndicator())
-                          : _customers.isEmpty
-                              ? Center(
-                                  child: Text(l10n.noCustomersInGroup,
-                                      style: TextStyle(color: Theme.of(context).hintColor)),
-                                )
-                              : ListView.separated(
-                                  padding: const EdgeInsets.all(AlhaiSpacing.xs),
-                                  itemCount: _customers.length,
-                                  separatorBuilder: (_, __) => const SizedBox(height: AlhaiSpacing.xxs),
-                                  itemBuilder: (ctx, i) {
-                                    final c = _customers[i];
-                                    final group = _groups[_selectedGroup];
-                                    return Card(
-                                      child: ListTile(
-                                        dense: true,
-                                        leading: CircleAvatar(
-                                          radius: 18,
-                                          backgroundColor: group.color.withValues(alpha: 0.1),
-                                          child: Text(
-                                            c.name.isNotEmpty ? c.name[0] : '?',
-                                            style: TextStyle(color: group.color, fontWeight: FontWeight.bold),
+            ? const Center(child: CircularProgressIndicator())
+            : Row(
+                children: [
+                  // Groups panel
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width > 600
+                        ? 180
+                        : MediaQuery.of(context).size.width * 0.4,
+                    child: Card(
+                      margin: const EdgeInsets.all(AlhaiSpacing.xs),
+                      child: ListView.builder(
+                        itemCount: _groups.length,
+                        itemBuilder: (ctx, i) {
+                          final g = _groups[i];
+                          final isSelected = i == _selectedGroup;
+                          return InkWell(
+                            onTap: () => _loadCustomersForGroup(i),
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 150),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 10),
+                              decoration: BoxDecoration(
+                                color: isSelected
+                                    ? g.color.withValues(alpha: 0.15)
+                                    : null,
+                                border: isSelected
+                                    ? BorderDirectional(
+                                        end: BorderSide(
+                                            color: g.color, width: 3))
+                                    : null,
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Icon(g.icon, size: 16, color: g.color),
+                                      const SizedBox(width: 6),
+                                      Expanded(
+                                        child: Text(
+                                          g.name,
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: isSelected
+                                                ? FontWeight.bold
+                                                : FontWeight.normal,
+                                            color: isSelected ? g.color : null,
                                           ),
                                         ),
-                                        title: Text(c.name, style: const TextStyle(fontSize: 13)),
-                                        subtitle: Text(c.phone, style: const TextStyle(fontSize: 11)),
-                                        trailing: c.debt > 0
-                                            ? Column(
-                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                children: [
-                                                  Text(
-                                                    l10n.amountSar(c.debt.toStringAsFixed(0)),
-                                                    style: TextStyle(
-                                                      color: AppColors.error,
-                                                      fontWeight: FontWeight.bold,
-                                                      fontSize: 12,
-                                                    ),
-                                                  ),
-                                                  Text(l10n.debtWord, style: TextStyle(fontSize: 10, color: AppColors.error)),
-                                                ],
-                                              )
-                                            : Icon(Icons.check_circle_rounded,
-                                                color: AppColors.success, size: 18),
                                       ),
-                                    );
-                                  },
-                                ),
-                ),
-              ],
-            ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: AlhaiSpacing.xxxs),
+                                  Text(
+                                    l10n.customerCountLabel(g.count),
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      color: g.color,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+
+                  // Customers list
+                  Expanded(
+                    child: _selectedGroup < 0
+                        ? Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.touch_app_rounded,
+                                    size: 48,
+                                    color: Theme.of(context).hintColor),
+                                SizedBox(height: AlhaiSpacing.sm),
+                                Text(l10n.selectGroupToViewCustomers,
+                                    style: TextStyle(
+                                        color: Theme.of(context).hintColor)),
+                              ],
+                            ),
+                          )
+                        : _isLoadingCustomers
+                            ? const Center(child: CircularProgressIndicator())
+                            : _customers.isEmpty
+                                ? Center(
+                                    child: Text(l10n.noCustomersInGroup,
+                                        style: TextStyle(
+                                            color:
+                                                Theme.of(context).hintColor)),
+                                  )
+                                : ListView.separated(
+                                    padding:
+                                        const EdgeInsets.all(AlhaiSpacing.xs),
+                                    itemCount: _customers.length,
+                                    separatorBuilder: (_, __) => const SizedBox(
+                                        height: AlhaiSpacing.xxs),
+                                    itemBuilder: (ctx, i) {
+                                      final c = _customers[i];
+                                      final group = _groups[_selectedGroup];
+                                      return Card(
+                                        child: ListTile(
+                                          dense: true,
+                                          leading: CircleAvatar(
+                                            radius: 18,
+                                            backgroundColor: group.color
+                                                .withValues(alpha: 0.1),
+                                            child: Text(
+                                              c.name.isNotEmpty
+                                                  ? c.name[0]
+                                                  : '?',
+                                              style: TextStyle(
+                                                  color: group.color,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                          title: Text(c.name,
+                                              style: const TextStyle(
+                                                  fontSize: 13)),
+                                          subtitle: Text(c.phone,
+                                              style: const TextStyle(
+                                                  fontSize: 11)),
+                                          trailing: c.debt > 0
+                                              ? Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    Text(
+                                                      l10n.amountSar(c.debt
+                                                          .toStringAsFixed(0)),
+                                                      style: TextStyle(
+                                                        color: AppColors.error,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 12,
+                                                      ),
+                                                    ),
+                                                    Text(l10n.debtWord,
+                                                        style: TextStyle(
+                                                            fontSize: 10,
+                                                            color: AppColors
+                                                                .error)),
+                                                  ],
+                                                )
+                                              : Icon(Icons.check_circle_rounded,
+                                                  color: AppColors.success,
+                                                  size: 18),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                  ),
+                ],
+              ),
       ),
     );
   }

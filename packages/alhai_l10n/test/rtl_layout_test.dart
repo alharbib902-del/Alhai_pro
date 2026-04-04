@@ -9,7 +9,8 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('RTL layout rendering', () {
-    testWidgets('Text aligns to the right in RTL directionality', (tester) async {
+    testWidgets('Text aligns to the right in RTL directionality',
+        (tester) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: Directionality(
@@ -33,7 +34,8 @@ void main() {
       // In RTL, "start" means right side. Verify the widget's position
       // is in the right half of the screen.
       final textWidget = tester.getTopLeft(textFinder);
-      final screenWidth = tester.view.physicalSize.width / tester.view.devicePixelRatio;
+      final screenWidth =
+          tester.view.physicalSize.width / tester.view.devicePixelRatio;
       // In RTL with start alignment, the text should be positioned
       // (its left edge may be anywhere, but the widget should exist and render)
       expect(textWidget.dx, greaterThanOrEqualTo(0));
@@ -62,7 +64,8 @@ void main() {
 
       // In RTL, "first" child should be to the RIGHT of "second" child.
       expect(firstPos.dx, greaterThan(secondPos.dx),
-          reason: 'In RTL, the first Row child should render to the right of the second');
+          reason:
+              'In RTL, the first Row child should render to the right of the second');
     });
 
     testWidgets('EdgeInsetsDirectional respects RTL', (tester) async {
@@ -89,7 +92,8 @@ void main() {
           reason: 'In RTL, start padding should apply to the right side');
     });
 
-    testWidgets('AlignmentDirectional.centerStart is right-aligned in RTL', (tester) async {
+    testWidgets('AlignmentDirectional.centerStart is right-aligned in RTL',
+        (tester) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: Directionality(
@@ -105,7 +109,8 @@ void main() {
       );
 
       final textPos = tester.getTopLeft(find.text('aligned'));
-      final screenWidth = tester.view.physicalSize.width / tester.view.devicePixelRatio;
+      final screenWidth =
+          tester.view.physicalSize.width / tester.view.devicePixelRatio;
 
       // In RTL, centerStart means right-aligned.
       // The text's left edge should be in the right half of the screen.
@@ -135,7 +140,8 @@ void main() {
 
       // In LTR, "first" child should be to the LEFT of "second" child.
       expect(firstPos.dx, lessThan(secondPos.dx),
-          reason: 'In LTR, the first Row child should render to the left of the second');
+          reason:
+              'In LTR, the first Row child should render to the left of the second');
     });
   });
 }

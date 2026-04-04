@@ -76,8 +76,7 @@ class XmlCanonicalizer {
     for (final attr in element.attributes) {
       if (attr.name.prefix == 'xmlns' || attr.name.local == 'xmlns') {
         // Namespace declaration
-        final nsPrefix =
-            attr.name.prefix == 'xmlns' ? attr.name.local : '';
+        final nsPrefix = attr.name.prefix == 'xmlns' ? attr.name.local : '';
         namespaceDecls[nsPrefix] = attr.value;
       } else {
         attributes.add(attr);

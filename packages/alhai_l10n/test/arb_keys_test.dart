@@ -40,10 +40,7 @@ void main() {
       fail('l10n directory not found at ${l10nDir.path}');
     }
 
-    arbFiles = l10nDir
-        .listSync()
-        .where((f) => f.path.endsWith('.arb'))
-        .toList()
+    arbFiles = l10nDir.listSync().where((f) => f.path.endsWith('.arb')).toList()
       ..sort((a, b) => a.path.compareTo(b.path));
 
     // Use app_ar.arb as the base (primary locale).

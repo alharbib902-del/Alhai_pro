@@ -27,9 +27,8 @@ class SeasonalPatternsCard extends StatelessWidget {
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.08)
-              : AppColors.border,
+          color:
+              isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.border,
         ),
         boxShadow: [
           BoxShadow(

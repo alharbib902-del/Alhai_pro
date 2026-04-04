@@ -111,8 +111,7 @@ void main() {
         final failedItem = allItems.firstWhere((i) => i.id == item.id);
 
         // backoffMinutes = (1 << (2 - 1)).clamp(1, 60) = 2
-        final expectedMin =
-            beforeSecondFail.add(const Duration(minutes: 2));
+        final expectedMin = beforeSecondFail.add(const Duration(minutes: 2));
         expect(failedItem.nextRetryAt, isNotNull);
         expect(
           failedItem.nextRetryAt!.difference(expectedMin).inSeconds.abs(),
@@ -140,8 +139,7 @@ void main() {
 
         // The backoff for attempt 10 would be 2^9 = 512, clamped to 60
         // We verify nextRetryAt is not more than ~61 minutes from now
-        final maxExpected =
-            DateTime.now().add(const Duration(minutes: 61));
+        final maxExpected = DateTime.now().add(const Duration(minutes: 61));
         expect(failedItem.nextRetryAt!.isBefore(maxExpected), isTrue);
       });
     });
@@ -211,8 +209,7 @@ void main() {
         expect(pending, isEmpty);
       });
 
-      test('resolveConflict with merge should enqueue merged data',
-          () async {
+      test('resolveConflict with merge should enqueue merged data', () async {
         syncService.addConflict(
           entityType: SyncEntityType.product,
           entityId: 'prod-1',
@@ -296,7 +293,8 @@ void main() {
         await syncService.processQueue();
 
         // Assert - should be processed in FIFO order
-        expect(processedOrder, equals(['sale-oldest', 'sale-middle', 'sale-newest']));
+        expect(processedOrder,
+            equals(['sale-oldest', 'sale-middle', 'sale-newest']));
       });
 
       test('failed items should also be processed in FIFO order', () async {

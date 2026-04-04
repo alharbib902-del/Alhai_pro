@@ -13,10 +13,7 @@ final saPlatformSettingsProvider =
     FutureProvider.autoDispose<SAPlatformSettings>((ref) async {
   final client = ref.watch(saSupabaseClientProvider);
   try {
-    final data = await client
-        .from('platform_settings')
-        .select('*')
-        .single();
+    final data = await client.from('platform_settings').select('*').single();
     return SAPlatformSettings.fromJson(data);
   } catch (_) {
     // Table may not exist yet, return defaults

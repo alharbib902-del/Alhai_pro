@@ -24,8 +24,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const WalletScreen()));
+      await tester.pumpWidget(createTestWidget(const WalletScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(WalletScreen), findsOneWidget);
@@ -39,8 +38,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const WalletScreen()));
+      await tester.pumpWidget(createTestWidget(const WalletScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(TabBar), findsWidgets);
@@ -54,8 +52,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const WalletScreen()));
+      await tester.pumpWidget(createTestWidget(const WalletScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.add), findsWidgets);
@@ -69,8 +66,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const WalletScreen()));
+      await tester.pumpWidget(createTestWidget(const WalletScreen()));
       await tester.pumpAndSettle();
 
       // Without DAO stubs, the screen enters error state

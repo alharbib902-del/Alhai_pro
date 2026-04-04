@@ -62,11 +62,17 @@ class _CashFlowScreenState extends ConsumerState<CashFlowScreen> {
 
   Future<void> _loadData() async {
     try {
-      setState(() { _isLoading = true; _error = null; });
+      setState(() {
+        _isLoading = true;
+        _error = null;
+      });
       final db = GetIt.I<AppDatabase>();
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) {
-        setState(() { _error = 'لم يتم تحديد المتجر'; _isLoading = false; });
+        setState(() {
+          _error = 'لم يتم تحديد المتجر';
+          _isLoading = false;
+        });
         return;
       }
       final dr = _getDateRange();
@@ -147,7 +153,11 @@ class _CashFlowScreenState extends ConsumerState<CashFlowScreen> {
         });
       }
     } catch (e) {
-      if (mounted) setState(() { _error = e.toString(); _isLoading = false; });
+      if (mounted)
+        setState(() {
+          _error = e.toString();
+          _isLoading = false;
+        });
     }
   }
 
@@ -159,11 +169,16 @@ class _CashFlowScreenState extends ConsumerState<CashFlowScreen> {
 
   String _periodLabel() {
     switch (_period) {
-      case 'week': return 'هذا الأسبوع';
-      case 'month': return 'هذا الشهر';
-      case 'quarter': return 'هذا الربع';
-      case 'year': return 'هذه السنة';
-      default: return 'هذا الشهر';
+      case 'week':
+        return 'هذا الأسبوع';
+      case 'month':
+        return 'هذا الشهر';
+      case 'quarter':
+        return 'هذا الربع';
+      case 'year':
+        return 'هذه السنة';
+      default:
+        return 'هذا الشهر';
     }
   }
 
@@ -189,7 +204,8 @@ class _CashFlowScreenState extends ConsumerState<CashFlowScreen> {
               const SizedBox(height: AlhaiSpacing.sm),
               Text(_error!),
               const SizedBox(height: AlhaiSpacing.sm),
-              ElevatedButton(onPressed: _loadData, child: const Text('إعادة المحاولة')),
+              ElevatedButton(
+                  onPressed: _loadData, child: const Text('إعادة المحاولة')),
             ],
           ),
         ),
@@ -201,7 +217,10 @@ class _CashFlowScreenState extends ConsumerState<CashFlowScreen> {
         title: const Text('قائمة التدفق النقدي'),
         actions: [
           PopupMenuButton<String>(
-            onSelected: (v) { setState(() => _period = v); _loadData(); },
+            onSelected: (v) {
+              setState(() => _period = v);
+              _loadData();
+            },
             itemBuilder: (_) => [
               const PopupMenuItem(value: 'week', child: Text('هذا الأسبوع')),
               const PopupMenuItem(value: 'month', child: Text('هذا الشهر')),
@@ -221,85 +240,85 @@ class _CashFlowScreenState extends ConsumerState<CashFlowScreen> {
       body: SafeArea(
         top: false,
         child: RefreshIndicator(
-        onRefresh: _loadData,
-        child: ListView(
-          padding: const EdgeInsets.all(AlhaiSpacing.md),
-          children: [
-            // Net cash flow card
-            _NetCard(
-              label: 'صافي التدفق النقدي',
-              amount: _netCashFlow,
-              isPositive: _netCashFlow >= 0,
-            ),
-            const SizedBox(height: AlhaiSpacing.mdl),
+          onRefresh: _loadData,
+          child: ListView(
+            padding: const EdgeInsets.all(AlhaiSpacing.md),
+            children: [
+              // Net cash flow card
+              _NetCard(
+                label: 'صافي التدفق النقدي',
+                amount: _netCashFlow,
+                isPositive: _netCashFlow >= 0,
+              ),
+              const SizedBox(height: AlhaiSpacing.mdl),
 
-            // Operating activities
-            _ActivitySection(
-              title: 'الأنشطة التشغيلية',
-              icon: Icons.storefront_rounded,
-              color: AlhaiColors.info,
-              netAmount: _operatingNet,
-              isDark: isDark,
-              rows: [
-                _FlowRow(
-                  label: 'إيرادات المبيعات',
-                  amount: _salesReceipts,
-                  isInflow: true,
-                ),
-                _FlowRow(
-                  label: 'المصروفات المدفوعة',
-                  amount: -_expensesPaid,
-                  isInflow: false,
-                ),
-                _FlowRow(
-                  label: 'الضرائب المدفوعة (ضريبة القيمة المضافة)',
-                  amount: -_taxesPaid,
-                  isInflow: false,
-                ),
-              ],
-            ),
-            const SizedBox(height: AlhaiSpacing.md),
+              // Operating activities
+              _ActivitySection(
+                title: 'الأنشطة التشغيلية',
+                icon: Icons.storefront_rounded,
+                color: AlhaiColors.info,
+                netAmount: _operatingNet,
+                isDark: isDark,
+                rows: [
+                  _FlowRow(
+                    label: 'إيرادات المبيعات',
+                    amount: _salesReceipts,
+                    isInflow: true,
+                  ),
+                  _FlowRow(
+                    label: 'المصروفات المدفوعة',
+                    amount: -_expensesPaid,
+                    isInflow: false,
+                  ),
+                  _FlowRow(
+                    label: 'الضرائب المدفوعة (ضريبة القيمة المضافة)',
+                    amount: -_taxesPaid,
+                    isInflow: false,
+                  ),
+                ],
+              ),
+              const SizedBox(height: AlhaiSpacing.md),
 
-            // Investing activities
-            _ActivitySection(
-              title: 'الأنشطة الاستثمارية',
-              icon: Icons.trending_up_rounded,
-              color: Colors.orange,
-              netAmount: _investingNet,
-              isDark: isDark,
-              rows: [
-                _FlowRow(
-                  label: 'مدفوعات المشتريات',
-                  amount: -_purchasesPaid,
-                  isInflow: false,
-                ),
-              ],
-            ),
-            const SizedBox(height: AlhaiSpacing.md),
+              // Investing activities
+              _ActivitySection(
+                title: 'الأنشطة الاستثمارية',
+                icon: Icons.trending_up_rounded,
+                color: Colors.orange,
+                netAmount: _investingNet,
+                isDark: isDark,
+                rows: [
+                  _FlowRow(
+                    label: 'مدفوعات المشتريات',
+                    amount: -_purchasesPaid,
+                    isInflow: false,
+                  ),
+                ],
+              ),
+              const SizedBox(height: AlhaiSpacing.md),
 
-            // Financing activities
-            _ActivitySection(
-              title: 'الأنشطة التمويلية',
-              icon: Icons.account_balance_rounded,
-              color: AlhaiColors.success,
-              netAmount: _financingNet,
-              isDark: isDark,
-              rows: [
-                _FlowRow(
-                  label: 'إيداع نقدي',
-                  amount: _cashIn,
-                  isInflow: true,
-                ),
-                _FlowRow(
-                  label: 'سحب نقدي',
-                  amount: -_cashOut,
-                  isInflow: false,
-                ),
-              ],
-            ),
-          ],
+              // Financing activities
+              _ActivitySection(
+                title: 'الأنشطة التمويلية',
+                icon: Icons.account_balance_rounded,
+                color: AlhaiColors.success,
+                netAmount: _financingNet,
+                isDark: isDark,
+                rows: [
+                  _FlowRow(
+                    label: 'إيداع نقدي',
+                    amount: _cashIn,
+                    isInflow: true,
+                  ),
+                  _FlowRow(
+                    label: 'سحب نقدي',
+                    amount: -_cashOut,
+                    isInflow: false,
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
-      ),
       ),
     );
   }
@@ -310,7 +329,8 @@ class _NetCard extends StatelessWidget {
   final double amount;
   final bool isPositive;
 
-  const _NetCard({required this.label, required this.amount, required this.isPositive});
+  const _NetCard(
+      {required this.label, required this.amount, required this.isPositive});
 
   @override
   Widget build(BuildContext context) {
@@ -329,14 +349,20 @@ class _NetCard extends StatelessWidget {
         padding: const EdgeInsets.all(AlhaiSpacing.mdl),
         child: Column(
           children: [
-            Text(label, style: TextStyle(fontSize: 14, color: Theme.of(context).colorScheme.onSurfaceVariant)),
+            Text(label,
+                style: TextStyle(
+                    fontSize: 14,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant)),
             const SizedBox(height: AlhaiSpacing.xs),
             Text(
               '${isPositive ? '+' : ''}${amount.toStringAsFixed(0)} ر.س',
-              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: color),
+              style: TextStyle(
+                  fontSize: 32, fontWeight: FontWeight.bold, color: color),
             ),
             Icon(
-              isPositive ? Icons.arrow_upward_rounded : Icons.arrow_downward_rounded,
+              isPositive
+                  ? Icons.arrow_upward_rounded
+                  : Icons.arrow_downward_rounded,
               color: color,
               size: 20,
             ),
@@ -376,10 +402,15 @@ class _ActivitySection extends StatelessWidget {
               children: [
                 Icon(icon, color: color, size: 20),
                 const SizedBox(width: AlhaiSpacing.xs),
-                Text(title, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: color)),
+                Text(title,
+                    style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        color: color)),
                 const Spacer(),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
                     color: color.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
@@ -397,32 +428,39 @@ class _ActivitySection extends StatelessWidget {
             ),
             const Divider(height: 20),
             ...rows.map((row) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxs),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxs),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Icon(
-                        row.isInflow ? Icons.add_circle_outline : Icons.remove_circle_outline,
-                        size: 14,
-                        color: row.isInflow ? AlhaiColors.success : AlhaiColors.error,
+                      Row(
+                        children: [
+                          Icon(
+                            row.isInflow
+                                ? Icons.add_circle_outline
+                                : Icons.remove_circle_outline,
+                            size: 14,
+                            color: row.isInflow
+                                ? AlhaiColors.success
+                                : AlhaiColors.error,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(row.label, style: const TextStyle(fontSize: 13)),
+                        ],
                       ),
-                      const SizedBox(width: 6),
-                      Text(row.label, style: const TextStyle(fontSize: 13)),
+                      Text(
+                        '${row.amount >= 0 ? '+' : ''}${row.amount.toStringAsFixed(0)} ر.س',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: row.amount >= 0
+                              ? AlhaiColors.successDark
+                              : AlhaiColors.errorDark,
+                        ),
+                      ),
                     ],
                   ),
-                  Text(
-                    '${row.amount >= 0 ? '+' : ''}${row.amount.toStringAsFixed(0)} ر.س',
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                      color: row.amount >= 0 ? AlhaiColors.successDark : AlhaiColors.errorDark,
-                    ),
-                  ),
-                ],
-              ),
-            )),
+                )),
           ],
         ),
       ),
@@ -434,5 +472,6 @@ class _FlowRow {
   final String label;
   final double amount;
   final bool isInflow;
-  const _FlowRow({required this.label, required this.amount, required this.isInflow});
+  const _FlowRow(
+      {required this.label, required this.amount, required this.isInflow});
 }

@@ -244,10 +244,13 @@ void main() {
   group('ConflictResolution', () {
     test('has all expected values', () {
       expect(ConflictResolution.values.length, 4);
-      expect(ConflictResolution.values, contains(ConflictResolution.acceptLocal));
-      expect(ConflictResolution.values, contains(ConflictResolution.acceptServer));
+      expect(
+          ConflictResolution.values, contains(ConflictResolution.acceptLocal));
+      expect(
+          ConflictResolution.values, contains(ConflictResolution.acceptServer));
       expect(ConflictResolution.values, contains(ConflictResolution.merge));
-      expect(ConflictResolution.values, contains(ConflictResolution.createAdjustment));
+      expect(ConflictResolution.values,
+          contains(ConflictResolution.createAdjustment));
     });
   });
 

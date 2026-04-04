@@ -10,7 +10,8 @@ abstract final class AlhaiInputFormatters {
   static TextInputFormatter saudiPhone() => _SaudiPhoneFormatter();
 
   /// International phone formatter (digits only with + prefix)
-  static TextInputFormatter internationalPhone() => _InternationalPhoneFormatter();
+  static TextInputFormatter internationalPhone() =>
+      _InternationalPhoneFormatter();
 
   // ============================================
   // OTP Formatter
@@ -43,7 +44,8 @@ abstract final class AlhaiInputFormatters {
   // ============================================
 
   /// Quantity formatter (positive integers only)
-  static TextInputFormatter quantity({int maxDigits = 5, int maxValue = 99999}) =>
+  static TextInputFormatter quantity(
+          {int maxDigits = 5, int maxValue = 99999}) =>
       _QuantityFormatter(maxDigits: maxDigits, maxValue: maxValue);
 
   // ============================================
@@ -51,7 +53,8 @@ abstract final class AlhaiInputFormatters {
   // ============================================
 
   /// Digits only
-  static TextInputFormatter digitsOnly() => FilteringTextInputFormatter.digitsOnly;
+  static TextInputFormatter digitsOnly() =>
+      FilteringTextInputFormatter.digitsOnly;
 
   /// Allow only specific characters
   static TextInputFormatter allow(String pattern) =>
@@ -95,7 +98,8 @@ class _SaudiPhoneFormatter extends TextInputFormatter {
     final digitsOnly = newValue.text.replaceAll(RegExp(r'[^\d]'), '');
 
     // Limit to 12 digits (966 + 9 digits)
-    final limited = digitsOnly.length > 12 ? digitsOnly.substring(0, 12) : digitsOnly;
+    final limited =
+        digitsOnly.length > 12 ? digitsOnly.substring(0, 12) : digitsOnly;
 
     // Format: +966 5XX XXX XXXX
     final buffer = StringBuffer();
@@ -135,7 +139,8 @@ class _InternationalPhoneFormatter extends TextInputFormatter {
     final digitsOnly = text.replaceAll(RegExp(r'[^\d]'), '');
 
     // Limit to 15 digits
-    final limited = digitsOnly.length > 15 ? digitsOnly.substring(0, 15) : digitsOnly;
+    final limited =
+        digitsOnly.length > 15 ? digitsOnly.substring(0, 15) : digitsOnly;
 
     final formatted = hasPlus ? '+$limited' : limited;
     return TextEditingValue(
@@ -157,8 +162,9 @@ class _OtpFormatter extends TextInputFormatter {
     TextEditingValue newValue,
   ) {
     final digitsOnly = newValue.text.replaceAll(RegExp(r'[^\d]'), '');
-    final limited =
-        digitsOnly.length > maxLength ? digitsOnly.substring(0, maxLength) : digitsOnly;
+    final limited = digitsOnly.length > maxLength
+        ? digitsOnly.substring(0, maxLength)
+        : digitsOnly;
 
     return TextEditingValue(
       text: limited,
@@ -226,8 +232,9 @@ class _IntegerCurrencyFormatter extends TextInputFormatter {
     TextEditingValue newValue,
   ) {
     final digitsOnly = newValue.text.replaceAll(RegExp(r'[^\d]'), '');
-    var limited =
-        digitsOnly.length > maxDigits ? digitsOnly.substring(0, maxDigits) : digitsOnly;
+    var limited = digitsOnly.length > maxDigits
+        ? digitsOnly.substring(0, maxDigits)
+        : digitsOnly;
 
     // Remove leading zeros
     limited = limited.replaceFirst(RegExp(r'^0+'), '');
@@ -257,8 +264,9 @@ class _QuantityFormatter extends TextInputFormatter {
     }
 
     final digitsOnly = newValue.text.replaceAll(RegExp(r'[^\d]'), '');
-    var limited =
-        digitsOnly.length > maxDigits ? digitsOnly.substring(0, maxDigits) : digitsOnly;
+    var limited = digitsOnly.length > maxDigits
+        ? digitsOnly.substring(0, maxDigits)
+        : digitsOnly;
 
     // Remove leading zeros
     limited = limited.replaceFirst(RegExp(r'^0+'), '');

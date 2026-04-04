@@ -18,8 +18,7 @@ void main() {
     db = setupMockDatabase(productsDao: productsDao);
     setupTestGetIt(mockDb: db);
 
-    when(() => productsDao.getAllProducts(any()))
-        .thenAnswer((_) async => []);
+    when(() => productsDao.getAllProducts(any())).thenAnswer((_) async => []);
   });
 
   tearDown(() => tearDownTestGetIt());

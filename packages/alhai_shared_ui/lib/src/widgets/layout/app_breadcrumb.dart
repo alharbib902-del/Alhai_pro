@@ -99,9 +99,8 @@ class _BreadcrumbItemWidgetState extends State<_BreadcrumbItemWidget> {
                       ? AppColors.textPrimary
                       : AppColors.textSecondary,
                   fontSize: 14,
-                  fontWeight: widget.isLast
-                      ? FontWeight.w600
-                      : FontWeight.normal,
+                  fontWeight:
+                      widget.isLast ? FontWeight.w600 : FontWeight.normal,
                 ),
               ),
             ],
@@ -129,17 +128,33 @@ class DateTimeDisplay extends StatelessWidget {
   Widget build(BuildContext context) {
     final now = dateTime ?? DateTime.now();
     final months = [
-      'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
-      'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر',
+      'يناير',
+      'فبراير',
+      'مارس',
+      'أبريل',
+      'مايو',
+      'يونيو',
+      'يوليو',
+      'أغسطس',
+      'سبتمبر',
+      'أكتوبر',
+      'نوفمبر',
+      'ديسمبر',
     ];
     final days = [
-      'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء',
-      'الخميس', 'الجمعة', 'السبت',
+      'الأحد',
+      'الإثنين',
+      'الثلاثاء',
+      'الأربعاء',
+      'الخميس',
+      'الجمعة',
+      'السبت',
     ];
 
     final day = days[now.weekday % 7];
     final date = '${now.day} ${months[now.month - 1]} ${now.year}';
-    final time = '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
+    final time =
+        '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
 
     return Row(
       mainAxisSize: MainAxisSize.min,

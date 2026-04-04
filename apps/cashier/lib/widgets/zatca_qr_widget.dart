@@ -45,45 +45,45 @@ class ZatcaQrWidget extends StatelessWidget {
         children: [
           Container(
             padding: const EdgeInsets.all(AlhaiSpacing.sm),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: AppColors.getBorder(isDark),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: AppColors.getBorder(isDark),
+              ),
+            ),
+            child: QrImageView(
+              data: qrData,
+              version: QrVersions.auto,
+              size: size,
+              backgroundColor: Colors.white,
+              eyeStyle: const QrEyeStyle(
+                eyeShape: QrEyeShape.square,
+                color: Color(0xFF1A1A2E),
+              ),
+              dataModuleStyle: const QrDataModuleStyle(
+                dataModuleShape: QrDataModuleShape.square,
+                color: Color(0xFF1A1A2E),
+              ),
             ),
           ),
-          child: QrImageView(
-            data: qrData,
-            version: QrVersions.auto,
-            size: size,
-            backgroundColor: Colors.white,
-            eyeStyle: const QrEyeStyle(
-              eyeShape: QrEyeShape.square,
-              color: Color(0xFF1A1A2E),
-            ),
-            dataModuleStyle: const QrDataModuleStyle(
-              dataModuleShape: QrDataModuleShape.square,
-              color: Color(0xFF1A1A2E),
-            ),
-          ),
-        ),
-        const SizedBox(height: AlhaiSpacing.xs),
-        Text(
-          'ZATCA E-Invoice',
-          style: TextStyle(
-            fontSize: 10,
-            color: AppColors.getTextMuted(isDark),
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        if (ZatcaQrService.isValidVatNumber(vatNumber))
+          const SizedBox(height: AlhaiSpacing.xs),
           Text(
-            ZatcaQrService.formatVatNumber(vatNumber),
+            'ZATCA E-Invoice',
             style: TextStyle(
-              fontSize: 9,
+              fontSize: 10,
               color: AppColors.getTextMuted(isDark),
+              fontWeight: FontWeight.w500,
             ),
           ),
+          if (ZatcaQrService.isValidVatNumber(vatNumber))
+            Text(
+              ZatcaQrService.formatVatNumber(vatNumber),
+              style: TextStyle(
+                fontSize: 9,
+                color: AppColors.getTextMuted(isDark),
+              ),
+            ),
         ],
       ),
     );

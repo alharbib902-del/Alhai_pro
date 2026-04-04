@@ -64,7 +64,10 @@ class LiteSettingsScreen extends ConsumerWidget {
           // =================================================================
           // APPEARANCE SECTION
           // =================================================================
-          _SectionHeader(title: l10n.appearance, icon: Icons.palette_outlined, isDark: isDark),
+          _SectionHeader(
+              title: l10n.appearance,
+              icon: Icons.palette_outlined,
+              isDark: isDark),
           const SizedBox(height: AlhaiSpacing.xs),
           _SettingsCard(
             isDark: isDark,
@@ -92,7 +95,10 @@ class LiteSettingsScreen extends ConsumerWidget {
           // =================================================================
           // NOTIFICATIONS SECTION
           // =================================================================
-          _SectionHeader(title: l10n.notifications, icon: Icons.notifications_outlined, isDark: isDark),
+          _SectionHeader(
+              title: l10n.notifications,
+              icon: Icons.notifications_outlined,
+              isDark: isDark),
           const SizedBox(height: AlhaiSpacing.xs),
           _SettingsCard(
             isDark: isDark,
@@ -103,7 +109,8 @@ class LiteSettingsScreen extends ConsumerWidget {
                 subtitle: l10n.lowStockNotifications,
                 isDark: isDark,
                 value: ref.watch(_lowStockAlertsProvider),
-                onChanged: (v) => ref.read(_lowStockAlertsProvider.notifier).state = v,
+                onChanged: (v) =>
+                    ref.read(_lowStockAlertsProvider.notifier).state = v,
               ),
               _SettingsDivider(isDark: isDark),
               _ToggleTile(
@@ -112,7 +119,8 @@ class LiteSettingsScreen extends ConsumerWidget {
                 subtitle: l10n.expiryNotifications,
                 isDark: isDark,
                 value: ref.watch(_expiryAlertsProvider),
-                onChanged: (v) => ref.read(_expiryAlertsProvider.notifier).state = v,
+                onChanged: (v) =>
+                    ref.read(_expiryAlertsProvider.notifier).state = v,
               ),
               _SettingsDivider(isDark: isDark),
               _ToggleTile(
@@ -122,7 +130,8 @@ class LiteSettingsScreen extends ConsumerWidget {
                 subtitle: 'Shift open/close reminders',
                 isDark: isDark,
                 value: ref.watch(_shiftRemindersProvider),
-                onChanged: (v) => ref.read(_shiftRemindersProvider.notifier).state = v,
+                onChanged: (v) =>
+                    ref.read(_shiftRemindersProvider.notifier).state = v,
               ),
               _SettingsDivider(isDark: isDark),
               _ToggleTile(
@@ -131,7 +140,8 @@ class LiteSettingsScreen extends ConsumerWidget {
                 subtitle: l10n.refundRequestTitle,
                 isDark: isDark,
                 value: ref.watch(_refundNotificationsProvider),
-                onChanged: (v) => ref.read(_refundNotificationsProvider.notifier).state = v,
+                onChanged: (v) =>
+                    ref.read(_refundNotificationsProvider.notifier).state = v,
               ),
             ],
           ),
@@ -141,7 +151,8 @@ class LiteSettingsScreen extends ConsumerWidget {
           // =================================================================
           // ALERT THRESHOLDS SECTION
           // =================================================================
-          _SectionHeader(title: l10n.alerts, icon: Icons.tune_rounded, isDark: isDark),
+          _SectionHeader(
+              title: l10n.alerts, icon: Icons.tune_rounded, isDark: isDark),
           const SizedBox(height: AlhaiSpacing.xs),
           _SettingsCard(
             isDark: isDark,
@@ -154,7 +165,8 @@ class LiteSettingsScreen extends ConsumerWidget {
                 isDark: isDark,
                 onDecrease: () {
                   final v = ref.read(_lowStockThresholdProvider);
-                  if (v > 1) ref.read(_lowStockThresholdProvider.notifier).state = v - 1;
+                  if (v > 1)
+                    ref.read(_lowStockThresholdProvider.notifier).state = v - 1;
                 },
                 onIncrease: () {
                   final v = ref.read(_lowStockThresholdProvider);
@@ -170,7 +182,9 @@ class LiteSettingsScreen extends ConsumerWidget {
                 isDark: isDark,
                 onDecrease: () {
                   final v = ref.read(_expiryDaysThresholdProvider);
-                  if (v > 1) ref.read(_expiryDaysThresholdProvider.notifier).state = v - 1;
+                  if (v > 1)
+                    ref.read(_expiryDaysThresholdProvider.notifier).state =
+                        v - 1;
                 },
                 onIncrease: () {
                   final v = ref.read(_expiryDaysThresholdProvider);
@@ -185,7 +199,10 @@ class LiteSettingsScreen extends ConsumerWidget {
           // =================================================================
           // SECURITY SECTION
           // =================================================================
-          _SectionHeader(title: l10n.security, icon: Icons.shield_outlined, isDark: isDark),
+          _SectionHeader(
+              title: l10n.security,
+              icon: Icons.shield_outlined,
+              isDark: isDark),
           const SizedBox(height: AlhaiSpacing.xs),
           _SettingsCard(
             isDark: isDark,
@@ -223,7 +240,8 @@ class LiteSettingsScreen extends ConsumerWidget {
           // =================================================================
           // APP INFO SECTION
           // =================================================================
-          _SectionHeader(title: l10n.about, icon: Icons.info_outline, isDark: isDark),
+          _SectionHeader(
+              title: l10n.about, icon: Icons.info_outline, isDark: isDark),
           const SizedBox(height: AlhaiSpacing.xs),
           _SettingsCard(
             isDark: isDark,
@@ -374,7 +392,9 @@ class _SectionHeader extends StatelessWidget {
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.bold,
-            color: isDark ? Colors.white70 : Theme.of(context).colorScheme.onSurface,
+            color: isDark
+                ? Colors.white70
+                : Theme.of(context).colorScheme.onSurface,
           ),
         ),
       ],
@@ -399,7 +419,9 @@ class _SettingsCard extends StatelessWidget {
         color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark ? Colors.white12 : Theme.of(context).colorScheme.surfaceContainer,
+          color: isDark
+              ? Colors.white12
+              : Theme.of(context).colorScheme.surfaceContainer,
         ),
       ),
       child: Column(children: children),
@@ -434,7 +456,8 @@ class _SettingsTile extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(16),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: 14),
+        padding: const EdgeInsets.symmetric(
+            horizontal: AlhaiSpacing.md, vertical: 14),
         child: Row(
           children: [
             Container(
@@ -464,7 +487,9 @@ class _SettingsTile extends StatelessWidget {
                       subtitle!,
                       style: TextStyle(
                         fontSize: 12,
-                        color: isDark ? Colors.white38 : Theme.of(context).colorScheme.outline,
+                        color: isDark
+                            ? Colors.white38
+                            : Theme.of(context).colorScheme.outline,
                       ),
                     ),
                 ],
@@ -507,7 +532,8 @@ class _ToggleTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: 10),
+      padding:
+          const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: 10),
       child: Row(
         children: [
           Container(
@@ -537,7 +563,9 @@ class _ToggleTile extends StatelessWidget {
                     subtitle!,
                     style: TextStyle(
                       fontSize: 12,
-                      color: isDark ? Colors.white38 : Theme.of(context).colorScheme.outline,
+                      color: isDark
+                          ? Colors.white38
+                          : Theme.of(context).colorScheme.outline,
                     ),
                   ),
               ],
@@ -581,7 +609,8 @@ class _ThresholdTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: 10),
+      padding:
+          const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: 10),
       child: Row(
         children: [
           Container(
@@ -607,7 +636,9 @@ class _ThresholdTile extends StatelessWidget {
           // Stepper control
           Container(
             decoration: BoxDecoration(
-              color: isDark ? Colors.white.withValues(alpha: 0.08) : Theme.of(context).colorScheme.surfaceContainerLow,
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.08)
+                  : Theme.of(context).colorScheme.surfaceContainerLow,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Row(
@@ -617,12 +648,16 @@ class _ThresholdTile extends StatelessWidget {
                   tooltip: 'Decrease',
                   onPressed: onDecrease,
                   icon: const Icon(Icons.remove, size: 16),
-                  constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+                  constraints:
+                      const BoxConstraints(minWidth: 36, minHeight: 36),
                   padding: EdgeInsets.zero,
-                  color: isDark ? Colors.white54 : Theme.of(context).colorScheme.onSurfaceVariant,
+                  color: isDark
+                      ? Colors.white54
+                      : Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xxs),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xxs),
                   child: Text(
                     '$value $unit',
                     style: TextStyle(
@@ -636,9 +671,12 @@ class _ThresholdTile extends StatelessWidget {
                   tooltip: 'Increase',
                   onPressed: onIncrease,
                   icon: const Icon(Icons.add, size: 16),
-                  constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+                  constraints:
+                      const BoxConstraints(minWidth: 36, minHeight: 36),
                   padding: EdgeInsets.zero,
-                  color: isDark ? Colors.white54 : Theme.of(context).colorScheme.onSurfaceVariant,
+                  color: isDark
+                      ? Colors.white54
+                      : Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ],
             ),
@@ -663,7 +701,9 @@ class _SettingsDivider extends StatelessWidget {
     return Divider(
       height: 1,
       indent: 66,
-      color: isDark ? Colors.white.withValues(alpha: 0.06) : Theme.of(context).colorScheme.surfaceContainerLow,
+      color: isDark
+          ? Colors.white.withValues(alpha: 0.06)
+          : Theme.of(context).colorScheme.surfaceContainerLow,
     );
   }
 }

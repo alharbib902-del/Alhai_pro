@@ -88,10 +88,12 @@ class ZatcaInvoiceService {
     try {
       // ── Step 1: Validate ──────────────────────────────────
       final complianceResult = _complianceChecker.check(invoice);
-      if (!complianceResult.isValid && complianceResult.blockingErrors.isNotEmpty) {
+      if (!complianceResult.isValid &&
+          complianceResult.blockingErrors.isNotEmpty) {
         return result.copyWith(
           reportingStatus: ReportingStatus.failed,
-          errors: complianceResult.blockingErrors.map((e) => e.toString()).toList(),
+          errors:
+              complianceResult.blockingErrors.map((e) => e.toString()).toList(),
           warnings: complianceResult.warnings.map((e) => e.toString()).toList(),
         );
       }
@@ -105,8 +107,10 @@ class ZatcaInvoiceService {
       if (certificate == null) {
         return result.copyWith(
           reportingStatus: ReportingStatus.failed,
-          errors: ['No ZATCA certificate found for store $storeId. '
-              'Complete onboarding first.'],
+          errors: [
+            'No ZATCA certificate found for store $storeId. '
+                'Complete onboarding first.'
+          ],
           warnings: warningMessages,
         );
       }
@@ -368,7 +372,8 @@ class ZatcaInvoiceService {
   String _extractSignatureValue(String signedXml) {
     // Look for <ds:SignatureValue> or <SignatureValue>
     final patterns = [
-      RegExp(r'<ds:SignatureValue[^>]*>(.*?)</ds:SignatureValue>', dotAll: true),
+      RegExp(r'<ds:SignatureValue[^>]*>(.*?)</ds:SignatureValue>',
+          dotAll: true),
       RegExp(r'<SignatureValue[^>]*>(.*?)</SignatureValue>', dotAll: true),
     ];
 

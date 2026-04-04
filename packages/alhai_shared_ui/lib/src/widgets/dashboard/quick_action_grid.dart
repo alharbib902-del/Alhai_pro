@@ -100,13 +100,10 @@ class _QuickActionButtonState extends State<QuickActionButton>
         child: Container(
           padding: EdgeInsets.all(widget.compact ? 16 : 20),
           decoration: BoxDecoration(
-            color: action.isPrimary
-                ? action.color
-                : Colors.white,
+            color: action.isPrimary ? action.color : Colors.white,
             borderRadius: BorderRadius.circular(16),
-            border: action.isPrimary
-                ? null
-                : Border.all(color: AppColors.border),
+            border:
+                action.isPrimary ? null : Border.all(color: AppColors.border),
             boxShadow: [
               BoxShadow(
                 color: action.isPrimary
@@ -134,9 +131,7 @@ class _QuickActionButtonState extends State<QuickActionButton>
                     ),
                     child: Icon(
                       action.icon,
-                      color: action.isPrimary
-                          ? Colors.white
-                          : action.color,
+                      color: action.isPrimary ? Colors.white : action.color,
                       size: widget.compact ? 22 : 26,
                     ),
                   ),
@@ -176,9 +171,8 @@ class _QuickActionButtonState extends State<QuickActionButton>
               Text(
                 action.title,
                 style: TextStyle(
-                  color: action.isPrimary
-                      ? Colors.white
-                      : AppColors.textPrimary,
+                  color:
+                      action.isPrimary ? Colors.white : AppColors.textPrimary,
                   fontSize: widget.compact ? 12 : 14,
                   fontWeight: FontWeight.w600,
                 ),
@@ -262,7 +256,8 @@ class QuickActionRow extends StatelessWidget {
 
 /// الإجراءات السريعة الافتراضية
 class DefaultQuickActions {
-  static QuickAction newSale({required BuildContext context, VoidCallback? onTap}) {
+  static QuickAction newSale(
+      {required BuildContext context, VoidCallback? onTap}) {
     final l10n = AppLocalizations.of(context)!;
     return QuickAction(
       id: 'new_sale',
@@ -274,7 +269,8 @@ class DefaultQuickActions {
     );
   }
 
-  static QuickAction addProduct({required BuildContext context, VoidCallback? onTap}) {
+  static QuickAction addProduct(
+      {required BuildContext context, VoidCallback? onTap}) {
     final l10n = AppLocalizations.of(context)!;
     return QuickAction(
       id: 'add_product',
@@ -285,7 +281,8 @@ class DefaultQuickActions {
     );
   }
 
-  static QuickAction refund({required BuildContext context, VoidCallback? onTap}) {
+  static QuickAction refund(
+      {required BuildContext context, VoidCallback? onTap}) {
     final l10n = AppLocalizations.of(context)!;
     return QuickAction(
       id: 'refund',
@@ -296,7 +293,8 @@ class DefaultQuickActions {
     );
   }
 
-  static QuickAction dailyReport({required BuildContext context, VoidCallback? onTap}) {
+  static QuickAction dailyReport(
+      {required BuildContext context, VoidCallback? onTap}) {
     final l10n = AppLocalizations.of(context)!;
     return QuickAction(
       id: 'daily_report',
@@ -307,7 +305,8 @@ class DefaultQuickActions {
     );
   }
 
-  static QuickAction inventory({required BuildContext context, VoidCallback? onTap, String? badge}) {
+  static QuickAction inventory(
+      {required BuildContext context, VoidCallback? onTap, String? badge}) {
     final l10n = AppLocalizations.of(context)!;
     return QuickAction(
       id: 'inventory',
@@ -319,7 +318,8 @@ class DefaultQuickActions {
     );
   }
 
-  static QuickAction customers({required BuildContext context, VoidCallback? onTap}) {
+  static QuickAction customers(
+      {required BuildContext context, VoidCallback? onTap}) {
     final l10n = AppLocalizations.of(context)!;
     return QuickAction(
       id: 'customers',
@@ -330,7 +330,8 @@ class DefaultQuickActions {
     );
   }
 
-  static QuickAction settings({required BuildContext context, VoidCallback? onTap}) {
+  static QuickAction settings(
+      {required BuildContext context, VoidCallback? onTap}) {
     final l10n = AppLocalizations.of(context)!;
     return QuickAction(
       id: 'settings',
@@ -341,7 +342,8 @@ class DefaultQuickActions {
     );
   }
 
-  static QuickAction closeDay({required BuildContext context, VoidCallback? onTap}) {
+  static QuickAction closeDay(
+      {required BuildContext context, VoidCallback? onTap}) {
     final l10n = AppLocalizations.of(context)!;
     return QuickAction(
       id: 'close_day',

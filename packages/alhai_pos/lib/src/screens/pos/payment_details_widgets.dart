@@ -113,9 +113,12 @@ class CashPaymentDetails extends StatelessWidget {
               onTap: () => onQuickAmountSelected(total),
             ),
             QuickAmountChip(amount: 50, onTap: () => onQuickAmountSelected(50)),
-            QuickAmountChip(amount: 100, onTap: () => onQuickAmountSelected(100)),
-            QuickAmountChip(amount: 200, onTap: () => onQuickAmountSelected(200)),
-            QuickAmountChip(amount: 500, onTap: () => onQuickAmountSelected(500)),
+            QuickAmountChip(
+                amount: 100, onTap: () => onQuickAmountSelected(100)),
+            QuickAmountChip(
+                amount: 200, onTap: () => onQuickAmountSelected(200)),
+            QuickAmountChip(
+                amount: 500, onTap: () => onQuickAmountSelected(500)),
           ],
         ),
 
@@ -126,7 +129,8 @@ class CashPaymentDetails extends StatelessWidget {
           duration: AppDurations.normal,
           padding: const EdgeInsets.all(AppSpacing.xl),
           decoration: BoxDecoration(
-            color: change >= 0 ? AppColors.successSurface : AppColors.errorSurface,
+            color:
+                change >= 0 ? AppColors.successSurface : AppColors.errorSurface,
             borderRadius: BorderRadius.circular(AppRadius.lg),
             border: Border.all(
               color: change >= 0 ? AppColors.success : AppColors.error,
@@ -285,7 +289,8 @@ class CreditPaymentDetails extends StatelessWidget {
           ),
           child: Row(
             children: [
-              const Icon(Icons.warning_amber, color: AppColors.warning, size: 24),
+              const Icon(Icons.warning_amber,
+                  color: AppColors.warning, size: 24),
               const SizedBox(width: AppSpacing.md),
               Expanded(
                 child: Text(

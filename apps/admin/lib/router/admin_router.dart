@@ -21,7 +21,15 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import '../core/constants/admin_permissions.dart';
 
 // Package imports: Auth
-import 'package:alhai_auth/alhai_auth.dart' show SplashScreen, LoginScreen, StoreSelectScreen, authStateProvider, AuthStatus, currentStoreIdProvider, userRoleProvider;
+import 'package:alhai_auth/alhai_auth.dart'
+    show
+        SplashScreen,
+        LoginScreen,
+        StoreSelectScreen,
+        authStateProvider,
+        AuthStatus,
+        currentStoreIdProvider,
+        userRoleProvider;
 
 // Package imports: POS
 import 'package:alhai_pos/alhai_pos.dart'
@@ -60,9 +68,7 @@ import 'package:alhai_ai/alhai_ai.dart'
 
 // Package imports: Reports
 import 'package:alhai_reports/alhai_reports.dart'
-    show
-        ReportsScreen,
-        ComplaintsReportScreen;
+    show ReportsScreen, ComplaintsReportScreen;
 
 // Package imports: Shared UI
 import 'package:alhai_shared_ui/alhai_shared_ui.dart'
@@ -254,7 +260,9 @@ class _AuthNotifier extends ChangeNotifier {
 /// that reads the authenticated user's actual permission list.
 List<String> _permissionsForRole(UserRole? role) {
   return switch (role) {
-    UserRole.superAdmin || UserRole.storeOwner => AdminPermissions.ownerDefaults,
+    UserRole.superAdmin ||
+    UserRole.storeOwner =>
+      AdminPermissions.ownerDefaults,
     UserRole.employee => AdminPermissions.cashierDefaults,
     // delivery / customer / null → no admin permissions
     _ => const <String>[],
@@ -294,9 +302,7 @@ String? _guardRedirect(Ref ref, GoRouterState state) {
   }
 
   // Authenticated but no store selected
-  if (storeId == null &&
-      path != AppRoutes.storeSelect &&
-      !isPublic) {
+  if (storeId == null && path != AppRoutes.storeSelect && !isPublic) {
     return AppRoutes.storeSelect;
   }
 
@@ -329,10 +335,12 @@ String? _guardRedirect(Ref ref, GoRouterState state) {
     bool lacks(String perm) => !permissions.contains(perm);
 
     // ── Users & Roles ──────────────────────────────────────────
-    if (path == AppRoutes.settingsUsers && lacks(AdminPermissions.usersManage)) {
+    if (path == AppRoutes.settingsUsers &&
+        lacks(AdminPermissions.usersManage)) {
       return AppRoutes.home;
     }
-    if (path == AppRoutes.settingsRoles && lacks(AdminPermissions.rolesManage)) {
+    if (path == AppRoutes.settingsRoles &&
+        lacks(AdminPermissions.rolesManage)) {
       return AppRoutes.home;
     }
     if (path == AppRoutes.employees && lacks(AdminPermissions.staffManage)) {
@@ -363,11 +371,11 @@ String? _guardRedirect(Ref ref, GoRouterState state) {
 
     // ── Purchases ──────────────────────────────────────────────
     if ((path == AppRoutes.purchaseForm ||
-         path == AppRoutes.smartReorder ||
-         path == AppRoutes.aiInvoiceImport ||
-         path == AppRoutes.aiInvoiceReview ||
-         path == AppRoutes.supplierReturns ||
-         path.startsWith('/purchases/')) &&
+            path == AppRoutes.smartReorder ||
+            path == AppRoutes.aiInvoiceImport ||
+            path == AppRoutes.aiInvoiceReview ||
+            path == AppRoutes.supplierReturns ||
+            path.startsWith('/purchases/')) &&
         lacks(AdminPermissions.purchasesManage) &&
         lacks(AdminPermissions.purchasesView)) {
       return AppRoutes.home;
@@ -375,19 +383,19 @@ String? _guardRedirect(Ref ref, GoRouterState state) {
 
     // ── Marketing ──────────────────────────────────────────────
     if ((path == AppRoutes.discounts ||
-         path == AppRoutes.coupons ||
-         path == AppRoutes.specialOffers ||
-         path == AppRoutes.smartPromotions ||
-         path == AppRoutes.loyalty ||
-         path == AppRoutes.giftCards) &&
+            path == AppRoutes.coupons ||
+            path == AppRoutes.specialOffers ||
+            path == AppRoutes.smartPromotions ||
+            path == AppRoutes.loyalty ||
+            path == AppRoutes.giftCards) &&
         lacks(AdminPermissions.marketingManage)) {
       return AppRoutes.home;
     }
 
     // ── Inventory ──────────────────────────────────────────────
     if ((path == AppRoutes.inventory ||
-         path == AppRoutes.expiryTracking ||
-         path == AppRoutes.damagedGoods) &&
+            path == AppRoutes.expiryTracking ||
+            path == AppRoutes.damagedGoods) &&
         lacks(AdminPermissions.inventoryManage) &&
         lacks(AdminPermissions.inventoryView)) {
       return AppRoutes.home;
@@ -401,7 +409,7 @@ String? _guardRedirect(Ref ref, GoRouterState state) {
 
     // ── Customers ──────────────────────────────────────────────
     if ((path == AppRoutes.customerAnalytics ||
-         path == AppRoutes.customerGroups) &&
+            path == AppRoutes.customerGroups) &&
         lacks(AdminPermissions.customersManage) &&
         lacks(AdminPermissions.customersView)) {
       return AppRoutes.home;
@@ -409,25 +417,27 @@ String? _guardRedirect(Ref ref, GoRouterState state) {
 
     // ── Financial ──────────────────────────────────────────────
     if ((path == AppRoutes.expenses ||
-         path == AppRoutes.expenseCategories ||
-         path == AppRoutes.monthlyClose) &&
+            path == AppRoutes.expenseCategories ||
+            path == AppRoutes.monthlyClose) &&
         lacks(AdminPermissions.financialManage)) {
       return AppRoutes.home;
     }
 
     // ── Backup & Audit ─────────────────────────────────────────
-    if (path == AppRoutes.settingsBackup && lacks(AdminPermissions.backupManage)) {
+    if (path == AppRoutes.settingsBackup &&
+        lacks(AdminPermissions.backupManage)) {
       return AppRoutes.home;
     }
-    if (path == AppRoutes.settingsActivityLog && lacks(AdminPermissions.auditLogView)) {
+    if (path == AppRoutes.settingsActivityLog &&
+        lacks(AdminPermissions.auditLogView)) {
       return AppRoutes.home;
     }
 
     // ── Devices & Sync ─────────────────────────────────────────
     if ((path == AppRoutes.deviceLog ||
-         path == AppRoutes.syncStatus ||
-         path == AppRoutes.pendingTransactions ||
-         path == AppRoutes.conflictResolution) &&
+            path == AppRoutes.syncStatus ||
+            path == AppRoutes.pendingTransactions ||
+            path == AppRoutes.conflictResolution) &&
         lacks(AdminPermissions.devicesManage)) {
       return AppRoutes.home;
     }
@@ -828,8 +838,8 @@ final List<RouteBase> _routes = [
           final orderId = state.queryParam('orderId');
           return _buildFadePage(
             state: state,
-            child: RefundRequestScreen(
-                orderId: orderId.isEmpty ? null : orderId),
+            child:
+                RefundRequestScreen(orderId: orderId.isEmpty ? null : orderId),
           );
         },
       ),
@@ -981,9 +991,12 @@ final List<RouteBase> _routes = [
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.receipt_long, size: 64, color: Theme.of(context).hintColor),
+                        Icon(Icons.receipt_long,
+                            size: 64, color: Theme.of(context).hintColor),
                         const SizedBox(height: AlhaiSpacing.md),
-                        Text(l10n.noInvoiceDataAvailable, style: TextStyle(color: Theme.of(context).hintColor)),
+                        Text(l10n.noInvoiceDataAvailable,
+                            style:
+                                TextStyle(color: Theme.of(context).hintColor)),
                       ],
                     ),
                   ),

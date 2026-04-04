@@ -301,10 +301,9 @@ class UblInvoiceBuilder {
           XmlName('PartyIdentification', 'cac'),
           [],
           [
-            _cbcElement('ID', seller.additionalId!,
-                attributes: {
-                  'schemeID': seller.additionalIdScheme ?? 'OTH',
-                }),
+            _cbcElement('ID', seller.additionalId!, attributes: {
+              'schemeID': seller.additionalIdScheme ?? 'OTH',
+            }),
           ],
         ),
       );

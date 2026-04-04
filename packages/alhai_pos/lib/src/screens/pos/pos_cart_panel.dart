@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart' hide Column;
-import 'package:alhai_database/alhai_database.dart' show CustomersTableCompanion, AccountsTableCompanion;
+import 'package:alhai_database/alhai_database.dart'
+    show CustomersTableCompanion, AccountsTableCompanion;
 import 'package:alhai_sync/alhai_sync.dart' show SyncPriority;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -103,7 +104,11 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
                       if (index >= items.length) return const SizedBox.shrink();
                       final item = items[index];
                       return _buildAnimatedCartItem(
-                        context, ref, item, animation, l10n,
+                        context,
+                        ref,
+                        item,
+                        animation,
+                        l10n,
                       );
                     },
                   ),
@@ -112,14 +117,17 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
           // Discount + Coupon links
           if (items.isNotEmpty)
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xxs),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xxs),
               child: Row(
                 children: [
                   // زر تطبيق خصم
                   Flexible(
                     child: TextButton.icon(
-                      onPressed: () => _showDiscountDialog(context, ref, subtotal),
-                      icon: const Icon(Icons.percent_rounded, size: 16, color: AppColors.success),
+                      onPressed: () =>
+                          _showDiscountDialog(context, ref, subtotal),
+                      icon: const Icon(Icons.percent_rounded,
+                          size: 16, color: AppColors.success),
                       label: Text(
                         l10n.discount,
                         style: const TextStyle(
@@ -139,120 +147,166 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
                   // كوبون
                   Flexible(
                     child: TextButton.icon(
-                    onPressed: () {
-                      final codeController = TextEditingController();
-                      showDialog<void>(
-                        context: context,
-                        builder: (ctx) => AlertDialog(
-                          title: Text(l10n.applyCoupon),
-                          content: TextField(
-                            controller: codeController,
-                            autofocus: true,
-                            textDirection: TextDirection.ltr,
-                            decoration: InputDecoration(
-                              hintText: l10n.enterCouponCode,
-                              prefixIcon: const Icon(Icons.discount_outlined),
-                              border: const OutlineInputBorder(),
+                      onPressed: () {
+                        final codeController = TextEditingController();
+                        showDialog<void>(
+                          context: context,
+                          builder: (ctx) => AlertDialog(
+                            title: Text(l10n.applyCoupon),
+                            content: TextField(
+                              controller: codeController,
+                              autofocus: true,
+                              textDirection: TextDirection.ltr,
+                              decoration: InputDecoration(
+                                hintText: l10n.enterCouponCode,
+                                prefixIcon: const Icon(Icons.discount_outlined),
+                                border: const OutlineInputBorder(),
+                              ),
                             ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(ctx),
+                                child: Text(l10n.cancel),
+                              ),
+                              FilledButton(
+                                onPressed: () async {
+                                  final code =
+                                      codeController.text.trim().toUpperCase();
+                                  if (code.isEmpty) return;
+                                  Navigator.pop(ctx);
+                                  final db = ref.read(appDatabaseProvider);
+                                  final storeId =
+                                      ref.read(currentStoreIdProvider) ??
+                                          kDefaultStoreId;
+                                  try {
+                                    final coupon = await db.discountsDao
+                                        .getCouponByCode(code, storeId);
+                                    if (!context.mounted) return;
+                                    if (coupon == null || !coupon.isActive) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                              content: Text(l10n.invalidCoupon),
+                                              backgroundColor:
+                                                  AppColors.error));
+                                      return;
+                                    }
+                                    if (coupon.expiresAt != null &&
+                                        coupon.expiresAt!
+                                            .isBefore(DateTime.now())) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                              content: Text(l10n.couponExpired),
+                                              backgroundColor:
+                                                  AppColors.error));
+                                      return;
+                                    }
+                                    final currentSubtotal =
+                                        ref.read(cartStateProvider).subtotal;
+                                    if (coupon.minPurchase > 0 &&
+                                        currentSubtotal < coupon.minPurchase) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                              content: Text(
+                                                  l10n.minimumPurchaseRequired(
+                                                      AppNumberFormatter.currency(
+                                                          coupon.minPurchase,
+                                                          locale: Localizations
+                                                                  .localeOf(
+                                                                      context)
+                                                              .toString()))),
+                                              backgroundColor:
+                                                  AppColors.warning));
+                                      return;
+                                    }
+                                    final discount = coupon.type == 'percentage'
+                                        ? currentSubtotal * (coupon.value / 100)
+                                        : coupon.value;
+                                    ref
+                                        .read(cartStateProvider.notifier)
+                                        .setDiscount(discount);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                            content: Text(
+                                                l10n.couponDiscountApplied(
+                                                    CurrencyFormatter
+                                                        .formatWithContext(
+                                                            context,
+                                                            discount))),
+                                            backgroundColor:
+                                                AppColors.success));
+                                  } catch (_) {
+                                    if (!context.mounted) return;
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                            content: Text(l10n.couponInvalid),
+                                            backgroundColor: AppColors.error));
+                                  }
+                                },
+                                child: Text(l10n.apply),
+                              ),
+                            ],
                           ),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(ctx),
-                              child: Text(l10n.cancel),
-                            ),
-                            FilledButton(
-                              onPressed: () async {
-                                final code = codeController.text.trim().toUpperCase();
-                                if (code.isEmpty) return;
-                                Navigator.pop(ctx);
-                                final db = ref.read(appDatabaseProvider);
-                                final storeId = ref.read(currentStoreIdProvider) ?? kDefaultStoreId;
-                                try {
-                                  final coupon = await db.discountsDao.getCouponByCode(code, storeId);
-                                  if (!context.mounted) return;
-                                  if (coupon == null || !coupon.isActive) {
-                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.invalidCoupon), backgroundColor: AppColors.error));
-                                    return;
-                                  }
-                                  if (coupon.expiresAt != null && coupon.expiresAt!.isBefore(DateTime.now())) {
-                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.couponExpired), backgroundColor: AppColors.error));
-                                    return;
-                                  }
-                                  final currentSubtotal = ref.read(cartStateProvider).subtotal;
-                                  if (coupon.minPurchase > 0 && currentSubtotal < coupon.minPurchase) {
-                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.minimumPurchaseRequired(AppNumberFormatter.currency(coupon.minPurchase, locale: Localizations.localeOf(context).toString()))), backgroundColor: AppColors.warning));
-                                    return;
-                                  }
-                                  final discount = coupon.type == 'percentage' ? currentSubtotal * (coupon.value / 100) : coupon.value;
-                                  ref.read(cartStateProvider.notifier).setDiscount(discount);
-                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.couponDiscountApplied(CurrencyFormatter.formatWithContext(context, discount))), backgroundColor: AppColors.success));
-                                } catch (_) {
-                                  if (!context.mounted) return;
-                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.couponInvalid), backgroundColor: AppColors.error));
-                                }
-                              },
-                              child: Text(l10n.apply),
-                            ),
-                          ],
+                        );
+                      },
+                      icon: const Text('\uD83C\uDFF7\uFE0F',
+                          style: TextStyle(fontSize: 14)),
+                      label: Text(
+                        l10n.haveCoupon,
+                        style: const TextStyle(
+                          color: AppColors.primary,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
                         ),
-                      );
-                    },
-                    icon: const Text('\uD83C\uDFF7\uFE0F', style: TextStyle(fontSize: 14)),
-                    label: Text(
-                      l10n.haveCoupon,
-                      style: const TextStyle(
-                        color: AppColors.primary,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      overflow: TextOverflow.ellipsis,
+                      style: TextButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        minimumSize: const Size(0, 32),
+                      ),
                     ),
-                    style: TextButton.styleFrom(
-                      padding: EdgeInsets.zero,
-                      minimumSize: const Size(0, 32),
-                    ),
-                  ),
                   ),
                   const SizedBox(width: AlhaiSpacing.xs),
                   // ملاحظة
                   Flexible(
                     child: TextButton.icon(
-                    onPressed: () async {
-                      final result = await SaleNoteDialog.show(
-                        context,
-                        initialNote: cartState.notes,
-                      );
-                      if (result != null) {
-                        ref.read(cartStateProvider.notifier).setNotes(
-                              result.isEmpty ? null : result,
-                            );
-                      }
-                    },
-                    icon: Icon(
-                      cartState.notes != null && cartState.notes!.isNotEmpty
-                          ? Icons.note_rounded
-                          : Icons.note_add_outlined,
-                      size: 16,
-                      color: cartState.notes != null && cartState.notes!.isNotEmpty
-                          ? AppColors.warning
-                          : AppColors.info,
-                    ),
-                    label: Text(
-                      l10n.noteLabel,
-                      style: TextStyle(
-                        color: cartState.notes != null && cartState.notes!.isNotEmpty
+                      onPressed: () async {
+                        final result = await SaleNoteDialog.show(
+                          context,
+                          initialNote: cartState.notes,
+                        );
+                        if (result != null) {
+                          ref.read(cartStateProvider.notifier).setNotes(
+                                result.isEmpty ? null : result,
+                              );
+                        }
+                      },
+                      icon: Icon(
+                        cartState.notes != null && cartState.notes!.isNotEmpty
+                            ? Icons.note_rounded
+                            : Icons.note_add_outlined,
+                        size: 16,
+                        color: cartState.notes != null &&
+                                cartState.notes!.isNotEmpty
                             ? AppColors.warning
                             : AppColors.info,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
                       ),
-                      overflow: TextOverflow.ellipsis,
+                      label: Text(
+                        l10n.noteLabel,
+                        style: TextStyle(
+                          color: cartState.notes != null &&
+                                  cartState.notes!.isNotEmpty
+                              ? AppColors.warning
+                              : AppColors.info,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      style: TextButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        minimumSize: const Size(0, 32),
+                      ),
                     ),
-                    style: TextButton.styleFrom(
-                      padding: EdgeInsets.zero,
-                      minimumSize: const Size(0, 32),
-                    ),
-                  ),
                   ),
                 ],
               ),
@@ -261,10 +315,12 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
           // Note indicator chip
           if (cartState.notes != null && cartState.notes!.isNotEmpty)
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xxs),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xxs),
               child: Container(
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xs),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -291,9 +347,8 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
                       ),
                     ),
                     InkWell(
-                      onTap: () => ref
-                          .read(cartStateProvider.notifier)
-                          .setNotes(null),
+                      onTap: () =>
+                          ref.read(cartStateProvider.notifier).setNotes(null),
                       child: const Icon(Icons.close,
                           size: 16, color: AppColors.warning),
                     ),
@@ -367,7 +422,8 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
         position: Tween<Offset>(
           begin: const Offset(-1, 0),
           end: Offset.zero,
-        ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic)),
+        ).animate(
+            CurvedAnimation(parent: animation, curve: Curves.easeOutCubic)),
         child: Dismissible(
           key: ValueKey(item.product.id),
           direction: DismissDirection.endToStart,
@@ -378,7 +434,8 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
               color: Theme.of(context).colorScheme.error,
               borderRadius: BorderRadius.circular(8),
             ),
-            child: const Icon(Icons.delete_outline, color: AppColors.textOnPrimary),
+            child: const Icon(Icons.delete_outline,
+                color: AppColors.textOnPrimary),
           ),
           confirmDismiss: (_) async {
             final confirmed = await showDialog<bool>(
@@ -423,7 +480,8 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
       CartState cartState, bool isDark, AppLocalizations l10n) {
     final colorScheme = Theme.of(context).colorScheme;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+      padding: const EdgeInsets.symmetric(
+          horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
       decoration: BoxDecoration(
         color: colorScheme.surfaceContainerLow,
         border: Border(
@@ -436,7 +494,9 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
         children: [
           Icon(Icons.shopping_cart_rounded,
               size: 20,
-              color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary),
+              color: isDark
+                  ? AppColors.textSecondaryDark
+                  : AppColors.textSecondary),
           const SizedBox(width: AlhaiSpacing.xs),
           Flexible(
             child: Text(
@@ -445,7 +505,8 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
-                color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
+                color:
+                    isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
               ),
             ),
           ),
@@ -510,7 +571,8 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
           Expanded(
             child: GestureDetector(
               onTap: () async {
-                final result = await CustomerSearchDialog.show(context, storeId: ref.read(currentStoreIdProvider) ?? '');
+                final result = await CustomerSearchDialog.show(context,
+                    storeId: ref.read(currentStoreIdProvider) ?? '');
                 if (result != null) {
                   ref.read(cartStateProvider.notifier).setCustomer(
                         result.id,
@@ -519,8 +581,8 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
                 }
               },
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: AlhaiSpacing.sm, vertical: 10),
                 decoration: BoxDecoration(
                   color: colorScheme.surfaceContainerLowest,
                   borderRadius: BorderRadius.circular(10),
@@ -531,8 +593,7 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
                 child: Row(
                   children: [
                     Icon(Icons.person_outline_rounded,
-                        size: 18,
-                        color: colorScheme.onSurfaceVariant),
+                        size: 18, color: colorScheme.onSurfaceVariant),
                     const SizedBox(width: AlhaiSpacing.xs),
                     Expanded(
                       child: Text(
@@ -587,16 +648,20 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
                     ],
                   ),
                   actions: [
-                    TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l10n.cancel)),
+                    TextButton(
+                        onPressed: () => Navigator.pop(ctx),
+                        child: Text(l10n.cancel)),
                     FilledButton(
                       onPressed: () async {
                         final name = nameCtrl.text.trim();
                         if (name.isEmpty) return;
                         Navigator.pop(ctx);
                         final db = ref.read(appDatabaseProvider);
-                        final storeId = ref.read(currentStoreIdProvider) ?? kDefaultStoreId;
+                        final storeId =
+                            ref.read(currentStoreIdProvider) ?? kDefaultStoreId;
                         try {
-                          final customerId = 'cust_${DateTime.now().millisecondsSinceEpoch}';
+                          final customerId =
+                              'cust_${DateTime.now().millisecondsSinceEpoch}';
                           final phone = phoneCtrl.text.trim();
                           final now = DateTime.now();
                           await db.customersDao.insertCustomer(
@@ -604,19 +669,24 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
                               id: customerId,
                               storeId: storeId,
                               name: name,
-                              phone: phone.isEmpty ? const Value.absent() : Value(phone),
+                              phone: phone.isEmpty
+                                  ? const Value.absent()
+                                  : Value(phone),
                               createdAt: now,
                             ),
                           );
                           // إنشاء حساب مالي للعميل (ليظهر في شاشة العملاء)
                           try {
-                            final accountId = 'acc_${DateTime.now().millisecondsSinceEpoch}';
+                            final accountId =
+                                'acc_${DateTime.now().millisecondsSinceEpoch}';
                             String? orgId;
                             try {
-                              final store = await db.storesDao.getStoreById(storeId);
+                              final store =
+                                  await db.storesDao.getStoreById(storeId);
                               orgId = store?.orgId;
                             } catch (e) {
-                              debugPrint('[PosCartPanel] orgId fetch failed: $e');
+                              debugPrint(
+                                  '[PosCartPanel] orgId fetch failed: $e');
                             }
                             await db.accountsDao.insertAccount(
                               AccountsTableCompanion.insert(
@@ -632,16 +702,19 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
                               ),
                             );
                           } catch (e) {
-                            debugPrint('Error creating account for customer: $e');
+                            debugPrint(
+                                'Error creating account for customer: $e');
                           }
                           // مزامنة العميل الجديد مع Supabase
                           try {
                             String? orgId;
                             try {
-                              final store = await db.storesDao.getStoreById(storeId);
+                              final store =
+                                  await db.storesDao.getStoreById(storeId);
                               orgId = store?.orgId;
                             } catch (e) {
-                              debugPrint('[PosCartPanel] orgId fetch failed: $e');
+                              debugPrint(
+                                  '[PosCartPanel] orgId fetch failed: $e');
                             }
                             final syncService = ref.read(syncServiceProvider);
                             await syncService.enqueueCreate(
@@ -662,13 +735,19 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
                           } catch (e) {
                             debugPrint('Error syncing customer: $e');
                           }
-                          ref.read(cartStateProvider.notifier).setCustomer(customerId, customerName: name);
+                          ref
+                              .read(cartStateProvider.notifier)
+                              .setCustomer(customerId, customerName: name);
                           if (!context.mounted) return;
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.customerAddedSuccess(name)), backgroundColor: AppColors.success));
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text(l10n.customerAddedSuccess(name)),
+                              backgroundColor: AppColors.success));
                         } catch (e) {
                           debugPrint('Error adding customer: $e');
                           if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.customerAddFailed), backgroundColor: AppColors.error));
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                content: Text(l10n.customerAddFailed),
+                                backgroundColor: AppColors.error));
                           }
                         }
                       },
@@ -681,14 +760,16 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
             style: OutlinedButton.styleFrom(
               foregroundColor: AppColors.primary,
               side: const BorderSide(color: AppColors.primary),
-              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 10),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AlhaiSpacing.sm, vertical: 10),
               minimumSize: const Size(0, 40),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
             child: Text('+${l10n.newCustomer}',
-                style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                style:
+                    const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
           ),
         ],
       ),
@@ -714,7 +795,9 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
-                color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                color: isDark
+                    ? AppColors.textSecondaryDark
+                    : AppColors.textSecondary,
               ),
             ),
             const SizedBox(height: AlhaiSpacing.xs),
@@ -747,8 +830,7 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
       decoration: BoxDecoration(
         color: colorScheme.surfaceContainerLow,
         border: Border(
-          top: BorderSide(
-              color: colorScheme.outlineVariant),
+          top: BorderSide(color: colorScheme.outlineVariant),
         ),
       ),
       child: Column(
@@ -902,7 +984,8 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
   }
 
   /// حوار إدخال خصم مع حماية PIN للخصومات > 20%
-  void _showDiscountDialog(BuildContext context, WidgetRef ref, double subtotal) {
+  void _showDiscountDialog(
+      BuildContext context, WidgetRef ref, double subtotal) {
     final discountController = TextEditingController();
     final l10n = AppLocalizations.of(context)!;
 
@@ -912,9 +995,12 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
         return AlertDialog(
           title: Row(
             children: [
-              const Icon(Icons.percent_rounded, color: AppColors.success, size: 22),
+              const Icon(Icons.percent_rounded,
+                  color: AppColors.success, size: 22),
               const SizedBox(width: AlhaiSpacing.xs),
-              Expanded(child: Text(l10n.discount, overflow: TextOverflow.ellipsis, maxLines: 1)),
+              Expanded(
+                  child: Text(l10n.discount,
+                      overflow: TextOverflow.ellipsis, maxLines: 1)),
             ],
           ),
           content: Column(
@@ -932,7 +1018,11 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
                   border: const OutlineInputBorder(),
                 ),
                 onSubmitted: (_) => _applyDiscount(
-                  dialogContext, context, ref, discountController, subtotal,
+                  dialogContext,
+                  context,
+                  ref,
+                  discountController,
+                  subtotal,
                 ),
               ),
             ],
@@ -944,7 +1034,11 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
             ),
             FilledButton(
               onPressed: () => _applyDiscount(
-                dialogContext, context, ref, discountController, subtotal,
+                dialogContext,
+                context,
+                ref,
+                discountController,
+                subtotal,
               ),
               child: Text(l10n.confirm),
             ),
@@ -1010,7 +1104,9 @@ class PosTotalRow extends StatelessWidget {
             label,
             style: TextStyle(
               fontSize: 13,
-              color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
+              color: isDark
+                  ? AppColors.textSecondaryDark
+                  : AppColors.textSecondary,
             ),
             overflow: TextOverflow.ellipsis,
             maxLines: 1,
@@ -1063,19 +1159,19 @@ class PosCartItemTile extends ConsumerWidget {
                     memCacheHeight: 112,
                     placeholder: (_, __) => Container(
                       color: colorScheme.surfaceContainerLow,
-                      child: Icon(Icons.image, size: 20,
-                          color: colorScheme.onSurfaceVariant),
+                      child: Icon(Icons.image,
+                          size: 20, color: colorScheme.onSurfaceVariant),
                     ),
                     errorWidget: (_, __, ___) => Container(
                       color: colorScheme.surfaceContainerLow,
-                      child: Icon(Icons.image, size: 20,
-                          color: colorScheme.onSurfaceVariant),
+                      child: Icon(Icons.image,
+                          size: 20, color: colorScheme.onSurfaceVariant),
                     ),
                   )
                 : Container(
                     color: colorScheme.surfaceContainerLow,
-                    child: Icon(Icons.image, size: 20,
-                        color: colorScheme.onSurfaceVariant),
+                    child: Icon(Icons.image,
+                        size: 20, color: colorScheme.onSurfaceVariant),
                   ),
           ),
         ),
@@ -1091,7 +1187,9 @@ class PosCartItemTile extends ConsumerWidget {
                 style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
-                  color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
+                  color: isDark
+                      ? AppColors.textPrimaryDark
+                      : AppColors.textPrimary,
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -1140,7 +1238,9 @@ class PosCartItemTile extends ConsumerWidget {
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
+                  color: isDark
+                      ? AppColors.textPrimaryDark
+                      : AppColors.textPrimary,
                 ),
               ),
             ),
@@ -1170,27 +1270,39 @@ class PosCartItemTile extends ConsumerWidget {
             onTap: () {
               int qty = item.quantity;
               final priceCtrl = TextEditingController(
-                text: (item.customPrice ?? item.product.price).toStringAsFixed(2),
+                text:
+                    (item.customPrice ?? item.product.price).toStringAsFixed(2),
               );
               showDialog<void>(
                 context: context,
                 builder: (ctx) => StatefulBuilder(
                   builder: (ctx, setDialogState) => AlertDialog(
-                    title: Text(item.product.name, maxLines: 1, overflow: TextOverflow.ellipsis),
+                    title: Text(item.product.name,
+                        maxLines: 1, overflow: TextOverflow.ellipsis),
                     content: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Flexible(child: Text(l10n.quantityColon, style: const TextStyle(fontWeight: FontWeight.w500), overflow: TextOverflow.ellipsis, maxLines: 1)),
+                            Flexible(
+                                child: Text(l10n.quantityColon,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.w500),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1)),
                             Row(
                               children: [
                                 IconButton(
                                   icon: const Icon(Icons.remove_circle_outline),
-                                  onPressed: qty > 1 ? () => setDialogState(() => qty--) : null,
+                                  onPressed: qty > 1
+                                      ? () => setDialogState(() => qty--)
+                                      : null,
                                 ),
-                                Text('$qty', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                                Text('$qty',
+                                    style: const TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold)),
                                 IconButton(
                                   icon: const Icon(Icons.add_circle_outline),
                                   onPressed: () => setDialogState(() => qty++),
@@ -1202,7 +1314,8 @@ class PosCartItemTile extends ConsumerWidget {
                         const SizedBox(height: AlhaiSpacing.xs),
                         TextField(
                           controller: priceCtrl,
-                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          keyboardType: const TextInputType.numberWithOptions(
+                              decimal: true),
                           textDirection: TextDirection.ltr,
                           decoration: InputDecoration(
                             labelText: l10n.price,
@@ -1213,14 +1326,23 @@ class PosCartItemTile extends ConsumerWidget {
                       ],
                     ),
                     actions: [
-                      TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l10n.cancel)),
+                      TextButton(
+                          onPressed: () => Navigator.pop(ctx),
+                          child: Text(l10n.cancel)),
                       FilledButton(
                         onPressed: () {
                           Navigator.pop(ctx);
-                          ref.read(cartStateProvider.notifier).updateQuantity(item.product.id, qty);
-                          final newPrice = double.tryParse(priceCtrl.text.trim());
-                          if (newPrice != null && newPrice > 0 && newPrice != item.product.price) {
-                            ref.read(cartStateProvider.notifier).setCustomPrice(item.product.id, newPrice);
+                          ref
+                              .read(cartStateProvider.notifier)
+                              .updateQuantity(item.product.id, qty);
+                          final newPrice =
+                              double.tryParse(priceCtrl.text.trim());
+                          if (newPrice != null &&
+                              newPrice > 0 &&
+                              newPrice != item.product.price) {
+                            ref
+                                .read(cartStateProvider.notifier)
+                                .setCustomPrice(item.product.id, newPrice);
                           }
                         },
                         child: Text(l10n.confirm),
@@ -1249,7 +1371,9 @@ class PosCartItemTile extends ConsumerWidget {
             color: Colors.transparent,
             child: InkWell(
               onTap: () {
-                ref.read(cartStateProvider.notifier).removeProduct(item.product.id);
+                ref
+                    .read(cartStateProvider.notifier)
+                    .removeProduct(item.product.id);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(l10n.itemDeletedMsg),
@@ -1264,7 +1388,10 @@ class PosCartItemTile extends ConsumerWidget {
                 child: Icon(
                   Icons.delete_outline_rounded,
                   size: 18,
-                  color: Theme.of(context).colorScheme.error.withValues(alpha: 0.7),
+                  color: Theme.of(context)
+                      .colorScheme
+                      .error
+                      .withValues(alpha: 0.7),
                 ),
               ),
             ),
@@ -1297,9 +1424,7 @@ class PosQtyButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Material(
-      color: isPrimary
-          ? AppColors.primary
-          : colorScheme.surfaceContainerLow,
+      color: isPrimary ? AppColors.primary : colorScheme.surfaceContainerLow,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
         side: isPrimary
@@ -1377,7 +1502,8 @@ class PosDraftButton extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 if (heldCount > 0) ...[
-                  const Icon(Icons.pause_circle_outline, size: 16, color: AppColors.warning),
+                  const Icon(Icons.pause_circle_outline,
+                      size: 16, color: AppColors.warning),
                   const SizedBox(width: AlhaiSpacing.xxs),
                 ],
                 Flexible(

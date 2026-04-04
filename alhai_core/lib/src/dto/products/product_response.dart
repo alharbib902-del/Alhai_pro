@@ -23,12 +23,13 @@ class ProductResponse with _$ProductResponse {
     String? unit,
     String? description,
     @Deprecated('Use imageThumbnail, imageMedium, or imageLarge')
-    @JsonKey(name: 'image_url') String? imageUrl,
+    @JsonKey(name: 'image_url')
+    String? imageUrl,
     // R2 Image Storage (Cloudflare CDN)
     @JsonKey(name: 'image_thumbnail') String? imageThumbnail, // 300×300
-    @JsonKey(name: 'image_medium') String? imageMedium,       // 600×600
-    @JsonKey(name: 'image_large') String? imageLarge,         // 1200×1200
-    @JsonKey(name: 'image_hash') String? imageHash,           // Versioning
+    @JsonKey(name: 'image_medium') String? imageMedium, // 600×600
+    @JsonKey(name: 'image_large') String? imageLarge, // 1200×1200
+    @JsonKey(name: 'image_hash') String? imageHash, // Versioning
     @JsonKey(name: 'category_id') String? categoryId,
     @JsonKey(name: 'is_active') required bool isActive,
     @JsonKey(name: 'track_inventory') @Default(true) bool trackInventory,

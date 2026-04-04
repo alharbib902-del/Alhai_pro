@@ -27,7 +27,8 @@ final minOrderAmountProvider = Provider<double>((ref) {
 });
 
 /// Place order action.
-final placeOrderProvider = FutureProvider.family<Order, Cart>((ref, cart) async {
+final placeOrderProvider =
+    FutureProvider.family<Order, Cart>((ref, cart) async {
   final address = ref.read(selectedAddressProvider);
   final paymentMethod = ref.read(selectedPaymentMethodProvider);
   final deliveryFee = ref.read(deliveryFeeProvider);

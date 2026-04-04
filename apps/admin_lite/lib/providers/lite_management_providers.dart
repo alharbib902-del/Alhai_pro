@@ -16,7 +16,8 @@ import 'package:alhai_auth/alhai_auth.dart';
 // =============================================================================
 
 /// Provider: All products (for quick price/stock screens)
-final liteAllProductsProvider = FutureProvider.autoDispose<List<ProductsTableData>>((ref) async {
+final liteAllProductsProvider =
+    FutureProvider.autoDispose<List<ProductsTableData>>((ref) async {
   final storeId = ref.watch(currentStoreIdProvider);
   if (storeId == null) return [];
 
@@ -25,7 +26,8 @@ final liteAllProductsProvider = FutureProvider.autoDispose<List<ProductsTableDat
 });
 
 /// Provider: Employee schedule from shifts
-final liteEmployeeScheduleProvider = FutureProvider.autoDispose<List<ShiftWithCashier>>((ref) async {
+final liteEmployeeScheduleProvider =
+    FutureProvider.autoDispose<List<ShiftWithCashier>>((ref) async {
   final storeId = ref.watch(currentStoreIdProvider);
   if (storeId == null) return [];
 
@@ -33,10 +35,12 @@ final liteEmployeeScheduleProvider = FutureProvider.autoDispose<List<ShiftWithCa
   final now = DateTime.now();
   final todayWeekday = now.weekday;
   final daysSinceSat = (todayWeekday + 1) % 7;
-  final startOfWeek = DateTime(now.year, now.month, now.day).subtract(Duration(days: daysSinceSat));
+  final startOfWeek = DateTime(now.year, now.month, now.day)
+      .subtract(Duration(days: daysSinceSat));
   final endOfWeek = startOfWeek.add(const Duration(days: 7));
 
-  return db.shiftsDao.getShiftsWithCashierName(storeId, startDate: startOfWeek, endDate: endOfWeek);
+  return db.shiftsDao.getShiftsWithCashierName(storeId,
+      startDate: startOfWeek, endDate: endOfWeek);
 });
 
 /// Pending approvals data model (refunds + purchases)
@@ -60,7 +64,8 @@ class PendingApprovalItem {
 }
 
 /// Provider: Pending approvals (returns pending + purchases pending)
-final litePendingApprovalsProvider = FutureProvider.autoDispose<List<PendingApprovalItem>>((ref) async {
+final litePendingApprovalsProvider =
+    FutureProvider.autoDispose<List<PendingApprovalItem>>((ref) async {
   final storeId = ref.watch(currentStoreIdProvider);
   if (storeId == null) return [];
 
@@ -90,7 +95,8 @@ final litePendingApprovalsProvider = FutureProvider.autoDispose<List<PendingAppr
         description: row.data['reason'] as String? ?? 'Refund request',
         amount: _toDouble(row.data['total_refund']),
         requestedBy: row.data['user_name'] as String? ?? 'Unknown',
-        createdAt: DateTime.tryParse(row.data['created_at'].toString()) ?? DateTime.now(),
+        createdAt: DateTime.tryParse(row.data['created_at'].toString()) ??
+            DateTime.now(),
       ));
     }
 

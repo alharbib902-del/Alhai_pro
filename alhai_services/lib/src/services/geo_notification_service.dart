@@ -1,6 +1,6 @@
 /// خدمة الإشعارات الجغرافية
 /// تستخدم من: customer_app
-/// 
+///
 /// تحتاج: Firebase Cloud Messaging + Geofencing
 class GeoNotificationService {
   final Set<GeoFence> _activeGeofences = {};
@@ -60,9 +60,9 @@ class GeoNotificationService {
       // TODO: Implement with Firebase Cloud Messaging + Firestore GeoQuery
       // 1. Query users in the area using geohash
       // 2. Send FCM to those users
-      
+
       await Future.delayed(const Duration(milliseconds: 500));
-      
+
       return GeoNotificationResult(
         success: true,
         sentCount: 0, // Would be actual count
@@ -85,7 +85,7 @@ class GeoNotificationService {
     try {
       // TODO: Implement district-based notification
       await Future.delayed(const Duration(milliseconds: 500));
-      
+
       return GeoNotificationResult(
         success: true,
         sentCount: 0,
@@ -124,19 +124,22 @@ class GeoNotificationService {
 
   // ==================== Helpers ====================
 
-  double _calculateDistance(double lat1, double lng1, double lat2, double lng2) {
+  double _calculateDistance(
+      double lat1, double lng1, double lat2, double lng2) {
     // Haversine formula
     const earthRadius = 6371.0; // km
-    
+
     final dLat = _toRadians(lat2 - lat1);
     final dLng = _toRadians(lng2 - lng1);
-    
+
     final a = _sin(dLat / 2) * _sin(dLat / 2) +
-        _cos(_toRadians(lat1)) * _cos(_toRadians(lat2)) *
-        _sin(dLng / 2) * _sin(dLng / 2);
-    
+        _cos(_toRadians(lat1)) *
+            _cos(_toRadians(lat2)) *
+            _sin(dLng / 2) *
+            _sin(dLng / 2);
+
     final c = 2 * _atan2(_sqrt(a), _sqrt(1 - a));
-    
+
     return earthRadius * c;
   }
 
@@ -151,10 +154,12 @@ class GeoNotificationService {
     }
     return guess;
   }
+
   double _atan2(double y, double x) {
     if (x == 0) return y > 0 ? 1.5707963 : -1.5707963;
     return y / x; // Simplified
   }
+
   double _taylor(double x, bool isSin) {
     x = x % (2 * 3.14159265359);
     double result = isSin ? x : 1;

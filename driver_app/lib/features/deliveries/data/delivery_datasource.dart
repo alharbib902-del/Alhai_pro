@@ -9,8 +9,7 @@ import '../../../core/services/offline_queue_service.dart';
 /// without hunting through query chains.
 class _DeliveryColumns {
   /// Light projection for list views – avoids fetching large blobs.
-  static const String list =
-      'id, status, created_at, fee, '
+  static const String list = 'id, status, created_at, fee, '
       'orders:order_id(id, order_number, customer_name, customer_phone, delivery_address)';
 
   /// Full projection for list views that need driver location fields.
@@ -298,8 +297,8 @@ class DeliveryDatasource {
 
       return resultMap;
     } on PostgrestException catch (e) {
-      final classified = _classifyDatasourceError(
-          e, 'updateStatus($deliveryId, $newStatus)');
+      final classified =
+          _classifyDatasourceError(e, 'updateStatus($deliveryId, $newStatus)');
 
       if (classified.isNetwork) {
         // 3b. Network error: queue for later, keep the optimistic state.
@@ -362,14 +361,11 @@ class DeliveryDatasource {
     });
 
     try {
-      await _client
-          .from('deliveries')
-          .update({
-            'driver_lat': lat,
-            'driver_lng': lng,
-            'updated_at': DateTime.now().toIso8601String(),
-          })
-          .eq('id', deliveryId);
+      await _client.from('deliveries').update({
+        'driver_lat': lat,
+        'driver_lng': lng,
+        'updated_at': DateTime.now().toIso8601String(),
+      }).eq('id', deliveryId);
 
       // Also upsert to driver_locations for real-time tracking
       await _client.from('driver_locations').upsert({
@@ -448,6 +444,5 @@ class DatasourceException implements Exception {
   bool get isNetwork => type == DatasourceErrorType.network;
 
   @override
-  String toString() =>
-      'DatasourceException[$type] in $context: $message';
+  String toString() => 'DatasourceException[$type] in $context: $message';
 }

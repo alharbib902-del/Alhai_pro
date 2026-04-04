@@ -24,8 +24,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const PriceListsScreen()));
+      await tester.pumpWidget(createTestWidget(const PriceListsScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(PriceListsScreen), findsOneWidget);
@@ -39,8 +38,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const PriceListsScreen()));
+      await tester.pumpWidget(createTestWidget(const PriceListsScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.refresh_rounded), findsWidgets);
@@ -54,8 +52,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const PriceListsScreen()));
+      await tester.pumpWidget(createTestWidget(const PriceListsScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.storefront_rounded), findsWidgets);
@@ -69,8 +66,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const PriceListsScreen()));
+      await tester.pumpWidget(createTestWidget(const PriceListsScreen()));
       await tester.pumpAndSettle();
 
       // Default selection is retail (blue) which shows storefront_rounded

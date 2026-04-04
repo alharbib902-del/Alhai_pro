@@ -28,7 +28,8 @@ class EoqCalculatorCard extends StatelessWidget {
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
+          color:
+              isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
         ),
         boxShadow: [
           BoxShadow(
@@ -50,7 +51,8 @@ class EoqCalculatorCard extends StatelessWidget {
                   color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.calculate_rounded, color: AppColors.primary, size: 20),
+                child: const Icon(Icons.calculate_rounded,
+                    color: AppColors.primary, size: 20),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
@@ -69,7 +71,9 @@ class EoqCalculatorCard extends StatelessWidget {
                       Text(
                         result.category!,
                         style: TextStyle(
-                          color: isDark ? Colors.white.withValues(alpha: 0.4) : AppColors.textMuted,
+                          color: isDark
+                              ? Colors.white.withValues(alpha: 0.4)
+                              : AppColors.textMuted,
                           fontSize: 11,
                         ),
                       ),
@@ -78,7 +82,8 @@ class EoqCalculatorCard extends StatelessWidget {
               ),
               // EOQ value
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: AlhaiSpacing.xs),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 14, vertical: AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
                     colors: [Color(0xFF10B981), Color(0xFF059669)],
@@ -96,7 +101,10 @@ class EoqCalculatorCard extends StatelessWidget {
                   children: [
                     const Text(
                       'EOQ',
-                      style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w500),
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w500),
                     ),
                     Text(
                       '${result.eoq}',
@@ -171,7 +179,9 @@ class EoqCalculatorCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: isDark ? Colors.white.withValues(alpha: 0.03) : AppColors.grey50,
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.03)
+                  : AppColors.grey50,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Row(
@@ -186,7 +196,9 @@ class EoqCalculatorCard extends StatelessWidget {
                 Container(
                   width: 1,
                   height: 30,
-                  color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.grey200,
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.1)
+                      : AppColors.grey200,
                 ),
                 Expanded(
                   child: _CostItem(
@@ -210,7 +222,8 @@ class EoqCalculatorCard extends StatelessWidget {
                 icon: const Icon(Icons.add_shopping_cart_rounded, size: 16),
                 label: Text(
                   'طلب ${result.eoq} وحدة', // Order X units
-                  style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                  style: const TextStyle(
+                      fontSize: 13, fontWeight: FontWeight.w600),
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
@@ -264,7 +277,9 @@ class _MetricBox extends StatelessWidget {
                 Text(
                   label,
                   style: TextStyle(
-                    color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textMuted,
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.5)
+                        : AppColors.textMuted,
                     fontSize: 10,
                   ),
                 ),
@@ -304,7 +319,9 @@ class _CostItem extends StatelessWidget {
         Text(
           label,
           style: TextStyle(
-            color: isDark ? Colors.white.withValues(alpha: 0.4) : AppColors.textMuted,
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.4)
+                : AppColors.textMuted,
             fontSize: 10,
           ),
         ),
@@ -312,7 +329,9 @@ class _CostItem extends StatelessWidget {
         Text(
           value,
           style: TextStyle(
-            color: isDark ? Colors.white.withValues(alpha: 0.8) : AppColors.textPrimary,
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.8)
+                : AppColors.textPrimary,
             fontSize: 13,
             fontWeight: FontWeight.w600,
           ),

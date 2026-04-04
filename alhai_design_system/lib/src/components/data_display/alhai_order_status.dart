@@ -6,11 +6,11 @@ import '../../tokens/alhai_radius.dart';
 import '../../tokens/alhai_spacing.dart';
 
 /// Re-export tokens for convenience
-export '../../tokens/alhai_order_status_tokens.dart' 
+export '../../tokens/alhai_order_status_tokens.dart'
     show AlhaiOrderStatus, AlhaiOrderStatusExtension;
 
 /// AlhaiOrderStatusBadge - Compact inline badge for order status
-/// 
+///
 /// Features:
 /// - Status label with optional icon
 /// - Color-coded by status tokens
@@ -96,7 +96,7 @@ class AlhaiOrderStatusBadge extends StatelessWidget {
 }
 
 /// AlhaiOrderStatusTimeline - Vertical timeline for order progress
-/// 
+///
 /// Features:
 /// - Ordered steps based on status progression
 /// - Current status highlighted
@@ -146,12 +146,14 @@ class AlhaiOrderStatusTimeline extends StatelessWidget {
     if (steps != null) {
       // Sanitize user-provided steps
       if (currentStatus == AlhaiOrderStatus.cancelled) {
-        effectiveSteps = steps!.where((s) => s == AlhaiOrderStatus.cancelled).toList();
+        effectiveSteps =
+            steps!.where((s) => s == AlhaiOrderStatus.cancelled).toList();
         if (effectiveSteps.isEmpty) {
           effectiveSteps = [AlhaiOrderStatus.cancelled];
         }
       } else {
-        effectiveSteps = steps!.where((s) => s != AlhaiOrderStatus.cancelled).toList();
+        effectiveSteps =
+            steps!.where((s) => s != AlhaiOrderStatus.cancelled).toList();
       }
     } else {
       effectiveSteps = currentStatus == AlhaiOrderStatus.cancelled
@@ -274,7 +276,9 @@ class _TimelineStep extends StatelessWidget {
                   ),
                   child: showIcon && (isCompleted || isCurrent)
                       ? Icon(
-                          isCompleted ? Icons.check_rounded : status.defaultIcon,
+                          isCompleted
+                              ? Icons.check_rounded
+                              : status.defaultIcon,
                           size: AlhaiSpacing.sm,
                           color: statusColors.activeOnIndicator,
                         )

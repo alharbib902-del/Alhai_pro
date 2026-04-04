@@ -64,8 +64,7 @@ class SAUsageAnalyticsScreen extends ConsumerWidget {
                 child: Center(child: CircularProgressIndicator()),
               ),
               error: (e, _) => Text('Error: $e'),
-              data: (data) =>
-                  _ActiveUsersChart(theme: theme, storeData: data),
+              data: (data) => _ActiveUsersChart(theme: theme, storeData: data),
             ),
             const SizedBox(height: AlhaiSpacing.xl),
 
@@ -83,8 +82,7 @@ class SAUsageAnalyticsScreen extends ConsumerWidget {
                 child: Center(child: CircularProgressIndicator()),
               ),
               error: (e, _) => Text('Error: $e'),
-              data: (stores) =>
-                  _TransactionsTable(l10n: l10n, stores: stores),
+              data: (stores) => _TransactionsTable(l10n: l10n, stores: stores),
             ),
           ],
         ),
@@ -106,8 +104,9 @@ class SAUsageAnalyticsScreen extends ConsumerWidget {
     final avgTx = avgTxAsync.valueOrNull;
     final totalUsers = totalUsersAsync.valueOrNull;
 
-    final isLoading =
-        kpisAsync.isLoading || avgTxAsync.isLoading || totalUsersAsync.isLoading;
+    final isLoading = kpisAsync.isLoading ||
+        avgTxAsync.isLoading ||
+        totalUsersAsync.isLoading;
 
     if (isLoading && activeStores == null) {
       return const SizedBox(
@@ -259,9 +258,12 @@ class _ActiveUsersChart extends StatelessWidget {
       );
     }
 
-    final blueColor = isDark ? const Color(0xFF60A5FA) : const Color(0xFF2563EB);
-    final deepPurpleColor = isDark ? const Color(0xFFA78BFA) : const Color(0xFF7C3AED);
-    final tealColor = isDark ? const Color(0xFF2DD4BF) : const Color(0xFF0D9488);
+    final blueColor =
+        isDark ? const Color(0xFF60A5FA) : const Color(0xFF2563EB);
+    final deepPurpleColor =
+        isDark ? const Color(0xFFA78BFA) : const Color(0xFF7C3AED);
+    final tealColor =
+        isDark ? const Color(0xFF2DD4BF) : const Color(0xFF0D9488);
     final colors = [
       blueColor,
       deepPurpleColor,
@@ -341,8 +343,7 @@ class _ActiveUsersChart extends StatelessWidget {
                       final label =
                           name.length > 8 ? name.substring(0, 8) : name;
                       return Padding(
-                        padding: const EdgeInsets.only(
-                            top: AlhaiSpacing.xs),
+                        padding: const EdgeInsets.only(top: AlhaiSpacing.xs),
                         child: Text(
                           label,
                           style: theme.textTheme.labelSmall?.copyWith(
@@ -353,18 +354,18 @@ class _ActiveUsersChart extends StatelessWidget {
                     },
                   ),
                 ),
-                topTitles: const AxisTitles(
-                    sideTitles: SideTitles(showTitles: false)),
-                rightTitles: const AxisTitles(
-                    sideTitles: SideTitles(showTitles: false)),
+                topTitles:
+                    const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                rightTitles:
+                    const AxisTitles(sideTitles: SideTitles(showTitles: false)),
               ),
               borderData: FlBorderData(show: false),
               gridData: FlGridData(
                 show: true,
                 drawVerticalLine: false,
                 getDrawingHorizontalLine: (value) => FlLine(
-                  color: theme.colorScheme.outlineVariant
-                      .withValues(alpha: 0.3),
+                  color:
+                      theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
                   strokeWidth: 1,
                 ),
               ),

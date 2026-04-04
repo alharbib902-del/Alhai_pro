@@ -95,7 +95,8 @@ class SyncConflict {
   }
 
   /// Parse conflict details from JSON string stored in sync_queue.last_error
-  static SyncConflict? fromJsonString(String json, {
+  static SyncConflict? fromJsonString(
+    String json, {
     required String syncQueueId,
   }) {
     try {
@@ -325,8 +326,7 @@ class ConflictResolver {
       return ResolutionResult(
         resolved: false,
         strategy: ResolutionStrategy.serverWins,
-        description:
-            'Server wins but no server data available for '
+        description: 'Server wins but no server data available for '
             '${conflict.tableName}/${conflict.recordId}',
       );
     }
@@ -346,8 +346,7 @@ class ConflictResolver {
       return ResolutionResult(
         resolved: false,
         strategy: ResolutionStrategy.localWins,
-        description:
-            'Local wins but no local data available for '
+        description: 'Local wins but no local data available for '
             '${conflict.tableName}/${conflict.recordId}',
       );
     }
@@ -373,8 +372,7 @@ class ConflictResolver {
         return ResolutionResult(
           resolved: false,
           strategy: ResolutionStrategy.lastWriteWins,
-          description:
-              'Last write wins but no data available for '
+          description: 'Last write wins but no data available for '
               '${conflict.tableName}/${conflict.recordId}',
         );
       }
@@ -388,8 +386,10 @@ class ConflictResolver {
     }
 
     // Compare updated_at (or created_at as fallback)
-    final localTime = _parseTimestamp(localData['updated_at'] ?? localData['created_at']);
-    final serverTime = _parseTimestamp(serverData['updated_at'] ?? serverData['created_at']);
+    final localTime =
+        _parseTimestamp(localData['updated_at'] ?? localData['created_at']);
+    final serverTime =
+        _parseTimestamp(serverData['updated_at'] ?? serverData['created_at']);
 
     if (localTime == null && serverTime == null) {
       // No timestamps: default to server wins
@@ -397,15 +397,15 @@ class ConflictResolver {
         resolved: true,
         strategy: ResolutionStrategy.serverWins,
         resolvedData: serverData,
-        description:
-            'No timestamps available, defaulting to server for '
+        description: 'No timestamps available, defaulting to server for '
             '${conflict.tableName}/${conflict.recordId}',
       );
     }
 
     // Special handling for orders: status priority
     if (conflict.tableName == 'orders') {
-      return _resolveOrderConflict(conflict, localData, serverData, localTime, serverTime);
+      return _resolveOrderConflict(
+          conflict, localData, serverData, localTime, serverTime);
     }
 
     final localWins = localTime != null &&
@@ -443,8 +443,7 @@ class ConflictResolver {
         resolved: true,
         strategy: ResolutionStrategy.lastWriteWins,
         resolvedData: statusWinnerIsLocal ? localData : serverData,
-        description:
-            '${statusWinnerIsLocal ? "Local" : "Server"} order status '
+        description: '${statusWinnerIsLocal ? "Local" : "Server"} order status '
             '"${statusWinnerIsLocal ? localStatus : serverStatus}" has higher priority '
             'for ${conflict.tableName}/${conflict.recordId}',
       );

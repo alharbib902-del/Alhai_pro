@@ -312,8 +312,7 @@ void main() {
 
         await syncService.markAsFailed('test-id', 'Network error');
 
-        verify(() =>
-                mockSyncQueueDao.markAsFailed('test-id', 'Network error'))
+        verify(() => mockSyncQueueDao.markAsFailed('test-id', 'Network error'))
             .called(1);
       });
     });
@@ -383,8 +382,9 @@ void main() {
 
         await syncService.markAsConflict('test-id', 'Conflict detected');
 
-        verify(() => mockSyncQueueDao.markAsConflict(
-            'test-id', 'Conflict detected')).called(1);
+        verify(() =>
+                mockSyncQueueDao.markAsConflict('test-id', 'Conflict detected'))
+            .called(1);
       });
     });
 
@@ -413,8 +413,7 @@ void main() {
     group('cleanup', () {
       test('delegates to DAO with default duration', () async {
         when(() => mockSyncQueueDao.cleanupSyncedItems(
-                olderThan: any(named: 'olderThan')))
-            .thenAnswer((_) async => 10);
+            olderThan: any(named: 'olderThan'))).thenAnswer((_) async => 10);
 
         final result = await syncService.cleanup();
 
@@ -425,8 +424,7 @@ void main() {
 
       test('delegates to DAO with custom duration', () async {
         when(() => mockSyncQueueDao.cleanupSyncedItems(
-                olderThan: any(named: 'olderThan')))
-            .thenAnswer((_) async => 5);
+            olderThan: any(named: 'olderThan'))).thenAnswer((_) async => 5);
 
         final result =
             await syncService.cleanup(olderThan: const Duration(days: 1));

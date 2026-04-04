@@ -45,7 +45,8 @@ class AppSupabase {
     _initialized = true;
     if (kDebugMode) {
       debugPrint('Supabase initialized for driver app');
-      debugPrint('Certificate pinning: ${CertificatePinningService.diagnosticStatus}');
+      debugPrint(
+          'Certificate pinning: ${CertificatePinningService.diagnosticStatus}');
     }
   }
 

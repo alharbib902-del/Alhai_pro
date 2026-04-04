@@ -16,8 +16,7 @@ class SAStoreSettingsScreen extends ConsumerStatefulWidget {
       _SAStoreSettingsScreenState();
 }
 
-class _SAStoreSettingsScreenState
-    extends ConsumerState<SAStoreSettingsScreen> {
+class _SAStoreSettingsScreenState extends ConsumerState<SAStoreSettingsScreen> {
   bool? _isActive;
   String? _currentPlan;
   bool _saving = false;
@@ -54,8 +53,7 @@ class _SAStoreSettingsScreenState
                   children: [
                     IconButton(
                       icon: const Icon(Icons.arrow_back_rounded),
-                      onPressed: () =>
-                          context.go('/stores/${widget.storeId}'),
+                      onPressed: () => context.go('/stores/${widget.storeId}'),
                     ),
                     const SizedBox(width: AlhaiSpacing.xs),
                     Text(
@@ -67,7 +65,6 @@ class _SAStoreSettingsScreenState
                   ],
                 ),
                 const SizedBox(height: AlhaiSpacing.lg),
-
                 Center(
                   child: ConstrainedBox(
                     constraints: BoxConstraints(
@@ -96,10 +93,9 @@ class _SAStoreSettingsScreenState
                                   setState(() => _isActive = v);
                                   final ds =
                                       ref.read(saStoresDatasourceProvider);
-                                  await ds.updateStoreStatus(
-                                      widget.storeId, v);
-                                  ref.invalidate(saStoreDetailProvider(
-                                      widget.storeId));
+                                  await ds.updateStoreStatus(widget.storeId, v);
+                                  ref.invalidate(
+                                      saStoreDetailProvider(widget.storeId));
                                   ref.invalidate(saStoresListProvider);
                                 },
                               ),
@@ -116,30 +112,27 @@ class _SAStoreSettingsScreenState
                             children: [
                               _PlanRadio(
                                 title: l10n.basicPlan,
-                                subtitle:
-                                    '99 ${l10n.sar}${l10n.perMonth}',
+                                subtitle: '99 ${l10n.sar}${l10n.perMonth}',
                                 value: 'basic',
                                 groupValue: currentPlan,
-                                onChanged: (v) => setState(
-                                    () => _currentPlan = v),
+                                onChanged: (v) =>
+                                    setState(() => _currentPlan = v),
                               ),
                               _PlanRadio(
                                 title: l10n.advancedPlan,
-                                subtitle:
-                                    '249 ${l10n.sar}${l10n.perMonth}',
+                                subtitle: '249 ${l10n.sar}${l10n.perMonth}',
                                 value: 'advanced',
                                 groupValue: currentPlan,
-                                onChanged: (v) => setState(
-                                    () => _currentPlan = v),
+                                onChanged: (v) =>
+                                    setState(() => _currentPlan = v),
                               ),
                               _PlanRadio(
                                 title: l10n.professionalPlan,
-                                subtitle:
-                                    '499 ${l10n.sar}${l10n.perMonth}',
+                                subtitle: '499 ${l10n.sar}${l10n.perMonth}',
                                 value: 'professional',
                                 groupValue: currentPlan,
-                                onChanged: (v) => setState(
-                                    () => _currentPlan = v),
+                                onChanged: (v) =>
+                                    setState(() => _currentPlan = v),
                               ),
                               const SizedBox(height: AlhaiSpacing.md),
                               Row(
@@ -149,35 +142,30 @@ class _SAStoreSettingsScreenState
                                     onPressed: _saving
                                         ? null
                                         : () async {
-                                            setState(
-                                                () => _saving = true);
+                                            setState(() => _saving = true);
                                             try {
                                               final ds = ref.read(
                                                   saStoresDatasourceProvider);
                                               await ds.updateStorePlan(
-                                                  widget.storeId,
-                                                  currentPlan);
+                                                  widget.storeId, currentPlan);
                                               ref.invalidate(
                                                   saStoreDetailProvider(
                                                       widget.storeId));
                                               if (mounted) {
-                                                ScaffoldMessenger.of(
-                                                        context)
+                                                ScaffoldMessenger.of(context)
                                                     .showSnackBar(
                                                   const SnackBar(
-                                                    content: Text(
-                                                        'Plan updated'),
+                                                    content:
+                                                        Text('Plan updated'),
                                                   ),
                                                 );
                                               }
                                             } catch (e) {
                                               if (mounted) {
-                                                ScaffoldMessenger.of(
-                                                        context)
+                                                ScaffoldMessenger.of(context)
                                                     .showSnackBar(
                                                   SnackBar(
-                                                    content: Text(
-                                                        'Error: $e'),
+                                                    content: Text('Error: $e'),
                                                     backgroundColor:
                                                         theme.colorScheme.error,
                                                   ),
@@ -185,8 +173,7 @@ class _SAStoreSettingsScreenState
                                               }
                                             } finally {
                                               if (mounted) {
-                                                setState(
-                                                    () => _saving = false);
+                                                setState(() => _saving = false);
                                               }
                                             }
                                           },
@@ -194,9 +181,8 @@ class _SAStoreSettingsScreenState
                                         ? const SizedBox(
                                             width: 20,
                                             height: 20,
-                                            child:
-                                                CircularProgressIndicator(
-                                                    strokeWidth: 2),
+                                            child: CircularProgressIndicator(
+                                                strokeWidth: 2),
                                           )
                                         : Text(l10n.save),
                                   ),
@@ -211,14 +197,14 @@ class _SAStoreSettingsScreenState
                         _SettingsCard(
                           title: l10n.dangerZone,
                           icon: Icons.warning_rounded,
-                          borderColor: theme.colorScheme.error.withValues(alpha: 0.3),
+                          borderColor:
+                              theme.colorScheme.error.withValues(alpha: 0.3),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 l10n.suspendStore,
-                                style:
-                                    theme.textTheme.bodyMedium?.copyWith(
+                                style: theme.textTheme.bodyMedium?.copyWith(
                                   color: theme.colorScheme.error,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -227,8 +213,7 @@ class _SAStoreSettingsScreenState
                               Text(
                                 'Suspending a store will immediately disable access for all store users. '
                                 'Data will be preserved and the store can be reactivated later.',
-                                style:
-                                    theme.textTheme.bodySmall?.copyWith(
+                                style: theme.textTheme.bodySmall?.copyWith(
                                   color: theme.colorScheme.outline,
                                 ),
                               ),
@@ -236,7 +221,8 @@ class _SAStoreSettingsScreenState
                               OutlinedButton(
                                 onPressed: isActive
                                     ? () async {
-                                        final confirmed = await showDialog<bool>(
+                                        final confirmed =
+                                            await showDialog<bool>(
                                           context: context,
                                           builder: (ctx) => AlertDialog(
                                             title: Text(l10n.confirm),
@@ -245,36 +231,49 @@ class _SAStoreSettingsScreenState
                                             ),
                                             actions: [
                                               TextButton(
-                                                onPressed: () => Navigator.pop(ctx, false),
+                                                onPressed: () =>
+                                                    Navigator.pop(ctx, false),
                                                 child: Text(l10n.cancel),
                                               ),
                                               FilledButton(
                                                 style: FilledButton.styleFrom(
-                                                  backgroundColor: theme.colorScheme.error,
+                                                  backgroundColor:
+                                                      theme.colorScheme.error,
                                                 ),
-                                                onPressed: () => Navigator.pop(ctx, true),
+                                                onPressed: () =>
+                                                    Navigator.pop(ctx, true),
                                                 child: Text(l10n.suspendStore),
                                               ),
                                             ],
                                           ),
                                         );
-                                        if (confirmed != true || !context.mounted) return;
+                                        if (confirmed != true ||
+                                            !context.mounted) return;
 
-                                        final ds = ref.read(saStoresDatasourceProvider);
+                                        final ds = ref
+                                            .read(saStoresDatasourceProvider);
                                         await UndoService.executeWithUndo(
                                           context: context,
                                           description: 'تم تعليق المتجر',
                                           action: () async {
-                                            await ds.softDeleteStore(widget.storeId);
+                                            await ds.softDeleteStore(
+                                                widget.storeId);
                                             setState(() => _isActive = false);
-                                            ref.invalidate(saStoreDetailProvider(widget.storeId));
-                                            ref.invalidate(saStoresListProvider);
+                                            ref.invalidate(
+                                                saStoreDetailProvider(
+                                                    widget.storeId));
+                                            ref.invalidate(
+                                                saStoresListProvider);
                                           },
                                           undoAction: () async {
-                                            await ds.restoreStore(widget.storeId);
+                                            await ds
+                                                .restoreStore(widget.storeId);
                                             setState(() => _isActive = true);
-                                            ref.invalidate(saStoreDetailProvider(widget.storeId));
-                                            ref.invalidate(saStoresListProvider);
+                                            ref.invalidate(
+                                                saStoreDetailProvider(
+                                                    widget.storeId));
+                                            ref.invalidate(
+                                                saStoresListProvider);
                                           },
                                         );
                                       }

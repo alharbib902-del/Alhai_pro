@@ -7,16 +7,22 @@ part 'stock_adjustment.g.dart';
 enum AdjustmentType {
   /// Stock received from supplier
   received,
+
   /// Stock returned to supplier
   returned,
+
   /// Damaged/expired stock
   damaged,
+
   /// Manual correction
   correction,
+
   /// Stock transfer out
   transferOut,
+
   /// Stock transfer in
   transferIn,
+
   /// Sold (via POS)
   sold,
 }
@@ -43,7 +49,8 @@ extension AdjustmentTypeExt on AdjustmentType {
   }
 
   /// Whether this type increases stock
-  bool get isAddition => this == AdjustmentType.received ||
+  bool get isAddition =>
+      this == AdjustmentType.received ||
       this == AdjustmentType.transferIn ||
       this == AdjustmentType.correction;
 }

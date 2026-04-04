@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// نظام قياس أداء الكاشير
-/// 
+///
 /// يتتبع:
 /// - متوسط وقت البيع
 /// - عمليات/ساعة
@@ -89,7 +89,9 @@ class PerformanceStats {
 
   /// إجمالي المبيعات
   double get totalSales {
-    return sales.where((s) => s.isCompleted).fold(0.0, (sum, s) => sum + s.totalAmount);
+    return sales
+        .where((s) => s.isCompleted)
+        .fold(0.0, (sum, s) => sum + s.totalAmount);
   }
 
   /// نسبة الأخطاء
@@ -129,7 +131,8 @@ class PerformanceNotifier extends StateNotifier<PerformanceStats> {
     // Trim old entries to prevent unbounded memory growth
     var updatedSales = [...state.sales, sale];
     if (updatedSales.length > _maxSalesHistory) {
-      updatedSales = updatedSales.sublist(updatedSales.length - _maxSalesHistory);
+      updatedSales =
+          updatedSales.sublist(updatedSales.length - _maxSalesHistory);
     }
 
     state = state.copyWith(sales: updatedSales);
@@ -179,7 +182,8 @@ class PerformanceNotifier extends StateNotifier<PerformanceStats> {
   void cancelSale() {
     if (_currentSaleId == null) return;
 
-    final updatedSales = state.sales.where((s) => s.saleId != _currentSaleId).toList();
+    final updatedSales =
+        state.sales.where((s) => s.saleId != _currentSaleId).toList();
     state = state.copyWith(sales: updatedSales);
     _currentSaleId = null;
   }
@@ -195,7 +199,8 @@ class PerformanceNotifier extends StateNotifier<PerformanceStats> {
 }
 
 /// مزودات الأداء
-final performanceProvider = StateNotifierProvider<PerformanceNotifier, PerformanceStats>(
+final performanceProvider =
+    StateNotifierProvider<PerformanceNotifier, PerformanceStats>(
   (ref) => PerformanceNotifier(),
 );
 

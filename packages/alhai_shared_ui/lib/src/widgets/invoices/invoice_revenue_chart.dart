@@ -26,20 +26,34 @@ class InvoiceRevenueChart extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(l10n.revenueAnalysis, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
+              Text(l10n.revenueAnalysis,
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onSurface)),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: AlhaiSpacing.sm, vertical: 6),
                 decoration: BoxDecoration(
-                  color: isDark ? AppColors.backgroundDark : AppColors.backgroundSecondary,
+                  color: isDark
+                      ? AppColors.backgroundDark
+                      : AppColors.backgroundSecondary,
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(color: Theme.of(context).dividerColor),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(l10n.last7Days, style: TextStyle(fontSize: 13, color: Theme.of(context).colorScheme.onSurface)),
+                    Text(l10n.last7Days,
+                        style: TextStyle(
+                            fontSize: 13,
+                            color: Theme.of(context).colorScheme.onSurface)),
                     SizedBox(width: AlhaiSpacing.xxs),
-                    Icon(Icons.keyboard_arrow_down, size: 16, color: isDark ? AppColors.textMutedDark : AppColors.textSecondary),
+                    Icon(Icons.keyboard_arrow_down,
+                        size: 16,
+                        color: isDark
+                            ? AppColors.textMutedDark
+                            : AppColors.textSecondary),
                   ],
                 ),
               ),
@@ -50,15 +64,33 @@ class InvoiceRevenueChart extends StatelessWidget {
             height: 220,
             child: CustomPaint(
               size: Size.infinite,
-              painter: _RevenueChartPainter(isDark: isDark, gridLineColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05)),
+              painter: _RevenueChartPainter(
+                  isDark: isDark,
+                  gridLineColor: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.05)),
             ),
           ),
           SizedBox(height: AlhaiSpacing.sm),
           // X-axis labels
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [l10n.sat, l10n.sun, l10n.mon, l10n.tue, l10n.wed, l10n.thu, l10n.fri]
-                .map((d) => Text(d, style: TextStyle(fontSize: 11, color: isDark ? AppColors.textMutedDark : AppColors.textMuted)))
+            children: [
+              l10n.sat,
+              l10n.sun,
+              l10n.mon,
+              l10n.tue,
+              l10n.wed,
+              l10n.thu,
+              l10n.fri
+            ]
+                .map((d) => Text(d,
+                    style: TextStyle(
+                        fontSize: 11,
+                        color: isDark
+                            ? AppColors.textMutedDark
+                            : AppColors.textMuted)))
                 .toList(),
           ),
         ],
@@ -74,7 +106,15 @@ class _RevenueChartPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final data = [12000.0, 15000.0, 11000.0, 18000.0, 14000.0, 22000.0, 19500.0];
+    final data = [
+      12000.0,
+      15000.0,
+      11000.0,
+      18000.0,
+      14000.0,
+      22000.0,
+      19500.0
+    ];
     const maxVal = 25000.0;
 
     // Grid lines
@@ -88,11 +128,16 @@ class _RevenueChartPainter extends CustomPainter {
     }
 
     // Y-axis labels
-    final textStyle = TextStyle(fontSize: 10, color: isDark ? AppColors.textMutedDark : AppColors.textSecondary);
+    final textStyle = TextStyle(
+        fontSize: 10,
+        color: isDark ? AppColors.textMutedDark : AppColors.textSecondary);
     for (int i = 0; i <= 4; i++) {
       final value = (maxVal * i / 4).toInt();
       final label = '${(value / 1000).toStringAsFixed(0)}k';
-      final textPainter = TextPainter(text: TextSpan(text: label, style: textStyle), textDirection: TextDirection.ltr)..layout();
+      final textPainter = TextPainter(
+          text: TextSpan(text: label, style: textStyle),
+          textDirection: TextDirection.ltr)
+        ..layout();
       textPainter.paint(canvas, Offset(-2, size.height * (1 - i / 4) - 6));
     }
 
@@ -115,15 +160,21 @@ class _RevenueChartPainter extends CustomPainter {
       ..shader = LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
-        colors: [AppColors.primary.withValues(alpha: 0.3), AppColors.primary.withValues(alpha: 0.02)],
+        colors: [
+          AppColors.primary.withValues(alpha: 0.3),
+          AppColors.primary.withValues(alpha: 0.02)
+        ],
       ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
     canvas.drawPath(areaPath, areaPaint);
 
     // Line
     final linePath = Path();
     for (int i = 0; i < points.length; i++) {
-      if (i == 0) { linePath.moveTo(points[i].dx, points[i].dy); }
-      else { linePath.lineTo(points[i].dx, points[i].dy); }
+      if (i == 0) {
+        linePath.moveTo(points[i].dx, points[i].dy);
+      } else {
+        linePath.lineTo(points[i].dx, points[i].dy);
+      }
     }
     final linePaint = Paint()
       ..color = AppColors.primary
@@ -134,7 +185,10 @@ class _RevenueChartPainter extends CustomPainter {
 
     // Dots
     final dotPaint = Paint()..color = AppColors.primary;
-    final dotBorderPaint = Paint()..color = Colors.white..strokeWidth = 2..style = PaintingStyle.stroke;
+    final dotBorderPaint = Paint()
+      ..color = Colors.white
+      ..strokeWidth = 2
+      ..style = PaintingStyle.stroke;
     for (final p in points) {
       canvas.drawCircle(p, 4, dotPaint);
       canvas.drawCircle(p, 4, dotBorderPaint);

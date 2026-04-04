@@ -32,7 +32,9 @@ class OrgProductsTable extends Table {
   RealColumn get costPrice => real().nullable()();
 
   // التصنيف
-  TextColumn get categoryId => text().nullable().references(CategoriesTable, #id, onDelete: KeyAction.setNull)();
+  TextColumn get categoryId => text()
+      .nullable()
+      .references(CategoriesTable, #id, onDelete: KeyAction.setNull)();
   TextColumn get unit => text().nullable()();
 
   // صور المنظمة (الافتراضية لكل الفروع)
@@ -42,7 +44,8 @@ class OrgProductsTable extends Table {
   TextColumn get orgImageHash => text().nullable()();
 
   // إعدادات أونلاين افتراضية
-  BoolColumn get onlineAvailable => boolean().withDefault(const Constant(false))();
+  BoolColumn get onlineAvailable =>
+      boolean().withDefault(const Constant(false))();
   RealColumn get onlineMaxQty => real().nullable()();
   RealColumn get minAlertQty => real().nullable()();
   BoolColumn get autoReorder => boolean().withDefault(const Constant(false))();

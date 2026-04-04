@@ -78,7 +78,8 @@ void main() {
       seller: seller,
       buyer: buyer,
       lines: [line1, line2],
-      previousInvoiceHash: 'NWZlY2ViNjZmZmM4NmYzOGQ5NTI3ODZjNmQ2OTZjNzljMmRiYzk=',
+      previousInvoiceHash:
+          'NWZlY2ViNjZmZmM4NmYzOGQ5NTI3ODZjNmQ2OTZjNzljMmRiYzk=',
     );
 
     simplifiedInvoice = ZatcaInvoice(
@@ -158,8 +159,8 @@ void main() {
     test('contains InvoiceTypeCode with name attribute', () {
       final xml = builder.build(standardInvoice);
       final doc = XmlDocument.parse(xml);
-      final typeCode = doc.rootElement.findAllElements('InvoiceTypeCode',
-          namespace: '*');
+      final typeCode =
+          doc.rootElement.findAllElements('InvoiceTypeCode', namespace: '*');
       expect(typeCode, isNotEmpty);
 
       final el = typeCode.first;
@@ -209,10 +210,6 @@ void main() {
     test('contains two TaxTotal elements', () {
       final xml = builder.build(standardInvoice);
       final doc = XmlDocument.parse(xml);
-      final taxTotals = doc.rootElement.findAllElements(
-        'TaxTotal',
-        namespace: '*',
-      );
       // Two at invoice level; individual lines also have TaxTotal
       final directTaxTotals = doc.rootElement.childElements
           .where((e) => e.name.local == 'TaxTotal')
@@ -397,7 +394,7 @@ void main() {
     });
 
     test('builds a line with correct ID', () {
-      final line = const ZatcaInvoiceLine(
+      const line = ZatcaInvoiceLine(
         lineId: '1',
         itemName: 'Widget',
         quantity: 3,
@@ -411,7 +408,7 @@ void main() {
     });
 
     test('builds line with InvoicedQuantity and unitCode', () {
-      final line = const ZatcaInvoiceLine(
+      const line = ZatcaInvoiceLine(
         lineId: '1',
         itemName: 'Widget',
         quantity: 3,
@@ -421,14 +418,13 @@ void main() {
       );
       final el = lineBuilder.buildLine(line, 'SAR');
 
-      final qty =
-          el.findAllElements('InvoicedQuantity', namespace: '*').first;
+      final qty = el.findAllElements('InvoicedQuantity', namespace: '*').first;
       expect(qty.innerText, '3.00');
       expect(qty.getAttribute('unitCode'), 'PCE');
     });
 
     test('builds line with correct LineExtensionAmount', () {
-      final line = const ZatcaInvoiceLine(
+      const line = ZatcaInvoiceLine(
         lineId: '1',
         itemName: 'Widget',
         quantity: 4,
@@ -444,7 +440,7 @@ void main() {
     });
 
     test('includes AllowanceCharge when line has discount', () {
-      final line = const ZatcaInvoiceLine(
+      const line = ZatcaInvoiceLine(
         lineId: '1',
         itemName: 'Discounted Item',
         quantity: 2,
@@ -456,14 +452,13 @@ void main() {
       );
       final el = lineBuilder.buildLine(line, 'SAR');
 
-      final allowances =
-          el.findAllElements('AllowanceCharge', namespace: '*');
+      final allowances = el.findAllElements('AllowanceCharge', namespace: '*');
       // At least one AllowanceCharge at line level
       expect(allowances, isNotEmpty);
     });
 
     test('omits AllowanceCharge when no discount', () {
-      final line = const ZatcaInvoiceLine(
+      const line = ZatcaInvoiceLine(
         lineId: '1',
         itemName: 'Full Price Item',
         quantity: 1,
@@ -480,7 +475,7 @@ void main() {
     });
 
     test('builds Item with name and ClassifiedTaxCategory', () {
-      final line = const ZatcaInvoiceLine(
+      const line = ZatcaInvoiceLine(
         lineId: '1',
         itemName: 'Test Product',
         quantity: 1,
@@ -503,7 +498,7 @@ void main() {
     });
 
     test('builds Item with barcode as StandardItemIdentification', () {
-      final line = const ZatcaInvoiceLine(
+      const line = ZatcaInvoiceLine(
         lineId: '1',
         itemName: 'Barcoded Item',
         quantity: 1,
@@ -522,7 +517,7 @@ void main() {
     });
 
     test('builds Price with PriceAmount', () {
-      final line = const ZatcaInvoiceLine(
+      const line = ZatcaInvoiceLine(
         lineId: '1',
         itemName: 'Widget',
         quantity: 1,
@@ -532,8 +527,7 @@ void main() {
       final el = lineBuilder.buildLine(line, 'SAR');
 
       final price = el.findAllElements('Price', namespace: '*').first;
-      final amount =
-          price.findAllElements('PriceAmount', namespace: '*').first;
+      final amount = price.findAllElements('PriceAmount', namespace: '*').first;
       expect(amount.innerText, '42.50');
       expect(amount.getAttribute('currencyID'), 'SAR');
     });
@@ -638,12 +632,10 @@ void main() {
       final first = totals[0];
 
       // Should only have TaxAmount, no TaxSubtotal
-      final subtotals =
-          first.findAllElements('TaxSubtotal', namespace: '*');
+      final subtotals = first.findAllElements('TaxSubtotal', namespace: '*');
       expect(subtotals, isEmpty);
 
-      final amount =
-          first.findAllElements('TaxAmount', namespace: '*').first;
+      final amount = first.findAllElements('TaxAmount', namespace: '*').first;
       expect(amount.innerText, '15.00');
     });
 
@@ -678,8 +670,7 @@ void main() {
       final totals = taxBuilder.buildTaxTotals(invoice);
       final second = totals[1];
 
-      final subtotals =
-          second.findAllElements('TaxSubtotal', namespace: '*');
+      final subtotals = second.findAllElements('TaxSubtotal', namespace: '*');
       expect(subtotals.length, 1);
 
       final taxable =
@@ -727,8 +718,7 @@ void main() {
       final totals = taxBuilder.buildTaxTotals(invoice);
       final second = totals[1];
 
-      final subtotals =
-          second.findAllElements('TaxSubtotal', namespace: '*');
+      final subtotals = second.findAllElements('TaxSubtotal', namespace: '*');
       expect(subtotals.length, 2);
     });
   });

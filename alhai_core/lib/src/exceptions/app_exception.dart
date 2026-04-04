@@ -7,7 +7,8 @@ sealed class AppException implements Exception {
   const AppException(this.message, {this.code, this.statusCode});
 
   @override
-  String toString() => 'AppException: $message (code: $code, status: $statusCode)';
+  String toString() =>
+      'AppException: $message (code: $code, status: $statusCode)';
 }
 
 /// Network-related exceptions (connection, timeout)

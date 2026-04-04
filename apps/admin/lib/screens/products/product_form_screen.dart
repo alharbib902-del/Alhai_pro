@@ -166,8 +166,10 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
-    final isWideScreen = size.width >= AlhaiBreakpoints.desktop || (isLandscape && size.width >= 600);
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+    final isWideScreen = size.width >= AlhaiBreakpoints.desktop ||
+        (isLandscape && size.width >= 600);
     final isMediumScreen = size.width >= AlhaiBreakpoints.tablet;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
@@ -211,9 +213,8 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
               child: Column(
                 children: [
                   AppHeader(
-                    title: widget.isEditing
-                        ? l10n.editProduct
-                        : l10n.addProduct,
+                    title:
+                        widget.isEditing ? l10n.editProduct : l10n.addProduct,
                     onMenuTap: isWideScreen
                         ? null
                         : () => Scaffold.of(context).openDrawer(),
@@ -361,9 +362,8 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.08)
-              : AppColors.border,
+          color:
+              isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.border,
         ),
         boxShadow: [
           BoxShadow(
@@ -768,9 +768,8 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
             : AppColors.border.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.08)
-              : AppColors.border,
+          color:
+              isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.border,
         ),
       ),
       child: SwitchListTile(
@@ -872,8 +871,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
       final minStockText = _minStockController.text.trim();
 
       if (widget.isEditing) {
-        final existing =
-            await db.productsDao.getProductById(widget.productId!);
+        final existing = await db.productsDao.getProductById(widget.productId!);
         if (existing == null) throw Exception('Product not found');
 
         final updated = existing.copyWith(

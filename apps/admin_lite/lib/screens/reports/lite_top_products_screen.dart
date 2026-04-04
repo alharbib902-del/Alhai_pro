@@ -17,7 +17,8 @@ class LiteTopProductsScreen extends ConsumerStatefulWidget {
   const LiteTopProductsScreen({super.key});
 
   @override
-  ConsumerState<LiteTopProductsScreen> createState() => _LiteTopProductsScreenState();
+  ConsumerState<LiteTopProductsScreen> createState() =>
+      _LiteTopProductsScreenState();
 }
 
 class _LiteTopProductsScreenState extends ConsumerState<LiteTopProductsScreen> {
@@ -48,14 +49,22 @@ class _LiteTopProductsScreenState extends ConsumerState<LiteTopProductsScreen> {
                 }
                 if (sorted.isEmpty) {
                   return Center(
-                    child: Text(l10n.noResults, style: TextStyle(color: isDark ? Colors.white54 : Theme.of(context).colorScheme.onSurfaceVariant)),
+                    child: Text(l10n.noResults,
+                        style: TextStyle(
+                            color: isDark
+                                ? Colors.white54
+                                : Theme.of(context)
+                                    .colorScheme
+                                    .onSurfaceVariant)),
                   );
                 }
                 return ListView.builder(
-                  padding: EdgeInsets.all(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
+                  padding: EdgeInsets.all(
+                      isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
                   itemCount: sorted.length,
                   itemBuilder: (context, index) {
-                    return _buildProductTile(context, sorted[index], index, isDark);
+                    return _buildProductTile(
+                        context, sorted[index], index, isDark);
                   },
                 );
               },
@@ -82,12 +91,17 @@ class _LiteTopProductsScreenState extends ConsumerState<LiteTopProductsScreen> {
 
   Widget _buildSortToggle(bool isDark, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+      padding: const EdgeInsets.symmetric(
+          horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.03) : Theme.of(context).colorScheme.surfaceContainerLowest,
+        color: isDark
+            ? Colors.white.withValues(alpha: 0.03)
+            : Theme.of(context).colorScheme.surfaceContainerLowest,
         border: Border(
           bottom: BorderSide(
-            color: isDark ? Colors.white12 : Theme.of(context).colorScheme.outlineVariant,
+            color: isDark
+                ? Colors.white12
+                : Theme.of(context).colorScheme.outlineVariant,
           ),
         ),
       ),
@@ -112,20 +126,29 @@ class _LiteTopProductsScreenState extends ConsumerState<LiteTopProductsScreen> {
       labelStyle: TextStyle(
         color: isSelected
             ? AlhaiColors.primary
-            : (isDark ? Colors.white70 : Theme.of(context).colorScheme.onSurface),
+            : (isDark
+                ? Colors.white70
+                : Theme.of(context).colorScheme.onSurface),
         fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
         fontSize: 13,
       ),
       side: BorderSide(
-        color: isSelected ? AlhaiColors.primary : (isDark ? Colors.white24 : Theme.of(context).colorScheme.outlineVariant),
+        color: isSelected
+            ? AlhaiColors.primary
+            : (isDark
+                ? Colors.white24
+                : Theme.of(context).colorScheme.outlineVariant),
       ),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
     );
   }
 
-  Widget _buildProductTile(BuildContext context, TopProductData product, int index, bool isDark) {
+  Widget _buildProductTile(
+      BuildContext context, TopProductData product, int index, bool isDark) {
     final rank = index + 1;
-    final rankColor = rank <= 3 ? AlhaiColors.warning : (isDark ? Colors.white24 : Colors.grey.shade300);
+    final rankColor = rank <= 3
+        ? AlhaiColors.warning
+        : (isDark ? Colors.white24 : Colors.grey.shade300);
 
     return Container(
       margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
@@ -134,7 +157,9 @@ class _LiteTopProductsScreenState extends ConsumerState<LiteTopProductsScreen> {
         color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color: isDark ? Colors.white12 : Theme.of(context).colorScheme.outlineVariant,
+          color: isDark
+              ? Colors.white12
+              : Theme.of(context).colorScheme.outlineVariant,
         ),
       ),
       child: Row(
@@ -152,7 +177,9 @@ class _LiteTopProductsScreenState extends ConsumerState<LiteTopProductsScreen> {
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
-                  color: rank <= 3 ? AlhaiColors.warning : (isDark ? Colors.white54 : Colors.black54),
+                  color: rank <= 3
+                      ? AlhaiColors.warning
+                      : (isDark ? Colors.white54 : Colors.black54),
                 ),
               ),
             ),
@@ -175,7 +202,9 @@ class _LiteTopProductsScreenState extends ConsumerState<LiteTopProductsScreen> {
                   '${product.quantity} units',
                   style: TextStyle(
                     fontSize: 12,
-                    color: isDark ? Colors.white38 : Theme.of(context).colorScheme.onSurfaceVariant,
+                    color: isDark
+                        ? Colors.white38
+                        : Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
               ],

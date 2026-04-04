@@ -22,7 +22,8 @@ class DeliveriesListScreen extends ConsumerWidget {
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(48),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
+            padding: const EdgeInsets.symmetric(
+                horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
             child: SegmentedButton<DeliveryFilter>(
               selected: {filter},
               onSelectionChanged: (s) =>
@@ -53,78 +54,80 @@ class DeliveriesListScreen extends ConsumerWidget {
           data: (list) {
             if (list.isEmpty) {
               return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.inbox_rounded,
-                    size: 64,
-                    color: Theme.of(context).colorScheme.outline,
-                  ),
-                  const SizedBox(height: AlhaiSpacing.md),
-                  Text(
-                    'لا توجد توصيلات',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.outline,
-                        ),
-                  ),
-                  const SizedBox(height: AlhaiSpacing.md),
-                  OutlinedButton.icon(
-                    onPressed: () => ref.invalidate(myDeliveriesStreamProvider),
-                    icon: const Icon(Icons.refresh),
-                    label: const Text('تحديث'),
-                  ),
-                ],
-              ),
-            );
-          }
-
-          final isTablet = MediaQuery.of(context).size.width >= 600;
-
-          return RefreshIndicator(
-            onRefresh: () async {
-              ref.invalidate(myDeliveriesStreamProvider);
-            },
-            child: isTablet
-                ? GridView.builder(
-                    padding: const EdgeInsets.all(AlhaiSpacing.md),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: AlhaiSpacing.md,
-                      mainAxisSpacing: AlhaiSpacing.md,
-                      childAspectRatio: 1.8,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.inbox_rounded,
+                      size: 64,
+                      color: Theme.of(context).colorScheme.outline,
                     ),
-                    addAutomaticKeepAlives: false,
-                    itemCount: list.length,
-                    itemBuilder: (context, index) {
-                      final delivery = list[index];
-                      final id = delivery['id'] as String;
-                      return DeliveryCard(
-                        key: ValueKey(id),
-                        delivery: delivery,
-                        onTap: () => context.push('/orders/$id'),
-                      );
-                    },
-                  )
-                : ListView.builder(
-                    padding: const EdgeInsets.all(AlhaiSpacing.md),
-                    itemCount: list.length,
-                    addAutomaticKeepAlives: false,
-                    itemBuilder: (context, index) {
-                      final delivery = list[index];
-                      final id = delivery['id'] as String;
-                      return DeliveryCard(
-                        key: ValueKey(id),
-                        delivery: delivery,
-                        onTap: () => context.push('/orders/$id'),
-                      );
-                    },
-                  ),
-          );
-        },
+                    const SizedBox(height: AlhaiSpacing.md),
+                    Text(
+                      'لا توجد توصيلات',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            color: Theme.of(context).colorScheme.outline,
+                          ),
+                    ),
+                    const SizedBox(height: AlhaiSpacing.md),
+                    OutlinedButton.icon(
+                      onPressed: () =>
+                          ref.invalidate(myDeliveriesStreamProvider),
+                      icon: const Icon(Icons.refresh),
+                      label: const Text('تحديث'),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            final isTablet = MediaQuery.of(context).size.width >= 600;
+
+            return RefreshIndicator(
+              onRefresh: () async {
+                ref.invalidate(myDeliveriesStreamProvider);
+              },
+              child: isTablet
+                  ? GridView.builder(
+                      padding: const EdgeInsets.all(AlhaiSpacing.md),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: AlhaiSpacing.md,
+                        mainAxisSpacing: AlhaiSpacing.md,
+                        childAspectRatio: 1.8,
+                      ),
+                      addAutomaticKeepAlives: false,
+                      itemCount: list.length,
+                      itemBuilder: (context, index) {
+                        final delivery = list[index];
+                        final id = delivery['id'] as String;
+                        return DeliveryCard(
+                          key: ValueKey(id),
+                          delivery: delivery,
+                          onTap: () => context.push('/orders/$id'),
+                        );
+                      },
+                    )
+                  : ListView.builder(
+                      padding: const EdgeInsets.all(AlhaiSpacing.md),
+                      itemCount: list.length,
+                      addAutomaticKeepAlives: false,
+                      itemBuilder: (context, index) {
+                        final delivery = list[index];
+                        final id = delivery['id'] as String;
+                        return DeliveryCard(
+                          key: ValueKey(id),
+                          delivery: delivery,
+                          onTap: () => context.push('/orders/$id'),
+                        );
+                      },
+                    ),
+            );
+          },
           loading: () => const ShimmerList(count: 5),
-          error: (e, _) => const Center(child: Text('حدث خطأ في تحميل البيانات')),
+          error: (e, _) =>
+              const Center(child: Text('حدث خطأ في تحميل البيانات')),
         ),
       ),
     );

@@ -12,14 +12,19 @@ library;
 enum PromotionType {
   /// خصم نسبة مئوية
   percentOff,
+
   /// اشتري X واحصل على Y
   buyXGetY,
+
   /// حزمة (Bundle)
   bundle,
+
   /// تخفيض سريع
   flashSale,
+
   /// مكافأة ولاء
   loyaltyBonus,
+
   /// عرض موسمي
   seasonalDeal,
 }
@@ -93,7 +98,6 @@ class RoiForecast {
 
 /// خدمة تصميم العروض الذكية
 class AiPromotionDesignerService {
-
   AiPromotionDesignerService();
 
   /// توليد عروض ترويجية ذكية
@@ -106,8 +110,14 @@ class AiPromotionDesignerService {
         id: 'PROMO-AI-001',
         type: PromotionType.seasonalDeal,
         title: 'عرض رمضان المبارك',
-        description: 'خصم 25% على سلة رمضان الأساسية (تمور، لبن، عصائر). الذكاء الاصطناعي يتوقع زيادة الطلب بنسبة 40% خلال هذه الفترة.',
-        products: ['تمور سكري 1 كجم', 'لبن رايب 2 لتر', 'عصير فيمتو', 'قمر الدين'],
+        description:
+            'خصم 25% على سلة رمضان الأساسية (تمور، لبن، عصائر). الذكاء الاصطناعي يتوقع زيادة الطلب بنسبة 40% خلال هذه الفترة.',
+        products: [
+          'تمور سكري 1 كجم',
+          'لبن رايب 2 لتر',
+          'عصير فيمتو',
+          'قمر الدين'
+        ],
         discountAmount: 25,
         startDate: now,
         endDate: now.add(const Duration(days: 30)),
@@ -120,7 +130,8 @@ class AiPromotionDesignerService {
         id: 'PROMO-AI-002',
         type: PromotionType.buyXGetY,
         title: 'اشتري 3 واحصل على 1 مجاناً - ألبان',
-        description: 'زيادة مبيعات الألبان القريبة من انتهاء الصلاحية. AI لاحظ تباطؤ حركة الألبان يوم الأحد والإثنين.',
+        description:
+            'زيادة مبيعات الألبان القريبة من انتهاء الصلاحية. AI لاحظ تباطؤ حركة الألبان يوم الأحد والإثنين.',
         products: ['حليب طازج 1 لتر', 'زبادي طبيعي', 'لبنة كاملة الدسم'],
         discountAmount: 25,
         startDate: now,
@@ -134,7 +145,8 @@ class AiPromotionDesignerService {
         id: 'PROMO-AI-003',
         type: PromotionType.flashSale,
         title: 'تخفيض سريع - ساعة الذروة',
-        description: 'خصم 15% بين 5-7 مساءً على الخضروات الطازجة. AI حدد هذا الوقت كأفضل فترة لتصريف المخزون اليومي.',
+        description:
+            'خصم 15% بين 5-7 مساءً على الخضروات الطازجة. AI حدد هذا الوقت كأفضل فترة لتصريف المخزون اليومي.',
         products: ['طماطم طازجة', 'خيار', 'بصل أحمر', 'فلفل رومي'],
         discountAmount: 15,
         startDate: now,
@@ -148,7 +160,8 @@ class AiPromotionDesignerService {
         id: 'PROMO-AI-004',
         type: PromotionType.bundle,
         title: 'حزمة الإفطار السعودي',
-        description: 'حزمة شاملة للإفطار بسعر مخفض. يزيد متوسط الفاتورة بنسبة 35%. المنتجات الأكثر شراءً معاً حسب تحليل AI.',
+        description:
+            'حزمة شاملة للإفطار بسعر مخفض. يزيد متوسط الفاتورة بنسبة 35%. المنتجات الأكثر شراءً معاً حسب تحليل AI.',
         products: ['فول مدمس', 'جبنة بيضاء', 'خبز صامولي', 'بيض بلدي 6 حبات'],
         discountAmount: 20,
         startDate: now,
@@ -162,7 +175,8 @@ class AiPromotionDesignerService {
         id: 'PROMO-AI-005',
         type: PromotionType.percentOff,
         title: 'تصفية صيف - مشروبات باردة',
-        description: 'خصم 30% على جميع المشروبات الباردة والعصائر. التوقعات تشير لارتفاع الحرارة وزيادة الطلب.',
+        description:
+            'خصم 30% على جميع المشروبات الباردة والعصائر. التوقعات تشير لارتفاع الحرارة وزيادة الطلب.',
         products: ['مياه معدنية 12 حبة', 'عصير مانجو', 'آيس تي', 'مشروب غازي'],
         discountAmount: 30,
         startDate: now.add(const Duration(days: 5)),
@@ -176,7 +190,8 @@ class AiPromotionDesignerService {
         id: 'PROMO-AI-006',
         type: PromotionType.loyaltyBonus,
         title: 'مكافأة الولاء - نقاط مضاعفة',
-        description: 'نقاط مضاعفة لعملاء برنامج الولاء على مشتريات أكثر من 100 ر.س. يزيد معدل العودة بنسبة 60%.',
+        description:
+            'نقاط مضاعفة لعملاء برنامج الولاء على مشتريات أكثر من 100 ر.س. يزيد معدل العودة بنسبة 60%.',
         products: ['جميع المنتجات'],
         discountAmount: 0,
         startDate: now,
@@ -190,7 +205,8 @@ class AiPromotionDesignerService {
         id: 'PROMO-AI-007',
         type: PromotionType.percentOff,
         title: 'خصم المنتجات البطيئة',
-        description: 'خصم 35% على منتجات لم تُباع منذ أسبوعين. يساعد في تصريف المخزون الراكد وتحرير مساحة الرفوف.',
+        description:
+            'خصم 35% على منتجات لم تُباع منذ أسبوعين. يساعد في تصريف المخزون الراكد وتحرير مساحة الرفوف.',
         products: ['صابون غسيل 3 لتر', 'معجون أسنان كبير', 'مناديل ورقية 200'],
         discountAmount: 35,
         startDate: now,
@@ -204,7 +220,8 @@ class AiPromotionDesignerService {
         id: 'PROMO-AI-008',
         type: PromotionType.seasonalDeal,
         title: 'عرض العودة للمدارس',
-        description: 'حزمة سناكس مدرسية بخصم 20%. AI تنبأ بزيادة الطلب على السناكس الصحية في فترة المدارس.',
+        description:
+            'حزمة سناكس مدرسية بخصم 20%. AI تنبأ بزيادة الطلب على السناكس الصحية في فترة المدارس.',
         products: ['بسكويت صحي', 'عصير تفاح صغير', 'جبنة مثلثات', 'تمور معبأة'],
         discountAmount: 20,
         startDate: now.add(const Duration(days: 15)),
@@ -231,7 +248,8 @@ class AiPromotionDesignerService {
 
     for (int day = 1; day <= duration; day++) {
       // محاكاة تذبذب طبيعي
-      final factor = 0.8 + (day % 7 == 5 || day % 7 == 6 ? 0.5 : 0.2) * (day / duration);
+      final factor =
+          0.8 + (day % 7 == 5 || day % 7 == 6 ? 0.5 : 0.2) * (day / duration);
       final rev = dailyRevenue * factor;
       final cost = dailyCost * factor;
       cumRevenue += rev;
@@ -241,7 +259,8 @@ class AiPromotionDesignerService {
         day: day,
         projectedRevenue: cumRevenue,
         projectedCost: cumCost,
-        cumulativeRoi: cumCost > 0 ? ((cumRevenue - cumCost) / cumCost * 100) : 0,
+        cumulativeRoi:
+            cumCost > 0 ? ((cumRevenue - cumCost) / cumCost * 100) : 0,
       ));
     }
 

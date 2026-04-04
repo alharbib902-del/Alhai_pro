@@ -14,14 +14,14 @@ final instantSearchQueryProvider = StateProvider<String>((ref) => '');
 final searchResultsProvider = Provider<List<Product>>((ref) {
   final query = ref.watch(instantSearchQueryProvider);
   final products = ref.watch(productsStateProvider).products;
-  
+
   if (query.isEmpty) return products;
-  
+
   final lowerQuery = query.toLowerCase();
   return products.where((p) {
     return p.name.toLowerCase().contains(lowerQuery) ||
-           (p.barcode?.toLowerCase().contains(lowerQuery) ?? false) ||
-           p.id.toLowerCase().contains(lowerQuery);
+        (p.barcode?.toLowerCase().contains(lowerQuery) ?? false) ||
+        p.id.toLowerCase().contains(lowerQuery);
   }).toList();
 });
 
@@ -75,12 +75,12 @@ class _InstantSearchFieldState extends ConsumerState<InstantSearchField> {
   void _selectProduct(Product product) {
     // إضافة للسلة
     ref.read(cartStateProvider.notifier).addProduct(product);
-    
+
     // مسح البحث
     _controller.clear();
     ref.read(instantSearchQueryProvider.notifier).state = '';
     setState(() => _showResults = false);
-    
+
     // Callback
     widget.onProductSelected?.call(product);
   }
@@ -101,19 +101,20 @@ class _InstantSearchFieldState extends ConsumerState<InstantSearchField> {
           onChanged: _onSearchChanged,
           maxLength: 100,
           decoration: InputDecoration(
-            hintText: widget.hintText ?? AppLocalizations.of(context)!.quickSearchHintFull,
+            hintText: widget.hintText ??
+                AppLocalizations.of(context)!.quickSearchHintFull,
             prefixIcon: const Icon(Icons.search),
-            suffixIcon: _controller.text.isNotEmpty 
-              ? IconButton(
-                  icon: const Icon(Icons.clear),
-                  onPressed: () {
-                    _controller.clear();
-                    ref.read(instantSearchQueryProvider.notifier).state = '';
-                    setState(() => _showResults = false);
-                  },
-                  tooltip: AppLocalizations.of(context)!.clearField,
-                )
-              : null,
+            suffixIcon: _controller.text.isNotEmpty
+                ? IconButton(
+                    icon: const Icon(Icons.clear),
+                    onPressed: () {
+                      _controller.clear();
+                      ref.read(instantSearchQueryProvider.notifier).state = '';
+                      setState(() => _showResults = false);
+                    },
+                    tooltip: AppLocalizations.of(context)!.clearField,
+                  )
+                : null,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
             ),
@@ -121,7 +122,7 @@ class _InstantSearchFieldState extends ConsumerState<InstantSearchField> {
             fillColor: theme.colorScheme.surfaceContainerHighest,
           ),
         ),
-        
+
         // نتائج البحث
         if (_showResults && query.isNotEmpty)
           Container(
@@ -144,11 +145,16 @@ class _InstantSearchFieldState extends ConsumerState<InstantSearchField> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.search_off, color: Theme.of(context).colorScheme.outline),
+                        Icon(Icons.search_off,
+                            color: Theme.of(context).colorScheme.outline),
                         const SizedBox(width: AlhaiSpacing.xs),
                         Text(
-                          AppLocalizations.of(context)!.noResultsForQuery(query),
-                          style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                          AppLocalizations.of(context)!
+                              .noResultsForQuery(query),
+                          style: TextStyle(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurfaceVariant),
                         ),
                       ],
                     ),
@@ -209,7 +215,9 @@ class _SearchResultItem extends StatelessWidget {
       subtitle: Row(
         children: [
           if (product.barcode != null) ...[
-            Icon(Icons.qr_code, size: 12, color: Theme.of(context).colorScheme.onSurfaceVariant),
+            Icon(Icons.qr_code,
+                size: 12,
+                color: Theme.of(context).colorScheme.onSurfaceVariant),
             const SizedBox(width: AlhaiSpacing.xxs),
             _HighlightedText(
               text: product.barcode!,
@@ -222,7 +230,8 @@ class _SearchResultItem extends StatelessWidget {
             const SizedBox(width: AlhaiSpacing.xs),
           ],
           Text(
-            AppLocalizations.of(context)!.priceSar(product.price.toStringAsFixed(2)),
+            AppLocalizations.of(context)!
+                .priceSar(product.price.toStringAsFixed(2)),
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.primary,
               fontWeight: FontWeight.bold,
@@ -276,10 +285,11 @@ class _HighlightedText extends StatelessWidget {
           TextSpan(text: text.substring(0, startIndex)),
           TextSpan(
             text: text.substring(startIndex, endIndex),
-            style: highlightStyle ?? style?.copyWith(
-              backgroundColor: Colors.yellow.shade200,
-              fontWeight: FontWeight.bold,
-            ),
+            style: highlightStyle ??
+                style?.copyWith(
+                  backgroundColor: Colors.yellow.shade200,
+                  fontWeight: FontWeight.bold,
+                ),
           ),
           TextSpan(text: text.substring(endIndex)),
         ],

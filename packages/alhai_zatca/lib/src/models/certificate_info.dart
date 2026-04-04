@@ -100,7 +100,8 @@ class CertificateInfo {
         'isProduction': isProduction,
       };
 
-  factory CertificateInfo.fromJson(Map<String, dynamic> json) => CertificateInfo(
+  factory CertificateInfo.fromJson(Map<String, dynamic> json) =>
+      CertificateInfo(
         certificatePem: json['certificatePem'] as String,
         privateKeyPem: json['privateKeyPem'] as String,
         csid: json['csid'] as String,

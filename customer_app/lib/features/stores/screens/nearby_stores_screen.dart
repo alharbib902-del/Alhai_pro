@@ -25,45 +25,45 @@ class NearbyStoresScreen extends ConsumerWidget {
       body: SafeArea(
         top: false,
         child: storesAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (_, __) => Center(
-          child: AlhaiEmptyState.error(
-            title: 'فشل تحميل المتاجر',
-            description: 'تحقق من اتصالك بالإنترنت',
-            actionText: 'إعادة المحاولة',
-            onAction: () => ref.invalidate(allStoresProvider),
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (_, __) => Center(
+            child: AlhaiEmptyState.error(
+              title: 'فشل تحميل المتاجر',
+              description: 'تحقق من اتصالك بالإنترنت',
+              actionText: 'إعادة المحاولة',
+              onAction: () => ref.invalidate(allStoresProvider),
+            ),
           ),
-        ),
-        data: (stores) {
-          if (stores.isEmpty) {
-            return Center(
-              child: AlhaiEmptyState(
-                icon: Icons.storefront_outlined,
-                title: 'لا توجد متاجر قريبة',
-                description: 'لم نتمكن من العثور على متاجر في منطقتك',
-              ),
-            );
-          }
-
-          return ListView.builder(
-            padding: const EdgeInsets.all(AlhaiSpacing.md),
-            itemCount: stores.length,
-            itemBuilder: (context, index) {
-              final store = stores[index];
-              return Padding(
-                padding: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
-                child: StoreCard(
-                  store: store,
-                  onTap: () {
-                    ref.read(selectedStoreProvider.notifier).state = store;
-                    context.push('/catalog');
-                  },
+          data: (stores) {
+            if (stores.isEmpty) {
+              return Center(
+                child: AlhaiEmptyState(
+                  icon: Icons.storefront_outlined,
+                  title: 'لا توجد متاجر قريبة',
+                  description: 'لم نتمكن من العثور على متاجر في منطقتك',
                 ),
               );
-            },
-          );
-        },
-      ),
+            }
+
+            return ListView.builder(
+              padding: const EdgeInsets.all(AlhaiSpacing.md),
+              itemCount: stores.length,
+              itemBuilder: (context, index) {
+                final store = stores[index];
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
+                  child: StoreCard(
+                    store: store,
+                    onTap: () {
+                      ref.read(selectedStoreProvider.notifier).state = store;
+                      context.push('/catalog');
+                    },
+                  ),
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }

@@ -65,8 +65,7 @@ final ordersStatsProvider =
 });
 
 /// عدد الطلبات المعلقة
-final pendingOrdersCountProvider =
-    FutureProvider.autoDispose<int>((ref) async {
+final pendingOrdersCountProvider = FutureProvider.autoDispose<int>((ref) async {
   final storeId = ref.watch(currentStoreIdProvider);
   if (storeId == null) return 0;
   final db = GetIt.I<AppDatabase>();
@@ -123,7 +122,8 @@ Future<void> updateOrderStatus(
     tableName: 'orders',
     recordId: orderId,
     operation: 'UPDATE',
-    payload: '{"id":"$orderId","status":"$newStatus","updated_at":"${now.toUtc().toIso8601String()}"}',
+    payload:
+        '{"id":"$orderId","status":"$newStatus","updated_at":"${now.toUtc().toIso8601String()}"}',
     idempotencyKey: 'order_status_${orderId}_$newStatus',
   );
 
@@ -131,14 +131,21 @@ Future<void> updateOrderStatus(
   final historyId = _uuid.v4();
   await db.customStatement(
     'INSERT INTO order_status_history (id, order_id, from_status, to_status, created_at) VALUES (?, ?, ?, ?, ?)',
-    [historyId, orderId, oldStatus, newStatus, now.millisecondsSinceEpoch ~/ 1000],
+    [
+      historyId,
+      orderId,
+      oldStatus,
+      newStatus,
+      now.millisecondsSinceEpoch ~/ 1000
+    ],
   );
   await db.syncQueueDao.enqueue(
     id: _uuid.v4(),
     tableName: 'order_status_history',
     recordId: historyId,
     operation: 'CREATE',
-    payload: '{"id":"$historyId","order_id":"$orderId","from_status":"${oldStatus ?? ''}","to_status":"$newStatus","created_at":"${now.toUtc().toIso8601String()}"}',
+    payload:
+        '{"id":"$historyId","order_id":"$orderId","from_status":"${oldStatus ?? ''}","to_status":"$newStatus","created_at":"${now.toUtc().toIso8601String()}"}',
     idempotencyKey: 'order_history_$historyId',
   );
 
@@ -150,8 +157,7 @@ Future<void> updateOrderStatus(
 }
 
 /// إلغاء الطلب
-Future<void> cancelOrder(
-    WidgetRef ref, String orderId, String reason) async {
+Future<void> cancelOrder(WidgetRef ref, String orderId, String reason) async {
   final db = GetIt.I<AppDatabase>();
 
   // جلب الحالة القديمة قبل الإلغاء
@@ -167,7 +173,8 @@ Future<void> cancelOrder(
     tableName: 'orders',
     recordId: orderId,
     operation: 'UPDATE',
-    payload: '{"id":"$orderId","status":"cancelled","cancellation_reason":"$reason","cancelled_at":"${now.toUtc().toIso8601String()}","updated_at":"${now.toUtc().toIso8601String()}"}',
+    payload:
+        '{"id":"$orderId","status":"cancelled","cancellation_reason":"$reason","cancelled_at":"${now.toUtc().toIso8601String()}","updated_at":"${now.toUtc().toIso8601String()}"}',
     idempotencyKey: 'order_cancel_$orderId',
   );
 
@@ -175,14 +182,22 @@ Future<void> cancelOrder(
   final historyId = _uuid.v4();
   await db.customStatement(
     'INSERT INTO order_status_history (id, order_id, from_status, to_status, notes, created_at) VALUES (?, ?, ?, ?, ?, ?)',
-    [historyId, orderId, oldStatus, 'cancelled', reason, now.millisecondsSinceEpoch ~/ 1000],
+    [
+      historyId,
+      orderId,
+      oldStatus,
+      'cancelled',
+      reason,
+      now.millisecondsSinceEpoch ~/ 1000
+    ],
   );
   await db.syncQueueDao.enqueue(
     id: _uuid.v4(),
     tableName: 'order_status_history',
     recordId: historyId,
     operation: 'CREATE',
-    payload: '{"id":"$historyId","order_id":"$orderId","from_status":"${oldStatus ?? ''}","to_status":"cancelled","notes":"$reason","created_at":"${now.toUtc().toIso8601String()}"}',
+    payload:
+        '{"id":"$historyId","order_id":"$orderId","from_status":"${oldStatus ?? ''}","to_status":"cancelled","notes":"$reason","created_at":"${now.toUtc().toIso8601String()}"}',
     idempotencyKey: 'order_history_$historyId',
   );
 

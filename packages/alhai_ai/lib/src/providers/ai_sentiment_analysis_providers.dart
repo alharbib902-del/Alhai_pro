@@ -18,7 +18,8 @@ final sentimentResultProvider = Provider<SentimentResult>((ref) {
 });
 
 /// مزود ملاحظات العملاء
-final customerFeedbackProvider = StateNotifierProvider<FeedbackNotifier, List<CustomerFeedback>>((ref) {
+final customerFeedbackProvider =
+    StateNotifierProvider<FeedbackNotifier, List<CustomerFeedback>>((ref) {
   return FeedbackNotifier();
 });
 
@@ -56,11 +57,13 @@ class FeedbackNotifier extends StateNotifier<List<CustomerFeedback>> {
   }
 
   void sortByRating() {
-    state = [...state]..sort((a, b) => (b.rating ?? 0).compareTo(a.rating ?? 0));
+    state = [...state]
+      ..sort((a, b) => (b.rating ?? 0).compareTo(a.rating ?? 0));
   }
 
   void sortBySentiment() {
-    state = [...state]..sort((a, b) => b.sentimentValue.compareTo(a.sentimentValue));
+    state = [...state]
+      ..sort((a, b) => b.sentimentValue.compareTo(a.sentimentValue));
   }
 }
 

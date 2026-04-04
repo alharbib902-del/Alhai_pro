@@ -34,8 +34,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const PrintBarcodeScreen()));
+      await tester.pumpWidget(createTestWidget(const PrintBarcodeScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(PrintBarcodeScreen), findsOneWidget);
@@ -49,8 +48,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const PrintBarcodeScreen()));
+      await tester.pumpWidget(createTestWidget(const PrintBarcodeScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.search_rounded), findsWidgets);
@@ -65,8 +63,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const PrintBarcodeScreen()));
+      await tester.pumpWidget(createTestWidget(const PrintBarcodeScreen()));
       await tester.pumpAndSettle();
 
       expect(find.text('Barcode Preview'), findsOneWidget);
@@ -82,8 +79,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const PrintBarcodeScreen()));
+      await tester.pumpWidget(createTestWidget(const PrintBarcodeScreen()));
       await tester.pumpAndSettle();
 
       expect(find.text('Label Quantity'), findsOneWidget);
@@ -103,8 +99,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const PrintBarcodeScreen()));
+      await tester.pumpWidget(createTestWidget(const PrintBarcodeScreen()));
       await tester.pumpAndSettle();
 
       // Find the print button (last FilledButton)
@@ -127,12 +122,10 @@ void main() {
 
       when(() => productsDao.searchProducts(any(), any()))
           .thenAnswer((_) async => [
-                createTestProduct(
-                    name: 'Test Prod', barcode: '1234567890123'),
+                createTestProduct(name: 'Test Prod', barcode: '1234567890123'),
               ]);
 
-      await tester.pumpWidget(
-          createTestWidget(const PrintBarcodeScreen()));
+      await tester.pumpWidget(createTestWidget(const PrintBarcodeScreen()));
       await tester.pumpAndSettle();
 
       // Find and enter text in search field

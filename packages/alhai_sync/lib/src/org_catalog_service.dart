@@ -69,7 +69,8 @@ class OrgCatalogService {
     }
 
     if (kDebugMode) {
-      debugPrint('OrgCatalogService: cloned $cloned products to store $storeId');
+      debugPrint(
+          'OrgCatalogService: cloned $cloned products to store $storeId');
     }
 
     return cloned;

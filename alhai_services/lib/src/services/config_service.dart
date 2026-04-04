@@ -1,6 +1,6 @@
 /// خدمة الإعدادات
 /// تستخدم من: جميع التطبيقات
-/// 
+///
 /// ملاحظة: تحتاج تنفيذ مع SharedPreferences
 class ConfigService {
   final Map<String, dynamic> _config = {};
@@ -52,7 +52,8 @@ class ConfigService {
   set isDarkMode(bool value) => set(ConfigKeys.darkMode, value);
 
   /// الإشعارات
-  bool get notificationsEnabled => get<bool>(ConfigKeys.notifications, defaultValue: true);
+  bool get notificationsEnabled =>
+      get<bool>(ConfigKeys.notifications, defaultValue: true);
   set notificationsEnabled(bool value) => set(ConfigKeys.notifications, value);
 
   /// الصوت
@@ -60,7 +61,8 @@ class ConfigService {
   set soundEnabled(bool value) => set(ConfigKeys.sound, value);
 
   /// الاهتزاز
-  bool get vibrationEnabled => get<bool>(ConfigKeys.vibration, defaultValue: true);
+  bool get vibrationEnabled =>
+      get<bool>(ConfigKeys.vibration, defaultValue: true);
   set vibrationEnabled(bool value) => set(ConfigKeys.vibration, value);
 
   /// الطباعة التلقائية
@@ -68,8 +70,10 @@ class ConfigService {
   set autoPrint(bool value) => set(ConfigKeys.autoPrint, value);
 
   /// فتح درج النقود تلقائياً
-  bool get autoOpenCashDrawer => get<bool>(ConfigKeys.autoOpenCashDrawer, defaultValue: true);
-  set autoOpenCashDrawer(bool value) => set(ConfigKeys.autoOpenCashDrawer, value);
+  bool get autoOpenCashDrawer =>
+      get<bool>(ConfigKeys.autoOpenCashDrawer, defaultValue: true);
+  set autoOpenCashDrawer(bool value) =>
+      set(ConfigKeys.autoOpenCashDrawer, value);
 
   /// حجم الخط
   double get fontSize => get<double>(ConfigKeys.fontSize, defaultValue: 1.0);
@@ -80,7 +84,8 @@ class ConfigService {
   set screenTimeout(int value) => set(ConfigKeys.screenTimeout, value);
 
   /// آخر متجر مستخدم
-  String? get lastStoreId => get<String?>(ConfigKeys.lastStoreId, defaultValue: null);
+  String? get lastStoreId =>
+      get<String?>(ConfigKeys.lastStoreId, defaultValue: null);
   set lastStoreId(String? value) => set(ConfigKeys.lastStoreId, value);
 
   /// وضع الـ Demo

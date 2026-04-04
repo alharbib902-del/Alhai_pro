@@ -36,9 +36,8 @@ class ExpensesScreen extends ConsumerWidget {
             subtitle: _getDateSubtitle(l10n),
             showSearch: isWideScreen,
             searchHint: l10n.searchPlaceholder,
-            onMenuTap: isWideScreen
-                ? null
-                : () => Scaffold.of(context).openDrawer(),
+            onMenuTap:
+                isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
             onNotificationsTap: () => context.push('/notifications'),
             notificationsCount: 3,
             userName: l10n.defaultUserName,
@@ -47,37 +46,48 @@ class ExpensesScreen extends ConsumerWidget {
           ),
           Expanded(
             child: ref.watch(expensesStreamProvider).when(
-              loading: () => const Padding(
-                padding: EdgeInsets.all(AlhaiSpacing.md),
-                child: ShimmerList(itemCount: 6, itemHeight: 72),
-              ),
-              error: (e, _) => AppErrorState.general(
-                context,
-                message: e.toString(),
-                onRetry: () => ref.invalidate(expensesStreamProvider),
-              ),
-              data: (expenses) => RefreshIndicator(
-                onRefresh: () async => ref.invalidate(expensesStreamProvider),
-                color: AppColors.primary,
-                child: SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-                  child: _buildContent(context, ref, isWideScreen, isMediumScreen, isDark, l10n, expenses),
+                  loading: () => const Padding(
+                    padding: EdgeInsets.all(AlhaiSpacing.md),
+                    child: ShimmerList(itemCount: 6, itemHeight: 72),
+                  ),
+                  error: (e, _) => AppErrorState.general(
+                    context,
+                    message: e.toString(),
+                    onRetry: () => ref.invalidate(expensesStreamProvider),
+                  ),
+                  data: (expenses) => RefreshIndicator(
+                    onRefresh: () async =>
+                        ref.invalidate(expensesStreamProvider),
+                    color: AppColors.primary,
+                    child: SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: EdgeInsets.all(
+                          isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+                      child: _buildContent(context, ref, isWideScreen,
+                          isMediumScreen, isDark, l10n, expenses),
+                    ),
+                  ),
                 ),
-              ),
-            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildContent(BuildContext context, WidgetRef ref, bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n, List<ExpensesTableData> expenses) {
+  Widget _buildContent(
+      BuildContext context,
+      WidgetRef ref,
+      bool isWideScreen,
+      bool isMediumScreen,
+      bool isDark,
+      AppLocalizations l10n,
+      List<ExpensesTableData> expenses) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Stat cards
-        _buildStatsSection(context, isWideScreen, isMediumScreen, isDark, l10n, expenses),
+        _buildStatsSection(
+            context, isWideScreen, isMediumScreen, isDark, l10n, expenses),
         SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
 
         // Categories row - تحميل التصنيفات من قاعدة البيانات
@@ -90,7 +100,13 @@ class ExpensesScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildStatsSection(BuildContext context, bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n, List<ExpensesTableData> expenses) {
+  Widget _buildStatsSection(
+      BuildContext context,
+      bool isWideScreen,
+      bool isMediumScreen,
+      bool isDark,
+      AppLocalizations l10n,
+      List<ExpensesTableData> expenses) {
     final thisMonth = expenses.fold(0.0, (sum, e) => sum + e.amount);
     final categoriesCount = expenses.map((e) => e.categoryId).toSet().length;
     final avgExpense = expenses.isNotEmpty ? thisMonth / expenses.length : 0.0;
@@ -230,7 +246,8 @@ class ExpensesScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildCategoriesRow(bool isDark, bool isMediumScreen, AppLocalizations l10n, WidgetRef ref, List<ExpensesTableData> expenses) {
+  Widget _buildCategoriesRow(bool isDark, bool isMediumScreen,
+      AppLocalizations l10n, WidgetRef ref, List<ExpensesTableData> expenses) {
     final categoriesAsync = ref.watch(expenseCategoriesProvider);
 
     return categoriesAsync.when(
@@ -327,7 +344,9 @@ class ExpensesScreen extends ConsumerWidget {
     return AppColors.textSecondary;
   }
 
-  Widget _buildExpensesList(BuildContext context, bool isDark, AppLocalizations l10n, [List<ExpensesTableData>? expensesData]) {
+  Widget _buildExpensesList(
+      BuildContext context, bool isDark, AppLocalizations l10n,
+      [List<ExpensesTableData>? expensesData]) {
     final expenses = expensesData ?? [];
     return Container(
       decoration: BoxDecoration(
@@ -367,9 +386,18 @@ class ExpensesScreen extends ConsumerWidget {
               child: Center(
                 child: Column(
                   children: [
-                    Icon(Icons.receipt_long_rounded, size: 48, color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.4)),
+                    Icon(Icons.receipt_long_rounded,
+                        size: 48,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurfaceVariant
+                            .withValues(alpha: 0.4)),
                     SizedBox(height: AlhaiSpacing.sm),
-                    Text(l10n.noExpenses, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
+                    Text(l10n.noExpenses,
+                        style: TextStyle(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurfaceVariant)),
                   ],
                 ),
               ),
@@ -384,7 +412,8 @@ class ExpensesScreen extends ConsumerWidget {
                 final expense = expenses[index];
                 final category = expense.categoryId ?? 'other';
                 return ListTile(
-                  contentPadding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.mdl, vertical: AlhaiSpacing.xs),
+                  contentPadding: const EdgeInsets.symmetric(
+                      horizontal: AlhaiSpacing.mdl, vertical: AlhaiSpacing.xs),
                   leading: Container(
                     width: 44,
                     height: 44,
@@ -508,9 +537,12 @@ class ExpensesScreen extends ConsumerWidget {
                 ),
                 items: [
                   DropdownMenuItem(value: 'rent', child: Text(l10n.rent)),
-                  DropdownMenuItem(value: 'utilities', child: Text(l10n.services)),
-                  DropdownMenuItem(value: 'salaries', child: Text(l10n.salaries)),
-                  DropdownMenuItem(value: 'maintenance', child: Text(l10n.maintenance)),
+                  DropdownMenuItem(
+                      value: 'utilities', child: Text(l10n.services)),
+                  DropdownMenuItem(
+                      value: 'salaries', child: Text(l10n.salaries)),
+                  DropdownMenuItem(
+                      value: 'maintenance', child: Text(l10n.maintenance)),
                   DropdownMenuItem(value: 'other', child: Text(l10n.other)),
                 ],
                 onChanged: (v) => setDialogState(() => category = v!),
@@ -524,9 +556,11 @@ class ExpensesScreen extends ConsumerWidget {
             ),
             FilledButton(
               onPressed: () {
-                if (titleController.text.isNotEmpty && amountController.text.isNotEmpty) {
+                if (titleController.text.isNotEmpty &&
+                    amountController.text.isNotEmpty) {
                   // Security: Check for dangerous content in description
-                  if (InputSanitizer.containsDangerousContent(titleController.text)) {
+                  if (InputSanitizer.containsDangerousContent(
+                      titleController.text)) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(l10n.inputContainsDangerousContent),
@@ -561,7 +595,6 @@ class ExpensesScreen extends ConsumerWidget {
       SnackBar(content: Text(l10n.filterExpenses)),
     );
   }
-
 }
 
 class _CategorySummary {

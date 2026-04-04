@@ -108,8 +108,8 @@ void main() {
     group('getRootCategories', () {
       test('filters only root categories (parentId == null)', () async {
         // Arrange
-        when(() => mockRemote.getCategories(any()))
-            .thenAnswer((_) async => [testCategoryResponse, testChildCategoryResponse]);
+        when(() => mockRemote.getCategories(any())).thenAnswer(
+            (_) async => [testCategoryResponse, testChildCategoryResponse]);
 
         // Act
         final result = await repository.getRootCategories('store-1');
@@ -123,8 +123,8 @@ void main() {
     group('getChildCategories', () {
       test('filters categories by parentId', () async {
         // Arrange
-        when(() => mockRemote.getCategories(any()))
-            .thenAnswer((_) async => [testCategoryResponse, testChildCategoryResponse]);
+        when(() => mockRemote.getCategories(any())).thenAnswer(
+            (_) async => [testCategoryResponse, testChildCategoryResponse]);
 
         // Act
         final result = await repository.getChildCategories('cat-1');

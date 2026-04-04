@@ -215,31 +215,31 @@ class ReceiptPdfGenerator {
           pw.Expanded(
             flex: 4,
             child: pw.Text('الصنف',
-                style: pw.TextStyle(
-                    fontSize: 9, fontWeight: pw.FontWeight.bold),
+                style:
+                    pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold),
                 textDirection: pw.TextDirection.rtl),
           ),
           pw.SizedBox(
             width: 30,
             child: pw.Text('الكمية',
-                style: pw.TextStyle(
-                    fontSize: 9, fontWeight: pw.FontWeight.bold),
+                style:
+                    pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold),
                 textAlign: pw.TextAlign.center,
                 textDirection: pw.TextDirection.rtl),
           ),
           pw.SizedBox(
             width: 40,
             child: pw.Text('السعر',
-                style: pw.TextStyle(
-                    fontSize: 9, fontWeight: pw.FontWeight.bold),
+                style:
+                    pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold),
                 textAlign: pw.TextAlign.center,
                 textDirection: pw.TextDirection.rtl),
           ),
           pw.SizedBox(
             width: 45,
             child: pw.Text('المجموع',
-                style: pw.TextStyle(
-                    fontSize: 9, fontWeight: pw.FontWeight.bold),
+                style:
+                    pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold),
                 textAlign: pw.TextAlign.left,
                 textDirection: pw.TextDirection.rtl),
           ),
@@ -300,8 +300,7 @@ class ReceiptPdfGenerator {
         if (sale.discount > 0)
           _totalRow('الخصم', '-${sale.discount.toStringAsFixed(2)}',
               color: PdfColors.green700),
-        _totalRow(
-            'ضريبة القيمة المضافة 15%', sale.tax.toStringAsFixed(2)),
+        _totalRow('ضريبة القيمة المضافة 15%', sale.tax.toStringAsFixed(2)),
         pw.SizedBox(height: 4),
         // خط مزدوج
         pw.Container(
@@ -317,14 +316,14 @@ class ReceiptPdfGenerator {
             children: [
               pw.Text(
                 'الإجمالي',
-                style: pw.TextStyle(
-                    fontSize: 13, fontWeight: pw.FontWeight.bold),
+                style:
+                    pw.TextStyle(fontSize: 13, fontWeight: pw.FontWeight.bold),
                 textDirection: pw.TextDirection.rtl,
               ),
               pw.Text(
                 '${sale.total.toStringAsFixed(2)} $_currency',
-                style: pw.TextStyle(
-                    fontSize: 13, fontWeight: pw.FontWeight.bold),
+                style:
+                    pw.TextStyle(fontSize: 13, fontWeight: pw.FontWeight.bold),
                 textDirection: pw.TextDirection.rtl,
               ),
             ],
@@ -402,8 +401,7 @@ class ReceiptPdfGenerator {
           ),
           pw.Text(
             value,
-            style: pw.TextStyle(
-                fontSize: 9, fontWeight: pw.FontWeight.bold),
+            style: pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold),
             textDirection: pw.TextDirection.rtl,
           ),
         ],
@@ -426,9 +424,7 @@ class ReceiptPdfGenerator {
           pw.Text(
             '$value $_currency',
             style: pw.TextStyle(
-                fontSize: 10,
-                fontWeight: pw.FontWeight.bold,
-                color: color),
+                fontSize: 10, fontWeight: pw.FontWeight.bold, color: color),
             textDirection: pw.TextDirection.rtl,
           ),
         ],

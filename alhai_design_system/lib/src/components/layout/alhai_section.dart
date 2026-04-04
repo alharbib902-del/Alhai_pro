@@ -95,12 +95,12 @@ class AlhaiSection extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final direction = Directionality.of(context);
-    
+
     // حل آمن: resolve padding ثم copyWith
     final resolvedPadding = padding.resolve(direction);
     final headerPadding = resolvedPadding.copyWith(bottom: 0);
     final contentPadding = resolvedPadding.copyWith(top: 0);
-    
+
     final hasHeader = title != null || trailing != null;
 
     return Container(

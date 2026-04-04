@@ -20,8 +20,7 @@ void main() {
     ordersDao = MockOrdersDao();
 
     // PaymentReportsScreen uses _db.ordersDao.getOrders(storeId).
-    when(() => ordersDao.getOrders(any()))
-        .thenAnswer((_) async => []);
+    when(() => ordersDao.getOrders(any())).thenAnswer((_) async => []);
 
     final db = setupMockDatabase(ordersDao: ordersDao);
     setupTestGetIt(mockDb: db);

@@ -176,14 +176,12 @@ void main() {
       });
 
       test('warns about invalid payment means code', () {
-        final invoice =
-            validSimplifiedInvoice(paymentMeansCode: '99');
+        final invoice = validSimplifiedInvoice(paymentMeansCode: '99');
         final errors = checker.validate(invoice);
 
         expect(
           errors.any((e) =>
-              e.code == 'BT-81' &&
-              e.severity == ComplianceSeverity.warning),
+              e.code == 'BT-81' && e.severity == ComplianceSeverity.warning),
           isTrue,
         );
       });
@@ -255,8 +253,7 @@ void main() {
 
         expect(
           errors.any((e) =>
-              e.code == 'BT-38' &&
-              e.severity == ComplianceSeverity.warning),
+              e.code == 'BT-38' && e.severity == ComplianceSeverity.warning),
           isTrue,
         );
       });

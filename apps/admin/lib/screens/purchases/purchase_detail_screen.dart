@@ -74,8 +74,7 @@ class _PurchaseDetailScreenState extends ConsumerState<PurchaseDetailScreen> {
         AppHeader(
           title: l10n.purchaseDetails,
           onMenuTap: isWide ? null : () => Scaffold.of(context).openDrawer(),
-          onNotificationsTap: () =>
-              context.push(AppRoutes.notificationsCenter),
+          onNotificationsTap: () => context.push(AppRoutes.notificationsCenter),
           notificationsCount: 0,
           userName: l10n.cashCustomer,
           userRole: l10n.branchManager,
@@ -138,7 +137,8 @@ class _PurchaseDetailScreenState extends ConsumerState<PurchaseDetailScreen> {
   ) {
     final purchase = data.purchase;
     final items = data.items;
-    final dateFormat = DateFormat('yyyy/MM/dd - HH:mm', Localizations.localeOf(context).languageCode);
+    final dateFormat = DateFormat(
+        'yyyy/MM/dd - HH:mm', Localizations.localeOf(context).languageCode);
     final currentStatus = purchase.status;
 
     return SingleChildScrollView(
@@ -184,7 +184,8 @@ class _PurchaseDetailScreenState extends ConsumerState<PurchaseDetailScreen> {
                   flex: 2,
                   child: Column(
                     children: [
-                      _buildHeaderCard(purchase, dateFormat, currentStatus, isDark),
+                      _buildHeaderCard(
+                          purchase, dateFormat, currentStatus, isDark),
                       const SizedBox(height: AlhaiSpacing.md),
                       _buildItemsTable(items, isDark, isWide),
                     ],
@@ -260,7 +261,8 @@ class _PurchaseDetailScreenState extends ConsumerState<PurchaseDetailScreen> {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: color.withValues(alpha: isDark ? 0.25 : 0.12),
                   borderRadius: BorderRadius.circular(20),
@@ -301,7 +303,8 @@ class _PurchaseDetailScreenState extends ConsumerState<PurchaseDetailScreen> {
           _infoRow(
             Icons.attach_money_rounded,
             AppLocalizations.of(context).totalLabel,
-            AppLocalizations.of(context).amountSar(purchase.total.toStringAsFixed(2)),
+            AppLocalizations.of(context)
+                .amountSar(purchase.total.toStringAsFixed(2)),
             isDark,
             valueColor: isDark ? AppColors.primaryLight : AppColors.primaryDark,
             valueBold: true,
@@ -350,8 +353,7 @@ class _PurchaseDetailScreenState extends ConsumerState<PurchaseDetailScreen> {
             style: TextStyle(
               fontSize: 14,
               fontWeight: valueBold ? FontWeight.bold : FontWeight.w500,
-              color: valueColor ??
-                  (Theme.of(context).colorScheme.onSurface),
+              color: valueColor ?? (Theme.of(context).colorScheme.onSurface),
             ),
           ),
         ),
@@ -385,7 +387,8 @@ class _PurchaseDetailScreenState extends ConsumerState<PurchaseDetailScreen> {
                   color: AppColors.info.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Icon(Icons.timeline_rounded, color: AppColors.info, size: 20),
+                child: const Icon(Icons.timeline_rounded,
+                    color: AppColors.info, size: 20),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Text(
@@ -435,7 +438,8 @@ class _PurchaseDetailScreenState extends ConsumerState<PurchaseDetailScreen> {
                       _statusLabel(stepStatus),
                       style: TextStyle(
                         fontSize: 14,
-                        fontWeight: isCurrent ? FontWeight.bold : FontWeight.w500,
+                        fontWeight:
+                            isCurrent ? FontWeight.bold : FontWeight.w500,
                         color: isCompleted
                             ? (Theme.of(context).colorScheme.onSurface)
                             : (Theme.of(context).colorScheme.onSurfaceVariant),
@@ -453,7 +457,10 @@ class _PurchaseDetailScreenState extends ConsumerState<PurchaseDetailScreen> {
                       color: index < currentIndex
                           ? _statusColor(_statusFlow[index])
                           : (isDark
-                              ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1)
+                              ? Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withValues(alpha: 0.1)
                               : AppColors.grey200),
                     ),
                   ),
@@ -490,7 +497,8 @@ class _PurchaseDetailScreenState extends ConsumerState<PurchaseDetailScreen> {
                   color: AppColors.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Icon(Icons.bolt_rounded, color: AppColors.warning, size: 20),
+                child: const Icon(Icons.bolt_rounded,
+                    color: AppColors.warning, size: 20),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Text(
@@ -506,8 +514,8 @@ class _PurchaseDetailScreenState extends ConsumerState<PurchaseDetailScreen> {
           const SizedBox(height: AlhaiSpacing.md),
           if (currentStatus == 'draft')
             FilledButton.icon(
-              onPressed: () =>
-                  context.go(AppRoutes.sendToDistributorPath(widget.purchaseId)),
+              onPressed: () => context
+                  .go(AppRoutes.sendToDistributorPath(widget.purchaseId)),
               icon: const Icon(Icons.send_rounded),
               label: Text(AppLocalizations.of(context).sendToDistributor),
               style: FilledButton.styleFrom(
@@ -560,7 +568,8 @@ class _PurchaseDetailScreenState extends ConsumerState<PurchaseDetailScreen> {
             Container(
               padding: const EdgeInsets.all(AlhaiSpacing.md),
               decoration: BoxDecoration(
-                color: AppColors.success.withValues(alpha: isDark ? 0.15 : 0.08),
+                color:
+                    AppColors.success.withValues(alpha: isDark ? 0.15 : 0.08),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: AppColors.success.withValues(alpha: 0.3),
@@ -633,7 +642,8 @@ class _PurchaseDetailScreenState extends ConsumerState<PurchaseDetailScreen> {
               ),
               const Spacer(),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
                   color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
@@ -661,14 +671,25 @@ class _PurchaseDetailScreenState extends ConsumerState<PurchaseDetailScreen> {
               scrollDirection: Axis.horizontal,
               child: DataTable(
                 headingRowColor: WidgetStateProperty.all(
-                  isDark ? Theme.of(context).colorScheme.surface : AppColors.grey50,
+                  isDark
+                      ? Theme.of(context).colorScheme.surface
+                      : AppColors.grey50,
                 ),
                 columns: [
-                  DataColumn(label: Text(AppLocalizations.of(context).productColumn)),
-                  DataColumn(label: Text(AppLocalizations.of(context).quantityColumn), numeric: true),
-                  DataColumn(label: Text(AppLocalizations.of(context).receivedColumn), numeric: true),
-                  DataColumn(label: Text(AppLocalizations.of(context).unitPriceColumn), numeric: true),
-                  DataColumn(label: Text(AppLocalizations.of(context).totalColumn), numeric: true),
+                  DataColumn(
+                      label: Text(AppLocalizations.of(context).productColumn)),
+                  DataColumn(
+                      label: Text(AppLocalizations.of(context).quantityColumn),
+                      numeric: true),
+                  DataColumn(
+                      label: Text(AppLocalizations.of(context).receivedColumn),
+                      numeric: true),
+                  DataColumn(
+                      label: Text(AppLocalizations.of(context).unitPriceColumn),
+                      numeric: true),
+                  DataColumn(
+                      label: Text(AppLocalizations.of(context).totalColumn),
+                      numeric: true),
                 ],
                 rows: items.map((item) {
                   return DataRow(cells: [
@@ -692,13 +713,15 @@ class _PurchaseDetailScreenState extends ConsumerState<PurchaseDetailScreen> {
                       ),
                     )),
                     DataCell(Text(
-                      AppLocalizations.of(context).amountSar(item.unitCost.toStringAsFixed(2)),
+                      AppLocalizations.of(context)
+                          .amountSar(item.unitCost.toStringAsFixed(2)),
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.onSurface,
                       ),
                     )),
                     DataCell(Text(
-                      AppLocalizations.of(context).amountSar(item.total.toStringAsFixed(2)),
+                      AppLocalizations.of(context)
+                          .amountSar(item.total.toStringAsFixed(2)),
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: isDark
@@ -723,7 +746,8 @@ class _PurchaseDetailScreenState extends ConsumerState<PurchaseDetailScreen> {
               itemBuilder: (context, index) {
                 final item = items[index];
                 return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
                   child: Row(
                     children: [
                       Expanded(
@@ -739,17 +763,23 @@ class _PurchaseDetailScreenState extends ConsumerState<PurchaseDetailScreen> {
                             ),
                             const SizedBox(height: AlhaiSpacing.xxs),
                             Text(
-                              AppLocalizations.of(context).quantityInfo(item.qty.toInt(), item.receivedQty.toInt(), item.unitCost.toStringAsFixed(2)),
+                              AppLocalizations.of(context).quantityInfo(
+                                  item.qty.toInt(),
+                                  item.receivedQty.toInt(),
+                                  item.unitCost.toStringAsFixed(2)),
                               style: TextStyle(
                                 fontSize: 12,
-                                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurfaceVariant,
                               ),
                             ),
                           ],
                         ),
                       ),
                       Text(
-                        AppLocalizations.of(context).amountSar(item.total.toStringAsFixed(2)),
+                        AppLocalizations.of(context)
+                            .amountSar(item.total.toStringAsFixed(2)),
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: isDark

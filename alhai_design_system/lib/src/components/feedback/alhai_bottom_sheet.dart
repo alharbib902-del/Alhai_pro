@@ -76,7 +76,8 @@ class AlhaiBottomSheet extends StatelessWidget {
       isScrollControlled: true,
       isDismissible: isDismissible,
       enableDrag: enableDrag,
-      backgroundColor: Colors.transparent, // استثناء تقني: لعرض Container بزوايا
+      backgroundColor:
+          Colors.transparent, // استثناء تقني: لعرض Container بزوايا
       builder: (sheetContext) => AlhaiBottomSheet(
         title: title,
         actions: actions,
@@ -138,7 +139,7 @@ class AlhaiBottomSheet extends StatelessWidget {
             // Actions
             if (actions != null && actions!.isNotEmpty)
               _buildActions(basePadding, keyboardBottom),
-            
+
             // Keyboard spacing (when no actions)
             if ((actions == null || actions!.isEmpty) && keyboardBottom > 0)
               SizedBox(height: keyboardBottom),
@@ -177,8 +178,8 @@ class AlhaiBottomSheet extends StatelessWidget {
     ThemeData theme,
     EdgeInsetsGeometry basePadding,
   ) {
-    final tooltip = closeTooltip ??
-        MaterialLocalizations.of(context).closeButtonTooltip;
+    final tooltip =
+        closeTooltip ?? MaterialLocalizations.of(context).closeButtonTooltip;
 
     // استخدام helper للـ resolve
     final resolved = context.resolvePadding(basePadding);

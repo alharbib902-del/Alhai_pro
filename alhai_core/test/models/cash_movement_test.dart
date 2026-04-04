@@ -24,12 +24,14 @@ void main() {
 
     group('signedAmount', () {
       test('should return positive for cash in', () {
-        final movement = createMovement(type: CashMovementType.cashIn, amount: 100.0);
+        final movement =
+            createMovement(type: CashMovementType.cashIn, amount: 100.0);
         expect(movement.signedAmount, equals(100.0));
       });
 
       test('should return negative for cash out', () {
-        final movement = createMovement(type: CashMovementType.cashOut, amount: 50.0);
+        final movement =
+            createMovement(type: CashMovementType.cashOut, amount: 50.0);
         expect(movement.signedAmount, equals(-50.0));
       });
     });
@@ -51,7 +53,8 @@ void main() {
         expect(movement.requiresSupervisor, isFalse);
       });
 
-      test('should not require supervisor for cash in regardless of amount', () {
+      test('should not require supervisor for cash in regardless of amount',
+          () {
         final movement = createMovement(
           type: CashMovementType.cashIn,
           amount: 500.0,
@@ -62,12 +65,14 @@ void main() {
 
     group('formattedAmount', () {
       test('should show positive sign for cash in', () {
-        final movement = createMovement(type: CashMovementType.cashIn, amount: 100.0);
+        final movement =
+            createMovement(type: CashMovementType.cashIn, amount: 100.0);
         expect(movement.formattedAmount, equals('+100.00 ر.س'));
       });
 
       test('should show negative sign for cash out', () {
-        final movement = createMovement(type: CashMovementType.cashOut, amount: 50.0);
+        final movement =
+            createMovement(type: CashMovementType.cashOut, amount: 50.0);
         expect(movement.formattedAmount, equals('-50.00 ر.س'));
       });
 
@@ -135,10 +140,12 @@ void main() {
 
   group('CashMovementReason Extensions', () {
     test('displayNameAr should return Arabic names', () {
-      expect(CashMovementReason.bankDeposit.displayNameAr, equals('إيداع بنكي'));
+      expect(
+          CashMovementReason.bankDeposit.displayNameAr, equals('إيداع بنكي'));
       expect(CashMovementReason.changeFund.displayNameAr, equals('صندوق فكة'));
       expect(CashMovementReason.expense.displayNameAr, equals('مصروف'));
-      expect(CashMovementReason.supplierPayment.displayNameAr, equals('دفع مورد'));
+      expect(
+          CashMovementReason.supplierPayment.displayNameAr, equals('دفع مورد'));
       expect(CashMovementReason.other.displayNameAr, equals('أخرى'));
     });
   });

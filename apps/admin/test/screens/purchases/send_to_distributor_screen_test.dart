@@ -40,8 +40,8 @@ void main() {
       when(() => mockSuppliersDao.getActiveSuppliers(any()))
           .thenAnswer((_) async => []);
 
-      await tester.pumpWidget(createTestWidget(
-          const SendToDistributorScreen(purchaseId: 'pur-1')));
+      await tester.pumpWidget(
+          createTestWidget(const SendToDistributorScreen(purchaseId: 'pur-1')));
       await tester.pump();
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
@@ -53,8 +53,8 @@ void main() {
       when(() => mockSuppliersDao.getActiveSuppliers(any()))
           .thenAnswer((_) async => []);
 
-      await tester.pumpWidget(createTestWidget(
-          const SendToDistributorScreen(purchaseId: 'pur-1')));
+      await tester.pumpWidget(
+          createTestWidget(const SendToDistributorScreen(purchaseId: 'pur-1')));
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.error_outline), findsWidgets);
@@ -73,8 +73,8 @@ void main() {
       when(() => mockSuppliersDao.getActiveSuppliers(any()))
           .thenAnswer((_) async => [createTestSupplier()]);
 
-      await tester.pumpWidget(createTestWidget(
-          const SendToDistributorScreen(purchaseId: 'pur-1')));
+      await tester.pumpWidget(
+          createTestWidget(const SendToDistributorScreen(purchaseId: 'pur-1')));
       await tester.pumpAndSettle();
 
       expect(find.byType(SendToDistributorScreen), findsOneWidget);
@@ -93,8 +93,8 @@ void main() {
       when(() => mockSuppliersDao.getActiveSuppliers(any()))
           .thenAnswer((_) async => [createTestSupplier()]);
 
-      await tester.pumpWidget(createTestWidget(
-          const SendToDistributorScreen(purchaseId: 'pur-1')));
+      await tester.pumpWidget(
+          createTestWidget(const SendToDistributorScreen(purchaseId: 'pur-1')));
       await tester.pumpAndSettle();
 
       expect(find.text('PUR-SEND-001'), findsWidgets);
@@ -112,8 +112,8 @@ void main() {
       when(() => mockSuppliersDao.getActiveSuppliers(any()))
           .thenAnswer((_) async => [createTestSupplier()]);
 
-      await tester.pumpWidget(createTestWidget(
-          const SendToDistributorScreen(purchaseId: 'pur-1')));
+      await tester.pumpWidget(
+          createTestWidget(const SendToDistributorScreen(purchaseId: 'pur-1')));
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.send_rounded), findsWidgets);

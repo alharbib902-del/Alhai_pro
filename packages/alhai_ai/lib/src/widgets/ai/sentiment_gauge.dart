@@ -65,7 +65,10 @@ class _SentimentGaugeState extends State<SentimentGauge>
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
+        border: Border.all(
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.1)
+                : AppColors.border),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
@@ -87,7 +90,8 @@ class _SentimentGaugeState extends State<SentimentGauge>
                   ),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.sentiment_satisfied_alt_rounded, color: Colors.white, size: 20),
+                child: const Icon(Icons.sentiment_satisfied_alt_rounded,
+                    color: Colors.white, size: 20),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
@@ -106,7 +110,9 @@ class _SentimentGaugeState extends State<SentimentGauge>
                       '${widget.totalReviews} تقييم',
                       style: TextStyle(
                         fontSize: 12,
-                        color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textMuted,
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.5)
+                            : AppColors.textMuted,
                       ),
                     ),
                   ],
@@ -163,7 +169,9 @@ class _SentimentGaugeState extends State<SentimentGauge>
               Container(
                 width: 1,
                 height: 36,
-                color: isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.grey200,
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.08)
+                    : AppColors.grey200,
               ),
               _StatItem(
                 label: 'NPS',
@@ -174,7 +182,9 @@ class _SentimentGaugeState extends State<SentimentGauge>
               Container(
                 width: 1,
                 height: 36,
-                color: isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.grey200,
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.08)
+                    : AppColors.grey200,
               ),
               _StatItem(
                 label: 'التقييمات',
@@ -204,7 +214,11 @@ class _StatItem extends StatelessWidget {
   final Color color;
   final bool isDark;
 
-  const _StatItem({required this.label, required this.value, required this.color, required this.isDark});
+  const _StatItem(
+      {required this.label,
+      required this.value,
+      required this.color,
+      required this.isDark});
 
   @override
   Widget build(BuildContext context) {
@@ -224,7 +238,9 @@ class _StatItem extends StatelessWidget {
             label,
             style: TextStyle(
               fontSize: 11,
-              color: isDark ? Colors.white.withValues(alpha: 0.4) : AppColors.textMuted,
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.4)
+                  : AppColors.textMuted,
             ),
           ),
         ],
@@ -265,7 +281,8 @@ class _GaugePainter extends CustomPainter {
       sweepAngle,
       false,
       Paint()
-        ..color = isDark ? Colors.white.withValues(alpha: 0.06) : AppColors.grey200
+        ..color =
+            isDark ? Colors.white.withValues(alpha: 0.06) : AppColors.grey200
         ..style = PaintingStyle.stroke
         ..strokeWidth = 20
         ..strokeCap = StrokeCap.round,
@@ -305,7 +322,8 @@ class _GaugePainter extends CustomPainter {
 
     // Needle
     final normalizedValue = (value + 1) / 2; // 0 to 1
-    final needleAngle = startAngle + sweepAngle * normalizedValue * animationValue;
+    final needleAngle =
+        startAngle + sweepAngle * normalizedValue * animationValue;
     final needleLength = radius - 10;
     final needleEnd = Offset(
       center.dx + needleLength * cos(needleAngle),
@@ -333,7 +351,8 @@ class _GaugePainter extends CustomPainter {
     );
 
     // Center circle
-    canvas.drawCircle(center, 10, Paint()..color = isDark ? const Color(0xFF1E293B) : Colors.white);
+    canvas.drawCircle(center, 10,
+        Paint()..color = isDark ? const Color(0xFF1E293B) : Colors.white);
     canvas.drawCircle(center, 8, Paint()..color = _getScoreColor(value));
     canvas.drawCircle(center, 4, Paint()..color = Colors.white);
 
@@ -350,13 +369,28 @@ class _GaugePainter extends CustomPainter {
       ),
       textDirection: TextDirection.ltr,
     )..layout();
-    tp.paint(canvas, Offset(center.dx - tp.width / 2, center.dy - radius * 0.5 - tp.height / 2));
+    tp.paint(
+        canvas,
+        Offset(center.dx - tp.width / 2,
+            center.dy - radius * 0.5 - tp.height / 2));
 
     // Scale labels
     final labels = [
-      {'text': negativeLabel, 'angle': startAngle + 0.15, 'color': const Color(0xFFEF4444)},
-      {'text': neutralLabel, 'angle': startAngle + sweepAngle / 2, 'color': const Color(0xFFF59E0B)},
-      {'text': positiveLabel, 'angle': startAngle + sweepAngle - 0.15, 'color': const Color(0xFF22C55E)},
+      {
+        'text': negativeLabel,
+        'angle': startAngle + 0.15,
+        'color': const Color(0xFFEF4444)
+      },
+      {
+        'text': neutralLabel,
+        'angle': startAngle + sweepAngle / 2,
+        'color': const Color(0xFFF59E0B)
+      },
+      {
+        'text': positiveLabel,
+        'angle': startAngle + sweepAngle - 0.15,
+        'color': const Color(0xFF22C55E)
+      },
     ];
 
     for (final label in labels) {
@@ -365,7 +399,8 @@ class _GaugePainter extends CustomPainter {
       final ltp = TextPainter(
         text: TextSpan(
           text: label['text'] as String,
-          style: TextStyle(color: color, fontSize: 10, fontWeight: FontWeight.w600),
+          style: TextStyle(
+              color: color, fontSize: 10, fontWeight: FontWeight.w600),
         ),
         textDirection: TextDirection.rtl,
       )..layout();

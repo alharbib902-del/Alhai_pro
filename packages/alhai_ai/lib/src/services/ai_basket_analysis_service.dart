@@ -198,15 +198,20 @@ class AiBasketAnalysisService {
         id: 'B001',
         name: 'حزمة الإفطار العائلي', // Family Breakfast Bundle
         products: [
-          BundleProduct(id: 'P003', name: 'خبز عربي', price: 3.5, category: 'مخبوزات'),
-          BundleProduct(id: 'P004', name: 'جبنة بيضاء', price: 12.0, category: 'ألبان'),
-          BundleProduct(id: 'P018', name: 'لبن المراعي', price: 6.5, category: 'ألبان'),
-          BundleProduct(id: 'P019', name: 'تمر سكري', price: 25.0, category: 'حلويات'),
+          BundleProduct(
+              id: 'P003', name: 'خبز عربي', price: 3.5, category: 'مخبوزات'),
+          BundleProduct(
+              id: 'P004', name: 'جبنة بيضاء', price: 12.0, category: 'ألبان'),
+          BundleProduct(
+              id: 'P018', name: 'لبن المراعي', price: 6.5, category: 'ألبان'),
+          BundleProduct(
+              id: 'P019', name: 'تمر سكري', price: 25.0, category: 'حلويات'),
         ],
         currentTotalPrice: 47.0,
         suggestedBundlePrice: 39.9,
         expectedUplift: 18.5,
-        reasoning: 'هذه المنتجات تُشترى معاً بنسبة 78% - تقديم حزمة سيزيد المبيعات', // These products are bought together 78% of the time
+        reasoning:
+            'هذه المنتجات تُشترى معاً بنسبة 78% - تقديم حزمة سيزيد المبيعات', // These products are bought together 78% of the time
         confidence: 0.82,
       ),
       // حزمة الطبخ - Cooking Bundle
@@ -214,15 +219,20 @@ class AiBasketAnalysisService {
         id: 'B002',
         name: 'حزمة الطبخ الأساسية', // Essential Cooking Bundle
         products: [
-          BundleProduct(id: 'P001', name: 'أرز بسمتي', price: 28.0, category: 'أرز'),
-          BundleProduct(id: 'P002', name: 'بهارات مشكلة', price: 8.5, category: 'بهارات'),
-          BundleProduct(id: 'P017', name: 'زيت عافية', price: 22.0, category: 'زيوت'),
-          BundleProduct(id: 'P010', name: 'صلصة طماطم', price: 4.5, category: 'صلصات'),
+          BundleProduct(
+              id: 'P001', name: 'أرز بسمتي', price: 28.0, category: 'أرز'),
+          BundleProduct(
+              id: 'P002', name: 'بهارات مشكلة', price: 8.5, category: 'بهارات'),
+          BundleProduct(
+              id: 'P017', name: 'زيت عافية', price: 22.0, category: 'زيوت'),
+          BundleProduct(
+              id: 'P010', name: 'صلصة طماطم', price: 4.5, category: 'صلصات'),
         ],
         currentTotalPrice: 63.0,
         suggestedBundlePrice: 54.9,
         expectedUplift: 22.0,
-        reasoning: 'مكونات الطبخ الأساسية - ارتباط قوي بين الأرز والبهارات والزيت', // Basic cooking ingredients - strong association
+        reasoning:
+            'مكونات الطبخ الأساسية - ارتباط قوي بين الأرز والبهارات والزيت', // Basic cooking ingredients - strong association
         confidence: 0.88,
       ),
       // حزمة الأطفال - Baby Bundle
@@ -230,13 +240,19 @@ class AiBasketAnalysisService {
         id: 'B003',
         name: 'حزمة العناية بالطفل', // Baby Care Bundle
         products: [
-          BundleProduct(id: 'P005', name: 'حفاضات بامبرز', price: 45.0, category: 'أطفال'),
-          BundleProduct(id: 'P006', name: 'مناديل مبللة', price: 12.0, category: 'أطفال'),
+          BundleProduct(
+              id: 'P005',
+              name: 'حفاضات بامبرز',
+              price: 45.0,
+              category: 'أطفال'),
+          BundleProduct(
+              id: 'P006', name: 'مناديل مبللة', price: 12.0, category: 'أطفال'),
         ],
         currentTotalPrice: 57.0,
         suggestedBundlePrice: 49.9,
         expectedUplift: 15.0,
-        reasoning: 'ارتباط قوي جداً (91%) بين الحفاضات والمناديل المبللة', // Very strong association (91%)
+        reasoning:
+            'ارتباط قوي جداً (91%) بين الحفاضات والمناديل المبللة', // Very strong association (91%)
         confidence: 0.91,
       ),
       // حزمة المشروبات - Beverages Bundle
@@ -244,14 +260,21 @@ class AiBasketAnalysisService {
         id: 'B004',
         name: 'حزمة المشروبات', // Beverages Bundle
         products: [
-          BundleProduct(id: 'P011', name: 'شاي ربيع', price: 15.0, category: 'مشروبات'),
-          BundleProduct(id: 'P012', name: 'سكر أبيض', price: 8.0, category: 'أساسيات'),
-          BundleProduct(id: 'P007', name: 'حليب طويل الأمد', price: 7.0, category: 'ألبان'),
+          BundleProduct(
+              id: 'P011', name: 'شاي ربيع', price: 15.0, category: 'مشروبات'),
+          BundleProduct(
+              id: 'P012', name: 'سكر أبيض', price: 8.0, category: 'أساسيات'),
+          BundleProduct(
+              id: 'P007',
+              name: 'حليب طويل الأمد',
+              price: 7.0,
+              category: 'ألبان'),
         ],
         currentTotalPrice: 30.0,
         suggestedBundlePrice: 25.9,
         expectedUplift: 12.0,
-        reasoning: 'الشاي والسكر والحليب يُشترون معاً بنسبة 85%', // Tea, sugar and milk are bought together 85% of the time
+        reasoning:
+            'الشاي والسكر والحليب يُشترون معاً بنسبة 85%', // Tea, sugar and milk are bought together 85% of the time
         confidence: 0.85,
       ),
     ];
@@ -271,19 +294,22 @@ class AiBasketAnalysisService {
           triggerProduct: 'دجاج طازج', // Fresh Chicken
           suggestedProduct: 'أرز بسمتي', // Basmati Rice
           probability: 0.72,
-          reason: '72% من مشتري الدجاج يشترون الأرز أيضاً', // 72% of chicken buyers also buy rice
+          reason:
+              '72% من مشتري الدجاج يشترون الأرز أيضاً', // 72% of chicken buyers also buy rice
         ),
         CrossSellOpportunity(
           triggerProduct: 'حفاضات بامبرز', // Pampers Diapers
           suggestedProduct: 'حليب الأطفال', // Baby Milk
           probability: 0.65,
-          reason: 'فرصة بيع متقاطع للأمهات الجدد', // Cross-sell opportunity for new mothers
+          reason:
+              'فرصة بيع متقاطع للأمهات الجدد', // Cross-sell opportunity for new mothers
         ),
         CrossSellOpportunity(
           triggerProduct: 'معكرونة سباغيتي', // Spaghetti
           suggestedProduct: 'جبنة بارميزان', // Parmesan Cheese
           probability: 0.58,
-          reason: 'ارتباط قوي في فئة المعكرونة', // Strong association in pasta category
+          reason:
+              'ارتباط قوي في فئة المعكرونة', // Strong association in pasta category
         ),
       ],
       categoryMix: {

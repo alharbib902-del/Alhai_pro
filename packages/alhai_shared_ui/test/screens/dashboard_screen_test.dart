@@ -44,9 +44,11 @@ Widget _buildTestWidget({
     overrides: [
       currentStoreIdProvider.overrideWith((ref) => 'test-store-id'),
       dashboardDataProvider.overrideWith(
-        (ref) => dashboardValue?.when(
+        (ref) =>
+            dashboardValue?.when(
               data: (d) => Future.value(d),
-              loading: () => Future.delayed(const Duration(days: 1), () => const DashboardData()),
+              loading: () => Future.delayed(
+                  const Duration(days: 1), () => const DashboardData()),
               error: (e, _) => Future.error(e!),
             ) ??
             Future.value(const DashboardData()),
@@ -123,7 +125,8 @@ void main() {
       addTearDown(() => tester.view.resetPhysicalSize());
 
       await tester.pumpWidget(_buildTestWidget(
-        dashboardValue: AsyncValue.error(Exception('Failed'), StackTrace.current),
+        dashboardValue:
+            AsyncValue.error(Exception('Failed'), StackTrace.current),
       ));
       await tester.pumpAndSettle(const Duration(seconds: 2));
 

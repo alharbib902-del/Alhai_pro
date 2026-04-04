@@ -55,8 +55,7 @@ class PrintServiceNotifier extends StateNotifier<ThermalPrintService?> {
       final name = prefs.getString(_kPrefPrinterName);
       final address = prefs.getString(_kPrefPrinterAddress);
       final paperSizeValue = prefs.getInt(_kPrefPaperSize) ?? 80;
-      final paperSize =
-          paperSizeValue == 58 ? PaperSize.mm58 : PaperSize.mm80;
+      final paperSize = paperSizeValue == 58 ? PaperSize.mm58 : PaperSize.mm80;
 
       if (type == null || name == null) return;
 
@@ -114,8 +113,7 @@ class PrintServiceNotifier extends StateNotifier<ThermalPrintService?> {
   Future<void> setPaperSize(PaperSize size) async {
     state?.paperSize = size;
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt(
-        _kPrefPaperSize, size == PaperSize.mm58 ? 58 : 80);
+    await prefs.setInt(_kPrefPaperSize, size == PaperSize.mm58 ? 58 : 80);
   }
 
   /// Toggle auto-print preference

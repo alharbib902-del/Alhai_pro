@@ -353,8 +353,8 @@ class EscPosCommandBuilder {
 
   // ESC/POS command constants
   static const int _esc = 0x1B; // ESC
-  static const int _gs = 0x1D;  // GS
-  static const int _lf = 0x0A;  // Line feed
+  static const int _gs = 0x1D; // GS
+  static const int _lf = 0x0A; // Line feed
 
   /// Initialize printer (ESC @)
   void initialize() {

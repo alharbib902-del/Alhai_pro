@@ -13,7 +13,8 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
+import 'package:alhai_design_system/alhai_design_system.dart'
+    show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import 'dart:math' as math;
 import '../../core/services/sentry_service.dart';
@@ -27,8 +28,7 @@ class PaymentReportsScreen extends ConsumerStatefulWidget {
       _PaymentReportsScreenState();
 }
 
-class _PaymentReportsScreenState
-    extends ConsumerState<PaymentReportsScreen> {
+class _PaymentReportsScreenState extends ConsumerState<PaymentReportsScreen> {
   final _db = GetIt.I<AppDatabase>();
 
   bool _isLoading = true;
@@ -67,12 +67,15 @@ class _PaymentReportsScreenState
         if (_dateFilter == 'today') {
           return order.createdAt.isAfter(todayStart);
         } else if (_dateFilter == 'week') {
-          return order.createdAt.isAfter(todayStart.subtract(const Duration(days: 7)));
+          return order.createdAt
+              .isAfter(todayStart.subtract(const Duration(days: 7)));
         } else if (_dateFilter == 'month') {
-          return order.createdAt.month == now.month && order.createdAt.year == now.year;
+          return order.createdAt.month == now.month &&
+              order.createdAt.year == now.year;
         } else if (_dateFilter == 'custom' && _customRange != null) {
           return order.createdAt.isAfter(_customRange!.start) &&
-              order.createdAt.isBefore(_customRange!.end.add(const Duration(days: 1)));
+              order.createdAt
+                  .isBefore(_customRange!.end.add(const Duration(days: 1)));
         }
         return true;
       }).toList();
@@ -135,9 +138,8 @@ class _PaymentReportsScreenState
           subtitle: _getDateSubtitle(l10n),
           showSearch: false,
           searchHint: l10n.searchPlaceholder,
-          onMenuTap: isWideScreen
-              ? null
-              : () => Scaffold.of(context).openDrawer(),
+          onMenuTap:
+              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 3,
           userName: user?.name ?? l10n.cashCustomer,
@@ -148,12 +150,14 @@ class _PaymentReportsScreenState
           child: _isLoading
               ? const AppLoadingState()
               : _error != null
-                  ? AppErrorState.general(context, message: _error!, onRetry: _loadData)
+                  ? AppErrorState.general(context,
+                      message: _error!, onRetry: _loadData)
                   : SingleChildScrollView(
-                  padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-                  child: _buildContent(
-                      isWideScreen, isMediumScreen, isDark, l10n),
-                ),
+                      padding: EdgeInsets.all(
+                          isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+                      child: _buildContent(
+                          isWideScreen, isMediumScreen, isDark, l10n),
+                    ),
         ),
       ],
     );
@@ -164,8 +168,8 @@ class _PaymentReportsScreenState
     return '${now.day}/${now.month}/${now.year} \u2022 ${l10n.mainBranch}';
   }
 
-  Widget _buildContent(
-      bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n) {
+  Widget _buildContent(bool isWideScreen, bool isMediumScreen, bool isDark,
+      AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -240,24 +244,35 @@ class _PaymentReportsScreenState
       onTap: onTap,
       borderRadius: BorderRadius.circular(999),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: AlhaiSpacing.xs),
+        padding: const EdgeInsets.symmetric(
+            horizontal: 14, vertical: AlhaiSpacing.xs),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.primary : AppColors.getSurfaceVariant(isDark),
+          color: isSelected
+              ? AppColors.primary
+              : AppColors.getSurfaceVariant(isDark),
           borderRadius: BorderRadius.circular(999),
-          border: Border.all(color: isSelected ? AppColors.primary : AppColors.getBorder(isDark)),
+          border: Border.all(
+              color:
+                  isSelected ? AppColors.primary : AppColors.getBorder(isDark)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             if (icon != null) ...[
-              Icon(icon, size: 14,
-                  color: isSelected ? AppColors.textOnPrimary : AppColors.getTextSecondary(isDark)),
+              Icon(icon,
+                  size: 14,
+                  color: isSelected
+                      ? AppColors.textOnPrimary
+                      : AppColors.getTextSecondary(isDark)),
               const SizedBox(width: 6),
             ],
             Text(label,
-                style: TextStyle(fontSize: 13,
+                style: TextStyle(
+                    fontSize: 13,
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                    color: isSelected ? AppColors.textOnPrimary : AppColors.getTextSecondary(isDark))),
+                    color: isSelected
+                        ? AppColors.textOnPrimary
+                        : AppColors.getTextSecondary(isDark))),
           ],
         ),
       ),
@@ -287,14 +302,16 @@ class _PaymentReportsScreenState
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Text(l10n.paymentDistribution,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
                       color: AppColors.getTextPrimary(isDark))),
             ],
           ),
           const SizedBox(height: AlhaiSpacing.lg),
           // Custom pie chart using colored containers
           SizedBox(
-            width:200,
+            width: 200,
             height: 200,
             child: _grandTotal > 0
                 ? CustomPaint(
@@ -312,11 +329,14 @@ class _PaymentReportsScreenState
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.pie_chart_outline_rounded, size: 48,
-                            color: AppColors.getTextMuted(isDark).withValues(alpha: 0.3)),
+                        Icon(Icons.pie_chart_outline_rounded,
+                            size: 48,
+                            color: AppColors.getTextMuted(isDark)
+                                .withValues(alpha: 0.3)),
                         const SizedBox(height: AlhaiSpacing.xs),
                         Text(l10n.noData,
-                            style: TextStyle(fontSize: 13,
+                            style: TextStyle(
+                                fontSize: 13,
                                 color: AppColors.getTextMuted(isDark))),
                       ],
                     ),
@@ -344,13 +364,14 @@ class _PaymentReportsScreenState
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          width: 12, height: 12,
+          width: 12,
+          height: 12,
           decoration: BoxDecoration(color: color, shape: BoxShape.circle),
         ),
         const SizedBox(width: 6),
         Text(label,
-            style: TextStyle(fontSize: 12,
-                color: AppColors.getTextSecondary(isDark))),
+            style: TextStyle(
+                fontSize: 12, color: AppColors.getTextSecondary(isDark))),
       ],
     );
   }
@@ -379,7 +400,9 @@ class _PaymentReportsScreenState
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Text(l10n.breakdown,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
                       color: AppColors.getTextPrimary(isDark))),
             ],
           ),
@@ -443,7 +466,8 @@ class _PaymentReportsScreenState
           Row(
             children: [
               Container(
-                width: 40, height: 40,
+                width: 40,
+                height: 40,
                 decoration: BoxDecoration(
                   color: color.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(10),
@@ -457,11 +481,13 @@ class _PaymentReportsScreenState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(label,
-                        style: TextStyle(fontSize: 14,
+                        style: TextStyle(
+                            fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: AppColors.getTextPrimary(isDark))),
                     Text(l10n.nTransactions(count),
-                        style: TextStyle(fontSize: 12,
+                        style: TextStyle(
+                            fontSize: 12,
                             color: AppColors.getTextMuted(isDark))),
                   ],
                 ),
@@ -470,10 +496,13 @@ class _PaymentReportsScreenState
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text('${total.toStringAsFixed(0)} ${l10n.sar}',
-                      style: TextStyle(fontSize: 16,
-                          fontWeight: FontWeight.w700, color: color)),
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: color)),
                   Text('$percentage%',
-                      style: TextStyle(fontSize: 12,
+                      style: TextStyle(
+                          fontSize: 12,
                           fontWeight: FontWeight.w500,
                           color: AppColors.getTextSecondary(isDark))),
                 ],
@@ -516,11 +545,13 @@ class _PaymentReportsScreenState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(l10n.grandTotal,
-                    style: TextStyle(fontSize: 14,
+                    style: TextStyle(
+                        fontSize: 14,
                         color: AppColors.getTextSecondary(isDark))),
                 const SizedBox(height: AlhaiSpacing.xxs),
                 Text('${_grandTotal.toStringAsFixed(0)} ${l10n.sar}',
-                    style: const TextStyle(fontSize: 28,
+                    style: const TextStyle(
+                        fontSize: 28,
                         fontWeight: FontWeight.w800,
                         color: AppColors.primary)),
               ],
@@ -530,11 +561,12 @@ class _PaymentReportsScreenState
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(l10n.totalTransactions,
-                  style: TextStyle(fontSize: 12,
-                      color: AppColors.getTextSecondary(isDark))),
+                  style: TextStyle(
+                      fontSize: 12, color: AppColors.getTextSecondary(isDark))),
               const SizedBox(height: AlhaiSpacing.xxs),
               Text('$_totalCount',
-                  style: TextStyle(fontSize: 24,
+                  style: TextStyle(
+                      fontSize: 24,
                       fontWeight: FontWeight.w800,
                       color: AppColors.getTextPrimary(isDark))),
             ],

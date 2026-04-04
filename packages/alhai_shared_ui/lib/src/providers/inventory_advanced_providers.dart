@@ -28,8 +28,8 @@ final stockTransfersListProvider =
 
   final db = GetIt.I<AppDatabase>();
   return (db.select(db.stockTransfersTable)
-        ..where((t) =>
-            t.fromStoreId.equals(storeId) | t.toStoreId.equals(storeId))
+        ..where(
+            (t) => t.fromStoreId.equals(storeId) | t.toStoreId.equals(storeId))
         ..orderBy([(t) => OrderingTerm.desc(t.createdAt)]))
       .get();
 });
@@ -105,14 +105,11 @@ Future<bool> updateTransferStatus(
 
     final companion = StockTransfersTableCompanion(
       status: Value(newStatus),
-      approvedAt:
-          newStatus == 'approved' ? Value(now) : const Value.absent(),
-      completedAt:
-          newStatus == 'completed' ? Value(now) : const Value.absent(),
+      approvedAt: newStatus == 'approved' ? Value(now) : const Value.absent(),
+      completedAt: newStatus == 'completed' ? Value(now) : const Value.absent(),
     );
 
-    await (db.update(db.stockTransfersTable)
-          ..where((t) => t.id.equals(id)))
+    await (db.update(db.stockTransfersTable)..where((t) => t.id.equals(id)))
         .write(companion);
 
     // إضافة للمزامنة
@@ -123,10 +120,8 @@ Future<bool> updateTransferStatus(
         recordId: id,
         changes: {
           'status': newStatus,
-          if (newStatus == 'approved')
-            'approved_at': now.toIso8601String(),
-          if (newStatus == 'completed')
-            'completed_at': now.toIso8601String(),
+          if (newStatus == 'approved') 'approved_at': now.toIso8601String(),
+          if (newStatus == 'completed') 'completed_at': now.toIso8601String(),
         },
       );
     } catch (e) {
@@ -180,8 +175,7 @@ Future<bool> completeTransfer(WidgetRef ref, String id) async {
       if (sku != null && sku.isNotEmpty) {
         final destProduct = await (db.select(db.productsTable)
               ..where((p) =>
-                  p.sku.equals(sku) &
-                  p.storeId.equals(transfer.toStoreId)))
+                  p.sku.equals(sku) & p.storeId.equals(transfer.toStoreId)))
             .getSingleOrNull();
         if (destProduct != null) {
           final newQty = destProduct.stockQty + qty;
@@ -191,8 +185,7 @@ Future<bool> completeTransfer(WidgetRef ref, String id) async {
     }
 
     // تحديث حالة التحويل إلى مكتمل
-    await (db.update(db.stockTransfersTable)
-          ..where((t) => t.id.equals(id)))
+    await (db.update(db.stockTransfersTable)..where((t) => t.id.equals(id)))
         .write(StockTransfersTableCompanion(
       status: const Value('completed'),
       completedAt: Value(now),
@@ -437,8 +430,9 @@ final expiryTrackingProvider =
   final cutoff = DateTime.now().add(const Duration(days: 90));
 
   final records = await (db.select(db.productExpiryTable)
-        ..where(
-            (e) => e.storeId.equals(storeId) & e.expiryDate.isSmallerOrEqualValue(cutoff))
+        ..where((e) =>
+            e.storeId.equals(storeId) &
+            e.expiryDate.isSmallerOrEqualValue(cutoff))
         ..orderBy([(e) => OrderingTerm.asc(e.expiryDate)]))
       .get();
 
@@ -467,8 +461,8 @@ final expiryTrackingProvider =
 });
 
 /// مزود المنتجات التي تنتهي خلال عدد أيام محدد
-final expiringSoonProvider =
-    FutureProvider.autoDispose.family<List<ExpiryItemData>, int>((ref, days) async {
+final expiringSoonProvider = FutureProvider.autoDispose
+    .family<List<ExpiryItemData>, int>((ref, days) async {
   final allItems = await ref.watch(expiryTrackingProvider.future);
   final now = DateTime.now();
   final cutoff = now.add(Duration(days: days));
@@ -544,8 +538,7 @@ Future<bool> deleteExpiryRecord(WidgetRef ref, String id) async {
   try {
     final db = GetIt.I<AppDatabase>();
 
-    await (db.delete(db.productExpiryTable)
-          ..where((e) => e.id.equals(id)))
+    await (db.delete(db.productExpiryTable)..where((e) => e.id.equals(id)))
         .go();
 
     // إضافة للمزامنة

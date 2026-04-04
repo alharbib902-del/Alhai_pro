@@ -54,8 +54,8 @@ final saStoresListProvider =
 });
 
 /// Single store detail.
-final saStoreDetailProvider = FutureProvider.autoDispose
-    .family<SAStore, String>((ref, storeId) async {
+final saStoreDetailProvider =
+    FutureProvider.autoDispose.family<SAStore, String>((ref, storeId) async {
   final ds = ref.watch(saStoresDatasourceProvider);
   return ds.getStore(storeId);
 });

@@ -8,7 +8,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import 'package:alhai_auth/alhai_auth.dart' show authStateProvider, currentStoreIdProvider;
+import 'package:alhai_auth/alhai_auth.dart'
+    show authStateProvider, currentStoreIdProvider;
 import 'package:alhai_database/alhai_database.dart';
 import 'package:get_it/get_it.dart';
 import 'package:alhai_sync/alhai_sync.dart';
@@ -46,7 +47,8 @@ final syncApiServiceProvider = Provider<SyncApiService?>((ref) {
   } catch (e) {
     // SupabaseClient not registered - offline mode, sync unavailable
     if (kDebugMode) {
-      debugPrint('SyncApiService unavailable: SupabaseClient not registered. $e');
+      debugPrint(
+          'SyncApiService unavailable: SupabaseClient not registered. $e');
     }
     return null;
   }
@@ -59,7 +61,8 @@ final orgSyncServiceProvider = Provider<OrgSyncService?>((ref) {
     return OrgSyncService(client: client);
   } catch (e) {
     if (kDebugMode) {
-      debugPrint('OrgSyncService unavailable: SupabaseClient not registered. $e');
+      debugPrint(
+          'OrgSyncService unavailable: SupabaseClient not registered. $e');
     }
     return null;
   }
@@ -164,7 +167,8 @@ final syncExistingCustomersProvider = FutureProvider<int>((ref) async {
     }
 
     if (count > 0 && kDebugMode) {
-      debugPrint('[SyncCustomers] ✅ Enqueued $count existing customers for sync');
+      debugPrint(
+          '[SyncCustomers] ✅ Enqueued $count existing customers for sync');
     }
     return count;
   } catch (e) {
@@ -358,7 +362,8 @@ final globalSyncActivationProvider = FutureProvider<void>((ref) async {
       }
 
       if (kDebugMode) {
-        debugPrint('[GlobalSync] Running InitialSync for store=$storeId, org=$orgId');
+        debugPrint(
+            '[GlobalSync] Running InitialSync for store=$storeId, org=$orgId');
       }
 
       final result = await initialSync.execute(orgId: orgId, storeId: storeId);
@@ -403,7 +408,8 @@ final pendingSyncCountProvider = StreamProvider<int>((ref) {
 
 /// مزود معلومات المبيعات غير المُزامنة (العدد + وقت أقدم عنصر)
 /// يُستخدم لعرض بانر التحذير عند وجود عناصر معلقة لأكثر من 5 دقائق
-final unsyncedSalesInfoProvider = StreamProvider<({int count, DateTime? oldestAt})>((ref) {
+final unsyncedSalesInfoProvider =
+    StreamProvider<({int count, DateTime? oldestAt})>((ref) {
   final syncService = ref.watch(syncServiceProvider);
   return syncService.watchPendingCountWithOldest();
 });
@@ -421,13 +427,15 @@ final syncNowProvider = FutureProvider.autoDispose<SyncResult>((ref) async {
 });
 
 /// مزود قائمة العناصر المعلقة (Stream)
-final pendingSyncItemsProvider = StreamProvider<List<SyncQueueTableData>>((ref) {
+final pendingSyncItemsProvider =
+    StreamProvider<List<SyncQueueTableData>>((ref) {
   final syncService = ref.watch(syncServiceProvider);
   return syncService.watchPendingItems();
 });
 
 /// مزود قائمة العناصر المتعارضة (Stream)
-final conflictSyncItemsProvider = StreamProvider<List<SyncQueueTableData>>((ref) {
+final conflictSyncItemsProvider =
+    StreamProvider<List<SyncQueueTableData>>((ref) {
   final syncService = ref.watch(syncServiceProvider);
   return syncService.watchConflictItems();
 });

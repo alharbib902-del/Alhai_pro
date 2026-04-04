@@ -213,23 +213,23 @@ class BranchCard extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
-      margin: EdgeInsets.only(bottom: compact ? AlhaiSpacing.xs : AlhaiSpacing.sm),
+      margin:
+          EdgeInsets.only(bottom: compact ? AlhaiSpacing.xs : AlhaiSpacing.sm),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(16),
           child: Container(
-            padding: EdgeInsets.all(compact ? AlhaiSpacing.sm : AlhaiSpacing.md),
+            padding:
+                EdgeInsets.all(compact ? AlhaiSpacing.sm : AlhaiSpacing.md),
             decoration: BoxDecoration(
               color: isSelected
                   ? AppColors.primary.withValues(alpha: 0.05)
                   : Colors.white,
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: isSelected
-                    ? AppColors.primary
-                    : AppColors.border,
+                color: isSelected ? AppColors.primary : AppColors.border,
                 width: isSelected ? 2 : 1,
               ),
               boxShadow: [
@@ -343,9 +343,8 @@ class BranchCard extends StatelessWidget {
                 else
                   Icon(
                     Icons.chevron_left_rounded,
-                    color: isSelected
-                        ? AppColors.primary
-                        : AppColors.textTertiary,
+                    color:
+                        isSelected ? AppColors.primary : AppColors.textTertiary,
                     size: 24,
                   ),
               ],

@@ -242,7 +242,8 @@ void main() {
           expect(
             greys[i].computeLuminance(),
             greaterThan(greys[i + 1].computeLuminance()),
-            reason: 'grey${(i + 1) * 100} should be darker than grey${i * 100 + 50}',
+            reason:
+                'grey${(i + 1) * 100} should be darker than grey${i * 100 + 50}',
           );
         }
       });

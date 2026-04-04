@@ -122,7 +122,8 @@ class AnimatedCounter extends StatefulWidget {
 
 class _AnimatedCounterState extends State<AnimatedCounter>
     with SingleTickerProviderStateMixin {
-  static final _thousandSeparatorRegExp = RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
+  static final _thousandSeparatorRegExp =
+      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
 
   late AnimationController _controller;
   late Animation<double> _animation;
@@ -272,7 +273,8 @@ class AnimatedCircularCounter extends StatefulWidget {
   });
 
   @override
-  State<AnimatedCircularCounter> createState() => _AnimatedCircularCounterState();
+  State<AnimatedCircularCounter> createState() =>
+      _AnimatedCircularCounterState();
 }
 
 class _AnimatedCircularCounterState extends State<AnimatedCircularCounter>

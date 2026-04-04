@@ -66,16 +66,14 @@ class _CustomerNotesSectionState extends State<CustomerNotesSection> {
                       horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxxs),
                   decoration: BoxDecoration(
                     color: AppColors.getSurfaceVariant(isDark),
-                    borderRadius:
-                        BorderRadius.circular(AppSizes.radiusFull),
+                    borderRadius: BorderRadius.circular(AppSizes.radiusFull),
                   ),
                   child: Text(
                     '${_notes.length}',
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
-                      color:
-                          AppColors.getTextSecondary(isDark),
+                      color: AppColors.getTextSecondary(isDark),
                     ),
                   ),
                 ),
@@ -90,8 +88,7 @@ class _CustomerNotesSectionState extends State<CustomerNotesSection> {
               child: Center(
                 child: Text(
                   'No notes yet',
-                  style: TextStyle(
-                      color: AppColors.getTextMuted(isDark)),
+                  style: TextStyle(color: AppColors.getTextMuted(isDark)),
                 ),
               ),
             )
@@ -101,8 +98,7 @@ class _CustomerNotesSectionState extends State<CustomerNotesSection> {
               physics: const NeverScrollableScrollPhysics(),
               padding: const EdgeInsets.all(AlhaiSpacing.sm),
               itemCount: _notes.length,
-              separatorBuilder: (_, __) =>
-                  const SizedBox(height: 10),
+              separatorBuilder: (_, __) => const SizedBox(height: 10),
               itemBuilder: (context, index) {
                 final note = _notes[index];
                 return _buildNoteItem(note, isDark);
@@ -128,14 +124,11 @@ class _CustomerNotesSectionState extends State<CustomerNotesSection> {
                         color: AppColors.getTextMuted(isDark),
                       ),
                       filled: true,
-                      fillColor:
-                          AppColors.getSurfaceVariant(isDark),
-                      contentPadding:
-                          const EdgeInsets.symmetric(
-                              horizontal: 14, vertical: 10),
+                      fillColor: AppColors.getSurfaceVariant(isDark),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 14, vertical: 10),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(
-                            AppSizes.radiusLg),
+                        borderRadius: BorderRadius.circular(AppSizes.radiusLg),
                         borderSide: BorderSide.none,
                       ),
                       counterText: '',
@@ -146,15 +139,13 @@ class _CustomerNotesSectionState extends State<CustomerNotesSection> {
                 SizedBox(width: AlhaiSpacing.xs),
                 IconButton(
                   onPressed: _addNote,
-                  icon:
-                      const AdaptiveIcon(Icons.send_rounded, size: 20),
+                  icon: const AdaptiveIcon(Icons.send_rounded, size: 20),
                   style: IconButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.all(10),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(
-                          AppSizes.radiusLg),
+                      borderRadius: BorderRadius.circular(AppSizes.radiusLg),
                     ),
                   ),
                 ),
@@ -166,8 +157,7 @@ class _CustomerNotesSectionState extends State<CustomerNotesSection> {
     );
   }
 
-  Widget _buildNoteItem(
-      Map<String, dynamic> note, bool isDark) {
+  Widget _buildNoteItem(Map<String, dynamic> note, bool isDark) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -176,10 +166,8 @@ class _CustomerNotesSectionState extends State<CustomerNotesSection> {
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color:
-                (note['color'] as Color).withValues(alpha: 0.15),
-            borderRadius:
-                BorderRadius.circular(AppSizes.radiusMd),
+            color: (note['color'] as Color).withValues(alpha: 0.15),
+            borderRadius: BorderRadius.circular(AppSizes.radiusMd),
           ),
           alignment: Alignment.center,
           child: Text(
@@ -198,31 +186,27 @@ class _CustomerNotesSectionState extends State<CustomerNotesSection> {
             padding: const EdgeInsets.all(AlhaiSpacing.sm),
             decoration: BoxDecoration(
               color: AppColors.getSurfaceVariant(isDark),
-              borderRadius:
-                  BorderRadius.circular(AppSizes.radiusLg),
+              borderRadius: BorderRadius.circular(AppSizes.radiusLg),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
-                  mainAxisAlignment:
-                      MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       note['author'] as String,
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
-                        color:
-                            AppColors.getTextPrimary(isDark),
+                        color: AppColors.getTextPrimary(isDark),
                       ),
                     ),
                     Text(
                       note['date'] as String,
                       style: TextStyle(
                         fontSize: 10,
-                        color:
-                            AppColors.getTextMuted(isDark),
+                        color: AppColors.getTextMuted(isDark),
                       ),
                     ),
                   ],
@@ -232,8 +216,7 @@ class _CustomerNotesSectionState extends State<CustomerNotesSection> {
                   note['text'] as String,
                   style: TextStyle(
                     fontSize: 13,
-                    color:
-                        AppColors.getTextSecondary(isDark),
+                    color: AppColors.getTextSecondary(isDark),
                     height: 1.4,
                   ),
                 ),
@@ -252,7 +235,8 @@ class _CustomerNotesSectionState extends State<CustomerNotesSection> {
     if (InputSanitizer.containsDangerousContent(text)) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(AppLocalizations.of(context)!.inputContainsDangerousContent),
+          content:
+              Text(AppLocalizations.of(context)!.inputContainsDangerousContent),
           backgroundColor: Theme.of(context).colorScheme.error,
         ),
       );

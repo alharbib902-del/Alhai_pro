@@ -39,17 +39,20 @@ class ZatcaResponse {
 
   /// Parse from ZATCA API JSON response
   factory ZatcaResponse.fromJson(Map<String, dynamic> json, int statusCode) {
-    final validationResults = json['validationResults'] as Map<String, dynamic>?;
+    final validationResults =
+        json['validationResults'] as Map<String, dynamic>?;
 
     final warnings = <ZatcaValidationResult>[];
     final errors = <ZatcaValidationResult>[];
 
     if (validationResults != null) {
-      final warningMessages = validationResults['warningMessages'] as List<dynamic>? ?? [];
+      final warningMessages =
+          validationResults['warningMessages'] as List<dynamic>? ?? [];
       for (final w in warningMessages) {
         warnings.add(ZatcaValidationResult.fromJson(w as Map<String, dynamic>));
       }
-      final errorMessages = validationResults['errorMessages'] as List<dynamic>? ?? [];
+      final errorMessages =
+          validationResults['errorMessages'] as List<dynamic>? ?? [];
       for (final e in errorMessages) {
         errors.add(ZatcaValidationResult.fromJson(e as Map<String, dynamic>));
       }
@@ -60,7 +63,8 @@ class ZatcaResponse {
     return ZatcaResponse(
       isSuccess: isSuccess,
       statusCode: statusCode,
-      reportingStatus: isSuccess ? ReportingStatus.reported : ReportingStatus.rejected,
+      reportingStatus:
+          isSuccess ? ReportingStatus.reported : ReportingStatus.rejected,
       clearanceStatus: json['clearanceStatus'] as String?,
       clearedInvoiceXml: json['clearedInvoice'] as String?,
       warnings: warnings,

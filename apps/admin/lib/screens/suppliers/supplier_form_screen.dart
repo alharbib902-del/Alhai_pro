@@ -21,8 +21,7 @@ class SupplierFormScreen extends ConsumerStatefulWidget {
   bool get isEditing => supplierId != null;
 
   @override
-  ConsumerState<SupplierFormScreen> createState() =>
-      _SupplierFormScreenState();
+  ConsumerState<SupplierFormScreen> createState() => _SupplierFormScreenState();
 }
 
 class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
@@ -156,7 +155,8 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
     final isWideScreen = size.width > 900 || (isLandscape && size.width >= 600);
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -217,8 +217,7 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
                         ? const Center(child: CircularProgressIndicator())
                         : Center(
                             child: ConstrainedBox(
-                              constraints:
-                                  const BoxConstraints(maxWidth: 1000),
+                              constraints: const BoxConstraints(maxWidth: 1000),
                               child: Form(
                                 key: _formKey,
                                 autovalidateMode:
@@ -262,7 +261,8 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
         // Right column: business + financial + additional + save
         Expanded(
           child: SingleChildScrollView(
-            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.zero, AlhaiSpacing.lg, AlhaiSpacing.lg, AlhaiSpacing.lg),
+            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.zero,
+                AlhaiSpacing.lg, AlhaiSpacing.lg, AlhaiSpacing.lg),
             child: Column(
               children: [
                 _buildBusinessSection(isDark, l10n),
@@ -305,9 +305,7 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
               const SizedBox(width: AlhaiSpacing.xs),
               Expanded(
                 child: Text(
-                  widget.isEditing
-                      ? l10n.editSupplier
-                      : l10n.addNewSupplier,
+                  widget.isEditing ? l10n.editSupplier : l10n.addNewSupplier,
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -356,13 +354,15 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.08)
-              : AppColors.border,
+          color:
+              isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.border,
         ),
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: isDark ? 0.2 : 0.04),
+            color: Theme.of(context)
+                .colorScheme
+                .onSurface
+                .withValues(alpha: isDark ? 0.2 : 0.04),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -547,18 +547,12 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
           value: _paymentTerms,
           isDark: isDark,
           items: [
-            DropdownMenuItem(
-                value: 'cod', child: Text(l10n.payOnDelivery)),
-            DropdownMenuItem(
-                value: '7', child: Text(l10n.sevenDays)),
-            DropdownMenuItem(
-                value: '14', child: Text(l10n.fourteenDays)),
-            DropdownMenuItem(
-                value: '30', child: Text(l10n.thirtyDays)),
-            DropdownMenuItem(
-                value: '45', child: Text(l10n.fortyFiveDays)),
-            DropdownMenuItem(
-                value: '60', child: Text(l10n.sixtyDays)),
+            DropdownMenuItem(value: 'cod', child: Text(l10n.payOnDelivery)),
+            DropdownMenuItem(value: '7', child: Text(l10n.sevenDays)),
+            DropdownMenuItem(value: '14', child: Text(l10n.fourteenDays)),
+            DropdownMenuItem(value: '30', child: Text(l10n.thirtyDays)),
+            DropdownMenuItem(value: '45', child: Text(l10n.fortyFiveDays)),
+            DropdownMenuItem(value: '60', child: Text(l10n.sixtyDays)),
           ],
           onChanged: (value) {
             if (value != null) {
@@ -579,8 +573,8 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
       children: [
         // Active switch
         Container(
-          padding:
-              const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xxs),
+          padding: const EdgeInsets.symmetric(
+              horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xxs),
           decoration: BoxDecoration(
             color: isDark
                 ? Colors.white.withValues(alpha: 0.03)
@@ -777,9 +771,7 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
         label: Text(
           _isLoading
               ? l10n.savingLabel
-              : (widget.isEditing
-                  ? l10n.updateSupplier
-                  : l10n.addSupplierBtn),
+              : (widget.isEditing ? l10n.updateSupplier : l10n.addSupplierBtn),
         ),
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.primary,
@@ -868,35 +860,26 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
             name: sanitizedName,
             phone: Value(sanitizedPhone.isEmpty ? null : sanitizedPhone),
             email: Value(sanitizedEmail.isEmpty ? null : sanitizedEmail),
-            address:
-                Value(sanitizedAddress.isEmpty ? null : sanitizedAddress),
-            taxNumber:
-                Value(sanitizedVat.isEmpty ? null : sanitizedVat),
-            notes:
-                Value(sanitizedNotes.isEmpty ? null : sanitizedNotes),
+            address: Value(sanitizedAddress.isEmpty ? null : sanitizedAddress),
+            taxNumber: Value(sanitizedVat.isEmpty ? null : sanitizedVat),
+            notes: Value(sanitizedNotes.isEmpty ? null : sanitizedNotes),
             paymentTerms: Value(_paymentTerms),
             isActive: _isActive,
             updatedAt: Value(DateTime.now()),
           ));
         }
       } else {
-        final supplierId =
-            'sup_${DateTime.now().millisecondsSinceEpoch}';
+        final supplierId = 'sup_${DateTime.now().millisecondsSinceEpoch}';
 
         await db.suppliersDao.insertSupplier(SuppliersTableCompanion(
           id: Value(supplierId),
           storeId: Value(storeId),
           name: Value(sanitizedName),
-          phone:
-              Value(sanitizedPhone.isEmpty ? null : sanitizedPhone),
-          email:
-              Value(sanitizedEmail.isEmpty ? null : sanitizedEmail),
-          address: Value(
-              sanitizedAddress.isEmpty ? null : sanitizedAddress),
-          taxNumber:
-              Value(sanitizedVat.isEmpty ? null : sanitizedVat),
-          notes:
-              Value(sanitizedNotes.isEmpty ? null : sanitizedNotes),
+          phone: Value(sanitizedPhone.isEmpty ? null : sanitizedPhone),
+          email: Value(sanitizedEmail.isEmpty ? null : sanitizedEmail),
+          address: Value(sanitizedAddress.isEmpty ? null : sanitizedAddress),
+          taxNumber: Value(sanitizedVat.isEmpty ? null : sanitizedVat),
+          notes: Value(sanitizedNotes.isEmpty ? null : sanitizedNotes),
           paymentTerms: Value(_paymentTerms),
           isActive: Value(_isActive),
           createdAt: Value(DateTime.now()),
@@ -916,8 +899,8 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
             ),
             backgroundColor: AppColors.success,
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           ),
         );
 
@@ -931,8 +914,8 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
             content: Text(l10n.errorOccurredMsg(e)),
             backgroundColor: AppColors.error,
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           ),
         );
       }
@@ -945,12 +928,14 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
     showDialog(
       context: context,
       builder: (ctx) => ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: MediaQuery.of(ctx).size.width > 600 ? 400 : MediaQuery.of(ctx).size.width * 0.9),
+        constraints: BoxConstraints(
+            maxWidth: MediaQuery.of(ctx).size.width > 600
+                ? 400
+                : MediaQuery.of(ctx).size.width * 0.9),
         child: AlertDialog(
-          backgroundColor:
-              Theme.of(context).colorScheme.surface,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16)),
+          backgroundColor: Theme.of(context).colorScheme.surface,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           title: Text(
             l10n.deleteSupplier,
             style: TextStyle(
@@ -1010,8 +995,8 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
             content: Text(l10n.supplierDeletedMsg),
             backgroundColor: AppColors.error,
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           ),
         );
 
@@ -1025,8 +1010,8 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
             content: Text(l10n.errorDuringDeleteMsg(e)),
             backgroundColor: AppColors.error,
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           ),
         );
       }

@@ -299,8 +299,7 @@ void runZatcaComplianceTests() {
       for (final field in requiredFields) {
         expect(invoice.containsKey(field), isTrue,
             reason: 'Missing ZATCA field: $field');
-        expect(invoice[field], isNotNull,
-            reason: 'Null ZATCA field: $field');
+        expect(invoice[field], isNotNull, reason: 'Null ZATCA field: $field');
       }
     });
 

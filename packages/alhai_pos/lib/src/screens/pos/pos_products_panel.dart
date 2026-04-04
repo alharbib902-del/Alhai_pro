@@ -65,8 +65,8 @@ class _PosProductsPanelState extends ConsumerState<PosProductsPanel> {
   Widget build(BuildContext context) {
     // M93: Use .select() to only rebuild when products/loading/error change,
     // not when currentPage, hasMore, searchQuery, or categoryId change alone
-    final productsState = ref.watch(productsStateProvider.select((state) =>
-      (state.products, state.isLoading, state.error),
+    final productsState = ref.watch(productsStateProvider.select(
+      (state) => (state.products, state.isLoading, state.error),
     ));
     final categoriesAsync = ref.watch(categoriesProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -94,7 +94,8 @@ class _PosProductsPanelState extends ConsumerState<PosProductsPanel> {
                   onCategorySelected: widget.onCategorySelected,
                 ),
                 Expanded(
-                  child: _buildProductsGrid(context, ref, productsStateForGrid, l10n),
+                  child: _buildProductsGrid(
+                      context, ref, productsStateForGrid, l10n),
                 ),
               ],
             )
@@ -108,7 +109,8 @@ class _PosProductsPanelState extends ConsumerState<PosProductsPanel> {
                   onCategorySelected: widget.onCategorySelected,
                 ),
                 Expanded(
-                  child: _buildProductsGrid(context, ref, productsStateForGrid, l10n),
+                  child: _buildProductsGrid(
+                      context, ref, productsStateForGrid, l10n),
                 ),
               ],
             ),
@@ -119,7 +121,8 @@ class _PosProductsPanelState extends ConsumerState<PosProductsPanel> {
               bottom: 16,
               left: 0,
               right: 0,
-              child: Center(child: PosShortcutsBar(
+              child: Center(
+                  child: PosShortcutsBar(
                 onHoldInvoice: widget.onHoldInvoice,
                 onShowHeldInvoices: widget.onShowHeldInvoices,
               )),
@@ -129,8 +132,8 @@ class _PosProductsPanelState extends ConsumerState<PosProductsPanel> {
     );
   }
 
-  Widget _buildProductsGrid(
-      BuildContext context, WidgetRef ref, ProductsState state, AppLocalizations l10n) {
+  Widget _buildProductsGrid(BuildContext context, WidgetRef ref,
+      ProductsState state, AppLocalizations l10n) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     if (state.isLoading && state.products.isEmpty) {
@@ -146,16 +149,21 @@ class _PosProductsPanelState extends ConsumerState<PosProductsPanel> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error_outline, size: 64, color: AppColors.error.withValues(alpha: 0.6)),
+            Icon(Icons.error_outline,
+                size: 64, color: AppColors.error.withValues(alpha: 0.6)),
             const SizedBox(height: AlhaiSpacing.md),
             Text('${l10n.error}: ${state.error}',
-                style: TextStyle(color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary)),
+                style: TextStyle(
+                    color: isDark
+                        ? AppColors.textSecondaryDark
+                        : AppColors.textSecondary)),
             const SizedBox(height: AlhaiSpacing.md),
             FilledButton.icon(
               onPressed: () {
                 final storeId = ref.read(currentStoreIdProvider);
                 if (storeId != null) {
-                  ref.read(productsStateProvider.notifier)
+                  ref
+                      .read(productsStateProvider.notifier)
                       .loadProducts(storeId: storeId, refresh: true);
                 }
               },
@@ -172,12 +180,15 @@ class _PosProductsPanelState extends ConsumerState<PosProductsPanel> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.inventory_2_outlined, size: 64,
+            Icon(Icons.inventory_2_outlined,
+                size: 64,
                 color: isDark ? AppColors.grey600 : AppColors.grey400),
             const SizedBox(height: AlhaiSpacing.md),
             Text(l10n.noProducts,
                 style: TextStyle(
-                  color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                  color: isDark
+                      ? AppColors.textSecondaryDark
+                      : AppColors.textSecondary,
                   fontSize: 16,
                 )),
             const SizedBox(height: AlhaiSpacing.xs),
@@ -196,13 +207,16 @@ class _PosProductsPanelState extends ConsumerState<PosProductsPanel> {
       onRefresh: () async {
         final storeId = ref.read(currentStoreIdProvider);
         if (storeId != null) {
-          await ref.read(productsStateProvider.notifier)
+          await ref
+              .read(productsStateProvider.notifier)
               .loadProducts(storeId: storeId, refresh: true);
         }
       },
       child: Padding(
         padding: EdgeInsetsDirectional.only(
-          start: AlhaiSpacing.xs, end: AlhaiSpacing.xs, top: AlhaiSpacing.xs,
+          start: AlhaiSpacing.xs,
+          end: AlhaiSpacing.xs,
+          top: AlhaiSpacing.xs,
           bottom: widget.showShortcutsBar ? 80 : 8,
         ),
         child: GridView.builder(
@@ -222,7 +236,8 @@ class _PosProductsPanelState extends ConsumerState<PosProductsPanel> {
                 child: Padding(
                   padding: EdgeInsets.all(AlhaiSpacing.md),
                   child: SizedBox(
-                    width: 24, height: 24,
+                    width: 24,
+                    height: 24,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   ),
                 ),
@@ -239,7 +254,9 @@ class _PosProductsPanelState extends ConsumerState<PosProductsPanel> {
               onAddWithQuantity: () async {
                 final qty = await QuantityInputDialog.show(context, product);
                 if (qty != null && qty > 0 && context.mounted) {
-                  ref.read(cartStateProvider.notifier).addProduct(product, quantity: qty);
+                  ref
+                      .read(cartStateProvider.notifier)
+                      .addProduct(product, quantity: qty);
                 }
               },
             );

@@ -22,7 +22,8 @@ class TopProductsReportScreen extends ConsumerStatefulWidget {
       _TopProductsReportScreenState();
 }
 
-class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScreen>
+class _TopProductsReportScreenState
+    extends ConsumerState<TopProductsReportScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   DateTimeRange _dateRange = DateTimeRange(
@@ -77,7 +78,8 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
            ORDER BY revenue DESC''',
         variables: [
           Variable.withDateTime(_dateRange.start),
-          Variable.withDateTime(DateTime(_dateRange.end.year, _dateRange.end.month, _dateRange.end.day + 1)),
+          Variable.withDateTime(DateTime(_dateRange.end.year,
+              _dateRange.end.month, _dateRange.end.day + 1)),
           Variable.withString(storeId),
         ],
       ).get();
@@ -200,23 +202,23 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : Column(
-        children: [
-          // شريط الفترة الزمنية
-          _buildDateRangeBanner(),
-
-          // المحتوى
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
               children: [
-                _buildTopProductsTab(),
-                _buildCategoryTab(),
-                _buildPerformanceTab(),
+                // شريط الفترة الزمنية
+                _buildDateRangeBanner(),
+
+                // المحتوى
+                Expanded(
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      _buildTopProductsTab(),
+                      _buildCategoryTab(),
+                      _buildPerformanceTab(),
+                    ],
+                  ),
+                ),
               ],
             ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -253,12 +255,13 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
           child: _filteredProducts.isEmpty
               ? Center(child: Text(l10n.noSalesDataForPeriod))
               : ListView.builder(
-            padding: const EdgeInsets.all(AppSizes.md),
-            itemCount: _filteredProducts.length,
-            itemBuilder: (context, index) {
-              return _buildProductCard(_filteredProducts[index], index + 1);
-            },
-          ),
+                  padding: const EdgeInsets.all(AppSizes.md),
+                  itemCount: _filteredProducts.length,
+                  itemBuilder: (context, index) {
+                    return _buildProductCard(
+                        _filteredProducts[index], index + 1);
+                  },
+                ),
         ),
       ],
     );
@@ -377,7 +380,9 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
                   child: Text(
                     '#$rank',
                     style: AppTypography.labelMedium.copyWith(
-                      color: rank <= 3 ? Theme.of(context).colorScheme.surface : Theme.of(context).colorScheme.onSurface,
+                      color: rank <= 3
+                          ? Theme.of(context).colorScheme.surface
+                          : Theme.of(context).colorScheme.onSurface,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -413,7 +418,9 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
                                 vertical: 2,
                               ),
                               decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .surfaceContainerHighest,
                                 borderRadius:
                                     BorderRadius.circular(AppSizes.radiusSm),
                               ),
@@ -515,7 +522,8 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
     // حساب إحصائيات الفئات
     final categoryStats = <String, CategoryStats>{};
     for (final product in _products) {
-      final catName = product.category.isEmpty ? l10n.unclassified : product.category;
+      final catName =
+          product.category.isEmpty ? l10n.unclassified : product.category;
       if (!categoryStats.containsKey(catName)) {
         categoryStats[catName] = CategoryStats(
           name: catName,
@@ -528,12 +536,9 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
       categoryStats[catName] = CategoryStats(
         name: catName,
         productCount: categoryStats[catName]!.productCount + 1,
-        totalRevenue:
-            categoryStats[catName]!.totalRevenue + product.revenue,
-        totalUnits:
-            categoryStats[catName]!.totalUnits + product.unitsSold,
-        totalProfit:
-            categoryStats[catName]!.totalProfit + product.profit,
+        totalRevenue: categoryStats[catName]!.totalRevenue + product.revenue,
+        totalUnits: categoryStats[catName]!.totalUnits + product.unitsSold,
+        totalProfit: categoryStats[catName]!.totalProfit + product.profit,
       );
     }
 
@@ -560,48 +565,51 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
                   ),
                 ),
                 const SizedBox(height: AppSizes.lg),
-
                 if (totalRevenue == 0)
                   Padding(
                     padding: const EdgeInsets.all(AlhaiSpacing.md),
                     child: Center(child: Text(l10n.noRevenueForPeriod)),
                   )
                 else
-                // Chart simulation
-                ...sortedCategories.map((cat) {
-                  final percentage = totalRevenue > 0 ? cat.totalRevenue / totalRevenue * 100 : 0.0;
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: AppSizes.md),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              cat.name,
-                              style: AppTypography.bodyMedium,
-                            ),
-                            Text(
-                              '${cat.totalRevenue.toStringAsFixed(0)} ${l10n.sar} (${percentage.toStringAsFixed(0)}%)',
-                              style: AppTypography.bodySmall.copyWith(
-                                color: AppColors.textMuted,
+                  // Chart simulation
+                  ...sortedCategories.map((cat) {
+                    final percentage = totalRevenue > 0
+                        ? cat.totalRevenue / totalRevenue * 100
+                        : 0.0;
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: AppSizes.md),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                cat.name,
+                                style: AppTypography.bodyMedium,
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: AlhaiSpacing.xxs),
-                        LinearProgressIndicator(
-                          value: percentage / 100,
-                          backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
-                          valueColor: AlwaysStoppedAnimation(
-                            _getCategoryColor(cat.name),
+                              Text(
+                                '${cat.totalRevenue.toStringAsFixed(0)} ${l10n.sar} (${percentage.toStringAsFixed(0)}%)',
+                                style: AppTypography.bodySmall.copyWith(
+                                  color: AppColors.textMuted,
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                      ],
-                    ),
-                  );
-                }),
+                          const SizedBox(height: AlhaiSpacing.xxs),
+                          LinearProgressIndicator(
+                            value: percentage / 100,
+                            backgroundColor: Theme.of(context)
+                                .colorScheme
+                                .surfaceContainerHighest,
+                            valueColor: AlwaysStoppedAnimation(
+                              _getCategoryColor(cat.name),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
               ],
             ),
           ),
@@ -616,9 +624,12 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
 
   Widget _buildCategoryCard(CategoryStats category) {
     final l10n = AppLocalizations.of(context)!;
-    final categoryProducts =
-        _products.where((p) => (p.category.isEmpty ? l10n.unclassified : p.category) == category.name).toList()
-          ..sort((a, b) => b.revenue.compareTo(a.revenue));
+    final categoryProducts = _products
+        .where((p) =>
+            (p.category.isEmpty ? l10n.unclassified : p.category) ==
+            category.name)
+        .toList()
+      ..sort((a, b) => b.revenue.compareTo(a.revenue));
 
     return Card(
       margin: const EdgeInsets.only(bottom: AppSizes.md),
@@ -647,7 +658,8 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
             color: AppColors.textMuted,
           ),
         ),
-        children: categoryProducts.take(10)
+        children: categoryProducts
+            .take(10)
             .map((p) => ListTile(
                   title: Text(p.name),
                   subtitle: Text('${p.unitsSold} ${l10n.unitsSoldUnit}'),
@@ -871,7 +883,9 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
   Widget _buildSlowMovingProducts() {
     final l10n = AppLocalizations.of(context)!;
     // المنتجات التي لم تُباع أو مبيعاتها منخفضة جداً
-    final slowMoving = _products.where((p) => p.unitsSold == 0 && p.stockLevel > 0).toList()
+    final slowMoving = _products
+        .where((p) => p.unitsSold == 0 && p.stockLevel > 0)
+        .toList()
       ..sort((a, b) => b.stockLevel.compareTo(a.stockLevel));
 
     if (slowMoving.isEmpty) {
@@ -910,8 +924,7 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
                       ),
                       decoration: BoxDecoration(
                         color: AppColors.warning.withValues(alpha: 0.1),
-                        borderRadius:
-                            BorderRadius.circular(AppSizes.radiusSm),
+                        borderRadius: BorderRadius.circular(AppSizes.radiusSm),
                       ),
                       child: Text(
                         l10n.slowMovingLabel,
@@ -931,7 +944,9 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
   /// منتجات مبيعاتها عالية ولكن مخزونها منخفض - تحتاج إعادة طلب
   Widget _buildLowStockHighSales() {
     final l10n = AppLocalizations.of(context)!;
-    final needsReorder = _products.where((p) => p.unitsSold > 10 && p.stockLevel < 20).toList()
+    final needsReorder = _products
+        .where((p) => p.unitsSold > 10 && p.stockLevel < 20)
+        .toList()
       ..sort((a, b) => a.stockLevel.compareTo(b.stockLevel));
 
     if (needsReorder.isEmpty) {
@@ -961,7 +976,8 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
                   (product) => ListTile(
                     title: Text(product.name),
                     subtitle: Text(
-                      l10n.soldUnitsStock(product.unitsSold, product.stockLevel.round()),
+                      l10n.soldUnitsStock(
+                          product.unitsSold, product.stockLevel.round()),
                     ),
                     trailing: Container(
                       padding: const EdgeInsets.symmetric(
@@ -970,8 +986,7 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
                       ),
                       decoration: BoxDecoration(
                         color: AppColors.error.withValues(alpha: 0.1),
-                        borderRadius:
-                            BorderRadius.circular(AppSizes.radiusSm),
+                        borderRadius: BorderRadius.circular(AppSizes.radiusSm),
                       ),
                       child: Text(
                         l10n.reorderLabel,

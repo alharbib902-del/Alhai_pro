@@ -53,17 +53,20 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
           .map((e) => e.key)
           .toList();
       if (selectedCatIds.isNotEmpty) {
-        products = products.where((p) => selectedCatIds.contains(p.categoryId)).toList();
+        products = products
+            .where((p) => selectedCatIds.contains(p.categoryId))
+            .toList();
       }
     }
 
     // Filter by search
     final search = _searchController.text.toLowerCase();
     if (search.isNotEmpty) {
-      products = products.where((p) =>
-        p.name.toLowerCase().contains(search) ||
-        (p.barcode?.contains(search) ?? false)
-      ).toList();
+      products = products
+          .where((p) =>
+              p.name.toLowerCase().contains(search) ||
+              (p.barcode?.contains(search) ?? false))
+          .toList();
     }
 
     return products;
@@ -142,7 +145,9 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
   String _getCategoryDisplayName(ProductsTableData product) {
     final l10n = AppLocalizations.of(context)!;
     if (product.categoryId == null) return l10n.otherCategory;
-    return _categoryMap[product.categoryId] ?? product.categoryId ?? l10n.otherCategory;
+    return _categoryMap[product.categoryId] ??
+        product.categoryId ??
+        l10n.otherCategory;
   }
 
   @override
@@ -170,7 +175,10 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
           context,
           message: _error == 'storeNotSet' ? l10n.storeNotSet : _error,
           onRetry: () {
-            setState(() { _isLoading = true; _error = null; });
+            setState(() {
+              _isLoading = true;
+              _error = null;
+            });
             _loadData();
           },
         ),
@@ -183,7 +191,8 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
         const SingleActivator(LogicalKeyboardKey.f2): _showProductSearch,
         const SingleActivator(LogicalKeyboardKey.f8): _clearCart,
         const SingleActivator(LogicalKeyboardKey.f12): _checkout,
-        const SingleActivator(LogicalKeyboardKey.escape): () => setState(() => _showCart = !_showCart),
+        const SingleActivator(LogicalKeyboardKey.escape): () =>
+            setState(() => _showCart = !_showCart),
       },
       child: Focus(
         autofocus: true,
@@ -191,22 +200,25 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           body: SafeArea(
             child: SplitView(
-            primaryContent: _buildProductsSection(),
-            secondaryContent: _buildCartSection(),
-            showSecondary: _showCart,
-            onSecondaryVisibilityChanged: (visible) => setState(() => _showCart = visible),
-            minSecondaryWidth: 380,
-            maxSecondaryWidth: 450,
+              primaryContent: _buildProductsSection(),
+              secondaryContent: _buildCartSection(),
+              showSecondary: _showCart,
+              onSecondaryVisibilityChanged: (visible) =>
+                  setState(() => _showCart = visible),
+              minSecondaryWidth: 380,
+              maxSecondaryWidth: 450,
+            ),
           ),
-          ),
-          floatingActionButton: AppBreakpoints.isMobile(context) && _cartItems.isNotEmpty
-              ? FloatingActionButton.extended(
-                  onPressed: () => setState(() => _showCart = true),
-                  backgroundColor: AppColors.primary,
-                  icon: const Icon(Icons.shopping_cart),
-                  label: Text(l10n.itemsCountPrice(_itemCount, _total.toStringAsFixed(2))),
-                )
-              : null,
+          floatingActionButton:
+              AppBreakpoints.isMobile(context) && _cartItems.isNotEmpty
+                  ? FloatingActionButton.extended(
+                      onPressed: () => setState(() => _showCart = true),
+                      backgroundColor: AppColors.primary,
+                      icon: const Icon(Icons.shopping_cart),
+                      label: Text(l10n.itemsCountPrice(
+                          _itemCount, _total.toStringAsFixed(2))),
+                    )
+                  : null,
         ),
       ),
     );
@@ -250,12 +262,17 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.primaryContainer,
                 borderRadius: BorderRadius.circular(AppRadius.lg),
-                border: Border.all(color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3)),
+                border: Border.all(
+                    color: Theme.of(context)
+                        .colorScheme
+                        .primary
+                        .withValues(alpha: 0.3)),
               ),
               child: Row(
                 children: [
                   const SizedBox(width: AppSpacing.md),
-                  const Icon(Icons.qr_code_scanner, color: AppColors.primary, size: 24),
+                  const Icon(Icons.qr_code_scanner,
+                      color: AppColors.primary, size: 24),
                   const SizedBox(width: AppSpacing.sm),
                   Expanded(
                     child: TextField(
@@ -314,7 +331,9 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
           // Toggle Cart Button (for tablet)
           if (AppBreakpoints.isTablet(context))
             AppIconButton(
-              icon: _showCart ? Icons.shopping_cart : Icons.shopping_cart_outlined,
+              icon: _showCart
+                  ? Icons.shopping_cart
+                  : Icons.shopping_cart_outlined,
               onPressed: () => setState(() => _showCart = !_showCart),
               color: AppColors.primary,
               tooltip: _showCart ? l10n.hideCart : l10n.showCart,
@@ -585,7 +604,8 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
         final db = GetIt.I<AppDatabase>();
         final storeId = ref.read(currentStoreIdProvider);
         if (storeId != null) {
-          final product = await db.productsDao.getProductByBarcode(barcode, storeId);
+          final product =
+              await db.productsDao.getProductByBarcode(barcode, storeId);
           if (product != null && mounted) {
             _addProduct(product);
           } else if (mounted) {
@@ -609,7 +629,8 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
 
   void _addProduct(ProductsTableData product) {
     setState(() {
-      final existingIndex = _cartItems.indexWhere((e) => e.product.id == product.id);
+      final existingIndex =
+          _cartItems.indexWhere((e) => e.product.id == product.id);
       if (existingIndex >= 0) {
         _cartItems[existingIndex] = _cartItems[existingIndex].copyWith(
           quantity: _cartItems[existingIndex].quantity + 1,
@@ -666,8 +687,8 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
     }
 
     final now = DateTime.now();
-    final defaultName =
-        AppLocalizations.of(context)!.quickSaleHold('${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}');
+    final defaultName = AppLocalizations.of(context)!.quickSaleHold(
+        '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}');
 
     final name = await showDialog<String>(
       context: context,
@@ -682,12 +703,18 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
               labelText: l10n.holdInvoiceNameLabel,
               border: const OutlineInputBorder(),
             ),
-            onSubmitted: (v) => Navigator.pop(ctx, v.trim().isEmpty ? defaultName : v.trim()),
+            onSubmitted: (v) =>
+                Navigator.pop(ctx, v.trim().isEmpty ? defaultName : v.trim()),
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l10n.cancel)),
+            TextButton(
+                onPressed: () => Navigator.pop(ctx), child: Text(l10n.cancel)),
             FilledButton(
-              onPressed: () => Navigator.pop(ctx, controller.text.trim().isEmpty ? defaultName : controller.text.trim()),
+              onPressed: () => Navigator.pop(
+                  ctx,
+                  controller.text.trim().isEmpty
+                      ? defaultName
+                      : controller.text.trim()),
               child: Text(l10n.holdAction),
             ),
           ],
@@ -702,34 +729,37 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
       final storeId = ref.read(currentStoreIdProvider) ?? '';
       final id = const Uuid().v4();
       final subtotal = _cartItems.fold<double>(0.0, (s, i) => s + i.total);
-      final itemsJson = jsonEncode(_cartItems.map((item) => {
-        'productId': item.product.id,
-        'productName': item.product.name,
-        'price': item.product.price,
-        'quantity': item.quantity,
-        'total': item.total,
-      }).toList());
+      final itemsJson = jsonEncode(_cartItems
+          .map((item) => {
+                'productId': item.product.id,
+                'productName': item.product.name,
+                'price': item.product.price,
+                'quantity': item.quantity,
+                'total': item.total,
+              })
+          .toList());
 
       await db.into(db.heldInvoicesTable).insert(
-        HeldInvoicesTableCompanion.insert(
-          id: id,
-          storeId: storeId,
-          cashierId: '',
-          items: itemsJson,
-          subtotal: Value(subtotal),
-          discount: const Value(0.0),
-          total: Value(subtotal),
-          notes: Value(name),
-          createdAt: now,
-        ),
-      );
+            HeldInvoicesTableCompanion.insert(
+              id: id,
+              storeId: storeId,
+              cashierId: '',
+              items: itemsJson,
+              subtotal: Value(subtotal),
+              discount: const Value(0.0),
+              total: Value(subtotal),
+              notes: Value(name),
+              createdAt: now,
+            ),
+          );
 
       if (mounted) {
         setState(() => _cartItems.clear());
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Row(children: [
-              const Icon(Icons.pause_circle_outline, color: AppColors.textOnPrimary, size: 18),
+              const Icon(Icons.pause_circle_outline,
+                  color: AppColors.textOnPrimary, size: 18),
               const SizedBox(width: AlhaiSpacing.xs),
               Text(l10n.heldMessage(name)),
             ]),
@@ -817,7 +847,9 @@ class _ProductTileState extends State<_ProductTile> {
           color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(AppRadius.lg),
           border: Border.all(
-            color: _isHovered ? Theme.of(context).colorScheme.primary : Theme.of(context).dividerColor,
+            color: _isHovered
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).dividerColor,
             width: _isHovered ? 2 : 1,
           ),
           boxShadow: _isHovered ? AppShadows.md : AppShadows.sm,

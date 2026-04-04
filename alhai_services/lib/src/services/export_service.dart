@@ -31,7 +31,8 @@ String _buildDebtsCsv(List<Map<String, dynamic>> debts) {
   final buffer = StringBuffer();
 
   // Header
-  buffer.writeln('اسم الطرف,الهاتف,المبلغ الأصلي,المتبقي,تاريخ الاستحقاق,النوع');
+  buffer
+      .writeln('اسم الطرف,الهاتف,المبلغ الأصلي,المتبقي,تاريخ الاستحقاق,النوع');
 
   // Data
   for (final d in debts) {

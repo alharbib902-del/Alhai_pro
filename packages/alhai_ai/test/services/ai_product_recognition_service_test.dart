@@ -151,8 +151,7 @@ void main() {
   group('getStatusLabel', () {
     test('returns label for each status', () {
       for (final status in RecognitionStatus.values) {
-        expect(
-            AiProductRecognitionService.getStatusLabel(status), isNotEmpty);
+        expect(AiProductRecognitionService.getStatusLabel(status), isNotEmpty);
       }
     });
 

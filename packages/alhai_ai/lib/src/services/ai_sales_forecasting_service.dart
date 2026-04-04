@@ -163,8 +163,8 @@ class AiSalesForecastingService {
     // تجميع المبيعات اليومية
     final dailySales = <DateTime, double>{};
     for (final sale in historicalSales) {
-      final day =
-          DateTime(sale.createdAt.year, sale.createdAt.month, sale.createdAt.day);
+      final day = DateTime(
+          sale.createdAt.year, sale.createdAt.month, sale.createdAt.day);
       dailySales[day] = (dailySales[day] ?? 0) + sale.total;
     }
 
@@ -186,17 +186,17 @@ class AiSalesForecastingService {
             ? 28
             : 60;
 
-    final avgDaily =
-        values.isNotEmpty ? values.reduce((a, b) => a + b) / values.length : 1500.0;
+    final avgDaily = values.isNotEmpty
+        ? values.reduce((a, b) => a + b) / values.length
+        : 1500.0;
     final lastAvg = movingAvg.isNotEmpty ? movingAvg.last : avgDaily;
 
     // بيانات تاريخية (فعلية)
     for (var i = max(0, sortedDays.length - 14); i < sortedDays.length; i++) {
       final date = sortedDays[i];
       final actual = dailySales[date]!;
-      final predicted = i < movingAvg.length + 6
-          ? movingAvg[max(0, i - 6)]
-          : lastAvg;
+      final predicted =
+          i < movingAvg.length + 6 ? movingAvg[max(0, i - 6)] : lastAvg;
       forecasts.add(DailyForecast(
         date: date,
         predicted: predicted,
@@ -211,8 +211,9 @@ class AiSalesForecastingService {
       final dayOfWeek = date.weekday;
       final seasonalFactor = _getDayOfWeekFactor(dayOfWeek);
       final trend = _calculateTrend(values);
-      final predicted =
-          lastAvg * seasonalFactor + (trend * i) + (_random.nextDouble() * 100 - 50);
+      final predicted = lastAvg * seasonalFactor +
+          (trend * i) +
+          (_random.nextDouble() * 100 - 50);
       final confidence = max(0.5, 0.95 - (i * 0.01));
 
       forecasts.add(DailyForecast(
@@ -238,10 +239,10 @@ class AiSalesForecastingService {
 
     // إجمالي الأسبوع والشهر القادم
     final futureForecasts = forecasts.where((f) => f.actual == null).toList();
-    final nextWeek = futureForecasts
-        .take(7)
-        .fold<double>(0, (sum, f) => sum + f.predicted);
-    final nextMonth = futureForecasts.fold<double>(0, (sum, f) => sum + f.predicted);
+    final nextWeek =
+        futureForecasts.take(7).fold<double>(0, (sum, f) => sum + f.predicted);
+    final nextMonth =
+        futureForecasts.fold<double>(0, (sum, f) => sum + f.predicted);
 
     // الملخص
     final trendText = trend == TrendDirection.up
@@ -257,7 +258,8 @@ class AiSalesForecastingService {
       accuracy: accuracy,
       nextWeekTotal: nextWeek,
       nextMonthTotal: nextMonth,
-      summary: '$trendText. التوقع للأسبوع القادم: ${nextWeek.toStringAsFixed(0)} ر.س',
+      summary:
+          '$trendText. التوقع للأسبوع القادم: ${nextWeek.toStringAsFixed(0)} ر.س',
       // Trend text + next week forecast
     );
   }
@@ -271,8 +273,8 @@ class AiSalesForecastingService {
 
     final dailySales = <DateTime, double>{};
     for (final sale in sales) {
-      final day =
-          DateTime(sale.createdAt.year, sale.createdAt.month, sale.createdAt.day);
+      final day = DateTime(
+          sale.createdAt.year, sale.createdAt.month, sale.createdAt.day);
       dailySales[day] = (dailySales[day] ?? 0) + sale.total;
     }
 
@@ -292,8 +294,7 @@ class AiSalesForecastingService {
     final weekAgo = now.subtract(const Duration(days: 7));
     final sales = await _db.salesDao.getSalesByDateRange(storeId, weekAgo, now);
 
-    double weeklyRevenue =
-        sales.fold<double>(0, (sum, s) => sum + s.total);
+    double weeklyRevenue = sales.fold<double>(0, (sum, s) => sum + s.total);
 
     // إذا لا توجد بيانات كافية، نستخدم قيمة افتراضية
     if (weeklyRevenue < 100) {
@@ -304,9 +305,10 @@ class AiSalesForecastingService {
 
     // حساب تأثير الخصم (مرونة سعرية مبسطة)
     // Price elasticity: كل 1% خصم يزيد الحجم ~1.5%
-    final volumeIncrease =
-        scenario.discountPercent * 1.5 + scenario.priceChangePercent.abs() * 0.8;
-    final revenuePerUnit = 1.0 - (scenario.discountPercent / 100) +
+    final volumeIncrease = scenario.discountPercent * 1.5 +
+        scenario.priceChangePercent.abs() * 0.8;
+    final revenuePerUnit = 1.0 -
+        (scenario.discountPercent / 100) +
         (scenario.priceChangePercent / 100);
     final volumeMultiplier = 1.0 + (volumeIncrease / 100);
 
@@ -350,16 +352,41 @@ class AiSalesForecastingService {
   void _generateMockHistoricalData(
       Map<DateTime, double> dailySales, DateTime now) {
     final baseValues = [
-      1200.0, 1450.0, 1300.0, 1800.0, 1650.0, 2100.0, 1900.0,
-      1350.0, 1500.0, 1250.0, 1700.0, 1600.0, 2200.0, 1850.0,
-      1400.0, 1550.0, 1350.0, 1750.0, 1580.0, 2050.0, 1920.0,
-      1280.0, 1480.0, 1380.0, 1820.0, 1690.0, 2150.0, 1980.0,
-      1320.0, 1520.0,
+      1200.0,
+      1450.0,
+      1300.0,
+      1800.0,
+      1650.0,
+      2100.0,
+      1900.0,
+      1350.0,
+      1500.0,
+      1250.0,
+      1700.0,
+      1600.0,
+      2200.0,
+      1850.0,
+      1400.0,
+      1550.0,
+      1350.0,
+      1750.0,
+      1580.0,
+      2050.0,
+      1920.0,
+      1280.0,
+      1480.0,
+      1380.0,
+      1820.0,
+      1690.0,
+      2150.0,
+      1980.0,
+      1320.0,
+      1520.0,
     ];
 
     for (var i = 30; i >= 1; i--) {
-      final date = DateTime(now.year, now.month, now.day)
-          .subtract(Duration(days: i));
+      final date =
+          DateTime(now.year, now.month, now.day).subtract(Duration(days: i));
       if (!dailySales.containsKey(date)) {
         final baseIdx = (30 - i) % baseValues.length;
         final noise = (_random.nextDouble() * 200) - 100;
@@ -450,10 +477,12 @@ class AiSalesForecastingService {
 
       String description;
       if (multiplier > 1.15) {
-        description = '$dayName يوم ذروة - مبيعات أعلى بـ ${((multiplier - 1) * 100).toStringAsFixed(0)}%';
+        description =
+            '$dayName يوم ذروة - مبيعات أعلى بـ ${((multiplier - 1) * 100).toStringAsFixed(0)}%';
         // Peak day - sales X% higher
       } else if (multiplier < 0.85) {
-        description = '$dayName يوم ضعيف - مبيعات أقل بـ ${((1 - multiplier) * 100).toStringAsFixed(0)}%';
+        description =
+            '$dayName يوم ضعيف - مبيعات أقل بـ ${((1 - multiplier) * 100).toStringAsFixed(0)}%';
         // Slow day - sales X% lower
       } else {
         description = '$dayName أداء عادي';

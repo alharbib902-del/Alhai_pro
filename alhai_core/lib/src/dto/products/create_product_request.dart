@@ -44,4 +44,3 @@ class CreateProductRequest with _$CreateProductRequest {
     );
   }
 }
-

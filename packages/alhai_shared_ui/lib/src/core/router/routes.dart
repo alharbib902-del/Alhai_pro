@@ -1,5 +1,5 @@
 /// Route constants for the POS App
-/// 
+///
 /// All route paths should be defined here to avoid hardcoding strings.
 library;
 
@@ -10,35 +10,35 @@ class AppRoutes {
   // ============================================================================
   // AUTH ROUTES
   // ============================================================================
-  
+
   /// Splash screen - entry point
   static const String splash = '/splash';
-  
+
   /// Login with OTP
   static const String login = '/login';
-  
+
   /// Store selection after login
   static const String storeSelect = '/store-select';
 
   // ============================================================================
   // MAIN ROUTES
   // ============================================================================
-  
+
   /// Home dashboard
   static const String home = '/home';
-  
+
   /// Dashboard (main)
   static const String dashboard = '/dashboard';
-  
+
   /// POS main screen
   static const String pos = '/pos';
-  
+
   /// Payment screen
   static const String posPayment = '/pos/payment';
-  
+
   /// Receipt screen
   static const String posReceipt = '/pos/receipt';
-  
+
   /// Product search
   static const String posSearch = '/pos/search';
 
@@ -51,13 +51,13 @@ class AppRoutes {
   // ============================================================================
   // PRODUCTS ROUTES
   // ============================================================================
-  
+
   /// Products list
   static const String products = '/products';
-  
+
   /// Add new product
   static const String productsAdd = '/products/add';
-  
+
   /// Edit product - use productsEditPath(id)
   static const String productsEdit = '/products/edit/:id';
 
@@ -76,7 +76,7 @@ class AppRoutes {
   // ============================================================================
   // INVENTORY ROUTES
   // ============================================================================
-  
+
   /// Inventory list
   static const String inventory = '/inventory';
 
@@ -89,7 +89,7 @@ class AppRoutes {
   // ============================================================================
   // CUSTOMERS ROUTES
   // ============================================================================
-  
+
   /// Customers list
   static const String customers = '/customers';
 
@@ -243,7 +243,8 @@ class AppRoutes {
   static const String addPaymentDevice = '/settings/add-payment-device';
 
   /// Keyboard shortcuts
-  static const String settingsKeyboardShortcuts = '/settings/keyboard-shortcuts';
+  static const String settingsKeyboardShortcuts =
+      '/settings/keyboard-shortcuts';
 
   // ============================================================================
   // INVOICES ROUTES
@@ -286,17 +287,17 @@ class AppRoutes {
   // ============================================================================
   // SUPPLIERS ROUTES
   // ============================================================================
-  
+
   /// Suppliers list
   static const String suppliers = '/suppliers';
 
   // ============================================================================
   // SETTINGS ROUTES
   // ============================================================================
-  
+
   /// General settings
   static const String settings = '/settings';
-  
+
   /// Printer settings
   static const String settingsPrinter = '/settings/printer';
 
@@ -570,7 +571,8 @@ class AppRoutes {
   static const String aiBasketAnalysis = '/ai/basket-analysis';
 
   /// AI Customer Recommendations - توصيات العملاء
-  static const String aiCustomerRecommendations = '/ai/customer-recommendations';
+  static const String aiCustomerRecommendations =
+      '/ai/customer-recommendations';
 
   /// AI Smart Inventory - المخزون الذكي
   static const String aiSmartInventory = '/ai/smart-inventory';

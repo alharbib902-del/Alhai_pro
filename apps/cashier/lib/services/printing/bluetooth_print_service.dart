@@ -217,8 +217,9 @@ class BluetoothPrintService implements ThermalPrintService {
     const chunkSize = 512;
 
     for (var offset = 0; offset < bytes.length; offset += chunkSize) {
-      final end =
-          (offset + chunkSize > bytes.length) ? bytes.length : offset + chunkSize;
+      final end = (offset + chunkSize > bytes.length)
+          ? bytes.length
+          : offset + chunkSize;
       final chunk = bytes.sublist(offset, end);
 
       try {
@@ -266,7 +267,8 @@ class BluetoothPrintService implements ThermalPrintService {
           return true;
         }
       } on PlatformException catch (e) {
-        if (kDebugMode) debugPrint('BT reconnect attempt $attempt failed: ${e.message}');
+        if (kDebugMode)
+          debugPrint('BT reconnect attempt $attempt failed: ${e.message}');
       } on MissingPluginException {
         _status = PrinterStatus.disconnected;
         return false;

@@ -7,31 +7,33 @@ part 'sale_items_dao.g.dart';
 
 /// DAO لعناصر البيع
 @DriftAccessor(tables: [SaleItemsTable])
-class SaleItemsDao extends DatabaseAccessor<AppDatabase> with _$SaleItemsDaoMixin {
+class SaleItemsDao extends DatabaseAccessor<AppDatabase>
+    with _$SaleItemsDaoMixin {
   SaleItemsDao(super.db);
-  
+
   /// الحصول على عناصر البيع
   Future<List<SaleItemsTableData>> getItemsBySaleId(String saleId) {
-    return (select(saleItemsTable)..where((i) => i.saleId.equals(saleId))).get();
+    return (select(saleItemsTable)..where((i) => i.saleId.equals(saleId)))
+        .get();
   }
-  
+
   /// إدراج عنصر
   Future<int> insertItem(SaleItemsTableCompanion item) {
     return into(saleItemsTable).insert(item);
   }
-  
+
   /// إدراج عناصر متعددة
   Future<void> insertItems(List<SaleItemsTableCompanion> items) async {
     await batch((b) {
       b.insertAll(saleItemsTable, items);
     });
   }
-  
+
   /// حذف عناصر البيع
   Future<int> deleteItemsBySaleId(String saleId) {
     return (delete(saleItemsTable)..where((i) => i.saleId.equals(saleId))).go();
   }
-  
+
   /// الحصول على إجمالي مبيعات منتج (مع فلتر المتجر)
   Future<double> getProductSalesCount(String productId, String storeId) async {
     final result = await customSelect(
@@ -50,7 +52,8 @@ class SaleItemsDao extends DatabaseAccessor<AppDatabase> with _$SaleItemsDaoMixi
   // ============================================================================
 
   /// عناصر البيع مع تفاصيل المنتج
-  Future<List<SaleItemWithProduct>> getItemsWithProductDetails(String saleId) async {
+  Future<List<SaleItemWithProduct>> getItemsWithProductDetails(
+      String saleId) async {
     final result = await customSelect(
       '''SELECT si.*,
               p.name as product_name, p.sku as product_sku,
@@ -62,18 +65,20 @@ class SaleItemsDao extends DatabaseAccessor<AppDatabase> with _$SaleItemsDaoMixi
       variables: [Variable.withString(saleId)],
     ).get();
 
-    return result.map((row) => SaleItemWithProduct(
-      id: row.data['id'] as String,
-      saleId: row.data['sale_id'] as String,
-      productId: row.data['product_id'] as String,
-      productName: row.data['product_name'] as String? ?? '',
-      productSku: row.data['product_sku'] as String?,
-      productBarcode: row.data['product_barcode'] as String?,
-      productImage: row.data['product_image'] as String?,
-      qty: _toDouble(row.data['qty']),
-      price: _toDouble(row.data['price']),
-      total: _toDouble(row.data['total']),
-    )).toList();
+    return result
+        .map((row) => SaleItemWithProduct(
+              id: row.data['id'] as String,
+              saleId: row.data['sale_id'] as String,
+              productId: row.data['product_id'] as String,
+              productName: row.data['product_name'] as String? ?? '',
+              productSku: row.data['product_sku'] as String?,
+              productBarcode: row.data['product_barcode'] as String?,
+              productImage: row.data['product_image'] as String?,
+              qty: _toDouble(row.data['qty']),
+              price: _toDouble(row.data['price']),
+              total: _toDouble(row.data['total']),
+            ))
+        .toList();
   }
 
   /// حساب إجمالي عدد الأصناف لعدة مبيعات دفعة واحدة (بدلاً من N+1)
@@ -135,15 +140,17 @@ class SaleItemsDao extends DatabaseAccessor<AppDatabase> with _$SaleItemsDaoMixi
       variables: [...variables, Variable.withInt(limit)],
     ).get();
 
-    return result.map((row) => ProductSalesSummary(
-      productId: row.data['id'] as String,
-      productName: row.data['name'] as String,
-      productBarcode: row.data['barcode'] as String?,
-      productImage: row.data['image_thumbnail'] as String?,
-      totalQty: _toDouble(row.data['total_qty']),
-      totalRevenue: _toDouble(row.data['total_revenue']),
-      saleCount: row.data['sale_count'] as int? ?? 0,
-    )).toList();
+    return result
+        .map((row) => ProductSalesSummary(
+              productId: row.data['id'] as String,
+              productName: row.data['name'] as String,
+              productBarcode: row.data['barcode'] as String?,
+              productImage: row.data['image_thumbnail'] as String?,
+              totalQty: _toDouble(row.data['total_qty']),
+              totalRevenue: _toDouble(row.data['total_revenue']),
+              saleCount: row.data['sale_count'] as int? ?? 0,
+            ))
+        .toList();
   }
 
   double _toDouble(dynamic value) {

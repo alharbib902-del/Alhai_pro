@@ -130,7 +130,7 @@ class AlhaiCard extends StatelessWidget {
         ? Border.all(color: borderColor ?? colorScheme.outlineVariant)
         : null;
     final radiusBorder = BorderRadius.circular(borderRadius);
-    
+
     // Wrap with margin if provided
     Widget wrapWithMargin(Widget content) {
       if (margin != null) {
@@ -147,7 +147,7 @@ class AlhaiCard extends StatelessWidget {
           clipBehavior: clipBehavior,
           shape: RoundedRectangleBorder(
             borderRadius: radiusBorder,
-            side: showBorder 
+            side: showBorder
                 ? BorderSide(color: borderColor ?? colorScheme.outlineVariant)
                 : BorderSide.none,
           ),
@@ -160,7 +160,8 @@ class AlhaiCard extends StatelessWidget {
             child: Container(
               width: width,
               height: height,
-              padding: padding ?? const EdgeInsets.all(AlhaiSpacing.cardPadding),
+              padding:
+                  padding ?? const EdgeInsets.all(AlhaiSpacing.cardPadding),
               child: child,
             ),
           ),

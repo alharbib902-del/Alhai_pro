@@ -63,8 +63,7 @@ void main() {
       when(() => accountsDao.getReceivableAccounts(any()))
           .thenAnswer((_) async => <AccountsTableData>[]);
 
-      await tester
-          .pumpWidget(createTestWidget(const ApplyInterestScreen()));
+      await tester.pumpWidget(createTestWidget(const ApplyInterestScreen()));
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
@@ -81,16 +80,14 @@ void main() {
                 _createTestAccount(id: 'acc-1', balance: 0.0),
               ]);
 
-      await tester
-          .pumpWidget(createTestWidget(const ApplyInterestScreen()));
+      await tester.pumpWidget(createTestWidget(const ApplyInterestScreen()));
       await tester.pumpAndSettle();
 
       expect(
           find.byIcon(Icons.account_balance_wallet_outlined), findsOneWidget);
     });
 
-    testWidgets('shows interest rate card with percent icon',
-        (tester) async {
+    testWidgets('shows interest rate card with percent icon', (tester) async {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
 
@@ -103,8 +100,7 @@ void main() {
       when(() => accountsDao.getReceivableAccounts(any()))
           .thenAnswer((_) async => accounts);
 
-      await tester
-          .pumpWidget(createTestWidget(const ApplyInterestScreen()));
+      await tester.pumpWidget(createTestWidget(const ApplyInterestScreen()));
       await tester.pumpAndSettle();
 
       // Percent icon for rate card
@@ -129,8 +125,7 @@ void main() {
       when(() => accountsDao.getReceivableAccounts(any()))
           .thenAnswer((_) async => accounts);
 
-      await tester
-          .pumpWidget(createTestWidget(const ApplyInterestScreen()));
+      await tester.pumpWidget(createTestWidget(const ApplyInterestScreen()));
       await tester.pumpAndSettle();
 
       // People icon for customers section
@@ -152,8 +147,7 @@ void main() {
       when(() => accountsDao.getReceivableAccounts(any()))
           .thenAnswer((_) async => accounts);
 
-      await tester
-          .pumpWidget(createTestWidget(const ApplyInterestScreen()));
+      await tester.pumpWidget(createTestWidget(const ApplyInterestScreen()));
       await tester.pumpAndSettle();
 
       // Preview icon
@@ -176,8 +170,7 @@ void main() {
       when(() => accountsDao.getReceivableAccounts(any()))
           .thenAnswer((_) async => accounts);
 
-      await tester
-          .pumpWidget(createTestWidget(const ApplyInterestScreen()));
+      await tester.pumpWidget(createTestWidget(const ApplyInterestScreen()));
       await tester.pumpAndSettle();
 
       // Apply button should be disabled (no customers selected)

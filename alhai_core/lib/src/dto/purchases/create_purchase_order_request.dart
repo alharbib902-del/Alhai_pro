@@ -31,11 +31,14 @@ class CreatePurchaseOrderRequest {
   Map<String, dynamic> toJson() => _$CreatePurchaseOrderRequestToJson(this);
 
   /// Creates from domain params
-  factory CreatePurchaseOrderRequest.fromDomain(CreatePurchaseOrderParams params) {
+  factory CreatePurchaseOrderRequest.fromDomain(
+      CreatePurchaseOrderParams params) {
     return CreatePurchaseOrderRequest(
       storeId: params.storeId,
       supplierId: params.supplierId,
-      items: params.items.map((i) => PurchaseOrderItemRequest.fromDomain(i)).toList(),
+      items: params.items
+          .map((i) => PurchaseOrderItemRequest.fromDomain(i))
+          .toList(),
       discount: params.discount,
       tax: params.tax,
       notes: params.notes,

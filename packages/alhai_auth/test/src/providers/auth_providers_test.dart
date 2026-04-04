@@ -4,12 +4,14 @@ import 'package:alhai_auth/alhai_auth.dart';
 void main() {
   group('AuthStatus', () {
     test('has all expected values', () {
-      expect(AuthStatus.values, containsAll([
-        AuthStatus.unknown,
-        AuthStatus.authenticated,
-        AuthStatus.unauthenticated,
-        AuthStatus.sessionExpired,
-      ]));
+      expect(
+          AuthStatus.values,
+          containsAll([
+            AuthStatus.unknown,
+            AuthStatus.authenticated,
+            AuthStatus.unauthenticated,
+            AuthStatus.sessionExpired,
+          ]));
     });
   });
 
@@ -128,12 +130,14 @@ void main() {
 
   group('SessionStatus', () {
     test('has all expected values', () {
-      expect(SessionStatus.values, containsAll([
-        SessionStatus.valid,
-        SessionStatus.needsRefresh,
-        SessionStatus.expired,
-        SessionStatus.notAuthenticated,
-      ]));
+      expect(
+          SessionStatus.values,
+          containsAll([
+            SessionStatus.valid,
+            SessionStatus.needsRefresh,
+            SessionStatus.expired,
+            SessionStatus.notAuthenticated,
+          ]));
     });
   });
 }

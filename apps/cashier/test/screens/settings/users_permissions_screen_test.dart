@@ -21,8 +21,7 @@ void main() {
 
     // UsersPermissionsScreen loads users via _db.usersDao.getAllUsers(storeId).
     // Default: return empty list.
-    when(() => usersDao.getAllUsers(any()))
-        .thenAnswer((_) async => []);
+    when(() => usersDao.getAllUsers(any())).thenAnswer((_) async => []);
 
     final db = setupMockDatabase(usersDao: usersDao);
     setupTestGetIt(mockDb: db);

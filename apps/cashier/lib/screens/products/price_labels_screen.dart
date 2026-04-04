@@ -13,7 +13,8 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
+import 'package:alhai_design_system/alhai_design_system.dart'
+    show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 
@@ -22,8 +23,7 @@ class PriceLabelsScreen extends ConsumerStatefulWidget {
   const PriceLabelsScreen({super.key});
 
   @override
-  ConsumerState<PriceLabelsScreen> createState() =>
-      _PriceLabelsScreenState();
+  ConsumerState<PriceLabelsScreen> createState() => _PriceLabelsScreenState();
 }
 
 class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
@@ -108,9 +108,8 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
               '${_selectedIds.length} ${l10n.selected} \u2022 ${l10n.mainBranch}',
           showSearch: false,
           searchHint: l10n.searchPlaceholder,
-          onMenuTap: isWideScreen
-              ? null
-              : () => Scaffold.of(context).openDrawer(),
+          onMenuTap:
+              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 3,
           userName: user?.name ?? l10n.cashCustomer,
@@ -121,15 +120,16 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
           child: _isLoading
               ? const AppLoadingState()
               : _error != null
-                  ? AppErrorState.general(context, message: _error!, onRetry: _loadProducts)
+                  ? AppErrorState.general(context,
+                      message: _error!, onRetry: _loadProducts)
                   : _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
         ),
       ],
     );
   }
 
-  Widget _buildContent(
-      bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n) {
+  Widget _buildContent(bool isWideScreen, bool isMediumScreen, bool isDark,
+      AppLocalizations l10n) {
     if (isWideScreen) {
       return Row(
         children: [
@@ -161,7 +161,8 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
       children: [
         // Label size + actions bar
         Padding(
-          padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+          padding: EdgeInsets.all(
+              isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
           child: Column(
             children: [
               _buildLabelSizeCard(isDark, l10n),
@@ -190,12 +191,10 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
               Expanded(
                 child: TextField(
                   controller: _searchController,
-                  style:
-                      TextStyle(color: AppColors.getTextPrimary(isDark)),
+                  style: TextStyle(color: AppColors.getTextPrimary(isDark)),
                   decoration: InputDecoration(
                     hintText: l10n.searchByNameOrBarcode,
-                    hintStyle:
-                        TextStyle(color: AppColors.getTextMuted(isDark)),
+                    hintStyle: TextStyle(color: AppColors.getTextMuted(isDark)),
                     prefixIcon: Icon(Icons.search_rounded,
                         color: AppColors.getTextMuted(isDark)),
                     filled: true,
@@ -212,8 +211,8 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
-                          color: AppColors.primary, width: 2),
+                      borderSide:
+                          const BorderSide(color: AppColors.primary, width: 2),
                     ),
                     contentPadding: const EdgeInsets.symmetric(
                         horizontal: AlhaiSpacing.md, vertical: 14),
@@ -227,8 +226,7 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
                     if (_selectedIds.length == _filteredProducts.length) {
                       _selectedIds.clear();
                     } else {
-                      _selectedIds.addAll(
-                          _filteredProducts.map((p) => p.id));
+                      _selectedIds.addAll(_filteredProducts.map((p) => p.id));
                     }
                   });
                 },
@@ -254,17 +252,16 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
           child: _filteredProducts.isEmpty
               ? Center(
                   child: Text(l10n.noProducts,
-                      style: TextStyle(
-                          color: AppColors.getTextMuted(isDark))))
+                      style: TextStyle(color: AppColors.getTextMuted(isDark))))
               : ListView.separated(
                   padding: EdgeInsets.symmetric(
-                      horizontal: isMediumScreen ? 24 : 16, vertical: AlhaiSpacing.xs),
+                      horizontal: isMediumScreen ? 24 : 16,
+                      vertical: AlhaiSpacing.xs),
                   itemCount: _filteredProducts.length,
                   separatorBuilder: (_, __) =>
                       const SizedBox(height: AlhaiSpacing.xs),
                   itemBuilder: (context, index) =>
-                      _buildProductTile(
-                          _filteredProducts[index], isDark, l10n),
+                      _buildProductTile(_filteredProducts[index], isDark, l10n),
                 ),
         ),
       ],
@@ -415,9 +412,8 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
                 : AppColors.getSurfaceVariant(isDark),
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
-              color: isSelected
-                  ? AppColors.primary
-                  : AppColors.getBorder(isDark),
+              color:
+                  isSelected ? AppColors.primary : AppColors.getBorder(isDark),
               width: isSelected ? 2 : 1,
             ),
           ),
@@ -438,10 +434,8 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
   }
 
   Widget _buildLabelPreview(bool isDark, AppLocalizations l10n) {
-    final selectedProducts = _products
-        .where((p) => _selectedIds.contains(p.id))
-        .take(3)
-        .toList();
+    final selectedProducts =
+        _products.where((p) => _selectedIds.contains(p.id)).take(3).toList();
 
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
@@ -482,21 +476,19 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
                 padding: const EdgeInsets.all(AlhaiSpacing.lg),
                 child: Text(l10n.selectProductsForLabels,
                     style: TextStyle(
-                        fontSize: 13,
-                        color: AppColors.getTextMuted(isDark))),
+                        fontSize: 13, color: AppColors.getTextMuted(isDark))),
               ),
             )
           else
-            ...selectedProducts.map((product) => _buildLabelItem(
-                product, isDark, l10n)),
+            ...selectedProducts
+                .map((product) => _buildLabelItem(product, isDark, l10n)),
           if (_selectedIds.length > 3)
             Padding(
               padding: const EdgeInsets.only(top: AlhaiSpacing.xs),
               child: Text(
                 '+${_selectedIds.length - 3} ${l10n.more}',
                 style: TextStyle(
-                    fontSize: 12,
-                    color: AppColors.getTextMuted(isDark)),
+                    fontSize: 12, color: AppColors.getTextMuted(isDark)),
               ),
             ),
         ],
@@ -546,7 +538,10 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
                 product.barcode ?? '',
                 style: TextStyle(
                     fontSize: 7,
-                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withValues(alpha: 0.54),
                     fontFamily: 'monospace'),
               ),
             ],
@@ -601,8 +596,7 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
     return SizedBox(
       width: double.infinity,
       child: FilledButton.icon(
-        onPressed:
-            _isPrinting || _selectedIds.isEmpty ? null : _printLabels,
+        onPressed: _isPrinting || _selectedIds.isEmpty ? null : _printLabels,
         icon: _isPrinting
             ? const SizedBox(
                 width: 20,
@@ -613,15 +607,14 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
             : const Icon(Icons.print_rounded, size: 20),
         label: Text(
           '${l10n.printLabels} (${_selectedIds.length})',
-          style:
-              const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
         ),
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.primary,
           foregroundColor: AppColors.textOnPrimary,
           padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
       ),
     );
@@ -638,8 +631,7 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content:
-              Text(l10n.printJobSentForLabels(_selectedIds.length)),
+          content: Text(l10n.printJobSentForLabels(_selectedIds.length)),
           backgroundColor: AppColors.success,
         ),
       );

@@ -6,7 +6,7 @@ import '../../tokens/alhai_radius.dart';
 import '../../tokens/alhai_spacing.dart';
 
 /// AlhaiSkeleton - Loading placeholder shapes
-/// 
+///
 /// Features:
 /// - Multiple shape variants
 /// - Pre-built component skeletons
@@ -97,7 +97,8 @@ class AlhaiSkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final effectiveRadius = borderRadius ?? BorderRadius.circular(AlhaiRadius.sm);
+    final effectiveRadius =
+        borderRadius ?? BorderRadius.circular(AlhaiRadius.sm);
 
     return Container(
       width: width,
@@ -414,7 +415,7 @@ class _CartItemSkeleton extends AlhaiSkeleton {
 }
 
 /// AlhaiShimmer - Animated shimmer effect wrapper
-/// 
+///
 /// Features:
 /// - Gradient animation
 /// - RTL-safe direction
@@ -525,14 +526,12 @@ class _AlhaiShimmerState extends State<AlhaiShimmer>
           blendMode: BlendMode.srcATop,
           shaderCallback: (bounds) {
             final v = _animation.value;
-            
+
             // RTL: reverse gradient direction
-            final begin = isRtl 
-                ? Alignment(1.0 + v, 0.0)
-                : Alignment(-1.0 + v, 0.0);
-            final end = isRtl
-                ? Alignment(-1.0 + v, 0.0)
-                : Alignment(1.0 + v, 0.0);
+            final begin =
+                isRtl ? Alignment(1.0 + v, 0.0) : Alignment(-1.0 + v, 0.0);
+            final end =
+                isRtl ? Alignment(-1.0 + v, 0.0) : Alignment(1.0 + v, 0.0);
 
             return LinearGradient(
               begin: begin,

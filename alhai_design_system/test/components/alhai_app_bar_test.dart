@@ -67,7 +67,8 @@ void main() {
     });
 
     group('Search Mode', () {
-      testWidgets('shows search button when enableSearch is true', (tester) async {
+      testWidgets('shows search button when enableSearch is true',
+          (tester) async {
         // Arrange & Act
         await tester.pumpWidget(
           MaterialApp(

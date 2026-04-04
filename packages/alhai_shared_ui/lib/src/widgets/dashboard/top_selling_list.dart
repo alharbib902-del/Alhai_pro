@@ -46,7 +46,7 @@ class TopSellingList extends StatelessWidget {
     final theme = Theme.of(context);
     final isDarkMode = theme.brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
-    
+
     String formatAmount(double amount) {
       if (formatCurrency != null) return formatCurrency!(amount);
       return CurrencyFormatter.formatCompactWithContext(context, amount);
@@ -97,15 +97,15 @@ class TopSellingList extends StatelessWidget {
                 ),
             ],
           ),
-          
+
           SizedBox(height: AlhaiSpacing.md),
-          
+
           // قائمة المنتجات
           ...products.take(5).map((product) => _TopSellingItem(
-            product: product,
-            formatAmount: formatAmount,
-            isDarkMode: isDarkMode,
-          )),
+                product: product,
+                formatAmount: formatAmount,
+                isDarkMode: isDarkMode,
+              )),
         ],
       ),
     );
@@ -135,8 +135,8 @@ class _TopSellingItem extends StatelessWidget {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: isDarkMode 
-                  ? Colors.white.withValues(alpha: 0.1) 
+              color: isDarkMode
+                  ? Colors.white.withValues(alpha: 0.1)
                   : AppColors.backgroundSecondary,
               borderRadius: BorderRadius.circular(12),
             ),
@@ -164,9 +164,9 @@ class _TopSellingItem extends StatelessWidget {
                     size: 20,
                   ),
           ),
-          
+
           SizedBox(width: AlhaiSpacing.sm),
-          
+
           // معلومات المنتج
           Expanded(
             child: Column(
@@ -193,7 +193,7 @@ class _TopSellingItem extends StatelessWidget {
               ],
             ),
           ),
-          
+
           // المبلغ
           Text(
             formatAmount(product.revenue),

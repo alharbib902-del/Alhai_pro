@@ -31,8 +31,7 @@ class PosTerminalsDao extends DatabaseAccessor<AppDatabase>
 
   Future<List<PosTerminalsTableData>> getActiveTerminals(String storeId) {
     return (select(posTerminalsTable)
-          ..where((t) =>
-              t.storeId.equals(storeId) & t.isActive.equals(true)))
+          ..where((t) => t.storeId.equals(storeId) & t.isActive.equals(true)))
         .get();
   }
 
@@ -44,28 +43,22 @@ class PosTerminalsDao extends DatabaseAccessor<AppDatabase>
       (delete(posTerminalsTable)..where((t) => t.id.equals(id))).go();
 
   Future<int> updateHeartbeat(String id) {
-    return (update(posTerminalsTable)..where((t) => t.id.equals(id)))
-        .write(PosTerminalsTableCompanion(
-            lastHeartbeatAt: Value(DateTime.now())));
+    return (update(posTerminalsTable)..where((t) => t.id.equals(id))).write(
+        PosTerminalsTableCompanion(lastHeartbeatAt: Value(DateTime.now())));
   }
 
   Future<int> updateCurrentShift(String terminalId, String? shiftId) {
-    return (update(posTerminalsTable)
-          ..where((t) => t.id.equals(terminalId)))
-        .write(PosTerminalsTableCompanion(
-            currentShiftId: Value(shiftId)));
+    return (update(posTerminalsTable)..where((t) => t.id.equals(terminalId)))
+        .write(PosTerminalsTableCompanion(currentShiftId: Value(shiftId)));
   }
 
   Future<int> updateCurrentUser(String terminalId, String? userId) {
-    return (update(posTerminalsTable)
-          ..where((t) => t.id.equals(terminalId)))
-        .write(PosTerminalsTableCompanion(
-            currentUserId: Value(userId)));
+    return (update(posTerminalsTable)..where((t) => t.id.equals(terminalId)))
+        .write(PosTerminalsTableCompanion(currentUserId: Value(userId)));
   }
 
   Future<int> markAsSynced(String id) {
     return (update(posTerminalsTable)..where((t) => t.id.equals(id)))
-        .write(PosTerminalsTableCompanion(
-            syncedAt: Value(DateTime.now())));
+        .write(PosTerminalsTableCompanion(syncedAt: Value(DateTime.now())));
   }
 }

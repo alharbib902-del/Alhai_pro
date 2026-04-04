@@ -64,12 +64,14 @@ void main() {
         // Assert
         expect(result.revenue, equals(10000.0));
         expect(result.ordersCount, equals(50));
-        verify(() => mockRemote.getDailySummary('store-1', '2026-01-19')).called(1);
+        verify(() => mockRemote.getDailySummary('store-1', '2026-01-19'))
+            .called(1);
       });
 
       test('throws NetworkException on connection error', () async {
         // Arrange
-        when(() => mockRemote.getDailySummary(any(), any())).thenThrow(DioException(
+        when(() => mockRemote.getDailySummary(any(), any()))
+            .thenThrow(DioException(
           type: DioExceptionType.connectionError,
           requestOptions: RequestOptions(path: '/reports'),
         ));
@@ -126,8 +128,8 @@ void main() {
     group('getHourlySales', () {
       test('returns hourly sales map', () async {
         // Arrange
-        when(() => mockRemote.getHourlySales(any(), any())).thenAnswer(
-            (_) async => {'9': 500.0, '10': 800.0, '11': 1200.0});
+        when(() => mockRemote.getHourlySales(any(), any()))
+            .thenAnswer((_) async => {'9': 500.0, '10': 800.0, '11': 1200.0});
 
         // Act
         final result =

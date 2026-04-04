@@ -80,7 +80,9 @@ class WastePredictionCard extends StatelessWidget {
         border: Border.all(
           color: prediction.daysToExpiry <= 3
               ? urgencyColor.withValues(alpha: 0.3)
-              : (isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
+              : (isDark
+                  ? Colors.white.withValues(alpha: 0.1)
+                  : AppColors.border),
         ),
         boxShadow: [
           BoxShadow(
@@ -143,14 +145,18 @@ class WastePredictionCard extends StatelessWidget {
                     Text(
                       'المخزون: ${prediction.currentStock} وحدة', // Stock: X units
                       style: TextStyle(
-                        color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textSecondary,
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.5)
+                            : AppColors.textSecondary,
                         fontSize: 12,
                       ),
                     ),
                     Text(
                       'معدل البيع: ${prediction.sellRate.toStringAsFixed(1)} وحدة/يوم', // Sell rate: X units/day
                       style: TextStyle(
-                        color: isDark ? Colors.white.withValues(alpha: 0.4) : AppColors.textMuted,
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.4)
+                            : AppColors.textMuted,
                         fontSize: 11,
                       ),
                     ),
@@ -172,7 +178,9 @@ class WastePredictionCard extends StatelessWidget {
                   Text(
                     'الهدر المتوقع', // Predicted Waste
                     style: TextStyle(
-                      color: isDark ? Colors.white.withValues(alpha: 0.6) : AppColors.textSecondary,
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.6)
+                          : AppColors.textSecondary,
                       fontSize: 12,
                     ),
                   ),
@@ -191,7 +199,9 @@ class WastePredictionCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(4),
                 child: LinearProgressIndicator(
                   value: prediction.predictedWaste / 100,
-                  backgroundColor: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.grey200,
+                  backgroundColor: isDark
+                      ? Colors.white.withValues(alpha: 0.1)
+                      : AppColors.grey200,
                   valueColor: AlwaysStoppedAnimation<Color>(urgencyColor),
                   minHeight: 8,
                 ),
@@ -211,12 +221,15 @@ class WastePredictionCard extends StatelessWidget {
             ),
             child: Row(
               children: [
-                const Icon(Icons.money_off_rounded, color: AppColors.error, size: 18),
+                const Icon(Icons.money_off_rounded,
+                    color: AppColors.error, size: 18),
                 const SizedBox(width: AlhaiSpacing.xs),
                 Text(
                   'الخسارة المتوقعة: ', // Estimated Loss:
                   style: TextStyle(
-                    color: isDark ? Colors.white.withValues(alpha: 0.6) : AppColors.textSecondary,
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.6)
+                        : AppColors.textSecondary,
                     fontSize: 12,
                   ),
                 ),
@@ -243,7 +256,8 @@ class WastePredictionCard extends StatelessWidget {
                 icon: Icon(_getActionIcon(), size: 18),
                 label: Text(
                   _getActionLabel(l10n),
-                  style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                  style: const TextStyle(
+                      fontSize: 13, fontWeight: FontWeight.w600),
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: actionColor,
@@ -259,7 +273,8 @@ class WastePredictionCard extends StatelessWidget {
             const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.check_circle_rounded, color: AppColors.success, size: 18),
+                Icon(Icons.check_circle_rounded,
+                    color: AppColors.success, size: 18),
                 SizedBox(width: 6),
                 Text(
                   'لا إجراء مطلوب حالياً', // No action needed

@@ -35,7 +35,8 @@ class RefundRequestScreen extends ConsumerStatefulWidget {
   const RefundRequestScreen({super.key, this.orderId});
 
   @override
-  ConsumerState<RefundRequestScreen> createState() => _RefundRequestScreenState();
+  ConsumerState<RefundRequestScreen> createState() =>
+      _RefundRequestScreenState();
 }
 
 class _RefundRequestScreenState extends ConsumerState<RefundRequestScreen> {
@@ -70,151 +71,194 @@ class _RefundRequestScreenState extends ConsumerState<RefundRequestScreen> {
       body: SafeArea(
         top: false,
         child: Column(
-        children: [
-          // Search order
-          Padding(
-            padding: const EdgeInsets.all(AlhaiSpacing.md),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _orderIdController,
-                    decoration: InputDecoration(
-                      hintText: AppLocalizations.of(context)!.invoiceNumberHint,
-                      prefixIcon: const Icon(Icons.receipt),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: AlhaiSpacing.sm),
-                FilledButton.icon(
-                  onPressed: _isSearching ? null : _searchOrder,
-                  icon: _isSearching
-                      ? SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Theme.of(context).colorScheme.surface))
-                      : const Icon(Icons.search),
-                  label: Text(AppLocalizations.of(context)!.searchAction),
-                ),
-              ],
-            ),
-          ),
-
-          if (_saleData != null) ...[
-            // Order info
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md),
-              padding: const EdgeInsets.all(AlhaiSpacing.sm),
-              decoration: BoxDecoration(
-                color: AppColors.info.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                children: [
-                  const Icon(Icons.info_outline, color: AppColors.info),
-                  const SizedBox(width: AlhaiSpacing.sm),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(AppLocalizations.of(context)!.invoiceFieldLabel(_saleData!.receiptNo), style: const TextStyle(fontWeight: FontWeight.bold)),
-                        Text('${_saleData!.createdAt.toString().split('.').first} - ${_saleData!.total.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}'),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: AlhaiSpacing.md),
-
-            // Select items header
+          children: [
+            // Search order
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md),
+              padding: const EdgeInsets.all(AlhaiSpacing.md),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(AppLocalizations.of(context)!.selectProductsForRefund, style: const TextStyle(fontWeight: FontWeight.bold)),
-                  TextButton(
-                    onPressed: _selectAll,
-                    child: Text(AppLocalizations.of(context)!.selectAll),
-                  ),
-                ],
-              ),
-            ),
-
-            // Items list
-            Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.all(AlhaiSpacing.md),
-                itemCount: _saleItems.length,
-                itemBuilder: (context, index) {
-                  final item = _saleItems[index];
-                  final isSelected = _selectedItems.any((e) => e.id == item.id);
-
-                  return Card(
-                    margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
-                    child: CheckboxListTile(
-                      value: isSelected,
-                      onChanged: (v) => _toggleItem(item, v ?? false),
-                      title: Text(item.productName),
-                      subtitle: Text(AppLocalizations.of(context)!.quantityTimesPrice(item.qty.toInt(), item.unitPrice.toStringAsFixed(2))),
-                      secondary: CircleAvatar(
-                        backgroundColor: isSelected ? AppColors.success.withValues(alpha: 0.15) : Theme.of(context).colorScheme.surfaceContainerHighest,
-                        child: Icon(
-                          isSelected ? Icons.check : Icons.inventory_2,
-                          color: isSelected ? AppColors.success : Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
+                  Expanded(
+                    child: TextField(
+                      controller: _orderIdController,
+                      decoration: InputDecoration(
+                        hintText:
+                            AppLocalizations.of(context)!.invoiceNumberHint,
+                        prefixIcon: const Icon(Icons.receipt),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12)),
                       ),
                     ),
-                  );
-                },
+                  ),
+                  const SizedBox(width: AlhaiSpacing.sm),
+                  FilledButton.icon(
+                    onPressed: _isSearching ? null : _searchOrder,
+                    icon: _isSearching
+                        ? SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Theme.of(context).colorScheme.surface))
+                        : const Icon(Icons.search),
+                    label: Text(AppLocalizations.of(context)!.searchAction),
+                  ),
+                ],
               ),
             ),
 
-            // Bottom action
-            if (_selectedItems.isNotEmpty)
+            if (_saleData != null) ...[
+              // Order info
               Container(
-                padding: const EdgeInsets.all(AlhaiSpacing.md),
+                margin: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md),
+                padding: const EdgeInsets.all(AlhaiSpacing.sm),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  boxShadow: [BoxShadow(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12), blurRadius: 8, offset: const Offset(0, -2))],
+                  color: AppColors.info.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
                   children: [
+                    const Icon(Icons.info_outline, color: AppColors.info),
+                    const SizedBox(width: AlhaiSpacing.sm),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(AppLocalizations.of(context)!.productsSelected(_selectedItems.length)),
                           Text(
-                            AppLocalizations.of(context)!.refundAmountValue(_calculateRefundAmount().toStringAsFixed(0)),
-                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                          ),
+                              AppLocalizations.of(context)!
+                                  .invoiceFieldLabel(_saleData!.receiptNo),
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold)),
+                          Text(
+                              '${_saleData!.createdAt.toString().split('.').first} - ${_saleData!.total.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}'),
                         ],
                       ),
                     ),
-                    FilledButton.icon(
-                      onPressed: _proceedToReason,
-                      icon: const AdaptiveIcon(Icons.arrow_forward),
-                      label: Text(AppLocalizations.of(context)!.nextAction),
+                  ],
+                ),
+              ),
+              const SizedBox(height: AlhaiSpacing.md),
+
+              // Select items header
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(AppLocalizations.of(context)!.selectProductsForRefund,
+                        style: const TextStyle(fontWeight: FontWeight.bold)),
+                    TextButton(
+                      onPressed: _selectAll,
+                      child: Text(AppLocalizations.of(context)!.selectAll),
                     ),
                   ],
                 ),
               ),
-          ] else if (!_isSearching) ...[
-            Expanded(
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.receipt_long, size: 64, color: Theme.of(context).colorScheme.onSurfaceVariant),
-                    const SizedBox(height: AlhaiSpacing.md),
-                    Text(AppLocalizations.of(context)!.enterInvoiceToSearch, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
-                  ],
+
+              // Items list
+              Expanded(
+                child: ListView.builder(
+                  padding: const EdgeInsets.all(AlhaiSpacing.md),
+                  itemCount: _saleItems.length,
+                  itemBuilder: (context, index) {
+                    final item = _saleItems[index];
+                    final isSelected =
+                        _selectedItems.any((e) => e.id == item.id);
+
+                    return Card(
+                      margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
+                      child: CheckboxListTile(
+                        value: isSelected,
+                        onChanged: (v) => _toggleItem(item, v ?? false),
+                        title: Text(item.productName),
+                        subtitle: Text(AppLocalizations.of(context)!
+                            .quantityTimesPrice(item.qty.toInt(),
+                                item.unitPrice.toStringAsFixed(2))),
+                        secondary: CircleAvatar(
+                          backgroundColor: isSelected
+                              ? AppColors.success.withValues(alpha: 0.15)
+                              : Theme.of(context)
+                                  .colorScheme
+                                  .surfaceContainerHighest,
+                          child: Icon(
+                            isSelected ? Icons.check : Icons.inventory_2,
+                            color: isSelected
+                                ? AppColors.success
+                                : Theme.of(context)
+                                    .colorScheme
+                                    .onSurfaceVariant,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ),
-            ),
+
+              // Bottom action
+              if (_selectedItems.isNotEmpty)
+                Container(
+                  padding: const EdgeInsets.all(AlhaiSpacing.md),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    boxShadow: [
+                      BoxShadow(
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withValues(alpha: 0.12),
+                          blurRadius: 8,
+                          offset: const Offset(0, -2))
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(AppLocalizations.of(context)!
+                                .productsSelected(_selectedItems.length)),
+                            Text(
+                              AppLocalizations.of(context)!.refundAmountValue(
+                                  _calculateRefundAmount().toStringAsFixed(0)),
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16),
+                            ),
+                          ],
+                        ),
+                      ),
+                      FilledButton.icon(
+                        onPressed: _proceedToReason,
+                        icon: const AdaptiveIcon(Icons.arrow_forward),
+                        label: Text(AppLocalizations.of(context)!.nextAction),
+                      ),
+                    ],
+                  ),
+                ),
+            ] else if (!_isSearching) ...[
+              Expanded(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.receipt_long,
+                          size: 64,
+                          color:
+                              Theme.of(context).colorScheme.onSurfaceVariant),
+                      const SizedBox(height: AlhaiSpacing.md),
+                      Text(AppLocalizations.of(context)!.enterInvoiceToSearch,
+                          style: TextStyle(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurfaceVariant)),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ],
-        ],
-      ),
+        ),
       ),
     );
   }
@@ -245,7 +289,9 @@ class _RefundRequestScreenState extends ConsumerState<RefundRequestScreen> {
             _saleItems = [];
           });
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(AppLocalizations.of(context)!.invoiceNotFoundMsg)),
+            SnackBar(
+                content:
+                    Text(AppLocalizations.of(context)!.invoiceNotFoundMsg)),
           );
         }
         return;
@@ -261,7 +307,8 @@ class _RefundRequestScreenState extends ConsumerState<RefundRequestScreen> {
           });
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(AppLocalizations.of(context)!.invoiceVoidedCannotRefund),
+              content:
+                  Text(AppLocalizations.of(context)!.invoiceVoidedCannotRefund),
               backgroundColor: AppColors.error,
               duration: const Duration(seconds: 4),
             ),
@@ -273,7 +320,8 @@ class _RefundRequestScreenState extends ConsumerState<RefundRequestScreen> {
       final items = await db.saleItemsDao.getItemsBySaleId(sale.id);
 
       // BUG FIX: Check for existing returns to prevent double refunds
-      final existingReturns = await db.returnsDao.getReturnsBySaleId(sale.id, storeId);
+      final existingReturns =
+          await db.returnsDao.getReturnsBySaleId(sale.id, storeId);
 
       if (existingReturns.isNotEmpty) {
         // Gather all previously refunded item quantities
@@ -306,7 +354,8 @@ class _RefundRequestScreenState extends ConsumerState<RefundRequestScreen> {
             });
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(AppLocalizations.of(context)!.invoiceAlreadyRefunded),
+                content:
+                    Text(AppLocalizations.of(context)!.invoiceAlreadyRefunded),
                 backgroundColor: AppColors.error,
                 duration: const Duration(seconds: 4),
               ),
@@ -319,7 +368,8 @@ class _RefundRequestScreenState extends ConsumerState<RefundRequestScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(AppLocalizations.of(context)!.invoicePartiallyRefunded),
+              content:
+                  Text(AppLocalizations.of(context)!.invoicePartiallyRefunded),
               backgroundColor: AppColors.warning,
               duration: const Duration(seconds: 3),
             ),
@@ -346,7 +396,9 @@ class _RefundRequestScreenState extends ConsumerState<RefundRequestScreen> {
       if (mounted) {
         setState(() => _isSearching = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)?.errorOccurred ?? 'حدث خطأ')),
+          SnackBar(
+              content: Text(
+                  AppLocalizations.of(context)?.errorOccurred ?? 'حدث خطأ')),
         );
       }
     }
@@ -371,7 +423,8 @@ class _RefundRequestScreenState extends ConsumerState<RefundRequestScreen> {
 
   double _calculateRefundAmount() {
     // Include 15% Saudi VAT — customer paid unitPrice * 1.15, so refund must match
-    return _selectedItems.fold(0.0, (sum, item) => sum + item.qty * item.unitPrice * 1.15);
+    return _selectedItems.fold(
+        0.0, (sum, item) => sum + item.qty * item.unitPrice * 1.15);
   }
 
   void _proceedToReason() {

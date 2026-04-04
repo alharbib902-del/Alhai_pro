@@ -58,8 +58,8 @@ class CartNotifier extends StateNotifier<Cart> {
       return false;
     }
 
-    final existing = state.items
-        .indexWhere((item) => item.productId == product.id);
+    final existing =
+        state.items.indexWhere((item) => item.productId == product.id);
 
     List<CartItem> updatedItems;
     if (existing >= 0) {

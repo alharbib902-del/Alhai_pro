@@ -10,16 +10,16 @@ class Paginated<T> with _$Paginated<T> {
   const factory Paginated({
     /// List of items for current page
     required List<T> items,
-    
+
     /// Current page number (1-indexed)
     required int page,
-    
+
     /// Items per page limit
     required int limit,
-    
+
     /// Total items count (if available from API)
     int? total,
-    
+
     /// Whether more pages exist
     @Default(false) bool hasMore,
   }) = _Paginated<T>;
@@ -38,16 +38,16 @@ extension PaginatedExt<T> on Paginated<T> {
     if (total == null || limit == 0) return null;
     return (total! / limit).ceil();
   }
-  
+
   /// Check if this is the first page
   bool get isFirstPage => page == 1;
-  
+
   /// Check if this is the last page
   bool get isLastPage => !hasMore;
-  
+
   /// Get next page number (null if no more)
   int? get nextPage => hasMore ? page + 1 : null;
-  
+
   /// Get previous page number (null if first)
   int? get previousPage => page > 1 ? page - 1 : null;
 }

@@ -90,7 +90,8 @@ void main() {
     });
 
     group('factories', () {
-      testWidgets('AlhaiButton.filled renders as filled button', (tester) async {
+      testWidgets('AlhaiButton.filled renders as filled button',
+          (tester) async {
         await tester.pumpWidget(createTestWidget(
           AlhaiButton.filled(label: 'Filled', onPressed: () {}),
         ));
@@ -99,7 +100,8 @@ void main() {
         expect(find.text('Filled'), findsOneWidget);
       });
 
-      testWidgets('AlhaiButton.outlined renders as outlined button', (tester) async {
+      testWidgets('AlhaiButton.outlined renders as outlined button',
+          (tester) async {
         await tester.pumpWidget(createTestWidget(
           AlhaiButton.outlined(label: 'Outlined', onPressed: () {}),
         ));

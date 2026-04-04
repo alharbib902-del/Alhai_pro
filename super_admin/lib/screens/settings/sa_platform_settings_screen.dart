@@ -68,7 +68,6 @@ class _SAPlatformSettingsScreenState
                   ),
                 ),
                 const SizedBox(height: AlhaiSpacing.lg),
-
                 Center(
                   child: ConstrainedBox(
                     constraints: BoxConstraints(
@@ -83,23 +82,20 @@ class _SAPlatformSettingsScreenState
                           child: Column(
                             children: [
                               SwitchListTile(
-                                title:
-                                    const Text('ZATCA E-invoicing'),
-                                subtitle: const Text(
-                                  'Enable electronic invoicing compliance for all stores',
+                                title: Text(l10n.saZatcaEInvoicing),
+                                subtitle: Text(
+                                  l10n.saEnableEInvoicing,
                                 ),
                                 value: _zatcaEnabled,
-                                onChanged: (v) => setState(
-                                    () => _zatcaEnabled = v),
+                                onChanged: (v) =>
+                                    setState(() => _zatcaEnabled = v),
                               ),
                               const Divider(),
                               ListTile(
-                                title:
-                                    const Text('API Environment'),
-                                subtitle: Text(
-                                    _zatcaEnvironment == 'production'
-                                        ? 'Production'
-                                        : 'Sandbox'),
+                                title: Text(l10n.saApiEnvironment),
+                                subtitle: Text(_zatcaEnvironment == 'production'
+                                    ? 'Production'
+                                    : 'Sandbox'),
                                 trailing: DropdownButton<String>(
                                   value: _zatcaEnvironment,
                                   underline: const SizedBox(),
@@ -115,15 +111,14 @@ class _SAPlatformSettingsScreenState
                                   ],
                                   onChanged: (v) {
                                     if (v != null) {
-                                      setState(() =>
-                                          _zatcaEnvironment = v);
+                                      setState(() => _zatcaEnvironment = v);
                                     }
                                   },
                                 ),
                               ),
                               const Divider(),
                               ListTile(
-                                title: const Text('Tax Rate (VAT)'),
+                                title: Text(l10n.saTaxRateVat),
                                 subtitle: Text('$_vatRate%'),
                                 trailing: SizedBox(
                                   width: 80,
@@ -134,10 +129,8 @@ class _SAPlatformSettingsScreenState
                                     ),
                                     textAlign: TextAlign.center,
                                     controller:
-                                        TextEditingController(
-                                            text: _vatRate),
-                                    onChanged: (v) =>
-                                        _vatRate = v,
+                                        TextEditingController(text: _vatRate),
+                                    onChanged: (v) => _vatRate = v,
                                   ),
                                 ),
                               ),
@@ -154,37 +147,34 @@ class _SAPlatformSettingsScreenState
                             children: [
                               _GatewayTile(
                                 name: 'Moyasar',
-                                description:
-                                    'Credit/debit card processing',
+                                description: 'Credit/debit card processing',
                                 enabled: _moyasarEnabled,
-                                onChanged: (v) => setState(
-                                    () => _moyasarEnabled = v),
+                                onChanged: (v) =>
+                                    setState(() => _moyasarEnabled = v),
                               ),
                               const Divider(),
                               _GatewayTile(
                                 name: 'HyperPay',
-                                description:
-                                    'Multi-method payment gateway',
+                                description: 'Multi-method payment gateway',
                                 enabled: _hyperpayEnabled,
-                                onChanged: (v) => setState(
-                                    () => _hyperpayEnabled = v),
+                                onChanged: (v) =>
+                                    setState(() => _hyperpayEnabled = v),
                               ),
                               const Divider(),
                               _GatewayTile(
                                 name: 'Tabby',
                                 description: 'Buy now, pay later',
                                 enabled: _tabbyEnabled,
-                                onChanged: (v) => setState(
-                                    () => _tabbyEnabled = v),
+                                onChanged: (v) =>
+                                    setState(() => _tabbyEnabled = v),
                               ),
                               const Divider(),
                               _GatewayTile(
                                 name: 'Tamara',
-                                description:
-                                    'Installment payments',
+                                description: 'Installment payments',
                                 enabled: _tamaraEnabled,
-                                onChanged: (v) => setState(
-                                    () => _tamaraEnabled = v),
+                                onChanged: (v) =>
+                                    setState(() => _tamaraEnabled = v),
                               ),
                             ],
                           ),
@@ -198,56 +188,45 @@ class _SAPlatformSettingsScreenState
                           child: Column(
                             children: [
                               ListTile(
-                                title: const Text(
-                                    'Default Language'),
+                                title: Text(l10n.saDefaultLanguage),
                                 trailing: DropdownButton<String>(
                                   value: _defaultLanguage,
                                   underline: const SizedBox(),
                                   items: const [
                                     DropdownMenuItem(
-                                        value: 'ar',
-                                        child: Text('Arabic')),
+                                        value: 'ar', child: Text('Arabic')),
                                     DropdownMenuItem(
-                                        value: 'en',
-                                        child: Text('English')),
+                                        value: 'en', child: Text('English')),
                                   ],
                                   onChanged: (v) {
                                     if (v != null) {
-                                      setState(() =>
-                                          _defaultLanguage = v);
+                                      setState(() => _defaultLanguage = v);
                                     }
                                   },
                                 ),
                               ),
                               const Divider(),
                               ListTile(
-                                title: const Text(
-                                    'Default Currency'),
-                                subtitle: Text(
-                                    'SAR - ${l10n.sar}'),
-                                trailing: const Icon(
-                                    Icons.chevron_right_rounded),
+                                title: Text(l10n.saDefaultCurrency),
+                                subtitle: Text('SAR - ${l10n.sar}'),
+                                trailing:
+                                    const Icon(Icons.chevron_right_rounded),
                               ),
                               const Divider(),
                               ListTile(
-                                title: const Text(
-                                    'Trial Period (Days)'),
+                                title: Text(l10n.saTrialPeriodDays),
                                 trailing: SizedBox(
                                   width: 60,
                                   child: TextField(
-                                    decoration:
-                                        const InputDecoration(
+                                    decoration: const InputDecoration(
                                       isDense: true,
                                     ),
                                     textAlign: TextAlign.center,
-                                    controller:
-                                        TextEditingController(
-                                      text:
-                                          '$_trialPeriodDays',
+                                    controller: TextEditingController(
+                                      text: '$_trialPeriodDays',
                                     ),
                                     onChanged: (v) {
-                                      final parsed =
-                                          int.tryParse(v);
+                                      final parsed = int.tryParse(v);
                                       if (parsed != null) {
                                         _trialPeriodDays = parsed;
                                       }

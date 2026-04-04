@@ -66,16 +66,16 @@ class _NewOrderScreenState extends ConsumerState<NewOrderScreen>
     return Scaffold(
       body: activeDeliveries.when(
         data: (deliveries) {
-          final assigned = deliveries
-              .where((d) => d['status'] == 'assigned')
-              .toList();
+          final assigned =
+              deliveries.where((d) => d['status'] == 'assigned').toList();
 
           if (assigned.isEmpty) {
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.check_circle, size: 64, color: theme.colorScheme.primary),
+                  Icon(Icons.check_circle,
+                      size: 64, color: theme.colorScheme.primary),
                   const SizedBox(height: AlhaiSpacing.md),
                   const Text('لا توجد طلبات جديدة'),
                   const SizedBox(height: AlhaiSpacing.md),
@@ -150,7 +150,8 @@ class _NewOrderScreenState extends ConsumerState<NewOrderScreen>
                             ListTile(
                               contentPadding: EdgeInsets.zero,
                               leading: const Icon(Icons.straighten),
-                              title: Text('${(distance as num).toStringAsFixed(1)} كم'),
+                              title: Text(
+                                  '${(distance as num).toStringAsFixed(1)} كم'),
                               dense: true,
                             ),
                           if (estimatedTime != null)
@@ -194,9 +195,11 @@ class _NewOrderScreenState extends ConsumerState<NewOrderScreen>
                           style: TextStyle(fontSize: 18),
                         ),
                         style: FilledButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: AlhaiSpacing.md),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(AlhaiRadius.button),
+                            borderRadius:
+                                BorderRadius.circular(AlhaiRadius.button),
                           ),
                         ),
                       ),
@@ -207,12 +210,14 @@ class _NewOrderScreenState extends ConsumerState<NewOrderScreen>
                       child: OutlinedButton.icon(
                         onPressed: () => _reject(deliveryId),
                         icon: const Icon(Icons.cancel_outlined),
-                        label: const Text('رفض', style: TextStyle(fontSize: 16)),
+                        label:
+                            const Text('رفض', style: TextStyle(fontSize: 16)),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: theme.colorScheme.error,
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(AlhaiRadius.button),
+                            borderRadius:
+                                BorderRadius.circular(AlhaiRadius.button),
                           ),
                         ),
                       ),

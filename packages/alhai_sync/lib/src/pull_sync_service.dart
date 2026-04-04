@@ -116,10 +116,12 @@ class PullSyncService {
         totalSkippedConflicts += result.skippedConflicts;
 
         if (result.pulled > 0 && kDebugMode) {
-          debugPrint('[PullSync] Pulled ${result.pulled} records for $tableName');
+          debugPrint(
+              '[PullSync] Pulled ${result.pulled} records for $tableName');
         }
         if (result.skippedConflicts > 0 && kDebugMode) {
-          debugPrint('[PullSync] Skipped ${result.skippedConflicts} conflicting records for $tableName');
+          debugPrint(
+              '[PullSync] Skipped ${result.skippedConflicts} conflicting records for $tableName');
         }
       } catch (e) {
         errors.add('$tableName: $e');
@@ -132,7 +134,8 @@ class PullSyncService {
 
     if (kDebugMode) {
       if (totalPulled > 0) {
-        debugPrint('[PullSync] Done: $totalPulled total records pulled, $totalSkippedConflicts conflicts skipped');
+        debugPrint(
+            '[PullSync] Done: $totalPulled total records pulled, $totalSkippedConflicts conflicts skipped');
       } else if (errors.isEmpty) {
         debugPrint('[PullSync] No updates found');
       }
@@ -161,7 +164,8 @@ class PullSyncService {
       since: lastPullAt,
     );
 
-    if (records.isEmpty) return _PullTableResult(pulled: 0, skippedConflicts: 0);
+    if (records.isEmpty)
+      return _PullTableResult(pulled: 0, skippedConflicts: 0);
 
     // تصفية السجلات التي لها عمليات معلقة في طابور الدفع
     // لمنع الكتابة فوق تغييرات محلية لم تُدفع بعد
@@ -186,11 +190,13 @@ class PullSyncService {
           );
         } catch (e) {
           if (kDebugMode) {
-            debugPrint('[PullSync] Failed to track conflict for $tableName/$recordId: $e');
+            debugPrint(
+                '[PullSync] Failed to track conflict for $tableName/$recordId: $e');
           }
         }
         if (kDebugMode) {
-          final strategy = _conflictResolver.getStrategy(tableName, ConflictType.versionConflict);
+          final strategy = _conflictResolver.getStrategy(
+              tableName, ConflictType.versionConflict);
           debugPrint(
             '[PullSync] Conflict: skipped $tableName/$recordId '
             '(pending local push, server has update, strategy: ${strategy.name})',

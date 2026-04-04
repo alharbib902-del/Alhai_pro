@@ -48,9 +48,12 @@ void main() {
       // Step 2: Verify pending items are retrieved in correct order (priority desc, then created_at asc)
       final pendingItems = await db.syncQueueDao.getPendingItems();
       expect(pendingItems, hasLength(3));
-      expect(pendingItems[0].id, 'sq-2', reason: 'Highest priority (3) should be first');
-      expect(pendingItems[1].id, 'sq-1', reason: 'Normal priority (2) should be second');
-      expect(pendingItems[2].id, 'sq-3', reason: 'Low priority (1) should be last');
+      expect(pendingItems[0].id, 'sq-2',
+          reason: 'Highest priority (3) should be first');
+      expect(pendingItems[1].id, 'sq-1',
+          reason: 'Normal priority (2) should be second');
+      expect(pendingItems[2].id, 'sq-3',
+          reason: 'Low priority (1) should be last');
 
       // Verify pending count
       final pendingCount = await db.syncQueueDao.getPendingCount();
@@ -80,7 +83,8 @@ void main() {
       expect(remainingCount, 2);
     });
 
-    test('retry logic: failed items increment attempts and remain pending', () async {
+    test('retry logic: failed items increment attempts and remain pending',
+        () async {
       // Enqueue an item
       await db.syncQueueDao.enqueue(
         id: 'retry-1',
@@ -158,7 +162,8 @@ void main() {
       items = await db.syncQueueDao.getAllItems();
       item = items.first;
       expect(item.status, 'pending');
-      expect(item.retryCount, 0, reason: 'retryItem should reset retryCount to 0');
+      expect(item.retryCount, 0,
+          reason: 'retryItem should reset retryCount to 0');
 
       // Should be back in pending
       final pending = await db.syncQueueDao.getPendingItems();
@@ -207,7 +212,8 @@ void main() {
       );
 
       // Mark as conflict
-      await db.syncQueueDao.markAsConflict('conflict-1', 'Version mismatch: server has newer data');
+      await db.syncQueueDao.markAsConflict(
+          'conflict-1', 'Version mismatch: server has newer data');
 
       var items = await db.syncQueueDao.getAllItems();
       var item = items.first;
@@ -275,7 +281,8 @@ void main() {
       final syncedItems = allItems.where((i) => i.status == 'synced').toList();
       expect(syncedItems, hasLength(2));
       for (final item in syncedItems) {
-        expect(item.syncedAt, isNotNull, reason: 'Synced items should have syncedAt');
+        expect(item.syncedAt, isNotNull,
+            reason: 'Synced items should have syncedAt');
       }
 
       // Remove synced items manually (simulating cleanup)
@@ -284,11 +291,13 @@ void main() {
 
       allItems = await db.syncQueueDao.getAllItems();
       expect(allItems, hasLength(1));
-      expect(allItems.first.id, 'clean-3', reason: 'Only pending item should remain');
+      expect(allItems.first.id, 'clean-3',
+          reason: 'Only pending item should remain');
       expect(allItems.first.status, 'pending');
     });
 
-    test('mixed operations: multiple items through different lifecycle paths', () async {
+    test('mixed operations: multiple items through different lifecycle paths',
+        () async {
       // Enqueue 5 items
       for (int i = 1; i <= 5; i++) {
         await db.syncQueueDao.enqueue(
@@ -327,7 +336,8 @@ void main() {
       expect(pending.first.id, 'mix-5');
 
       final conflicts = await db.syncQueueDao.getConflictItems();
-      expect(conflicts, hasLength(2), reason: 'mix-3 (exhausted) and mix-4 (marked conflict)');
+      expect(conflicts, hasLength(2),
+          reason: 'mix-3 (exhausted) and mix-4 (marked conflict)');
 
       final allItems = await db.syncQueueDao.getAllItems();
       expect(allItems, hasLength(5));

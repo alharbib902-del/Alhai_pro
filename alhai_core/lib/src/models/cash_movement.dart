@@ -92,8 +92,7 @@ class CashMovement with _$CashMovement {
       _$CashMovementFromJson(json);
 
   /// Signed amount (positive for in, negative for out)
-  double get signedAmount =>
-      type == CashMovementType.cashIn ? amount : -amount;
+  double get signedAmount => type == CashMovementType.cashIn ? amount : -amount;
 
   /// Requires supervisor approval for cash out
   bool get requiresSupervisor =>

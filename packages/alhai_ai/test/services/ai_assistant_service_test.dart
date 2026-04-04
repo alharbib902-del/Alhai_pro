@@ -170,8 +170,7 @@ void main() {
       when(() => mockAccountsDao.getReceivableAccounts(any()))
           .thenAnswer((_) async => [
                 createFakeAccount(name: 'Customer A', balance: 500),
-                createFakeAccount(
-                    id: 'a2', name: 'Customer B', balance: 300),
+                createFakeAccount(id: 'a2', name: 'Customer B', balance: 300),
               ]);
 
       final response = await service.processQuery('ديون العملاء', 'store-1');
@@ -227,8 +226,7 @@ void main() {
       when(() => mockSalesDao.getSalesByDateRange(any(), any(), any()))
           .thenAnswer((_) async => []);
 
-      final response =
-          await service.processQuery('أفضل المنتجات', 'store-1');
+      final response = await service.processQuery('أفضل المنتجات', 'store-1');
 
       expect(response.confidence, 0.7);
       expect(response.text, contains('لا توجد بيانات'));
@@ -237,14 +235,13 @@ void main() {
     test('returns top products when sales exist', () async {
       when(() => mockSalesDao.getSalesByDateRange(any(), any(), any()))
           .thenAnswer((_) async => [createFakeSale()]);
-      when(() => mockProductsDao.getAllProducts(any())).thenAnswer(
-          (_) async => [
+      when(() => mockProductsDao.getAllProducts(any()))
+          .thenAnswer((_) async => [
                 createFakeProduct(id: 'p1', name: 'Product A', price: 10),
                 createFakeProduct(id: 'p2', name: 'Product B', price: 20),
               ]);
 
-      final response =
-          await service.processQuery('أفضل المنتجات', 'store-1');
+      final response = await service.processQuery('أفضل المنتجات', 'store-1');
 
       expect(response.confidence, 0.85);
       expect(response.data, isNotNull);

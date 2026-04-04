@@ -75,11 +75,16 @@ class ReceiptBuilder {
 
     // ─── Items ─────────────────────────────────────────
     for (final item in receipt.items) {
-      final qtyPrice = '${_formatQty(item.quantity)} × ${_formatMoney(item.unitPrice)}';
+      final qtyPrice =
+          '${_formatQty(item.quantity)} × ${_formatMoney(item.unitPrice)}';
       final totalStr = _formatMoney(item.total);
 
       // If item name is long, print it on its own line then details below
-      if (_estimateWidth(item.name) + _estimateWidth(qtyPrice) + _estimateWidth(totalStr) + 2 > size.charsPerLine) {
+      if (_estimateWidth(item.name) +
+              _estimateWidth(qtyPrice) +
+              _estimateWidth(totalStr) +
+              2 >
+          size.charsPerLine) {
         cmd
           ..printLine(item.name)
           ..printTwoColumns('  $qtyPrice', totalStr);
@@ -98,7 +103,8 @@ class ReceiptBuilder {
     }
 
     cmd
-      ..printTwoColumns('ضريبة القيمة المضافة (15%):', _formatMoney(receipt.tax))
+      ..printTwoColumns(
+          'ضريبة القيمة المضافة (15%):', _formatMoney(receipt.tax))
       ..doubleLine()
       ..setBold(true)
       ..setTextSize(EscPosTextSize.doubleHeight)
@@ -108,10 +114,12 @@ class ReceiptBuilder {
       ..doubleLine();
 
     // ─── Payment Info ──────────────────────────────────
-    cmd.printTwoColumns('طريقة الدفع:', _translatePaymentMethod(receipt.paymentMethod));
+    cmd.printTwoColumns(
+        'طريقة الدفع:', _translatePaymentMethod(receipt.paymentMethod));
 
     if (receipt.amountReceived != null && receipt.amountReceived! > 0) {
-      cmd.printTwoColumns('المبلغ المدفوع:', _formatMoney(receipt.amountReceived!));
+      cmd.printTwoColumns(
+          'المبلغ المدفوع:', _formatMoney(receipt.amountReceived!));
     }
     if (receipt.changeAmount != null && receipt.changeAmount! > 0) {
       cmd.printTwoColumns('الباقي:', _formatMoney(receipt.changeAmount!));

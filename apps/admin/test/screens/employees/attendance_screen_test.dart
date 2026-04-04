@@ -29,11 +29,9 @@ void main() {
     testWidgets('renders the screen widget', (tester) async {
       // UsersDao.getAllUsers is stubbed, but customSelect for shifts won't be.
       // The screen handles the error gracefully.
-      when(() => mockUsersDao.getAllUsers(any()))
-          .thenAnswer((_) async => []);
+      when(() => mockUsersDao.getAllUsers(any())).thenAnswer((_) async => []);
 
-      await tester
-          .pumpWidget(createTestWidget(const AttendanceScreen()));
+      await tester.pumpWidget(createTestWidget(const AttendanceScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(AttendanceScreen), findsOneWidget);
@@ -44,8 +42,7 @@ void main() {
       when(() => mockUsersDao.getAllUsers(any()))
           .thenAnswer((_) => completer.future.then((v) => v.cast()));
 
-      await tester
-          .pumpWidget(createTestWidget(const AttendanceScreen()));
+      await tester.pumpWidget(createTestWidget(const AttendanceScreen()));
       await tester.pump();
 
       // Should show loading or progress indicator
@@ -63,11 +60,9 @@ void main() {
     });
 
     testWidgets('has the attendance screen structure', (tester) async {
-      when(() => mockUsersDao.getAllUsers(any()))
-          .thenAnswer((_) async => []);
+      when(() => mockUsersDao.getAllUsers(any())).thenAnswer((_) async => []);
 
-      await tester
-          .pumpWidget(createTestWidget(const AttendanceScreen()));
+      await tester.pumpWidget(createTestWidget(const AttendanceScreen()));
       await tester.pumpAndSettle();
 
       // The screen widget tree should be present

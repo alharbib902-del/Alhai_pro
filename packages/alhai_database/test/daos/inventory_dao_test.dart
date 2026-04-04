@@ -28,8 +28,7 @@ void main() {
         ),
       );
 
-      final movements =
-          await db.inventoryDao.getMovementsByProduct('prod-1');
+      final movements = await db.inventoryDao.getMovementsByProduct('prod-1');
       expect(movements, hasLength(1));
       expect(movements.first.qty, -2);
       expect(movements.first.type, 'sale');
@@ -45,8 +44,7 @@ void main() {
         saleId: 'sale-1',
       );
 
-      final movements =
-          await db.inventoryDao.getMovementsByProduct('prod-1');
+      final movements = await db.inventoryDao.getMovementsByProduct('prod-1');
       expect(movements, hasLength(1));
       expect(movements.first.qty, -5); // negative for sales
       expect(movements.first.newQty, 95);
@@ -65,8 +63,7 @@ void main() {
         purchaseId: 'purchase-1',
       );
 
-      final movements =
-          await db.inventoryDao.getMovementsByProduct('prod-1');
+      final movements = await db.inventoryDao.getMovementsByProduct('prod-1');
       expect(movements, hasLength(1));
       expect(movements.first.qty, 50); // positive for purchases
       expect(movements.first.newQty, 150);
@@ -83,8 +80,7 @@ void main() {
         reason: 'تلف بضاعة',
       );
 
-      final movements =
-          await db.inventoryDao.getMovementsByProduct('prod-1');
+      final movements = await db.inventoryDao.getMovementsByProduct('prod-1');
       expect(movements, hasLength(1));
       expect(movements.first.qty, -20);
       expect(movements.first.newQty, 80);
@@ -93,8 +89,7 @@ void main() {
     });
 
     test('getMovementsByProduct returns empty for unknown product', () async {
-      final movements =
-          await db.inventoryDao.getMovementsByProduct('unknown');
+      final movements = await db.inventoryDao.getMovementsByProduct('unknown');
       expect(movements, isEmpty);
     });
 
@@ -176,8 +171,7 @@ void main() {
         ),
       );
 
-      final movements =
-          await db.inventoryDao.getMovementsByProduct('prod-1');
+      final movements = await db.inventoryDao.getMovementsByProduct('prod-1');
       expect(movements.first.id, 'mov-2'); // most recent first
     });
   });

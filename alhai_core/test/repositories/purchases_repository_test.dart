@@ -18,6 +18,7 @@ class MockPurchasesRemoteDataSource extends Mock
 // Fake classes
 class FakeCreatePurchaseOrderRequest extends Fake
     implements CreatePurchaseOrderRequest {}
+
 class FakeReceiveItemsRequest extends Fake implements ReceiveItemsRequest {}
 
 void main() {
@@ -153,8 +154,8 @@ void main() {
     group('cancelPurchaseOrder', () {
       test('cancels purchase order successfully', () async {
         // Arrange
-        when(() => mockRemote.cancelPurchaseOrder(any(), reason: any(named: 'reason')))
-            .thenAnswer((_) async {});
+        when(() => mockRemote.cancelPurchaseOrder(any(),
+            reason: any(named: 'reason'))).thenAnswer((_) async {});
 
         // Act & Assert
         await expectLater(

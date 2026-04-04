@@ -6,7 +6,8 @@ import '../tables/loyalty_table.dart';
 part 'loyalty_dao.g.dart';
 
 /// DAO لنظام الولاء
-@DriftAccessor(tables: [LoyaltyPointsTable, LoyaltyTransactionsTable, LoyaltyRewardsTable])
+@DriftAccessor(
+    tables: [LoyaltyPointsTable, LoyaltyTransactionsTable, LoyaltyRewardsTable])
 class LoyaltyDao extends DatabaseAccessor<AppDatabase> with _$LoyaltyDaoMixin {
   LoyaltyDao(super.db);
 
@@ -15,16 +16,18 @@ class LoyaltyDao extends DatabaseAccessor<AppDatabase> with _$LoyaltyDaoMixin {
   // ============================================================================
 
   /// الحصول على نقاط عميل
-  Future<LoyaltyPointsTableData?> getCustomerLoyalty(String customerId, String storeId) {
+  Future<LoyaltyPointsTableData?> getCustomerLoyalty(
+      String customerId, String storeId) {
     return (select(loyaltyPointsTable)
-      ..where((l) => l.customerId.equals(customerId) & l.storeId.equals(storeId)))
-      .getSingleOrNull();
+          ..where((l) =>
+              l.customerId.equals(customerId) & l.storeId.equals(storeId)))
+        .getSingleOrNull();
   }
 
   /// الحصول على نقاط بالمعرف
   Future<LoyaltyPointsTableData?> getLoyaltyById(String id) {
     return (select(loyaltyPointsTable)..where((l) => l.id.equals(id)))
-      .getSingleOrNull();
+        .getSingleOrNull();
   }
 
   /// إنشاء سجل نقاط جديد
@@ -65,7 +68,8 @@ class LoyaltyDao extends DatabaseAccessor<AppDatabase> with _$LoyaltyDaoMixin {
   }
 
   /// خصم نقاط من العميل - atomic with balance check
-  Future<bool> redeemPoints(String customerId, String storeId, int points) async {
+  Future<bool> redeemPoints(
+      String customerId, String storeId, int points) async {
     final result = await customUpdate(
       '''UPDATE loyalty_points
          SET current_points = current_points - ?,
@@ -96,26 +100,28 @@ class LoyaltyDao extends DatabaseAccessor<AppDatabase> with _$LoyaltyDaoMixin {
   /// الحصول على جميع العملاء مع نقاطهم
   Future<List<LoyaltyPointsTableData>> getAllLoyaltyAccounts(String storeId) {
     return (select(loyaltyPointsTable)
-      ..where((l) => l.storeId.equals(storeId))
-      ..orderBy([(l) => OrderingTerm.desc(l.currentPoints)]))
-      .get();
+          ..where((l) => l.storeId.equals(storeId))
+          ..orderBy([(l) => OrderingTerm.desc(l.currentPoints)]))
+        .get();
   }
 
   /// الحصول على أفضل العملاء
-  Future<List<LoyaltyPointsTableData>> getTopCustomers(String storeId, {int limit = 10}) {
+  Future<List<LoyaltyPointsTableData>> getTopCustomers(String storeId,
+      {int limit = 10}) {
     return (select(loyaltyPointsTable)
-      ..where((l) => l.storeId.equals(storeId))
-      ..orderBy([(l) => OrderingTerm.desc(l.totalEarned)])
-      ..limit(limit))
-      .get();
+          ..where((l) => l.storeId.equals(storeId))
+          ..orderBy([(l) => OrderingTerm.desc(l.totalEarned)])
+          ..limit(limit))
+        .get();
   }
 
   /// العملاء حسب المستوى
-  Future<List<LoyaltyPointsTableData>> getCustomersByTier(String storeId, String tier) {
+  Future<List<LoyaltyPointsTableData>> getCustomersByTier(
+      String storeId, String tier) {
     return (select(loyaltyPointsTable)
-      ..where((l) => l.storeId.equals(storeId) & l.tierLevel.equals(tier))
-      ..orderBy([(l) => OrderingTerm.desc(l.currentPoints)]))
-      .get();
+          ..where((l) => l.storeId.equals(storeId) & l.tierLevel.equals(tier))
+          ..orderBy([(l) => OrderingTerm.desc(l.currentPoints)]))
+        .get();
   }
 
   // ============================================================================
@@ -135,29 +141,32 @@ class LoyaltyDao extends DatabaseAccessor<AppDatabase> with _$LoyaltyDaoMixin {
     int offset = 0,
   }) {
     return (select(loyaltyTransactionsTable)
-      ..where((t) => t.customerId.equals(customerId) & t.storeId.equals(storeId))
-      ..orderBy([(t) => OrderingTerm.desc(t.createdAt)])
-      ..limit(limit, offset: offset))
-      .get();
+          ..where((t) =>
+              t.customerId.equals(customerId) & t.storeId.equals(storeId))
+          ..orderBy([(t) => OrderingTerm.desc(t.createdAt)])
+          ..limit(limit, offset: offset))
+        .get();
   }
 
   /// معاملات اليوم
-  Future<List<LoyaltyTransactionsTableData>> getTodayTransactions(String storeId) {
+  Future<List<LoyaltyTransactionsTableData>> getTodayTransactions(
+      String storeId) {
     final today = DateTime.now();
     final startOfDay = DateTime(today.year, today.month, today.day);
     final endOfDay = startOfDay.add(const Duration(days: 1));
 
     return (select(loyaltyTransactionsTable)
-      ..where((t) =>
-        t.storeId.equals(storeId) &
-        t.createdAt.isBiggerOrEqualValue(startOfDay) &
-        t.createdAt.isSmallerThanValue(endOfDay))
-      ..orderBy([(t) => OrderingTerm.desc(t.createdAt)]))
-      .get();
+          ..where((t) =>
+              t.storeId.equals(storeId) &
+              t.createdAt.isBiggerOrEqualValue(startOfDay) &
+              t.createdAt.isSmallerThanValue(endOfDay))
+          ..orderBy([(t) => OrderingTerm.desc(t.createdAt)]))
+        .get();
   }
 
   /// إحصائيات النقاط لفترة
-  Future<LoyaltyStats> getStats(String storeId, {DateTime? startDate, DateTime? endDate}) async {
+  Future<LoyaltyStats> getStats(String storeId,
+      {DateTime? startDate, DateTime? endDate}) async {
     var whereClause = 'store_id = ?';
     final variables = <Variable>[Variable.withString(storeId)];
 
@@ -204,11 +213,14 @@ class LoyaltyDao extends DatabaseAccessor<AppDatabase> with _$LoyaltyDaoMixin {
         var condition = r.storeId.equals(storeId) & r.isActive.equals(true);
 
         // تصفية المنتهية الصلاحية
-        condition = condition & (r.expiresAt.isNull() | r.expiresAt.isBiggerThanValue(DateTime.now()));
+        condition = condition &
+            (r.expiresAt.isNull() |
+                r.expiresAt.isBiggerThanValue(DateTime.now()));
 
         // تصفية حسب النقاط
         if (customerPoints != null) {
-          condition = condition & r.pointsRequired.isSmallerOrEqualValue(customerPoints);
+          condition = condition &
+              r.pointsRequired.isSmallerOrEqualValue(customerPoints);
         }
 
         return condition;
@@ -221,7 +233,7 @@ class LoyaltyDao extends DatabaseAccessor<AppDatabase> with _$LoyaltyDaoMixin {
   /// الحصول على مكافأة بالمعرف
   Future<LoyaltyRewardsTableData?> getRewardById(String id) {
     return (select(loyaltyRewardsTable)..where((r) => r.id.equals(id)))
-      .getSingleOrNull();
+        .getSingleOrNull();
   }
 
   /// إنشاء مكافأة
@@ -237,7 +249,7 @@ class LoyaltyDao extends DatabaseAccessor<AppDatabase> with _$LoyaltyDaoMixin {
   /// تعطيل مكافأة
   Future<int> deactivateReward(String id) {
     return (update(loyaltyRewardsTable)..where((r) => r.id.equals(id)))
-      .write(const LoyaltyRewardsTableCompanion(isActive: Value(false)));
+        .write(const LoyaltyRewardsTableCompanion(isActive: Value(false)));
   }
 
   // ============================================================================
@@ -246,23 +258,26 @@ class LoyaltyDao extends DatabaseAccessor<AppDatabase> with _$LoyaltyDaoMixin {
 
   /// الحصول على السجلات غير المزامنة
   Future<List<LoyaltyPointsTableData>> getUnsyncedLoyalty() {
-    return (select(loyaltyPointsTable)..where((l) => l.syncedAt.isNull())).get();
+    return (select(loyaltyPointsTable)..where((l) => l.syncedAt.isNull()))
+        .get();
   }
 
   /// الحصول على المعاملات غير المزامنة
   Future<List<LoyaltyTransactionsTableData>> getUnsyncedTransactions() {
-    return (select(loyaltyTransactionsTable)..where((t) => t.syncedAt.isNull())).get();
+    return (select(loyaltyTransactionsTable)..where((t) => t.syncedAt.isNull()))
+        .get();
   }
 
   /// تعيين تاريخ المزامنة
   Future<void> markLoyaltySynced(String id) {
     return (update(loyaltyPointsTable)..where((l) => l.id.equals(id)))
-      .write(LoyaltyPointsTableCompanion(syncedAt: Value(DateTime.now())));
+        .write(LoyaltyPointsTableCompanion(syncedAt: Value(DateTime.now())));
   }
 
   Future<void> markTransactionSynced(String id) {
     return (update(loyaltyTransactionsTable)..where((t) => t.id.equals(id)))
-      .write(LoyaltyTransactionsTableCompanion(syncedAt: Value(DateTime.now())));
+        .write(
+            LoyaltyTransactionsTableCompanion(syncedAt: Value(DateTime.now())));
   }
 }
 

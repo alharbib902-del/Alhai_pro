@@ -40,8 +40,7 @@ void main() {
       expect(find.byIcon(Icons.refresh), findsOneWidget);
     });
 
-    testWidgets('should call onRetry when retry button tapped',
-        (tester) async {
+    testWidgets('should call onRetry when retry button tapped', (tester) async {
       var retryCalled = false;
       await tester.pumpWidget(createSimpleTestWidget(
         AppErrorWidget(

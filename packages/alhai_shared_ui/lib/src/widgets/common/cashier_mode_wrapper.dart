@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiColors, AlhaiSpacing;
+import 'package:alhai_design_system/alhai_design_system.dart'
+    show AlhaiColors, AlhaiSpacing;
 import '../../providers/cashier_mode_provider.dart';
 
 // ============================================================================
@@ -230,7 +231,8 @@ class CashierModeBadge extends ConsumerWidget {
     if (!isEnabled) return const SizedBox.shrink();
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
+      padding: const EdgeInsets.symmetric(
+          horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
       decoration: BoxDecoration(
         color: AlhaiColors.warning.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(8),

@@ -24,7 +24,6 @@ class AiSmartPricingScreen extends ConsumerStatefulWidget {
 }
 
 class _AiSmartPricingScreenState extends ConsumerState<AiSmartPricingScreen> {
-
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -33,23 +32,23 @@ class _AiSmartPricingScreenState extends ConsumerState<AiSmartPricingScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Column(
-              children: [
-                AppHeader(
-                  title: AppLocalizations.of(context)!.aiSmartPricingTitle,
-                  subtitle: AppLocalizations.of(context)!.aiSmartPricingSubtitle,
-                  // AI-based price suggestions
-                  onMenuTap: isWideScreen
-                      ? null
-                      : () => Scaffold.of(context).openDrawer(),
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-                    child: _buildContent(isDark, isWideScreen, isMediumScreen),
-                  ),
-                ),
-              ],
-            );
+      children: [
+        AppHeader(
+          title: AppLocalizations.of(context)!.aiSmartPricingTitle,
+          subtitle: AppLocalizations.of(context)!.aiSmartPricingSubtitle,
+          // AI-based price suggestions
+          onMenuTap:
+              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+        ),
+        Expanded(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.all(
+                isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+            child: _buildContent(isDark, isWideScreen, isMediumScreen),
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _buildContent(bool isDark, bool isWideScreen, bool isMediumScreen) {
@@ -101,8 +100,8 @@ class _AiSmartPricingScreenState extends ConsumerState<AiSmartPricingScreen> {
               Expanded(
                 flex: 2,
                 child: selected != null
-                    ? _buildDetailPanel(
-                        selected, sliderPrice, impactAsync, elasticityAsync, isDark)
+                    ? _buildDetailPanel(selected, sliderPrice, impactAsync,
+                        elasticityAsync, isDark)
                     : _buildSelectProductHint(isDark),
               ),
             ],
@@ -121,8 +120,8 @@ class _AiSmartPricingScreenState extends ConsumerState<AiSmartPricingScreen> {
               ),
               if (selected != null) ...[
                 const SizedBox(height: AlhaiSpacing.md),
-                _buildDetailPanel(
-                    selected, sliderPrice, impactAsync, elasticityAsync, isDark),
+                _buildDetailPanel(selected, sliderPrice, impactAsync,
+                    elasticityAsync, isDark),
               ],
             ],
           ),
@@ -163,7 +162,8 @@ class _AiSmartPricingScreenState extends ConsumerState<AiSmartPricingScreen> {
       ),
       _SummaryData(
         label: l10n.expectedMonthlyImpact,
-        value: '${totalImpact >= 0 ? '+' : ''}${l10n.amountSar(totalImpact.toStringAsFixed(0))}',
+        value:
+            '${totalImpact >= 0 ? '+' : ''}${l10n.amountSar(totalImpact.toStringAsFixed(0))}',
         icon: Icons.monetization_on_rounded,
         color: totalImpact >= 0 ? AppColors.primary : AppColors.error,
       ),
@@ -212,9 +212,8 @@ class _AiSmartPricingScreenState extends ConsumerState<AiSmartPricingScreen> {
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.08)
-              : AppColors.border,
+          color:
+              isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.border,
         ),
         boxShadow: [
           BoxShadow(
@@ -243,8 +242,7 @@ class _AiSmartPricingScreenState extends ConsumerState<AiSmartPricingScreen> {
                   data.label,
                   style: TextStyle(
                     fontSize: 11,
-                    color:
-                        isDark ? Colors.white54 : AppColors.textSecondary,
+                    color: isDark ? Colors.white54 : AppColors.textSecondary,
                   ),
                 ),
                 const SizedBox(height: AlhaiSpacing.xxxs),
@@ -273,9 +271,16 @@ class _AiSmartPricingScreenState extends ConsumerState<AiSmartPricingScreen> {
     final l10n = AppLocalizations.of(context)!;
     final filters = [
       (PriceFilterType.all, l10n.filterAllLabel, Icons.list_rounded),
-      (PriceFilterType.canIncrease, l10n.canIncreaseLabel, Icons.trending_up_rounded),
-      (PriceFilterType.shouldDecrease, l10n.shouldDecreaseLabel,
-          Icons.trending_down_rounded),
+      (
+        PriceFilterType.canIncrease,
+        l10n.canIncreaseLabel,
+        Icons.trending_up_rounded
+      ),
+      (
+        PriceFilterType.shouldDecrease,
+        l10n.shouldDecreaseLabel,
+        Icons.trending_down_rounded
+      ),
     ];
 
     return Wrap(
@@ -305,8 +310,7 @@ class _AiSmartPricingScreenState extends ConsumerState<AiSmartPricingScreen> {
             ),
           ),
           selectedColor: AppColors.primary,
-          backgroundColor:
-              isDark ? const Color(0xFF1E293B) : Colors.white,
+          backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
           side: BorderSide(
             color: isActive
                 ? AppColors.primary
@@ -403,7 +407,8 @@ class _AiSmartPricingScreenState extends ConsumerState<AiSmartPricingScreen> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
-                  AppLocalizations.of(context)!.priceApplied(sliderPrice.toStringAsFixed(2), selected.name),
+                  AppLocalizations.of(context)!.priceApplied(
+                      sliderPrice.toStringAsFixed(2), selected.name),
                 ),
                 backgroundColor: AppColors.primary,
                 behavior: SnackBarBehavior.floating,
@@ -439,9 +444,8 @@ class _AiSmartPricingScreenState extends ConsumerState<AiSmartPricingScreen> {
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.08)
-              : AppColors.border,
+          color:
+              isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.border,
         ),
       ),
       child: Column(
@@ -488,9 +492,8 @@ class _AiSmartPricingScreenState extends ConsumerState<AiSmartPricingScreen> {
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.08)
-              : AppColors.border,
+          color:
+              isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.border,
         ),
       ),
       child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),

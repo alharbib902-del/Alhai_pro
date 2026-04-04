@@ -21,16 +21,14 @@ final orderStatusTrackingProvider =
 
 /// Real-time driver location.
 final driverLocationProvider =
-    StreamProvider.family<Map<String, dynamic>?, String>(
-        (ref, driverId) {
+    StreamProvider.family<Map<String, dynamic>?, String>((ref, driverId) {
   final datasource = locator<DeliveryDatasource>();
   return datasource.trackDriverLocation(driverId);
 });
 
 /// Driver info (name, phone, image).
 final driverInfoProvider =
-    FutureProvider.family<Map<String, dynamic>?, String>(
-        (ref, driverId) {
+    FutureProvider.family<Map<String, dynamic>?, String>((ref, driverId) {
   final datasource = locator<DeliveryDatasource>();
   return datasource.getDriverInfo(driverId);
 });

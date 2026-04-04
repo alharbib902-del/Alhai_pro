@@ -54,8 +54,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Builder(builder: (context) {
-              final logoSize = (MediaQuery.of(context).size.width * 0.25)
-                  .clamp(80.0, 150.0);
+              final logoSize =
+                  (MediaQuery.of(context).size.width * 0.25).clamp(80.0, 150.0);
               return Container(
                 width: logoSize,
                 height: logoSize,

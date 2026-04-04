@@ -25,14 +25,29 @@ class DeleteInvoiceDialog extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                width: 64, height: 64,
-                decoration: BoxDecoration(color: AppColors.error.withValues(alpha: isDark ? 0.15 : 0.1), shape: BoxShape.circle),
-                child: const Icon(Icons.warning_amber, size: 32, color: AppColors.error),
+                width: 64,
+                height: 64,
+                decoration: BoxDecoration(
+                    color:
+                        AppColors.error.withValues(alpha: isDark ? 0.15 : 0.1),
+                    shape: BoxShape.circle),
+                child: const Icon(Icons.warning_amber,
+                    size: 32, color: AppColors.error),
               ),
               SizedBox(height: AlhaiSpacing.md),
-              Text(l10n.deleteConfirm, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
+              Text(l10n.deleteConfirm,
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onSurface)),
               SizedBox(height: AlhaiSpacing.xs),
-              Text(l10n.deleteInvoiceMsg, textAlign: TextAlign.center, style: TextStyle(fontSize: 14, color: isDark ? AppColors.textMutedDark : AppColors.textMuted)),
+              Text(l10n.deleteInvoiceMsg,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 14,
+                      color: isDark
+                          ? AppColors.textMutedDark
+                          : AppColors.textMuted)),
               SizedBox(height: AlhaiSpacing.lg),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -40,7 +55,15 @@ class DeleteInvoiceDialog extends StatelessWidget {
                   Expanded(
                     child: OutlinedButton(
                       onPressed: () => Navigator.pop(context),
-                      style: OutlinedButton.styleFrom(foregroundColor: Theme.of(context).colorScheme.onSurface, side: BorderSide(color: Theme.of(context).dividerColor), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)), padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm)),
+                      style: OutlinedButton.styleFrom(
+                          foregroundColor:
+                              Theme.of(context).colorScheme.onSurface,
+                          side:
+                              BorderSide(color: Theme.of(context).dividerColor),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12)),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: AlhaiSpacing.sm)),
                       child: Text(l10n.cancel),
                     ),
                   ),
@@ -48,7 +71,13 @@ class DeleteInvoiceDialog extends StatelessWidget {
                   Expanded(
                     child: FilledButton(
                       onPressed: onConfirm,
-                      style: FilledButton.styleFrom(backgroundColor: AppColors.error, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)), padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm)),
+                      style: FilledButton.styleFrom(
+                          backgroundColor: AppColors.error,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12)),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: AlhaiSpacing.sm)),
                       child: Text(l10n.yesDelete),
                     ),
                   ),

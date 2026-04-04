@@ -150,7 +150,8 @@ void main() {
       final testAccounts = [
         _createTestAccount(id: 'c1', name: 'Ahmad Ali', balance: 500),
         _createTestAccount(id: 'c2', name: 'Sara Mohammed', balance: 0),
-        _createTestAccount(id: 'c3', name: 'Khalid Omar', balance: -200, type: 'payable'),
+        _createTestAccount(
+            id: 'c3', name: 'Khalid Omar', balance: -200, type: 'payable'),
       ];
 
       when(() => mockAccountsDao.getAccountsPaginated(

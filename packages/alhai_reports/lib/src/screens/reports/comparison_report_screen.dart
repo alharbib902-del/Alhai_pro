@@ -11,10 +11,12 @@ class ComparisonReportScreen extends ConsumerStatefulWidget {
   const ComparisonReportScreen({super.key});
 
   @override
-  ConsumerState<ComparisonReportScreen> createState() => _ComparisonReportScreenState();
+  ConsumerState<ComparisonReportScreen> createState() =>
+      _ComparisonReportScreenState();
 }
 
-class _ComparisonReportScreenState extends ConsumerState<ComparisonReportScreen> {
+class _ComparisonReportScreenState
+    extends ConsumerState<ComparisonReportScreen> {
   String _compareMode = 'month'; // month, quarter, year
   bool _isLoading = true;
   String? _error;
@@ -138,11 +140,17 @@ class _ComparisonReportScreenState extends ConsumerState<ComparisonReportScreen>
 
   Future<void> _loadData() async {
     try {
-      setState(() { _isLoading = true; _error = null; });
+      setState(() {
+        _isLoading = true;
+        _error = null;
+      });
       final db = GetIt.I<AppDatabase>();
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) {
-        setState(() { _error = 'لم يتم تحديد المتجر'; _isLoading = false; });
+        setState(() {
+          _error = 'لم يتم تحديد المتجر';
+          _isLoading = false;
+        });
         return;
       }
       final cur = _getCurrent();
@@ -157,25 +165,37 @@ class _ComparisonReportScreenState extends ConsumerState<ComparisonReportScreen>
         });
       }
     } catch (e) {
-      if (mounted) setState(() { _error = e.toString(); _isLoading = false; });
+      if (mounted)
+        setState(() {
+          _error = e.toString();
+          _isLoading = false;
+        });
     }
   }
 
   String _currentLabel() {
     switch (_compareMode) {
-      case 'month': return 'هذا الشهر';
-      case 'quarter': return 'هذا الربع';
-      case 'year': return 'هذه السنة';
-      default: return 'الفترة الحالية';
+      case 'month':
+        return 'هذا الشهر';
+      case 'quarter':
+        return 'هذا الربع';
+      case 'year':
+        return 'هذه السنة';
+      default:
+        return 'الفترة الحالية';
     }
   }
 
   String _previousLabel() {
     switch (_compareMode) {
-      case 'month': return 'الشهر الماضي';
-      case 'quarter': return 'الربع الماضي';
-      case 'year': return 'السنة الماضية';
-      default: return 'الفترة السابقة';
+      case 'month':
+        return 'الشهر الماضي';
+      case 'quarter':
+        return 'الربع الماضي';
+      case 'year':
+        return 'السنة الماضية';
+      default:
+        return 'الفترة السابقة';
     }
   }
 
@@ -197,7 +217,8 @@ class _ComparisonReportScreenState extends ConsumerState<ComparisonReportScreen>
               const Icon(Icons.error_outline, size: 48, color: Colors.red),
               const SizedBox(height: AlhaiSpacing.sm),
               Text(_error ?? 'خطأ في تحميل البيانات'),
-              TextButton(onPressed: _loadData, child: const Text('إعادة المحاولة')),
+              TextButton(
+                  onPressed: _loadData, child: const Text('إعادة المحاولة')),
             ],
           ),
         ),
@@ -232,71 +253,85 @@ class _ComparisonReportScreenState extends ConsumerState<ComparisonReportScreen>
       body: SafeArea(
         top: false,
         child: ListView(
-        padding: const EdgeInsets.all(AlhaiSpacing.md),
-        children: [
-          // Header labels
-          Row(
-            children: [
-              Expanded(flex: 2, child: Text('المؤشر', style: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurfaceVariant))),
-              Expanded(
-                child: Text(_currentLabel(),
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue)),
-              ),
-              Expanded(
-                child: Text(_previousLabel(),
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurfaceVariant)),
-              ),
-              Expanded(
-                child: Text('التغيير',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurfaceVariant)),
-              ),
-            ],
-          ),
-          const Divider(height: 20, thickness: 2),
+          padding: const EdgeInsets.all(AlhaiSpacing.md),
+          children: [
+            // Header labels
+            Row(
+              children: [
+                Expanded(
+                    flex: 2,
+                    child: Text('المؤشر',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurfaceVariant))),
+                Expanded(
+                  child: Text(_currentLabel(),
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, color: Colors.blue)),
+                ),
+                Expanded(
+                  child: Text(_previousLabel(),
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color:
+                              Theme.of(context).colorScheme.onSurfaceVariant)),
+                ),
+                Expanded(
+                  child: Text('التغيير',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color:
+                              Theme.of(context).colorScheme.onSurfaceVariant)),
+                ),
+              ],
+            ),
+            const Divider(height: 20, thickness: 2),
 
-          _CompRow(
-            label: 'المبيعات',
-            current: cur.revenue,
-            previous: prev.revenue,
-            higherIsBetter: true,
-          ),
-          _CompRow(
-            label: 'عدد الفواتير',
-            current: cur.invoices.toDouble(),
-            previous: prev.invoices.toDouble(),
-            higherIsBetter: true,
-            isCount: true,
-          ),
-          _CompRow(
-            label: 'المشتريات',
-            current: cur.purchases,
-            previous: prev.purchases,
-            higherIsBetter: false,
-          ),
-          _CompRow(
-            label: 'المصروفات',
-            current: cur.expenses,
-            previous: prev.expenses,
-            higherIsBetter: false,
-          ),
-          _CompRow(
-            label: 'الضريبة',
-            current: cur.tax,
-            previous: prev.tax,
-            higherIsBetter: false,
-          ),
-          const Divider(),
-          _CompRow(
-            label: 'صافي الربح',
-            current: cur.profit,
-            previous: prev.profit,
-            higherIsBetter: true,
-            bold: true,
-          ),
-        ],
+            _CompRow(
+              label: 'المبيعات',
+              current: cur.revenue,
+              previous: prev.revenue,
+              higherIsBetter: true,
+            ),
+            _CompRow(
+              label: 'عدد الفواتير',
+              current: cur.invoices.toDouble(),
+              previous: prev.invoices.toDouble(),
+              higherIsBetter: true,
+              isCount: true,
+            ),
+            _CompRow(
+              label: 'المشتريات',
+              current: cur.purchases,
+              previous: prev.purchases,
+              higherIsBetter: false,
+            ),
+            _CompRow(
+              label: 'المصروفات',
+              current: cur.expenses,
+              previous: prev.expenses,
+              higherIsBetter: false,
+            ),
+            _CompRow(
+              label: 'الضريبة',
+              current: cur.tax,
+              previous: prev.tax,
+              higherIsBetter: false,
+            ),
+            const Divider(),
+            _CompRow(
+              label: 'صافي الربح',
+              current: cur.profit,
+              previous: prev.profit,
+              higherIsBetter: true,
+              bold: true,
+            ),
+          ],
         ),
       ),
     );
@@ -322,9 +357,12 @@ class _CompRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final change = previous != 0 ? ((current - previous) / previous) * 100 : (current != 0 ? 100.0 : 0.0);
+    final change = previous != 0
+        ? ((current - previous) / previous) * 100
+        : (current != 0 ? 100.0 : 0.0);
     final isPositive = higherIsBetter ? change >= 0 : change <= 0;
-    final changeColor = isPositive ? Colors.green.shade700 : Colors.red.shade700;
+    final changeColor =
+        isPositive ? Colors.green.shade700 : Colors.red.shade700;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs),
@@ -342,7 +380,9 @@ class _CompRow extends StatelessWidget {
           ),
           Expanded(
             child: Text(
-              isCount ? current.toStringAsFixed(0) : '${current.toStringAsFixed(0)} ر.س',
+              isCount
+                  ? current.toStringAsFixed(0)
+                  : '${current.toStringAsFixed(0)} ر.س',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontWeight: bold ? FontWeight.bold : FontWeight.w500,
@@ -353,9 +393,13 @@ class _CompRow extends StatelessWidget {
           ),
           Expanded(
             child: Text(
-              isCount ? previous.toStringAsFixed(0) : '${previous.toStringAsFixed(0)} ر.س',
+              isCount
+                  ? previous.toStringAsFixed(0)
+                  : '${previous.toStringAsFixed(0)} ر.س',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 13, color: Theme.of(context).colorScheme.onSurfaceVariant),
+              style: TextStyle(
+                  fontSize: 13,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant),
             ),
           ),
           Expanded(
@@ -363,7 +407,9 @@ class _CompRow extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
-                  change >= 0 ? Icons.arrow_upward_rounded : Icons.arrow_downward_rounded,
+                  change >= 0
+                      ? Icons.arrow_upward_rounded
+                      : Icons.arrow_downward_rounded,
                   size: 14,
                   color: changeColor,
                 ),

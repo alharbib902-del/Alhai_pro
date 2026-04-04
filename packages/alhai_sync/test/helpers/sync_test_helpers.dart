@@ -68,7 +68,8 @@ void setupSelectChain(
   when(() => filterBuilder.gte(any(), any())).thenAnswer((_) => filterBuilder);
   when(() => filterBuilder.order(any(), ascending: any(named: 'ascending')))
       .thenAnswer((_) => filterBuilder);
-  when(() => filterBuilder.range(any(), any())).thenAnswer((_) => filterBuilder);
+  when(() => filterBuilder.range(any(), any()))
+      .thenAnswer((_) => filterBuilder);
   // Mock the `then()` method that `await` calls since PostgrestBuilder implements Future
   when(() => filterBuilder.then<dynamic>(any(), onError: any(named: 'onError')))
       .thenAnswer((invocation) {
@@ -120,7 +121,8 @@ void setupMaybeSingle(
 }) {
   final transformBuilder = MockPostgrestTransformBuilderNullableMap();
   when(() => filterBuilder.maybeSingle()).thenAnswer((_) => transformBuilder);
-  when(() => transformBuilder.then<dynamic>(any(), onError: any(named: 'onError')))
+  when(() =>
+          transformBuilder.then<dynamic>(any(), onError: any(named: 'onError')))
       .thenAnswer((invocation) {
     final onValue = invocation.positionalArguments[0] as Function;
     return Future.value(onValue(data));

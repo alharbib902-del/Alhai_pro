@@ -67,8 +67,7 @@ List<Override> defaultProviderOverrides({
         priority: any(named: 'priority'),
       )).thenAnswer((_) async => 'mock-sync-id');
 
-  when(() => mockSyncService.getPendingCount())
-      .thenAnswer((_) async => 0);
+  when(() => mockSyncService.getPendingCount()).thenAnswer((_) async => 0);
 
   when(() => mockSyncService.watchPendingCount())
       .thenAnswer((_) => Stream.value(0));
@@ -133,8 +132,7 @@ MockSyncService createMockSyncService() {
         priority: any(named: 'priority'),
       )).thenAnswer((_) async => 'mock-sync-id');
 
-  when(() => mockSyncService.getPendingCount())
-      .thenAnswer((_) async => 0);
+  when(() => mockSyncService.getPendingCount()).thenAnswer((_) async => 0);
 
   when(() => mockSyncService.watchPendingCount())
       .thenAnswer((_) => Stream.value(0));

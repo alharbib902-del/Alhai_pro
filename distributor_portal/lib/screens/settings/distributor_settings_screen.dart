@@ -124,134 +124,141 @@ class _DistributorSettingsScreenState
         child: Focus(
           autofocus: true,
           child: Scaffold(
-      backgroundColor: AppColors.getBackground(isDark),
-      appBar: AppBar(
-        title: Text(
-          l10n?.distributorSettings ?? 'الإعدادات',
-          style: TextStyle(fontWeight: FontWeight.bold, color: cs.onSurface),
-        ),
-        centerTitle: false,
-      ),
-      body: settingsAsync.when(
-        loading: () => const TableSkeleton(rows: 6, columns: 2),
-        error: (e, _) => Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.error_outline,
-                  size: 48, color: AppColors.getTextMuted(isDark)),
-              const SizedBox(height: AlhaiSpacing.md),
-              Text(
-                l10n?.distributorLoadError ?? 'حدث خطأ في تحميل الإعدادات',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: AppColors.getTextSecondary(isDark),
-                ),
+            backgroundColor: AppColors.getBackground(isDark),
+            appBar: AppBar(
+              title: Text(
+                l10n?.distributorSettings ?? 'الإعدادات',
+                style:
+                    TextStyle(fontWeight: FontWeight.bold, color: cs.onSurface),
               ),
-              const SizedBox(height: AlhaiSpacing.md),
-              FilledButton.icon(
-                onPressed: () => ref.invalidate(orgSettingsProvider),
-                icon: const Icon(Icons.refresh, size: 18),
-                label: Text(l10n?.distributorRetry ?? 'إعادة المحاولة'),
-                style: FilledButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: AppColors.textOnPrimary,
-                ),
-              ),
-            ],
-          ),
-        ),
-        data: (settings) {
-          if (settings == null) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.business_rounded,
-                      size: 48, color: AppColors.getTextMuted(isDark)),
-                  const SizedBox(height: AlhaiSpacing.md),
-                  Text(
-                    'لم يتم العثور على بيانات المنشأة',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: AppColors.getTextSecondary(isDark),
-                    ),
-                  ),
-                  const SizedBox(height: AlhaiSpacing.md),
-                  FilledButton.icon(
-                    onPressed: () => ref.invalidate(orgSettingsProvider),
-                    icon: const Icon(Icons.refresh, size: 18),
-                    label: Text(l10n?.distributorRetry ?? 'إعادة المحاولة'),
-                    style: FilledButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: AppColors.textOnPrimary,
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }
-
-          // Populate controllers once from fetched data
-          _populateFromSettings(settings);
-
-          return SingleChildScrollView(
-            padding:
-                EdgeInsets.all(isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md),
-            child: isWide
-                ? Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        flex: 3,
-                        child: Column(
-                          children: [
-                            _buildCompanyInfoSection(isDark),
-                            const SizedBox(height: AlhaiSpacing.lg),
-                            _buildDeliverySection(isDark, isMobile: isMobile),
-                          ],
-                        ),
+              centerTitle: false,
+            ),
+            body: settingsAsync.when(
+              loading: () => const TableSkeleton(rows: 6, columns: 2),
+              error: (e, _) => Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.error_outline,
+                        size: 48, color: AppColors.getTextMuted(isDark)),
+                    const SizedBox(height: AlhaiSpacing.md),
+                    Text(
+                      l10n?.distributorLoadError ??
+                          'حدث خطأ في تحميل الإعدادات',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: AppColors.getTextSecondary(isDark),
                       ),
-                      const SizedBox(width: AlhaiSpacing.lg),
-                      Expanded(
-                        flex: 2,
-                        child: Column(
+                    ),
+                    const SizedBox(height: AlhaiSpacing.md),
+                    FilledButton.icon(
+                      onPressed: () => ref.invalidate(orgSettingsProvider),
+                      icon: const Icon(Icons.refresh, size: 18),
+                      label: Text(l10n?.distributorRetry ?? 'إعادة المحاولة'),
+                      style: FilledButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        foregroundColor: AppColors.textOnPrimary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              data: (settings) {
+                if (settings == null) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.business_rounded,
+                            size: 48, color: AppColors.getTextMuted(isDark)),
+                        const SizedBox(height: AlhaiSpacing.md),
+                        Text(
+                          'لم يتم العثور على بيانات المنشأة',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: AppColors.getTextSecondary(isDark),
+                          ),
+                        ),
+                        const SizedBox(height: AlhaiSpacing.md),
+                        FilledButton.icon(
+                          onPressed: () => ref.invalidate(orgSettingsProvider),
+                          icon: const Icon(Icons.refresh, size: 18),
+                          label:
+                              Text(l10n?.distributorRetry ?? 'إعادة المحاولة'),
+                          style: FilledButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                            foregroundColor: AppColors.textOnPrimary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
+                // Populate controllers once from fetched data
+                _populateFromSettings(settings);
+
+                return SingleChildScrollView(
+                  padding: EdgeInsets.all(
+                      isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md),
+                  child: isWide
+                      ? Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              flex: 3,
+                              child: Column(
+                                children: [
+                                  _buildCompanyInfoSection(isDark),
+                                  const SizedBox(height: AlhaiSpacing.lg),
+                                  _buildDeliverySection(isDark,
+                                      isMobile: isMobile),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: AlhaiSpacing.lg),
+                            Expanded(
+                              flex: 2,
+                              child: Column(
+                                children: [
+                                  _buildAppearanceSection(isDark, ref),
+                                  const SizedBox(height: AlhaiSpacing.lg),
+                                  _buildNotificationsSection(isDark),
+                                  const SizedBox(height: AlhaiSpacing.lg),
+                                  _buildSaveButton(isDark),
+                                ],
+                              ),
+                            ),
+                          ],
+                        )
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             _buildAppearanceSection(isDark, ref),
-                            const SizedBox(height: AlhaiSpacing.lg),
+                            SizedBox(
+                                height: isMedium
+                                    ? AlhaiSpacing.lg
+                                    : AlhaiSpacing.md),
+                            _buildCompanyInfoSection(isDark),
+                            SizedBox(
+                                height: isMedium
+                                    ? AlhaiSpacing.lg
+                                    : AlhaiSpacing.md),
                             _buildNotificationsSection(isDark),
+                            SizedBox(
+                                height: isMedium
+                                    ? AlhaiSpacing.lg
+                                    : AlhaiSpacing.md),
+                            _buildDeliverySection(isDark, isMobile: isMobile),
                             const SizedBox(height: AlhaiSpacing.lg),
                             _buildSaveButton(isDark),
+                            const SizedBox(height: AlhaiSpacing.xl),
                           ],
                         ),
-                      ),
-                    ],
-                  )
-                : Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      _buildAppearanceSection(isDark, ref),
-                      SizedBox(
-                          height:
-                              isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md),
-                      _buildCompanyInfoSection(isDark),
-                      SizedBox(
-                          height:
-                              isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md),
-                      _buildNotificationsSection(isDark),
-                      SizedBox(
-                          height:
-                              isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md),
-                      _buildDeliverySection(isDark, isMobile: isMobile),
-                      const SizedBox(height: AlhaiSpacing.lg),
-                      _buildSaveButton(isDark),
-                      const SizedBox(height: AlhaiSpacing.xl),
-                    ],
-                  ),
-          );
-        },
-      ),
-    ),
+                );
+              },
+            ),
+          ),
         ),
       ),
     );
@@ -263,8 +270,8 @@ class _DistributorSettingsScreenState
       context: context,
       builder: (context) => AlertDialog(
         title: Text(l10n?.distributorUnsavedChanges ?? 'تغييرات غير محفوظة'),
-        content: Text(
-            l10n?.distributorUnsavedChangesMessage ?? 'لديك تغييرات غير محفوظة. هل تريد المغادرة بدون حفظ؟'),
+        content: Text(l10n?.distributorUnsavedChangesMessage ??
+            'لديك تغييرات غير محفوظة. هل تريد المغادرة بدون حفظ؟'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -414,7 +421,8 @@ class _DistributorSettingsScreenState
       children: [
         _buildFieldWithHelp(
           label: 'مناطق التوصيل',
-          helpText: 'أدخل أسماء المدن أو المناطق مفصولة بفاصلة. مثال: الرياض، جدة، الدمام',
+          helpText:
+              'أدخل أسماء المدن أو المناطق مفصولة بفاصلة. مثال: الرياض، جدة، الدمام',
           controller: _deliveryZonesController,
           icon: Icons.map_rounded,
           maxLines: 2,
@@ -423,33 +431,34 @@ class _DistributorSettingsScreenState
           isDark: isDark,
         ),
         const SizedBox(height: AlhaiSpacing.md),
-        if (isMobile)
-          ...[
-            _buildFieldWithHelp(
-              label: 'الحد الأدنى للطلب (ر.س)',
-              helpText: 'أقل مبلغ مطلوب لقبول الطلب. الطلبات الأقل من هذا المبلغ لن تُقبل تلقائياً',
-              controller: _minOrderController,
-              icon: Icons.shopping_cart_rounded,
-              keyboardType: TextInputType.number,
-              isDark: isDark,
-            ),
-            const SizedBox(height: AlhaiSpacing.md),
-            _buildFieldWithHelp(
-              label: 'رسوم التوصيل (ر.س)',
-              helpText: 'المبلغ الذي يُضاف على كل طلب كرسوم توصيل. يظهر للمتاجر عند تقديم الطلب',
-              controller: _deliveryFeeController,
-              icon: Icons.delivery_dining_rounded,
-              keyboardType: TextInputType.number,
-              isDark: isDark,
-            ),
-          ]
-        else
+        if (isMobile) ...[
+          _buildFieldWithHelp(
+            label: 'الحد الأدنى للطلب (ر.س)',
+            helpText:
+                'أقل مبلغ مطلوب لقبول الطلب. الطلبات الأقل من هذا المبلغ لن تُقبل تلقائياً',
+            controller: _minOrderController,
+            icon: Icons.shopping_cart_rounded,
+            keyboardType: TextInputType.number,
+            isDark: isDark,
+          ),
+          const SizedBox(height: AlhaiSpacing.md),
+          _buildFieldWithHelp(
+            label: 'رسوم التوصيل (ر.س)',
+            helpText:
+                'المبلغ الذي يُضاف على كل طلب كرسوم توصيل. يظهر للمتاجر عند تقديم الطلب',
+            controller: _deliveryFeeController,
+            icon: Icons.delivery_dining_rounded,
+            keyboardType: TextInputType.number,
+            isDark: isDark,
+          ),
+        ] else
           Row(
             children: [
               Expanded(
                 child: _buildFieldWithHelp(
                   label: 'الحد الأدنى للطلب (ر.س)',
-                  helpText: 'أقل مبلغ مطلوب لقبول الطلب. الطلبات الأقل من هذا المبلغ لن تُقبل تلقائياً',
+                  helpText:
+                      'أقل مبلغ مطلوب لقبول الطلب. الطلبات الأقل من هذا المبلغ لن تُقبل تلقائياً',
                   controller: _minOrderController,
                   icon: Icons.shopping_cart_rounded,
                   keyboardType: TextInputType.number,
@@ -460,7 +469,8 @@ class _DistributorSettingsScreenState
               Expanded(
                 child: _buildFieldWithHelp(
                   label: 'رسوم التوصيل (ر.س)',
-                  helpText: 'المبلغ الذي يُضاف على كل طلب كرسوم توصيل. يظهر للمتاجر عند تقديم الطلب',
+                  helpText:
+                      'المبلغ الذي يُضاف على كل طلب كرسوم توصيل. يظهر للمتاجر عند تقديم الطلب',
                   controller: _deliveryFeeController,
                   icon: Icons.delivery_dining_rounded,
                   keyboardType: TextInputType.number,
@@ -506,21 +516,26 @@ class _DistributorSettingsScreenState
           'تلقائي (حسب النظام)',
           Icons.brightness_auto_rounded,
           currentMode == ThemeMode.system,
-          () => ref.read(themeModeProvider.notifier).setThemeMode(ThemeMode.system),
+          () => ref
+              .read(themeModeProvider.notifier)
+              .setThemeMode(ThemeMode.system),
           isDark,
         ),
         _themeTile(
           'الوضع الفاتح',
           Icons.light_mode_rounded,
           currentMode == ThemeMode.light,
-          () => ref.read(themeModeProvider.notifier).setThemeMode(ThemeMode.light),
+          () => ref
+              .read(themeModeProvider.notifier)
+              .setThemeMode(ThemeMode.light),
           isDark,
         ),
         _themeTile(
           'الوضع الداكن',
           Icons.dark_mode_rounded,
           currentMode == ThemeMode.dark,
-          () => ref.read(themeModeProvider.notifier).setThemeMode(ThemeMode.dark),
+          () =>
+              ref.read(themeModeProvider.notifier).setThemeMode(ThemeMode.dark),
           isDark,
         ),
       ],
@@ -578,22 +593,22 @@ class _DistributorSettingsScreenState
         width: double.infinity,
         child: FilledButton.icon(
           onPressed: _isSaving ? null : _saveSettings,
-        icon: _isSaving
-            ? const SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(
-                    strokeWidth: 2, color: AppColors.textOnPrimary),
-              )
-            : const Icon(Icons.save_rounded, size: 20),
-        label: const Text('حفظ الإعدادات',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-        style: FilledButton.styleFrom(
-          backgroundColor: AppColors.primary,
-          foregroundColor: AppColors.textOnPrimary,
-          padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AlhaiRadius.md)),
+          icon: _isSaving
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                      strokeWidth: 2, color: AppColors.textOnPrimary),
+                )
+              : const Icon(Icons.save_rounded, size: 20),
+          label: const Text('حفظ الإعدادات',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+          style: FilledButton.styleFrom(
+            backgroundColor: AppColors.primary,
+            foregroundColor: AppColors.textOnPrimary,
+            padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AlhaiRadius.md)),
           ),
         ),
       ),
@@ -696,11 +711,10 @@ class _DistributorSettingsScreenState
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AlhaiRadius.md),
-              borderSide:
-                  const BorderSide(color: AppColors.primary, width: 2),
+              borderSide: const BorderSide(color: AppColors.primary, width: 2),
             ),
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+            contentPadding: const EdgeInsets.symmetric(
+                horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
           ),
         ),
       ],
@@ -772,11 +786,10 @@ class _DistributorSettingsScreenState
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AlhaiRadius.md),
-              borderSide:
-                  const BorderSide(color: AppColors.primary, width: 2),
+              borderSide: const BorderSide(color: AppColors.primary, width: 2),
             ),
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+            contentPadding: const EdgeInsets.symmetric(
+                horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
           ),
         ),
       ],
@@ -808,7 +821,10 @@ class _DistributorSettingsScreenState
           ),
           Switch(
             value: value,
-            onChanged: (v) { onChanged(v); _hasChanges = true; },
+            onChanged: (v) {
+              onChanged(v);
+              _hasChanges = true;
+            },
             activeColor: AppColors.primary,
           ),
         ],
@@ -827,7 +843,8 @@ class _DistributorSettingsScreenState
         final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(l10n?.distributorInvalidEmail ?? 'يرجى إدخال بريد إلكتروني صحيح'),
+            content: Text(l10n?.distributorInvalidEmail ??
+                'يرجى إدخال بريد إلكتروني صحيح'),
             backgroundColor: AppColors.error,
           ),
         );
@@ -842,7 +859,8 @@ class _DistributorSettingsScreenState
         final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(l10n?.distributorInvalidPhone ?? 'يرجى إدخال رقم هاتف صحيح'),
+            content: Text(
+                l10n?.distributorInvalidPhone ?? 'يرجى إدخال رقم هاتف صحيح'),
             backgroundColor: AppColors.error,
           ),
         );
@@ -885,7 +903,8 @@ class _DistributorSettingsScreenState
       final l10n = AppLocalizations.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(l10n?.distributorSettingsSaved ?? 'تم حفظ الإعدادات بنجاح'),
+          content:
+              Text(l10n?.distributorSettingsSaved ?? 'تم حفظ الإعدادات بنجاح'),
           backgroundColor: AppColors.success,
         ),
       );
@@ -896,7 +915,8 @@ class _DistributorSettingsScreenState
       final l10n = AppLocalizations.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(l10n?.distributorSaveError ?? 'حدث خطأ أثناء حفظ الإعدادات'),
+          content:
+              Text(l10n?.distributorSaveError ?? 'حدث خطأ أثناء حفظ الإعدادات'),
           backgroundColor: AppColors.error,
         ),
       );

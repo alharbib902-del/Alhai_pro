@@ -29,17 +29,13 @@ class LanguageSelectorButton extends ConsumerWidget {
     final localeState = ref.watch(localeProvider);
     final currentLocale = localeState.locale;
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    
+
     // ألوان متوافقة مع الوضع الداكن
     final backgroundColor = isDarkMode
         ? AppColors.surfaceVariantDark
         : AppColors.backgroundSecondary;
-    final textColor = isDarkMode 
-        ? Colors.white 
-        : AppColors.textSecondary;
-    final iconColor = isDarkMode 
-        ? Colors.white70 
-        : AppColors.textTertiary;
+    final textColor = isDarkMode ? Colors.white : AppColors.textSecondary;
+    final iconColor = isDarkMode ? Colors.white70 : AppColors.textTertiary;
 
     return InkWell(
       onTap: () => _showLanguageDialog(context, ref),
@@ -52,9 +48,7 @@ class LanguageSelectorButton extends ConsumerWidget {
         decoration: BoxDecoration(
           color: backgroundColor,
           borderRadius: BorderRadius.circular(8),
-          border: isDarkMode 
-              ? Border.all(color: Colors.white12) 
-              : null,
+          border: isDarkMode ? Border.all(color: Colors.white12) : null,
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -113,14 +107,10 @@ class LanguagePickerSheet extends ConsumerWidget {
     final localeState = ref.watch(localeProvider);
     final currentLocale = localeState.locale;
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    
+
     // ألوان متوافقة مع الوضع الفاتح والداكن
-    final backgroundColor = isDarkMode
-        ? AppColors.surfaceDark
-        : Colors.white;
-    final handleColor = isDarkMode 
-        ? Colors.white24 
-        : AppColors.border;
+    final backgroundColor = isDarkMode ? AppColors.surfaceDark : Colors.white;
+    final handleColor = isDarkMode ? Colors.white24 : AppColors.border;
 
     return Container(
       decoration: BoxDecoration(
@@ -162,7 +152,8 @@ class LanguagePickerSheet extends ConsumerWidget {
               itemCount: SupportedLocales.all.length,
               itemBuilder: (context, index) {
                 final locale = SupportedLocales.all[index];
-                final isSelected = locale.languageCode == currentLocale.languageCode;
+                final isSelected =
+                    locale.languageCode == currentLocale.languageCode;
                 return _LanguageOption(
                   locale: locale,
                   isSelected: isSelected,
@@ -198,7 +189,7 @@ class _LanguageOption extends StatelessWidget {
   Widget build(BuildContext context) {
     final textColor = Theme.of(context).colorScheme.onSurface;
     final subtitleColor = Theme.of(context).colorScheme.onSurfaceVariant;
-    
+
     return ListTile(
       onTap: onTap,
       leading: Text(
@@ -284,7 +275,8 @@ class LanguageSettingsScreen extends ConsumerWidget {
                 SizedBox(width: AlhaiSpacing.sm),
                 Expanded(
                   child: Text(
-                    l10n?.languageChangeInfo ?? 'Choose your preferred display language. Changes will be applied immediately.',
+                    l10n?.languageChangeInfo ??
+                        'Choose your preferred display language. Changes will be applied immediately.',
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                       fontSize: 13,
@@ -299,7 +291,8 @@ class LanguageSettingsScreen extends ConsumerWidget {
 
           // قائمة اللغات
           ...SupportedLocales.all.map((locale) {
-            final isSelected = locale.languageCode == currentLocale.languageCode;
+            final isSelected =
+                locale.languageCode == currentLocale.languageCode;
             return Padding(
               padding: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
               child: _LanguageCard(
@@ -344,7 +337,9 @@ class _LanguageCard extends StatelessWidget {
                 : Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isSelected ? AppColors.primary : Theme.of(context).dividerColor,
+              color: isSelected
+                  ? AppColors.primary
+                  : Theme.of(context).dividerColor,
               width: isSelected ? 2 : 1,
             ),
           ),
@@ -378,7 +373,8 @@ class _LanguageCard extends StatelessWidget {
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.onSurface,
                         fontSize: 16,
-                        fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                        fontWeight:
+                            isSelected ? FontWeight.bold : FontWeight.w500,
                       ),
                     ),
                     SizedBox(height: AlhaiSpacing.xxs),
@@ -408,7 +404,8 @@ class _LanguageCard extends StatelessWidget {
                         Text(
                           locale.countryCode ?? '',
                           style: TextStyle(
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
                             fontSize: 12,
                           ),
                         ),

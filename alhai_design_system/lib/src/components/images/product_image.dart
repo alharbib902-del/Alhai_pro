@@ -7,16 +7,16 @@ import 'package:alhai_design_system/alhai_design_system.dart';
 enum ImageSize {
   /// 300×300 - For Grid, List, Search
   thumbnail,
-  
+
   /// 600×600 - For Quick View, Drawer
   medium,
-  
+
   /// 1200×1200 - For Product Detail, Zoom
   large,
 }
 
 /// Widget to display product images with automatic caching and fallbacks
-/// 
+///
 /// Usage:
 /// ```dart
 /// // In Grid
@@ -26,7 +26,7 @@ enum ImageSize {
 ///   large: product.imageLarge,
 ///   size: ImageSize.thumbnail,
 /// )
-/// 
+///
 /// // In Detail Screen
 /// ProductImage(
 ///   thumbnail: product.imageThumbnail,
@@ -150,7 +150,10 @@ class ProductImage extends StatelessWidget {
         child: Icon(
           Icons.image_outlined,
           size: _getIconSize(),
-          color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+          color: Theme.of(context)
+              .colorScheme
+              .onSurfaceVariant
+              .withValues(alpha: 0.5),
         ),
       ),
     );
@@ -161,7 +164,8 @@ class ProductImage extends StatelessWidget {
       width: width,
       height: height,
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.errorContainer.withValues(alpha: 0.1),
+        color:
+            Theme.of(context).colorScheme.errorContainer.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(AlhaiRadius.sm),
       ),
       child: Center(

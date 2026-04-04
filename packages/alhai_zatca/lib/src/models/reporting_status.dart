@@ -22,10 +22,12 @@ enum ReportingStatus {
 /// Extension helpers for ReportingStatus
 extension ReportingStatusX on ReportingStatus {
   /// Whether the invoice has been successfully processed by ZATCA
-  bool get isSuccess => this == ReportingStatus.reported || this == ReportingStatus.cleared;
+  bool get isSuccess =>
+      this == ReportingStatus.reported || this == ReportingStatus.cleared;
 
   /// Whether the invoice needs to be resubmitted
-  bool get needsRetry => this == ReportingStatus.failed || this == ReportingStatus.queued;
+  bool get needsRetry =>
+      this == ReportingStatus.failed || this == ReportingStatus.queued;
 
   /// Human-readable Arabic label
   String get labelAr {

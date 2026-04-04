@@ -11,13 +11,13 @@ library;
 abstract class AppException implements Exception {
   /// رسالة الخطأ للمطور
   final String message;
-  
+
   /// رسالة الخطأ للمستخدم (بالعربي)
   final String userMessage;
-  
+
   /// كود الخطأ
   final String? code;
-  
+
   /// تفاصيل إضافية
   final dynamic details;
 
@@ -44,7 +44,7 @@ class NetworkException extends AppException {
     super.code,
     super.details,
   });
-  
+
   /// لا يوجد اتصال بالإنترنت
   factory NetworkException.noConnection() {
     return const NetworkException(
@@ -53,7 +53,7 @@ class NetworkException extends AppException {
       code: 'NO_CONNECTION',
     );
   }
-  
+
   /// انتهاء وقت الطلب
   factory NetworkException.timeout() {
     return const NetworkException(
@@ -62,7 +62,7 @@ class NetworkException extends AppException {
       code: 'TIMEOUT',
     );
   }
-  
+
   /// خطأ في الخادم
   factory NetworkException.serverError([int? statusCode]) {
     return NetworkException(
@@ -86,7 +86,7 @@ class AuthException extends AppException {
     super.code,
     super.details,
   });
-  
+
   /// جلسة منتهية
   factory AuthException.sessionExpired() {
     return const AuthException(
@@ -95,7 +95,7 @@ class AuthException extends AppException {
       code: 'SESSION_EXPIRED',
     );
   }
-  
+
   /// غير مصرح
   factory AuthException.unauthorized() {
     return const AuthException(
@@ -104,7 +104,7 @@ class AuthException extends AppException {
       code: 'UNAUTHORIZED',
     );
   }
-  
+
   /// رمز OTP غير صحيح
   factory AuthException.invalidOtp() {
     return const AuthException(
@@ -113,7 +113,7 @@ class AuthException extends AppException {
       code: 'INVALID_OTP',
     );
   }
-  
+
   /// رقم هاتف غير صالح
   factory AuthException.invalidPhone() {
     return const AuthException(
@@ -122,7 +122,7 @@ class AuthException extends AppException {
       code: 'INVALID_PHONE',
     );
   }
-  
+
   /// Token منتهي
   factory AuthException.tokenExpired() {
     return const AuthException(
@@ -145,7 +145,7 @@ class DatabaseException extends AppException {
     super.code,
     super.details,
   });
-  
+
   /// فشل إدراج البيانات
   factory DatabaseException.insertFailed([String? table]) {
     return DatabaseException(
@@ -155,7 +155,7 @@ class DatabaseException extends AppException {
       details: {'table': table},
     );
   }
-  
+
   /// فشل التحديث
   factory DatabaseException.updateFailed([String? table]) {
     return DatabaseException(
@@ -165,7 +165,7 @@ class DatabaseException extends AppException {
       details: {'table': table},
     );
   }
-  
+
   /// العنصر غير موجود
   factory DatabaseException.notFound([String? id]) {
     return DatabaseException(
@@ -189,7 +189,7 @@ class ValidationException extends AppException {
     super.code,
     super.details,
   });
-  
+
   /// حقل مطلوب
   factory ValidationException.required(String field) {
     return ValidationException(
@@ -199,7 +199,7 @@ class ValidationException extends AppException {
       details: {'field': field},
     );
   }
-  
+
   /// قيمة غير صالحة
   factory ValidationException.invalid(String field) {
     return ValidationException(
@@ -229,8 +229,8 @@ class BusinessException extends AppException {
     return BusinessException(
       message: 'Out of stock: $productName',
       userMessage: productName != null
-        ? 'المنتج "$productName" غير متوفر'
-        : 'المنتج غير متوفر في المخزون',
+          ? 'المنتج "$productName" غير متوفر'
+          : 'المنتج غير متوفر في المخزون',
       code: 'OUT_OF_STOCK',
       details: {'product': productName},
     );
@@ -319,10 +319,13 @@ class SaleException extends AppException {
   }
 
   /// المخزون غير كافٍ
-  factory SaleException.insufficientStock(String productName, double available, double requested) {
+  factory SaleException.insufficientStock(
+      String productName, double available, double requested) {
     return SaleException(
-      message: 'Insufficient stock for "$productName": available=$available, requested=$requested',
-      userMessage: 'المنتج "$productName" لا يتوفر بالكمية المطلوبة. المتاح: $available، المطلوب: $requested',
+      message:
+          'Insufficient stock for "$productName": available=$available, requested=$requested',
+      userMessage:
+          'المنتج "$productName" لا يتوفر بالكمية المطلوبة. المتاح: $available، المطلوب: $requested',
       code: 'INSUFFICIENT_STOCK',
       details: {
         'productName': productName,
@@ -357,7 +360,8 @@ class PermissionException extends AppException {
   }
 
   /// دور غير كافي
-  factory PermissionException.insufficientRole(String required, String current) {
+  factory PermissionException.insufficientRole(
+      String required, String current) {
     return PermissionException(
       message: 'Role required: $required, current: $current',
       userMessage: 'هذا الإجراء يتطلب صلاحيات أعلى',

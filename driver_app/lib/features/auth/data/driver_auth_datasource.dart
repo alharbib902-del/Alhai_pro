@@ -114,14 +114,12 @@ class DriverAuthDatasource {
       if (vehicleType != null) driverUpdates['vehicle_type'] = vehicleType;
       if (vehiclePlate != null) driverUpdates['vehicle_plate'] = vehiclePlate;
 
-      await _client
-          .from('drivers')
-          .upsert({
-            'id': userId,
-            'name': name ?? '',
-            'phone': _client.auth.currentUser?.phone ?? '',
-            ...driverUpdates,
-          }, onConflict: 'id');
+      await _client.from('drivers').upsert({
+        'id': userId,
+        'name': name ?? '',
+        'phone': _client.auth.currentUser?.phone ?? '',
+        ...driverUpdates,
+      }, onConflict: 'id');
     }
   }
 
@@ -129,20 +127,14 @@ class DriverAuthDatasource {
     final userId = _client.auth.currentUser?.id;
     if (userId == null) return;
 
-    await _client
-        .from('users')
-        .update({'fcm_token': token})
-        .eq('id', userId);
+    await _client.from('users').update({'fcm_token': token}).eq('id', userId);
   }
 
   Future<void> logout() async {
     // Clear FCM token on logout
     final userId = _client.auth.currentUser?.id;
     if (userId != null) {
-      await _client
-          .from('users')
-          .update({'fcm_token': null})
-          .eq('id', userId);
+      await _client.from('users').update({'fcm_token': null}).eq('id', userId);
     }
     await _client.auth.signOut();
   }

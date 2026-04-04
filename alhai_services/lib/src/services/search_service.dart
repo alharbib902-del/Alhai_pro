@@ -16,12 +16,12 @@ class SearchService {
     int limit = 20,
   }) async {
     if (query.isEmpty) return [];
-    
+
     final result = await _productsRepo.getProducts(
       storeId,
       limit: limit,
     );
-    
+
     // Filter locally by name or barcode
     return result.items.where((product) {
       return product.name.contains(query) ||
@@ -31,9 +31,10 @@ class SearchService {
   }
 
   /// بحث بالباركود
-  Future<Product?> searchByBarcode(String barcode, {required String storeId}) async {
+  Future<Product?> searchByBarcode(String barcode,
+      {required String storeId}) async {
     if (barcode.isEmpty) return null;
-    
+
     try {
       return await _productsRepo.getByBarcode(barcode);
     } catch (e) {
@@ -48,13 +49,13 @@ class SearchService {
     int limit = 20,
   }) async {
     if (query.isEmpty) return [];
-    
+
     // Search by order number or customer name/phone
     final result = await _ordersRepo.getOrders(
       page: 1,
       limit: limit,
     );
-    
+
     // Filter locally
     return result.items.where((order) {
       return (order.orderNumber?.contains(query) ?? false) ||
@@ -70,13 +71,13 @@ class SearchService {
     int limit = 20,
   }) async {
     if (query.isEmpty) return [];
-    
+
     final result = await _debtsRepo.getDebts(
       storeId,
       page: 1,
       limit: limit,
     );
-    
+
     // Filter locally
     return result.items.where((debt) {
       return debt.partyName.contains(query) ||
@@ -116,8 +117,9 @@ class SearchService {
   }) async {
     if (query.length < 2) return [];
 
-    final products = await searchProducts(query, storeId: storeId, limit: limit);
-    
+    final products =
+        await searchProducts(query, storeId: storeId, limit: limit);
+
     return products.map((p) => p.name).toList();
   }
 }
@@ -137,11 +139,11 @@ class UnifiedSearchResult {
   });
 
   factory UnifiedSearchResult.empty() => const UnifiedSearchResult(
-    query: '',
-    products: [],
-    orders: [],
-    debts: [],
-  );
+        query: '',
+        products: [],
+        orders: [],
+        debts: [],
+      );
 
   int get totalCount => products.length + orders.length + debts.length;
   bool get isEmpty => totalCount == 0;

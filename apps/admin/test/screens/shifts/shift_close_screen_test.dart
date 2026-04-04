@@ -19,8 +19,7 @@ void main() {
     setupTestGetIt(mockDb: db);
 
     // Return null to indicate no open shift
-    when(() => shiftsDao.getAnyOpenShift(any()))
-        .thenAnswer((_) async => null);
+    when(() => shiftsDao.getAnyOpenShift(any())).thenAnswer((_) async => null);
   });
 
   tearDown(() => tearDownTestGetIt());
@@ -31,8 +30,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const ShiftCloseScreen()));
+      await tester.pumpWidget(createTestWidget(const ShiftCloseScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(ShiftCloseScreen), findsOneWidget);
@@ -46,8 +44,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const ShiftCloseScreen()));
+      await tester.pumpWidget(createTestWidget(const ShiftCloseScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.timer_off_rounded), findsWidgets);
@@ -61,8 +58,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const ShiftCloseScreen()));
+      await tester.pumpWidget(createTestWidget(const ShiftCloseScreen()));
       await tester.pumpAndSettle();
 
       // When no shift is open, the close button may not be visible

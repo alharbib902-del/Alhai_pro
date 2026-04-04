@@ -32,7 +32,7 @@ class AlhaiBottomNavItem {
 }
 
 /// AlhaiBottomNavBar - Bottom navigation bar for main navigation
-/// 
+///
 /// Features:
 /// - 2-5 navigation items
 /// - Icons with labels
@@ -65,7 +65,7 @@ class AlhaiBottomNavBar extends StatelessWidget {
     this.enabled = true,
     this.backgroundColor,
   }) : assert(items.length >= 2 && items.length <= 5,
-           'AlhaiBottomNavBar requires 2-5 items');
+            'AlhaiBottomNavBar requires 2-5 items');
 
   @override
   Widget build(BuildContext context) {
@@ -125,13 +125,12 @@ class _NavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final effectiveIcon = isSelected ? (item.activeIcon ?? item.icon) : item.icon;
-    final iconColor = isSelected 
-        ? colorScheme.primary 
-        : colorScheme.onSurfaceVariant;
-    final labelColor = isSelected 
-        ? colorScheme.primary 
-        : colorScheme.onSurfaceVariant;
+    final effectiveIcon =
+        isSelected ? (item.activeIcon ?? item.icon) : item.icon;
+    final iconColor =
+        isSelected ? colorScheme.primary : colorScheme.onSurfaceVariant;
+    final labelColor =
+        isSelected ? colorScheme.primary : colorScheme.onSurfaceVariant;
 
     return Semantics(
       label: item.label,
@@ -187,7 +186,8 @@ class _NavItem extends StatelessWidget {
         vertical: AlhaiSpacing.xxs,
       ),
       decoration: BoxDecoration(
-        color: isSelected ? colorScheme.primaryContainer : AlhaiColors.transparent,
+        color:
+            isSelected ? colorScheme.primaryContainer : AlhaiColors.transparent,
         borderRadius: BorderRadius.circular(AlhaiRadius.full),
       ),
       child: Icon(

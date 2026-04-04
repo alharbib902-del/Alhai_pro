@@ -71,7 +71,8 @@ void main() {
       final container = ProviderContainer();
       addTearDown(container.dispose);
 
-      container.read(approvalFilterProvider.notifier).state = ApprovalFilter.pending;
+      container.read(approvalFilterProvider.notifier).state =
+          ApprovalFilter.pending;
 
       expect(container.read(approvalFilterProvider), ApprovalFilter.pending);
     });
@@ -205,9 +206,9 @@ void main() {
     test('returns count from database query', () async {
       final selectable = MockSelectable();
       when(() => db.customSelect(
-        any(),
-        variables: any(named: 'variables'),
-      )).thenReturn(selectable);
+            any(),
+            variables: any(named: 'variables'),
+          )).thenReturn(selectable);
       when(() => selectable.getSingle()).thenAnswer(
         (_) async => FakeQueryRow({'count': 5}),
       );
@@ -226,9 +227,9 @@ void main() {
     test('returns 0 when database query throws', () async {
       final selectable = MockSelectable();
       when(() => db.customSelect(
-        any(),
-        variables: any(named: 'variables'),
-      )).thenReturn(selectable);
+            any(),
+            variables: any(named: 'variables'),
+          )).thenReturn(selectable);
       when(() => selectable.getSingle()).thenThrow(Exception('DB error'));
 
       setupTestGetIt(mockDb: db);
@@ -249,17 +250,16 @@ void main() {
 
   group('approveRefund', () {
     test('returns true on success', () async {
-      when(() => db.customStatement(any(), any()))
-          .thenAnswer((_) async {});
+      when(() => db.customStatement(any(), any())).thenAnswer((_) async {});
       when(() => auditLogDao.log(
-        storeId: any(named: 'storeId'),
-        userId: any(named: 'userId'),
-        userName: any(named: 'userName'),
-        action: any(named: 'action'),
-        entityType: any(named: 'entityType'),
-        entityId: any(named: 'entityId'),
-        description: any(named: 'description'),
-      )).thenAnswer((_) async => 1);
+            storeId: any(named: 'storeId'),
+            userId: any(named: 'userId'),
+            userName: any(named: 'userName'),
+            action: any(named: 'action'),
+            entityType: any(named: 'entityType'),
+            entityId: any(named: 'entityId'),
+            description: any(named: 'description'),
+          )).thenAnswer((_) async => 1);
 
       setupTestGetIt(mockDb: db);
 
@@ -296,17 +296,16 @@ void main() {
 
   group('rejectRefund', () {
     test('returns true on success', () async {
-      when(() => db.customStatement(any(), any()))
-          .thenAnswer((_) async {});
+      when(() => db.customStatement(any(), any())).thenAnswer((_) async {});
       when(() => auditLogDao.log(
-        storeId: any(named: 'storeId'),
-        userId: any(named: 'userId'),
-        userName: any(named: 'userName'),
-        action: any(named: 'action'),
-        entityType: any(named: 'entityType'),
-        entityId: any(named: 'entityId'),
-        description: any(named: 'description'),
-      )).thenAnswer((_) async => 1);
+            storeId: any(named: 'storeId'),
+            userId: any(named: 'userId'),
+            userName: any(named: 'userName'),
+            action: any(named: 'action'),
+            entityType: any(named: 'entityType'),
+            entityId: any(named: 'entityId'),
+            description: any(named: 'description'),
+          )).thenAnswer((_) async => 1);
 
       setupTestGetIt(mockDb: db);
 

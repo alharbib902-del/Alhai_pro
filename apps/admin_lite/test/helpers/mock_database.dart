@@ -12,16 +12,27 @@ class MockAppDatabase extends Mock implements AppDatabase {}
 
 // DAOs used by Admin Lite
 class MockSalesDao extends Mock implements SalesDao {}
+
 class MockProductsDao extends Mock implements ProductsDao {}
+
 class MockAuditLogDao extends Mock implements AuditLogDao {}
+
 class MockReturnsDao extends Mock implements ReturnsDao {}
+
 class MockShiftsDao extends Mock implements ShiftsDao {}
+
 class MockOrdersDao extends Mock implements OrdersDao {}
+
 class MockCustomersDao extends Mock implements CustomersDao {}
+
 class MockCategoriesDao extends Mock implements CategoriesDao {}
+
 class MockInventoryDao extends Mock implements InventoryDao {}
+
 class MockNotificationsDao extends Mock implements NotificationsDao {}
+
 class MockStoresDao extends Mock implements StoresDao {}
+
 class MockSyncQueueDao extends Mock implements SyncQueueDao {}
 
 // ============================================================================
@@ -67,7 +78,8 @@ MockAppDatabase setupMockDatabase({
   when(() => db.customersDao).thenReturn(customersDao ?? MockCustomersDao());
   when(() => db.categoriesDao).thenReturn(categoriesDao ?? MockCategoriesDao());
   when(() => db.inventoryDao).thenReturn(inventoryDao ?? MockInventoryDao());
-  when(() => db.notificationsDao).thenReturn(notificationsDao ?? MockNotificationsDao());
+  when(() => db.notificationsDao)
+      .thenReturn(notificationsDao ?? MockNotificationsDao());
   when(() => db.storesDao).thenReturn(storesDao ?? MockStoresDao());
   when(() => db.syncQueueDao).thenReturn(syncQueueDao ?? MockSyncQueueDao());
 

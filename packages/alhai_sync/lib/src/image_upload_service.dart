@@ -109,7 +109,8 @@ class ImageUploadService {
   }) async {
     try {
       final hash = _generateHash(imageBytes);
-      final basePath = 'org/$orgId/products/${sku.isNotEmpty ? sku : orgProductId}';
+      final basePath =
+          'org/$orgId/products/${sku.isNotEmpty ? sku : orgProductId}';
 
       final thumbPath = '$basePath/thumb_$hash.webp';
       final mediumPath = '$basePath/medium_$hash.webp';
@@ -193,7 +194,8 @@ class ImageUploadService {
           '${now.year}/${now.month.toString().padLeft(2, '0')}/'
           '$invoiceNumber.pdf';
 
-      await _uploadFile(invoiceAttachmentsBucket, path, pdfBytes, 'application/pdf');
+      await _uploadFile(
+          invoiceAttachmentsBucket, path, pdfBytes, 'application/pdf');
       return _getPublicUrl(invoiceAttachmentsBucket, path);
     } catch (e) {
       if (kDebugMode) {

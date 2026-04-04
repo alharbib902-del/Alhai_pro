@@ -42,8 +42,7 @@ extension AlhaiContextExtensions on BuildContext {
   // ============================================
 
   /// Is portrait orientation
-  bool get isPortrait =>
-      MediaQuery.orientationOf(this) == Orientation.portrait;
+  bool get isPortrait => MediaQuery.orientationOf(this) == Orientation.portrait;
 
   /// Is landscape orientation
   bool get isLandscape =>
@@ -73,19 +72,20 @@ extension AlhaiContextExtensions on BuildContext {
 
   /// Whether user prefers reduced motion (accessibility)
   bool get prefersReducedMotion => MediaQuery.disableAnimationsOf(this);
-  
+
   /// Keyboard-aware page insets (safe area + keyboard)
   EdgeInsets get pageInsets =>
-      EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(this).bottom) + safePadding;
-  
+      EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(this).bottom) +
+      safePadding;
+
   /// Alias for pageInsets (clearer naming)
   EdgeInsets get safeKeyboardInsets => pageInsets;
-  
+
   /// Standard page padding preset
   EdgeInsets get pagePadding => const EdgeInsets.symmetric(
-    horizontal: AlhaiSpacing.pagePaddingHorizontal,
-    vertical: AlhaiSpacing.pagePaddingVertical,
-  );
+        horizontal: AlhaiSpacing.pagePaddingHorizontal,
+        vertical: AlhaiSpacing.pagePaddingVertical,
+      );
 
   // ============================================
   // Theme Helpers

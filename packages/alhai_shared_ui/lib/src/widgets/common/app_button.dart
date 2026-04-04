@@ -203,104 +203,110 @@ class _AppButtonState extends State<AppButton> {
       label: widget.label,
       hint: widget.shortcutHint,
       child: MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
-      child: AnimatedContainer(
-        duration: AppDurations.fast,
-        constraints: BoxConstraints(
-          minHeight: _getHeight(),
-          minWidth: widget.fullWidth ? double.infinity : ButtonSize.medium == widget.size ? 100 : 80,
-        ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: isDisabled ? null : widget.onPressed,
-            borderRadius: BorderRadius.circular(AppRadius.lg),
-            child: Ink(
-              decoration: _getDecoration(effectiveColor, isDisabled),
-              child: Container(
-                height: _getHeight(),
-                padding: EdgeInsets.symmetric(
-                  horizontal: _getPadding(),
-                ),
-                child: Row(
-                  mainAxisSize: widget.fullWidth ? MainAxisSize.max : MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Loading or Icon
-                    if (widget.isLoading) ...[
-                      widget.loadingWidget ??
-                          SizedBox(
-                            width: _getIconSize(),
-                            height: _getIconSize(),
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation(
-                                _getContentColor(effectiveColor, isDisabled),
+        onEnter: (_) => setState(() => _isHovered = true),
+        onExit: (_) => setState(() => _isHovered = false),
+        child: AnimatedContainer(
+          duration: AppDurations.fast,
+          constraints: BoxConstraints(
+            minHeight: _getHeight(),
+            minWidth: widget.fullWidth
+                ? double.infinity
+                : ButtonSize.medium == widget.size
+                    ? 100
+                    : 80,
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: isDisabled ? null : widget.onPressed,
+              borderRadius: BorderRadius.circular(AppRadius.lg),
+              child: Ink(
+                decoration: _getDecoration(effectiveColor, isDisabled),
+                child: Container(
+                  height: _getHeight(),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: _getPadding(),
+                  ),
+                  child: Row(
+                    mainAxisSize:
+                        widget.fullWidth ? MainAxisSize.max : MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Loading or Icon
+                      if (widget.isLoading) ...[
+                        widget.loadingWidget ??
+                            SizedBox(
+                              width: _getIconSize(),
+                              height: _getIconSize(),
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation(
+                                  _getContentColor(effectiveColor, isDisabled),
+                                ),
                               ),
                             ),
-                          ),
-                      const SizedBox(width: AppSpacing.sm),
-                    ] else if (widget.icon != null) ...[
-                      Icon(
-                        widget.icon,
-                        size: _getIconSize(),
-                        color: _getContentColor(effectiveColor, isDisabled),
-                      ),
-                      const SizedBox(width: AppSpacing.sm),
-                    ],
-
-                    // Label
-                    Flexible(
-                      child: Text(
-                        widget.label,
-                        style: _getTextStyle().copyWith(
+                        const SizedBox(width: AppSpacing.sm),
+                      ] else if (widget.icon != null) ...[
+                        Icon(
+                          widget.icon,
+                          size: _getIconSize(),
                           color: _getContentColor(effectiveColor, isDisabled),
                         ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
+                        const SizedBox(width: AppSpacing.sm),
+                      ],
 
-                    // Suffix Icon
-                    if (widget.suffixIcon != null && !widget.isLoading) ...[
-                      const SizedBox(width: AppSpacing.sm),
-                      Icon(
-                        widget.suffixIcon,
-                        size: _getIconSize(),
-                        color: _getContentColor(effectiveColor, isDisabled),
-                      ),
-                    ],
-
-                    // Shortcut Hint
-                    if (widget.shortcutHint != null && !widget.isLoading) ...[
-                      const SizedBox(width: AppSpacing.md),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.xs,
-                          vertical: AppSpacing.xxs,
-                        ),
-                        decoration: BoxDecoration(
-                          color: _getContentColor(effectiveColor, isDisabled)
-                              .withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(AppRadius.xs),
-                        ),
+                      // Label
+                      Flexible(
                         child: Text(
-                          widget.shortcutHint!,
-                          style: AppTypography.labelSmall.copyWith(
+                          widget.label,
+                          style: _getTextStyle().copyWith(
                             color: _getContentColor(effectiveColor, isDisabled),
-                            fontWeight: FontWeight.w500,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+
+                      // Suffix Icon
+                      if (widget.suffixIcon != null && !widget.isLoading) ...[
+                        const SizedBox(width: AppSpacing.sm),
+                        Icon(
+                          widget.suffixIcon,
+                          size: _getIconSize(),
+                          color: _getContentColor(effectiveColor, isDisabled),
+                        ),
+                      ],
+
+                      // Shortcut Hint
+                      if (widget.shortcutHint != null && !widget.isLoading) ...[
+                        const SizedBox(width: AppSpacing.md),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.xs,
+                            vertical: AppSpacing.xxs,
+                          ),
+                          decoration: BoxDecoration(
+                            color: _getContentColor(effectiveColor, isDisabled)
+                                .withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(AppRadius.xs),
+                          ),
+                          child: Text(
+                            widget.shortcutHint!,
+                            style: AppTypography.labelSmall.copyWith(
+                              color:
+                                  _getContentColor(effectiveColor, isDisabled),
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
-                      ),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
               ),
             ),
           ),
         ),
       ),
-    ),
     );
   }
 
@@ -320,7 +326,8 @@ class _AppButtonState extends State<AppButton> {
 
       case AppButtonVariant.outlined:
         return BoxDecoration(
-          color: _isHovered ? color.withValues(alpha: 0.05) : Colors.transparent,
+          color:
+              _isHovered ? color.withValues(alpha: 0.05) : Colors.transparent,
           borderRadius: BorderRadius.circular(AppRadius.lg),
           border: Border.all(
             color: isDisabled ? colorScheme.outlineVariant : color,
@@ -330,7 +337,8 @@ class _AppButtonState extends State<AppButton> {
 
       case AppButtonVariant.ghost:
         return BoxDecoration(
-          color: _isHovered ? colorScheme.surfaceContainerLow : Colors.transparent,
+          color:
+              _isHovered ? colorScheme.surfaceContainerLow : Colors.transparent,
           borderRadius: BorderRadius.circular(AppRadius.lg),
         );
 
@@ -505,7 +513,8 @@ class _AppIconButtonState extends State<AppIconButton> {
 
       case AppButtonVariant.outlined:
         return BoxDecoration(
-          color: _isHovered ? color.withValues(alpha: 0.05) : Colors.transparent,
+          color:
+              _isHovered ? color.withValues(alpha: 0.05) : Colors.transparent,
           shape: BoxShape.circle,
           border: Border.all(
             color: isDisabled ? colorScheme.outlineVariant : color,
@@ -515,7 +524,8 @@ class _AppIconButtonState extends State<AppIconButton> {
 
       case AppButtonVariant.ghost:
         return BoxDecoration(
-          color: _isHovered ? colorScheme.surfaceContainerLow : Colors.transparent,
+          color:
+              _isHovered ? colorScheme.surfaceContainerLow : Colors.transparent,
           shape: BoxShape.circle,
         );
 

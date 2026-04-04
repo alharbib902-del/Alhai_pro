@@ -16,7 +16,7 @@ enum AlhaiQuantityControlSize {
 }
 
 /// AlhaiQuantityControl - Compact quantity stepper for commerce UI
-/// 
+///
 /// Features:
 /// - Plus/minus buttons with quantity display
 /// - Min/max value support with clamping
@@ -74,9 +74,9 @@ class AlhaiQuantityControl extends StatelessWidget {
     this.decrementSemanticLabel,
     this.incrementSemanticLabel,
     this.hapticsEnabled = true,
-  }) : assert(min >= 0, 'min must be >= 0'),
-       assert(step > 0, 'step must be > 0'),
-       assert(max == null || max >= min, 'max must be >= min');
+  })  : assert(min >= 0, 'min must be >= 0'),
+        assert(step > 0, 'step must be > 0'),
+        assert(max == null || max >= min, 'max must be >= min');
 
   @override
   Widget build(BuildContext context) {
@@ -89,10 +89,10 @@ class AlhaiQuantityControl extends StatelessWidget {
 
     // Button states - based on actual value change
     final isDisabled = !enabled || onChanged == null;
-    
+
     final nextDecrementValue = math.max(min, clampedQuantity - step);
     final canDecrement = !isDisabled && nextDecrementValue != clampedQuantity;
-    
+
     final nextIncrementValue = max == null
         ? clampedQuantity + step
         : math.min(max!, clampedQuantity + step);
@@ -177,9 +177,8 @@ class AlhaiQuantityControl extends StatelessWidget {
   }
 
   void _increment(int current) {
-    final newValue = max == null
-        ? current + step
-        : math.min(max!, current + step);
+    final newValue =
+        max == null ? current + step : math.min(max!, current + step);
     if (newValue != current) {
       if (hapticsEnabled) {
         HapticFeedback.lightImpact();

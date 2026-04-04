@@ -12,7 +12,8 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
+import 'package:alhai_design_system/alhai_design_system.dart'
+    show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 
@@ -21,8 +22,7 @@ class PrintBarcodeScreen extends ConsumerStatefulWidget {
   const PrintBarcodeScreen({super.key});
 
   @override
-  ConsumerState<PrintBarcodeScreen> createState() =>
-      _PrintBarcodeScreenState();
+  ConsumerState<PrintBarcodeScreen> createState() => _PrintBarcodeScreenState();
 }
 
 class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
@@ -59,12 +59,14 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
         });
       }
     } catch (e, stack) {
-      reportError(e, stackTrace: stack, hint: 'Search products for barcode print');
+      reportError(e,
+          stackTrace: stack, hint: 'Search products for barcode print');
       if (mounted) {
         setState(() => _isSearching = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(AppLocalizations.of(context)?.errorOccurred ?? 'حدث خطأ'),
+            content:
+                Text(AppLocalizations.of(context)?.errorOccurred ?? 'حدث خطأ'),
             backgroundColor: AppColors.error,
           ),
         );
@@ -88,9 +90,8 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
           subtitle: _getDateSubtitle(l10n),
           showSearch: false,
           searchHint: l10n.searchPlaceholder,
-          onMenuTap: isWideScreen
-              ? null
-              : () => Scaffold.of(context).openDrawer(),
+          onMenuTap:
+              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 3,
           userName: user?.name ?? l10n.cashCustomer,
@@ -99,9 +100,9 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
         ),
         Expanded(
           child: SingleChildScrollView(
-            padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-            child:
-                _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
+            padding: EdgeInsets.all(
+                isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+            child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
           ),
         ),
       ],
@@ -113,8 +114,8 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
     return '${now.day}/${now.month}/${now.year} \u2022 ${l10n.mainBranch}';
   }
 
-  Widget _buildContent(
-      bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n) {
+  Widget _buildContent(bool isWideScreen, bool isMediumScreen, bool isDark,
+      AppLocalizations l10n) {
     if (isWideScreen) {
       return Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -204,13 +205,11 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
               Expanded(
                 child: TextField(
                   controller: _searchController,
-                  style:
-                      TextStyle(color: AppColors.getTextPrimary(isDark)),
+                  style: TextStyle(color: AppColors.getTextPrimary(isDark)),
                   onChanged: _searchProducts,
                   decoration: InputDecoration(
                     hintText: l10n.searchByNameOrBarcode,
-                    hintStyle:
-                        TextStyle(color: AppColors.getTextMuted(isDark)),
+                    hintStyle: TextStyle(color: AppColors.getTextMuted(isDark)),
                     prefixIcon: Icon(Icons.search_rounded,
                         color: AppColors.getTextMuted(isDark)),
                     suffixIcon: _searchController.text.isNotEmpty
@@ -241,8 +240,8 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
-                          color: AppColors.primary, width: 2),
+                      borderSide:
+                          const BorderSide(color: AppColors.primary, width: 2),
                     ),
                     contentPadding: const EdgeInsets.symmetric(
                         horizontal: AlhaiSpacing.md, vertical: 14),
@@ -256,7 +255,8 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text(AppLocalizations.of(context).enterBarcodeManually),
+                        content: Text(
+                            AppLocalizations.of(context).enterBarcodeManually),
                         backgroundColor: AppColors.info,
                       ),
                     );
@@ -307,8 +307,8 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
-                      color: AppColors.getBorder(isDark)
-                          .withValues(alpha: 0.5)),
+                      color:
+                          AppColors.getBorder(isDark).withValues(alpha: 0.5)),
                 ),
               ),
               child: Row(
@@ -333,8 +333,7 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
                             style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
-                                color:
-                                    AppColors.getTextPrimary(isDark))),
+                                color: AppColors.getTextPrimary(isDark))),
                         if (product.barcode != null)
                           Text(product.barcode!,
                               style: TextStyle(
@@ -405,8 +404,7 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
                   const SizedBox(height: AlhaiSpacing.sm),
                   Text(l10n.selectProductFirst,
                       style: TextStyle(
-                          fontSize: 13,
-                          color: AppColors.getTextMuted(isDark))),
+                          fontSize: 13, color: AppColors.getTextMuted(isDark))),
                 ],
               ),
             )
@@ -433,8 +431,7 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
                           width: width,
                           height: 60,
                           margin: const EdgeInsets.symmetric(horizontal: 1),
-                          color:
-                              (i % 4 == 0) ? Colors.white : Colors.black,
+                          color: (i % 4 == 0) ? Colors.white : Colors.black,
                         );
                       }),
                     ),
@@ -455,7 +452,10 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
                     product.name,
                     style: TextStyle(
                       fontSize: 12,
-                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54),
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withValues(alpha: 0.54),
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -482,8 +482,7 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
               child: Row(
                 children: [
                   Icon(Icons.info_outline_rounded,
-                      size: 16,
-                      color: AppColors.getTextMuted(isDark)),
+                      size: 16, color: AppColors.getTextMuted(isDark)),
                   const SizedBox(width: AlhaiSpacing.xs),
                   Text(
                     'Format: EAN-13',
@@ -573,8 +572,7 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
             spacing: 8,
             runSpacing: 8,
             children: [1, 5, 10, 20, 50].map((qty) {
-              final isSelected =
-                  _quantityController.text == qty.toString();
+              final isSelected = _quantityController.text == qty.toString();
               return Material(
                 color: Colors.transparent,
                 child: InkWell(
@@ -631,14 +629,13 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
               )
             : const Icon(Icons.print_rounded, size: 20),
         label: Text(l10n.printLabels,
-            style:
-                const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.primary,
           foregroundColor: AppColors.textOnPrimary,
           padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
       ),
     );

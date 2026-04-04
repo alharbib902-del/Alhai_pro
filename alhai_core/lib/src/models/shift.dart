@@ -84,18 +84,17 @@ class Shift with _$Shift {
   }
 
   /// Check if there's a cash shortage
-  bool get hasShortage =>
-      cashDifference != null && cashDifference! < 0;
+  bool get hasShortage => cashDifference != null && cashDifference! < 0;
 
   /// Check if there's cash overage
-  bool get hasOverage =>
-      cashDifference != null && cashDifference! > 0;
+  bool get hasOverage => cashDifference != null && cashDifference! > 0;
 
   /// Get cash status display in Arabic
   String get cashStatusAr {
     if (cashDifference == null) return '-';
     if (cashDifference == 0) return 'متطابق';
-    if (cashDifference! > 0) return 'زيادة ${cashDifference!.abs().toStringAsFixed(2)}';
+    if (cashDifference! > 0)
+      return 'زيادة ${cashDifference!.abs().toStringAsFixed(2)}';
     return 'نقص ${cashDifference!.abs().toStringAsFixed(2)}';
   }
 }

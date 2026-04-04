@@ -17,10 +17,12 @@ class AiCompetitorAnalysisScreen extends ConsumerStatefulWidget {
   const AiCompetitorAnalysisScreen({super.key});
 
   @override
-  ConsumerState<AiCompetitorAnalysisScreen> createState() => _AiCompetitorAnalysisScreenState();
+  ConsumerState<AiCompetitorAnalysisScreen> createState() =>
+      _AiCompetitorAnalysisScreenState();
 }
 
-class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysisScreen>
+class _AiCompetitorAnalysisScreenState
+    extends ConsumerState<AiCompetitorAnalysisScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
@@ -43,14 +45,15 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
     final l10n = AppLocalizations.of(context)!;
 
     return Column(
-              children: [
-                AppHeader(
-                  title: l10n.aiCompetitorAnalysis,
-                  onMenuTap: !isWideScreen ? () => Scaffold.of(context).openDrawer() : null,
-                ),
-                Expanded(child: _buildContent(isDark, isWideScreen)),
-              ],
-            );
+      children: [
+        AppHeader(
+          title: l10n.aiCompetitorAnalysis,
+          onMenuTap:
+              !isWideScreen ? () => Scaffold.of(context).openDrawer() : null,
+        ),
+        Expanded(child: _buildContent(isDark, isWideScreen)),
+      ],
+    );
   }
 
   Widget _buildContent(bool isDark, bool isWideScreen) {
@@ -63,12 +66,15 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
       children: [
         // Tab bar
         Container(
-          margin: EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl, AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.zero),
+          margin: EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl,
+              AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.zero),
           decoration: BoxDecoration(
             color: isDark ? const Color(0xFF1E293B) : Colors.white,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.1)
+                  : AppColors.border,
             ),
           ),
           child: TabBar(
@@ -81,8 +87,11 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
             ),
             indicatorSize: TabBarIndicatorSize.tab,
             labelColor: Colors.white,
-            unselectedLabelColor: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textSecondary,
-            labelStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+            unselectedLabelColor: isDark
+                ? Colors.white.withValues(alpha: 0.5)
+                : AppColors.textSecondary,
+            labelStyle:
+                const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
             dividerHeight: 0,
             tabs: [
               Tab(
@@ -115,14 +124,18 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
                     if (unreadAlerts > 0) ...[
                       const SizedBox(width: 6),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: AlhaiSpacing.xxxs),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 6, vertical: AlhaiSpacing.xxxs),
                         decoration: BoxDecoration(
                           color: AppColors.error,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(
                           '$unreadAlerts',
-                          style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w700),
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w700),
                         ),
                       ),
                     ],
@@ -135,7 +148,8 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
 
         // Summary cards
         Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl, AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.zero),
+          padding: EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl,
+              AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.zero),
           child: _buildSummaryCards(summary, isDark, isWideScreen),
         ),
 
@@ -154,7 +168,8 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
     );
   }
 
-  Widget _buildSummaryCards(CompetitorAnalysisSummary summary, bool isDark, bool isWideScreen) {
+  Widget _buildSummaryCards(
+      CompetitorAnalysisSummary summary, bool isDark, bool isWideScreen) {
     final l10n = AppLocalizations.of(context)!;
     final cards = [
       _SummaryData(
@@ -179,7 +194,9 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
         icon: Icons.percent_rounded,
         label: l10n.aiAvgPriceDiff,
         value: '${summary.averagePriceDifference}%',
-        color: summary.averagePriceDifference < 0 ? AppColors.success : AppColors.warning,
+        color: summary.averagePriceDifference < 0
+            ? AppColors.success
+            : AppColors.warning,
       ),
     ];
 
@@ -190,7 +207,9 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
           runSpacing: 12,
           children: cards.map((data) {
             return SizedBox(
-              width: isWideScreen ? constraints.maxWidth / 4 - 12 : double.infinity,
+              width: isWideScreen
+                  ? constraints.maxWidth / 4 - 12
+                  : double.infinity,
               child: _buildSummaryCard(data, isDark),
             );
           }).toList(),
@@ -205,7 +224,10 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.border),
+        border: Border.all(
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.08)
+                : AppColors.border),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: isDark ? 0.15 : 0.04),
@@ -241,7 +263,9 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
                   data.label,
                   style: TextStyle(
                     fontSize: 12,
-                    color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textMuted,
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.5)
+                        : AppColors.textMuted,
                   ),
                 ),
               ],
@@ -259,10 +283,14 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
 
     return comparisons.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (e, _) => Center(child: Text(AppLocalizations.of(context)!.aiErrorWithMessage(e.toString()))),
+      error: (e, _) => Center(
+          child: Text(
+              AppLocalizations.of(context)!.aiErrorWithMessage(e.toString()))),
       data: (data) {
         final l10n = AppLocalizations.of(context)!;
-        var filtered = filter == l10n.all ? data : data.where((c) => c.category == filter).toList();
+        var filtered = filter == l10n.all
+            ? data
+            : data.where((c) => c.category == filter).toList();
         final notifier = ref.read(priceComparisonsProvider.notifier);
         filtered = notifier.sortComparisons(filtered, sort);
 
@@ -282,23 +310,36 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
                         children: categories.map((cat) {
                           final isSelected = cat == filter;
                           return Padding(
-                            padding: const EdgeInsetsDirectional.only(start: AlhaiSpacing.xs),
+                            padding: const EdgeInsetsDirectional.only(
+                                start: AlhaiSpacing.xs),
                             child: FilterChip(
                               selected: isSelected,
                               label: Text(cat),
                               labelStyle: TextStyle(
-                                color: isSelected ? Colors.white : (isDark ? Colors.white.withValues(alpha: 0.7) : AppColors.textSecondary),
+                                color: isSelected
+                                    ? Colors.white
+                                    : (isDark
+                                        ? Colors.white.withValues(alpha: 0.7)
+                                        : AppColors.textSecondary),
                                 fontSize: 12,
-                                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                                fontWeight: isSelected
+                                    ? FontWeight.w600
+                                    : FontWeight.w500,
                               ),
                               selectedColor: const Color(0xFF8B5CF6),
-                              backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
+                              backgroundColor: isDark
+                                  ? const Color(0xFF1E293B)
+                                  : Colors.white,
                               side: BorderSide(
                                 color: isSelected
                                     ? const Color(0xFF8B5CF6)
-                                    : (isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
+                                    : (isDark
+                                        ? Colors.white.withValues(alpha: 0.1)
+                                        : AppColors.border),
                               ),
-                              onSelected: (_) => ref.read(competitorFilterProvider.notifier).state = cat,
+                              onSelected: (_) => ref
+                                  .read(competitorFilterProvider.notifier)
+                                  .state = cat,
                             ),
                           );
                         }).toList(),
@@ -308,32 +349,51 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
                   const SizedBox(width: AlhaiSpacing.sm),
                   PopupMenuButton<CompetitorSortType>(
                     initialValue: sort,
-                    onSelected: (v) => ref.read(competitorSortProvider.notifier).state = v,
+                    onSelected: (v) =>
+                        ref.read(competitorSortProvider.notifier).state = v,
                     itemBuilder: (_) => [
-                      PopupMenuItem(value: CompetitorSortType.name, child: Text(l10n.aiSortByName)),
-                      PopupMenuItem(value: CompetitorSortType.priceDiff, child: Text(l10n.aiSortByPriceDiff)),
-                      PopupMenuItem(value: CompetitorSortType.ourPrice, child: Text(l10n.aiSortByOurPrice)),
-                      PopupMenuItem(value: CompetitorSortType.category, child: Text(l10n.aiSortByCategory)),
+                      PopupMenuItem(
+                          value: CompetitorSortType.name,
+                          child: Text(l10n.aiSortByName)),
+                      PopupMenuItem(
+                          value: CompetitorSortType.priceDiff,
+                          child: Text(l10n.aiSortByPriceDiff)),
+                      PopupMenuItem(
+                          value: CompetitorSortType.ourPrice,
+                          child: Text(l10n.aiSortByOurPrice)),
+                      PopupMenuItem(
+                          value: CompetitorSortType.category,
+                          child: Text(l10n.aiSortByCategory)),
                     ],
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xs),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: AlhaiSpacing.sm,
+                          vertical: AlhaiSpacing.xs),
                       decoration: BoxDecoration(
                         color: isDark ? const Color(0xFF1E293B) : Colors.white,
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(
-                          color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
+                          color: isDark
+                              ? Colors.white.withValues(alpha: 0.1)
+                              : AppColors.border,
                         ),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.sort_rounded, size: 18,
-                            color: isDark ? Colors.white.withValues(alpha: 0.6) : AppColors.textSecondary),
+                          Icon(Icons.sort_rounded,
+                              size: 18,
+                              color: isDark
+                                  ? Colors.white.withValues(alpha: 0.6)
+                                  : AppColors.textSecondary),
                           const SizedBox(width: 6),
-                          Text(l10n.aiSortLabel, style: TextStyle(
-                            fontSize: 13,
-                            color: isDark ? Colors.white.withValues(alpha: 0.6) : AppColors.textSecondary,
-                          )),
+                          Text(l10n.aiSortLabel,
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: isDark
+                                    ? Colors.white.withValues(alpha: 0.6)
+                                    : AppColors.textSecondary,
+                              )),
                         ],
                       ),
                     ),
@@ -365,7 +425,8 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
           Wrap(
             spacing: 12,
             runSpacing: 12,
-            children: AiCompetitorAnalysisService.mockCompetitors.map((competitor) {
+            children:
+                AiCompetitorAnalysisService.mockCompetitors.map((competitor) {
               return SizedBox(
                 width: isWide ? 280 : double.infinity,
                 child: _buildCompetitorCard(competitor, isDark),
@@ -393,7 +454,10 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.border),
+        border: Border.all(
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.08)
+                : AppColors.border),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: isDark ? 0.15 : 0.04),
@@ -417,7 +481,10 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
                 child: Center(
                   child: Text(
                     competitor.nameAr[0],
-                    style: TextStyle(color: color, fontWeight: FontWeight.w800, fontSize: 18),
+                    style: TextStyle(
+                        color: color,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 18),
                   ),
                 ),
               ),
@@ -438,7 +505,9 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
                       competitor.type,
                       style: TextStyle(
                         fontSize: 12,
-                        color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textMuted,
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.5)
+                            : AppColors.textMuted,
                       ),
                     ),
                   ],
@@ -449,11 +518,17 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
           const SizedBox(height: 14),
           Row(
             children: [
-              _buildCompetitorStat(l10n.aiPriceIndex, '${(competitor.overallPriceIndex * 100).toInt()}%', isDark, color),
+              _buildCompetitorStat(
+                  l10n.aiPriceIndex,
+                  '${(competitor.overallPriceIndex * 100).toInt()}%',
+                  isDark,
+                  color),
               const SizedBox(width: AlhaiSpacing.sm),
-              _buildCompetitorStat(l10n.aiQuality, '${competitor.qualityScore}/10', isDark, color),
+              _buildCompetitorStat(l10n.aiQuality,
+                  '${competitor.qualityScore}/10', isDark, color),
               const SizedBox(width: AlhaiSpacing.sm),
-              _buildCompetitorStat(l10n.aiBranches, '${competitor.branchCount}', isDark, color),
+              _buildCompetitorStat(
+                  l10n.aiBranches, '${competitor.branchCount}', isDark, color),
             ],
           ),
         ],
@@ -461,7 +536,8 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
     );
   }
 
-  Widget _buildCompetitorStat(String label, String value, bool isDark, Color color) {
+  Widget _buildCompetitorStat(
+      String label, String value, bool isDark, Color color) {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs),
@@ -484,7 +560,9 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
               label,
               style: TextStyle(
                 fontSize: 10,
-                color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textMuted,
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.5)
+                    : AppColors.textMuted,
               ),
             ),
           ],
@@ -500,7 +578,8 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
     return Column(
       children: [
         Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl, AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.zero),
+          padding: EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl,
+              AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.zero),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -521,13 +600,18 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.notifications_off_rounded, size: 48,
-                        color: isDark ? Colors.white.withValues(alpha: 0.2) : AppColors.textMuted),
+                      Icon(Icons.notifications_off_rounded,
+                          size: 48,
+                          color: isDark
+                              ? Colors.white.withValues(alpha: 0.2)
+                              : AppColors.textMuted),
                       const SizedBox(height: AlhaiSpacing.sm),
                       Text(l10n.aiNoAlertsCurrently,
-                        style: TextStyle(
-                          color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textSecondary,
-                        )),
+                          style: TextStyle(
+                            color: isDark
+                                ? Colors.white.withValues(alpha: 0.5)
+                                : AppColors.textSecondary,
+                          )),
                     ],
                   ),
                 )
@@ -535,7 +619,8 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
                   padding: const EdgeInsets.all(AlhaiSpacing.mdl),
                   itemCount: alerts.length,
                   itemBuilder: (context, index) {
-                    return _buildAlertCard(alerts[index], isDark, alertsNotifier);
+                    return _buildAlertCard(
+                        alerts[index], isDark, alertsNotifier);
                   },
                 ),
         ),
@@ -543,7 +628,8 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
     );
   }
 
-  Widget _buildAlertCard(CompetitorAlert alert, bool isDark, CompetitorAlertsNotifier notifier) {
+  Widget _buildAlertCard(
+      CompetitorAlert alert, bool isDark, CompetitorAlertsNotifier notifier) {
     Color alertColor;
     IconData alertIcon;
     switch (alert.alertType) {
@@ -572,7 +658,9 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
           color: alert.isRead
-              ? (isDark ? Colors.white.withValues(alpha: 0.05) : AppColors.border)
+              ? (isDark
+                  ? Colors.white.withValues(alpha: 0.05)
+                  : AppColors.border)
               : alertColor.withValues(alpha: 0.3),
           width: alert.isRead ? 1 : 2,
         ),
@@ -611,7 +699,8 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
                           style: TextStyle(
                             fontWeight: FontWeight.w700,
                             fontSize: 14,
-                            color: isDark ? Colors.white : AppColors.textPrimary,
+                            color:
+                                isDark ? Colors.white : AppColors.textPrimary,
                           ),
                         ),
                       ),
@@ -631,7 +720,9 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
                     alert.message,
                     style: TextStyle(
                       fontSize: 13,
-                      color: isDark ? Colors.white.withValues(alpha: 0.7) : AppColors.textSecondary,
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.7)
+                          : AppColors.textSecondary,
                     ),
                   ),
                   const SizedBox(height: AlhaiSpacing.xs),
@@ -639,7 +730,8 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
                     children: [
                       if (alert.changePercent != 0)
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 3),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: AlhaiSpacing.xs, vertical: 3),
                           decoration: BoxDecoration(
                             color: alertColor.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(6),
@@ -653,12 +745,15 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
                             ),
                           ),
                         ),
-                      if (alert.changePercent != 0) const SizedBox(width: AlhaiSpacing.xs),
+                      if (alert.changePercent != 0)
+                        const SizedBox(width: AlhaiSpacing.xs),
                       Text(
                         '${alert.oldPrice.toStringAsFixed(2)} ر.س → ${alert.newPrice.toStringAsFixed(2)} ر.س',
                         style: TextStyle(
                           fontSize: 12,
-                          color: isDark ? Colors.white.withValues(alpha: 0.4) : AppColors.textMuted,
+                          color: isDark
+                              ? Colors.white.withValues(alpha: 0.4)
+                              : AppColors.textMuted,
                         ),
                       ),
                       const Spacer(),
@@ -666,7 +761,9 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
                         _formatTimeAgo(alert.timestamp),
                         style: TextStyle(
                           fontSize: 11,
-                          color: isDark ? Colors.white.withValues(alpha: 0.3) : AppColors.textMuted,
+                          color: isDark
+                              ? Colors.white.withValues(alpha: 0.3)
+                              : AppColors.textMuted,
                         ),
                       ),
                     ],

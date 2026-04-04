@@ -31,7 +31,8 @@ class AssociationMatrix extends StatelessWidget {
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
+          color:
+              isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
         ),
         boxShadow: [
           BoxShadow(
@@ -47,7 +48,8 @@ class AssociationMatrix extends StatelessWidget {
           // Header
           Row(
             children: [
-              const Icon(Icons.grid_on_rounded, color: AppColors.primary, size: 20),
+              const Icon(Icons.grid_on_rounded,
+                  color: AppColors.primary, size: 20),
               const SizedBox(width: AlhaiSpacing.xs),
               Text(
                 'خريطة الارتباطات', // Association Heatmap
@@ -70,7 +72,8 @@ class AssociationMatrix extends StatelessWidget {
             height: math.min(associations.length * 56.0, 400),
             child: ListView.separated(
               itemCount: associations.length,
-              separatorBuilder: (_, __) => const SizedBox(height: AlhaiSpacing.xs),
+              separatorBuilder: (_, __) =>
+                  const SizedBox(height: AlhaiSpacing.xs),
               itemBuilder: (context, index) {
                 final assoc = associations[index];
                 return _AssociationRow(
@@ -149,10 +152,13 @@ class _AssociationRowState extends State<_AssociationRow> {
         onTap: widget.onTap,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 150),
-          padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 10),
+          padding: const EdgeInsets.symmetric(
+              horizontal: AlhaiSpacing.sm, vertical: 10),
           decoration: BoxDecoration(
             color: _isHovered
-                ? (widget.isDark ? Colors.white.withValues(alpha: 0.05) : AppColors.grey50)
+                ? (widget.isDark
+                    ? Colors.white.withValues(alpha: 0.05)
+                    : AppColors.grey50)
                 : Colors.transparent,
             borderRadius: BorderRadius.circular(10),
           ),
@@ -178,7 +184,9 @@ class _AssociationRowState extends State<_AssociationRow> {
                 child: Icon(
                   Icons.sync_alt_rounded,
                   size: 16,
-                  color: widget.isDark ? Colors.white.withValues(alpha: 0.3) : AppColors.textMuted,
+                  color: widget.isDark
+                      ? Colors.white.withValues(alpha: 0.3)
+                      : AppColors.textMuted,
                 ),
               ),
 
@@ -232,7 +240,8 @@ class _AssociationRowState extends State<_AssociationRow> {
 
               // Frequency badge
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
                 decoration: BoxDecoration(
                   color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -283,7 +292,9 @@ class _LegendItem extends StatelessWidget {
         Text(
           label,
           style: TextStyle(
-            color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textMuted,
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.5)
+                : AppColors.textMuted,
             fontSize: 10,
           ),
         ),

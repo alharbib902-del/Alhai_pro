@@ -189,7 +189,8 @@ class CertificateRenewalService {
     if (!cert.isValid) {
       return CertificateCheckResult(
         status: CertificateStatus.expired,
-        message: 'Certificate expired${cert.validTo != null ? ' on ${cert.validTo!.toIso8601String().split('T').first}' : ''}. '
+        message:
+            'Certificate expired${cert.validTo != null ? ' on ${cert.validTo!.toIso8601String().split('T').first}' : ''}. '
             'Renewal required with a new OTP from ZATCA portal.',
       );
     }

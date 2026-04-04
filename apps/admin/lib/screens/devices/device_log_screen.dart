@@ -13,8 +13,7 @@ class DeviceLogScreen extends ConsumerStatefulWidget {
   const DeviceLogScreen({super.key});
 
   @override
-  ConsumerState<DeviceLogScreen> createState() =>
-      _DeviceLogScreenState();
+  ConsumerState<DeviceLogScreen> createState() => _DeviceLogScreenState();
 }
 
 class _DeviceLogScreenState extends ConsumerState<DeviceLogScreen> {
@@ -224,8 +223,7 @@ class _DeviceLogScreenState extends ConsumerState<DeviceLogScreen> {
       children: [
         AppHeader(
           title: l10n.deviceLog,
-          onMenuTap:
-              isWide ? null : () => Scaffold.of(context).openDrawer(),
+          onMenuTap: isWide ? null : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 0,
           userName: l10n.defaultUserName,
@@ -261,8 +259,8 @@ class _DeviceLogScreenState extends ConsumerState<DeviceLogScreen> {
         ),
         // Search bar
         Container(
-          padding:
-              const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
+          padding: const EdgeInsets.symmetric(
+              horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
           color: Theme.of(context).colorScheme.surface,
           child: TextField(
             decoration: InputDecoration(
@@ -274,10 +272,12 @@ class _DeviceLogScreenState extends ConsumerState<DeviceLogScreen> {
               ),
               filled: true,
               fillColor: isDark
-                  ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05)
+                  ? Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.05)
                   : AppColors.border.withValues(alpha: 0.3),
-              contentPadding:
-                  const EdgeInsets.symmetric(vertical: 10),
+              contentPadding: const EdgeInsets.symmetric(vertical: 10),
             ),
             onChanged: (value) {
               _searchDebouncer.run(() {
@@ -293,21 +293,18 @@ class _DeviceLogScreenState extends ConsumerState<DeviceLogScreen> {
           decoration: BoxDecoration(
             color: AppColors.info.withValues(alpha: 0.08),
             borderRadius: BorderRadius.circular(12),
-            border:
-                Border.all(color: AppColors.info.withValues(alpha: 0.2)),
+            border: Border.all(color: AppColors.info.withValues(alpha: 0.2)),
           ),
           child: Row(
             children: [
-              const Icon(Icons.info_outline,
-                  color: AppColors.info, size: 20),
+              const Icon(Icons.info_outline, color: AppColors.info, size: 20),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
                   _dateRange != null
                       ? '${l10n.filter}: ${_formatDate(_dateRange!.start)} - ${_formatDate(_dateRange!.end)}'
                       : l10n.allOperationsSynced,
-                  style: const TextStyle(
-                      fontSize: 13, color: AppColors.info),
+                  style: const TextStyle(fontSize: 13, color: AppColors.info),
                 ),
               ),
             ],
@@ -343,8 +340,7 @@ class _DeviceLogScreenState extends ConsumerState<DeviceLogScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.error_outline,
-                size: 48,
-                color: AppColors.error.withValues(alpha: 0.7)),
+                size: 48, color: AppColors.error.withValues(alpha: 0.7)),
             const SizedBox(height: AlhaiSpacing.md),
             Text(_error!,
                 style: const TextStyle(color: AppColors.error),
@@ -396,8 +392,7 @@ class _DeviceLogScreenState extends ConsumerState<DeviceLogScreen> {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-            color: Theme.of(context).dividerColor),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Row(
         children: [
@@ -429,8 +424,7 @@ class _DeviceLogScreenState extends ConsumerState<DeviceLogScreen> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 3),
                       decoration: BoxDecoration(
-                        color:
-                            meta.color.withValues(alpha: 0.1),
+                        color: meta.color.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
@@ -465,15 +459,15 @@ class _DeviceLogScreenState extends ConsumerState<DeviceLogScreen> {
                       timeStr,
                       style: TextStyle(
                           fontSize: 11,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant),
+                          color:
+                              Theme.of(context).colorScheme.onSurfaceVariant),
                     ),
                     if (log.deviceInfo != null) ...[
                       const SizedBox(width: AlhaiSpacing.sm),
                       Icon(Icons.devices,
                           size: 12,
-                          color: isDark
-                              ? Colors.white38
-                              : AppColors.textTertiary),
+                          color:
+                              isDark ? Colors.white38 : AppColors.textTertiary),
                       const SizedBox(width: AlhaiSpacing.xxs),
                       Flexible(
                         child: Text(

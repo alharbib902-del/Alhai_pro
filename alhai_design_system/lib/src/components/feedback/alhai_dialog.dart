@@ -208,8 +208,8 @@ class AlhaiDialog extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    final padding = paddingOverride ??
-        const EdgeInsetsDirectional.all(AlhaiSpacing.lg);
+    final padding =
+        paddingOverride ?? const EdgeInsetsDirectional.all(AlhaiSpacing.lg);
 
     final effectiveMinWidth = minWidth ?? AlhaiSpacing.dialogMinWidth;
     final effectiveMaxWidth = maxWidth ?? AlhaiSpacing.dialogMaxWidth;
@@ -274,7 +274,8 @@ class AlhaiDialog extends StatelessWidget {
     );
   }
 
-  bool get _hasIcon => iconType != AlhaiDialogIconType.none || customIcon != null;
+  bool get _hasIcon =>
+      iconType != AlhaiDialogIconType.none || customIcon != null;
 
   Widget _buildIcon(ThemeData theme, ColorScheme colorScheme) {
     final iconData = customIcon ?? _getDefaultIcon();
@@ -303,7 +304,7 @@ class AlhaiDialog extends StatelessWidget {
 
   Color _getIconColor(ThemeData theme, ColorScheme colorScheme) {
     final statusColors = theme.extension<AlhaiStatusColors>();
-    
+
     switch (iconType) {
       case AlhaiDialogIconType.info:
         return colorScheme.primary;

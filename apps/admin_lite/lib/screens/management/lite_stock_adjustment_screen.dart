@@ -23,10 +23,12 @@ class LiteStockAdjustmentScreen extends ConsumerStatefulWidget {
   const LiteStockAdjustmentScreen({super.key});
 
   @override
-  ConsumerState<LiteStockAdjustmentScreen> createState() => _LiteStockAdjustmentScreenState();
+  ConsumerState<LiteStockAdjustmentScreen> createState() =>
+      _LiteStockAdjustmentScreenState();
 }
 
-class _LiteStockAdjustmentScreenState extends ConsumerState<LiteStockAdjustmentScreen> {
+class _LiteStockAdjustmentScreenState
+    extends ConsumerState<LiteStockAdjustmentScreen> {
   final _searchController = TextEditingController();
   String _searchQuery = '';
   Timer? _debounce;
@@ -48,11 +50,12 @@ class _LiteStockAdjustmentScreenState extends ConsumerState<LiteStockAdjustmentS
   List<ProductsTableData> _filter(List<ProductsTableData> products) {
     if (_searchQuery.isEmpty) return products;
     final q = _searchQuery.toLowerCase();
-    return products.where((p) =>
-        p.name.toLowerCase().contains(q) ||
-        (p.barcode?.toLowerCase().contains(q) ?? false) ||
-        (p.sku?.toLowerCase().contains(q) ?? false)
-    ).toList();
+    return products
+        .where((p) =>
+            p.name.toLowerCase().contains(q) ||
+            (p.barcode?.toLowerCase().contains(q) ?? false) ||
+            (p.sku?.toLowerCase().contains(q) ?? false))
+        .toList();
   }
 
   Future<void> _adjustStock(ProductsTableData product, double delta) async {
@@ -79,7 +82,8 @@ class _LiteStockAdjustmentScreenState extends ConsumerState<LiteStockAdjustmentS
             content: Text(l10n.success),
             backgroundColor: AlhaiColors.success,
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           ),
         );
       }
@@ -91,7 +95,8 @@ class _LiteStockAdjustmentScreenState extends ConsumerState<LiteStockAdjustmentS
             content: Text(l10n.errorOccurred),
             backgroundColor: AlhaiColors.error,
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           ),
         );
       }
@@ -114,7 +119,8 @@ class _LiteStockAdjustmentScreenState extends ConsumerState<LiteStockAdjustmentS
       body: Column(
         children: [
           Padding(
-            padding: EdgeInsets.all(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
+            padding:
+                EdgeInsets.all(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
             child: TextField(
               controller: _searchController,
               onChanged: _onSearchChanged,
@@ -123,12 +129,31 @@ class _LiteStockAdjustmentScreenState extends ConsumerState<LiteStockAdjustmentS
                 hintText: l10n.searchHint,
                 prefixIcon: const Icon(Icons.search),
                 suffixIcon: _searchQuery.isNotEmpty
-                    ? IconButton(tooltip: 'Clear search', icon: const Icon(Icons.clear), onPressed: () { _searchController.clear(); _debounce?.cancel(); setState(() => _searchQuery = ''); })
+                    ? IconButton(
+                        tooltip: 'Clear search',
+                        icon: const Icon(Icons.clear),
+                        onPressed: () {
+                          _searchController.clear();
+                          _debounce?.cancel();
+                          setState(() => _searchQuery = '');
+                        })
                     : null,
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: isDark ? Colors.white24 : Theme.of(context).colorScheme.outlineVariant)),
-                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: isDark ? Colors.white12 : Theme.of(context).colorScheme.outlineVariant)),
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                        color: isDark
+                            ? Colors.white24
+                            : Theme.of(context).colorScheme.outlineVariant)),
+                enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                        color: isDark
+                            ? Colors.white12
+                            : Theme.of(context).colorScheme.outlineVariant)),
                 filled: true,
-                fillColor: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.white,
+                fillColor: isDark
+                    ? Colors.white.withValues(alpha: 0.06)
+                    : Colors.white,
               ),
             ),
           ),
@@ -137,7 +162,14 @@ class _LiteStockAdjustmentScreenState extends ConsumerState<LiteStockAdjustmentS
               data: (products) {
                 final filtered = _filter(products);
                 if (filtered.isEmpty) {
-                  return Center(child: Text(l10n.noResults, style: TextStyle(color: isDark ? Colors.white54 : Theme.of(context).colorScheme.onSurfaceVariant)));
+                  return Center(
+                      child: Text(l10n.noResults,
+                          style: TextStyle(
+                              color: isDark
+                                  ? Colors.white54
+                                  : Theme.of(context)
+                                      .colorScheme
+                                      .onSurfaceVariant)));
                 }
                 final isWide = size.width > 900;
                 if (isWide) {
@@ -151,7 +183,11 @@ class _LiteStockAdjustmentScreenState extends ConsumerState<LiteStockAdjustmentS
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(l10n.errorOccurred),
-                    TextButton.icon(onPressed: () => ref.invalidate(liteAllProductsProvider), icon: const Icon(Icons.refresh_rounded), label: Text(l10n.tryAgain)),
+                    TextButton.icon(
+                        onPressed: () =>
+                            ref.invalidate(liteAllProductsProvider),
+                        icon: const Icon(Icons.refresh_rounded),
+                        label: Text(l10n.tryAgain)),
                   ],
                 ),
               ),
@@ -162,9 +198,11 @@ class _LiteStockAdjustmentScreenState extends ConsumerState<LiteStockAdjustmentS
     );
   }
 
-  Widget _buildCardList(List<ProductsTableData> products, bool isDark, bool isMobile, AppLocalizations l10n) {
+  Widget _buildCardList(List<ProductsTableData> products, bool isDark,
+      bool isMobile, AppLocalizations l10n) {
     return ListView.builder(
-      padding: EdgeInsets.symmetric(horizontal: isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
+      padding: EdgeInsets.symmetric(
+          horizontal: isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
       itemCount: products.length,
       itemBuilder: (context, index) {
         final product = products[index];
@@ -176,7 +214,8 @@ class _LiteStockAdjustmentScreenState extends ConsumerState<LiteStockAdjustmentS
     );
   }
 
-  Widget _buildDataTable(List<ProductsTableData> products, bool isDark, AppLocalizations l10n) {
+  Widget _buildDataTable(
+      List<ProductsTableData> products, bool isDark, AppLocalizations l10n) {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg),
       child: SizedBox(
@@ -197,7 +236,9 @@ class _LiteStockAdjustmentScreenState extends ConsumerState<LiteStockAdjustmentS
             final threshold = product.minQty.toInt();
             final stockColor = stock == 0
                 ? AlhaiColors.error
-                : (stock <= threshold ? AlhaiColors.warning : AlhaiColors.success);
+                : (stock <= threshold
+                    ? AlhaiColors.warning
+                    : AlhaiColors.success);
             final statusText = stock == 0
                 ? l10n.outOfStock
                 : (stock <= threshold ? l10n.lowStock : l10n.stock);
@@ -208,13 +249,21 @@ class _LiteStockAdjustmentScreenState extends ConsumerState<LiteStockAdjustmentS
                 DataCell(Text(product.name)),
                 DataCell(Text(
                   '$stock',
-                  style: TextStyle(fontWeight: FontWeight.bold, color: stockColor),
+                  style:
+                      TextStyle(fontWeight: FontWeight.bold, color: stockColor),
                 )),
                 DataCell(Text('$threshold')),
                 DataCell(Container(
-                  padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxxs),
-                  decoration: BoxDecoration(color: stockColor.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(8)),
-                  child: Text(statusText, style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: stockColor)),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxxs),
+                  decoration: BoxDecoration(
+                      color: stockColor.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(8)),
+                  child: Text(statusText,
+                      style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: stockColor)),
                 )),
                 DataCell(Row(
                   mainAxisSize: MainAxisSize.min,
@@ -223,7 +272,8 @@ class _LiteStockAdjustmentScreenState extends ConsumerState<LiteStockAdjustmentS
                       tooltip: '-1',
                       icon: const Icon(Icons.remove_circle_outline, size: 20),
                       color: AlhaiColors.error,
-                      onPressed: stock > 0 ? () => _adjustStock(product, -1) : null,
+                      onPressed:
+                          stock > 0 ? () => _adjustStock(product, -1) : null,
                     ),
                     IconButton(
                       tooltip: '+1',
@@ -241,7 +291,8 @@ class _LiteStockAdjustmentScreenState extends ConsumerState<LiteStockAdjustmentS
     );
   }
 
-  Widget _buildProductTile(BuildContext context, ProductsTableData product, bool isDark, AppLocalizations l10n) {
+  Widget _buildProductTile(BuildContext context, ProductsTableData product,
+      bool isDark, AppLocalizations l10n) {
     final stock = product.stockQty.toInt();
     final threshold = product.minQty.toInt();
     final stockColor = stock == 0
@@ -254,13 +305,19 @@ class _LiteStockAdjustmentScreenState extends ConsumerState<LiteStockAdjustmentS
       decoration: BoxDecoration(
         color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.white,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: isDark ? Colors.white12 : Theme.of(context).colorScheme.outlineVariant),
+        border: Border.all(
+            color: isDark
+                ? Colors.white12
+                : Theme.of(context).colorScheme.outlineVariant),
       ),
       child: Row(
         children: [
           Container(
-            width: AlhaiSpacing.listTileCompactMinHeight, height: AlhaiSpacing.listTileCompactMinHeight,
-            decoration: BoxDecoration(color: stockColor.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(10)),
+            width: AlhaiSpacing.listTileCompactMinHeight,
+            height: AlhaiSpacing.listTileCompactMinHeight,
+            decoration: BoxDecoration(
+                color: stockColor.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(10)),
             child: Icon(Icons.inventory_2, color: stockColor, size: 22),
           ),
           const SizedBox(width: AlhaiSpacing.sm),
@@ -268,11 +325,26 @@ class _LiteStockAdjustmentScreenState extends ConsumerState<LiteStockAdjustmentS
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(product.name, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: isDark ? Colors.white : Colors.black87)),
+                Text(product.name,
+                    style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: isDark ? Colors.white : Colors.black87)),
                 Row(
                   children: [
-                    Text('${l10n.stock}: ', style: TextStyle(fontSize: 12, color: isDark ? Colors.white38 : Theme.of(context).colorScheme.onSurfaceVariant)),
-                    Text('$stock', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: stockColor)),
+                    Text('${l10n.stock}: ',
+                        style: TextStyle(
+                            fontSize: 12,
+                            color: isDark
+                                ? Colors.white38
+                                : Theme.of(context)
+                                    .colorScheme
+                                    .onSurfaceVariant)),
+                    Text('$stock',
+                        style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: stockColor)),
                   ],
                 ),
               ],
@@ -280,7 +352,9 @@ class _LiteStockAdjustmentScreenState extends ConsumerState<LiteStockAdjustmentS
           ),
           Container(
             decoration: BoxDecoration(
-              color: isDark ? Colors.white.withValues(alpha: 0.08) : Theme.of(context).colorScheme.surfaceContainerLow,
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.08)
+                  : Theme.of(context).colorScheme.surfaceContainerLow,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Row(
@@ -290,19 +364,26 @@ class _LiteStockAdjustmentScreenState extends ConsumerState<LiteStockAdjustmentS
                   tooltip: 'Decrease stock',
                   onPressed: stock > 0 ? () => _adjustStock(product, -1) : null,
                   icon: const Icon(Icons.remove, size: 16),
-                  constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+                  constraints:
+                      const BoxConstraints(minWidth: 36, minHeight: 36),
                   padding: EdgeInsets.zero,
                   color: AlhaiColors.error,
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xxs),
-                  child: Text('$stock', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: isDark ? Colors.white : Colors.black87)),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xxs),
+                  child: Text('$stock',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                          color: isDark ? Colors.white : Colors.black87)),
                 ),
                 IconButton(
                   tooltip: 'Increase stock',
                   onPressed: () => _adjustStock(product, 1),
                   icon: const Icon(Icons.add, size: 16),
-                  constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+                  constraints:
+                      const BoxConstraints(minWidth: 36, minHeight: 36),
                   padding: EdgeInsets.zero,
                   color: AlhaiColors.success,
                 ),

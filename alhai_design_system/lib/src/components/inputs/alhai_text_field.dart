@@ -345,7 +345,8 @@ class _AlhaiTextFieldState extends State<AlhaiTextField> {
           Text(
             widget.errorText ?? widget.helperText!,
             style: theme.textTheme.bodySmall?.copyWith(
-              color: hasError ? colorScheme.error : colorScheme.onSurfaceVariant,
+              color:
+                  hasError ? colorScheme.error : colorScheme.onSurfaceVariant,
             ),
           ),
         ],
@@ -357,7 +358,9 @@ class _AlhaiTextFieldState extends State<AlhaiTextField> {
     if (widget.showPasswordToggle && widget.obscureText) {
       return IconButton(
         icon: Icon(
-          _obscureText ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+          _obscureText
+              ? Icons.visibility_off_outlined
+              : Icons.visibility_outlined,
           color: colorScheme.onSurfaceVariant,
         ),
         onPressed: () {

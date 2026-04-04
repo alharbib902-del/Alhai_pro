@@ -28,127 +28,132 @@ class ProfileScreen extends ConsumerWidget {
                 ref.invalidate(currentDriverProvider);
               },
               child: ListView(
-              padding: const EdgeInsets.all(AlhaiSpacing.md),
-              children: [
-          // Profile header
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(AlhaiSpacing.lg),
-              child: Column(
+                padding: const EdgeInsets.all(AlhaiSpacing.md),
                 children: [
-                  CircleAvatar(
-                    radius: 40,
-                    backgroundColor: theme.colorScheme.primaryContainer,
-                    child: Text(
-                      driver?.name.isNotEmpty == true
-                          ? driver!.name[0].toUpperCase()
-                          : '?',
-                      style: theme.textTheme.headlineLarge?.copyWith(
-                        color: theme.colorScheme.primary,
+                  // Profile header
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(AlhaiSpacing.lg),
+                      child: Column(
+                        children: [
+                          CircleAvatar(
+                            radius: 40,
+                            backgroundColor: theme.colorScheme.primaryContainer,
+                            child: Text(
+                              driver?.name.isNotEmpty == true
+                                  ? driver!.name[0].toUpperCase()
+                                  : '?',
+                              style: theme.textTheme.headlineLarge?.copyWith(
+                                color: theme.colorScheme.primary,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: AlhaiSpacing.sm),
+                          Text(
+                            driver?.name ?? 'سائق',
+                            style: theme.textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            driver?.phone ?? '',
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.colorScheme.outline,
+                            ),
+                            textDirection: TextDirection.ltr,
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                  const SizedBox(height: AlhaiSpacing.sm),
-                  Text(
-                    driver?.name ?? 'سائق',
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
+                  const SizedBox(height: AlhaiSpacing.md),
+
+                  // Settings
+                  Card(
+                    child: Column(
+                      children: [
+                        ListTile(
+                          leading: const Icon(Icons.person_outline),
+                          title: const Text('تعديل الملف الشخصي'),
+                          trailing:
+                              const Icon(Icons.arrow_forward_ios, size: 16),
+                          onTap: () => context.push('/profile-setup'),
+                        ),
+                        const Divider(height: 1),
+                        ListTile(
+                          leading: const Icon(Icons.history),
+                          title: const Text('سجل الورديات'),
+                          trailing:
+                              const Icon(Icons.arrow_forward_ios, size: 16),
+                          onTap: () {},
+                        ),
+                        const Divider(height: 1),
+                        ListTile(
+                          leading: const Icon(Icons.help_outline),
+                          title: const Text('المساعدة'),
+                          trailing:
+                              const Icon(Icons.arrow_forward_ios, size: 16),
+                          onTap: () {},
+                        ),
+                      ],
                     ),
                   ),
-                  Text(
-                    driver?.phone ?? '',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.outline,
+                  const SizedBox(height: AlhaiSpacing.md),
+
+                  // Logout
+                  Semantics(
+                    label: 'زر تسجيل الخروج',
+                    button: true,
+                    child: Card(
+                      child: ListTile(
+                        leading:
+                            Icon(Icons.logout, color: theme.colorScheme.error),
+                        title: Text(
+                          'تسجيل الخروج',
+                          style: TextStyle(color: theme.colorScheme.error),
+                        ),
+                        onTap: () async {
+                          final confirm = await showDialog<bool>(
+                            context: context,
+                            builder: (ctx) => AlertDialog(
+                              title: const Text('تسجيل الخروج'),
+                              content: const Text(
+                                  'هل تريد تسجيل الخروج من التطبيق؟'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(ctx, false),
+                                  child: const Text('إلغاء'),
+                                ),
+                                FilledButton(
+                                  onPressed: () => Navigator.pop(ctx, true),
+                                  style: FilledButton.styleFrom(
+                                    backgroundColor:
+                                        Theme.of(ctx).colorScheme.error,
+                                  ),
+                                  child: const Text('خروج'),
+                                ),
+                              ],
+                            ),
+                          );
+                          if (confirm == true) {
+                            await ref.read(logoutProvider.future);
+                            if (context.mounted) context.go('/login');
+                          }
+                        },
+                      ),
                     ),
-                    textDirection: TextDirection.ltr,
+                  ),
+
+                  const SizedBox(height: AlhaiSpacing.lg),
+                  Center(
+                    child: Text(
+                      'Alhai Driver v1.0.0',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.outline,
+                      ),
+                    ),
                   ),
                 ],
-              ),
-            ),
-          ),
-          const SizedBox(height: AlhaiSpacing.md),
-
-          // Settings
-          Card(
-            child: Column(
-              children: [
-                ListTile(
-                  leading: const Icon(Icons.person_outline),
-                  title: const Text('تعديل الملف الشخصي'),
-                  trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                  onTap: () => context.push('/profile-setup'),
-                ),
-                const Divider(height: 1),
-                ListTile(
-                  leading: const Icon(Icons.history),
-                  title: const Text('سجل الورديات'),
-                  trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                  onTap: () {},
-                ),
-                const Divider(height: 1),
-                ListTile(
-                  leading: const Icon(Icons.help_outline),
-                  title: const Text('المساعدة'),
-                  trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                  onTap: () {},
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: AlhaiSpacing.md),
-
-          // Logout
-          Semantics(
-            label: 'زر تسجيل الخروج',
-            button: true,
-            child: Card(
-              child: ListTile(
-              leading: Icon(Icons.logout, color: theme.colorScheme.error),
-              title: Text(
-                'تسجيل الخروج',
-                style: TextStyle(color: theme.colorScheme.error),
-              ),
-              onTap: () async {
-                final confirm = await showDialog<bool>(
-                  context: context,
-                  builder: (ctx) => AlertDialog(
-                    title: const Text('تسجيل الخروج'),
-                    content:
-                        const Text('هل تريد تسجيل الخروج من التطبيق؟'),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(ctx, false),
-                        child: const Text('إلغاء'),
-                      ),
-                      FilledButton(
-                        onPressed: () => Navigator.pop(ctx, true),
-                        style: FilledButton.styleFrom(
-                          backgroundColor: Theme.of(ctx).colorScheme.error,
-                        ),
-                        child: const Text('خروج'),
-                      ),
-                    ],
-                  ),
-                );
-                if (confirm == true) {
-                  await ref.read(logoutProvider.future);
-                  if (context.mounted) context.go('/login');
-                }
-              },
-            ),
-          ),
-          ),
-
-          const SizedBox(height: AlhaiSpacing.lg),
-          Center(
-            child: Text(
-              'Alhai Driver v1.0.0',
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.outline,
-              ),
-            ),
-          ),
-          ],
               ),
             ),
           ),

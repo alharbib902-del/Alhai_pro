@@ -20,10 +20,12 @@ class ReceiveItemsRequest {
   /// Creates from domain list
   factory ReceiveItemsRequest.fromDomain(List<ReceivedItem> items) {
     return ReceiveItemsRequest(
-      items: items.map((i) => ReceivedItemRequest(
-        productId: i.productId,
-        quantity: i.quantity,
-      )).toList(),
+      items: items
+          .map((i) => ReceivedItemRequest(
+                productId: i.productId,
+                quantity: i.quantity,
+              ))
+          .toList(),
     );
   }
 }

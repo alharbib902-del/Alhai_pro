@@ -128,8 +128,7 @@ class _DriverAppState extends ConsumerState<DriverApp>
       // respecting accessibility preferences within a safe range.
       builder: (context, child) {
         final mediaQuery = MediaQuery.of(context);
-        final clampedScale =
-            mediaQuery.textScaler.scale(1.0).clamp(0.8, 1.4);
+        final clampedScale = mediaQuery.textScaler.scale(1.0).clamp(0.8, 1.4);
         return MediaQuery(
           data: mediaQuery.copyWith(
             textScaler: TextScaler.linear(clampedScale),

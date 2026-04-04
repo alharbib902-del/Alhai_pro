@@ -81,14 +81,16 @@ class _DistributorLoginScreenState
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(20),
-              border: isDark
-                  ? Border.all(color: AppColors.getBorder(true))
-                  : null,
+              border:
+                  isDark ? Border.all(color: AppColors.getBorder(true)) : null,
               boxShadow: isDark
                   ? null
                   : [
                       BoxShadow(
-                        color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.08),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .shadow
+                            .withValues(alpha: 0.08),
                         blurRadius: 24,
                         offset: const Offset(0, 8),
                       ),
@@ -126,7 +128,8 @@ class _DistributorLoginScreenState
                   ),
                   const SizedBox(height: AlhaiSpacing.xs),
                   Text(
-                    l10n?.distributorLoginSubtitle ?? 'Enter your email and password',
+                    l10n?.distributorLoginSubtitle ??
+                        'Enter your email and password',
                     style: TextStyle(
                       fontSize: 14,
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -177,7 +180,8 @@ class _DistributorLoginScreenState
                         return l10n?.distributorEmailLabel ?? 'Email required';
                       }
                       // Email format validation
-                      final emailRegex = RegExp(r'^[\w\-\.+]+@([\w\-]+\.)+[\w\-]{2,}$');
+                      final emailRegex =
+                          RegExp(r'^[\w\-\.+]+@([\w\-]+\.)+[\w\-]{2,}$');
                       if (!emailRegex.hasMatch(value.trim())) {
                         return 'Please enter a valid email address';
                       }
@@ -189,10 +193,13 @@ class _DistributorLoginScreenState
                     decoration: InputDecoration(
                       labelText: '${l10n?.distributorEmailLabel ?? 'Email'} *',
                       prefixIcon: Icon(Icons.email_outlined,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant),
+                          color:
+                              Theme.of(context).colorScheme.onSurfaceVariant),
                       filled: true,
                       fillColor: isDark
-                          ? Theme.of(context).colorScheme.surfaceContainerHighest
+                          ? Theme.of(context)
+                              .colorScheme
+                              .surfaceContainerHighest
                           : AppColors.backgroundSecondary,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -227,9 +234,11 @@ class _DistributorLoginScreenState
                       color: Theme.of(context).colorScheme.onSurface,
                     ),
                     decoration: InputDecoration(
-                      labelText: '${l10n?.distributorPasswordLabel ?? 'Password'} *',
+                      labelText:
+                          '${l10n?.distributorPasswordLabel ?? 'Password'} *',
                       prefixIcon: Icon(Icons.lock_outline,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant),
+                          color:
+                              Theme.of(context).colorScheme.onSurfaceVariant),
                       suffixIcon: IconButton(
                         icon: Icon(
                           _obscurePassword
@@ -242,7 +251,9 @@ class _DistributorLoginScreenState
                       ),
                       filled: true,
                       fillColor: isDark
-                          ? Theme.of(context).colorScheme.surfaceContainerHighest
+                          ? Theme.of(context)
+                              .colorScheme
+                              .surfaceContainerHighest
                           : AppColors.backgroundSecondary,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -265,8 +276,8 @@ class _DistributorLoginScreenState
                       style: FilledButton.styleFrom(
                         backgroundColor: AppColors.primary,
                         foregroundColor: AppColors.textOnPrimary,
-                        padding:
-                            const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: AlhaiSpacing.md),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),

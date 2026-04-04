@@ -25,8 +25,7 @@ void main() {
     setupTestGetIt(mockDb: db);
 
     // Default stubs
-    when(() => productsDao.getAllProducts(any()))
-        .thenAnswer((_) async => []);
+    when(() => productsDao.getAllProducts(any())).thenAnswer((_) async => []);
   });
 
   tearDown(() => tearDownTestGetIt());
@@ -37,8 +36,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const PriceLabelsScreen()));
+      await tester.pumpWidget(createTestWidget(const PriceLabelsScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(PriceLabelsScreen), findsOneWidget);
@@ -57,8 +55,7 @@ void main() {
       when(() => productsDao.getAllProducts(any()))
           .thenAnswer((_) => completer.future);
 
-      await tester.pumpWidget(
-          createTestWidget(const PriceLabelsScreen()));
+      await tester.pumpWidget(createTestWidget(const PriceLabelsScreen()));
       await tester.pump();
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
@@ -80,8 +77,7 @@ void main() {
       when(() => productsDao.getAllProducts(any()))
           .thenAnswer((_) async => products);
 
-      await tester.pumpWidget(
-          createTestWidget(const PriceLabelsScreen()));
+      await tester.pumpWidget(createTestWidget(const PriceLabelsScreen()));
       await tester.pumpAndSettle();
 
       // Each product should have a checkbox
@@ -100,8 +96,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const PriceLabelsScreen()));
+      await tester.pumpWidget(createTestWidget(const PriceLabelsScreen()));
       await tester.pumpAndSettle();
 
       expect(find.text('Label Size'), findsOneWidget);
@@ -122,8 +117,7 @@ void main() {
       when(() => productsDao.getAllProducts(any()))
           .thenAnswer((_) async => products);
 
-      await tester.pumpWidget(
-          createTestWidget(const PriceLabelsScreen()));
+      await tester.pumpWidget(createTestWidget(const PriceLabelsScreen()));
       await tester.pumpAndSettle();
 
       // Print button should be disabled (no selection)
@@ -146,8 +140,7 @@ void main() {
       when(() => productsDao.getAllProducts(any()))
           .thenAnswer((_) async => products);
 
-      await tester.pumpWidget(
-          createTestWidget(const PriceLabelsScreen()));
+      await tester.pumpWidget(createTestWidget(const PriceLabelsScreen()));
       await tester.pumpAndSettle();
 
       // All products should be visible initially

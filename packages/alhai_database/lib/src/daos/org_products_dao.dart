@@ -14,8 +14,7 @@ class OrgProductsDao extends DatabaseAccessor<AppDatabase>
   /// Get all active products for an organization
   Future<List<OrgProductsTableData>> getByOrgId(String orgId) {
     return (select(orgProductsTable)
-          ..where(
-              (p) => p.orgId.equals(orgId) & p.isActive.equals(true))
+          ..where((p) => p.orgId.equals(orgId) & p.isActive.equals(true))
           ..orderBy([(p) => OrderingTerm.asc(p.name)]))
         .get();
   }
@@ -36,8 +35,7 @@ class OrgProductsDao extends DatabaseAccessor<AppDatabase>
   /// Get org product by barcode
   Future<OrgProductsTableData?> getByBarcode(String orgId, String barcode) {
     return (select(orgProductsTable)
-          ..where(
-              (p) => p.orgId.equals(orgId) & p.barcode.equals(barcode)))
+          ..where((p) => p.orgId.equals(orgId) & p.barcode.equals(barcode)))
         .getSingleOrNull();
   }
 
@@ -105,10 +103,15 @@ class OrgProductsDao extends DatabaseAccessor<AppDatabase>
   }) {
     return (update(orgProductsTable)..where((p) => p.id.equals(id)))
         .write(OrgProductsTableCompanion(
-      orgImageThumbnail: orgImageThumbnail != null ? Value(orgImageThumbnail) : const Value.absent(),
-      orgImageMedium: orgImageMedium != null ? Value(orgImageMedium) : const Value.absent(),
-      orgImageLarge: orgImageLarge != null ? Value(orgImageLarge) : const Value.absent(),
-      orgImageHash: orgImageHash != null ? Value(orgImageHash) : const Value.absent(),
+      orgImageThumbnail: orgImageThumbnail != null
+          ? Value(orgImageThumbnail)
+          : const Value.absent(),
+      orgImageMedium:
+          orgImageMedium != null ? Value(orgImageMedium) : const Value.absent(),
+      orgImageLarge:
+          orgImageLarge != null ? Value(orgImageLarge) : const Value.absent(),
+      orgImageHash:
+          orgImageHash != null ? Value(orgImageHash) : const Value.absent(),
       updatedAt: Value(DateTime.now()),
     ));
   }
@@ -139,8 +142,7 @@ class OrgProductsDao extends DatabaseAccessor<AppDatabase>
     final count = orgProductsTable.id.count();
     final query = selectOnly(orgProductsTable)
       ..addColumns([count])
-      ..where(
-          orgProductsTable.orgId.equals(orgId) &
+      ..where(orgProductsTable.orgId.equals(orgId) &
           orgProductsTable.isActive.equals(true));
     final result = await query.getSingle();
     return result.read(count) ?? 0;
@@ -149,8 +151,7 @@ class OrgProductsDao extends DatabaseAccessor<AppDatabase>
   /// Watch all active products for an organization
   Stream<List<OrgProductsTableData>> watchByOrgId(String orgId) {
     return (select(orgProductsTable)
-          ..where(
-              (p) => p.orgId.equals(orgId) & p.isActive.equals(true))
+          ..where((p) => p.orgId.equals(orgId) & p.isActive.equals(true))
           ..orderBy([(p) => OrderingTerm.asc(p.name)]))
         .watch();
   }

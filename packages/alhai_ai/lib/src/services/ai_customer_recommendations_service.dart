@@ -16,12 +16,16 @@ import 'package:alhai_database/alhai_database.dart';
 enum CustomerSegment {
   /// عميل VIP
   vip,
+
   /// عميل منتظم - Regular
   regular,
+
   /// عميل معرض للخسارة - At Risk
   atRisk,
+
   /// عميل مفقود - Lost
   lost,
+
   /// عميل جديد - New Customer
   newCustomer,
 }
@@ -127,7 +131,8 @@ class AiCustomerRecommendationsService {
   AiCustomerRecommendationsService(this._db);
 
   /// الحصول على التوصيات - Get Recommendations
-  Future<List<CustomerRecommendation>> getRecommendations(String storeId) async {
+  Future<List<CustomerRecommendation>> getRecommendations(
+      String storeId) async {
     final _ = _db.salesDao;
     final now = DateTime.now();
 
@@ -145,18 +150,24 @@ class AiCustomerRecommendationsService {
         products: const [
           RecommendedProduct(
             productId: 'P001', name: 'أرز بسمتي', // Basmati Rice
-            reason: 'يشتري كل 14 يوم - موعد الشراء القادم قريب', // Buys every 14 days
-            confidence: 0.92, avgPurchaseInterval: 14, price: 28.0, category: 'أرز',
+            reason:
+                'يشتري كل 14 يوم - موعد الشراء القادم قريب', // Buys every 14 days
+            confidence: 0.92, avgPurchaseInterval: 14, price: 28.0,
+            category: 'أرز',
           ),
           RecommendedProduct(
             productId: 'P009', name: 'دجاج طازج', // Fresh Chicken
-            reason: 'اشترى مع الأرز 85% من المرات', // Bought with rice 85% of the time
-            confidence: 0.85, avgPurchaseInterval: 7, price: 35.0, category: 'لحوم',
+            reason:
+                'اشترى مع الأرز 85% من المرات', // Bought with rice 85% of the time
+            confidence: 0.85, avgPurchaseInterval: 7, price: 35.0,
+            category: 'لحوم',
           ),
           RecommendedProduct(
             productId: 'P017', name: 'زيت عافية', // Afia Oil
-            reason: 'من مشترياته الأساسية الشهرية', // Part of monthly essentials
-            confidence: 0.78, avgPurchaseInterval: 30, price: 22.0, category: 'زيوت',
+            reason:
+                'من مشترياته الأساسية الشهرية', // Part of monthly essentials
+            confidence: 0.78, avgPurchaseInterval: 30, price: 22.0,
+            category: 'زيوت',
           ),
         ],
       ),
@@ -174,12 +185,14 @@ class AiCustomerRecommendationsService {
           RecommendedProduct(
             productId: 'P005', name: 'حفاضات بامبرز', // Pampers Diapers
             reason: 'تشتري كل 10 أيام', // Buys every 10 days
-            confidence: 0.95, avgPurchaseInterval: 10, price: 45.0, category: 'أطفال',
+            confidence: 0.95, avgPurchaseInterval: 10, price: 45.0,
+            category: 'أطفال',
           ),
           RecommendedProduct(
             productId: 'P006', name: 'مناديل مبللة', // Wet Wipes
             reason: 'تُشترى مع الحفاضات دائماً', // Always bought with diapers
-            confidence: 0.91, avgPurchaseInterval: 10, price: 12.0, category: 'أطفال',
+            confidence: 0.91, avgPurchaseInterval: 10, price: 12.0,
+            category: 'أطفال',
           ),
         ],
       ),
@@ -196,8 +209,10 @@ class AiCustomerRecommendationsService {
         products: const [
           RecommendedProduct(
             productId: 'P011', name: 'شاي ربيع', // Rabea Tea
-            reason: 'آخر مشتريات - ربما يحتاج عرض لجذبه', // Last purchase - might need an offer
-            confidence: 0.68, avgPurchaseInterval: 20, price: 15.0, category: 'مشروبات',
+            reason:
+                'آخر مشتريات - ربما يحتاج عرض لجذبه', // Last purchase - might need an offer
+            confidence: 0.68, avgPurchaseInterval: 20, price: 15.0,
+            category: 'مشروبات',
           ),
         ],
       ),
@@ -214,8 +229,10 @@ class AiCustomerRecommendationsService {
         products: const [
           RecommendedProduct(
             productId: 'P018', name: 'لبن المراعي', // Almarai Yogurt
-            reason: 'كانت تشتري أسبوعياً - يُنصح بإرسال عرض خاص', // Used to buy weekly - send special offer
-            confidence: 0.55, avgPurchaseInterval: 7, price: 6.5, category: 'ألبان',
+            reason:
+                'كانت تشتري أسبوعياً - يُنصح بإرسال عرض خاص', // Used to buy weekly - send special offer
+            confidence: 0.55, avgPurchaseInterval: 7, price: 6.5,
+            category: 'ألبان',
           ),
         ],
       ),
@@ -232,13 +249,16 @@ class AiCustomerRecommendationsService {
         products: const [
           RecommendedProduct(
             productId: 'P003', name: 'خبز عربي', // Arabic Bread
-            reason: 'من المنتجات الأكثر شراءً للعملاء الجدد', // Most purchased by new customers
-            confidence: 0.70, avgPurchaseInterval: 3, price: 3.5, category: 'مخبوزات',
+            reason:
+                'من المنتجات الأكثر شراءً للعملاء الجدد', // Most purchased by new customers
+            confidence: 0.70, avgPurchaseInterval: 3, price: 3.5,
+            category: 'مخبوزات',
           ),
           RecommendedProduct(
             productId: 'P004', name: 'جبنة بيضاء', // White Cheese
             reason: 'مرتبطة بالخبز بنسبة 78%', // Associated with bread at 78%
-            confidence: 0.65, avgPurchaseInterval: 7, price: 12.0, category: 'ألبان',
+            confidence: 0.65, avgPurchaseInterval: 7, price: 12.0,
+            category: 'ألبان',
           ),
         ],
       ),
@@ -255,8 +275,10 @@ class AiCustomerRecommendationsService {
         products: const [
           RecommendedProduct(
             productId: 'P019', name: 'تمر سكري', // Sukkari Dates
-            reason: 'من مشترياته المفضلة - يشتري كل أسبوعين', // Favorite - buys biweekly
-            confidence: 0.88, avgPurchaseInterval: 14, price: 25.0, category: 'حلويات',
+            reason:
+                'من مشترياته المفضلة - يشتري كل أسبوعين', // Favorite - buys biweekly
+            confidence: 0.88, avgPurchaseInterval: 14, price: 25.0,
+            category: 'حلويات',
           ),
         ],
       ),
@@ -264,7 +286,8 @@ class AiCustomerRecommendationsService {
   }
 
   /// تذكيرات إعادة الشراء - Get Repurchase Reminders
-  Future<List<RepurchaseReminder>> getRepurchaseReminders(String storeId) async {
+  Future<List<RepurchaseReminder>> getRepurchaseReminders(
+      String storeId) async {
     final _ = _db.salesDao;
     final now = DateTime.now();
 
@@ -323,8 +346,10 @@ class AiCustomerRecommendationsService {
 
     return segments.entries.map((entry) {
       final customers = entry.value;
-      final totalRevenue = customers.fold<double>(0, (sum, c) => sum + c.totalSpent);
-      final avgSpend = customers.fold<double>(0, (sum, c) => sum + c.avgSpend) / customers.length;
+      final totalRevenue =
+          customers.fold<double>(0, (sum, c) => sum + c.totalSpent);
+      final avgSpend = customers.fold<double>(0, (sum, c) => sum + c.avgSpend) /
+          customers.length;
 
       return SegmentResult(
         segment: entry.key,

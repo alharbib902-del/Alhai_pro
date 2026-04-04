@@ -46,7 +46,8 @@ class ValidationResult {
         errorCode = code;
 
   /// Factory constructor للاستخدام العام
-  factory ValidationResult.fromBool(bool valid, {String? errorAr, String? errorEn, String? code}) {
+  factory ValidationResult.fromBool(bool valid,
+      {String? errorAr, String? errorEn, String? code}) {
     return ValidationResult._internal(
       isValid: valid,
       errorAr: errorAr,

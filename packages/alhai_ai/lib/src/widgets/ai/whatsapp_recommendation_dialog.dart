@@ -47,10 +47,12 @@ class WhatsAppRecommendationDialog extends StatefulWidget {
   }
 
   @override
-  State<WhatsAppRecommendationDialog> createState() => _WhatsAppRecommendationDialogState();
+  State<WhatsAppRecommendationDialog> createState() =>
+      _WhatsAppRecommendationDialogState();
 }
 
-class _WhatsAppRecommendationDialogState extends State<WhatsAppRecommendationDialog> {
+class _WhatsAppRecommendationDialogState
+    extends State<WhatsAppRecommendationDialog> {
   late TextEditingController _phoneController;
   late TextEditingController _messageController;
   bool _isSending = false;
@@ -73,7 +75,8 @@ class _WhatsAppRecommendationDialogState extends State<WhatsAppRecommendationDia
     final priceText = widget.price != null
         ? ' بسعر ${widget.price!.toStringAsFixed(1)} ر.س'
         : '';
-    final offerText = widget.offerMessage ?? 'عرض خاص لك!'; // Special offer for you!
+    final offerText =
+        widget.offerMessage ?? 'عرض خاص لك!'; // Special offer for you!
 
     return 'مرحباً ${widget.customerName}! 👋\n\n'
         '$offerText\n\n'
@@ -142,7 +145,8 @@ class _WhatsAppRecommendationDialogState extends State<WhatsAppRecommendationDia
                         Text(
                           'إرسال توصية واتساب', // Send WhatsApp Recommendation
                           style: TextStyle(
-                            color: isDark ? Colors.white : AppColors.textPrimary,
+                            color:
+                                isDark ? Colors.white : AppColors.textPrimary,
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
@@ -150,7 +154,9 @@ class _WhatsAppRecommendationDialogState extends State<WhatsAppRecommendationDia
                         Text(
                           widget.customerName,
                           style: TextStyle(
-                            color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textMuted,
+                            color: isDark
+                                ? Colors.white.withValues(alpha: 0.5)
+                                : AppColors.textMuted,
                             fontSize: 12,
                           ),
                         ),
@@ -161,7 +167,9 @@ class _WhatsAppRecommendationDialogState extends State<WhatsAppRecommendationDia
                     onPressed: () => Navigator.pop(context),
                     icon: Icon(
                       Icons.close_rounded,
-                      color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textMuted,
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.5)
+                          : AppColors.textMuted,
                     ),
                   ),
                 ],
@@ -173,7 +181,9 @@ class _WhatsAppRecommendationDialogState extends State<WhatsAppRecommendationDia
               Text(
                 'رقم الهاتف', // Phone Number
                 style: TextStyle(
-                  color: isDark ? Colors.white.withValues(alpha: 0.7) : AppColors.textSecondary,
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.7)
+                      : AppColors.textSecondary,
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
                 ),
@@ -190,28 +200,38 @@ class _WhatsAppRecommendationDialogState extends State<WhatsAppRecommendationDia
                 decoration: InputDecoration(
                   hintText: '+966XXXXXXXXX',
                   hintStyle: TextStyle(
-                    color: isDark ? Colors.white.withValues(alpha: 0.3) : AppColors.textMuted,
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.3)
+                        : AppColors.textMuted,
                   ),
-                  prefixIcon: const Icon(Icons.phone_rounded, color: AppColors.primary, size: 20),
+                  prefixIcon: const Icon(Icons.phone_rounded,
+                      color: AppColors.primary, size: 20),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide(
-                      color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.1)
+                          : AppColors.border,
                     ),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide(
-                      color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.1)
+                          : AppColors.border,
                     ),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: const BorderSide(color: Color(0xFF25D366)),
                   ),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.sm),
+                  contentPadding: const EdgeInsets.symmetric(
+                      horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.sm),
                   filled: true,
-                  fillColor: isDark ? Colors.white.withValues(alpha: 0.05) : AppColors.grey50,
+                  fillColor: isDark
+                      ? Colors.white.withValues(alpha: 0.05)
+                      : AppColors.grey50,
                 ),
               ),
 
@@ -221,7 +241,9 @@ class _WhatsAppRecommendationDialogState extends State<WhatsAppRecommendationDia
               Text(
                 'معاينة الرسالة', // Message Preview
                 style: TextStyle(
-                  color: isDark ? Colors.white.withValues(alpha: 0.7) : AppColors.textSecondary,
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.7)
+                      : AppColors.textSecondary,
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
                 ),
@@ -239,13 +261,17 @@ class _WhatsAppRecommendationDialogState extends State<WhatsAppRecommendationDia
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide(
-                      color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.1)
+                          : AppColors.border,
                     ),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide(
-                      color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.1)
+                          : AppColors.border,
                     ),
                   ),
                   focusedBorder: OutlineInputBorder(
@@ -254,7 +280,9 @@ class _WhatsAppRecommendationDialogState extends State<WhatsAppRecommendationDia
                   ),
                   contentPadding: const EdgeInsets.all(AlhaiSpacing.sm),
                   filled: true,
-                  fillColor: isDark ? Colors.white.withValues(alpha: 0.05) : AppColors.grey50,
+                  fillColor: isDark
+                      ? Colors.white.withValues(alpha: 0.05)
+                      : AppColors.grey50,
                 ),
               ),
 
@@ -276,8 +304,11 @@ class _WhatsAppRecommendationDialogState extends State<WhatsAppRecommendationDia
                         )
                       : const AdaptiveIcon(Icons.send_rounded, size: 18),
                   label: Text(
-                    _isSending ? 'جاري الإرسال...' : 'إرسال عبر واتساب', // Sending... / Send via WhatsApp
-                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                    _isSending
+                        ? 'جاري الإرسال...'
+                        : 'إرسال عبر واتساب', // Sending... / Send via WhatsApp
+                    style: const TextStyle(
+                        fontSize: 14, fontWeight: FontWeight.w600),
                   ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF25D366),

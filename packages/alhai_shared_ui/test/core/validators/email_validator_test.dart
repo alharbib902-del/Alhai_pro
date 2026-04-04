@@ -122,8 +122,8 @@ void main() {
       });
 
       test('should handle already normalized email', () {
-        expect(EmailValidator.normalize('user@example.com'),
-            'user@example.com');
+        expect(
+            EmailValidator.normalize('user@example.com'), 'user@example.com');
       });
     });
 

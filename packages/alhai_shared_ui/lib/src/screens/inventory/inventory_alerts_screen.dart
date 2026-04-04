@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:alhai_database/alhai_database.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiColors, AlhaiSpacing;
+import 'package:alhai_design_system/alhai_design_system.dart'
+    show AlhaiColors, AlhaiSpacing;
 import 'package:get_it/get_it.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_auth/alhai_auth.dart';
@@ -12,10 +13,12 @@ class InventoryAlertsScreen extends ConsumerStatefulWidget {
   const InventoryAlertsScreen({super.key});
 
   @override
-  ConsumerState<InventoryAlertsScreen> createState() => _InventoryAlertsScreenState();
+  ConsumerState<InventoryAlertsScreen> createState() =>
+      _InventoryAlertsScreenState();
 }
 
-class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen> with SingleTickerProviderStateMixin {
+class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   int _lowStockThreshold = 10;
   bool _notifyLowStock = true;
@@ -25,8 +28,10 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen> w
 
   List<_AlertItem> _alerts = [];
 
-  List<_AlertItem> get _lowStockAlerts => _alerts.where((a) => a.type == 'low_stock').toList();
-  List<_AlertItem> get _expiryAlerts => _alerts.where((a) => a.type == 'expiry').toList();
+  List<_AlertItem> get _lowStockAlerts =>
+      _alerts.where((a) => a.type == 'low_stock').toList();
+  List<_AlertItem> get _expiryAlerts =>
+      _alerts.where((a) => a.type == 'expiry').toList();
 
   @override
   void initState() {
@@ -44,22 +49,31 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen> w
       }
       final db = GetIt.I<AppDatabase>();
       final lowStock = await db.productsDao.getLowStockProducts(storeId);
-      final alerts = lowStock.map((p) => _AlertItem(
-        id: p.id,
-        productName: p.name,
-        barcode: p.barcode ?? '',
-        type: 'low_stock',
-        currentStock: p.stockQty,
-        threshold: p.minQty,
-        priority: p.stockQty <= 0 ? 'critical' : (p.stockQty <= p.minQty ~/ 2 ? 'high' : 'medium'),
-        createdAt: p.updatedAt ?? p.createdAt,
-      )).toList();
-      if (mounted) setState(() { _alerts = alerts; _isLoading = false; });
+      final alerts = lowStock
+          .map((p) => _AlertItem(
+                id: p.id,
+                productName: p.name,
+                barcode: p.barcode ?? '',
+                type: 'low_stock',
+                currentStock: p.stockQty,
+                threshold: p.minQty,
+                priority: p.stockQty <= 0
+                    ? 'critical'
+                    : (p.stockQty <= p.minQty ~/ 2 ? 'high' : 'medium'),
+                createdAt: p.updatedAt ?? p.createdAt,
+              ))
+          .toList();
+      if (mounted)
+        setState(() {
+          _alerts = alerts;
+          _isLoading = false;
+        });
     } catch (e) {
-      if (mounted) setState(() {
-        _isLoading = false;
-        _loadError = e.toString();
-      });
+      if (mounted)
+        setState(() {
+          _isLoading = false;
+          _loadError = e.toString();
+        });
     }
   }
 
@@ -94,7 +108,10 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen> w
               SizedBox(height: AlhaiSpacing.xs),
               TextButton.icon(
                 onPressed: () {
-                  setState(() { _isLoading = true; _loadError = null; });
+                  setState(() {
+                    _isLoading = true;
+                    _loadError = null;
+                  });
                   _loadData();
                 },
                 icon: const Icon(Icons.refresh),
@@ -141,7 +158,8 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen> w
                   child: _SummaryCard(
                     icon: Icons.warning,
                     label: l10n.urgentAlerts,
-                    value: '${_alerts.where((a) => a.priority == "high" || a.priority == "critical").length}',
+                    value:
+                        '${_alerts.where((a) => a.priority == "high" || a.priority == "critical").length}',
                     color: colorScheme.error,
                   ),
                 ),
@@ -191,7 +209,8 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen> w
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.check_circle, size: 64, color: AlhaiColors.success),
+            const Icon(Icons.check_circle,
+                size: 64, color: AlhaiColors.success),
             SizedBox(height: AlhaiSpacing.md),
             Text(l10n.noAlerts, style: const TextStyle(fontSize: 18)),
           ],
@@ -203,7 +222,8 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen> w
     final sortedAlerts = List<_AlertItem>.from(alerts)
       ..sort((a, b) {
         final priorityOrder = {'critical': 0, 'high': 1, 'medium': 2, 'low': 3};
-        return (priorityOrder[a.priority] ?? 3).compareTo(priorityOrder[b.priority] ?? 3);
+        return (priorityOrder[a.priority] ?? 3)
+            .compareTo(priorityOrder[b.priority] ?? 3);
       });
 
     return ListView.builder(
@@ -247,7 +267,8 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen> w
                     Container(
                       padding: const EdgeInsets.all(AlhaiSpacing.sm),
                       decoration: BoxDecoration(
-                        color: _getAlertColor(alert.type).withValues(alpha: 0.1),
+                        color:
+                            _getAlertColor(alert.type).withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Icon(
@@ -265,19 +286,27 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen> w
                               Expanded(
                                 child: Text(
                                   alert.productName,
-                                  style: const TextStyle(fontWeight: FontWeight.bold),
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ),
-                              if (alert.priority == 'high' || alert.priority == 'critical')
+                              if (alert.priority == 'high' ||
+                                  alert.priority == 'critical')
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: AlhaiSpacing.xxxs),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 6,
+                                      vertical: AlhaiSpacing.xxxs),
                                   decoration: BoxDecoration(
                                     color: colorScheme.error,
                                     borderRadius: BorderRadius.circular(4),
                                   ),
                                   child: Text(
-                                    alert.priority == 'critical' ? l10n.criticalPriority : l10n.highPriority,
-                                    style: TextStyle(color: colorScheme.surface, fontSize: 10),
+                                    alert.priority == 'critical'
+                                        ? l10n.criticalPriority
+                                        : l10n.highPriority,
+                                    style: TextStyle(
+                                        color: colorScheme.surface,
+                                        fontSize: 10),
                                   ),
                                 ),
                             ],
@@ -285,18 +314,23 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen> w
                           SizedBox(height: AlhaiSpacing.xxs),
                           Text(
                             _getAlertMessage(alert),
-                            style: TextStyle(fontSize: 13, color: colorScheme.onSurfaceVariant),
+                            style: TextStyle(
+                                fontSize: 13,
+                                color: colorScheme.onSurfaceVariant),
                           ),
                           SizedBox(height: AlhaiSpacing.xxs),
                           Text(
                             _formatTimeAgo(alert.createdAt),
-                            style: TextStyle(fontSize: 11, color: colorScheme.onSurfaceVariant),
+                            style: TextStyle(
+                                fontSize: 11,
+                                color: colorScheme.onSurfaceVariant),
                           ),
                         ],
                       ),
                     ),
                     IconButton(
-                      icon: Icon(Icons.shopping_cart, color: colorScheme.primary),
+                      icon:
+                          Icon(Icons.shopping_cart, color: colorScheme.primary),
                       tooltip: l10n.createPurchaseOrder,
                       onPressed: () => _createPurchaseOrder(alert),
                     ),
@@ -312,24 +346,31 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen> w
 
   Color _getAlertColor(String type) {
     switch (type) {
-      case 'low_stock': return AlhaiColors.warning;
-      case 'expiry': return Colors.purple;
-      default: return Theme.of(context).colorScheme.outline;
+      case 'low_stock':
+        return AlhaiColors.warning;
+      case 'expiry':
+        return Colors.purple;
+      default:
+        return Theme.of(context).colorScheme.outline;
     }
   }
 
   IconData _getAlertIcon(String type) {
     switch (type) {
-      case 'low_stock': return Icons.inventory;
-      case 'expiry': return Icons.calendar_today;
-      default: return Icons.warning;
+      case 'low_stock':
+        return Icons.inventory;
+      case 'expiry':
+        return Icons.calendar_today;
+      default:
+        return Icons.warning;
     }
   }
 
   String _getAlertMessage(_AlertItem alert) {
     final l10n = AppLocalizations.of(context)!;
     if (alert.type == 'low_stock') {
-      return l10n.stockAlertMessage(alert.currentStock.toInt(), alert.threshold.toInt());
+      return l10n.stockAlertMessage(
+          alert.currentStock.toInt(), alert.threshold.toInt());
     } else {
       return l10n.expiryAlertLabel;
     }
@@ -366,23 +407,29 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen> w
                     color: _getAlertColor(alert.type).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(_getAlertIcon(alert.type), size: 32, color: _getAlertColor(alert.type)),
+                  child: Icon(_getAlertIcon(alert.type),
+                      size: 32, color: _getAlertColor(alert.type)),
                 ),
                 SizedBox(width: AlhaiSpacing.md),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(alert.productName, style: Theme.of(context).textTheme.titleLarge),
-                      Text(alert.barcode, style: TextStyle(color: colorScheme.onSurfaceVariant)),
+                      Text(alert.productName,
+                          style: Theme.of(context).textTheme.titleLarge),
+                      Text(alert.barcode,
+                          style:
+                              TextStyle(color: colorScheme.onSurfaceVariant)),
                     ],
                   ),
                 ),
               ],
             ),
             SizedBox(height: AlhaiSpacing.lg),
-            _DetailRow(label: l10n.currentQuantity, value: '${alert.currentStock}'),
-            _DetailRow(label: l10n.minimumThreshold, value: '${alert.threshold}'),
+            _DetailRow(
+                label: l10n.currentQuantity, value: '${alert.currentStock}'),
+            _DetailRow(
+                label: l10n.minimumThreshold, value: '${alert.threshold}'),
             SizedBox(height: AlhaiSpacing.lg),
             Row(
               children: [
@@ -426,7 +473,9 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen> w
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(l10n.alertSettings, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              Text(l10n.alertSettings,
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.bold)),
               SizedBox(height: AlhaiSpacing.md),
               SwitchListTile(
                 title: Text(l10n.lowStockNotifications),
@@ -586,8 +635,12 @@ class _SummaryCard extends StatelessWidget {
         children: [
           Icon(icon, color: color),
           SizedBox(height: AlhaiSpacing.xxs),
-          Text(value, style: TextStyle(fontWeight: FontWeight.bold, color: color, fontSize: 24)),
-          Text(label, style: TextStyle(fontSize: 11, color: color.withValues(alpha: 0.8))),
+          Text(value,
+              style: TextStyle(
+                  fontWeight: FontWeight.bold, color: color, fontSize: 24)),
+          Text(label,
+              style:
+                  TextStyle(fontSize: 11, color: color.withValues(alpha: 0.8))),
         ],
       ),
     );

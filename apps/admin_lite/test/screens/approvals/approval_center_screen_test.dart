@@ -167,7 +167,8 @@ void main() {
       tester.view.resetDevicePixelRatio();
     });
 
-    testWidgets('pending refund card shows approve and reject buttons', (tester) async {
+    testWidgets('pending refund card shows approve and reject buttons',
+        (tester) async {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
@@ -194,7 +195,8 @@ void main() {
       tester.view.resetDevicePixelRatio();
     });
 
-    testWidgets('approved refund card does not show action buttons', (tester) async {
+    testWidgets('approved refund card does not show action buttons',
+        (tester) async {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
@@ -227,7 +229,8 @@ void main() {
       suppressOverflowErrors();
 
       await tester.pumpWidget(buildScreen(
-        refundsValue: AsyncValue.error(Exception('Load error'), StackTrace.current),
+        refundsValue:
+            AsyncValue.error(Exception('Load error'), StackTrace.current),
         countValue: const AsyncValue.data(0),
       ));
       await tester.pumpAndSettle();

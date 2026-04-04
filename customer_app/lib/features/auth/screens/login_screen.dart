@@ -63,7 +63,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     });
 
     try {
-      final phone = '${AppConstants.defaultCountryCode}${_phoneController.text.trim()}';
+      final phone =
+          '${AppConstants.defaultCountryCode}${_phoneController.text.trim()}';
       final datasource = locator<AuthDatasource>();
       await datasource.sendOtp(phone);
 
@@ -73,7 +74,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         context.push('/auth/otp', extra: phone);
       }
     } on SocketException catch (_) {
-      setState(() => _error = 'لا يوجد اتصال بالإنترنت. تحقق من الشبكة وحاول مرة أخرى');
+      setState(() =>
+          _error = 'لا يوجد اتصال بالإنترنت. تحقق من الشبكة وحاول مرة أخرى');
     } on TimeoutException catch (_) {
       setState(() => _error = 'انتهت مهلة الاتصال. حاول مرة أخرى');
     } catch (e) {
@@ -177,8 +179,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 ],
                 const SizedBox(height: AlhaiSpacing.lg),
                 FilledButton(
-                  onPressed:
-                    (_loading || _isCooldownActive) ? null : _sendOtp,
+                  onPressed: (_loading || _isCooldownActive) ? null : _sendOtp,
                   style: FilledButton.styleFrom(
                     minimumSize: const Size.fromHeight(52),
                     shape: RoundedRectangleBorder(

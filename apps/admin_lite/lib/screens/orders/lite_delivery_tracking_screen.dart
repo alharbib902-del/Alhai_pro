@@ -38,13 +38,21 @@ class LiteDeliveryTrackingScreen extends ConsumerWidget {
               data: (orders) {
                 if (orders.isEmpty) {
                   return Center(
-                    child: Text(l10n.noResults, style: TextStyle(color: isDark ? Colors.white54 : Theme.of(context).colorScheme.onSurfaceVariant)),
+                    child: Text(l10n.noResults,
+                        style: TextStyle(
+                            color: isDark
+                                ? Colors.white54
+                                : Theme.of(context)
+                                    .colorScheme
+                                    .onSurfaceVariant)),
                   );
                 }
                 return RefreshIndicator(
-                  onRefresh: () async => ref.invalidate(liteDeliveryOrdersProvider),
+                  onRefresh: () async =>
+                      ref.invalidate(liteDeliveryOrdersProvider),
                   child: ListView.builder(
-                    padding: EdgeInsets.all(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
+                    padding: EdgeInsets.all(
+                        isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
                     itemCount: orders.length,
                     itemBuilder: (context, index) {
                       return _buildDeliveryCard(context, orders[index], isDark);
@@ -59,7 +67,8 @@ class LiteDeliveryTrackingScreen extends ConsumerWidget {
                   children: [
                     Text(l10n.errorOccurred),
                     TextButton.icon(
-                      onPressed: () => ref.invalidate(liteDeliveryOrdersProvider),
+                      onPressed: () =>
+                          ref.invalidate(liteDeliveryOrdersProvider),
                       icon: const Icon(Icons.refresh_rounded),
                       label: Text(l10n.tryAgain),
                     ),
@@ -73,18 +82,25 @@ class LiteDeliveryTrackingScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildMapPlaceholder(BuildContext context, bool isDark, AppLocalizations l10n) {
+  Widget _buildMapPlaceholder(
+      BuildContext context, bool isDark, AppLocalizations l10n) {
     return Container(
       height: 180,
       width: double.infinity,
-      color: isDark ? Colors.white.withValues(alpha: 0.04) : Colors.grey.shade100,
+      color:
+          isDark ? Colors.white.withValues(alpha: 0.04) : Colors.grey.shade100,
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.map_outlined, size: 48, color: isDark ? Colors.white24 : Colors.grey.shade400),
+            Icon(Icons.map_outlined,
+                size: 48,
+                color: isDark ? Colors.white24 : Colors.grey.shade400),
             const SizedBox(height: AlhaiSpacing.xs),
-            Text(l10n.trackingMap, style: TextStyle(fontSize: 14, color: isDark ? Colors.white38 : Colors.grey.shade500)),
+            Text(l10n.trackingMap,
+                style: TextStyle(
+                    fontSize: 14,
+                    color: isDark ? Colors.white38 : Colors.grey.shade500)),
           ],
         ),
       ),
@@ -107,10 +123,12 @@ class LiteDeliveryTrackingScreen extends ConsumerWidget {
     };
   }
 
-  Widget _buildDeliveryCard(BuildContext context, OrderWithCustomer order, bool isDark) {
+  Widget _buildDeliveryCard(
+      BuildContext context, OrderWithCustomer order, bool isDark) {
     final color = _statusColor(order.status);
     final label = _statusLabel(order.status);
-    final time = '${order.orderDate.hour.toString().padLeft(2, '0')}:${order.orderDate.minute.toString().padLeft(2, '0')}';
+    final time =
+        '${order.orderDate.hour.toString().padLeft(2, '0')}:${order.orderDate.minute.toString().padLeft(2, '0')}';
 
     return Container(
       margin: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
@@ -118,7 +136,10 @@ class LiteDeliveryTrackingScreen extends ConsumerWidget {
       decoration: BoxDecoration(
         color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: isDark ? Colors.white12 : Theme.of(context).colorScheme.outlineVariant),
+        border: Border.all(
+            color: isDark
+                ? Colors.white12
+                : Theme.of(context).colorScheme.outlineVariant),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -128,22 +149,41 @@ class LiteDeliveryTrackingScreen extends ConsumerWidget {
               CircleAvatar(
                 radius: 20,
                 backgroundColor: AlhaiColors.primary.withValues(alpha: 0.15),
-                child: const Icon(Icons.local_shipping, color: AlhaiColors.primary, size: 20),
+                child: const Icon(Icons.local_shipping,
+                    color: AlhaiColors.primary, size: 20),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(order.customerName ?? '', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: isDark ? Colors.white : Colors.black87)),
-                    Text('#${order.orderNumber}', style: TextStyle(fontSize: 12, color: isDark ? Colors.white38 : Theme.of(context).colorScheme.onSurfaceVariant)),
+                    Text(order.customerName ?? '',
+                        style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: isDark ? Colors.white : Colors.black87)),
+                    Text('#${order.orderNumber}',
+                        style: TextStyle(
+                            fontSize: 12,
+                            color: isDark
+                                ? Colors.white38
+                                : Theme.of(context)
+                                    .colorScheme
+                                    .onSurfaceVariant)),
                   ],
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: AlhaiSpacing.xxxs),
-                decoration: BoxDecoration(color: color.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(10)),
-                child: Text(label, style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: color)),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 10, vertical: AlhaiSpacing.xxxs),
+                decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(10)),
+                child: Text(label,
+                    style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        color: color)),
               ),
             ],
           ),
@@ -152,7 +192,8 @@ class LiteDeliveryTrackingScreen extends ConsumerWidget {
             children: [
               _DetailChip(Icons.access_time, time, isDark, context),
               const SizedBox(width: AlhaiSpacing.xs),
-              _DetailChip(Icons.attach_money, '${order.total.toStringAsFixed(0)} SAR', isDark, context),
+              _DetailChip(Icons.attach_money,
+                  '${order.total.toStringAsFixed(0)} SAR', isDark, context),
             ],
           ),
         ],
@@ -172,17 +213,29 @@ class _DetailChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxxs),
+      padding: const EdgeInsets.symmetric(
+          horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxxs),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.06) : Theme.of(parentContext).colorScheme.surfaceContainerLow,
+        color: isDark
+            ? Colors.white.withValues(alpha: 0.06)
+            : Theme.of(parentContext).colorScheme.surfaceContainerLow,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: isDark ? Colors.white38 : Theme.of(parentContext).colorScheme.onSurfaceVariant),
+          Icon(icon,
+              size: 14,
+              color: isDark
+                  ? Colors.white38
+                  : Theme.of(parentContext).colorScheme.onSurfaceVariant),
           const SizedBox(width: AlhaiSpacing.xxs),
-          Text(label, style: TextStyle(fontSize: 12, color: isDark ? Colors.white54 : Theme.of(parentContext).colorScheme.onSurface)),
+          Text(label,
+              style: TextStyle(
+                  fontSize: 12,
+                  color: isDark
+                      ? Colors.white54
+                      : Theme.of(parentContext).colorScheme.onSurface)),
         ],
       ),
     );

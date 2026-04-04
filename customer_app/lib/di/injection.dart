@@ -43,13 +43,20 @@ void configureDependencies() {
     locator.registerLazySingleton(() => DeliveryDatasource(client));
 
     // Repositories
-    locator.registerLazySingleton(() => AuthRepositoryImpl(locator<AuthDatasource>()));
-    locator.registerLazySingleton(() => StoresRepositoryImpl(locator<StoresDatasource>()));
-    locator.registerLazySingleton(() => ProductsRepositoryImpl(locator<ProductsDatasource>()));
-    locator.registerLazySingleton(() => CategoriesRepositoryImpl(locator<CategoriesDatasource>()));
-    locator.registerLazySingleton(() => OrdersRepositoryImpl(locator<OrdersDatasource>()));
-    locator.registerLazySingleton(() => AddressesRepositoryImpl(locator<AddressesDatasource>()));
-    locator.registerLazySingleton(() => DeliveryRepositoryImpl(locator<DeliveryDatasource>()));
+    locator.registerLazySingleton(
+        () => AuthRepositoryImpl(locator<AuthDatasource>()));
+    locator.registerLazySingleton(
+        () => StoresRepositoryImpl(locator<StoresDatasource>()));
+    locator.registerLazySingleton(
+        () => ProductsRepositoryImpl(locator<ProductsDatasource>()));
+    locator.registerLazySingleton(
+        () => CategoriesRepositoryImpl(locator<CategoriesDatasource>()));
+    locator.registerLazySingleton(
+        () => OrdersRepositoryImpl(locator<OrdersDatasource>()));
+    locator.registerLazySingleton(
+        () => AddressesRepositoryImpl(locator<AddressesDatasource>()));
+    locator.registerLazySingleton(
+        () => DeliveryRepositoryImpl(locator<DeliveryDatasource>()));
   }
 
   locator.allowReassignment = false;

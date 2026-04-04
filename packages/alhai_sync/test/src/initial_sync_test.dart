@@ -126,9 +126,8 @@ void main() {
 
       test('returns only unsynced tables', () async {
         for (final table in InitialSync.downloadOrder) {
-          when(() => mockMetadataDao.isInitialSynced(table))
-              .thenAnswer(
-                  (_) async => table == 'organizations' || table == 'stores');
+          when(() => mockMetadataDao.isInitialSynced(table)).thenAnswer(
+              (_) async => table == 'organizations' || table == 'stores');
         }
 
         final remaining = await initialSync.getRemainingTables();
@@ -161,21 +160,21 @@ void main() {
       test('emits progress events during sync', () async {
         // Only one table remaining
         for (final table in InitialSync.downloadOrder) {
-          when(() => mockMetadataDao.isInitialSynced(table)).thenAnswer(
-              (_) async => table != 'organizations');
+          when(() => mockMetadataDao.isInitialSynced(table))
+              .thenAnswer((_) async => table != 'organizations');
         }
 
         // Mock the download for organizations
         final queryBuilder = MockSupabaseQueryBuilder();
         final filterBuilder = MockPostgrestFilterBuilder();
-        when(() => mockClient.from('organizations')).thenAnswer((_) => queryBuilder);
+        when(() => mockClient.from('organizations'))
+            .thenAnswer((_) => queryBuilder);
         setupSelectChain(queryBuilder, filterBuilder, data: []);
 
         when(() => mockMetadataDao.markInitialSynced(any()))
             .thenAnswer((_) async {});
         when(() => mockMetadataDao.updateLastPullAt(any(), any(),
-                syncCount: any(named: 'syncCount')))
-            .thenAnswer((_) async {});
+            syncCount: any(named: 'syncCount'))).thenAnswer((_) async {});
 
         final progresses = <InitialSyncProgress>[];
         initialSync.progressStream.listen(progresses.add);
@@ -211,8 +210,7 @@ void main() {
           when(() => mockMetadataDao.markInitialSynced(table))
               .thenAnswer((_) async {});
           when(() => mockMetadataDao.updateLastPullAt(table, any(),
-                  syncCount: any(named: 'syncCount')))
-              .thenAnswer((_) async {});
+              syncCount: any(named: 'syncCount'))).thenAnswer((_) async {});
           when(() => mockMetadataDao.setError(table, any()))
               .thenAnswer((_) async {});
         }

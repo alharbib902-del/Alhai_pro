@@ -16,47 +16,50 @@ class ProductsDatasource {
     String? categoryId,
     String? searchQuery,
   }) async {
-   try {
-    var query = _client
-        .from('products')
-        .select()
-        .eq('store_id', storeId)
-        .eq('is_active', true);
+    try {
+      var query = _client
+          .from('products')
+          .select()
+          .eq('store_id', storeId)
+          .eq('is_active', true);
 
-    if (categoryId != null) {
-      query = query.eq('category_id', categoryId);
-    }
-
-    if (searchQuery != null && searchQuery.isNotEmpty) {
-      // Sanitize: keep only alphanumeric, Arabic, and spaces
-      final sanitized = searchQuery.replaceAll(RegExp(r'[^\p{L}\p{N}\s]', unicode: true), '').trim();
-      if (sanitized.isNotEmpty) {
-        query = query.or('name.ilike.%$sanitized%,barcode.eq.$sanitized,sku.ilike.%$sanitized%');
+      if (categoryId != null) {
+        query = query.eq('category_id', categoryId);
       }
+
+      if (searchQuery != null && searchQuery.isNotEmpty) {
+        // Sanitize: keep only alphanumeric, Arabic, and spaces
+        final sanitized = searchQuery
+            .replaceAll(RegExp(r'[^\p{L}\p{N}\s]', unicode: true), '')
+            .trim();
+        if (sanitized.isNotEmpty) {
+          query = query.or(
+              'name.ilike.%$sanitized%,barcode.eq.$sanitized,sku.ilike.%$sanitized%');
+        }
+      }
+
+      final from = (page - 1) * limit;
+      final to = from + limit - 1;
+
+      final data = await query
+          .order('name')
+          .range(from, to)
+          .timeout(AppConstants.networkTimeout);
+
+      final products = (data as List)
+          .map((row) => _productFromRow(row as Map<String, dynamic>))
+          .toList();
+
+      return Paginated(
+        items: products,
+        page: page,
+        limit: limit,
+        total: null,
+        hasMore: products.length == limit,
+      );
+    } on TimeoutException {
+      throw Exception('انتهت مهلة الاتصال، حاول مرة أخرى');
     }
-
-    final from = (page - 1) * limit;
-    final to = from + limit - 1;
-
-    final data = await query
-        .order('name')
-        .range(from, to)
-        .timeout(AppConstants.networkTimeout);
-
-    final products = (data as List)
-        .map((row) => _productFromRow(row as Map<String, dynamic>))
-        .toList();
-
-    return Paginated(
-      items: products,
-      page: page,
-      limit: limit,
-      total: null,
-      hasMore: products.length == limit,
-    );
-   } on TimeoutException {
-     throw Exception('انتهت مهلة الاتصال، حاول مرة أخرى');
-   }
   }
 
   Future<Product> getProduct(String id) async {

@@ -43,7 +43,7 @@ class PaymentService {
     if (_currentShift == null) {
       throw Exception('لا توجد وردية مفتوحة');
     }
-    
+
     final closed = await _shiftsRepo.closeShift(
       _currentShift!.id,
       closingCash: closingCash,

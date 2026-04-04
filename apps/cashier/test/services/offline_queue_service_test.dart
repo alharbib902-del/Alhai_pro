@@ -365,8 +365,7 @@ void main() {
       expect(health['syncing'], 0);
     });
 
-    test('getQueueHealth reflects status changes after failed flush',
-        () async {
+    test('getQueueHealth reflects status changes after failed flush', () async {
       await service.enqueue(
         type: QueueOperationType.saleCreate,
         payload: _salePayload(localSaleId: 'fail-item'),

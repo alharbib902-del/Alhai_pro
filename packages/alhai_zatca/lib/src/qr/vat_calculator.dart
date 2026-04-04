@@ -62,10 +62,11 @@ class VatCalculator {
     required double grossAmount,
     double vatRate = standardRate,
   }) {
-    return _round2(grossAmount - netFromGross(
-      grossAmount: grossAmount,
-      vatRate: vatRate,
-    ));
+    return _round2(grossAmount -
+        netFromGross(
+          grossAmount: grossAmount,
+          vatRate: vatRate,
+        ));
   }
 
   /// Extract net amount from gross (VAT-inclusive) amount
@@ -194,8 +195,7 @@ class VatCalculator {
   /// Round to 2 decimal places per ZATCA requirements
   ///
   /// Uses standard arithmetic rounding (0.5 rounds up).
-  static double _round2(double value) =>
-      (value * 100).roundToDouble() / 100;
+  static double _round2(double value) => (value * 100).roundToDouble() / 100;
 }
 
 /// Complete VAT breakdown with net, VAT, and gross amounts
@@ -220,7 +220,6 @@ class VatBreakdown {
   });
 
   @override
-  String toString() =>
-      'VatBreakdown(net: $netAmount, vat: $vatAmount, '
+  String toString() => 'VatBreakdown(net: $netAmount, vat: $vatAmount, '
       'gross: $grossAmount, rate: $vatRate%)';
 }

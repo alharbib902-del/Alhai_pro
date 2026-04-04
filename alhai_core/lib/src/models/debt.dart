@@ -7,6 +7,7 @@ part 'debt.g.dart';
 enum DebtType {
   /// Customer owes store (sale on credit)
   customerDebt,
+
   /// Store owes supplier
   supplierDebt,
 }
@@ -32,8 +33,7 @@ class Debt with _$Debt {
     DateTime? updatedAt,
   }) = _Debt;
 
-  factory Debt.fromJson(Map<String, dynamic> json) =>
-      _$DebtFromJson(json);
+  factory Debt.fromJson(Map<String, dynamic> json) => _$DebtFromJson(json);
 
   /// Amount paid so far
   double get paidAmount => originalAmount - remainingAmount;

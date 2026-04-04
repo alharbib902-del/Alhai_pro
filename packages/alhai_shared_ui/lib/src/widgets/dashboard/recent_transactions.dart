@@ -89,13 +89,14 @@ class RecentTransactionsList extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
+        borderRadius:
+            BorderRadius.circular(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
         border: Border.all(
           color: Theme.of(context).dividerColor,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha:isDarkMode ? 0.2 : 0.04),
+            color: Colors.black.withValues(alpha: isDarkMode ? 0.2 : 0.04),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -164,7 +165,10 @@ class RecentTransactionsList extends StatelessWidget {
           children: [
             Icon(
               Icons.receipt_long_rounded,
-              color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurfaceVariant
+                  .withValues(alpha: 0.5),
               size: 48,
             ),
             SizedBox(height: AlhaiSpacing.sm),
@@ -360,7 +364,10 @@ class _TransactionRowState extends State<_TransactionRow> {
         ),
         decoration: BoxDecoration(
           color: _isHovered
-              ? (Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5))
+              ? (Theme.of(context)
+                  .colorScheme
+                  .surfaceContainerHighest
+                  .withValues(alpha: 0.5))
               : Colors.transparent,
           border: widget.isLast
               ? null
@@ -460,8 +467,9 @@ class _TransactionRowState extends State<_TransactionRow> {
           width: isMobile ? 28 : AlhaiSpacing.xl,
           height: isMobile ? 28 : AlhaiSpacing.xl,
           decoration: BoxDecoration(
-            color: avatarColor.withValues(alpha:0.15),
-            borderRadius: BorderRadius.circular(isMobile ? AlhaiSpacing.xs : 10),
+            color: avatarColor.withValues(alpha: 0.15),
+            borderRadius:
+                BorderRadius.circular(isMobile ? AlhaiSpacing.xs : 10),
           ),
           alignment: Alignment.center,
           child: Text(
@@ -513,7 +521,8 @@ class _TransactionRowState extends State<_TransactionRow> {
     return Align(
       alignment: AlignmentDirectional.centerStart,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: AlhaiSpacing.xxs),
+        padding: const EdgeInsets.symmetric(
+            horizontal: 10, vertical: AlhaiSpacing.xxs),
         decoration: BoxDecoration(
           color: bgColor,
           borderRadius: BorderRadius.circular(20),
@@ -533,8 +542,8 @@ class _TransactionRowState extends State<_TransactionRow> {
 
   /// خلية المبلغ
   Widget _buildAmountCell(Transaction tx, bool isDark) {
-    final isNegative =
-        tx.type == TransactionType.refund || tx.type == TransactionType.cancelled;
+    final isNegative = tx.type == TransactionType.refund ||
+        tx.type == TransactionType.cancelled;
     final displayAmount = widget.formatAmount(context, tx.amount);
     final text = isNegative ? '-$displayAmount' : displayAmount;
 
@@ -607,9 +616,9 @@ String _formatTimeAgo(DateTime timestamp, AppLocalizations l10n) {
     case TransactionType.sale:
       return (
         l10n.completed,
-        AppColors.success.withValues(alpha:0.12),
+        AppColors.success.withValues(alpha: 0.12),
         AppColors.success,
-        AppColors.success.withValues(alpha:0.3),
+        AppColors.success.withValues(alpha: 0.3),
       );
 
     case TransactionType.refund:
@@ -623,9 +632,9 @@ String _formatTimeAgo(DateTime timestamp, AppLocalizations l10n) {
     case TransactionType.cancelled:
       return (
         l10n.cancelled,
-        AppColors.error.withValues(alpha:0.12),
+        AppColors.error.withValues(alpha: 0.12),
         AppColors.error,
-        AppColors.error.withValues(alpha:0.3),
+        AppColors.error.withValues(alpha: 0.3),
       );
   }
 }

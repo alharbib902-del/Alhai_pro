@@ -196,7 +196,8 @@ class _DefaultErrorScreen extends StatelessWidget {
                 ),
                 SizedBox(height: AlhaiSpacing.md),
                 Text(
-                  AppLocalizations.of(context)?.screenLoadError ?? 'An error occurred while loading the screen',
+                  AppLocalizations.of(context)?.screenLoadError ??
+                      'An error occurred while loading the screen',
                   style: theme.textTheme.titleLarge,
                   textAlign: TextAlign.center,
                 ),
@@ -225,7 +226,8 @@ class _DefaultErrorScreen extends StatelessWidget {
   String _getErrorMessage(Object error, BuildContext context) {
     final l10n = AppLocalizations.of(context);
     if (error is TimeoutException) {
-      return l10n?.timeoutCheckConnection ?? 'Timed out. Check your internet connection.';
+      return l10n?.timeoutCheckConnection ??
+          'Timed out. Check your internet connection.';
     }
     return l10n?.retryLaterMessage ?? 'Please try again later.';
   }
@@ -360,7 +362,8 @@ class PosLoadingScreen extends StatelessWidget {
                     // Products Grid
                     Expanded(
                       child: ShimmerGrid(
-                        crossAxisCount: getResponsiveGridColumns(context, mobile: 2, desktop: 4),
+                        crossAxisCount: getResponsiveGridColumns(context,
+                            mobile: 2, desktop: 4),
                         itemCount: 9,
                       ),
                     ),
@@ -420,7 +423,8 @@ class ReportsLoadingScreen extends StatelessWidget {
                   3,
                   (_) => Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: AlhaiSpacing.xs),
                       child: ShimmerPlaceholder.card(height: 100),
                     ),
                   ),
@@ -519,7 +523,8 @@ class InventoryLoadingScreen extends StatelessWidget {
                   3,
                   (_) => Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xxs),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: AlhaiSpacing.xxs),
                       child: ShimmerPlaceholder.card(height: 80),
                     ),
                   ),

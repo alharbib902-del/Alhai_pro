@@ -139,9 +139,10 @@ class _CompactBadge extends StatelessWidget {
     // كشف الداكن من الثيم إذا لم يكن light
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final useWhiteText = light || isDarkMode;
-    
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+      padding: const EdgeInsets.symmetric(
+          horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
       decoration: BoxDecoration(
         color: useWhiteText
             ? Colors.white.withValues(alpha: 0.15)
@@ -187,7 +188,7 @@ class _FullBadge extends StatelessWidget {
     // كشف الداكن من الثيم إذا لم يكن light
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final useWhiteText = light || isDarkMode;
-    
+
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
@@ -369,9 +370,7 @@ class _Divider extends StatelessWidget {
     return Container(
       height: AlhaiSpacing.xxl,
       width: 1,
-      color: light
-          ? Colors.white.withValues(alpha: 0.2)
-          : AppColors.border,
+      color: light ? Colors.white.withValues(alpha: 0.2) : AppColors.border,
     );
   }
 }

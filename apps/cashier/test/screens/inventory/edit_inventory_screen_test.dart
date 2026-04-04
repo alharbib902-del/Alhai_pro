@@ -37,8 +37,7 @@ void main() {
               barcode: '123456789',
               stockQty: 50,
             ));
-    when(() => inventoryDao.insertMovement(any()))
-        .thenAnswer((_) async => 1);
+    when(() => inventoryDao.insertMovement(any())).thenAnswer((_) async => 1);
     when(() => productsDao.updateStock(any(), any()))
         .thenAnswer((_) async => 1);
   });
@@ -108,8 +107,7 @@ void main() {
       tester.view.resetDevicePixelRatio();
     });
 
-    testWidgets('displays current stock and adjustment fields',
-        (tester) async {
+    testWidgets('displays current stock and adjustment fields', (tester) async {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();

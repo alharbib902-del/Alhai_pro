@@ -147,14 +147,14 @@ class DeliveryRepositoryImpl implements DeliveryRepository {
       driverPhone: response.driverPhone,
       driverLat: response.driverLat,
       driverLng: response.driverLng,
-      estimatedArrival: response.estimatedArrival != null 
-          ? DateTime.parse(response.estimatedArrival!) 
+      estimatedArrival: response.estimatedArrival != null
+          ? DateTime.parse(response.estimatedArrival!)
           : null,
-      pickedUpAt: response.pickedUpAt != null 
-          ? DateTime.parse(response.pickedUpAt!) 
+      pickedUpAt: response.pickedUpAt != null
+          ? DateTime.parse(response.pickedUpAt!)
           : null,
-      deliveredAt: response.deliveredAt != null 
-          ? DateTime.parse(response.deliveredAt!) 
+      deliveredAt: response.deliveredAt != null
+          ? DateTime.parse(response.deliveredAt!)
           : null,
       notes: response.notes,
       createdAt: DateTime.parse(response.createdAt),

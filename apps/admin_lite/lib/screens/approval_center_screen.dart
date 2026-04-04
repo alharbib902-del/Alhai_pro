@@ -40,13 +40,17 @@ class ApprovalCenterScreen extends ConsumerWidget {
               return countAsync.when(
                 data: (count) => count > 0
                     ? Padding(
-                        padding: const EdgeInsetsDirectional.only(end: AlhaiSpacing.md),
+                        padding: const EdgeInsetsDirectional.only(
+                            end: AlhaiSpacing.md),
                         child: Center(
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: AlhaiSpacing.xs,
+                                vertical: AlhaiSpacing.xxs),
                             decoration: BoxDecoration(
                               color: AlhaiColors.warning,
-                              borderRadius: BorderRadius.circular(AlhaiSpacing.sm),
+                              borderRadius:
+                                  BorderRadius.circular(AlhaiSpacing.sm),
                             ),
                             child: Text(
                               '$count',
@@ -91,7 +95,8 @@ class ApprovalCenterScreen extends ConsumerWidget {
                     ref.invalidate(pendingApprovalsCountProvider);
                   },
                   child: ListView.builder(
-                    padding: EdgeInsets.all(isMobile ? AlhaiSpacing.sm : AlhaiSpacing.mdl),
+                    padding: EdgeInsets.all(
+                        isMobile ? AlhaiSpacing.sm : AlhaiSpacing.mdl),
                     itemCount: refunds.length,
                     itemBuilder: (context, index) {
                       final refund = refunds[index];
@@ -115,13 +120,17 @@ class ApprovalCenterScreen extends ConsumerWidget {
                     Icon(
                       Icons.error_outline,
                       size: 48,
-                      color: isDark ? Colors.white30 : Theme.of(context).disabledColor,
+                      color: isDark
+                          ? Colors.white30
+                          : Theme.of(context).disabledColor,
                     ),
                     const SizedBox(height: AlhaiSpacing.md),
                     Text(
                       l10n?.errorOccurred ?? 'An error occurred',
                       style: TextStyle(
-                        color: isDark ? Colors.white54 : Theme.of(context).colorScheme.onSurfaceVariant,
+                        color: isDark
+                            ? Colors.white54
+                            : Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
                     const SizedBox(height: AlhaiSpacing.sm),
@@ -140,7 +149,8 @@ class ApprovalCenterScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildEmptyState(BuildContext context, bool isDark, ApprovalFilter filter) {
+  Widget _buildEmptyState(
+      BuildContext context, bool isDark, ApprovalFilter filter) {
     final l10n = AppLocalizations.of(context);
     final String message;
     final IconData icon;
@@ -168,13 +178,19 @@ class ApprovalCenterScreen extends ConsumerWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, size: 64, color: isDark ? Colors.white24 : Theme.of(context).colorScheme.outlineVariant),
+          Icon(icon,
+              size: 64,
+              color: isDark
+                  ? Colors.white24
+                  : Theme.of(context).colorScheme.outlineVariant),
           const SizedBox(height: AlhaiSpacing.md),
           Text(
             message,
             style: TextStyle(
               fontSize: 16,
-              color: isDark ? Colors.white54 : Theme.of(context).colorScheme.onSurfaceVariant,
+              color: isDark
+                  ? Colors.white54
+                  : Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
         ],
@@ -203,12 +219,17 @@ class _FilterTabs extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
+      padding: const EdgeInsets.symmetric(
+          horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.03) : Theme.of(context).colorScheme.surfaceContainerLowest,
+        color: isDark
+            ? Colors.white.withValues(alpha: 0.03)
+            : Theme.of(context).colorScheme.surfaceContainerLowest,
         border: Border(
           bottom: BorderSide(
-            color: isDark ? Colors.white12 : Theme.of(context).colorScheme.outlineVariant,
+            color: isDark
+                ? Colors.white12
+                : Theme.of(context).colorScheme.outlineVariant,
           ),
         ),
       ),
@@ -218,11 +239,14 @@ class _FilterTabs extends StatelessWidget {
           children: [
             _buildChip(context, l10n?.all ?? 'All', ApprovalFilter.all),
             const SizedBox(width: AlhaiSpacing.xs),
-            _buildChip(context, l10n?.pending ?? 'Pending', ApprovalFilter.pending),
+            _buildChip(
+                context, l10n?.pending ?? 'Pending', ApprovalFilter.pending),
             const SizedBox(width: AlhaiSpacing.xs),
-            _buildChip(context, l10n?.completed ?? 'Approved', ApprovalFilter.approved),
+            _buildChip(context, l10n?.completed ?? 'Approved',
+                ApprovalFilter.approved),
             const SizedBox(width: AlhaiSpacing.xs),
-            _buildChip(context, l10n?.cancelled ?? 'Rejected', ApprovalFilter.rejected),
+            _buildChip(context, l10n?.cancelled ?? 'Rejected',
+                ApprovalFilter.rejected),
           ],
         ),
       ),
@@ -240,11 +264,17 @@ class _FilterTabs extends StatelessWidget {
       labelStyle: TextStyle(
         color: isSelected
             ? AlhaiColors.primary
-            : (isDark ? Colors.white70 : Theme.of(context).colorScheme.onSurface),
+            : (isDark
+                ? Colors.white70
+                : Theme.of(context).colorScheme.onSurface),
         fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
       ),
       side: BorderSide(
-        color: isSelected ? AlhaiColors.primary : (isDark ? Colors.white24 : Theme.of(context).colorScheme.outlineVariant),
+        color: isSelected
+            ? AlhaiColors.primary
+            : (isDark
+                ? Colors.white24
+                : Theme.of(context).colorScheme.outlineVariant),
       ),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
     );
@@ -307,7 +337,9 @@ class _RefundCard extends ConsumerWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
         side: BorderSide(
-          color: isDark ? Colors.white12 : Theme.of(context).colorScheme.outlineVariant,
+          color: isDark
+              ? Colors.white12
+              : Theme.of(context).colorScheme.outlineVariant,
         ),
       ),
       child: Padding(
@@ -352,7 +384,11 @@ class _RefundCard extends ConsumerWidget {
                           refund.customerName!,
                           style: TextStyle(
                             fontSize: 13,
-                            color: isDark ? Colors.white54 : Theme.of(context).colorScheme.onSurfaceVariant,
+                            color: isDark
+                                ? Colors.white54
+                                : Theme.of(context)
+                                    .colorScheme
+                                    .onSurfaceVariant,
                           ),
                         ),
                     ],
@@ -361,7 +397,8 @@ class _RefundCard extends ConsumerWidget {
 
                 // Status badge
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: AlhaiSpacing.xxs),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 10, vertical: AlhaiSpacing.xxs),
                   decoration: BoxDecoration(
                     color: statusColor.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(12),
@@ -488,7 +525,8 @@ class _RefundCard extends ConsumerWidget {
           content: Text(l10n?.success ?? 'Refund approved successfully'),
           backgroundColor: AlhaiColors.success,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         ),
       );
     }
@@ -528,7 +566,8 @@ class _RefundCard extends ConsumerWidget {
           content: Text(l10n?.cancelled ?? 'Refund rejected'),
           backgroundColor: AlhaiColors.error,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         ),
       );
     }
@@ -559,22 +598,31 @@ class _DetailChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
+      padding: const EdgeInsets.symmetric(
+          horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.06) : Theme.of(context).colorScheme.surfaceContainerLow,
+        color: isDark
+            ? Colors.white.withValues(alpha: 0.06)
+            : Theme.of(context).colorScheme.surfaceContainerLow,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: isDark ? Colors.white38 : Theme.of(context).colorScheme.onSurfaceVariant),
+          Icon(icon,
+              size: 14,
+              color: isDark
+                  ? Colors.white38
+                  : Theme.of(context).colorScheme.onSurfaceVariant),
           const SizedBox(width: AlhaiSpacing.xxs),
           Flexible(
             child: Text(
               label,
               style: TextStyle(
                 fontSize: 12,
-                color: isDark ? Colors.white54 : Theme.of(context).colorScheme.onSurface,
+                color: isDark
+                    ? Colors.white54
+                    : Theme.of(context).colorScheme.onSurface,
               ),
               maxLines: maxLines,
               overflow: maxLines != null ? TextOverflow.ellipsis : null,

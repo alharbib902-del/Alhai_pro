@@ -12,15 +12,15 @@ class OrdersRepositoryImpl implements OrdersRepository {
       _datasource.createOrder(params);
 
   @override
-  Future<Order> getOrder(String id) =>
-      _datasource.getOrder(id);
+  Future<Order> getOrder(String id) => _datasource.getOrder(id);
 
   @override
   Future<Paginated<Order>> getOrders({
     OrderStatus? status,
     int page = 1,
     int limit = 20,
-  }) => _datasource.getOrders(status: status, page: page, limit: limit);
+  }) =>
+      _datasource.getOrders(status: status, page: page, limit: limit);
 
   @override
   Future<Order> updateStatus(String id, OrderStatus status) {

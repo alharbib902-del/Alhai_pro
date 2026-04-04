@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiColors, AlhaiSpacing;
+import 'package:alhai_design_system/alhai_design_system.dart'
+    show AlhaiColors, AlhaiSpacing;
 import 'package:alhai_l10n/alhai_l10n.dart';
 
 /// حوار إضافة ملاحظة على الفاتورة
@@ -23,7 +24,13 @@ class SaleNoteDialog extends StatefulWidget {
 
 class _SaleNoteDialogState extends State<SaleNoteDialog> {
   late final TextEditingController _controller;
-  List<String> _quickNotes(AppLocalizations l10n) => [l10n.quickNoteDelivery, l10n.quickNoteGiftWrap, l10n.quickNoteFragile, l10n.quickNoteUrgent, l10n.quickNoteReservation];
+  List<String> _quickNotes(AppLocalizations l10n) => [
+        l10n.quickNoteDelivery,
+        l10n.quickNoteGiftWrap,
+        l10n.quickNoteFragile,
+        l10n.quickNoteUrgent,
+        l10n.quickNoteReservation
+      ];
 
   @override
   void initState() {
@@ -85,7 +92,8 @@ class _SaleNoteDialogState extends State<SaleNoteDialog> {
         if (_controller.text.isNotEmpty)
           TextButton(
             onPressed: () => Navigator.pop(context, ''),
-            child: Text(l10n.clearNote, style: const TextStyle(color: AlhaiColors.error)),
+            child: Text(l10n.clearNote,
+                style: const TextStyle(color: AlhaiColors.error)),
           ),
         FilledButton(
           onPressed: () => Navigator.pop(context, _controller.text),

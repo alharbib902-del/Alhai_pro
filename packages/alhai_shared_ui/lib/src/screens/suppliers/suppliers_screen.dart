@@ -68,47 +68,49 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
             )
           : null,
       body: Column(
-              children: [
-                AppHeader(
-                  title: l10n.suppliersTitle,
-                  onMenuTap: isWideScreen
-                      ? null
-                      : () => Scaffold.of(context).openDrawer(),
-                  onNotificationsTap: () => context.push('/notifications'),
-                  notificationsCount: 3,
-                  userName: '\u0623\u062D\u0645\u062F \u0645\u062D\u0645\u062F',
-                  userRole: l10n.branchManager,
-                ),
-                Expanded(
-                  child: ref.watch(suppliersListProvider).when(
-                    loading: () => const Padding(
-                      padding: EdgeInsets.all(AlhaiSpacing.md),
-                      child: ShimmerList(itemCount: 6, itemHeight: 72),
-                    ),
-                    error: (e, _) => AppErrorState.general(
-                      context,
-                      message: e.toString(),
-                      onRetry: () => ref.invalidate(suppliersListProvider),
-                    ),
-                    data: (suppliers) => RefreshIndicator(
-                      onRefresh: () async => ref.invalidate(suppliersListProvider),
-                      color: AppColors.primary,
-                      child: SingleChildScrollView(
-                        controller: _scrollController,
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-                        child: _buildContent(suppliers,
-                            isWideScreen, isMediumScreen, isDark, l10n),
-                      ),
+        children: [
+          AppHeader(
+            title: l10n.suppliersTitle,
+            onMenuTap:
+                isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+            onNotificationsTap: () => context.push('/notifications'),
+            notificationsCount: 3,
+            userName: '\u0623\u062D\u0645\u062F \u0645\u062D\u0645\u062F',
+            userRole: l10n.branchManager,
+          ),
+          Expanded(
+            child: ref.watch(suppliersListProvider).when(
+                  loading: () => const Padding(
+                    padding: EdgeInsets.all(AlhaiSpacing.md),
+                    child: ShimmerList(itemCount: 6, itemHeight: 72),
+                  ),
+                  error: (e, _) => AppErrorState.general(
+                    context,
+                    message: e.toString(),
+                    onRetry: () => ref.invalidate(suppliersListProvider),
+                  ),
+                  data: (suppliers) => RefreshIndicator(
+                    onRefresh: () async =>
+                        ref.invalidate(suppliersListProvider),
+                    color: AppColors.primary,
+                    child: SingleChildScrollView(
+                      controller: _scrollController,
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: EdgeInsets.all(
+                          isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+                      child: _buildContent(suppliers, isWideScreen,
+                          isMediumScreen, isDark, l10n),
                     ),
                   ),
                 ),
-              ],
-            ),
+          ),
+        ],
+      ),
     );
   }
-  Widget _buildContent(List<SuppliersTableData> suppliers,
-      bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n) {
+
+  Widget _buildContent(List<SuppliersTableData> suppliers, bool isWideScreen,
+      bool isMediumScreen, bool isDark, AppLocalizations l10n) {
     final totalBalance = suppliers.fold(0.0, (sum, s) => sum + s.balance);
     final activeCount = suppliers.where((s) => s.isActive == true).length;
 
@@ -234,8 +236,8 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
                 ),
               ),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: AlhaiSpacing.xxs),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 10, vertical: AlhaiSpacing.xxs),
                 decoration: BoxDecoration(
                   color: AppColors.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -277,8 +279,8 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        contentPadding:
-                            const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
+                        contentPadding: const EdgeInsets.symmetric(
+                            vertical: AlhaiSpacing.sm),
                       ),
                     ),
                   ),
@@ -304,16 +306,22 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
               Builder(builder: (context) {
                 final filtered = _searchQuery.isEmpty
                     ? suppliers
-                    : suppliers.where((s) =>
-                        s.name.contains(_searchQuery) ||
-                        (s.phone ?? '').contains(_searchQuery) ||
-                        (s.email ?? '').contains(_searchQuery)).toList();
+                    : suppliers
+                        .where((s) =>
+                            s.name.contains(_searchQuery) ||
+                            (s.phone ?? '').contains(_searchQuery) ||
+                            (s.email ?? '').contains(_searchQuery))
+                        .toList();
 
                 if (filtered.isEmpty) {
                   return Padding(
                     padding: const EdgeInsets.all(AlhaiSpacing.xl),
                     child: Center(
-                      child: Text(l10n.noSuppliers, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
+                      child: Text(l10n.noSuppliers,
+                          style: TextStyle(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurfaceVariant)),
                     ),
                   );
                 }
@@ -328,10 +336,12 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
                   ),
                   itemBuilder: (context, index) {
                     final supplier = filtered[index];
-                    final initial = supplier.name.isNotEmpty ? supplier.name[0] : '?';
+                    final initial =
+                        supplier.name.isNotEmpty ? supplier.name[0] : '?';
                     return ListTile(
                       contentPadding: const EdgeInsets.symmetric(
-                          horizontal: AlhaiSpacing.xxs, vertical: AlhaiSpacing.xs),
+                          horizontal: AlhaiSpacing.xxs,
+                          vertical: AlhaiSpacing.xs),
                       leading: Hero(
                         tag: 'supplier-avatar-${supplier.id}',
                         child: CircleAvatar(
@@ -366,8 +376,7 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 10, vertical: AlhaiSpacing.xxs),
                             decoration: BoxDecoration(
-                              color:
-                                  AppColors.primary.withValues(alpha: 0.1),
+                              color: AppColors.primary.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
@@ -381,14 +390,17 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
                           ),
                           SizedBox(width: AlhaiSpacing.xs),
                           Icon(
-                            Directionality.of(context) == TextDirection.rtl ? Icons.chevron_right : Icons.chevron_left,
+                            Directionality.of(context) == TextDirection.rtl
+                                ? Icons.chevron_right
+                                : Icons.chevron_left,
                             color: isDark
                                 ? Colors.white.withValues(alpha: 0.3)
                                 : AppColors.textTertiary,
                           ),
                         ],
                       ),
-                      onTap: () => _showSupplierDetailFromData(context, supplier),
+                      onTap: () =>
+                          _showSupplierDetailFromData(context, supplier),
                     );
                   },
                 );
@@ -400,7 +412,8 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
     );
   }
 
-  void _showSupplierDetailFromData(BuildContext context, SuppliersTableData supplier) {
+  void _showSupplierDetailFromData(
+      BuildContext context, SuppliersTableData supplier) {
     final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
@@ -432,8 +445,8 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
               CircleAvatar(
                 radius: 40,
                 backgroundColor: AppColors.primary.withValues(alpha: 0.1),
-                child: const Icon(Icons.store,
-                    size: 40, color: AppColors.primary),
+                child:
+                    const Icon(Icons.store, size: 40, color: AppColors.primary),
               ),
               SizedBox(height: AlhaiSpacing.md),
               Text(
@@ -663,11 +676,9 @@ class _DetailRow extends StatelessWidget {
         children: [
           Icon(icon, size: 20, color: AppColors.textSecondary),
           SizedBox(width: AlhaiSpacing.sm),
-          Text(label,
-              style: const TextStyle(color: AppColors.textSecondary)),
+          Text(label, style: const TextStyle(color: AppColors.textSecondary)),
           const Spacer(),
-          Text(value,
-              style: const TextStyle(fontWeight: FontWeight.w500)),
+          Text(value, style: const TextStyle(fontWeight: FontWeight.w500)),
         ],
       ),
     );

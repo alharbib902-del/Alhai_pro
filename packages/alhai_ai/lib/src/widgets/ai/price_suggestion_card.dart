@@ -92,7 +92,8 @@ class PriceSuggestionCard extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: isDark ? Colors.white : AppColors.textPrimary,
+                            color:
+                                isDark ? Colors.white : AppColors.textPrimary,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -210,7 +211,8 @@ class PriceSuggestionCard extends StatelessWidget {
             : AppColors.error;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: AlhaiSpacing.xxxs),
+      padding: const EdgeInsets.symmetric(
+          horizontal: 6, vertical: AlhaiSpacing.xxxs),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(4),

@@ -124,7 +124,8 @@ void main() {
         ..addScenario(
           'Dot Dark',
           AlhaiBadge.dot(
-            child: const Icon(Icons.notifications, size: 32, color: Colors.white),
+            child:
+                const Icon(Icons.notifications, size: 32, color: Colors.white),
           ),
         )
         ..addScenario(

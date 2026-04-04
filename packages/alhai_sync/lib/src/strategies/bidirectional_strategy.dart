@@ -227,23 +227,29 @@ class BidirectionalStrategy {
         await _syncQueueDao.markAsSyncing(item.id);
         final payload = jsonDecode(item.payload) as Map<String, dynamic>;
         final remotePayload = _jsonConverter.toRemote(tableName, payload);
-        final cleanPayload =
-            _cleanPayload(remotePayload, tableName: tableName);
+        final cleanPayload = _cleanPayload(remotePayload, tableName: tableName);
         // M36: إعادة تسمية الأعمدة المحلية لتتوافق مع مخطط Supabase
         final mappedPayload = mapColumnsToRemote(tableName, cleanPayload);
 
         switch (item.operation.toUpperCase()) {
           case 'CREATE':
           case 'UPDATE':
-            await _client.from(tableName).upsert(
+            await _client
+                .from(tableName)
+                .upsert(
                   mappedPayload,
                   onConflict: 'id',
-                ).timeout(const Duration(seconds: 30));
+                )
+                .timeout(const Duration(seconds: 30));
             break;
           case 'DELETE':
             final id = mappedPayload['id'] as String?;
             if (id != null) {
-              await _client.from(tableName).delete().eq('id', id).timeout(const Duration(seconds: 30));
+              await _client
+                  .from(tableName)
+                  .delete()
+                  .eq('id', id)
+                  .timeout(const Duration(seconds: 30));
             }
             break;
         }
@@ -256,22 +262,27 @@ class BidirectionalStrategy {
         final payload = jsonDecode(item.payload) as Map<String, dynamic>;
 
         if (kDebugMode) {
-          debugPrint('Bidirectional push DB error for $tableName/${item.recordId}: ${e.code} ${e.message}');
+          debugPrint(
+              'Bidirectional push DB error for $tableName/${item.recordId}: ${e.code} ${e.message}');
         }
 
         // Duplicate key (23505): auto-resolve by converting to upsert
         if (e.code == '23505') {
           try {
-            await _client.from(tableName).upsert(
-              _cleanPayload(_jsonConverter.toRemote(tableName, payload),
-                  tableName: tableName),
-              onConflict: 'id',
-            ).timeout(const Duration(seconds: 30));
+            await _client
+                .from(tableName)
+                .upsert(
+                  _cleanPayload(_jsonConverter.toRemote(tableName, payload),
+                      tableName: tableName),
+                  onConflict: 'id',
+                )
+                .timeout(const Duration(seconds: 30));
             await _syncQueueDao.markAsSynced(item.id);
             count++;
             pushedIds.add(item.recordId);
             if (kDebugMode) {
-              debugPrint('Bidirectional: duplicate key auto-resolved via UPSERT for $tableName/${item.recordId}');
+              debugPrint(
+                  'Bidirectional: duplicate key auto-resolved via UPSERT for $tableName/${item.recordId}');
             }
             continue;
           } catch (_) {
@@ -301,7 +312,9 @@ class BidirectionalStrategy {
             syncQueueId: item.id,
             tableName: tableName,
             recordId: item.recordId,
-            type: isDeleteUpdate ? ConflictType.deleteUpdate : ConflictType.versionConflict,
+            type: isDeleteUpdate
+                ? ConflictType.deleteUpdate
+                : ConflictType.versionConflict,
             operation: item.operation,
             localData: payload,
             serverData: serverData,
@@ -314,18 +327,23 @@ class BidirectionalStrategy {
               final mappedPayload = mapColumnsToRemote(
                 tableName,
                 _cleanPayload(
-                    _jsonConverter.toRemote(tableName, resolution.resolvedData!),
+                    _jsonConverter.toRemote(
+                        tableName, resolution.resolvedData!),
                     tableName: tableName),
               );
-              await _client.from(tableName).upsert(
-                mappedPayload,
-                onConflict: 'id',
-              ).timeout(const Duration(seconds: 30));
+              await _client
+                  .from(tableName)
+                  .upsert(
+                    mappedPayload,
+                    onConflict: 'id',
+                  )
+                  .timeout(const Duration(seconds: 30));
               await _syncQueueDao.markAsSynced(item.id);
               count++;
               pushedIds.add(item.recordId);
               if (kDebugMode) {
-                debugPrint('Bidirectional: conflict auto-resolved (${resolution.strategy.name}) '
+                debugPrint(
+                    'Bidirectional: conflict auto-resolved (${resolution.strategy.name}) '
                     'for $tableName/${item.recordId}');
               }
               continue;
@@ -349,12 +367,14 @@ class BidirectionalStrategy {
         );
         await _syncQueueDao.markAsFailed(item.id, conflict.toJsonString());
         if (kDebugMode) {
-          debugPrint('Bidirectional push timeout for $tableName/${item.recordId}');
+          debugPrint(
+              'Bidirectional push timeout for $tableName/${item.recordId}');
         }
       } catch (e) {
         await _syncQueueDao.markAsFailed(item.id, e.toString());
         if (kDebugMode) {
-          debugPrint('Bidirectional push failed for $tableName/${item.recordId}: $e');
+          debugPrint(
+              'Bidirectional push failed for $tableName/${item.recordId}: $e');
         }
       }
     }
@@ -401,7 +421,8 @@ class BidirectionalStrategy {
         final recordId = serverRecord['id'] as String?;
         if (recordId != null && justPushedIds.contains(recordId)) {
           if (kDebugMode) {
-            debugPrint('BidirectionalStrategy: skipping just-pushed record $tableName/$recordId');
+            debugPrint(
+                'BidirectionalStrategy: skipping just-pushed record $tableName/$recordId');
           }
           continue;
         }
@@ -585,7 +606,9 @@ class BidirectionalStrategy {
       return batchMapColumnsToLocal(tableName, jsonConverted);
     } else {
       // جداول بدون أعمدة زمنية (return_items, purchase_items)
-      final response = await query.range(offset, offset + pageSize - 1).timeout(const Duration(seconds: 30));
+      final response = await query
+          .range(offset, offset + pageSize - 1)
+          .timeout(const Duration(seconds: 30));
       final records = List<Map<String, dynamic>>.from(response);
       final jsonConverted = _jsonConverter.batchToLocal(tableName, records);
       // M36: إعادة تسمية أعمدة Supabase لتتوافق مع مخطط Drift المحلي

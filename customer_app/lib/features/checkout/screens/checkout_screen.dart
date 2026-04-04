@@ -28,8 +28,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     final minOrderAmount = ref.read(minOrderAmountProvider);
     if (minOrderAmount > 0 && cart.total < minOrderAmount) {
       setState(() {
-        _error =
-            'الحد الأدنى للطلب ${minOrderAmount.toStringAsFixed(2)} ر.س';
+        _error = 'الحد الأدنى للطلب ${minOrderAmount.toStringAsFixed(2)} ر.س';
       });
       return;
     }
@@ -110,8 +109,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
 
                       return Column(
                         children: addresses.map((address) {
-                          final isSelected =
-                              selectedAddress?.id == address.id;
+                          final isSelected = selectedAddress?.id == address.id;
                           return Card(
                             color: isSelected
                                 ? theme.colorScheme.primaryContainer
@@ -157,7 +155,11 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                   ...[
                     (PaymentMethod.cash, 'الدفع عند الاستلام', Icons.money),
                     (PaymentMethod.card, 'بطاقة ائتمان', Icons.credit_card),
-                    (PaymentMethod.wallet, 'المحفظة', Icons.account_balance_wallet),
+                    (
+                      PaymentMethod.wallet,
+                      'المحفظة',
+                      Icons.account_balance_wallet
+                    ),
                   ].map((entry) {
                     final (method, label, icon) = entry;
                     final isSelected = paymentMethod == method;
@@ -167,9 +169,8 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                           : null,
                       child: ListTile(
                         leading: Icon(icon,
-                            color: isSelected
-                                ? theme.colorScheme.primary
-                                : null),
+                            color:
+                                isSelected ? theme.colorScheme.primary : null),
                         title: Text(label),
                         trailing: isSelected
                             ? Icon(Icons.check_circle,

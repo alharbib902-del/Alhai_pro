@@ -779,14 +779,16 @@ class _MascotPainter extends CustomPainter {
           Colors.white.withValues(alpha: 0.0),
         ],
       ).createShader(Rect.fromCenter(
-        center: Offset(center.dx - size.width * 0.05, center.dy + size.height * 0.13),
+        center: Offset(
+            center.dx - size.width * 0.05, center.dy + size.height * 0.13),
         width: size.width * 0.15,
         height: size.height * 0.04,
       ));
     canvas.drawRRect(
       RRect.fromRectAndRadius(
         Rect.fromCenter(
-          center: Offset(center.dx - size.width * 0.05, center.dy + size.height * 0.13),
+          center: Offset(
+              center.dx - size.width * 0.05, center.dy + size.height * 0.13),
           width: size.width * 0.15,
           height: size.height * 0.04,
         ),
@@ -814,8 +816,7 @@ class _MascotPainter extends CustomPainter {
     );
 
     // انعكاس
-    final highlightPaint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.2);
+    final highlightPaint = Paint()..color = Colors.white.withValues(alpha: 0.2);
     canvas.drawOval(
       Rect.fromCenter(
         center: Offset(center.dx, center.dy - footSize.height * 0.15),
@@ -851,7 +852,8 @@ class MascotWithMessage extends StatelessWidget {
         // فقاعة الرسالة
         Container(
           margin: const EdgeInsets.only(bottom: AlhaiSpacing.md),
-          padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.mdl, vertical: AlhaiSpacing.sm),
+          padding: const EdgeInsets.symmetric(
+              horizontal: AlhaiSpacing.mdl, vertical: AlhaiSpacing.sm),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(20),
@@ -879,7 +881,3 @@ class MascotWithMessage extends StatelessWidget {
     );
   }
 }
-
-
-
-

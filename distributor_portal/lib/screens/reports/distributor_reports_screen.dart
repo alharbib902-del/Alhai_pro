@@ -60,7 +60,8 @@ class _DistributorReportsScreenState
     if (report == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(l10n?.distributorNoDataToExport ?? 'لا توجد بيانات للتصدير'),
+          content:
+              Text(l10n?.distributorNoDataToExport ?? 'لا توجد بيانات للتصدير'),
           backgroundColor: AppColors.warning,
         ),
       );
@@ -97,20 +98,23 @@ class _DistributorReportsScreenState
     }
 
     final csvString = buf.toString();
-    final filename = 'report_${_apiPeriod}_${DateTime.now().millisecondsSinceEpoch}.csv';
+    final filename =
+        'report_${_apiPeriod}_${DateTime.now().millisecondsSinceEpoch}.csv';
 
     if (kIsWeb) {
       csv_export.downloadCsv(csvString, filename);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(l10n?.distributorReportExported ?? 'تم تصدير التقرير بنجاح'),
+          content:
+              Text(l10n?.distributorReportExported ?? 'تم تصدير التقرير بنجاح'),
           backgroundColor: AppColors.success,
         ),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(l10n?.distributorExportWebOnly ?? 'التصدير متاح فقط على الويب'),
+          content: Text(
+              l10n?.distributorExportWebOnly ?? 'التصدير متاح فقط على الويب'),
           backgroundColor: AppColors.warning,
         ),
       );
@@ -124,7 +128,8 @@ class _DistributorReportsScreenState
       final l10n = AppLocalizations.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(l10n?.distributorPrintWebOnly ?? 'الطباعة متاحة فقط على الويب'),
+          content: Text(
+              l10n?.distributorPrintWebOnly ?? 'الطباعة متاحة فقط على الويب'),
           backgroundColor: AppColors.warning,
         ),
       );
@@ -178,7 +183,10 @@ class _DistributorReportsScreenState
           // ── Period Filter (always visible) ──
           Padding(
             padding: EdgeInsetsDirectional.fromSTEB(
-              rPadding, rPadding, rPadding, 0,
+              rPadding,
+              rPadding,
+              rPadding,
+              0,
             ),
             child: _buildPeriodFilter(isDark),
           ),
@@ -236,56 +244,63 @@ class _DistributorReportsScreenState
                   );
                 }
                 return RefreshIndicator(
-                onRefresh: () async =>
-                    ref.invalidate(reportDataProvider(_apiPeriod)),
-                child: SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  padding: EdgeInsets.all(rPadding),
-                  child: Center(
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: kMaxContentWidth),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          // ── Summary Cards ──
-                          _buildSummaryCards(report, isDark, isWide, isMedium, size),
-                          SizedBox(
-                              height: isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md),
+                  onRefresh: () async =>
+                      ref.invalidate(reportDataProvider(_apiPeriod)),
+                  child: SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: EdgeInsets.all(rPadding),
+                    child: Center(
+                      child: ConstrainedBox(
+                        constraints:
+                            const BoxConstraints(maxWidth: kMaxContentWidth),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            // ── Summary Cards ──
+                            _buildSummaryCards(
+                                report, isDark, isWide, isMedium, size),
+                            SizedBox(
+                                height: isMedium
+                                    ? AlhaiSpacing.lg
+                                    : AlhaiSpacing.md),
 
-                          // ── Chart + Top Products ──
-                          if (isWide)
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                    flex: 3,
-                                    child: Semantics(
-                                      label: 'Daily sales bar chart showing sales amounts per day',
-                                      child: _buildChart(
-                                          isDark, isMedium, report.dailySales),
-                                    )),
-                                const SizedBox(width: AlhaiSpacing.lg),
-                                Expanded(
-                                    flex: 2,
-                                    child: _buildTopProducts(
-                                        isDark, report.topProducts)),
-                              ],
-                            )
-                          else ...[
-                            Semantics(
-                              label: 'Daily sales bar chart showing sales amounts per day',
-                              child: _buildChart(isDark, isMedium, report.dailySales),
-                            ),
-                            const SizedBox(height: AlhaiSpacing.md),
-                            _buildTopProducts(isDark, report.topProducts),
+                            // ── Chart + Top Products ──
+                            if (isWide)
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                      flex: 3,
+                                      child: Semantics(
+                                        label:
+                                            'Daily sales bar chart showing sales amounts per day',
+                                        child: _buildChart(isDark, isMedium,
+                                            report.dailySales),
+                                      )),
+                                  const SizedBox(width: AlhaiSpacing.lg),
+                                  Expanded(
+                                      flex: 2,
+                                      child: _buildTopProducts(
+                                          isDark, report.topProducts)),
+                                ],
+                              )
+                            else ...[
+                              Semantics(
+                                label:
+                                    'Daily sales bar chart showing sales amounts per day',
+                                child: _buildChart(
+                                    isDark, isMedium, report.dailySales),
+                              ),
+                              const SizedBox(height: AlhaiSpacing.md),
+                              _buildTopProducts(isDark, report.topProducts),
+                            ],
+                            const SizedBox(height: AlhaiSpacing.xl),
                           ],
-                          const SizedBox(height: AlhaiSpacing.xl),
-                        ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              );
+                );
               },
             ),
           ),
@@ -296,8 +311,8 @@ class _DistributorReportsScreenState
 
   // ─── Summary Cards ────────────────────────────────────────────
 
-  Widget _buildSummaryCards(ReportData report, bool isDark, bool isWide,
-      bool isMedium, Size size) {
+  Widget _buildSummaryCards(
+      ReportData report, bool isDark, bool isWide, bool isMedium, Size size) {
     final l10n = AppLocalizations.of(context);
     final fmt = NumberFormat('#,##0', 'ar');
     final fmtDec = NumberFormat('#,##0.00', 'ar');
@@ -380,11 +395,10 @@ class _DistributorReportsScreenState
               onTap: () => setState(() => _selectedPeriod = period),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
-                padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs + 2),
+                padding:
+                    const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs + 2),
                 decoration: BoxDecoration(
-                  color: isSelected
-                      ? AppColors.primary
-                      : Colors.transparent,
+                  color: isSelected ? AppColors.primary : Colors.transparent,
                   borderRadius: BorderRadius.circular(AlhaiRadius.sm + 2),
                 ),
                 child: Text(
@@ -415,66 +429,67 @@ class _DistributorReportsScreenState
       child: Semantics(
         label: '$label: $value${change.isNotEmpty ? ' ($change)' : ''}',
         child: Container(
-      padding: const EdgeInsets.all(AlhaiSpacing.md),
-      decoration: BoxDecoration(
-        color: AppColors.getSurface(isDark),
-        borderRadius: BorderRadius.circular(AlhaiRadius.lg),
-        border: Border.all(color: AppColors.getBorder(isDark)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+          padding: const EdgeInsets.all(AlhaiSpacing.md),
+          decoration: BoxDecoration(
+            color: AppColors.getSurface(isDark),
+            borderRadius: BorderRadius.circular(AlhaiRadius.lg),
+            border: Border.all(color: AppColors.getBorder(isDark)),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              ExcludeSemantics(
-                child: Container(
-                  padding: const EdgeInsets.all(AlhaiSpacing.xs),
-                  decoration: BoxDecoration(
-                    color: color.withValues(alpha: isDark ? 0.2 : 0.1),
-                    borderRadius: BorderRadius.circular(AlhaiRadius.sm + 2),
-                  ),
-                  child: Icon(icon, color: color, size: 20),
-                ),
-              ),
-              const Spacer(),
-              if (change.isNotEmpty)
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 3),
-                  decoration: BoxDecoration(
-                    color: AppColors.success.withValues(alpha: isDark ? 0.2 : 0.1),
-                    borderRadius: BorderRadius.circular(AlhaiRadius.sm - 2),
-                  ),
-                  child: Text(
-                    change,
-                    style: const TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.success,
+              Row(
+                children: [
+                  ExcludeSemantics(
+                    child: Container(
+                      padding: const EdgeInsets.all(AlhaiSpacing.xs),
+                      decoration: BoxDecoration(
+                        color: color.withValues(alpha: isDark ? 0.2 : 0.1),
+                        borderRadius: BorderRadius.circular(AlhaiRadius.sm + 2),
+                      ),
+                      child: Icon(icon, color: color, size: 20),
                     ),
                   ),
+                  const Spacer(),
+                  if (change.isNotEmpty)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: AlhaiSpacing.xs, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: AppColors.success
+                            .withValues(alpha: isDark ? 0.2 : 0.1),
+                        borderRadius: BorderRadius.circular(AlhaiRadius.sm - 2),
+                      ),
+                      child: Text(
+                        change,
+                        style: const TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.success,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+              const SizedBox(height: AlhaiSpacing.sm),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: AppColors.getTextSecondary(isDark),
                 ),
+              ),
+              const SizedBox(height: AlhaiSpacing.xxs),
+              Text(
+                value,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.getTextPrimary(isDark),
+                ),
+              ),
             ],
           ),
-          const SizedBox(height: AlhaiSpacing.sm),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 12,
-              color: AppColors.getTextSecondary(isDark),
-            ),
-          ),
-          const SizedBox(height: AlhaiSpacing.xxs),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: AppColors.getTextPrimary(isDark),
-            ),
-          ),
-        ],
-      ),
         ),
       ),
     );
@@ -520,9 +535,8 @@ class _DistributorReportsScreenState
       );
     }
 
-    final maxValue = dailySales
-        .map((s) => s.amount)
-        .reduce((a, b) => a > b ? a : b);
+    final maxValue =
+        dailySales.map((s) => s.amount).reduce((a, b) => a > b ? a : b);
     final chartMaxY = maxValue > 0 ? maxValue * 1.2 : 100.0;
 
     return Container(
@@ -540,7 +554,8 @@ class _DistributorReportsScreenState
               Container(
                 padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: isDark ? 0.2 : 0.1),
+                  color:
+                      AppColors.primary.withValues(alpha: isDark ? 0.2 : 0.1),
                   borderRadius: BorderRadius.circular(AlhaiRadius.sm + 2),
                 ),
                 child: const Icon(Icons.bar_chart_rounded,
@@ -568,9 +583,8 @@ class _DistributorReportsScreenState
                   enabled: true,
                   touchTooltipData: BarTouchTooltipData(
                     tooltipRoundedRadius: 8,
-                    tooltipBgColor: isDark
-                        ? AppColors.getSurface(true)
-                        : AppColors.grey800,
+                    tooltipBgColor:
+                        isDark ? AppColors.getSurface(true) : AppColors.grey800,
                     getTooltipItem: (group, groupIndex, rod, rodIndex) {
                       return BarTooltipItem(
                         '${NumberFormat('#,##0').format(rod.toY)} ر.س',
@@ -633,8 +647,7 @@ class _DistributorReportsScreenState
                 gridData: FlGridData(
                   show: true,
                   drawVerticalLine: false,
-                  horizontalInterval:
-                      maxValue > 0 ? maxValue / 4 : 25,
+                  horizontalInterval: maxValue > 0 ? maxValue / 4 : 25,
                   getDrawingHorizontalLine: (value) => FlLine(
                     color: AppColors.getBorder(isDark),
                     strokeWidth: 1,
@@ -661,7 +674,8 @@ class _DistributorReportsScreenState
                         backDrawRodData: BackgroundBarChartRodData(
                           show: true,
                           toY: chartMaxY,
-                          color: AppColors.primary.withValues(alpha: isDark ? 0.08 : 0.04),
+                          color: AppColors.primary
+                              .withValues(alpha: isDark ? 0.08 : 0.04),
                         ),
                       ),
                     ],
@@ -716,7 +730,8 @@ class _DistributorReportsScreenState
                 Container(
                   padding: const EdgeInsets.all(AlhaiSpacing.xs),
                   decoration: BoxDecoration(
-                    color: AppColors.warning.withValues(alpha: isDark ? 0.2 : 0.1),
+                    color:
+                        AppColors.warning.withValues(alpha: isDark ? 0.2 : 0.1),
                     borderRadius: BorderRadius.circular(AlhaiRadius.sm + 2),
                   ),
                   child: const Icon(Icons.emoji_events_rounded,
@@ -761,7 +776,8 @@ class _DistributorReportsScreenState
               Container(
                 padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
-                  color: AppColors.warning.withValues(alpha: isDark ? 0.2 : 0.1),
+                  color:
+                      AppColors.warning.withValues(alpha: isDark ? 0.2 : 0.1),
                   borderRadius: BorderRadius.circular(AlhaiRadius.sm + 2),
                 ),
                 child: const Icon(Icons.emoji_events_rounded,
@@ -782,7 +798,8 @@ class _DistributorReportsScreenState
           ...List.generate(topProducts.length, (index) {
             final product = topProducts[index];
             return Container(
-              padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs + 2),
+              padding:
+                  const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs + 2),
               decoration: BoxDecoration(
                 border: index < topProducts.length - 1
                     ? Border(

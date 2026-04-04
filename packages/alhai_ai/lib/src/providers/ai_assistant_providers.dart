@@ -135,7 +135,8 @@ final quickTemplatesProvider = Provider<List<QuickTemplate>>((ref) {
 // ============================================================================
 
 /// مزود المساعد الذكي عبر خادم AI
-final assistantApiProvider = Provider<Future<Map<String, dynamic>> Function(String)>((ref) {
+final assistantApiProvider =
+    Provider<Future<Map<String, dynamic>> Function(String)>((ref) {
   final api = ref.read(aiApiServiceProvider);
   final storeId = ref.read(currentStoreIdProvider)!;
   return (String query) => api.askAssistant(

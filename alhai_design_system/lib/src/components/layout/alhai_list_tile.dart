@@ -154,8 +154,8 @@ class AlhaiListTile extends StatelessWidget {
         );
 
     // Border radius
-    final effectiveRadius = borderRadiusOverride ??
-        BorderRadius.circular(AlhaiRadius.sm);
+    final effectiveRadius =
+        borderRadiusOverride ?? BorderRadius.circular(AlhaiRadius.sm);
 
     // Background color
     Color backgroundColor;

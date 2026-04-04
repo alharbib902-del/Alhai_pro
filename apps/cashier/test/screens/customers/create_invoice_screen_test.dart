@@ -27,8 +27,7 @@ void main() {
 
       suppressOverflowErrors();
 
-      await tester
-          .pumpWidget(createTestWidget(const CreateInvoiceScreen()));
+      await tester.pumpWidget(createTestWidget(const CreateInvoiceScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(CreateInvoiceScreen), findsOneWidget);
@@ -40,8 +39,7 @@ void main() {
 
       suppressOverflowErrors();
 
-      await tester
-          .pumpWidget(createTestWidget(const CreateInvoiceScreen()));
+      await tester.pumpWidget(createTestWidget(const CreateInvoiceScreen()));
       await tester.pumpAndSettle();
 
       // Person icon for customer card
@@ -54,8 +52,7 @@ void main() {
 
       suppressOverflowErrors();
 
-      await tester
-          .pumpWidget(createTestWidget(const CreateInvoiceScreen()));
+      await tester.pumpWidget(createTestWidget(const CreateInvoiceScreen()));
       await tester.pumpAndSettle();
 
       // Shopping bag icon for items card
@@ -68,8 +65,7 @@ void main() {
 
       suppressOverflowErrors();
 
-      await tester
-          .pumpWidget(createTestWidget(const CreateInvoiceScreen()));
+      await tester.pumpWidget(createTestWidget(const CreateInvoiceScreen()));
       await tester.pumpAndSettle();
 
       // Calculator icon for totals card
@@ -82,8 +78,7 @@ void main() {
 
       suppressOverflowErrors();
 
-      await tester
-          .pumpWidget(createTestWidget(const CreateInvoiceScreen()));
+      await tester.pumpWidget(createTestWidget(const CreateInvoiceScreen()));
       await tester.pumpAndSettle();
 
       expect(find.text('Finalize Invoice'), findsOneWidget);
@@ -97,8 +92,7 @@ void main() {
 
       suppressOverflowErrors();
 
-      await tester
-          .pumpWidget(createTestWidget(const CreateInvoiceScreen()));
+      await tester.pumpWidget(createTestWidget(const CreateInvoiceScreen()));
       await tester.pumpAndSettle();
 
       // Finalize button should be disabled

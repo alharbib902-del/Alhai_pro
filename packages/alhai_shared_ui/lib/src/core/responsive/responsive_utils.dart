@@ -20,7 +20,7 @@ T getResponsiveValue<T>(
 }) {
   final width = MediaQuery.sizeOf(context).width;
   final deviceType = getDeviceType(width);
-  
+
   switch (deviceType) {
     case DeviceType.mobile:
       return mobile;
@@ -35,18 +35,18 @@ T getResponsiveValue<T>(
 T getBreakpointValue<T>(
   BuildContext context, {
   required T defaultValue,
-  T? sm,  // < 600px
-  T? md,  // < 900px
-  T? lg,  // < 1200px
-  T? xl,  // >= 1200px
+  T? sm, // < 600px
+  T? md, // < 900px
+  T? lg, // < 1200px
+  T? xl, // >= 1200px
 }) {
   final width = MediaQuery.sizeOf(context).width;
-  
+
   if (width >= 1200 && xl != null) return xl;
   if (width >= 900 && lg != null) return lg;
   if (width >= 600 && md != null) return md;
   if (width < 600 && sm != null) return sm;
-  
+
   return defaultValue;
 }
 
@@ -77,7 +77,7 @@ class ResponsivePadding extends StatelessWidget {
       tablet: customTablet ?? const EdgeInsets.all(AlhaiSpacing.md),
       desktop: customDesktop ?? const EdgeInsets.all(AlhaiSpacing.lg),
     );
-    
+
     return Padding(padding: padding, child: child);
   }
 }
@@ -117,9 +117,9 @@ class ResponsiveText extends StatelessWidget {
       tablet: tabletSize ?? 15,
       desktop: desktopSize ?? 16,
     );
-    
+
     final baseStyle = style ?? Theme.of(context).textTheme.bodyMedium;
-    
+
     return Text(
       text,
       style: baseStyle?.copyWith(fontSize: fontSize),
@@ -173,7 +173,7 @@ class ResponsiveGap extends StatelessWidget {
       tablet: tablet,
       desktop: desktop,
     );
-    
+
     return SizedBox(height: height);
   }
 }
@@ -183,7 +183,8 @@ class ResponsiveGap extends StatelessWidget {
 // ============================================================================
 
 /// حجم الأيقونة المتجاوب
-double getResponsiveIconSize(BuildContext context, {
+double getResponsiveIconSize(
+  BuildContext context, {
   double mobile = 20,
   double? tablet,
   double desktop = 24,
@@ -201,7 +202,8 @@ double getResponsiveIconSize(BuildContext context, {
 // ============================================================================
 
 /// حجم الخط المتجاوب
-double getResponsiveFontSize(BuildContext context, {
+double getResponsiveFontSize(
+  BuildContext context, {
   double mobile = 14,
   double? tablet,
   double desktop = 16,
@@ -270,7 +272,7 @@ class ResponsiveVisibility extends StatelessWidget {
       tablet: visibleOnTablet,
       desktop: visibleOnDesktop,
     );
-    
+
     if (visible) return child;
     return replacement ?? const SizedBox.shrink();
   }
@@ -311,7 +313,7 @@ class ResponsiveConstraints extends StatelessWidget {
       tablet: maxWidthTablet ?? 800,
       desktop: maxWidthDesktop ?? 1200,
     );
-    
+
     return ConstrainedBox(
       constraints: BoxConstraints(maxWidth: maxWidth),
       child: child,
@@ -332,10 +334,10 @@ int getResponsiveGridColumns(
   double minItemWidth = 150,
 }) {
   final width = MediaQuery.sizeOf(context).width;
-  
+
   // حساب تلقائي إذا لم يُحدد
   final autoColumns = (width / minItemWidth).floor().clamp(1, 6);
-  
+
   return getResponsiveValue<int>(
     context,
     mobile: mobile.clamp(1, autoColumns),

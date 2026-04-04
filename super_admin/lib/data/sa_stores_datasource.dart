@@ -19,7 +19,7 @@ class SAStoresDatasource {
       id, name, address, phone, email, is_active, owner_id,
       business_type, created_at, logo, org_id,
       subscriptions(id, plan, status, amount, current_period_start, current_period_end, org_id)
-    ''').order('created_at', ascending: false);
+    ''');
 
     if (statusFilter != null && statusFilter != 'all') {
       if (statusFilter == 'active') {
@@ -30,12 +30,11 @@ class SAStoresDatasource {
     }
 
     if (search != null && search.isNotEmpty) {
-      // Escape special PostgREST wildcard characters to prevent injection
       final sanitized = search.replaceAll('%', r'\%').replaceAll('_', r'\_');
       query = query.or('name.ilike.%$sanitized%,email.ilike.%$sanitized%');
     }
 
-    final data = await query;
+    final data = await query.order('created_at', ascending: false);
     return (data as List)
         .map((e) => SAStore.fromJson(e as Map<String, dynamic>))
         .toList();
@@ -43,14 +42,10 @@ class SAStoresDatasource {
 
   /// Fetch a single store by ID with full details.
   Future<SAStore> getStore(String storeId) async {
-    final data = await _client
-        .from('stores')
-        .select('''
+    final data = await _client.from('stores').select('''
           *,
           subscriptions(*)
-        ''')
-        .eq('id', storeId)
-        .single();
+        ''').eq('id', storeId).single();
     return SAStore.fromJson(data);
   }
 
@@ -100,13 +95,17 @@ class SAStoresDatasource {
     int branchCount = 1,
   }) async {
     // Step 1: Insert store
-    final storeData = await _client.from('stores').insert({
-      'name': name,
-      'business_type': businessType,
-      'phone': ownerPhone,
-      'email': ownerEmail,
-      'is_active': true,
-    }).select().single();
+    final storeData = await _client
+        .from('stores')
+        .insert({
+          'name': name,
+          'business_type': businessType,
+          'phone': ownerPhone,
+          'email': ownerEmail,
+          'is_active': true,
+        })
+        .select()
+        .single();
 
     final storeId = storeData['id'] as String;
 
@@ -140,8 +139,7 @@ class SAStoresDatasource {
   Future<void> updateStoreStatus(String storeId, bool isActive) async {
     await _client
         .from('stores')
-        .update({'is_active': isActive})
-        .eq('id', storeId);
+        .update({'is_active': isActive}).eq('id', storeId);
   }
 
   /// Update store subscription plan.
@@ -163,10 +161,8 @@ class SAStoresDatasource {
 
   /// Get total store count.
   Future<int> getTotalStoreCount() async {
-    final result = await _client
-        .from('stores')
-        .select('id')
-        .count(CountOption.exact);
+    final result =
+        await _client.from('stores').select('id').count(CountOption.exact);
     return result.count;
   }
 
@@ -182,18 +178,12 @@ class SAStoresDatasource {
 
   /// Soft delete a store (set is_active = false instead of deleting).
   Future<void> softDeleteStore(String storeId) async {
-    await _client
-        .from('stores')
-        .update({'is_active': false})
-        .eq('id', storeId);
+    await _client.from('stores').update({'is_active': false}).eq('id', storeId);
   }
 
   /// Restore a soft-deleted store.
   Future<void> restoreStore(String storeId) async {
-    await _client
-        .from('stores')
-        .update({'is_active': true})
-        .eq('id', storeId);
+    await _client.from('stores').update({'is_active': true}).eq('id', storeId);
   }
 
   /// Get store owner info from users.

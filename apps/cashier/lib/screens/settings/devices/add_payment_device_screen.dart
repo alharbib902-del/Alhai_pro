@@ -14,7 +14,8 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:uuid/uuid.dart';
 import 'package:alhai_auth/alhai_auth.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
+import 'package:alhai_design_system/alhai_design_system.dart'
+    show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 
@@ -56,14 +57,14 @@ class _AddPaymentDeviceScreenState
     final storeId = ref.read(currentStoreIdProvider)!;
     final id = 'setting_${storeId}_$key';
     await _db.into(_db.settingsTable).insertOnConflictUpdate(
-      SettingsTableCompanion.insert(
-        id: id,
-        storeId: storeId,
-        key: key,
-        value: value,
-        updatedAt: DateTime.now(),
-      ),
-    );
+          SettingsTableCompanion.insert(
+            id: id,
+            storeId: storeId,
+            key: key,
+            value: value,
+            updatedAt: DateTime.now(),
+          ),
+        );
   }
 
   Future<void> _testConnection() async {
@@ -92,7 +93,8 @@ class _AddPaymentDeviceScreenState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(AppLocalizations.of(context).connectionFailedMsg('$e')),
+            content:
+                Text(AppLocalizations.of(context).connectionFailedMsg('$e')),
             backgroundColor: AppColors.error,
           ),
         );
@@ -140,7 +142,8 @@ class _AddPaymentDeviceScreenState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(AppLocalizations.of(context).settingsSaveErrorMsg('$e')),
+            content:
+                Text(AppLocalizations.of(context).settingsSaveErrorMsg('$e')),
             backgroundColor: AppColors.error,
           ),
         );
@@ -173,14 +176,14 @@ class _AddPaymentDeviceScreenState
             tooltip: l10n.back,
           ),
           onNotificationsTap: () => context.push(AppRoutes.notificationsCenter),
-          userName:
-              ref.watch(currentUserProvider)?.name ?? l10n.cashCustomer,
+          userName: ref.watch(currentUserProvider)?.name ?? l10n.cashCustomer,
           userRole: l10n.cashier,
           onUserTap: () => context.push(AppRoutes.profile),
         ),
         Expanded(
           child: SingleChildScrollView(
-            padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+            padding: EdgeInsets.all(
+                isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
             // M121: constrain form width on desktop
             child: Center(
               child: ConstrainedBox(
@@ -359,8 +362,7 @@ class _AddPaymentDeviceScreenState
               padding: EdgeInsets.only(
                   bottom: index < _connectionMethods.length - 1 ? 8 : 0),
               child: GestureDetector(
-                onTap: () =>
-                    setState(() => _connectionMethod = method),
+                onTap: () => setState(() => _connectionMethod = method),
                 child: Container(
                   padding: const EdgeInsets.symmetric(
                       horizontal: AlhaiSpacing.md, vertical: 14),
@@ -494,8 +496,8 @@ class _AddPaymentDeviceScreenState
             decoration: BoxDecoration(
               color: AppColors.success.withValues(alpha: isDark ? 0.15 : 0.08),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                  color: AppColors.success.withValues(alpha: 0.3)),
+              border:
+                  Border.all(color: AppColors.success.withValues(alpha: 0.3)),
             ),
             child: Row(
               children: [
@@ -531,8 +533,8 @@ class _AddPaymentDeviceScreenState
                 label: Text(l10n.testConnection),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.info,
-                  side: BorderSide(
-                      color: AppColors.info.withValues(alpha: 0.5)),
+                  side:
+                      BorderSide(color: AppColors.info.withValues(alpha: 0.5)),
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12)),
@@ -582,8 +584,7 @@ class _AddPaymentDeviceScreenState
     }
   }
 
-  Widget _sectionHeader(
-      IconData icon, String title, Color color, bool isDark) {
+  Widget _sectionHeader(IconData icon, String title, Color color, bool isDark) {
     return Row(
       children: [
         Container(

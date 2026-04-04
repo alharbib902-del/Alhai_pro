@@ -63,11 +63,13 @@ void main() {
       expect(product99!.stockQty, 248); // 50 + 99*2
 
       expect(sw.elapsedMilliseconds, lessThan(1000),
-          reason: 'Batch stock update for 100 products should complete under 1s '
+          reason:
+              'Batch stock update for 100 products should complete under 1s '
               '(actual: ${sw.elapsedMilliseconds}ms)');
     });
 
-    test('individual updateStock for 100 products completes under 2s', () async {
+    test('individual updateStock for 100 products completes under 2s',
+        () async {
       final sw = Stopwatch()..start();
       for (int i = 0; i < 100; i++) {
         await db.productsDao.updateStock('prod_$i', (75 + i).toDouble());
@@ -79,7 +81,8 @@ void main() {
       expect(product50!.stockQty, 125);
 
       expect(sw.elapsedMilliseconds, lessThan(2000),
-          reason: 'Individual stock updates for 100 products should complete under 2s '
+          reason:
+              'Individual stock updates for 100 products should complete under 2s '
               '(actual: ${sw.elapsedMilliseconds}ms)');
     });
   });
@@ -94,7 +97,9 @@ void main() {
         await db.productsDao.insertProduct(_makeProduct(
           id: 'prod_$i',
           name: 'Product $i',
-          stockQty: isLowStock ? (i % 5).toDouble() : (50 + i).toDouble(), // Low stock: 0-4, Normal: 50+
+          stockQty: isLowStock
+              ? (i % 5).toDouble()
+              : (50 + i).toDouble(), // Low stock: 0-4, Normal: 50+
           minQty: 10.0, // Threshold at 10
         ));
       }
@@ -104,7 +109,8 @@ void main() {
       await db.close();
     });
 
-    test('getLowStockProducts with 1000 products completes under 100ms', () async {
+    test('getLowStockProducts with 1000 products completes under 100ms',
+        () async {
       final sw = Stopwatch()..start();
       final lowStock = await db.productsDao.getLowStockProducts('store-1');
       sw.stop();
@@ -117,13 +123,16 @@ void main() {
       }
 
       expect(sw.elapsedMilliseconds, lessThan(100),
-          reason: 'Low stock query with 1000 products should complete under 100ms '
+          reason:
+              'Low stock query with 1000 products should complete under 100ms '
               '(actual: ${sw.elapsedMilliseconds}ms)');
     });
 
-    test('getLowStockWithCategory with 1000 products completes under 200ms', () async {
+    test('getLowStockWithCategory with 1000 products completes under 200ms',
+        () async {
       final sw = Stopwatch()..start();
-      final lowStockWithCat = await db.productsDao.getLowStockWithCategory('store-1');
+      final lowStockWithCat =
+          await db.productsDao.getLowStockWithCategory('store-1');
       sw.stop();
 
       expect(lowStockWithCat, hasLength(200));
@@ -145,10 +154,12 @@ void main() {
             id: 'mov_$i',
             productId: 'prod_${i % 20}',
             storeId: 'store-1',
-            type: i % 3 == 0 ? 'sale' : (i % 3 == 1 ? 'purchase' : 'adjustment'),
+            type:
+                i % 3 == 0 ? 'sale' : (i % 3 == 1 ? 'purchase' : 'adjustment'),
             qty: (i % 3 == 0 ? -(1 + i % 5) : (1 + i % 10)).toDouble(),
             previousQty: 100.0,
-            newQty: (i % 3 == 0 ? (100 - (1 + i % 5)) : (100 + (1 + i % 10))).toDouble(),
+            newQty: (i % 3 == 0 ? (100 - (1 + i % 5)) : (100 + (1 + i % 10)))
+                .toDouble(),
             createdAt: DateTime(2025, 6, (i % 30) + 1, i % 24),
           ),
         );
@@ -159,7 +170,8 @@ void main() {
       await db.close();
     });
 
-    test('getMovementsByProduct with 500 total movements completes under 200ms', () async {
+    test('getMovementsByProduct with 500 total movements completes under 200ms',
+        () async {
       // Product 0 should have ~25 movements (500 / 20)
       final sw = Stopwatch()..start();
       final movements = await db.inventoryDao.getMovementsByProduct('prod_0');
@@ -171,7 +183,8 @@ void main() {
               '(actual: ${sw.elapsedMilliseconds}ms)');
     });
 
-    test('getMovementsWithProductName with pagination completes under 200ms', () async {
+    test('getMovementsWithProductName with pagination completes under 200ms',
+        () async {
       // First insert some products so the JOIN can resolve names
       for (int i = 0; i < 20; i++) {
         await db.productsDao.insertProduct(_makeProduct(
@@ -191,11 +204,13 @@ void main() {
       expect(movements, isNotEmpty);
       expect(movements.length, lessThanOrEqualTo(50));
       expect(sw.elapsedMilliseconds, lessThan(200),
-          reason: 'Movements with product name JOIN should complete under 200ms '
+          reason:
+              'Movements with product name JOIN should complete under 200ms '
               '(actual: ${sw.elapsedMilliseconds}ms)');
     });
 
-    test('getUnsyncedMovements with 500 movements completes under 200ms', () async {
+    test('getUnsyncedMovements with 500 movements completes under 200ms',
+        () async {
       final sw = Stopwatch()..start();
       final unsynced = await db.inventoryDao.getUnsyncedMovements();
       sw.stop();

@@ -27,12 +27,10 @@ class TaxSettingsScreen extends ConsumerStatefulWidget {
   const TaxSettingsScreen({super.key});
 
   @override
-  ConsumerState<TaxSettingsScreen> createState() =>
-      _TaxSettingsScreenState();
+  ConsumerState<TaxSettingsScreen> createState() => _TaxSettingsScreenState();
 }
 
 class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
-
   bool _enableVat = true;
   double _vatRate = 15.0;
   final _taxNumberController = TextEditingController(text: '310123456700003');
@@ -145,13 +143,13 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
     final l10n = AppLocalizations.of(context);
 
     if (_isLoading) {
-      return SafeArea(child: Column(
+      return SafeArea(
+          child: Column(
         children: [
           AppHeader(
             title: l10n.taxSettings,
-            onMenuTap: isWideScreen
-                ? null
-                : () => Scaffold.of(context).openDrawer(),
+            onMenuTap:
+                isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
             onNotificationsTap: () => context.push('/notifications'),
             notificationsCount: 3,
             userName: l10n.defaultUserName,
@@ -164,26 +162,26 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
       ));
     }
 
-    return SafeArea(child: Column(
-              children: [
-                AppHeader(
-                  title: l10n.taxSettings,
-                  onMenuTap: isWideScreen
-                      ? null
-                      : () => Scaffold.of(context).openDrawer(),
-                  onNotificationsTap: () => context.push('/notifications'),
-                  notificationsCount: 3,
-                  userName: l10n.defaultUserName,
-                  userRole: l10n.branchManager,
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-                    child: _buildContent(isDark, l10n),
-                  ),
-                ),
-              ],
-            ));
+    return SafeArea(
+        child: Column(
+      children: [
+        AppHeader(
+          title: l10n.taxSettings,
+          onMenuTap:
+              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onNotificationsTap: () => context.push('/notifications'),
+          notificationsCount: 3,
+          userName: l10n.defaultUserName,
+          userRole: l10n.branchManager,
+        ),
+        Expanded(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+            child: _buildContent(isDark, l10n),
+          ),
+        ),
+      ],
+    ));
   }
 
   Widget _buildContent(bool isDark, AppLocalizations l10n) {
@@ -192,14 +190,12 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
       children: [
         _buildPageHeader(isDark, l10n),
         const SizedBox(height: AlhaiSpacing.mdl),
-
-        _buildSettingsGroup(
-            l10n.vatSettings, Icons.percent_rounded,
+        _buildSettingsGroup(l10n.vatSettings, Icons.percent_rounded,
             AppColors.success, isDark, [
           SwitchListTile(
             title: Text(l10n.enableVat,
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface)),
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
             subtitle: Text(l10n.enableVatDesc),
             value: _enableVat,
             onChanged: (v) => setState(() => _enableVat = v),
@@ -212,7 +208,9 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
                       color: Theme.of(context).colorScheme.onSurface)),
               subtitle: Text('${_vatRate.toInt()}%'),
               trailing: ConstrainedBox(
-                constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width > 600 ? 200 : 120),
+                constraints: BoxConstraints(
+                    maxWidth:
+                        MediaQuery.of(context).size.width > 600 ? 200 : 120),
                 child: Slider(
                   value: _vatRate,
                   min: 5,
@@ -224,7 +222,8 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl, AlhaiSpacing.xs, AlhaiSpacing.mdl, AlhaiSpacing.xs),
+              padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl,
+                  AlhaiSpacing.xs, AlhaiSpacing.mdl, AlhaiSpacing.xs),
               child: TextField(
                 controller: _taxNumberController,
                 keyboardType: TextInputType.number,
@@ -257,13 +256,12 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
           ],
           const SizedBox(height: AlhaiSpacing.xs),
         ]),
-
-        _buildSettingsGroup(l10n.zatcaEInvoicing,
-            Icons.verified_rounded, AppColors.primary, isDark, [
+        _buildSettingsGroup(l10n.zatcaEInvoicing, Icons.verified_rounded,
+            AppColors.primary, isDark, [
           SwitchListTile(
             title: Text(l10n.enableZatca,
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface)),
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
             subtitle: Text(l10n.enableZatcaDesc),
             value: _enableZatca,
             onChanged: (v) => setState(() => _enableZatca = v),
@@ -295,7 +293,6 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
           ],
           const SizedBox(height: AlhaiSpacing.xs),
         ]),
-
         const SizedBox(height: AlhaiSpacing.md),
         SizedBox(
           width: double.infinity,
@@ -377,7 +374,8 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl, AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.xs),
+            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl,
+                AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.xs),
             child: Row(
               children: [
                 Container(
@@ -393,8 +391,7 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
                     style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color:
-                            Theme.of(context).colorScheme.onSurface)),
+                        color: Theme.of(context).colorScheme.onSurface)),
               ],
             ),
           ),

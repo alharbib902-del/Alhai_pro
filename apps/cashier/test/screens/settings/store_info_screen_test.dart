@@ -21,8 +21,7 @@ void main() {
 
     // StoreInfoScreen uses _db.storesDao.getStoreById(storeId).
     // Default: return null (no store found), screen shows empty fields.
-    when(() => storesDao.getStoreById(any()))
-        .thenAnswer((_) async => null);
+    when(() => storesDao.getStoreById(any())).thenAnswer((_) async => null);
 
     final db = setupMockDatabase(storesDao: storesDao);
     setupTestGetIt(mockDb: db);

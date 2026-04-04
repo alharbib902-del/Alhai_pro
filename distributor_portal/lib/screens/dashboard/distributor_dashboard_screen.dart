@@ -23,7 +23,9 @@ class DistributorDashboardScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final width = MediaQuery.sizeOf(context).width;
-    final crossCount = width >= AlhaiBreakpoints.desktop ? 4 : (width >= AlhaiBreakpoints.tablet ? 2 : 1);
+    final crossCount = width >= AlhaiBreakpoints.desktop
+        ? 4
+        : (width >= AlhaiBreakpoints.tablet ? 2 : 1);
     final l10n = AppLocalizations.of(context);
     final kpisAsync = ref.watch(dashboardKpisProvider);
     final padding = responsivePadding(width);
@@ -44,103 +46,107 @@ class DistributorDashboardScreen extends ConsumerWidget {
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: kMaxContentWidth),
               child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            padding: EdgeInsets.all(padding),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Title
-                Text(
-                  l10n?.distributorDashboard ?? 'Dashboard',
-                  style: TextStyle(
-                    fontSize: responsiveHeaderFontSize(width),
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                ),
-                const SizedBox(height: AlhaiSpacing.xs),
-                Text(
-                  l10n?.distributorDashboardSubtitle ?? 'Distribution performance overview',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-                ),
-                const SizedBox(height: AlhaiSpacing.lg),
-
-                // Onboarding card for first-time users
-                if (kpis.totalOrders == 0)
-                  _OnboardingCard(isDark: isDark, l10n: l10n),
-
-                if (kpis.totalOrders == 0)
-                  const SizedBox(height: AlhaiSpacing.lg),
-
-                // Summary cards
-                GridView.count(
-                  crossAxisCount: crossCount,
-                  mainAxisSpacing: AlhaiSpacing.md,
-                  crossAxisSpacing: AlhaiSpacing.md,
-                  childAspectRatio: 1.8,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: EdgeInsets.all(padding),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _SummaryCard(
-                      title: l10n?.distributorTotalOrders ?? 'Total Orders',
-                      value: '${kpis.totalOrders}',
-                      icon: Icons.shopping_bag_outlined,
-                      color: AppColors.primary,
-                      isDark: isDark,
+                    // Title
+                    Text(
+                      l10n?.distributorDashboard ?? 'Dashboard',
+                      style: TextStyle(
+                        fontSize: responsiveHeaderFontSize(width),
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                     ),
-                    _SummaryCard(
-                      title: l10n?.distributorPendingOrders ?? 'Pending',
-                      value: '${kpis.pendingOrders}',
-                      icon: Icons.pending_outlined,
-                      color: AppColors.warning,
-                      isDark: isDark,
+                    const SizedBox(height: AlhaiSpacing.xs),
+                    Text(
+                      l10n?.distributorDashboardSubtitle ??
+                          'Distribution performance overview',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                     ),
-                    _SummaryCard(
-                      title: l10n?.distributorApprovedOrders ?? 'Approved',
-                      value: '${kpis.approvedOrders}',
-                      icon: Icons.check_circle_outline,
-                      color: AppColors.success,
-                      isDark: isDark,
+                    const SizedBox(height: AlhaiSpacing.lg),
+
+                    // Onboarding card for first-time users
+                    if (kpis.totalOrders == 0)
+                      _OnboardingCard(isDark: isDark, l10n: l10n),
+
+                    if (kpis.totalOrders == 0)
+                      const SizedBox(height: AlhaiSpacing.lg),
+
+                    // Summary cards
+                    GridView.count(
+                      crossAxisCount: crossCount,
+                      mainAxisSpacing: AlhaiSpacing.md,
+                      crossAxisSpacing: AlhaiSpacing.md,
+                      childAspectRatio: 1.8,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      children: [
+                        _SummaryCard(
+                          title: l10n?.distributorTotalOrders ?? 'Total Orders',
+                          value: '${kpis.totalOrders}',
+                          icon: Icons.shopping_bag_outlined,
+                          color: AppColors.primary,
+                          isDark: isDark,
+                        ),
+                        _SummaryCard(
+                          title: l10n?.distributorPendingOrders ?? 'Pending',
+                          value: '${kpis.pendingOrders}',
+                          icon: Icons.pending_outlined,
+                          color: AppColors.warning,
+                          isDark: isDark,
+                        ),
+                        _SummaryCard(
+                          title: l10n?.distributorApprovedOrders ?? 'Approved',
+                          value: '${kpis.approvedOrders}',
+                          icon: Icons.check_circle_outline,
+                          color: AppColors.success,
+                          isDark: isDark,
+                        ),
+                        _SummaryCard(
+                          title: l10n?.distributorRevenue ?? 'Revenue',
+                          value:
+                              '${NumberFormat('#,##0').format(kpis.totalRevenue)} ${l10n?.distributorSar ?? 'SAR'}',
+                          icon: Icons.payments_outlined,
+                          color: AppColors.credit,
+                          isDark: isDark,
+                        ),
+                      ],
                     ),
-                    _SummaryCard(
-                      title: l10n?.distributorRevenue ?? 'Revenue',
-                      value: '${NumberFormat('#,##0').format(kpis.totalRevenue)} ${l10n?.distributorSar ?? 'SAR'}',
-                      icon: Icons.payments_outlined,
-                      color: AppColors.credit,
-                      isDark: isDark,
-                    ),
+
+                    const SizedBox(height: AlhaiSpacing.xl),
+
+                    // Chart section
+                    if (kpis.monthlySales.isNotEmpty)
+                      Semantics(
+                        label:
+                            'Monthly sales bar chart showing sales amounts per month',
+                        child: _ChartCard(
+                          title:
+                              l10n?.distributorMonthlySales ?? 'Monthly Sales',
+                          monthlySales: kpis.monthlySales,
+                          isDark: isDark,
+                        ),
+                      ),
+
+                    const SizedBox(height: AlhaiSpacing.xl),
+
+                    // Recent orders section
+                    if (kpis.recentOrders.isNotEmpty)
+                      _RecentOrdersCard(
+                        title: l10n?.distributorRecentOrders ?? 'Recent Orders',
+                        orders: kpis.recentOrders,
+                        isDark: isDark,
+                        l10n: l10n,
+                      ),
                   ],
                 ),
-
-                const SizedBox(height: AlhaiSpacing.xl),
-
-                // Chart section
-                if (kpis.monthlySales.isNotEmpty)
-                  Semantics(
-                    label: 'Monthly sales bar chart showing sales amounts per month',
-                    child: _ChartCard(
-                      title: l10n?.distributorMonthlySales ?? 'Monthly Sales',
-                      monthlySales: kpis.monthlySales,
-                      isDark: isDark,
-                    ),
-                  ),
-
-                const SizedBox(height: AlhaiSpacing.xl),
-
-                // Recent orders section
-                if (kpis.recentOrders.isNotEmpty)
-                  _RecentOrdersCard(
-                    title: l10n?.distributorRecentOrders ?? 'Recent Orders',
-                    orders: kpis.recentOrders,
-                    isDark: isDark,
-                    l10n: l10n,
-                  ),
-              ],
-            ),
-          ),
+              ),
             ),
           ),
         ),
@@ -164,28 +170,32 @@ class _OnboardingCard extends StatelessWidget {
         icon: Icons.receipt_long_rounded,
         color: AppColors.primary,
         title: l10n?.distributorOrders ?? 'Review Orders',
-        subtitle: l10n?.distributorReviewOrdersDesc ?? 'Review and manage incoming purchase orders from stores',
+        subtitle: l10n?.distributorReviewOrdersDesc ??
+            'Review and manage incoming purchase orders from stores',
         route: '/orders',
       ),
       (
         icon: Icons.price_change_rounded,
         color: AppColors.secondary,
         title: l10n?.distributorManagePrices ?? 'Manage Prices',
-        subtitle: l10n?.distributorManagePricesDesc ?? 'Set and update product prices for your distribution',
+        subtitle: l10n?.distributorManagePricesDesc ??
+            'Set and update product prices for your distribution',
         route: '/pricing',
       ),
       (
         icon: Icons.bar_chart_rounded,
         color: AppColors.info,
         title: l10n?.distributorViewReports ?? 'View Reports',
-        subtitle: l10n?.distributorViewReportsDesc ?? 'Track sales performance and view analytics',
+        subtitle: l10n?.distributorViewReportsDesc ??
+            'Track sales performance and view analytics',
         route: '/reports',
       ),
       (
         icon: Icons.settings_rounded,
         color: AppColors.warning,
         title: l10n?.distributorUpdateSettings ?? 'Update Settings',
-        subtitle: l10n?.distributorUpdateSettingsDesc ?? 'Configure company info, delivery zones, and notifications',
+        subtitle: l10n?.distributorUpdateSettingsDesc ??
+            'Configure company info, delivery zones, and notifications',
         route: '/settings',
       ),
     ];
@@ -208,7 +218,8 @@ class _OnboardingCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(AlhaiSpacing.sm),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: isDark ? 0.2 : 0.1),
+                  color:
+                      AppColors.primary.withValues(alpha: isDark ? 0.2 : 0.1),
                   borderRadius: BorderRadius.circular(AlhaiRadius.md),
                 ),
                 child: ExcludeSemantics(
@@ -222,7 +233,8 @@ class _OnboardingCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      l10n?.distributorWelcomePortal ?? 'Welcome to the Distributor Portal!',
+                      l10n?.distributorWelcomePortal ??
+                          'Welcome to the Distributor Portal!',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -231,7 +243,8 @@ class _OnboardingCard extends StatelessWidget {
                     ),
                     const SizedBox(height: AlhaiSpacing.xxs),
                     Text(
-                      l10n?.distributorGetStarted ?? 'Get started by exploring these key features:',
+                      l10n?.distributorGetStarted ??
+                          'Get started by exploring these key features:',
                       style: TextStyle(
                         fontSize: 14,
                         color: AppColors.getTextSecondary(isDark),
@@ -263,7 +276,8 @@ class _OnboardingCard extends StatelessWidget {
                     child: Container(
                       padding: const EdgeInsets.all(AlhaiSpacing.md),
                       decoration: BoxDecoration(
-                        color: step.color.withValues(alpha: isDark ? 0.08 : 0.04),
+                        color:
+                            step.color.withValues(alpha: isDark ? 0.08 : 0.04),
                         borderRadius: BorderRadius.circular(AlhaiRadius.md),
                         border: Border.all(
                           color: step.color.withValues(alpha: 0.2),
@@ -420,9 +434,8 @@ class _ChartCard extends StatelessWidget {
                   enabled: true,
                   touchTooltipData: BarTouchTooltipData(
                     tooltipRoundedRadius: 8,
-                    tooltipBgColor: isDark
-                        ? AppColors.getSurface(true)
-                        : AppColors.grey800,
+                    tooltipBgColor:
+                        isDark ? AppColors.getSurface(true) : AppColors.grey800,
                     getTooltipItem: (group, groupIndex, rod, rodIndex) {
                       return BarTooltipItem(
                         '${(rod.toY / 1000).toStringAsFixed(0)}K',
@@ -452,7 +465,8 @@ class _ChartCard extends StatelessWidget {
                         final idx = value.toInt();
                         if (idx >= 0 && idx < monthlySales.length) {
                           return Padding(
-                            padding: const EdgeInsets.only(top: AlhaiSpacing.xs),
+                            padding:
+                                const EdgeInsets.only(top: AlhaiSpacing.xs),
                             child: Text(
                               monthlySales[idx].month,
                               style: TextStyle(
@@ -511,8 +525,8 @@ class _ChartCard extends StatelessWidget {
                         backDrawRodData: BackgroundBarChartRodData(
                           show: true,
                           toY: maxY > 0 ? maxY : 100,
-                          color: AppColors.primary.withValues(
-                              alpha: isDark ? 0.08 : 0.04),
+                          color: AppColors.primary
+                              .withValues(alpha: isDark ? 0.08 : 0.04),
                         ),
                       ),
                     ],

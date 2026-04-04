@@ -18,8 +18,7 @@ final saAnalyticsDatasourceProvider = Provider<SAAnalyticsDatasource>((ref) {
 // ============================================================================
 
 /// Revenue analytics period filter.
-final saRevenuePeriodProvider =
-    StateProvider<String>((ref) => 'last12Months');
+final saRevenuePeriodProvider = StateProvider<String>((ref) => 'last12Months');
 
 /// Revenue by plan breakdown.
 final saRevenueByPlanProvider =

@@ -6,10 +6,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
-import 'package:alhai_shared_ui/alhai_shared_ui.dart' show AppTheme, ThemeNotifier, ThemeState;
+import 'package:alhai_shared_ui/alhai_shared_ui.dart'
+    show AppTheme, ThemeNotifier, ThemeState;
 import 'dart:convert';
 import 'dart:math';
-import 'package:alhai_database/alhai_database.dart' show setDatabaseEncryptionKey;
+import 'package:alhai_database/alhai_database.dart'
+    show setDatabaseEncryptionKey;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:alhai_core/alhai_core.dart' show SupabaseConfig;
 import 'di/injection.dart';
@@ -18,8 +20,7 @@ import 'router/admin_router.dart';
 import 'screens/onboarding/onboarding_screen.dart';
 
 /// Local theme provider (same pattern as cashier app)
-final themeProvider =
-    StateNotifierProvider<ThemeNotifier, ThemeState>((ref) {
+final themeProvider = StateNotifierProvider<ThemeNotifier, ThemeState>((ref) {
   return ThemeNotifier();
 });
 
@@ -37,72 +38,73 @@ void main() {
       return true;
     };
 
-  // ── Parallel Phase 1: Firebase + Supabase + DB key ──────────────
-  // These are independent and can run concurrently to cut startup time.
-  await Future.wait([
-    // Firebase (graceful fallback if not configured)
-    Future<void>(() async {
-      try {
-        await Firebase.initializeApp();
-        if (kDebugMode) debugPrint('Firebase initialized successfully');
-      } catch (e) {
-        if (kDebugMode) debugPrint('Firebase not configured: $e');
-      }
-    }),
-    // Supabase (required for admin - online-first)
-    Future<void>(() async {
-      try {
-        if (!SupabaseConfig.isConfigured) {
-          throw StateError(
-            'Supabase not configured. ${SupabaseConfig.configurationError}',
-          );
+    // ── Parallel Phase 1: Firebase + Supabase + DB key ──────────────
+    // These are independent and can run concurrently to cut startup time.
+    await Future.wait([
+      // Firebase (graceful fallback if not configured)
+      Future<void>(() async {
+        try {
+          await Firebase.initializeApp();
+          if (kDebugMode) debugPrint('Firebase initialized successfully');
+        } catch (e) {
+          if (kDebugMode) debugPrint('Firebase not configured: $e');
         }
-        await Supabase.initialize(
-          url: SupabaseConfig.url,
-          anonKey: SupabaseConfig.anonKey,
-          debug: SupabaseConfig.enableDebugLogs,
-        );
-        if (kDebugMode) debugPrint('Supabase initialized successfully');
-      } catch (e) {
-        if (kDebugMode) debugPrint('Supabase initialization failed: $e');
-      }
-    }),
-    // Database encryption key (independent of Firebase/Supabase)
-    Future<void>(() async {
-      final dbKey = await _getOrCreateDbKey();
-      setDatabaseEncryptionKey(dbKey);
-    }),
-  ]);
+      }),
+      // Supabase (required for admin - online-first)
+      Future<void>(() async {
+        try {
+          if (!SupabaseConfig.isConfigured) {
+            throw StateError(
+              'Supabase not configured. ${SupabaseConfig.configurationError}',
+            );
+          }
+          await Supabase.initialize(
+            url: SupabaseConfig.url,
+            anonKey: SupabaseConfig.anonKey,
+            debug: SupabaseConfig.enableDebugLogs,
+          );
+          if (kDebugMode) debugPrint('Supabase initialized successfully');
+        } catch (e) {
+          if (kDebugMode) debugPrint('Supabase initialization failed: $e');
+        }
+      }),
+      // Database encryption key (independent of Firebase/Supabase)
+      Future<void>(() async {
+        final dbKey = await _getOrCreateDbKey();
+        setDatabaseEncryptionKey(dbKey);
+      }),
+    ]);
 
-  // DI must run before runApp (Riverpod providers use getIt synchronously)
-  await configureDependencies();
+    // DI must run before runApp (Riverpod providers use getIt synchronously)
+    await configureDependencies();
 
-  // ── Parallel Phase 2: Theme + Onboarding flag ──────────────────
-  // Both read from SharedPreferences independently.
-  final parallelResults = await Future.wait([
-    SharedPreferences.getInstance(),
-    hasSeenAdminOnboarding(),
-  ]);
+    // ── Parallel Phase 2: Theme + Onboarding flag ──────────────────
+    // Both read from SharedPreferences independently.
+    final parallelResults = await Future.wait([
+      SharedPreferences.getInstance(),
+      hasSeenAdminOnboarding(),
+    ]);
 
-  final prefs = parallelResults[0] as SharedPreferences;
-  final hasSeenOnboardingFlag = parallelResults[1] as bool;
+    final prefs = parallelResults[0] as SharedPreferences;
+    final hasSeenOnboardingFlag = parallelResults[1] as bool;
 
-  final savedTheme = prefs.getString('app_theme_mode');
-  final initialThemeMode = switch (savedTheme) {
-    'dark' => ThemeMode.dark,
-    'light' => ThemeMode.light,
-    _ => ThemeMode.system,
-  };
+    final savedTheme = prefs.getString('app_theme_mode');
+    final initialThemeMode = switch (savedTheme) {
+      'dark' => ThemeMode.dark,
+      'light' => ThemeMode.light,
+      _ => ThemeMode.system,
+    };
 
-  runApp(
-    ProviderScope(
-      overrides: [
-        themeProvider.overrideWith((ref) => ThemeNotifier(initialThemeMode)),
-        adminOnboardingSeenProvider.overrideWith((ref) => hasSeenOnboardingFlag),
-      ],
-      child: const AdminApp(),
-    ),
-  );
+    runApp(
+      ProviderScope(
+        overrides: [
+          themeProvider.overrideWith((ref) => ThemeNotifier(initialThemeMode)),
+          adminOnboardingSeenProvider
+              .overrideWith((ref) => hasSeenOnboardingFlag),
+        ],
+        child: const AdminApp(),
+      ),
+    );
   }, (error, stack) {
     debugPrint('Uncaught error: $error\n$stack');
   });
@@ -124,7 +126,8 @@ Future<String> _getOrCreateDbKey() async {
     //   2. Encrypting the key with a passphrase entered by the user
     //   3. Using WebCrypto API with non-extractable keys
     if (kDebugMode) {
-      debugPrint('WARNING: DB encryption key stored in localStorage (insecure on web)');
+      debugPrint(
+          'WARNING: DB encryption key stored in localStorage (insecure on web)');
     }
     final prefs = await SharedPreferences.getInstance();
     var key = prefs.getString('secure_storage_$keyName');
@@ -139,7 +142,8 @@ Future<String> _getOrCreateDbKey() async {
     // Native: use FlutterSecureStorage (encrypted keychain)
     const storage = FlutterSecureStorage(
       aOptions: AndroidOptions(encryptedSharedPreferences: true),
-      iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock_this_device),
+      iOptions: IOSOptions(
+          accessibility: KeychainAccessibility.first_unlock_this_device),
     );
     var key = await storage.read(key: keyName);
     if (key == null) {

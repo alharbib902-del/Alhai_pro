@@ -16,8 +16,7 @@ class Cart with _$Cart {
     String? notes,
   }) = _Cart;
 
-  factory Cart.fromJson(Map<String, dynamic> json) =>
-      _$CartFromJson(json);
+  factory Cart.fromJson(Map<String, dynamic> json) => _$CartFromJson(json);
 
   /// Calculate cart total
   double get total => items.fold(0, (sum, item) => sum + item.lineTotal);

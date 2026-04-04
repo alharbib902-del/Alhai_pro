@@ -17,7 +17,8 @@ class ZatcaComplianceScreen extends ConsumerStatefulWidget {
   const ZatcaComplianceScreen({super.key});
 
   @override
-  ConsumerState<ZatcaComplianceScreen> createState() => _ZatcaComplianceScreenState();
+  ConsumerState<ZatcaComplianceScreen> createState() =>
+      _ZatcaComplianceScreenState();
 }
 
 class _ZatcaComplianceScreenState extends ConsumerState<ZatcaComplianceScreen> {
@@ -51,9 +52,11 @@ class _ZatcaComplianceScreenState extends ConsumerState<ZatcaComplianceScreen> {
           _eInvoicingEnabled = settings[_kZatcaEInvoicing] != 'false';
           _qrCodeEnabled = settings[_kZatcaQrCode] != 'false';
           _taxNumber = settings['zatca_tax_number'] ??
-              storeSettings['store_tax_number'] ?? '';
+              storeSettings['store_tax_number'] ??
+              '';
           _branchCode = settings['zatca_branch_code'] ??
-              storeSettings['store_branch_code'] ?? '';
+              storeSettings['store_branch_code'] ??
+              '';
           _isLoading = false;
         });
       }
@@ -94,9 +97,8 @@ class _ZatcaComplianceScreenState extends ConsumerState<ZatcaComplianceScreen> {
         children: [
           AppHeader(
             title: l10n.zatcaCompliance,
-            onMenuTap: isWideScreen
-                ? null
-                : () => Scaffold.of(context).openDrawer(),
+            onMenuTap:
+                isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
             onNotificationsTap: () => context.push('/notifications'),
             notificationsCount: 3,
             userName: l10n.defaultUserName,
@@ -110,20 +112,23 @@ class _ZatcaComplianceScreenState extends ConsumerState<ZatcaComplianceScreen> {
     }
 
     return Column(children: [
-          AppHeader(
-            title: l10n.zatcaCompliance,
-            onMenuTap: isWideScreen
-                      ? null
-                      : () => Scaffold.of(context).openDrawer(),
-            onNotificationsTap: () => context.push('/notifications'),
-            notificationsCount: 3, userName: l10n.defaultUserName, userRole: l10n.branchManager,
-          ),
-          Expanded(child: SingleChildScrollView(
-            padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-            child: _buildContent(isDark, l10n),
-          )),
-        ]);
+      AppHeader(
+        title: l10n.zatcaCompliance,
+        onMenuTap:
+            isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+        onNotificationsTap: () => context.push('/notifications'),
+        notificationsCount: 3,
+        userName: l10n.defaultUserName,
+        userRole: l10n.branchManager,
+      ),
+      Expanded(
+          child: SingleChildScrollView(
+        padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+        child: _buildContent(isDark, l10n),
+      )),
+    ]);
   }
+
   Widget _buildContent(bool isDark, AppLocalizations l10n) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       // Status
@@ -135,68 +140,111 @@ class _ZatcaComplianceScreenState extends ConsumerState<ZatcaComplianceScreen> {
           border: Border.all(color: AppColors.success.withValues(alpha: 0.3)),
         ),
         child: Row(children: [
-          const Icon(Icons.verified_rounded, color: AppColors.success, size: 24),
+          const Icon(Icons.verified_rounded,
+              color: AppColors.success, size: 24),
           const SizedBox(width: AlhaiSpacing.sm),
-          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(l10n.zatcaRegistered, style: const TextStyle(color: AppColors.success, fontWeight: FontWeight.bold)),
-            Text(l10n.zatcaPhase2Active, style: TextStyle(color: AppColors.success.withValues(alpha: 0.8), fontSize: 12)),
-          ])),
+          Expanded(
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                Text(l10n.zatcaRegistered,
+                    style: const TextStyle(
+                        color: AppColors.success, fontWeight: FontWeight.bold)),
+                Text(l10n.zatcaPhase2Active,
+                    style: TextStyle(
+                        color: AppColors.success.withValues(alpha: 0.8),
+                        fontSize: 12)),
+              ])),
         ]),
       ),
 
       const SizedBox(height: AlhaiSpacing.lg),
 
       // Registration info
-      _buildGroup(l10n.registrationInfo, [
-        _tile(Icons.badge_rounded, l10n.taxNumber,
-            _taxNumber.isNotEmpty ? _taxNumber : '—', isDark),
-        _tile(Icons.business_rounded, l10n.businessName,
-            l10n.businessNameValue, isDark),
-        _tile(Icons.location_on_rounded, l10n.branchCode,
-            _branchCode.isNotEmpty ? _branchCode : '—', isDark),
-      ], isDark),
+      _buildGroup(
+          l10n.registrationInfo,
+          [
+            _tile(Icons.badge_rounded, l10n.taxNumber,
+                _taxNumber.isNotEmpty ? _taxNumber : '—', isDark),
+            _tile(Icons.business_rounded, l10n.businessName,
+                l10n.businessNameValue, isDark),
+            _tile(Icons.location_on_rounded, l10n.branchCode,
+                _branchCode.isNotEmpty ? _branchCode : '—', isDark),
+          ],
+          isDark),
 
       // E-invoicing
-      _buildGroup(l10n.eInvoicing, [
-        SwitchListTile(
-          secondary: Container(padding: const EdgeInsets.all(AlhaiSpacing.xs),
-            decoration: BoxDecoration(color: AppColors.primary.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
-            child: const Icon(Icons.description_rounded, color: AppColors.primary, size: 20)),
-          title: Text(l10n.eInvoicing, style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.w500)),
-          subtitle: Text(_eInvoicingEnabled ? l10n.enabled : l10n.disabled,
-            style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 12)),
-          value: _eInvoicingEnabled,
-          onChanged: (v) {
-            setState(() => _eInvoicingEnabled = v);
-            _saveSingleSetting(_kZatcaEInvoicing, v.toString());
-          },
-        ),
-      ], isDark),
+      _buildGroup(
+          l10n.eInvoicing,
+          [
+            SwitchListTile(
+              secondary: Container(
+                  padding: const EdgeInsets.all(AlhaiSpacing.xs),
+                  decoration: BoxDecoration(
+                      color: AppColors.primary.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8)),
+                  child: const Icon(Icons.description_rounded,
+                      color: AppColors.primary, size: 20)),
+              title: Text(l10n.eInvoicing,
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurface,
+                      fontWeight: FontWeight.w500)),
+              subtitle: Text(_eInvoicingEnabled ? l10n.enabled : l10n.disabled,
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      fontSize: 12)),
+              value: _eInvoicingEnabled,
+              onChanged: (v) {
+                setState(() => _eInvoicingEnabled = v);
+                _saveSingleSetting(_kZatcaEInvoicing, v.toString());
+              },
+            ),
+          ],
+          isDark),
 
       // QR code
-      _buildGroup(l10n.qrCode, [
-        SwitchListTile(
-          secondary: Container(padding: const EdgeInsets.all(AlhaiSpacing.xs),
-            decoration: BoxDecoration(color: AppColors.primary.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
-            child: const Icon(Icons.qr_code_rounded, color: AppColors.primary, size: 20)),
-          title: Text(l10n.qrCodeOnInvoice, style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.w500)),
-          subtitle: Text(_qrCodeEnabled ? l10n.qrCodeOnInvoice : l10n.disabledLabel,
-            style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 12)),
-          value: _qrCodeEnabled,
-          onChanged: (v) {
-            setState(() => _qrCodeEnabled = v);
-            _saveSingleSetting(_kZatcaQrCode, v.toString());
-          },
-        ),
-      ], isDark),
+      _buildGroup(
+          l10n.qrCode,
+          [
+            SwitchListTile(
+              secondary: Container(
+                  padding: const EdgeInsets.all(AlhaiSpacing.xs),
+                  decoration: BoxDecoration(
+                      color: AppColors.primary.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8)),
+                  child: const Icon(Icons.qr_code_rounded,
+                      color: AppColors.primary, size: 20)),
+              title: Text(l10n.qrCodeOnInvoice,
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurface,
+                      fontWeight: FontWeight.w500)),
+              subtitle: Text(
+                  _qrCodeEnabled ? l10n.qrCodeOnInvoice : l10n.disabledLabel,
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      fontSize: 12)),
+              value: _qrCodeEnabled,
+              onChanged: (v) {
+                setState(() => _qrCodeEnabled = v);
+                _saveSingleSetting(_kZatcaQrCode, v.toString());
+              },
+            ),
+          ],
+          isDark),
 
       // Certificates
-      _buildGroup(l10n.certificates, [
-        _tile(Icons.security_rounded, l10n.csidCertificate, l10n.valid, isDark,
-            trailing: const Icon(Icons.check_circle_rounded, color: AppColors.success)),
-        _tile(Icons.key_rounded, l10n.privateKey, l10n.configured, isDark,
-            trailing: const Icon(Icons.check_circle_rounded, color: AppColors.success)),
-      ], isDark),
+      _buildGroup(
+          l10n.certificates,
+          [
+            _tile(Icons.security_rounded, l10n.csidCertificate, l10n.valid,
+                isDark,
+                trailing: const Icon(Icons.check_circle_rounded,
+                    color: AppColors.success)),
+            _tile(Icons.key_rounded, l10n.privateKey, l10n.configured, isDark,
+                trailing: const Icon(Icons.check_circle_rounded,
+                    color: AppColors.success)),
+          ],
+          isDark),
 
       const SizedBox(height: AlhaiSpacing.xs),
 
@@ -238,8 +286,8 @@ class _ZatcaComplianceScreenState extends ConsumerState<ZatcaComplianceScreen> {
           label: Text(AppLocalizations.of(context).submitToAuthority),
           style: FilledButton.styleFrom(
             padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           ),
         ),
       ),
@@ -255,24 +303,43 @@ class _ZatcaComplianceScreenState extends ConsumerState<ZatcaComplianceScreen> {
         border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Padding(padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl, AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.xs),
-          child: Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.onSurface))),
+        Padding(
+            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl,
+                AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.xs),
+            child: Text(title,
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onSurface))),
         ...children,
       ]),
     );
   }
 
-  Widget _tile(IconData icon, String title, String? subtitle, bool isDark, {Widget? trailing}) {
+  Widget _tile(IconData icon, String title, String? subtitle, bool isDark,
+      {Widget? trailing}) {
     return ListTile(
-      leading: Container(padding: const EdgeInsets.all(AlhaiSpacing.xs),
-        decoration: BoxDecoration(color: AppColors.primary.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
-        child: Icon(icon, color: AppColors.primary, size: 20)),
-      title: Text(title, style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.w500)),
-      subtitle: subtitle != null ? Text(subtitle, style: TextStyle(
-          color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 12)) : null,
-      trailing: trailing ?? Icon(Icons.chevron_left_rounded,
-          color: isDark ? Colors.white.withValues(alpha: 0.3) : AppColors.textTertiary),
+      leading: Container(
+          padding: const EdgeInsets.all(AlhaiSpacing.xs),
+          decoration: BoxDecoration(
+              color: AppColors.primary.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(8)),
+          child: Icon(icon, color: AppColors.primary, size: 20)),
+      title: Text(title,
+          style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurface,
+              fontWeight: FontWeight.w500)),
+      subtitle: subtitle != null
+          ? Text(subtitle,
+              style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  fontSize: 12))
+          : null,
+      trailing: trailing ??
+          Icon(Icons.chevron_left_rounded,
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.3)
+                  : AppColors.textTertiary),
     );
   }
 }

@@ -3,11 +3,12 @@ import 'package:alhai_design_system/alhai_design_system.dart';
 import '../../core/constants/breakpoints.dart';
 
 /// Widget لبناء واجهات متجاوبة
-/// 
+///
 /// يوفر نوع الجهاز وعرض الشاشة للـ builder
 class ResponsiveBuilder extends StatelessWidget {
   /// البناء الرئيسي الذي يستقبل نوع الجهاز
-  final Widget Function(BuildContext context, DeviceType deviceType, double screenWidth) builder;
+  final Widget Function(
+      BuildContext context, DeviceType deviceType, double screenWidth) builder;
 
   const ResponsiveBuilder({
     super.key,
@@ -30,10 +31,10 @@ class ResponsiveBuilder extends StatelessWidget {
 class ResponsiveLayout extends StatelessWidget {
   /// المحتوى على الهاتف
   final Widget mobile;
-  
+
   /// المحتوى على التابلت (اختياري، يستخدم desktop إذا لم يُحدد)
   final Widget? tablet;
-  
+
   /// المحتوى على سطح المكتب
   final Widget desktop;
 
@@ -64,7 +65,8 @@ class ResponsiveLayout extends StatelessWidget {
 /// Widget لعرض محتوى مختلف حسب عرض الشاشة
 class ScreenSizeBuilder extends StatelessWidget {
   /// البناء الذي يستقبل عرض الشاشة
-  final Widget Function(BuildContext context, double width, double height) builder;
+  final Widget Function(BuildContext context, double width, double height)
+      builder;
 
   const ScreenSizeBuilder({
     super.key,
@@ -91,7 +93,8 @@ extension ResponsiveExtension on BuildContext {
   DeviceType get deviceType => getDeviceType(MediaQuery.sizeOf(this).width);
 
   /// عدد أعمدة المنتجات المناسب
-  int get productGridColumns => getProductGridColumns(MediaQuery.sizeOf(this).width);
+  int get productGridColumns =>
+      getProductGridColumns(MediaQuery.sizeOf(this).width);
 
   /// هل يجب عرض السلة في BottomSheet؟
   bool get showCartInBottomSheet => deviceType.showCartInBottomSheet;
@@ -101,19 +104,19 @@ extension ResponsiveExtension on BuildContext {
 class ResponsiveGridView extends StatelessWidget {
   /// عناصر الـ Grid
   final int itemCount;
-  
+
   /// بناء كل عنصر
   final Widget Function(BuildContext context, int index) itemBuilder;
-  
+
   /// التباعد بين العناصر
   final double spacing;
-  
+
   /// نسبة العرض للارتفاع
   final double childAspectRatio;
-  
+
   /// حد أدنى لعرض العنصر
   final double minItemWidth;
-  
+
   /// الحشوة
   final EdgeInsetsGeometry padding;
 
@@ -133,7 +136,7 @@ class ResponsiveGridView extends StatelessWidget {
       builder: (context, constraints) {
         final width = constraints.maxWidth - padding.horizontal;
         final columns = (width / minItemWidth).floor().clamp(2, 6);
-        
+
         return GridView.builder(
           padding: padding,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

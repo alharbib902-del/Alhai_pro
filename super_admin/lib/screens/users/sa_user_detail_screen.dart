@@ -12,8 +12,7 @@ class SAUserDetailScreen extends ConsumerStatefulWidget {
   const SAUserDetailScreen({super.key, required this.userId});
 
   @override
-  ConsumerState<SAUserDetailScreen> createState() =>
-      _SAUserDetailScreenState();
+  ConsumerState<SAUserDetailScreen> createState() => _SAUserDetailScreenState();
 }
 
 class _SAUserDetailScreenState extends ConsumerState<SAUserDetailScreen> {
@@ -31,9 +30,8 @@ class _SAUserDetailScreenState extends ConsumerState<SAUserDetailScreen> {
     final userAsync = ref.watch(saUserDetailProvider(widget.userId));
     final ds = ref.watch(saUsersDatasourceProvider);
 
-    final onlineColor = isDark
-        ? const Color(0xFF4ADE80)
-        : const Color(0xFF16A34A);
+    final onlineColor =
+        isDark ? const Color(0xFF4ADE80) : const Color(0xFF16A34A);
     final offlineColor = colorScheme.outline;
 
     return Scaffold(
@@ -82,7 +80,6 @@ class _SAUserDetailScreenState extends ConsumerState<SAUserDetailScreen> {
                   ],
                 ),
                 const SizedBox(height: AlhaiSpacing.lg),
-
                 Center(
                   child: ConstrainedBox(
                     constraints: BoxConstraints(
@@ -102,14 +99,12 @@ class _SAUserDetailScreenState extends ConsumerState<SAUserDetailScreen> {
                             ),
                           ),
                           child: Padding(
-                            padding:
-                                const EdgeInsets.all(AlhaiSpacing.xl),
+                            padding: const EdgeInsets.all(AlhaiSpacing.xl),
                             child: Column(
                               children: [
                                 CircleAvatar(
                                   radius: 40,
-                                  backgroundColor:
-                                      colorScheme.primaryContainer,
+                                  backgroundColor: colorScheme.primaryContainer,
                                   child: Text(
                                     name.isNotEmpty ? name[0] : '?',
                                     style: theme.textTheme.headlineMedium
@@ -122,15 +117,13 @@ class _SAUserDetailScreenState extends ConsumerState<SAUserDetailScreen> {
                                 const SizedBox(height: AlhaiSpacing.md),
                                 Text(
                                   name,
-                                  style: theme.textTheme.titleLarge
-                                      ?.copyWith(
+                                  style: theme.textTheme.titleLarge?.copyWith(
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
                                 Text(
                                   email,
-                                  style: theme.textTheme.bodyMedium
-                                      ?.copyWith(
+                                  style: theme.textTheme.bodyMedium?.copyWith(
                                     color: colorScheme.outline,
                                   ),
                                 ),
@@ -141,10 +134,9 @@ class _SAUserDetailScreenState extends ConsumerState<SAUserDetailScreen> {
                                     vertical: AlhaiSpacing.xxs,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: statusColor
-                                        .withValues(alpha: 0.1),
-                                    borderRadius: BorderRadius.circular(
-                                        AlhaiRadius.full),
+                                    color: statusColor.withValues(alpha: 0.1),
+                                    borderRadius:
+                                        BorderRadius.circular(AlhaiRadius.full),
                                   ),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
@@ -157,13 +149,15 @@ class _SAUserDetailScreenState extends ConsumerState<SAUserDetailScreen> {
                                           shape: BoxShape.circle,
                                         ),
                                       ),
-                                      const SizedBox(
-                                          width: AlhaiSpacing.xxs),
+                                      const SizedBox(width: AlhaiSpacing.xxs),
                                       Text(
                                         isOnline ? l10n.online : l10n.offline,
-                                        style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                                          color: statusColor,
-                                        ),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .labelMedium
+                                            ?.copyWith(
+                                              color: statusColor,
+                                            ),
                                       ),
                                     ],
                                   ),
@@ -199,36 +193,28 @@ class _SAUserDetailScreenState extends ConsumerState<SAUserDetailScreen> {
                             ),
                           ),
                           child: Padding(
-                            padding:
-                                const EdgeInsets.all(AlhaiSpacing.lg),
+                            padding: const EdgeInsets.all(AlhaiSpacing.lg),
                             child: Column(
-                              crossAxisAlignment:
-                                  CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
                                   children: [
-                                    Icon(
-                                        Icons.warning_rounded,
-                                        size: 20,
-                                        color: colorScheme.error),
-                                    const SizedBox(
-                                        width: AlhaiSpacing.xs),
+                                    Icon(Icons.warning_rounded,
+                                        size: 20, color: colorScheme.error),
+                                    const SizedBox(width: AlhaiSpacing.xs),
                                     Text(
                                       l10n.dangerZone,
-                                      style: theme
-                                          .textTheme.titleMedium
-                                          ?.copyWith(
+                                      style:
+                                          theme.textTheme.titleMedium?.copyWith(
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
                                   ],
                                 ),
-                                const Divider(
-                                    height: AlhaiSpacing.xl),
+                                const Divider(height: AlhaiSpacing.xl),
                                 Text(
                                   l10n.deactivate,
-                                  style:
-                                      theme.textTheme.bodyMedium?.copyWith(
+                                  style: theme.textTheme.bodyMedium?.copyWith(
                                     color: colorScheme.error,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -237,8 +223,7 @@ class _SAUserDetailScreenState extends ConsumerState<SAUserDetailScreen> {
                                 Text(
                                   'Deactivating a user will immediately revoke their access. '
                                   'The account can be reactivated later.',
-                                  style:
-                                      theme.textTheme.bodySmall?.copyWith(
+                                  style: theme.textTheme.bodySmall?.copyWith(
                                     color: colorScheme.outline,
                                   ),
                                 ),
@@ -254,40 +239,45 @@ class _SAUserDetailScreenState extends ConsumerState<SAUserDetailScreen> {
                                         ),
                                         actions: [
                                           TextButton(
-                                            onPressed: () => Navigator.pop(ctx, false),
+                                            onPressed: () =>
+                                                Navigator.pop(ctx, false),
                                             child: Text(l10n.cancel),
                                           ),
                                           FilledButton(
                                             style: FilledButton.styleFrom(
-                                              backgroundColor: colorScheme.error,
+                                              backgroundColor:
+                                                  colorScheme.error,
                                             ),
-                                            onPressed: () => Navigator.pop(ctx, true),
+                                            onPressed: () =>
+                                                Navigator.pop(ctx, true),
                                             child: Text(l10n.deactivate),
                                           ),
                                         ],
                                       ),
                                     );
-                                    if (confirmed != true || !context.mounted) return;
+                                    if (confirmed != true || !context.mounted)
+                                      return;
 
                                     await UndoService.executeWithUndo(
                                       context: context,
                                       description: 'User $name deactivated',
                                       action: () async {
                                         await ds.softDeleteUser(widget.userId);
-                                        ref.invalidate(saUserDetailProvider(widget.userId));
+                                        ref.invalidate(saUserDetailProvider(
+                                            widget.userId));
                                         ref.invalidate(saUsersListProvider);
                                       },
                                       undoAction: () async {
                                         await ds.restoreUser(widget.userId);
-                                        ref.invalidate(saUserDetailProvider(widget.userId));
+                                        ref.invalidate(saUserDetailProvider(
+                                            widget.userId));
                                         ref.invalidate(saUsersListProvider);
                                       },
                                     );
                                   },
                                   style: OutlinedButton.styleFrom(
                                     foregroundColor: colorScheme.error,
-                                    side: BorderSide(
-                                        color: colorScheme.error),
+                                    side: BorderSide(color: colorScheme.error),
                                   ),
                                   child: Text(l10n.deactivate),
                                 ),
@@ -309,55 +299,50 @@ class _SAUserDetailScreenState extends ConsumerState<SAUserDetailScreen> {
                             ),
                           ),
                           child: Padding(
-                            padding:
-                                const EdgeInsets.all(AlhaiSpacing.lg),
+                            padding: const EdgeInsets.all(AlhaiSpacing.lg),
                             child: Column(
-                              crossAxisAlignment:
-                                  CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
                                   children: [
-                                    Icon(
-                                        Icons
-                                            .admin_panel_settings_rounded,
-                                        size: 20,
-                                        color:
-                                            colorScheme.primary),
-                                    const SizedBox(
-                                        width: AlhaiSpacing.xs),
+                                    Icon(Icons.admin_panel_settings_rounded,
+                                        size: 20, color: colorScheme.primary),
+                                    const SizedBox(width: AlhaiSpacing.xs),
                                     Text(
                                       l10n.roleManagement,
-                                      style: theme
-                                          .textTheme.titleMedium
-                                          ?.copyWith(
+                                      style:
+                                          theme.textTheme.titleMedium?.copyWith(
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
                                   ],
                                 ),
-                                const Divider(
-                                    height: AlhaiSpacing.xl),
+                                const Divider(height: AlhaiSpacing.xl),
                                 _RoleOption(
                                   title: l10n.superAdminRole,
                                   description:
                                       'Full access to all platform features',
                                   icon: Icons.shield_rounded,
-                                  color: isDark ? const Color(0xFFF87171) : Colors.red,
+                                  color: isDark
+                                      ? const Color(0xFFF87171)
+                                      : Colors.red,
                                   value: 'super_admin',
                                   groupValue: _selectedRole!,
-                                  onChanged: (v) => setState(
-                                      () => _selectedRole = v!),
+                                  onChanged: (v) =>
+                                      setState(() => _selectedRole = v!),
                                 ),
                                 _RoleOption(
                                   title: l10n.supportRole,
                                   description:
                                       'View stores, manage tickets, limited settings',
                                   icon: Icons.support_agent_rounded,
-                                  color: isDark ? const Color(0xFF60A5FA) : Colors.blue,
+                                  color: isDark
+                                      ? const Color(0xFF60A5FA)
+                                      : Colors.blue,
                                   value: 'support',
                                   groupValue: _selectedRole!,
-                                  onChanged: (v) => setState(
-                                      () => _selectedRole = v!),
+                                  onChanged: (v) =>
+                                      setState(() => _selectedRole = v!),
                                 ),
                                 _RoleOption(
                                   title: l10n.viewerRole,
@@ -367,28 +352,24 @@ class _SAUserDetailScreenState extends ConsumerState<SAUserDetailScreen> {
                                   color: colorScheme.outline,
                                   value: 'viewer',
                                   groupValue: _selectedRole!,
-                                  onChanged: (v) => setState(
-                                      () => _selectedRole = v!),
+                                  onChanged: (v) =>
+                                      setState(() => _selectedRole = v!),
                                 ),
-                                const SizedBox(
-                                    height: AlhaiSpacing.md),
+                                const SizedBox(height: AlhaiSpacing.md),
                                 Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.end,
+                                  mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     FilledButton(
                                       onPressed: _saving ||
                                               _selectedRole == role
                                           ? null
                                           : () => _saveRole(
-                                              widget.userId,
-                                              _selectedRole!),
+                                              widget.userId, _selectedRole!),
                                       child: _saving
                                           ? const SizedBox(
                                               width: 16,
                                               height: 16,
-                                              child:
-                                                  CircularProgressIndicator(
+                                              child: CircularProgressIndicator(
                                                 strokeWidth: 2,
                                               ),
                                             )
@@ -513,14 +494,10 @@ class _RoleOption extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(AlhaiRadius.sm),
             border: Border.all(
-              color: isSelected
-                  ? color
-                  : theme.colorScheme.outlineVariant,
+              color: isSelected ? color : theme.colorScheme.outlineVariant,
               width: isSelected ? 2 : 1,
             ),
-            color: isSelected
-                ? color.withValues(alpha: 0.05)
-                : null,
+            color: isSelected ? color.withValues(alpha: 0.05) : null,
           ),
           child: Row(
             children: [
@@ -535,8 +512,7 @@ class _RoleOption extends StatelessWidget {
                 height: 36,
                 decoration: BoxDecoration(
                   color: color.withValues(alpha: 0.1),
-                  borderRadius:
-                      BorderRadius.circular(AlhaiRadius.xs),
+                  borderRadius: BorderRadius.circular(AlhaiRadius.xs),
                 ),
                 child: Icon(icon, color: color, size: 20),
               ),

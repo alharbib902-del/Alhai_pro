@@ -81,14 +81,24 @@ class StoreCard extends StatelessWidget {
                           ),
                           decoration: BoxDecoration(
                             color: isOpen
-                                ? theme.extension<AlhaiStatusColors>()!.success.withValues(alpha: 0.1)
-                                : theme.extension<AlhaiStatusColors>()!.error.withValues(alpha: 0.1),
+                                ? theme
+                                    .extension<AlhaiStatusColors>()!
+                                    .success
+                                    .withValues(alpha: 0.1)
+                                : theme
+                                    .extension<AlhaiStatusColors>()!
+                                    .error
+                                    .withValues(alpha: 0.1),
                             borderRadius: AlhaiRadius.borderSm,
                           ),
                           child: Text(
                             isOpen ? 'مفتوح' : 'مغلق',
                             style: theme.textTheme.labelSmall?.copyWith(
-                              color: isOpen ? theme.extension<AlhaiStatusColors>()!.success : theme.extension<AlhaiStatusColors>()!.error,
+                              color: isOpen
+                                  ? theme
+                                      .extension<AlhaiStatusColors>()!
+                                      .success
+                                  : theme.extension<AlhaiStatusColors>()!.error,
                               fontWeight: FontWeight.w600,
                             ),
                           ),

@@ -84,7 +84,8 @@ class _SAStoresListScreenState extends ConsumerState<SAStoresListScreen> {
                     controller: _searchController,
                     onChanged: (query) {
                       _debounceTimer?.cancel();
-                      _debounceTimer = Timer(const Duration(milliseconds: 300), () {
+                      _debounceTimer =
+                          Timer(const Duration(milliseconds: 300), () {
                         _applySearch(query);
                       });
                     },
@@ -92,8 +93,7 @@ class _SAStoresListScreenState extends ConsumerState<SAStoresListScreen> {
                       hintText: l10n.searchStores,
                       prefixIcon: const Icon(Icons.search_rounded),
                       border: OutlineInputBorder(
-                        borderRadius:
-                            BorderRadius.circular(AlhaiRadius.input),
+                        borderRadius: BorderRadius.circular(AlhaiRadius.input),
                       ),
                       isDense: true,
                     ),
@@ -138,8 +138,7 @@ class _SAStoresListScreenState extends ConsumerState<SAStoresListScreen> {
                   return Card(
                     elevation: 0,
                     shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(AlhaiRadius.card),
+                      borderRadius: BorderRadius.circular(AlhaiRadius.card),
                       side: BorderSide(
                         color: colorScheme.outlineVariant,
                         width: AlhaiSpacing.strokeXs,
@@ -160,10 +159,14 @@ class _SAStoresListScreenState extends ConsumerState<SAStoresListScreen> {
                         onAdd: () => context.go(SuperAdminRoutes.createStore),
                       ),
                       columns: [
-                        DataColumn2(label: Text(l10n.storeName), size: ColumnSize.L),
-                        DataColumn2(label: Text(l10n.storeStatus), fixedWidth: 120),
-                        DataColumn2(label: Text(l10n.storePlan), fixedWidth: 140),
-                        DataColumn2(label: Text(l10n.storeCreatedAt), fixedWidth: 130),
+                        DataColumn2(
+                            label: Text(l10n.storeName), size: ColumnSize.L),
+                        DataColumn2(
+                            label: Text(l10n.storeStatus), fixedWidth: 120),
+                        DataColumn2(
+                            label: Text(l10n.storePlan), fixedWidth: 140),
+                        DataColumn2(
+                            label: Text(l10n.storeCreatedAt), fixedWidth: 130),
                         const DataColumn2(label: SizedBox(), fixedWidth: 56),
                       ],
                       source: _StoresDataSource(
@@ -171,7 +174,8 @@ class _SAStoresListScreenState extends ConsumerState<SAStoresListScreen> {
                         context: context,
                         isDark: isDark,
                         l10n: l10n,
-                        onViewStore: (storeId) => context.go('/stores/$storeId'),
+                        onViewStore: (storeId) =>
+                            context.go('/stores/$storeId'),
                       ),
                     ),
                   );
@@ -207,9 +211,8 @@ class _StoresDataSource extends DataTableSource {
 
     final name = store.name.isEmpty ? 'Unnamed' : store.name;
     final createdAt = store.createdAt ?? '';
-    final dateStr = createdAt.length >= 10
-        ? createdAt.substring(0, 10)
-        : createdAt;
+    final dateStr =
+        createdAt.length >= 10 ? createdAt.substring(0, 10) : createdAt;
 
     // Extract plan from typed subscription
     final planName = store.planName;
@@ -263,8 +266,7 @@ class _FilterChip extends StatelessWidget {
       underline: const SizedBox(),
       borderRadius: BorderRadius.circular(AlhaiRadius.sm),
       items: options.entries
-          .map((e) =>
-              DropdownMenuItem(value: e.key, child: Text(e.value)))
+          .map((e) => DropdownMenuItem(value: e.key, child: Text(e.value)))
           .toList(),
       onChanged: (v) {
         if (v != null) onChanged(v);
@@ -282,21 +284,21 @@ class _StatusBadge extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final (color, bgColor) = switch (status) {
       'active' => (
-        isDark ? const Color(0xFF4ADE80) : const Color(0xFF15803D),
-        isDark ? const Color(0xFF1B3A2A) : const Color(0xFFDCFCE7),
-      ),
+          isDark ? const Color(0xFF4ADE80) : const Color(0xFF15803D),
+          isDark ? const Color(0xFF1B3A2A) : const Color(0xFFDCFCE7),
+        ),
       'suspended' => (
-        isDark ? const Color(0xFFF87171) : const Color(0xFFB91C1C),
-        isDark ? const Color(0xFF3A1B1B) : const Color(0xFFFEE2E2),
-      ),
+          isDark ? const Color(0xFFF87171) : const Color(0xFFB91C1C),
+          isDark ? const Color(0xFF3A1B1B) : const Color(0xFFFEE2E2),
+        ),
       'trial' => (
-        isDark ? const Color(0xFFFBBF24) : const Color(0xFFB45309),
-        isDark ? const Color(0xFF3A2F1B) : const Color(0xFFFEF3C7),
-      ),
+          isDark ? const Color(0xFFFBBF24) : const Color(0xFFB45309),
+          isDark ? const Color(0xFF3A2F1B) : const Color(0xFFFEF3C7),
+        ),
       _ => (
-        isDark ? const Color(0xFF9CA3AF) : const Color(0xFF4B5563),
-        isDark ? const Color(0xFF2A2A2A) : const Color(0xFFF3F4F6),
-      ),
+          isDark ? const Color(0xFF9CA3AF) : const Color(0xFF4B5563),
+          isDark ? const Color(0xFF2A2A2A) : const Color(0xFFF3F4F6),
+        ),
     };
 
     return Container(
@@ -311,9 +313,9 @@ class _StatusBadge extends StatelessWidget {
       child: Text(
         status.toUpperCase(),
         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-          color: color,
-          fontWeight: FontWeight.w600,
-        ),
+              color: color,
+              fontWeight: FontWeight.w600,
+            ),
       ),
     );
   }
@@ -347,9 +349,9 @@ class _PlanBadge extends StatelessWidget {
       child: Text(
         plan,
         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-          color: color,
-          fontWeight: FontWeight.w600,
-        ),
+              color: color,
+              fontWeight: FontWeight.w600,
+            ),
       ),
     );
   }

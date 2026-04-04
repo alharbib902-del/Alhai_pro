@@ -41,7 +41,8 @@ final customDateRangeProvider = StateProvider<DateRange?>((ref) {
 // ============================================================================
 
 /// تقرير المبيعات للفترة المحددة
-final salesReportProvider = FutureProvider.autoDispose<SalesReport?>((ref) async {
+final salesReportProvider =
+    FutureProvider.autoDispose<SalesReport?>((ref) async {
   final service = ref.watch(reportsServiceProvider);
   final user = ref.watch(currentUserProvider);
   final period = ref.watch(selectedReportPeriodProvider);
@@ -67,7 +68,8 @@ final todayStatsProvider = FutureProvider.autoDispose<SalesStats?>((ref) async {
 });
 
 /// إحصائيات الكاشير اليوم
-final cashierTodayStatsProvider = FutureProvider.autoDispose<SalesStats?>((ref) async {
+final cashierTodayStatsProvider =
+    FutureProvider.autoDispose<SalesStats?>((ref) async {
   final service = ref.watch(reportsServiceProvider);
   final user = ref.watch(currentUserProvider);
 
@@ -81,7 +83,8 @@ final cashierTodayStatsProvider = FutureProvider.autoDispose<SalesStats?>((ref) 
 // ============================================================================
 
 /// ملخص لوحة التحكم
-final dashboardSummaryProvider = FutureProvider.autoDispose<DashboardSummary?>((ref) async {
+final dashboardSummaryProvider =
+    FutureProvider.autoDispose<DashboardSummary?>((ref) async {
   final service = ref.watch(reportsServiceProvider);
   final user = ref.watch(currentUserProvider);
 
@@ -91,7 +94,8 @@ final dashboardSummaryProvider = FutureProvider.autoDispose<DashboardSummary?>((
 });
 
 /// مراقبة ملخص لوحة التحكم (تحديث كل 5 دقائق)
-final dashboardAutoRefreshProvider = StreamProvider.autoDispose<DashboardSummary?>((ref) async* {
+final dashboardAutoRefreshProvider =
+    StreamProvider.autoDispose<DashboardSummary?>((ref) async* {
   final service = ref.watch(reportsServiceProvider);
   final user = ref.watch(currentUserProvider);
 
@@ -114,7 +118,8 @@ final dashboardAutoRefreshProvider = StreamProvider.autoDispose<DashboardSummary
 // ============================================================================
 
 /// تقرير المخزون
-final inventoryReportProvider = FutureProvider.autoDispose<InventoryReport?>((ref) async {
+final inventoryReportProvider =
+    FutureProvider.autoDispose<InventoryReport?>((ref) async {
   final service = ref.watch(reportsServiceProvider);
   final user = ref.watch(currentUserProvider);
 
@@ -124,7 +129,8 @@ final inventoryReportProvider = FutureProvider.autoDispose<InventoryReport?>((re
 });
 
 /// المنتجات منخفضة المخزون
-final lowStockItemsProvider = FutureProvider.autoDispose<List<LowStockItem>>((ref) async {
+final lowStockItemsProvider =
+    FutureProvider.autoDispose<List<LowStockItem>>((ref) async {
   final report = await ref.watch(inventoryReportProvider.future);
   return report?.lowStockItems ?? [];
 });
@@ -174,7 +180,8 @@ final dailySalesChartProvider = Provider.autoDispose<List<DailySales>>((ref) {
 });
 
 /// بيانات طرق الدفع
-final paymentMethodsChartProvider = Provider.autoDispose<List<PaymentMethodStats>>((ref) {
+final paymentMethodsChartProvider =
+    Provider.autoDispose<List<PaymentMethodStats>>((ref) {
   final report = ref.watch(salesReportProvider);
   return report.valueOrNull?.paymentMethods ?? [];
 });

@@ -55,11 +55,16 @@ class LiteAlertsSummaryScreen extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Alert summary cards
-            _buildAlertCategories(context, isDark, isMobile, l10n,
+            _buildAlertCategories(
+              context,
+              isDark,
+              isMobile,
+              l10n,
               stockCount: stockAsync.valueOrNull?.length ?? 0,
               orderCount: orderAsync.valueOrNull?.length ?? 0,
               systemCount: systemAsync.valueOrNull?.length ?? 0,
-              notifCount: notifAsync.valueOrNull?.where((n) => !n.isRead).length ?? 0,
+              notifCount:
+                  notifAsync.valueOrNull?.where((n) => !n.isRead).length ?? 0,
             ),
             const SizedBox(height: AlhaiSpacing.lg),
 
@@ -67,8 +72,10 @@ class LiteAlertsSummaryScreen extends ConsumerWidget {
             _buildSectionTitle(l10n.notifications, Icons.access_time, isDark),
             const SizedBox(height: AlhaiSpacing.sm),
             notifAsync.when(
-              data: (notifs) => _buildRecentAlerts(context, isDark, l10n, notifs.take(5).toList()),
-              loading: () => const Center(child: Padding(
+              data: (notifs) => _buildRecentAlerts(
+                  context, isDark, l10n, notifs.take(5).toList()),
+              loading: () => const Center(
+                  child: Padding(
                 padding: EdgeInsets.all(AlhaiSpacing.lg),
                 child: CircularProgressIndicator(),
               )),
@@ -80,7 +87,11 @@ class LiteAlertsSummaryScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildAlertCategories(BuildContext context, bool isDark, bool isMobile, AppLocalizations l10n, {
+  Widget _buildAlertCategories(
+    BuildContext context,
+    bool isDark,
+    bool isMobile,
+    AppLocalizations l10n, {
     required int stockCount,
     required int orderCount,
     required int systemCount,
@@ -122,17 +133,21 @@ class LiteAlertsSummaryScreen extends ConsumerWidget {
         children: [
           Row(
             children: [
-              Expanded(child: _buildCategoryCard(context, categories[0], isDark)),
+              Expanded(
+                  child: _buildCategoryCard(context, categories[0], isDark)),
               const SizedBox(width: AlhaiSpacing.sm),
-              Expanded(child: _buildCategoryCard(context, categories[1], isDark)),
+              Expanded(
+                  child: _buildCategoryCard(context, categories[1], isDark)),
             ],
           ),
           const SizedBox(height: AlhaiSpacing.sm),
           Row(
             children: [
-              Expanded(child: _buildCategoryCard(context, categories[2], isDark)),
+              Expanded(
+                  child: _buildCategoryCard(context, categories[2], isDark)),
               const SizedBox(width: AlhaiSpacing.sm),
-              Expanded(child: _buildCategoryCard(context, categories[3], isDark)),
+              Expanded(
+                  child: _buildCategoryCard(context, categories[3], isDark)),
             ],
           ),
         ],
@@ -153,7 +168,8 @@ class LiteAlertsSummaryScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildCategoryCard(BuildContext context, _AlertCategory category, bool isDark) {
+  Widget _buildCategoryCard(
+      BuildContext context, _AlertCategory category, bool isDark) {
     return InkWell(
       onTap: () => context.go(category.route),
       borderRadius: BorderRadius.circular(16),
@@ -163,7 +179,9 @@ class LiteAlertsSummaryScreen extends ConsumerWidget {
           color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isDark ? Colors.white12 : Theme.of(context).colorScheme.outlineVariant,
+            color: isDark
+                ? Colors.white12
+                : Theme.of(context).colorScheme.outlineVariant,
           ),
         ),
         child: Column(
@@ -182,7 +200,8 @@ class LiteAlertsSummaryScreen extends ConsumerWidget {
                 ),
                 const Spacer(),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: AlhaiSpacing.xxxs),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 8, vertical: AlhaiSpacing.xxxs),
                   decoration: BoxDecoration(
                     color: category.color.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(10),
@@ -232,12 +251,15 @@ class LiteAlertsSummaryScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildRecentAlerts(BuildContext context, bool isDark, AppLocalizations l10n, List<NotificationsTableData> notifs) {
+  Widget _buildRecentAlerts(BuildContext context, bool isDark,
+      AppLocalizations l10n, List<NotificationsTableData> notifs) {
     if (notifs.isEmpty) {
       return Center(
         child: Padding(
           padding: const EdgeInsets.all(AlhaiSpacing.lg),
-          child: Text(l10n.noResults, style: TextStyle(color: isDark ? Colors.white54 : Colors.black45)),
+          child: Text(l10n.noResults,
+              style:
+                  TextStyle(color: isDark ? Colors.white54 : Colors.black45)),
         ),
       );
     }
@@ -247,7 +269,8 @@ class LiteAlertsSummaryScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildNotifTile(BuildContext context, NotificationsTableData notif, bool isDark) {
+  Widget _buildNotifTile(
+      BuildContext context, NotificationsTableData notif, bool isDark) {
     final color = notif.isRead ? Colors.grey : AlhaiColors.primary;
     return Container(
       margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
@@ -255,10 +278,14 @@ class LiteAlertsSummaryScreen extends ConsumerWidget {
       decoration: BoxDecoration(
         color: isDark
             ? Colors.white.withValues(alpha: notif.isRead ? 0.04 : 0.08)
-            : (notif.isRead ? Colors.white : AlhaiColors.primary.withValues(alpha: 0.04)),
+            : (notif.isRead
+                ? Colors.white
+                : AlhaiColors.primary.withValues(alpha: 0.04)),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDark ? Colors.white12 : Theme.of(context).colorScheme.outlineVariant,
+          color: isDark
+              ? Colors.white12
+              : Theme.of(context).colorScheme.outlineVariant,
         ),
       ),
       child: Row(
@@ -281,7 +308,8 @@ class LiteAlertsSummaryScreen extends ConsumerWidget {
                   notif.title,
                   style: TextStyle(
                     fontSize: 13,
-                    fontWeight: notif.isRead ? FontWeight.normal : FontWeight.bold,
+                    fontWeight:
+                        notif.isRead ? FontWeight.normal : FontWeight.bold,
                     color: isDark ? Colors.white : Colors.black87,
                   ),
                 ),
@@ -291,7 +319,9 @@ class LiteAlertsSummaryScreen extends ConsumerWidget {
                     notif.body!,
                     style: TextStyle(
                       fontSize: 12,
-                      color: isDark ? Colors.white38 : Theme.of(context).colorScheme.onSurfaceVariant,
+                      color: isDark
+                          ? Colors.white38
+                          : Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

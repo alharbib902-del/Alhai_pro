@@ -149,7 +149,8 @@ class _SmartOfflineBannerState extends State<SmartOfflineBanner>
     }
 
     return _OfflineBanner(
-      pendingCount: widget.showPendingCount ? _connectionState.pendingSyncCount : 0,
+      pendingCount:
+          widget.showPendingCount ? _connectionState.pendingSyncCount : 0,
       connectionType: _connectionState.type,
       onSyncPressed: widget.onSyncPressed,
     );
@@ -176,7 +177,8 @@ class _OfflineBanner extends StatelessWidget {
         bottom: false,
         child: Container(
           width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
+          padding: const EdgeInsets.symmetric(
+              horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
           child: Row(
             children: [
               const Icon(
@@ -200,7 +202,8 @@ class _OfflineBanner extends StatelessWidget {
                     ),
                     if (pendingCount > 0)
                       Text(
-                        AppLocalizations.of(context)!.operationsPendingSync(pendingCount),
+                        AppLocalizations.of(context)!
+                            .operationsPendingSync(pendingCount),
                         style: TextStyle(
                           color: Colors.white.withValues(alpha: 0.9),
                           fontSize: 11,
@@ -216,7 +219,8 @@ class _OfflineBanner extends StatelessWidget {
                   label: Text(AppLocalizations.of(context)!.syncLabel),
                   style: TextButton.styleFrom(
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs),
                   ),
                 ),
             ],
@@ -237,7 +241,8 @@ class _OnlineBanner extends StatelessWidget {
         bottom: false,
         child: Container(
           width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
+          padding: const EdgeInsets.symmetric(
+              horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -275,7 +280,8 @@ class ConnectionStatusIndicator extends StatefulWidget {
   });
 
   @override
-  State<ConnectionStatusIndicator> createState() => _ConnectionStatusIndicatorState();
+  State<ConnectionStatusIndicator> createState() =>
+      _ConnectionStatusIndicatorState();
 }
 
 class _ConnectionStatusIndicatorState extends State<ConnectionStatusIndicator> {
@@ -317,7 +323,9 @@ class _ConnectionStatusIndicatorState extends State<ConnectionStatusIndicator> {
           ),
           SizedBox(width: AlhaiSpacing.xxs),
           Text(
-            isOnline ? AppLocalizations.of(context)!.connectedLabel : AppLocalizations.of(context)!.disconnectedLabel,
+            isOnline
+                ? AppLocalizations.of(context)!.connectedLabel
+                : AppLocalizations.of(context)!.disconnectedLabel,
             style: TextStyle(
               fontSize: 12,
               color: color,
@@ -326,7 +334,8 @@ class _ConnectionStatusIndicatorState extends State<ConnectionStatusIndicator> {
           if (!isOnline && _state.pendingSyncCount > 0) ...[
             SizedBox(width: AlhaiSpacing.xxs),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: AlhaiSpacing.xxxs),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 6, vertical: AlhaiSpacing.xxxs),
               decoration: BoxDecoration(
                 color: AlhaiColors.warning.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(10),

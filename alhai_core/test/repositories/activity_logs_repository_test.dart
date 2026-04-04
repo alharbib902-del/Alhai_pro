@@ -29,7 +29,13 @@ void main() {
     });
 
     test('should handle different action types', () {
-      final actions = ['login', 'logout', 'create_order', 'refund', 'open_shift'];
+      final actions = [
+        'login',
+        'logout',
+        'create_order',
+        'refund',
+        'open_shift'
+      ];
 
       for (final action in actions) {
         final summary = ActivitySummary(

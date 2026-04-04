@@ -24,8 +24,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const SubscriptionScreen()));
+      await tester.pumpWidget(createTestWidget(const SubscriptionScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(SubscriptionScreen), findsOneWidget);
@@ -39,8 +38,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const SubscriptionScreen()));
+      await tester.pumpWidget(createTestWidget(const SubscriptionScreen()));
       await tester.pumpAndSettle();
 
       // Without DAO stubs, screen falls into error state
@@ -55,8 +53,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const SubscriptionScreen()));
+      await tester.pumpWidget(createTestWidget(const SubscriptionScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.refresh), findsWidgets);
@@ -70,8 +67,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const SubscriptionScreen()));
+      await tester.pumpWidget(createTestWidget(const SubscriptionScreen()));
       await tester.pumpAndSettle();
 
       // FilledButton.icon() creates a private subclass; use predicate

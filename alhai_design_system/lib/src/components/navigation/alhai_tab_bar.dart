@@ -45,7 +45,7 @@ class AlhaiTabBarItem {
 }
 
 /// AlhaiTabBar - Enhanced TabBar with badges, subtitles, leading/trailing
-/// 
+///
 /// Features:
 /// - Fixed and scrollable modes
 /// - Optional leading/trailing widgets
@@ -89,9 +89,9 @@ class AlhaiTabBar extends StatelessWidget {
     this.trailing,
     this.showDivider = true,
     this.filled = false,
-  }) : assert(tabs.length > 0, 'AlhaiTabBar requires at least one tab'),
-       assert(currentIndex >= 0 && currentIndex < tabs.length,
-           'currentIndex must be within tabs range');
+  })  : assert(tabs.length > 0, 'AlhaiTabBar requires at least one tab'),
+        assert(currentIndex >= 0 && currentIndex < tabs.length,
+            'currentIndex must be within tabs range');
 
   @override
   Widget build(BuildContext context) {
@@ -312,7 +312,8 @@ class _TabItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDisabled = !item.enabled;
     final labelColor = isDisabled
-        ? colorScheme.onSurfaceVariant.withValues(alpha: AlhaiColors.disabledOpacity)
+        ? colorScheme.onSurfaceVariant
+            .withValues(alpha: AlhaiColors.disabledOpacity)
         : isSelected
             ? (filled ? colorScheme.onSecondaryContainer : colorScheme.primary)
             : colorScheme.onSurfaceVariant;
@@ -326,7 +327,9 @@ class _TabItem extends StatelessWidget {
         duration: AlhaiDurations.fast,
         decoration: filled
             ? BoxDecoration(
-                color: isSelected ? colorScheme.secondaryContainer : AlhaiColors.transparent,
+                color: isSelected
+                    ? colorScheme.secondaryContainer
+                    : AlhaiColors.transparent,
                 borderRadius: BorderRadius.circular(AlhaiRadius.sm),
               )
             : null,
@@ -344,7 +347,9 @@ class _TabItem extends StatelessWidget {
                   ? BoxDecoration(
                       border: Border(
                         bottom: BorderSide(
-                          color: isSelected ? colorScheme.primary : AlhaiColors.transparent,
+                          color: isSelected
+                              ? colorScheme.primary
+                              : AlhaiColors.transparent,
                           width: AlhaiSpacing.strokeSm,
                         ),
                       ),

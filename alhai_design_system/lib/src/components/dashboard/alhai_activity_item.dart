@@ -31,7 +31,8 @@ class AlhaiActivityItem extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm, horizontal: AlhaiSpacing.md),
+        padding: const EdgeInsets.symmetric(
+            vertical: AlhaiSpacing.sm, horizontal: AlhaiSpacing.md),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

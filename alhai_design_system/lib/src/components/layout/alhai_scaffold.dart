@@ -149,10 +149,12 @@ class AlhaiScaffold extends StatelessWidget {
         : EdgeInsets.zero;
 
     // إضافة keyboard inset
-    final keyboardBottom = avoidKeyboard ? context.safeKeyboardInsets.bottom : 0.0;
+    final keyboardBottom =
+        avoidKeyboard ? context.safeKeyboardInsets.bottom : 0.0;
 
     // دمج padding في Padding واحد
-    final effectivePadding = basePadding.add(EdgeInsets.only(bottom: keyboardBottom));
+    final effectivePadding =
+        basePadding.add(EdgeInsets.only(bottom: keyboardBottom));
 
     // Build body with merged padding
     final effectiveBody = Padding(padding: effectivePadding, child: body);

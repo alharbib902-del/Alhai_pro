@@ -18,8 +18,7 @@ void main() {
 
       container.read(priceFilterProvider.notifier).state =
           PriceFilterType.canIncrease;
-      expect(
-          container.read(priceFilterProvider), PriceFilterType.canIncrease);
+      expect(container.read(priceFilterProvider), PriceFilterType.canIncrease);
     });
 
     test('can be updated to shouldDecrease', () {
@@ -28,8 +27,8 @@ void main() {
 
       container.read(priceFilterProvider.notifier).state =
           PriceFilterType.shouldDecrease;
-      expect(container.read(priceFilterProvider),
-          PriceFilterType.shouldDecrease);
+      expect(
+          container.read(priceFilterProvider), PriceFilterType.shouldDecrease);
     });
   });
 
@@ -56,8 +55,7 @@ void main() {
       expect(PriceFilterType.values.length, 3);
       expect(PriceFilterType.values, contains(PriceFilterType.all));
       expect(PriceFilterType.values, contains(PriceFilterType.canIncrease));
-      expect(
-          PriceFilterType.values, contains(PriceFilterType.shouldDecrease));
+      expect(PriceFilterType.values, contains(PriceFilterType.shouldDecrease));
     });
   });
 }

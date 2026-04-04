@@ -14,10 +14,12 @@ class LiteNotificationPrefsScreen extends StatefulWidget {
   const LiteNotificationPrefsScreen({super.key});
 
   @override
-  State<LiteNotificationPrefsScreen> createState() => _LiteNotificationPrefsScreenState();
+  State<LiteNotificationPrefsScreen> createState() =>
+      _LiteNotificationPrefsScreenState();
 }
 
-class _LiteNotificationPrefsScreenState extends State<LiteNotificationPrefsScreen> {
+class _LiteNotificationPrefsScreenState
+    extends State<LiteNotificationPrefsScreen> {
   bool _pushEnabled = true;
   bool _lowStockAlerts = true;
   bool _orderAlerts = true;
@@ -46,7 +48,8 @@ class _LiteNotificationPrefsScreenState extends State<LiteNotificationPrefsScree
         ),
         children: [
           // Master toggle
-          _buildSectionHeader(l10n.notifications, Icons.notifications_outlined, isDark),
+          _buildSectionHeader(
+              l10n.notifications, Icons.notifications_outlined, isDark),
           const SizedBox(height: AlhaiSpacing.xs),
           _buildCard(isDark, [
             _buildToggle(
@@ -70,7 +73,9 @@ class _LiteNotificationPrefsScreenState extends State<LiteNotificationPrefsScree
               title: l10n.lowStock,
               subtitle: 'When products go below threshold',
               value: _lowStockAlerts,
-              onChanged: _pushEnabled ? (v) => setState(() => _lowStockAlerts = v) : null,
+              onChanged: _pushEnabled
+                  ? (v) => setState(() => _lowStockAlerts = v)
+                  : null,
               isDark: isDark,
             ),
             _divider(isDark),
@@ -79,7 +84,8 @@ class _LiteNotificationPrefsScreenState extends State<LiteNotificationPrefsScree
               title: l10n.orders,
               subtitle: 'New orders and status changes',
               value: _orderAlerts,
-              onChanged: _pushEnabled ? (v) => setState(() => _orderAlerts = v) : null,
+              onChanged:
+                  _pushEnabled ? (v) => setState(() => _orderAlerts = v) : null,
               isDark: isDark,
             ),
             _divider(isDark),
@@ -88,7 +94,9 @@ class _LiteNotificationPrefsScreenState extends State<LiteNotificationPrefsScree
               title: l10n.shiftsTitle,
               subtitle: 'Shift open/close reminders',
               value: _shiftReminders,
-              onChanged: _pushEnabled ? (v) => setState(() => _shiftReminders = v) : null,
+              onChanged: _pushEnabled
+                  ? (v) => setState(() => _shiftReminders = v)
+                  : null,
               isDark: isDark,
             ),
             _divider(isDark),
@@ -97,7 +105,9 @@ class _LiteNotificationPrefsScreenState extends State<LiteNotificationPrefsScree
               title: l10n.returns,
               subtitle: 'New refund requests',
               value: _refundNotifications,
-              onChanged: _pushEnabled ? (v) => setState(() => _refundNotifications = v) : null,
+              onChanged: _pushEnabled
+                  ? (v) => setState(() => _refundNotifications = v)
+                  : null,
               isDark: isDark,
             ),
             _divider(isDark),
@@ -106,7 +116,9 @@ class _LiteNotificationPrefsScreenState extends State<LiteNotificationPrefsScree
               title: l10n.products,
               subtitle: 'Products nearing expiration',
               value: _expiryAlerts,
-              onChanged: _pushEnabled ? (v) => setState(() => _expiryAlerts = v) : null,
+              onChanged: _pushEnabled
+                  ? (v) => setState(() => _expiryAlerts = v)
+                  : null,
               isDark: isDark,
             ),
             _divider(isDark),
@@ -115,7 +127,8 @@ class _LiteNotificationPrefsScreenState extends State<LiteNotificationPrefsScree
               title: l10n.sync,
               subtitle: 'Sync errors and completions',
               value: _syncAlerts,
-              onChanged: _pushEnabled ? (v) => setState(() => _syncAlerts = v) : null,
+              onChanged:
+                  _pushEnabled ? (v) => setState(() => _syncAlerts = v) : null,
               isDark: isDark,
             ),
           ]),
@@ -152,7 +165,9 @@ class _LiteNotificationPrefsScreenState extends State<LiteNotificationPrefsScree
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.bold,
-            color: isDark ? Colors.white70 : Theme.of(context).colorScheme.onSurface,
+            color: isDark
+                ? Colors.white70
+                : Theme.of(context).colorScheme.onSurface,
           ),
         ),
       ],
@@ -165,7 +180,9 @@ class _LiteNotificationPrefsScreenState extends State<LiteNotificationPrefsScree
         color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark ? Colors.white12 : Theme.of(context).colorScheme.surfaceContainer,
+          color: isDark
+              ? Colors.white12
+              : Theme.of(context).colorScheme.surfaceContainer,
         ),
       ),
       child: Column(children: children),
@@ -182,17 +199,21 @@ class _LiteNotificationPrefsScreenState extends State<LiteNotificationPrefsScree
   }) {
     final isDisabled = onChanged == null;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: 10),
+      padding:
+          const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: 10),
       child: Row(
         children: [
           Container(
             width: 36,
             height: 36,
             decoration: BoxDecoration(
-              color: AlhaiColors.primary.withValues(alpha: isDisabled ? 0.05 : 0.1),
+              color: AlhaiColors.primary
+                  .withValues(alpha: isDisabled ? 0.05 : 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(icon, size: 18, color: isDisabled ? Colors.grey : AlhaiColors.primary),
+            child: Icon(icon,
+                size: 18,
+                color: isDisabled ? Colors.grey : AlhaiColors.primary),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -216,7 +237,9 @@ class _LiteNotificationPrefsScreenState extends State<LiteNotificationPrefsScree
                       fontSize: 12,
                       color: isDisabled
                           ? (isDark ? Colors.white12 : Colors.black12)
-                          : (isDark ? Colors.white38 : Theme.of(context).colorScheme.outline),
+                          : (isDark
+                              ? Colors.white38
+                              : Theme.of(context).colorScheme.outline),
                     ),
                   ),
               ],
@@ -237,7 +260,9 @@ class _LiteNotificationPrefsScreenState extends State<LiteNotificationPrefsScree
     return Divider(
       height: 1,
       indent: 66,
-      color: isDark ? Colors.white.withValues(alpha: 0.06) : Theme.of(context).colorScheme.surfaceContainerLow,
+      color: isDark
+          ? Colors.white.withValues(alpha: 0.06)
+          : Theme.of(context).colorScheme.surfaceContainerLow,
     );
   }
 }

@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:pointycastle/export.dart';
@@ -154,7 +153,8 @@ class EcdsaSigner {
     // SEC 1 format: SEQUENCE { version INTEGER, privateKey OCTET STRING, ... }
     offset = 0;
     if (der[offset] != 0x30) {
-      throw FormatException('Expected SEQUENCE tag, got 0x${der[offset].toRadixString(16)}');
+      throw FormatException(
+          'Expected SEQUENCE tag, got 0x${der[offset].toRadixString(16)}');
     }
     offset++; // skip SEQUENCE tag
     offset = _skipLength(der, offset); // skip SEQUENCE length

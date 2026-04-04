@@ -13,7 +13,8 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
+import 'package:alhai_design_system/alhai_design_system.dart'
+    show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 
@@ -26,8 +27,7 @@ class PaymentDevicesScreen extends ConsumerStatefulWidget {
       _PaymentDevicesScreenState();
 }
 
-class _PaymentDevicesScreenState
-    extends ConsumerState<PaymentDevicesScreen> {
+class _PaymentDevicesScreenState extends ConsumerState<PaymentDevicesScreen> {
   final _db = GetIt.I<AppDatabase>();
   bool _isLoading = true;
   String? _error;
@@ -46,15 +46,16 @@ class _PaymentDevicesScreenState
     });
     try {
       final storeId = ref.read(currentStoreIdProvider)!;
-      final settings = await (
-        _db.select(_db.settingsTable)
-          ..where((s) => s.storeId.equals(storeId))
-      ).get();
+      final settings = await (_db.select(_db.settingsTable)
+            ..where((s) => s.storeId.equals(storeId)))
+          .get();
       final List<_PaymentDevice> loaded = [];
 
       // Parse stored devices from settings
       for (final s in settings) {
-        if (s.key.startsWith('payment_device_') && !s.key.contains('_ip') && !s.key.contains('_port')) {
+        if (s.key.startsWith('payment_device_') &&
+            !s.key.contains('_ip') &&
+            !s.key.contains('_port')) {
           final parts = s.value.split('|');
           if (parts.length >= 3) {
             loaded.add(_PaymentDevice(
@@ -105,7 +106,8 @@ class _PaymentDevicesScreenState
     // Simulate connection test
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(AppLocalizations.of(context).testingConnectionName(device.name)),
+        content: Text(
+            AppLocalizations.of(context).testingConnectionName(device.name)),
         backgroundColor: AppColors.info,
         duration: const Duration(seconds: 1),
       ),
@@ -119,7 +121,8 @@ class _PaymentDevicesScreenState
       });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(AppLocalizations.of(context).connectionSuccessful(device.name)),
+          content: Text(
+              AppLocalizations.of(context).connectionSuccessful(device.name)),
           backgroundColor: AppColors.success,
         ),
       );
@@ -156,16 +159,15 @@ class _PaymentDevicesScreenState
               style: FilledButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 foregroundColor: AppColors.textOnPrimary,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
               ),
             ),
           ],
           onNotificationsTap: () => context.push(AppRoutes.notificationsCenter),
-          userName:
-              ref.watch(currentUserProvider)?.name ?? l10n.cashCustomer,
+          userName: ref.watch(currentUserProvider)?.name ?? l10n.cashCustomer,
           userRole: l10n.cashier,
           onUserTap: () => context.push(AppRoutes.profile),
         ),
@@ -173,14 +175,17 @@ class _PaymentDevicesScreenState
           child: _isLoading
               ? const AppLoadingState()
               : _error != null
-                  ? AppErrorState.general(context, message: _error!, onRetry: _loadDevices)
-              : _devices.isEmpty
-                  ? _buildEmptyState(isDark, l10n)
-                  : SingleChildScrollView(
-                      padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-                      child: _buildContent(
-                          isWideScreen, isMediumScreen, isDark, l10n),
-                    ),
+                  ? AppErrorState.general(context,
+                      message: _error!, onRetry: _loadDevices)
+                  : _devices.isEmpty
+                      ? _buildEmptyState(isDark, l10n)
+                      : SingleChildScrollView(
+                          padding: EdgeInsets.all(isMediumScreen
+                              ? AlhaiSpacing.lg
+                              : AlhaiSpacing.md),
+                          child: _buildContent(
+                              isWideScreen, isMediumScreen, isDark, l10n),
+                        ),
         ),
       ],
     );
@@ -223,15 +228,14 @@ class _PaymentDevicesScreenState
           ),
           const SizedBox(height: AlhaiSpacing.lg),
           FilledButton.icon(
-            onPressed: () =>
-                context.push('/settings/payment-devices/add'),
+            onPressed: () => context.push('/settings/payment-devices/add'),
             icon: const Icon(Icons.add_rounded, size: 20),
             label: Text(l10n.addDevice),
             style: FilledButton.styleFrom(
               backgroundColor: AppColors.primary,
               foregroundColor: AppColors.textOnPrimary,
-              padding:
-                  const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg, vertical: 14),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AlhaiSpacing.lg, vertical: 14),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12)),
             ),
@@ -271,10 +275,9 @@ class _PaymentDevicesScreenState
           ...List.generate(
             _devices.length,
             (index) => Padding(
-              padding: EdgeInsets.only(
-                  bottom: index < _devices.length - 1 ? 12 : 0),
-              child: _buildDeviceCard(
-                  _devices[index], index, isDark, l10n),
+              padding:
+                  EdgeInsets.only(bottom: index < _devices.length - 1 ? 12 : 0),
+              child: _buildDeviceCard(_devices[index], index, isDark, l10n),
             ),
           ),
       ],
@@ -422,9 +425,7 @@ class _PaymentDevicesScreenState
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      device.isConnected
-                          ? l10n.connected
-                          : l10n.disconnected,
+                      device.isConnected ? l10n.connected : l10n.disconnected,
                       style: TextStyle(
                         fontSize: 12,
                         color: statusColor,
@@ -450,10 +451,9 @@ class _PaymentDevicesScreenState
             label: Text(l10n.test),
             style: OutlinedButton.styleFrom(
               foregroundColor: AppColors.info,
-              side: BorderSide(
-                  color: AppColors.info.withValues(alpha: 0.5)),
-              padding:
-                  const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xs),
+              side: BorderSide(color: AppColors.info.withValues(alpha: 0.5)),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xs),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8)),
             ),

@@ -60,15 +60,14 @@ extension OrderStatusExt on OrderStatus {
   }
 
   /// Check if order is in final state
-  bool get isFinal => 
-      this == OrderStatus.completed || 
+  bool get isFinal =>
+      this == OrderStatus.completed ||
       this == OrderStatus.cancelled ||
       this == OrderStatus.refunded ||
       this == OrderStatus.delivered ||
       this == OrderStatus.pickedUp;
 
   /// Check if order can be cancelled
-  bool get canCancel => 
-      this == OrderStatus.created || 
-      this == OrderStatus.confirmed;
+  bool get canCancel =>
+      this == OrderStatus.created || this == OrderStatus.confirmed;
 }

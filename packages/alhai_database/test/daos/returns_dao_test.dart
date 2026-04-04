@@ -71,7 +71,8 @@ void main() {
         saleId: 'sale-other',
       ));
 
-      final returns = await db.returnsDao.getReturnsBySaleId('sale-1', 'store-1');
+      final returns =
+          await db.returnsDao.getReturnsBySaleId('sale-1', 'store-1');
       expect(returns, hasLength(1));
       expect(returns.first.id, 'ret-1');
     });

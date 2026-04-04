@@ -47,7 +47,8 @@ final shiftMovementsProvider = FutureProvider.autoDispose
 /// مجاميع النقد فقط للوردية (مبيعات نقدية + جزء نقدي من المختلط - مرتجعات نقدية)
 /// يُستخدم لحساب النقد المتوقع في الدرج بدقة (بدون بطاقة/آجل)
 final shiftCashTotalsProvider = FutureProvider.autoDispose
-    .family<({double cashSales, double cashRefunds}), String>((ref, shiftId) async {
+    .family<({double cashSales, double cashRefunds}), String>(
+        (ref, shiftId) async {
   final db = GetIt.I<AppDatabase>();
   final shift = await db.shiftsDao.getShiftById(shiftId);
   if (shift == null) return (cashSales: 0.0, cashRefunds: 0.0);
@@ -116,7 +117,8 @@ final openShiftActionProvider = Provider<
       tableName: 'shifts',
       recordId: id,
       operation: 'CREATE',
-      payload: '{"id":"$id","store_id":"$storeId","cashier_id":"$cashierId","status":"open","opening_cash":$openingCash}',
+      payload:
+          '{"id":"$id","store_id":"$storeId","cashier_id":"$cashierId","status":"open","opening_cash":$openingCash}',
       idempotencyKey: 'shift_open_$id',
     );
 
@@ -181,7 +183,8 @@ final closeShiftActionProvider = Provider<
       tableName: 'shifts',
       recordId: shiftId,
       operation: 'UPDATE',
-      payload: '{"id":"$shiftId","status":"closed","closing_cash":$closingCash,"expected_cash":$expectedCash,"difference":$difference,"total_sales":$totalSales,"total_sales_amount":$totalSalesAmount,"total_refunds":$totalRefunds,"total_refunds_amount":$totalRefundsAmount}',
+      payload:
+          '{"id":"$shiftId","status":"closed","closing_cash":$closingCash,"expected_cash":$expectedCash,"difference":$difference,"total_sales":$totalSales,"total_sales_amount":$totalSalesAmount,"total_refunds":$totalRefunds,"total_refunds_amount":$totalRefundsAmount}',
       idempotencyKey: 'shift_close_$shiftId',
     );
 
@@ -201,7 +204,8 @@ final closeShiftActionProvider = Provider<
         'totalSales': totalSales,
         'totalSalesAmount': totalSalesAmount,
       },
-      description: 'إغلاق وردية - نقد فعلي: $closingCash ر.س، فرق: $difference ر.س',
+      description:
+          'إغلاق وردية - نقد فعلي: $closingCash ر.س، فرق: $difference ر.س',
     );
 
     ref.invalidate(openShiftProvider);
@@ -247,7 +251,8 @@ final addCashMovementProvider = Provider<
       tableName: 'cash_movements',
       recordId: movementId,
       operation: 'CREATE',
-      payload: '{"id":"$movementId","shift_id":"$shiftId","store_id":"$storeId","type":"$type","amount":$amount}',
+      payload:
+          '{"id":"$movementId","shift_id":"$shiftId","store_id":"$storeId","type":"$type","amount":$amount}',
       idempotencyKey: 'cash_movement_$movementId',
     );
 
@@ -264,9 +269,8 @@ final addCashMovementProvider = Provider<
         'amount': amount,
         if (reason != null) 'reason': reason,
       },
-      description: type == 'cash_in'
-          ? 'إيداع نقدي $amount ر.س'
-          : 'سحب نقدي $amount ر.س',
+      description:
+          type == 'cash_in' ? 'إيداع نقدي $amount ر.س' : 'سحب نقدي $amount ر.س',
     );
 
     ref.invalidate(shiftMovementsProvider(shiftId));

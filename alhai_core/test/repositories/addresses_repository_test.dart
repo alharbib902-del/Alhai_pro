@@ -52,8 +52,8 @@ void main() {
     group('getAddresses', () {
       test('returns list of addresses on success', () async {
         // Arrange
-        when(() => mockRemote.getAddresses())
-            .thenAnswer((_) async => [testAddressResponse, testSecondAddressResponse]);
+        when(() => mockRemote.getAddresses()).thenAnswer(
+            (_) async => [testAddressResponse, testSecondAddressResponse]);
 
         // Act
         final result = await repository.getAddresses();
@@ -82,8 +82,8 @@ void main() {
     group('getDefaultAddress', () {
       test('returns default address when exists', () async {
         // Arrange
-        when(() => mockRemote.getAddresses())
-            .thenAnswer((_) async => [testAddressResponse, testSecondAddressResponse]);
+        when(() => mockRemote.getAddresses()).thenAnswer(
+            (_) async => [testAddressResponse, testSecondAddressResponse]);
 
         // Act
         final result = await repository.getDefaultAddress();
@@ -174,7 +174,8 @@ void main() {
     group('setDefaultAddress', () {
       test('sets default address successfully', () async {
         // Arrange
-        when(() => mockRemote.setDefaultAddress(any())).thenAnswer((_) async {});
+        when(() => mockRemote.setDefaultAddress(any()))
+            .thenAnswer((_) async {});
 
         // Act & Assert
         await expectLater(repository.setDefaultAddress('addr-1'), completes);

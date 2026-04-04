@@ -5,7 +5,7 @@ import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 
 /// نظام Undo للعمليات القابلة للتراجع
-/// 
+///
 /// يوفر:
 /// - SnackBar مع زر "تراجع" بعد الحذف
 /// - تأكيد فقط للعمليات الكبيرة (>500 ر.س)
@@ -71,7 +71,8 @@ class UndoStackNotifier extends StateNotifier<List<UndoableAction>> {
 }
 
 /// مزود الـ Undo Stack
-final undoStackProvider = StateNotifierProvider<UndoStackNotifier, List<UndoableAction>>(
+final undoStackProvider =
+    StateNotifierProvider<UndoStackNotifier, List<UndoableAction>>(
   (ref) => UndoStackNotifier(),
 );
 
@@ -92,13 +93,13 @@ void showUndoSnackBar(
 }) {
   // تسجيل العملية
   ref.read(undoStackProvider.notifier).push(
-    UndoableAction(
-      type: actionType,
-      description: message,
-      undoCallback: undoCallback,
-      amount: amount,
-    ),
-  );
+        UndoableAction(
+          type: actionType,
+          description: message,
+          undoCallback: undoCallback,
+          amount: amount,
+        ),
+      );
 
   // عرض الـ SnackBar
   final l10n = AppLocalizations.of(context)!;
@@ -154,7 +155,8 @@ Future<bool> confirmLargeOperation(
               decoration: BoxDecoration(
                 color: AlhaiColors.warning.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: AlhaiColors.warning.withValues(alpha: 0.3)),
+                border: Border.all(
+                    color: AlhaiColors.warning.withValues(alpha: 0.3)),
               ),
               child: Row(
                 children: [
@@ -226,7 +228,9 @@ class UndoFloatingButton extends ConsumerWidget {
               );
             }
           },
-          tooltip: lastAction != null ? '${l10n.undo}: ${lastAction.description}' : l10n.undo,
+          tooltip: lastAction != null
+              ? '${l10n.undo}: ${lastAction.description}'
+              : l10n.undo,
           backgroundColor: AlhaiColors.warning.withValues(alpha: 0.15),
           foregroundColor: AlhaiColors.warningDark,
           child: const Icon(Icons.undo),

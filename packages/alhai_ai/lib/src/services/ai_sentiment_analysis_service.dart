@@ -111,16 +111,50 @@ class AiSentimentAnalysisService {
 
   /// كلمات إيجابية بالعربية
   static const List<String> positiveWords = [
-    'ممتاز', 'رائع', 'جميل', 'سريع', 'نظيف', 'مرتب', 'لذيذ',
-    'طازج', 'معقول', 'ودود', 'محترم', 'مساعد', 'جودة', 'عالية',
-    'أفضل', 'مميز', 'مذهل', 'احترافي', 'متعاون', 'صادق',
+    'ممتاز',
+    'رائع',
+    'جميل',
+    'سريع',
+    'نظيف',
+    'مرتب',
+    'لذيذ',
+    'طازج',
+    'معقول',
+    'ودود',
+    'محترم',
+    'مساعد',
+    'جودة',
+    'عالية',
+    'أفضل',
+    'مميز',
+    'مذهل',
+    'احترافي',
+    'متعاون',
+    'صادق',
   ];
 
   /// كلمات سلبية بالعربية
   static const List<String> negativeWords = [
-    'سيء', 'بطيء', 'غالي', 'متسخ', 'فاسد', 'منتهي', 'قديم',
-    'وقح', 'مهمل', 'ضعيف', 'رديء', 'صعب', 'معطل', 'مزعج',
-    'غير متوفر', 'متأخر', 'خاطئ', 'ناقص', 'محبط', 'مخيب',
+    'سيء',
+    'بطيء',
+    'غالي',
+    'متسخ',
+    'فاسد',
+    'منتهي',
+    'قديم',
+    'وقح',
+    'مهمل',
+    'ضعيف',
+    'رديء',
+    'صعب',
+    'معطل',
+    'مزعج',
+    'غير متوفر',
+    'متأخر',
+    'خاطئ',
+    'ناقص',
+    'محبط',
+    'مخيب',
   ];
 
   /// استخراج الكلمات المفتاحية
@@ -128,7 +162,18 @@ class AiSentimentAnalysisService {
     final keywords = <KeywordData>[];
 
     // Positive keywords
-    final positiveSelected = ['ممتاز', 'طازج', 'سريع', 'نظيف', 'ودود', 'جودة عالية', 'مرتب', 'أسعار معقولة', 'محترم', 'لذيذ'];
+    final positiveSelected = [
+      'ممتاز',
+      'طازج',
+      'سريع',
+      'نظيف',
+      'ودود',
+      'جودة عالية',
+      'مرتب',
+      'أسعار معقولة',
+      'محترم',
+      'لذيذ'
+    ];
     for (final word in positiveSelected) {
       keywords.add(KeywordData(
         word: word,
@@ -139,7 +184,14 @@ class AiSentimentAnalysisService {
     }
 
     // Negative keywords
-    final negativeSelected = ['غالي', 'بطيء', 'مزدحم', 'غير متوفر', 'فاسد', 'وقح'];
+    final negativeSelected = [
+      'غالي',
+      'بطيء',
+      'مزدحم',
+      'غير متوفر',
+      'فاسد',
+      'وقح'
+    ];
     for (final word in negativeSelected) {
       keywords.add(KeywordData(
         word: word,
@@ -171,7 +223,8 @@ class AiSentimentAnalysisService {
       CustomerFeedback(
         id: 'f1',
         customerName: 'عبدالله المحمد',
-        text: 'خدمة ممتازة وسرعة في الكاشير. المنتجات طازجة والأسعار معقولة. سأعود بالتأكيد!',
+        text:
+            'خدمة ممتازة وسرعة في الكاشير. المنتجات طازجة والأسعار معقولة. سأعود بالتأكيد!',
         sentiment: SentimentScore.veryPositive,
         sentimentValue: 0.92,
         timestamp: now.subtract(const Duration(hours: 1)),
@@ -181,7 +234,8 @@ class AiSentimentAnalysisService {
       CustomerFeedback(
         id: 'f2',
         customerName: 'سارة العمري',
-        text: 'المتجر نظيف ومرتب. الموظفين محترمين ومتعاونين. فقط أتمنى تتوفر بعض المنتجات أكثر.',
+        text:
+            'المتجر نظيف ومرتب. الموظفين محترمين ومتعاونين. فقط أتمنى تتوفر بعض المنتجات أكثر.',
         sentiment: SentimentScore.positive,
         sentimentValue: 0.75,
         timestamp: now.subtract(const Duration(hours: 3)),
@@ -191,7 +245,8 @@ class AiSentimentAnalysisService {
       CustomerFeedback(
         id: 'f3',
         customerName: 'خالد السعدي',
-        text: 'الأسعار غالية مقارنة بالسوبرماركت اللي جنبكم. بعض الخضروات فاسدة ومنتهية الصلاحية.',
+        text:
+            'الأسعار غالية مقارنة بالسوبرماركت اللي جنبكم. بعض الخضروات فاسدة ومنتهية الصلاحية.',
         sentiment: SentimentScore.negative,
         sentimentValue: -0.65,
         timestamp: now.subtract(const Duration(hours: 6)),
@@ -212,7 +267,8 @@ class AiSentimentAnalysisService {
       CustomerFeedback(
         id: 'f5',
         customerName: 'نوف القحطاني',
-        text: 'أحب التنوع في المنتجات والعروض الأسبوعية. الكاشير أحمد محترم جداً ومساعد.',
+        text:
+            'أحب التنوع في المنتجات والعروض الأسبوعية. الكاشير أحمد محترم جداً ومساعد.',
         sentiment: SentimentScore.veryPositive,
         sentimentValue: 0.88,
         timestamp: now.subtract(const Duration(hours: 12)),
@@ -222,7 +278,8 @@ class AiSentimentAnalysisService {
       CustomerFeedback(
         id: 'f6',
         customerName: 'محمد الشهري',
-        text: 'الكاشير بطيء جداً والصف طويل. لازم تزيدون عدد الكاشيرات خاصة في أوقات الذروة.',
+        text:
+            'الكاشير بطيء جداً والصف طويل. لازم تزيدون عدد الكاشيرات خاصة في أوقات الذروة.',
         sentiment: SentimentScore.negative,
         sentimentValue: -0.55,
         timestamp: now.subtract(const Duration(days: 1)),
@@ -232,7 +289,8 @@ class AiSentimentAnalysisService {
       CustomerFeedback(
         id: 'f7',
         customerName: 'ريم الزهراني',
-        text: 'أفضل محل في الحي! جودة عالية وخدمة رائعة. الأسعار مناسبة للجودة.',
+        text:
+            'أفضل محل في الحي! جودة عالية وخدمة رائعة. الأسعار مناسبة للجودة.',
         sentiment: SentimentScore.veryPositive,
         sentimentValue: 0.95,
         timestamp: now.subtract(const Duration(days: 1)),
@@ -256,12 +314,42 @@ class AiSentimentAnalysisService {
   /// اتجاه المشاعر
   static List<SentimentTrend> getTrend() {
     return const [
-      SentimentTrend(period: 'الأسبوع 1', positivePercent: 62, neutralPercent: 22, negativePercent: 16, totalReviews: 45),
-      SentimentTrend(period: 'الأسبوع 2', positivePercent: 65, neutralPercent: 20, negativePercent: 15, totalReviews: 52),
-      SentimentTrend(period: 'الأسبوع 3', positivePercent: 58, neutralPercent: 25, negativePercent: 17, totalReviews: 48),
-      SentimentTrend(period: 'الأسبوع 4', positivePercent: 70, neutralPercent: 18, negativePercent: 12, totalReviews: 55),
-      SentimentTrend(period: 'الأسبوع 5', positivePercent: 72, neutralPercent: 16, negativePercent: 12, totalReviews: 61),
-      SentimentTrend(period: 'الأسبوع 6', positivePercent: 68, neutralPercent: 20, negativePercent: 12, totalReviews: 58),
+      SentimentTrend(
+          period: 'الأسبوع 1',
+          positivePercent: 62,
+          neutralPercent: 22,
+          negativePercent: 16,
+          totalReviews: 45),
+      SentimentTrend(
+          period: 'الأسبوع 2',
+          positivePercent: 65,
+          neutralPercent: 20,
+          negativePercent: 15,
+          totalReviews: 52),
+      SentimentTrend(
+          period: 'الأسبوع 3',
+          positivePercent: 58,
+          neutralPercent: 25,
+          negativePercent: 17,
+          totalReviews: 48),
+      SentimentTrend(
+          period: 'الأسبوع 4',
+          positivePercent: 70,
+          neutralPercent: 18,
+          negativePercent: 12,
+          totalReviews: 55),
+      SentimentTrend(
+          period: 'الأسبوع 5',
+          positivePercent: 72,
+          neutralPercent: 16,
+          negativePercent: 12,
+          totalReviews: 61),
+      SentimentTrend(
+          period: 'الأسبوع 6',
+          positivePercent: 68,
+          neutralPercent: 20,
+          negativePercent: 12,
+          totalReviews: 58),
     ];
   }
 
@@ -272,19 +360,32 @@ class AiSentimentAnalysisService {
     final trend = getTrend();
 
     final distribution = <SentimentScore, int>{
-      SentimentScore.veryPositive: feedback.where((f) => f.sentiment == SentimentScore.veryPositive).length,
-      SentimentScore.positive: feedback.where((f) => f.sentiment == SentimentScore.positive).length,
-      SentimentScore.neutral: feedback.where((f) => f.sentiment == SentimentScore.neutral).length,
-      SentimentScore.negative: feedback.where((f) => f.sentiment == SentimentScore.negative).length,
-      SentimentScore.veryNegative: feedback.where((f) => f.sentiment == SentimentScore.veryNegative).length,
+      SentimentScore.veryPositive: feedback
+          .where((f) => f.sentiment == SentimentScore.veryPositive)
+          .length,
+      SentimentScore.positive:
+          feedback.where((f) => f.sentiment == SentimentScore.positive).length,
+      SentimentScore.neutral:
+          feedback.where((f) => f.sentiment == SentimentScore.neutral).length,
+      SentimentScore.negative:
+          feedback.where((f) => f.sentiment == SentimentScore.negative).length,
+      SentimentScore.veryNegative: feedback
+          .where((f) => f.sentiment == SentimentScore.veryNegative)
+          .length,
     };
 
-    final avgValue = feedback.map((f) => f.sentimentValue).reduce((a, b) => a + b) / feedback.length;
+    final avgValue =
+        feedback.map((f) => f.sentimentValue).reduce((a, b) => a + b) /
+            feedback.length;
     final positiveCount = feedback.where((f) => f.sentimentValue > 0.2).length;
     final satisfactionRate = positiveCount / feedback.length * 100;
 
     return SentimentResult(
-      overallScore: avgValue > 0.5 ? SentimentScore.positive : avgValue > 0 ? SentimentScore.neutral : SentimentScore.negative,
+      overallScore: avgValue > 0.5
+          ? SentimentScore.positive
+          : avgValue > 0
+              ? SentimentScore.neutral
+              : SentimentScore.negative,
       overallValue: double.parse(avgValue.toStringAsFixed(2)),
       totalReviews: feedback.length,
       distribution: distribution,
@@ -298,11 +399,16 @@ class AiSentimentAnalysisService {
   /// وصف درجة المشاعر
   static String getSentimentLabel(SentimentScore score) {
     switch (score) {
-      case SentimentScore.veryPositive: return 'إيجابي جداً';
-      case SentimentScore.positive: return 'إيجابي';
-      case SentimentScore.neutral: return 'محايد';
-      case SentimentScore.negative: return 'سلبي';
-      case SentimentScore.veryNegative: return 'سلبي جداً';
+      case SentimentScore.veryPositive:
+        return 'إيجابي جداً';
+      case SentimentScore.positive:
+        return 'إيجابي';
+      case SentimentScore.neutral:
+        return 'محايد';
+      case SentimentScore.negative:
+        return 'سلبي';
+      case SentimentScore.veryNegative:
+        return 'سلبي جداً';
     }
   }
 }

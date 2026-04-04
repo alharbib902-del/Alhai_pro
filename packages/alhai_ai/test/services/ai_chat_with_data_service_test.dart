@@ -25,8 +25,7 @@ void main() {
     });
 
     test('matches top 10 products query', () async {
-      final result =
-          await service.executeQuery('أفضل 10 منتجات', 'store-1');
+      final result = await service.executeQuery('أفضل 10 منتجات', 'store-1');
 
       expect(result.resultType, QueryResultType.table);
       expect(result.tableHeaders, isNotNull);
@@ -35,8 +34,7 @@ void main() {
     });
 
     test('matches weekly sales query', () async {
-      final result =
-          await service.executeQuery('مبيعات الأسبوع', 'store-1');
+      final result = await service.executeQuery('مبيعات الأسبوع', 'store-1');
 
       expect(result.resultType, QueryResultType.lineChart);
       expect(result.chartData, isNotNull);
@@ -44,38 +42,33 @@ void main() {
     });
 
     test('matches payment methods query', () async {
-      final result =
-          await service.executeQuery('توزيع طرق الدفع', 'store-1');
+      final result = await service.executeQuery('توزيع طرق الدفع', 'store-1');
 
       expect(result.resultType, QueryResultType.pieChart);
       expect(result.chartData, isNotNull);
     });
 
     test('matches category comparison query', () async {
-      final result =
-          await service.executeQuery('مقارنة الأقسام', 'store-1');
+      final result = await service.executeQuery('مقارنة الأقسام', 'store-1');
 
       expect(result.resultType, QueryResultType.barChart);
       expect(result.chartData, isNotNull);
     });
 
     test('matches customer count query', () async {
-      final result =
-          await service.executeQuery('عدد العملاء', 'store-1');
+      final result = await service.executeQuery('عدد العملاء', 'store-1');
 
       expect(result.resultType, QueryResultType.number);
     });
 
     test('matches average ticket query', () async {
-      final result =
-          await service.executeQuery('متوسط الفاتورة', 'store-1');
+      final result = await service.executeQuery('متوسط الفاتورة', 'store-1');
 
       expect(result.resultType, QueryResultType.number);
     });
 
     test('matches low stock query', () async {
-      final result =
-          await service.executeQuery('المخزون المنخفض', 'store-1');
+      final result = await service.executeQuery('المخزون المنخفض', 'store-1');
 
       expect(result.resultType, QueryResultType.table);
       expect(result.tableHeaders, isNotNull);
@@ -83,22 +76,19 @@ void main() {
     });
 
     test('matches monthly sales query', () async {
-      final result =
-          await service.executeQuery('مبيعات الشهر', 'store-1');
+      final result = await service.executeQuery('مبيعات الشهر', 'store-1');
 
       expect(result.resultType, QueryResultType.lineChart);
     });
 
     test('matches peak hours query', () async {
-      final result =
-          await service.executeQuery('ساعات الذروة', 'store-1');
+      final result = await service.executeQuery('ساعات الذروة', 'store-1');
 
       expect(result.resultType, QueryResultType.barChart);
     });
 
     test('unrecognized query returns default number result', () async {
-      final result =
-          await service.executeQuery('xyz random query', 'store-1');
+      final result = await service.executeQuery('xyz random query', 'store-1');
 
       expect(result.resultType, QueryResultType.number);
       expect(result.singleValue, '0');
@@ -140,19 +130,21 @@ void main() {
 
     test('returned list is unmodifiable', () {
       final history = service.getQueryHistory();
-      expect(() => history.add(
-        QueryResult(
-          query: DataQuery(
-            id: 'test',
-            query: 'test',
-            timestamp: DateTime.now(),
-            resultType: QueryResultType.number,
-          ),
-          resultType: QueryResultType.number,
-          title: 'test',
-          executionTimeMs: 0,
-        ),
-      ), throwsUnsupportedError);
+      expect(
+          () => history.add(
+                QueryResult(
+                  query: DataQuery(
+                    id: 'test',
+                    query: 'test',
+                    timestamp: DateTime.now(),
+                    resultType: QueryResultType.number,
+                  ),
+                  resultType: QueryResultType.number,
+                  title: 'test',
+                  executionTimeMs: 0,
+                ),
+              ),
+          throwsUnsupportedError);
     });
   });
 

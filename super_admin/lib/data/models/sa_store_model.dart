@@ -107,15 +107,21 @@ class SAStoreSubscription {
   });
 
   factory SAStoreSubscription.fromJson(Map<String, dynamic> json) {
-    final rawPlan = json['plans'] ?? json['plan'];
+    // 'plan' can be a String slug (Supabase schema) or a Map (join query)
+    final rawPlanField = json['plan'];
+    final rawPlan = json['plans'] ??
+        (rawPlanField is Map<String, dynamic> ? rawPlanField : null);
+    final planSlug =
+        rawPlanField is String ? rawPlanField : (json['plan_id'] as String?);
+
     return SAStoreSubscription(
       id: json['id'] as String?,
-      planSlug: json['plan'] as String? ?? json['plan_id'] as String?,
+      planSlug: planSlug,
       status: json['status'] as String?,
       startDate: json['current_period_start'] as String? ??
           json['start_date'] as String?,
-      endDate: json['current_period_end'] as String? ??
-          json['end_date'] as String?,
+      endDate:
+          json['current_period_end'] as String? ?? json['end_date'] as String?,
       orgId: json['org_id'] as String? ?? json['store_id'] as String?,
       amount: (json['amount'] as num?)?.toDouble(),
       plan: rawPlan is Map<String, dynamic>
@@ -132,6 +138,7 @@ class SAStoreSubscription {
         'current_period_end': endDate,
         'org_id': orgId,
         'amount': amount,
+        if (plan != null) 'plans': plan!.toJson(),
       };
 
   String? get planName => plan?.name ?? planSlug?.replaceAll('_', ' ');

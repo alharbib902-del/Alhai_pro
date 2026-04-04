@@ -84,18 +84,18 @@ class ManagerApprovalService {
 
   /// الإجراءات التي تتطلب موافقة المدير
   static const List<String> protectedActions = [
-    'delete_product',      // حذف منتج
-    'delete_customer',     // حذف عميل
-    'void_sale',          // إلغاء فاتورة
-    'refund',             // استرجاع
-    'modify_price',       // تعديل السعر
-    'apply_discount',     // تطبيق خصم
-    'discount_over_20',   // خصم أكثر من 20%
-    'cash_out',           // سحب نقدي من الصندوق
-    'close_day',          // إغلاق اليوم
-    'view_reports',       // عرض التقارير المالية
-    'export_data',        // تصدير البيانات
-    'modify_inventory',   // تعديل المخزون يدوياً
+    'delete_product', // حذف منتج
+    'delete_customer', // حذف عميل
+    'void_sale', // إلغاء فاتورة
+    'refund', // استرجاع
+    'modify_price', // تعديل السعر
+    'apply_discount', // تطبيق خصم
+    'discount_over_20', // خصم أكثر من 20%
+    'cash_out', // سحب نقدي من الصندوق
+    'close_day', // إغلاق اليوم
+    'view_reports', // عرض التقارير المالية
+    'export_data', // تصدير البيانات
+    'modify_inventory', // تعديل المخزون يدوياً
   ];
 
   /// التحقق مما إذا كان الإجراء يتطلب موافقة المدير
@@ -191,5 +191,4 @@ extension ManagerApprovalExtension on BuildContext {
       onVerify: onVerify,
     );
   }
-
 }

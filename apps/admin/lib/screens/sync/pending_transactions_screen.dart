@@ -34,9 +34,8 @@ class _PendingTransactionsScreenState
       children: [
         AppHeader(
           title: l10n.pendingTransactionsTitle,
-          onMenuTap: isWideScreen
-              ? null
-              : () => Scaffold.of(context).openDrawer(),
+          onMenuTap:
+              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 0,
           userName: l10n.defaultUserName,
@@ -62,16 +61,14 @@ class _PendingTransactionsScreenState
                   Text(
                     error.toString(),
                     style: TextStyle(
-                      color:
-                          Theme.of(context).colorScheme.onSurfaceVariant,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                       fontSize: 14,
                     ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: AlhaiSpacing.md),
                   FilledButton.icon(
-                    onPressed: () =>
-                        ref.invalidate(pendingSyncItemsProvider),
+                    onPressed: () => ref.invalidate(pendingSyncItemsProvider),
                     icon: const Icon(Icons.refresh, size: 18),
                     label: Text(l10n.retry),
                   ),
@@ -86,9 +83,7 @@ class _PendingTransactionsScreenState
                     children: [
                       Icon(Icons.cloud_done,
                           size: 64,
-                          color: isDark
-                              ? Colors.white24
-                              : AppColors.success),
+                          color: isDark ? Colors.white24 : AppColors.success),
                       const SizedBox(height: AlhaiSpacing.md),
                       Text(
                         l10n.allOperationsSynced,
@@ -101,9 +96,8 @@ class _PendingTransactionsScreenState
                       Text(
                         l10n.noPendingOperations,
                         style: TextStyle(
-                          color: isDark
-                              ? Colors.white38
-                              : AppColors.textTertiary,
+                          color:
+                              isDark ? Colors.white38 : AppColors.textTertiary,
                         ),
                       ),
                     ],
@@ -145,8 +139,7 @@ class _PendingTransactionsScreenState
                 ? AppColors.warning.withValues(alpha: 0.1)
                 : AppColors.warningSurface,
             borderRadius: BorderRadius.circular(12),
-            border:
-                Border.all(color: AppColors.warning.withValues(alpha: 0.3)),
+            border: Border.all(color: AppColors.warning.withValues(alpha: 0.3)),
           ),
           child: Row(
             children: [
@@ -205,8 +198,8 @@ class _PendingTransactionsScreenState
               ),
             ),
             child: ListTile(
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xxs),
+              contentPadding: const EdgeInsets.symmetric(
+                  horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xxs),
               leading: CircleAvatar(
                 backgroundColor:
                     _getOperationColor(item.operation).withValues(alpha: 0.1),
@@ -237,9 +230,8 @@ class _PendingTransactionsScreenState
                         _formatDate(item.createdAt),
                         style: TextStyle(
                           fontSize: 11,
-                          color: isDark
-                              ? Colors.white38
-                              : AppColors.textTertiary,
+                          color:
+                              isDark ? Colors.white38 : AppColors.textTertiary,
                         ),
                       ),
                       if (item.retryCount > 0) ...[
@@ -263,8 +255,7 @@ class _PendingTransactionsScreenState
                       ],
                     ],
                   ),
-                  if (item.lastError != null &&
-                      item.lastError!.isNotEmpty)
+                  if (item.lastError != null && item.lastError!.isNotEmpty)
                     Padding(
                       padding: const EdgeInsets.only(top: AlhaiSpacing.xxs),
                       child: Text(
@@ -430,8 +421,7 @@ class _PendingTransactionsScreenState
               } catch (e) {
                 messenger.showSnackBar(
                   SnackBar(
-                      content: Text('$e'),
-                      backgroundColor: AppColors.error),
+                      content: Text('$e'), backgroundColor: AppColors.error),
                 );
               }
             },

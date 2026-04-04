@@ -3,7 +3,8 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_auth/alhai_auth.dart';
-import 'package:alhai_database/alhai_database.dart' hide OrderStatus, PaymentStatus;
+import 'package:alhai_database/alhai_database.dart'
+    hide OrderStatus, PaymentStatus;
 import 'package:get_it/get_it.dart';
 import 'package:uuid/uuid.dart';
 import '../models/online_order.dart';
@@ -28,35 +29,35 @@ class OnlineOrdersState {
 
   /// الطلبات المعلقة
   List<OnlineOrder> get pendingOrders =>
-    orders.where((o) => o.status == OrderStatus.pending).toList();
+      orders.where((o) => o.status == OrderStatus.pending).toList();
 
   /// الطلبات المقبولة
   List<OnlineOrder> get acceptedOrders =>
-    orders.where((o) => o.status == OrderStatus.accepted).toList();
+      orders.where((o) => o.status == OrderStatus.accepted).toList();
 
   /// الطلبات قيد التجهيز
   List<OnlineOrder> get preparingOrders =>
-    orders.where((o) => o.status == OrderStatus.preparing).toList();
+      orders.where((o) => o.status == OrderStatus.preparing).toList();
 
   /// الطلبات في التوصيل
   List<OnlineOrder> get deliveryOrders =>
-    orders.where((o) => o.status == OrderStatus.outForDelivery).toList();
+      orders.where((o) => o.status == OrderStatus.outForDelivery).toList();
 
   /// الطلبات المكتملة اليوم
   List<OnlineOrder> get completedToday {
     final today = DateTime.now();
-    return orders.where((o) =>
-      o.status == OrderStatus.delivered &&
-      o.deliveredAt != null &&
-      o.deliveredAt!.day == today.day &&
-      o.deliveredAt!.month == today.month &&
-      o.deliveredAt!.year == today.year
-    ).toList();
+    return orders
+        .where((o) =>
+            o.status == OrderStatus.delivered &&
+            o.deliveredAt != null &&
+            o.deliveredAt!.day == today.day &&
+            o.deliveredAt!.month == today.month &&
+            o.deliveredAt!.year == today.year)
+        .toList();
   }
 
   /// عدد الطلبات التي تحتاج إجراء
-  int get actionRequiredCount =>
-    orders.where((o) => o.needsAction).length;
+  int get actionRequiredCount => orders.where((o) => o.needsAction).length;
 
   /// إجمالي المبيعات اليوم
   double get todayTotal => completedToday.fold(0, (sum, o) => sum + o.total);
@@ -211,7 +212,8 @@ class OnlineOrdersNotifier extends StateNotifier<OnlineOrdersState> {
   }
 
   /// تسليم للسائق
-  Future<void> assignDriver(String orderId, String driverId, String driverName) async {
+  Future<void> assignDriver(
+      String orderId, String driverId, String driverName) async {
     final updatedOrders = state.orders.map((order) {
       if (order.id == orderId) {
         return order.copyWith(
@@ -281,8 +283,10 @@ class OnlineOrdersNotifier extends StateNotifier<OnlineOrdersState> {
         return order.copyWith(
           status: newStatus,
           acceptedAt: newStatus == OrderStatus.accepted ? DateTime.now() : null,
-          preparedAt: newStatus == OrderStatus.outForDelivery ? DateTime.now() : null,
-          deliveredAt: newStatus == OrderStatus.delivered ? DateTime.now() : null,
+          preparedAt:
+              newStatus == OrderStatus.outForDelivery ? DateTime.now() : null,
+          deliveredAt:
+              newStatus == OrderStatus.delivered ? DateTime.now() : null,
         );
       }
       return order;
@@ -325,7 +329,8 @@ class OnlineOrdersNotifier extends StateNotifier<OnlineOrdersState> {
 }
 
 /// مزود الطلبات الأونلاين
-final onlineOrdersProvider = StateNotifierProvider<OnlineOrdersNotifier, OnlineOrdersState>(
+final onlineOrdersProvider =
+    StateNotifierProvider<OnlineOrdersNotifier, OnlineOrdersState>(
   (ref) {
     final storeId = ref.watch(currentStoreIdProvider);
     return OnlineOrdersNotifier(storeId);
@@ -346,4 +351,3 @@ final actionRequiredCountProvider = Provider<int>((ref) {
 final hasNewOrdersProvider = Provider<bool>((ref) {
   return ref.watch(onlineOrdersProvider).hasNewOrders;
 });
-

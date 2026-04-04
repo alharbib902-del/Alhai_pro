@@ -122,11 +122,16 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
     if (_error != null) {
       return AppErrorState.general(
         context,
-        message: _error == 'invoiceNotSpecified' ? l10n.invoiceNotSpecified
-          : _error == 'invoiceNotFound' ? l10n.invoiceNotFound
-          : _error,
+        message: _error == 'invoiceNotSpecified'
+            ? l10n.invoiceNotSpecified
+            : _error == 'invoiceNotFound'
+                ? l10n.invoiceNotFound
+                : _error,
         onRetry: () {
-          setState(() { _isLoading = true; _error = null; });
+          setState(() {
+            _isLoading = true;
+            _error = null;
+          });
           _loadSaleData();
         },
       );
@@ -141,7 +146,8 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
     return Center(
       child: Container(
         constraints: BoxConstraints(maxWidth: maxWidth),
-        margin: EdgeInsets.all(screenWidth > 600 ? AlhaiSpacing.xl : AlhaiSpacing.md),
+        margin: EdgeInsets.all(
+            screenWidth > 600 ? AlhaiSpacing.xl : AlhaiSpacing.md),
         child: Column(
           children: [
             // Success icon
@@ -169,11 +175,13 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
             if (sale.syncedAt == null) ...[
               const SizedBox(height: AlhaiSpacing.sm),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.warningSurface,
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: AppColors.warning.withValues(alpha: 0.5)),
+                  border: Border.all(
+                      color: AppColors.warning.withValues(alpha: 0.5)),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -231,7 +239,9 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
                                 ),
                               ),
                               backgroundColor: AppColors.warningSurface,
-                              side: BorderSide(color: AppColors.warning.withValues(alpha: 0.3)),
+                              side: BorderSide(
+                                  color:
+                                      AppColors.warning.withValues(alpha: 0.3)),
                               padding: EdgeInsets.zero,
                               visualDensity: VisualDensity.compact,
                             ),
@@ -325,7 +335,9 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
                                     SizedBox(
                                       width: 60,
                                       child: Text(
-                                        CurrencyFormatter.formatNumberWithContext(context, item.total),
+                                        CurrencyFormatter
+                                            .formatNumberWithContext(
+                                                context, item.total),
                                         textAlign: TextAlign.start,
                                         style: const TextStyle(
                                           fontSize: 13,
@@ -343,10 +355,8 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
                         _totalRow(l10n.subtotalLabel,
                             _fmtCurrency(context, sale.subtotal), isDark),
                         const SizedBox(height: AlhaiSpacing.xxs),
-                        _totalRow(
-                            l10n.vatLabel,
-                            _fmtCurrency(context, sale.tax),
-                            isDark),
+                        _totalRow(l10n.vatLabel,
+                            _fmtCurrency(context, sale.tax), isDark),
                         if (sale.discount > 0) ...[
                           const SizedBox(height: AlhaiSpacing.xxs),
                           _totalRow(
@@ -358,7 +368,8 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
                         const SizedBox(height: AlhaiSpacing.xs),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              vertical: AlhaiSpacing.xs, horizontal: AlhaiSpacing.sm),
+                              vertical: AlhaiSpacing.xs,
+                              horizontal: AlhaiSpacing.sm),
                           decoration: BoxDecoration(
                             color: AppColors.primary.withValues(alpha: 0.08),
                             borderRadius: BorderRadius.circular(8),
@@ -467,7 +478,9 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
                               height: 18,
                               child: CircularProgressIndicator(strokeWidth: 2))
                           : const Icon(Icons.chat, color: AppColors.success),
-                      label: Text(_whatsAppSent ? l10n.whatsappSentLabel : l10n.whatsappLabel),
+                      label: Text(_whatsAppSent
+                          ? l10n.whatsappSentLabel
+                          : l10n.whatsappLabel),
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         side: const BorderSide(color: AppColors.success),
@@ -505,8 +518,7 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
     );
   }
 
-  Widget _totalRow(String label, String value, bool isDark,
-      {Color? color}) {
+  Widget _totalRow(String label, String value, bool isDark, {Color? color}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -515,7 +527,9 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
           style: TextStyle(
             fontSize: 13,
             color: color ??
-                (isDark ? AppColors.textSecondaryDark : AppColors.textSecondary),
+                (isDark
+                    ? AppColors.textSecondaryDark
+                    : AppColors.textSecondary),
           ),
         ),
         Text(

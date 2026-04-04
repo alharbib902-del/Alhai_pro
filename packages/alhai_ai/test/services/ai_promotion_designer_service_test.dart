@@ -80,8 +80,7 @@ void main() {
       final promotion = promotions.first;
       final forecast = await service.forecastRoi(promotion);
 
-      final duration =
-          promotion.endDate.difference(promotion.startDate).inDays;
+      final duration = promotion.endDate.difference(promotion.startDate).inDays;
       expect(forecast.length, duration);
     });
 
@@ -118,8 +117,7 @@ void main() {
   group('createAbTest', () {
     test('creates A/B test config', () async {
       final promotions = await service.generatePromotions('store-1');
-      final abTest =
-          await service.createAbTest(promotions[0], promotions[1]);
+      final abTest = await service.createAbTest(promotions[0], promotions[1]);
 
       expect(abTest.promotionA.id, promotions[0].id);
       expect(abTest.promotionB.id, promotions[1].id);

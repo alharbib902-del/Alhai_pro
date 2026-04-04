@@ -31,7 +31,8 @@ enum PaymentMethod {
   const PaymentMethod(this.arabicName, this.code);
 
   bool get isElectronic => this != PaymentMethod.cash;
-  bool get requiresTerminal => [mada, visa, mastercard, applePay].contains(this);
+  bool get requiresTerminal =>
+      [mada, visa, mastercard, applePay].contains(this);
   bool get isBNPL => [tamara, tabby].contains(this); // Buy Now Pay Later
 }
 
@@ -50,7 +51,8 @@ enum PaymentStatus {
   const PaymentStatus(this.arabicName);
 
   bool get isSuccessful => this == PaymentStatus.approved;
-  bool get isFinal => [approved, declined, failed, cancelled, refunded].contains(this);
+  bool get isFinal =>
+      [approved, declined, failed, cancelled, refunded].contains(this);
 }
 
 /// حالة تهيئة بوابة الدفع
@@ -120,15 +122,15 @@ class PaymentRequest {
   });
 
   Map<String, dynamic> toJson() => {
-    'order_id': orderId,
-    'amount': amount,
-    'currency': currency,
-    'method': method.code,
-    'customer_phone': customerPhone,
-    'customer_email': customerEmail,
-    'customer_name': customerName,
-    'metadata': metadata,
-  };
+        'order_id': orderId,
+        'amount': amount,
+        'currency': currency,
+        'method': method.code,
+        'customer_phone': customerPhone,
+        'customer_email': customerEmail,
+        'customer_name': customerName,
+        'metadata': metadata,
+      };
 }
 
 /// نتيجة الدفع
@@ -345,11 +347,11 @@ class MadaPaymentGateway implements PaymentGateway {
 
   @override
   List<PaymentMethod> get supportedMethods => [
-    PaymentMethod.mada,
-    PaymentMethod.visa,
-    PaymentMethod.mastercard,
-    PaymentMethod.applePay,
-  ];
+        PaymentMethod.mada,
+        PaymentMethod.visa,
+        PaymentMethod.mastercard,
+        PaymentMethod.applePay,
+      ];
 
   @override
   PaymentGatewayStatus get configurationStatus {
@@ -377,8 +379,7 @@ class MadaPaymentGateway implements PaymentGateway {
     if (kReleaseMode) {
       return PaymentResult.failed(
         errorType: PaymentErrorType.gatewayNotConfigured,
-        errorMessage:
-            'الدفع بمدى غير مفعّل - يتطلب إعداد Nearpay SDK',
+        errorMessage: 'الدفع بمدى غير مفعّل - يتطلب إعداد Nearpay SDK',
       );
     }
 
@@ -403,8 +404,7 @@ class MadaPaymentGateway implements PaymentGateway {
     // TODO: تكامل مع Nearpay SDK / SoftPOS SDK
     return PaymentResult.failed(
       errorType: PaymentErrorType.gatewayNotConfigured,
-      errorMessage:
-          'الدفع بمدى غير مفعّل - يتطلب إعداد Nearpay SDK',
+      errorMessage: 'الدفع بمدى غير مفعّل - يتطلب إعداد Nearpay SDK',
     );
   }
 
@@ -625,8 +625,7 @@ class TamaraGateway implements PaymentGateway {
     if (kReleaseMode) {
       return PaymentResult.failed(
         errorType: PaymentErrorType.gatewayNotConfigured,
-        errorMessage:
-            'الدفع بتمارا غير مفعّل - يتطلب إعداد Tamara Flutter SDK',
+        errorMessage: 'الدفع بتمارا غير مفعّل - يتطلب إعداد Tamara Flutter SDK',
       );
     }
 
@@ -671,8 +670,7 @@ class TamaraGateway implements PaymentGateway {
     // TODO: تكامل مع Tamara Flutter SDK
     return PaymentResult.failed(
       errorType: PaymentErrorType.gatewayNotConfigured,
-      errorMessage:
-          'الدفع بتمارا غير مفعّل - يتطلب إعداد Tamara Flutter SDK',
+      errorMessage: 'الدفع بتمارا غير مفعّل - يتطلب إعداد Tamara Flutter SDK',
     );
   }
 
@@ -756,8 +754,8 @@ class PaymentService {
   /// تُرجع فقط البوابات التي [PaymentGatewayStatus.available].
   /// في وضع التطوير تشمل البوابات المحاكاة.
   List<PaymentMethod> get availableMethods => _gateways.entries
-      .where((e) =>
-          e.value.configurationStatus == PaymentGatewayStatus.available)
+      .where(
+          (e) => e.value.configurationStatus == PaymentGatewayStatus.available)
       .map((e) => e.key)
       .toList();
 
@@ -790,8 +788,8 @@ class PaymentService {
     // التحقق من أن الطريقة متاحة فعلياً
     if (!isMethodAvailable(request.method)) {
       final gateway = _gateways[request.method];
-      final status = gateway?.configurationStatus ??
-          PaymentGatewayStatus.notConfigured;
+      final status =
+          gateway?.configurationStatus ?? PaymentGatewayStatus.notConfigured;
 
       debugPrint(
         '[PaymentService] Rejected ${request.method.arabicName} '
@@ -835,7 +833,8 @@ class PaymentService {
   }
 
   /// استرجاع المبلغ
-  Future<RefundResult> refund(RefundRequest request, PaymentMethod method) async {
+  Future<RefundResult> refund(
+      RefundRequest request, PaymentMethod method) async {
     final gateway = _gateways[method];
 
     if (gateway == null) {

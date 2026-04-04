@@ -25,7 +25,8 @@ import 'package:alhai_auth/alhai_auth.dart';
 import '../../services/sale_service.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_zatca/alhai_zatca.dart' show VatCalculator;
-import '../../widgets/pos/split_payment_dialog.dart' as split_dlg show SplitPaymentDialog, PaymentSplit;
+import '../../widgets/pos/split_payment_dialog.dart' as split_dlg
+    show SplitPaymentDialog, PaymentSplit;
 import 'payment_sub_widgets.dart';
 import 'payment_details_widgets.dart';
 import 'payment_loyalty_widget.dart';
@@ -138,8 +139,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
 
     // Watch customer loyalty account (if customer selected)
     final customerId = cartState.customerId ?? '';
-    final customerLoyaltyAsync =
-        ref.watch(customerLoyaltyProvider(customerId));
+    final customerLoyaltyAsync = ref.watch(customerLoyaltyProvider(customerId));
     final loyaltyAccount = (loyaltySettings.isEnabled && customerId.isNotEmpty)
         ? customerLoyaltyAsync.when(
             data: (a) => a,
@@ -202,7 +202,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
           }
         },
         const SingleActivator(LogicalKeyboardKey.digit3): () {
-          if (!isOffline) setState(() => _selectedMethod = PaymentMethod.wallet);
+          if (!isOffline)
+            setState(() => _selectedMethod = PaymentMethod.wallet);
         },
       },
       child: Focus(
@@ -223,27 +224,27 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             body: SafeArea(
               child: _showSuccess
-                ? PaymentSuccessState(scaleAnimation: _scaleAnimation)
-                : _isProcessing
-                    ? const PaymentProcessingState()
-                    : Column(
-                        children: [
-                          const OfflineBanner(),
-                          Expanded(
-                            child: _buildPaymentContent(
-                              total,
-                              subtotal,
-                              tax,
-                              discount,
-                              change,
-                              settings,
-                              loyaltySettings,
-                              loyaltyAccount,
-                              loyaltyDiscount,
+                  ? PaymentSuccessState(scaleAnimation: _scaleAnimation)
+                  : _isProcessing
+                      ? const PaymentProcessingState()
+                      : Column(
+                          children: [
+                            const OfflineBanner(),
+                            Expanded(
+                              child: _buildPaymentContent(
+                                total,
+                                subtotal,
+                                tax,
+                                discount,
+                                change,
+                                settings,
+                                loyaltySettings,
+                                loyaltyAccount,
+                                loyaltyDiscount,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
+                          ],
+                        ),
             ),
           ),
         ),
@@ -285,12 +286,14 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
                     ),
                   ),
                   const SizedBox(height: AppSpacing.lg),
-                  _buildPaymentMethods(isOffline: _isOffline, settings: settings),
+                  _buildPaymentMethods(
+                      isOffline: _isOffline, settings: settings),
                   const SizedBox(height: AppSpacing.xl),
                   PaymentLoyaltyWidget(
                     loyaltySettings: loyaltySettings,
                     loyaltyAccount: loyaltyAccount,
-                    hasCustomer: (ref.read(cartStateProvider).customerId ?? '').isNotEmpty,
+                    hasCustomer: (ref.read(cartStateProvider).customerId ?? '')
+                        .isNotEmpty,
                     useLoyaltyPoints: _useLoyaltyPoints,
                     pointsToRedeem: _pointsToRedeem,
                     loyaltyPointsController: _loyaltyPointsController,
@@ -343,7 +346,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
               // Content
               Expanded(
                 child: SingleChildScrollView(
-                  padding: EdgeInsets.all(isDesktop ? AppSpacing.xxl : AppSpacing.lg),
+                  padding: EdgeInsets.all(
+                      isDesktop ? AppSpacing.xxl : AppSpacing.lg),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -355,7 +359,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
                         ),
                       ),
                       const SizedBox(height: AppSpacing.lg),
-                      _buildPaymentMethods(isOffline: _isOffline, settings: settings),
+                      _buildPaymentMethods(
+                          isOffline: _isOffline, settings: settings),
 
                       const SizedBox(height: AppSpacing.xl),
 
@@ -363,7 +368,9 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
                       PaymentLoyaltyWidget(
                         loyaltySettings: loyaltySettings,
                         loyaltyAccount: loyaltyAccount,
-                        hasCustomer: (ref.read(cartStateProvider).customerId ?? '').isNotEmpty,
+                        hasCustomer:
+                            (ref.read(cartStateProvider).customerId ?? '')
+                                .isNotEmpty,
                         useLoyaltyPoints: _useLoyaltyPoints,
                         pointsToRedeem: _pointsToRedeem,
                         loyaltyPointsController: _loyaltyPointsController,
@@ -465,7 +472,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
             ),
             child: Row(
               children: [
-                Icon(Icons.keyboard, size: 16, color: theme.colorScheme.onSurfaceVariant),
+                Icon(Icons.keyboard,
+                    size: 16, color: theme.colorScheme.onSurfaceVariant),
                 const SizedBox(width: AppSpacing.xs),
                 Text(
                   l10n.enterToConfirm,
@@ -503,7 +511,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
             decoration: BoxDecoration(
               color: AlhaiColors.warning.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(AppRadius.md),
-              border: Border.all(color: AlhaiColors.warning.withValues(alpha: 0.4)),
+              border:
+                  Border.all(color: AlhaiColors.warning.withValues(alpha: 0.4)),
             ),
             child: Row(
               children: [
@@ -534,7 +543,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
             decoration: BoxDecoration(
               color: AlhaiColors.info.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(AppRadius.md),
-              border: Border.all(color: AlhaiColors.info.withValues(alpha: 0.4)),
+              border:
+                  Border.all(color: AlhaiColors.info.withValues(alpha: 0.4)),
             ),
             child: Row(
               children: [
@@ -561,7 +571,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
                 label: l10n.cashPayment,
                 shortcut: '1',
                 color: AppColors.cash,
-                selected: _selectedMethod == PaymentMethod.cash && !_isSplitPayment,
+                selected:
+                    _selectedMethod == PaymentMethod.cash && !_isSplitPayment,
                 onTap: () => setState(() {
                   _selectedMethod = PaymentMethod.cash;
                   _isSplitPayment = false;
@@ -576,7 +587,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
                 label: l10n.cardPayment,
                 shortcut: '2',
                 color: AppColors.card,
-                selected: _selectedMethod == PaymentMethod.card && !_isSplitPayment,
+                selected:
+                    _selectedMethod == PaymentMethod.card && !_isSplitPayment,
                 onTap: cardDisabled
                     ? null
                     : () => setState(() {
@@ -599,7 +611,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
                 label: l10n.creditPayment,
                 shortcut: '3',
                 color: AppColors.debt,
-                selected: _selectedMethod == PaymentMethod.wallet && !_isSplitPayment,
+                selected:
+                    _selectedMethod == PaymentMethod.wallet && !_isSplitPayment,
                 onTap: isOffline
                     ? null
                     : () => setState(() {
@@ -639,11 +652,15 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
                   },
             icon: const Icon(Icons.call_split_rounded),
             label: _isSplitPayment
-                ? Text(AppLocalizations.of(context)!.splitPaymentDone(_splitPayments.length))
+                ? Text(AppLocalizations.of(context)!
+                    .splitPaymentDone(_splitPayments.length))
                 : Text(AppLocalizations.of(context)!.splitPaymentLabel),
             style: OutlinedButton.styleFrom(
-              foregroundColor: _isSplitPayment ? AppColors.success : AppColors.primary,
-              side: BorderSide(color: _isSplitPayment ? AppColors.success : AppColors.primary),
+              foregroundColor:
+                  _isSplitPayment ? AppColors.success : AppColors.primary,
+              side: BorderSide(
+                  color:
+                      _isSplitPayment ? AppColors.success : AppColors.primary),
               padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
             ),
           ),
@@ -690,11 +707,13 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
                 decoration: BoxDecoration(
                   color: AppColors.error.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(AppRadius.md),
-                  border: Border.all(color: AppColors.error.withValues(alpha: 0.3)),
+                  border:
+                      Border.all(color: AppColors.error.withValues(alpha: 0.3)),
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.person_off, color: AppColors.error, size: 22),
+                    const Icon(Icons.person_off,
+                        color: AppColors.error, size: 22),
                     const SizedBox(width: AppSpacing.sm),
                     Expanded(
                       child: Text(
@@ -774,7 +793,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
                 if (loyaltyDiscount > 0) ...[
                   const SizedBox(height: AppSpacing.md),
                   PaymentSummaryRow(
-                    label: AppLocalizations.of(context)!.loyaltyPointsDiscountLabel(_pointsToRedeem),
+                    label: AppLocalizations.of(context)!
+                        .loyaltyPointsDiscountLabel(_pointsToRedeem),
                     value: -loyaltyDiscount,
                     valueColor: AppColors.success,
                     icon: Icons.stars_rounded,
@@ -900,7 +920,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
                 ),
                 const SizedBox(width: AlhaiSpacing.xs),
                 Text(l10n.whatsappReceipt,
-                    style: TextStyle(fontSize: 14, color: theme.colorScheme.onSurface)),
+                    style: TextStyle(
+                        fontSize: 14, color: theme.colorScheme.onSurface)),
                 const SizedBox(width: AlhaiSpacing.xxs),
                 Icon(Icons.chat, size: 16, color: whatsAppColor),
               ],
@@ -918,11 +939,11 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
               hintText: '5X XXX XXXX',
               border:
                   OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 10),
+              contentPadding: const EdgeInsets.symmetric(
+                  horizontal: AlhaiSpacing.sm, vertical: 10),
               isDense: true,
-              suffixIcon: Icon(Icons.phone_android,
-                  size: 18, color: whatsAppColor),
+              suffixIcon:
+                  Icon(Icons.phone_android, size: 18, color: whatsAppColor),
             ),
             inputFormatters: [
               FilteringTextInputFormatter.digitsOnly,
@@ -1006,9 +1027,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
 
     try {
       final cartState = ref.read(cartStateProvider);
-      final resolvedStoreId = storeId.isNotEmpty
-          ? storeId
-          : ref.read(currentStoreIdProvider) ?? '';
+      final resolvedStoreId =
+          storeId.isNotEmpty ? storeId : ref.read(currentStoreIdProvider) ?? '';
       final resolvedCashierId = cashierId.isNotEmpty
           ? cashierId
           : ref.read(currentUserProvider)?.id ?? '';
@@ -1041,7 +1061,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
 
       if (saleResult.hadPriceCorrections) {
         for (final correction in saleResult.priceCorrections) {
-          debugPrint('[PaymentScreen] Price corrected at sale time: $correction');
+          debugPrint(
+              '[PaymentScreen] Price corrected at sale time: $correction');
         }
       }
 
@@ -1188,4 +1209,3 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
     }
   }
 }
-

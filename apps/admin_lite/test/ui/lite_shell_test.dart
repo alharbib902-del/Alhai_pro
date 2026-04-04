@@ -78,8 +78,7 @@ void main() {
       expect(find.text('Dashboard Content'), findsOneWidget);
     });
 
-    testWidgets('LiteShell bottom nav bar selects correct tab',
-        (tester) async {
+    testWidgets('LiteShell bottom nav bar selects correct tab', (tester) async {
       final router = GoRouter(
         initialLocation: '/reports',
         routes: [

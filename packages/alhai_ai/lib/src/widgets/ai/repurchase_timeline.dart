@@ -30,7 +30,8 @@ class RepurchaseTimeline extends StatelessWidget {
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
+          color:
+              isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
         ),
         boxShadow: [
           BoxShadow(
@@ -46,7 +47,8 @@ class RepurchaseTimeline extends StatelessWidget {
           // Header
           Row(
             children: [
-              const Icon(Icons.event_repeat_rounded, color: AppColors.primary, size: 20),
+              const Icon(Icons.event_repeat_rounded,
+                  color: AppColors.primary, size: 20),
               const SizedBox(width: AlhaiSpacing.xs),
               Text(
                 'تذكيرات إعادة الشراء', // Repurchase Reminders
@@ -58,7 +60,8 @@ class RepurchaseTimeline extends StatelessWidget {
               ),
               const Spacer(),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 3),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: AlhaiSpacing.xs, vertical: 3),
                 decoration: BoxDecoration(
                   color: AppColors.error.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -114,8 +117,20 @@ class _RepurchaseTimelineItem extends StatelessWidget {
   });
 
   String _formatDate(DateTime date) {
-    final months = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
-      'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+    final months = [
+      'يناير',
+      'فبراير',
+      'مارس',
+      'أبريل',
+      'مايو',
+      'يونيو',
+      'يوليو',
+      'أغسطس',
+      'سبتمبر',
+      'أكتوبر',
+      'نوفمبر',
+      'ديسمبر'
+    ];
     return '${date.day} ${months[date.month - 1]}';
   }
 
@@ -152,7 +167,9 @@ class _RepurchaseTimelineItem extends StatelessWidget {
                     Expanded(
                       child: Container(
                         width: 2,
-                        color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.grey200,
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.1)
+                            : AppColors.grey200,
                       ),
                     ),
                 ],
@@ -169,12 +186,16 @@ class _RepurchaseTimelineItem extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: reminder.isOverdue
                       ? AppColors.error.withValues(alpha: 0.05)
-                      : (isDark ? Colors.white.withValues(alpha: 0.03) : AppColors.grey50),
+                      : (isDark
+                          ? Colors.white.withValues(alpha: 0.03)
+                          : AppColors.grey50),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: reminder.isOverdue
                         ? AppColors.error.withValues(alpha: 0.15)
-                        : (isDark ? Colors.white.withValues(alpha: 0.05) : AppColors.grey200),
+                        : (isDark
+                            ? Colors.white.withValues(alpha: 0.05)
+                            : AppColors.grey200),
                   ),
                 ),
                 child: Column(
@@ -189,7 +210,9 @@ class _RepurchaseTimelineItem extends StatelessWidget {
                               Text(
                                 reminder.customerName,
                                 style: TextStyle(
-                                  color: isDark ? Colors.white : AppColors.textPrimary,
+                                  color: isDark
+                                      ? Colors.white
+                                      : AppColors.textPrimary,
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -208,7 +231,8 @@ class _RepurchaseTimelineItem extends StatelessWidget {
                         ),
                         // Status badge
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 3),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: AlhaiSpacing.xs, vertical: 3),
                           decoration: BoxDecoration(
                             color: reminder.isOverdue
                                 ? AppColors.error.withValues(alpha: 0.1)
@@ -216,9 +240,13 @@ class _RepurchaseTimelineItem extends StatelessWidget {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
-                            reminder.isOverdue ? 'متأخر' : 'قادم', // Overdue / Upcoming
+                            reminder.isOverdue
+                                ? 'متأخر'
+                                : 'قادم', // Overdue / Upcoming
                             style: TextStyle(
-                              color: reminder.isOverdue ? AppColors.error : AppColors.success,
+                              color: reminder.isOverdue
+                                  ? AppColors.error
+                                  : AppColors.success,
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
                             ),
@@ -235,13 +263,17 @@ class _RepurchaseTimelineItem extends StatelessWidget {
                         Icon(
                           Icons.schedule_rounded,
                           size: 14,
-                          color: isDark ? Colors.white.withValues(alpha: 0.4) : AppColors.textMuted,
+                          color: isDark
+                              ? Colors.white.withValues(alpha: 0.4)
+                              : AppColors.textMuted,
                         ),
                         const SizedBox(width: AlhaiSpacing.xxs),
                         Text(
                           'آخر شراء: منذ ${reminder.daysSinceLastPurchase} يوم', // Last purchase: X days ago
                           style: TextStyle(
-                            color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textMuted,
+                            color: isDark
+                                ? Colors.white.withValues(alpha: 0.5)
+                                : AppColors.textMuted,
                             fontSize: 11,
                           ),
                         ),
@@ -249,13 +281,17 @@ class _RepurchaseTimelineItem extends StatelessWidget {
                         Icon(
                           Icons.calendar_today_rounded,
                           size: 14,
-                          color: isDark ? Colors.white.withValues(alpha: 0.4) : AppColors.textMuted,
+                          color: isDark
+                              ? Colors.white.withValues(alpha: 0.4)
+                              : AppColors.textMuted,
                         ),
                         const SizedBox(width: AlhaiSpacing.xxs),
                         Text(
                           _formatDate(reminder.expectedDate),
                           style: TextStyle(
-                            color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textMuted,
+                            color: isDark
+                                ? Colors.white.withValues(alpha: 0.5)
+                                : AppColors.textMuted,
                             fontSize: 11,
                           ),
                         ),
@@ -271,7 +307,8 @@ class _RepurchaseTimelineItem extends StatelessWidget {
                         child: OutlinedButton.icon(
                           onPressed: onWhatsApp,
                           icon: const Icon(Icons.message_rounded, size: 14),
-                          label: const Text('إرسال تذكير واتساب'), // Send WhatsApp Reminder
+                          label: const Text(
+                              'إرسال تذكير واتساب'), // Send WhatsApp Reminder
                           style: OutlinedButton.styleFrom(
                             foregroundColor: const Color(0xFF25D366),
                             side: const BorderSide(color: Color(0xFF25D366)),
@@ -279,7 +316,8 @@ class _RepurchaseTimelineItem extends StatelessWidget {
                               borderRadius: BorderRadius.circular(8),
                             ),
                             padding: const EdgeInsets.symmetric(vertical: 6),
-                            textStyle: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+                            textStyle: const TextStyle(
+                                fontSize: 11, fontWeight: FontWeight.w600),
                           ),
                         ),
                       ),

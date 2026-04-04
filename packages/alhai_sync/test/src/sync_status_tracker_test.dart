@@ -70,8 +70,7 @@ void main() {
             ]);
         when(() => mockSyncQueueDao.getPendingCount())
             .thenAnswer((_) async => 5);
-        when(() => mockDeltasDao.getPendingCount())
-            .thenAnswer((_) async => 3);
+        when(() => mockDeltasDao.getPendingCount()).thenAnswer((_) async => 3);
 
         await tracker.refreshAll();
 
@@ -86,8 +85,7 @@ void main() {
         when(() => mockMetadataDao.getAll()).thenAnswer((_) async => []);
         when(() => mockSyncQueueDao.getPendingCount())
             .thenAnswer((_) async => 0);
-        when(() => mockDeltasDao.getPendingCount())
-            .thenAnswer((_) async => 0);
+        when(() => mockDeltasDao.getPendingCount()).thenAnswer((_) async => 0);
 
         await tracker.refreshAll();
 
@@ -98,24 +96,20 @@ void main() {
         when(() => mockMetadataDao.getAll()).thenAnswer((_) async => []);
         when(() => mockSyncQueueDao.getPendingCount())
             .thenAnswer((_) async => 3);
-        when(() => mockDeltasDao.getPendingCount())
-            .thenAnswer((_) async => 0);
+        when(() => mockDeltasDao.getPendingCount()).thenAnswer((_) async => 0);
 
         await tracker.refreshAll();
 
         expect(tracker.currentOverview.health, SyncHealthStatus.syncing);
       });
 
-      test('calculates health as warning when failed > 0 and <= 10',
-          () async {
+      test('calculates health as warning when failed > 0 and <= 10', () async {
         when(() => mockMetadataDao.getAll()).thenAnswer((_) async => [
-              createSyncMetadata(
-                  tableName: 'products', failedCount: 5),
+              createSyncMetadata(tableName: 'products', failedCount: 5),
             ]);
         when(() => mockSyncQueueDao.getPendingCount())
             .thenAnswer((_) async => 0);
-        when(() => mockDeltasDao.getPendingCount())
-            .thenAnswer((_) async => 0);
+        when(() => mockDeltasDao.getPendingCount()).thenAnswer((_) async => 0);
 
         await tracker.refreshAll();
 
@@ -124,13 +118,11 @@ void main() {
 
       test('calculates health as critical when failed > 10', () async {
         when(() => mockMetadataDao.getAll()).thenAnswer((_) async => [
-              createSyncMetadata(
-                  tableName: 'products', failedCount: 11),
+              createSyncMetadata(tableName: 'products', failedCount: 11),
             ]);
         when(() => mockSyncQueueDao.getPendingCount())
             .thenAnswer((_) async => 0);
-        when(() => mockDeltasDao.getPendingCount())
-            .thenAnswer((_) async => 0);
+        when(() => mockDeltasDao.getPendingCount()).thenAnswer((_) async => 0);
 
         await tracker.refreshAll();
 
@@ -141,8 +133,7 @@ void main() {
         when(() => mockMetadataDao.getAll()).thenAnswer((_) async => []);
         when(() => mockSyncQueueDao.getPendingCount())
             .thenAnswer((_) async => 0);
-        when(() => mockDeltasDao.getPendingCount())
-            .thenAnswer((_) async => 0);
+        when(() => mockDeltasDao.getPendingCount()).thenAnswer((_) async => 0);
 
         final future = expectLater(
           tracker.overviewStream,
@@ -178,8 +169,7 @@ void main() {
             ]);
         when(() => mockSyncQueueDao.getPendingCount())
             .thenAnswer((_) async => 0);
-        when(() => mockDeltasDao.getPendingCount())
-            .thenAnswer((_) async => 0);
+        when(() => mockDeltasDao.getPendingCount()).thenAnswer((_) async => 0);
 
         await tracker.refreshAll();
 
@@ -192,8 +182,7 @@ void main() {
         when(() => mockMetadataDao.getAll()).thenAnswer((_) async => []);
         when(() => mockSyncQueueDao.getPendingCount())
             .thenAnswer((_) async => 0);
-        when(() => mockDeltasDao.getPendingCount())
-            .thenAnswer((_) async => 0);
+        when(() => mockDeltasDao.getPendingCount()).thenAnswer((_) async => 0);
 
         tracker.startTracking();
 
@@ -214,8 +203,7 @@ void main() {
       test('returns sum of queue + deltas pending', () async {
         when(() => mockSyncQueueDao.getPendingCount())
             .thenAnswer((_) async => 5);
-        when(() => mockDeltasDao.getPendingCount())
-            .thenAnswer((_) async => 3);
+        when(() => mockDeltasDao.getPendingCount()).thenAnswer((_) async => 3);
 
         final count = await tracker.getPendingCount();
 
@@ -237,9 +225,8 @@ void main() {
 
       test('returns push time when only push exists', () async {
         final pushTime = DateTime(2024, 6, 1);
-        when(() => mockMetadataDao.getForTable('sales')).thenAnswer(
-            (_) async => createSyncMetadata(
-                tableName: 'sales', lastPushAt: pushTime));
+        when(() => mockMetadataDao.getForTable('sales')).thenAnswer((_) async =>
+            createSyncMetadata(tableName: 'sales', lastPushAt: pushTime));
 
         final result = await tracker.getLastSyncTime('sales');
 
@@ -270,8 +257,8 @@ void main() {
       });
 
       test('returns null when both times are null', () async {
-        when(() => mockMetadataDao.getForTable('products')).thenAnswer(
-            (_) async => createSyncMetadata(tableName: 'products'));
+        when(() => mockMetadataDao.getForTable('products'))
+            .thenAnswer((_) async => createSyncMetadata(tableName: 'products'));
 
         final result = await tracker.getLastSyncTime('products');
 

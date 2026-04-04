@@ -25,7 +25,8 @@ class FraudInvestigationPanel extends StatefulWidget {
   });
 
   @override
-  State<FraudInvestigationPanel> createState() => _FraudInvestigationPanelState();
+  State<FraudInvestigationPanel> createState() =>
+      _FraudInvestigationPanelState();
 }
 
 class _FraudInvestigationPanelState extends State<FraudInvestigationPanel> {
@@ -85,7 +86,8 @@ class _FraudInvestigationPanelState extends State<FraudInvestigationPanel> {
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
+          color:
+              isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
         ),
         boxShadow: [
           BoxShadow(
@@ -118,12 +120,14 @@ class _FraudInvestigationPanelState extends State<FraudInvestigationPanel> {
               const Spacer(),
               // Status dropdown
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xxs),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xxs),
                 decoration: BoxDecoration(
                   color: _getStatusColor(_currentStatus).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: _getStatusColor(_currentStatus).withValues(alpha: 0.3),
+                    color:
+                        _getStatusColor(_currentStatus).withValues(alpha: 0.3),
                   ),
                 ),
                 child: DropdownButtonHideUnderline(
@@ -140,7 +144,8 @@ class _FraudInvestigationPanelState extends State<FraudInvestigationPanel> {
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                     ),
-                    dropdownColor: isDark ? const Color(0xFF334155) : Colors.white,
+                    dropdownColor:
+                        isDark ? const Color(0xFF334155) : Colors.white,
                     items: InvestigationStatus.values.map((status) {
                       return DropdownMenuItem(
                         value: status,
@@ -167,11 +172,13 @@ class _FraudInvestigationPanelState extends State<FraudInvestigationPanel> {
             decoration: BoxDecoration(
               color: AppColors.warning.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.warning.withValues(alpha: 0.2)),
+              border:
+                  Border.all(color: AppColors.warning.withValues(alpha: 0.2)),
             ),
             child: Row(
               children: [
-                const Icon(Icons.lightbulb_outline_rounded, color: AppColors.warning, size: 20),
+                const Icon(Icons.lightbulb_outline_rounded,
+                    color: AppColors.warning, size: 20),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Column(
@@ -189,7 +196,9 @@ class _FraudInvestigationPanelState extends State<FraudInvestigationPanel> {
                       Text(
                         widget.alert.suggestedAction,
                         style: TextStyle(
-                          color: isDark ? Colors.white.withValues(alpha: 0.8) : AppColors.textPrimary,
+                          color: isDark
+                              ? Colors.white.withValues(alpha: 0.8)
+                              : AppColors.textPrimary,
                           fontSize: 13,
                         ),
                       ),
@@ -206,7 +215,9 @@ class _FraudInvestigationPanelState extends State<FraudInvestigationPanel> {
           Text(
             'الجدول الزمني', // Timeline
             style: TextStyle(
-              color: isDark ? Colors.white.withValues(alpha: 0.7) : AppColors.textSecondary,
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.7)
+                  : AppColors.textSecondary,
               fontSize: 13,
               fontWeight: FontWeight.w600,
             ),
@@ -233,7 +244,9 @@ class _FraudInvestigationPanelState extends State<FraudInvestigationPanel> {
           Text(
             'إضافة ملاحظة', // Add Note
             style: TextStyle(
-              color: isDark ? Colors.white.withValues(alpha: 0.7) : AppColors.textSecondary,
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.7)
+                  : AppColors.textSecondary,
               fontSize: 13,
               fontWeight: FontWeight.w600,
             ),
@@ -251,28 +264,37 @@ class _FraudInvestigationPanelState extends State<FraudInvestigationPanel> {
                   decoration: InputDecoration(
                     hintText: 'اكتب ملاحظة...', // Write a note...
                     hintStyle: TextStyle(
-                      color: isDark ? Colors.white.withValues(alpha: 0.3) : AppColors.textMuted,
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.3)
+                          : AppColors.textMuted,
                       fontSize: 13,
                     ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                       borderSide: BorderSide(
-                        color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.1)
+                            : AppColors.border,
                       ),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                       borderSide: BorderSide(
-                        color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.1)
+                            : AppColors.border,
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                       borderSide: const BorderSide(color: AppColors.primary),
                     ),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 10),
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: AlhaiSpacing.sm, vertical: 10),
                     filled: true,
-                    fillColor: isDark ? Colors.white.withValues(alpha: 0.05) : AppColors.grey50,
+                    fillColor: isDark
+                        ? Colors.white.withValues(alpha: 0.05)
+                        : AppColors.grey50,
                   ),
                 ),
               ),
@@ -342,7 +364,9 @@ class _TimelineItem extends StatelessWidget {
                   Expanded(
                     child: Container(
                       width: 2,
-                      color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.grey200,
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.1)
+                          : AppColors.grey200,
                     ),
                   ),
               ],
@@ -368,7 +392,9 @@ class _TimelineItem extends StatelessWidget {
                   Text(
                     event.description,
                     style: TextStyle(
-                      color: isDark ? Colors.white.withValues(alpha: 0.6) : AppColors.textSecondary,
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.6)
+                          : AppColors.textSecondary,
                       fontSize: 12,
                     ),
                   ),
@@ -376,7 +402,9 @@ class _TimelineItem extends StatelessWidget {
                   Text(
                     formattedTime,
                     style: TextStyle(
-                      color: isDark ? Colors.white.withValues(alpha: 0.4) : AppColors.textMuted,
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.4)
+                          : AppColors.textMuted,
                       fontSize: 10,
                     ),
                   ),

@@ -103,12 +103,10 @@ class InvoiceService {
           taxAmount: Value(sale.tax),
           total: Value(sale.total),
           paymentMethod: Value(sale.paymentMethod),
-          amountPaid: Value(sale.isPaid
-              ? sale.total
-              : (sale.amountReceived ?? 0)),
-          amountDue: Value(sale.isPaid
-              ? 0
-              : sale.total - (sale.amountReceived ?? 0)),
+          amountPaid:
+              Value(sale.isPaid ? sale.total : (sale.amountReceived ?? 0)),
+          amountDue:
+              Value(sale.isPaid ? 0 : sale.total - (sale.amountReceived ?? 0)),
           createdBy: Value(sale.cashierId),
           cashierName: Value(cashierName),
           issuedAt: Value(now),
@@ -134,9 +132,10 @@ class InvoiceService {
       } catch (e) {
         // Check if this is a unique constraint violation on invoice number (race condition).
         final errorStr = e.toString().toLowerCase();
-        final isUniqueViolation = errorStr.contains('unique constraint failed') ||
-            errorStr.contains('unique constraint') ||
-            errorStr.contains('unique');
+        final isUniqueViolation =
+            errorStr.contains('unique constraint failed') ||
+                errorStr.contains('unique constraint') ||
+                errorStr.contains('unique');
         if (isUniqueViolation && attempt < maxRetries - 1) {
           if (kDebugMode) {
             debugPrint(
@@ -316,5 +315,4 @@ class InvoiceService {
       }
     }
   }
-
 }

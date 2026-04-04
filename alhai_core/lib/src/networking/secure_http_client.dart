@@ -38,8 +38,7 @@ class CertificateFingerprints {
   );
 
   /// هل Certificate Pinning مفعل؟
-  static bool get isEnabled =>
-      supabase.isNotEmpty || wasender.isNotEmpty;
+  static bool get isEnabled => supabase.isNotEmpty || wasender.isNotEmpty;
 }
 
 /// Secure Dio Client Factory
@@ -189,7 +188,8 @@ class SecureHttpClient {
   static Interceptor _createLoggingInterceptor() {
     return InterceptorsWrapper(
       onRequest: (options, handler) {
-        AppLogger.debug('REQUEST: ${options.method} ${options.uri}', tag: 'HTTP');
+        AppLogger.debug('REQUEST: ${options.method} ${options.uri}',
+            tag: 'HTTP');
         return handler.next(options);
       },
       onResponse: (response, handler) {
@@ -237,7 +237,8 @@ class _CacheInterceptor extends Interceptor {
   }
 
   @override
-  void onResponse(Response<dynamic> response, ResponseInterceptorHandler handler) {
+  void onResponse(
+      Response<dynamic> response, ResponseInterceptorHandler handler) {
     if (response.requestOptions.method != 'GET') return handler.next(response);
     final key = response.requestOptions.uri.toString();
     final etag = response.headers.value('etag');

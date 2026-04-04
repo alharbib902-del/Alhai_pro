@@ -29,11 +29,17 @@ class CompetitorPriceTable extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.compare_arrows_rounded, size: 48,
-              color: isDark ? Colors.white.withValues(alpha: 0.3) : AppColors.textMuted),
+            Icon(Icons.compare_arrows_rounded,
+                size: 48,
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.3)
+                    : AppColors.textMuted),
             const SizedBox(height: AlhaiSpacing.sm),
             Text('لا توجد بيانات مقارنة',
-              style: TextStyle(color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textSecondary)),
+                style: TextStyle(
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.5)
+                        : AppColors.textSecondary)),
           ],
         ),
       );
@@ -45,7 +51,10 @@ class CompetitorPriceTable extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
+        border: Border.all(
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.1)
+                : AppColors.border),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
@@ -80,14 +89,16 @@ class CompetitorPriceTable extends StatelessWidget {
             ),
             dataTextStyle: TextStyle(
               fontSize: 13,
-              color: isDark ? Colors.white.withValues(alpha: 0.8) : AppColors.textPrimary,
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.8)
+                  : AppColors.textPrimary,
             ),
             columns: [
               DataColumn(label: Text(l10n.product)),
               DataColumn(label: Text(l10n.productCategory)),
               DataColumn(label: Text(l10n.ourPrice), numeric: true),
-              ...competitorNames.map((name) =>
-                DataColumn(label: Text(name), numeric: true),
+              ...competitorNames.map(
+                (name) => DataColumn(label: Text(name), numeric: true),
               ),
               const DataColumn(label: Text('متوسط السوق'), numeric: true),
               const DataColumn(label: Text('الفرق %'), numeric: true),
@@ -106,13 +117,15 @@ class CompetitorPriceTable extends StatelessWidget {
                       ),
                     ),
                   ),
-                  DataCell(_CategoryChip(category: comparison.category, isDark: isDark)),
+                  DataCell(_CategoryChip(
+                      category: comparison.category, isDark: isDark)),
                   DataCell(
                     Text(
                       '${comparison.ourPrice.toStringAsFixed(2)} ر.س',
                       style: TextStyle(
                         fontWeight: FontWeight.w700,
-                        color: isDark ? AppColors.primaryLight : AppColors.primary,
+                        color:
+                            isDark ? AppColors.primaryLight : AppColors.primary,
                       ),
                     ),
                   ),
@@ -128,8 +141,12 @@ class CompetitorPriceTable extends StatelessWidget {
                               ? AppColors.error
                               : isHigher
                                   ? AppColors.success
-                                  : (isDark ? Colors.white.withValues(alpha: 0.7) : AppColors.textSecondary),
-                          fontWeight: (isLower || isHigher) ? FontWeight.w600 : FontWeight.normal,
+                                  : (isDark
+                                      ? Colors.white.withValues(alpha: 0.7)
+                                      : AppColors.textSecondary),
+                          fontWeight: (isLower || isHigher)
+                              ? FontWeight.w600
+                              : FontWeight.normal,
                         ),
                       ),
                     );
@@ -138,7 +155,9 @@ class CompetitorPriceTable extends StatelessWidget {
                     Text(
                       comparison.avgMarketPrice.toStringAsFixed(2),
                       style: TextStyle(
-                        color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textMuted,
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.5)
+                            : AppColors.textMuted,
                       ),
                     ),
                   ),
@@ -170,7 +189,8 @@ class _CategoryChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 3),
+      padding:
+          const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 3),
       decoration: BoxDecoration(
         color: isDark
             ? AppColors.info.withValues(alpha: 0.15)
@@ -200,10 +220,12 @@ class _PriceDiffBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final isNegative = percent < 0;
     final color = isNegative ? AppColors.success : AppColors.error;
-    final icon = isNegative ? Icons.arrow_downward_rounded : Icons.arrow_upward_rounded;
+    final icon =
+        isNegative ? Icons.arrow_downward_rounded : Icons.arrow_upward_rounded;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
+      padding: const EdgeInsets.symmetric(
+          horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(8),
@@ -269,7 +291,9 @@ class _PositionIndicator extends StatelessWidget {
       children: [
         Icon(icon, size: 14, color: color),
         const SizedBox(width: AlhaiSpacing.xxs),
-        Text(label, style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: color)),
+        Text(label,
+            style: TextStyle(
+                fontSize: 11, fontWeight: FontWeight.w600, color: color)),
       ],
     );
   }

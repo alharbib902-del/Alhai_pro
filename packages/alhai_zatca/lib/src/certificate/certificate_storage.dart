@@ -54,7 +54,8 @@ abstract class CertificateStorage {
 /// on restart and are not encrypted at rest.
 class InMemoryCertificateStorage implements CertificateStorage {
   InMemoryCertificateStorage() {
-    assert(kDebugMode,
+    assert(
+        kDebugMode,
         'InMemoryCertificateStorage must not be used in production. '
         'Use a secure CertificateStorage implementation instead.');
   }

@@ -21,8 +21,7 @@ void main() {
 
     // TaxSettingsScreen uses _db.storesDao.getStoreById() and settingsTable.
     // Default: storesDao returns null (no store found), settingsTable fails in catch.
-    when(() => storesDao.getStoreById(any()))
-        .thenAnswer((_) async => null);
+    when(() => storesDao.getStoreById(any())).thenAnswer((_) async => null);
 
     final db = setupMockDatabase(storesDao: storesDao);
     setupTestGetIt(mockDb: db);

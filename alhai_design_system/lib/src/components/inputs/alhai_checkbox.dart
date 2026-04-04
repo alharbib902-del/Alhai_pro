@@ -4,7 +4,7 @@ import '../../tokens/alhai_colors.dart';
 import '../../tokens/alhai_spacing.dart';
 
 /// AlhaiCheckbox - Checkbox with optional label and subtitle
-/// 
+///
 /// Features:
 /// - Optional label and subtitle
 /// - Tristate support

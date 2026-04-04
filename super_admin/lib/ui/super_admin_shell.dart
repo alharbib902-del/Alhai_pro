@@ -48,8 +48,7 @@ class _SuperAdminShellState extends State<SuperAdminShell> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
-    final location =
-        GoRouterState.of(context).uri.path;
+    final location = GoRouterState.of(context).uri.path;
     final selectedIndex = _currentIndex(location);
     final width = MediaQuery.sizeOf(context).width;
     final isDesktop = width >= AlhaiBreakpoints.desktop;

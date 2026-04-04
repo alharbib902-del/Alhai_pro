@@ -19,7 +19,8 @@ class AiSmartInventoryScreen extends ConsumerStatefulWidget {
   const AiSmartInventoryScreen({super.key});
 
   @override
-  ConsumerState<AiSmartInventoryScreen> createState() => _AiSmartInventoryScreenState();
+  ConsumerState<AiSmartInventoryScreen> createState() =>
+      _AiSmartInventoryScreenState();
 }
 
 class _AiSmartInventoryScreenState extends ConsumerState<AiSmartInventoryScreen>
@@ -44,14 +45,15 @@ class _AiSmartInventoryScreenState extends ConsumerState<AiSmartInventoryScreen>
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Column(
-              children: [
-                AppHeader(
-                  title: AppLocalizations.of(context)!.aiSmartInventoryTitle,
-                  onMenuTap: !isWideScreen ? () => Scaffold.of(context).openDrawer() : null,
-                ),
-                Expanded(child: _buildContent(isDark, isWideScreen)),
-              ],
-            );
+      children: [
+        AppHeader(
+          title: AppLocalizations.of(context)!.aiSmartInventoryTitle,
+          onMenuTap:
+              !isWideScreen ? () => Scaffold.of(context).openDrawer() : null,
+        ),
+        Expanded(child: _buildContent(isDark, isWideScreen)),
+      ],
+    );
   }
 
   Widget _buildContent(bool isDark, bool isWideScreen) {
@@ -64,8 +66,10 @@ class _AiSmartInventoryScreenState extends ConsumerState<AiSmartInventoryScreen>
         children: [
           // Summary cards
           summaryAsync.when(
-            data: (summary) => _buildSummaryCards(isDark, summary, isWideScreen),
-            loading: () => const Center(child: CircularProgressIndicator(color: AppColors.primary)),
+            data: (summary) =>
+                _buildSummaryCards(isDark, summary, isWideScreen),
+            loading: () => const Center(
+                child: CircularProgressIndicator(color: AppColors.primary)),
             error: (e, _) => Text('$e'),
           ),
 
@@ -77,13 +81,17 @@ class _AiSmartInventoryScreenState extends ConsumerState<AiSmartInventoryScreen>
               color: isDark ? const Color(0xFF1E293B) : Colors.white,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.1)
+                    : AppColors.border,
               ),
             ),
             child: TabBar(
               controller: _tabController,
               labelColor: AppColors.primary,
-              unselectedLabelColor: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textSecondary,
+              unselectedLabelColor: isDark
+                  ? Colors.white.withValues(alpha: 0.5)
+                  : AppColors.textSecondary,
               indicatorColor: AppColors.primary,
               indicatorSize: TabBarIndicatorSize.label,
               dividerColor: Colors.transparent,
@@ -117,7 +125,8 @@ class _AiSmartInventoryScreenState extends ConsumerState<AiSmartInventoryScreen>
     );
   }
 
-  Widget _buildSummaryCards(bool isDark, SmartInventorySummary summary, bool isWideScreen) {
+  Widget _buildSummaryCards(
+      bool isDark, SmartInventorySummary summary, bool isWideScreen) {
     final l10n = AppLocalizations.of(context)!;
     final cards = [
       _SummaryData(
@@ -143,7 +152,8 @@ class _AiSmartInventoryScreenState extends ConsumerState<AiSmartInventoryScreen>
       _SummaryData(
         title: l10n.needReorder,
         value: '${summary.reorderCount}',
-        subtitle: l10n.estimatedLossSar(summary.totalEstimatedLoss.toInt().toString()),
+        subtitle: l10n
+            .estimatedLossSar(summary.totalEstimatedLoss.toInt().toString()),
         icon: Icons.shopping_cart_rounded,
         color: AppColors.warning,
       ),
@@ -160,68 +170,76 @@ class _AiSmartInventoryScreenState extends ConsumerState<AiSmartInventoryScreen>
                   ? constraints.maxWidth / 4 - 16
                   : double.infinity,
               child: Container(
-            padding: const EdgeInsets.all(AlhaiSpacing.md),
-            decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF1E293B) : Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: card.color.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(12),
+                padding: const EdgeInsets.all(AlhaiSpacing.md),
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.1)
+                        : AppColors.border,
                   ),
-                  child: Icon(card.icon, color: card.color, size: 22),
+                  boxShadow: [
+                    BoxShadow(
+                      color:
+                          Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: AlhaiSpacing.sm),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        card.title,
-                        style: TextStyle(
-                          color: isDark ? Colors.white.withValues(alpha: 0.6) : AppColors.textSecondary,
-                          fontSize: 11,
-                        ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: card.color.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                      Text(
-                        card.value,
-                        style: TextStyle(
-                          color: isDark ? Colors.white : AppColors.textPrimary,
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      if (card.subtitle != null)
-                        Text(
-                          card.subtitle!,
-                          style: TextStyle(
-                            color: isDark ? Colors.white.withValues(alpha: 0.4) : AppColors.textMuted,
-                            fontSize: 10,
+                      child: Icon(card.icon, color: card.color, size: 22),
+                    ),
+                    const SizedBox(width: AlhaiSpacing.sm),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            card.title,
+                            style: TextStyle(
+                              color: isDark
+                                  ? Colors.white.withValues(alpha: 0.6)
+                                  : AppColors.textSecondary,
+                              fontSize: 11,
+                            ),
                           ),
-                        ),
-                    ],
-                  ),
+                          Text(
+                            card.value,
+                            style: TextStyle(
+                              color:
+                                  isDark ? Colors.white : AppColors.textPrimary,
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          if (card.subtitle != null)
+                            Text(
+                              card.subtitle!,
+                              style: TextStyle(
+                                color: isDark
+                                    ? Colors.white.withValues(alpha: 0.4)
+                                    : AppColors.textMuted,
+                                fontSize: 10,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ),
+              ),
+            );
+          }).toList(),
         );
-      }).toList(),
-    );
       },
     );
   }
@@ -234,7 +252,8 @@ class _AiSmartInventoryScreenState extends ConsumerState<AiSmartInventoryScreen>
         if (isWideScreen) {
           return GridView.builder(
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: getResponsiveGridColumns(context, mobile: 2, desktop: 3),
+              crossAxisCount:
+                  getResponsiveGridColumns(context, mobile: 2, desktop: 3),
               childAspectRatio: 1.1,
               crossAxisSpacing: 16,
               mainAxisSpacing: 16,
@@ -246,7 +265,9 @@ class _AiSmartInventoryScreenState extends ConsumerState<AiSmartInventoryScreen>
                 onOrderNow: () {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text(AppLocalizations.of(context)!.orderUnitsSnack(results[index].eoq, results[index].name)),
+                      content: Text(AppLocalizations.of(context)!
+                          .orderUnitsSnack(
+                              results[index].eoq, results[index].name)),
                       backgroundColor: AppColors.primary,
                     ),
                   );
@@ -265,7 +286,8 @@ class _AiSmartInventoryScreenState extends ConsumerState<AiSmartInventoryScreen>
               onOrderNow: () {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(AppLocalizations.of(context)!.orderUnitsSnack(results[index].eoq, results[index].name)),
+                    content: Text(AppLocalizations.of(context)!.orderUnitsSnack(
+                        results[index].eoq, results[index].name)),
                     backgroundColor: AppColors.primary,
                   ),
                 );
@@ -292,10 +314,14 @@ class _AiSmartInventoryScreenState extends ConsumerState<AiSmartInventoryScreen>
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: [
-                    _buildAbcFilterChip(null, AppLocalizations.of(context)!.filterAllLabel, isDark),
-                    _buildAbcFilterChip(AbcCategory.a, AppLocalizations.of(context)!.categoryALabel, isDark),
-                    _buildAbcFilterChip(AbcCategory.b, AppLocalizations.of(context)!.categoryBLabel, isDark),
-                    _buildAbcFilterChip(AbcCategory.c, AppLocalizations.of(context)!.categoryCLabel, isDark),
+                    _buildAbcFilterChip(null,
+                        AppLocalizations.of(context)!.filterAllLabel, isDark),
+                    _buildAbcFilterChip(AbcCategory.a,
+                        AppLocalizations.of(context)!.categoryALabel, isDark),
+                    _buildAbcFilterChip(AbcCategory.b,
+                        AppLocalizations.of(context)!.categoryBLabel, isDark),
+                    _buildAbcFilterChip(AbcCategory.c,
+                        AppLocalizations.of(context)!.categoryCLabel, isDark),
                   ],
                 ),
               ),
@@ -333,12 +359,17 @@ class _AiSmartInventoryScreenState extends ConsumerState<AiSmartInventoryScreen>
         selected: isSelected,
         label: Text(label),
         onSelected: (_) {
-          ref.read(abcCategoryFilterProvider.notifier).state = isSelected ? null : category;
+          ref.read(abcCategoryFilterProvider.notifier).state =
+              isSelected ? null : category;
         },
         selectedColor: color.withValues(alpha: 0.15),
         checkmarkColor: color,
         labelStyle: TextStyle(
-          color: isSelected ? color : (isDark ? Colors.white.withValues(alpha: 0.6) : AppColors.textSecondary),
+          color: isSelected
+              ? color
+              : (isDark
+                  ? Colors.white.withValues(alpha: 0.6)
+                  : AppColors.textSecondary),
           fontSize: 12,
         ),
       ),
@@ -351,12 +382,14 @@ class _AiSmartInventoryScreenState extends ConsumerState<AiSmartInventoryScreen>
     return wasteAsync.when(
       data: (predictions) {
         // Sort by urgency (days to expiry)
-        final sorted = [...predictions]..sort((a, b) => a.daysToExpiry.compareTo(b.daysToExpiry));
+        final sorted = [...predictions]
+          ..sort((a, b) => a.daysToExpiry.compareTo(b.daysToExpiry));
 
         if (isWideScreen) {
           return GridView.builder(
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: getResponsiveGridColumns(context, mobile: 2, desktop: 3),
+              crossAxisCount:
+                  getResponsiveGridColumns(context, mobile: 2, desktop: 3),
               childAspectRatio: 1.2,
               crossAxisSpacing: 16,
               mainAxisSpacing: 16,
@@ -367,9 +400,11 @@ class _AiSmartInventoryScreenState extends ConsumerState<AiSmartInventoryScreen>
                 prediction: sorted[index],
                 onActionTap: () {
                   final l10n = AppLocalizations.of(context)!;
-                  final action = sorted[index].suggestedAction == WasteSuggestedAction.discount
+                  final action = sorted[index].suggestedAction ==
+                          WasteSuggestedAction.discount
                       ? l10n.actionDiscount
-                      : sorted[index].suggestedAction == WasteSuggestedAction.transfer
+                      : sorted[index].suggestedAction ==
+                              WasteSuggestedAction.transfer
                           ? l10n.actionTransfer
                           : l10n.actionDonate;
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -393,7 +428,8 @@ class _AiSmartInventoryScreenState extends ConsumerState<AiSmartInventoryScreen>
               onActionTap: () {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(AppLocalizations.of(context)!.actionOnProduct(sorted[index].name)),
+                    content: Text(AppLocalizations.of(context)!
+                        .actionOnProduct(sorted[index].name)),
                     backgroundColor: AppColors.primary,
                   ),
                 );
@@ -493,7 +529,9 @@ class _ReorderCard extends StatelessWidget {
         border: Border.all(
           color: suggestion.urgency == UrgencyLevel.critical
               ? urgencyColor.withValues(alpha: 0.3)
-              : (isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
+              : (isDark
+                  ? Colors.white.withValues(alpha: 0.1)
+                  : AppColors.border),
         ),
         boxShadow: [
           BoxShadow(
@@ -535,7 +573,9 @@ class _ReorderCard extends StatelessWidget {
                       Text(
                         suggestion.supplier!,
                         style: TextStyle(
-                          color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textMuted,
+                          color: isDark
+                              ? Colors.white.withValues(alpha: 0.5)
+                              : AppColors.textMuted,
                           fontSize: 11,
                         ),
                       ),
@@ -543,7 +583,8 @@ class _ReorderCard extends StatelessWidget {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: AlhaiSpacing.xxs),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 10, vertical: AlhaiSpacing.xxs),
                 decoration: BoxDecoration(
                   color: urgencyColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -599,9 +640,12 @@ class _ReorderCard extends StatelessWidget {
           Row(
             children: [
               Text(
-                l10n.estimatedCostLabel(suggestion.estimatedCost.toStringAsFixed(0)),
+                l10n.estimatedCostLabel(
+                    suggestion.estimatedCost.toStringAsFixed(0)),
                 style: TextStyle(
-                  color: isDark ? Colors.white.withValues(alpha: 0.6) : AppColors.textSecondary,
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.6)
+                      : AppColors.textSecondary,
                   fontSize: 12,
                 ),
               ),
@@ -610,7 +654,8 @@ class _ReorderCard extends StatelessWidget {
                 onPressed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text(l10n.purchaseOrderCreatedFor(suggestion.name)),
+                      content:
+                          Text(l10n.purchaseOrderCreatedFor(suggestion.name)),
                       backgroundColor: AppColors.primary,
                     ),
                   );
@@ -618,7 +663,8 @@ class _ReorderCard extends StatelessWidget {
                 icon: const Icon(Icons.shopping_cart_rounded, size: 16),
                 label: Text(
                   l10n.orderUnitsButton(suggestion.suggestedQty),
-                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                  style: const TextStyle(
+                      fontSize: 12, fontWeight: FontWeight.w600),
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
@@ -626,7 +672,8 @@ class _ReorderCard extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: AlhaiSpacing.xs),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 14, vertical: AlhaiSpacing.xs),
                 ),
               ),
             ],
@@ -661,14 +708,19 @@ class _StockDetail extends StatelessWidget {
         Text(
           label,
           style: TextStyle(
-            color: isDark ? Colors.white.withValues(alpha: 0.4) : AppColors.textMuted,
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.4)
+                : AppColors.textMuted,
             fontSize: 10,
           ),
         ),
         Text(
           value,
           style: TextStyle(
-            color: color ?? (highlight ? AppColors.primary : (isDark ? Colors.white : AppColors.textPrimary)),
+            color: color ??
+                (highlight
+                    ? AppColors.primary
+                    : (isDark ? Colors.white : AppColors.textPrimary)),
             fontSize: 15,
             fontWeight: highlight ? FontWeight.bold : FontWeight.w600,
           ),

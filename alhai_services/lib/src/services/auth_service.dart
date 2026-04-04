@@ -51,7 +51,7 @@ class AuthService {
   /// التحقق من صلاحية معينة بناءً على الدور
   bool hasPermission(String permission) {
     if (_currentUser == null) return false;
-    
+
     final role = _currentUser!.role;
     switch (role) {
       case UserRole.superAdmin:

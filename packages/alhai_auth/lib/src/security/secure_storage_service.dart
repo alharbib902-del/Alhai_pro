@@ -206,59 +206,59 @@ class SecureStorageService {
   static void resetStorage() {
     _storage = kIsWeb ? _WebStorage() : _NativeStorage();
   }
-  
+
   // ============================================================================
   // KEYS
   // ============================================================================
-  
+
   static const _keyDatabaseEncryption = 'db_encryption_key';
   static const _keyAccessToken = 'access_token';
   static const _keyRefreshToken = 'refresh_token';
   static const _keySessionExpiry = 'session_expiry';
   static const _keyUserId = 'user_id';
   static const _keyStoreId = 'store_id';
-  
+
   // ============================================================================
   // DATABASE ENCRYPTION
   // ============================================================================
-  
+
   /// الحصول على مفتاح تشفير قاعدة البيانات
   /// إذا لم يكن موجوداً، يتم توليد مفتاح جديد
   static Future<String> getDatabaseKey() async {
     String? key = await _storage.read(key: _keyDatabaseEncryption);
-    
+
     if (key == null) {
       key = _generateSecureKey(32);
       await _storage.write(key: _keyDatabaseEncryption, value: key);
     }
-    
+
     return key;
   }
-  
+
   // ============================================================================
   // TOKENS
   // ============================================================================
-  
+
   /// حفظ Access Token
   static Future<void> saveAccessToken(String token) async {
     await _storage.write(key: _keyAccessToken, value: token);
   }
-  
+
   /// الحصول على Access Token
   static Future<String?> getAccessToken() async {
     return await _storage.read(key: _keyAccessToken);
   }
-  
+
   /// حفظ Refresh Token
   static Future<void> saveRefreshToken(String token) async {
     await _storage.write(key: _keyRefreshToken, value: token);
   }
-  
+
   /// الحصول على Refresh Token
   static Future<String?> getRefreshToken() async {
     return await _storage.read(key: _keyRefreshToken);
   }
-  
+
   /// حفظ الـ tokens معاً
   static Future<void> saveTokens({
     required String accessToken,
@@ -271,27 +271,27 @@ class SecureStorageService {
       _storage.write(key: _keySessionExpiry, value: expiry.toIso8601String()),
     ]);
   }
-  
+
   /// التحقق من صلاحية الجلسة
   static Future<bool> isSessionValid() async {
     final expiryStr = await _storage.read(key: _keySessionExpiry);
     if (expiryStr == null) return false;
-    
+
     final expiry = DateTime.parse(expiryStr);
     return DateTime.now().isBefore(expiry);
   }
-  
+
   /// الحصول على وقت انتهاء الجلسة
   static Future<DateTime?> getSessionExpiry() async {
     final expiryStr = await _storage.read(key: _keySessionExpiry);
     if (expiryStr == null) return null;
     return DateTime.tryParse(expiryStr);
   }
-  
+
   // ============================================================================
   // USER DATA
   // ============================================================================
-  
+
   /// حفظ بيانات المستخدم
   static Future<void> saveUserData({
     required String userId,
@@ -302,21 +302,21 @@ class SecureStorageService {
       _storage.write(key: _keyStoreId, value: storeId),
     ]);
   }
-  
+
   /// الحصول على User ID
   static Future<String?> getUserId() async {
     return await _storage.read(key: _keyUserId);
   }
-  
+
   /// الحصول على Store ID
   static Future<String?> getStoreId() async {
     return await _storage.read(key: _keyStoreId);
   }
-  
+
   // ============================================================================
   // CLEAR
   // ============================================================================
-  
+
   /// مسح بيانات الجلسة (عند تسجيل الخروج)
   static Future<void> clearSession() async {
     await Future.wait([
@@ -327,37 +327,37 @@ class SecureStorageService {
       _storage.delete(key: _keyStoreId),
     ]);
   }
-  
+
   /// مسح كل البيانات (عند إعادة تعيين التطبيق)
   static Future<void> clearAll() async {
     await _storage.deleteAll();
   }
-  
+
   // ============================================================================
   // HELPERS
   // ============================================================================
-  
+
   /// توليد مفتاح آمن عشوائي
   static String _generateSecureKey(int length) {
     final random = Random.secure();
     final values = List<int>.generate(length, (_) => random.nextInt(256));
     return base64Url.encode(values);
   }
-  
+
   // ============================================================================
   // GENERIC STORAGE (for BiometricService & PinService)
   // ============================================================================
-  
+
   /// قراءة قيمة
   static Future<String?> read(String key) async {
     return await _storage.read(key: key);
   }
-  
+
   /// كتابة قيمة
   static Future<void> write(String key, String value) async {
     await _storage.write(key: key, value: value);
   }
-  
+
   /// حذف قيمة
   static Future<void> delete(String key) async {
     await _storage.delete(key: key);

@@ -9,7 +9,8 @@ import 'package:alhai_core/src/repositories/stores_repository.dart';
 import 'package:alhai_core/src/repositories/impl/stores_repository_impl.dart';
 
 // Mock class
-class MockStoresRemoteDataSource extends Mock implements StoresRemoteDataSource {}
+class MockStoresRemoteDataSource extends Mock
+    implements StoresRemoteDataSource {}
 
 void main() {
   late StoresRepositoryImpl repository;
@@ -180,7 +181,8 @@ void main() {
 
       test('returns false when store is closed', () async {
         // Arrange
-        when(() => mockRemote.isStoreOpen(any())).thenAnswer((_) async => false);
+        when(() => mockRemote.isStoreOpen(any()))
+            .thenAnswer((_) async => false);
 
         // Act
         final result = await repository.isStoreOpen('store-1');

@@ -38,7 +38,9 @@ class PinDisplay extends StatelessWidget {
           height: AlhaiSpacing.massive,
           decoration: BoxDecoration(
             color: isFilled
-                ? (hasError ? AppColors.error.withValues(alpha: 0.1) : AppColors.primary.withValues(alpha: 0.1))
+                ? (hasError
+                    ? AppColors.error.withValues(alpha: 0.1)
+                    : AppColors.primary.withValues(alpha: 0.1))
                 : Colors.white,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
@@ -251,9 +253,8 @@ class _NumpadButtonState extends State<_NumpadButton>
           width: AlhaiSpacing.avatarXl,
           height: AlhaiSpacing.avatarXl,
           decoration: BoxDecoration(
-            color: widget.isSpecial
-                ? AppColors.backgroundSecondary
-                : Colors.white,
+            color:
+                widget.isSpecial ? AppColors.backgroundSecondary : Colors.white,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: AppColors.border,
@@ -435,7 +436,8 @@ class _ManagerApprovalDialogState extends State<ManagerApprovalDialog> {
 
             // الوصف
             Text(
-              widget.description ?? 'الإجراء "${widget.action}" يتطلب صلاحيات مدير',
+              widget.description ??
+                  'الإجراء "${widget.action}" يتطلب صلاحيات مدير',
               style: const TextStyle(
                 color: AppColors.textSecondary,
                 fontSize: 14,
@@ -476,9 +478,8 @@ class _ManagerApprovalDialogState extends State<ManagerApprovalDialog> {
 
             // زر الإلغاء
             TextButton(
-              onPressed: _isVerifying
-                  ? null
-                  : () => Navigator.of(context).pop(false),
+              onPressed:
+                  _isVerifying ? null : () => Navigator.of(context).pop(false),
               child: Text(
                 AppLocalizations.of(context)!.cancel,
                 style: const TextStyle(
@@ -610,7 +611,8 @@ class _PinInputFieldState extends State<PinInputField> {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: AppColors.primary, width: 2),
+                  borderSide:
+                      const BorderSide(color: AppColors.primary, width: 2),
                 ),
               ),
               inputFormatters: [

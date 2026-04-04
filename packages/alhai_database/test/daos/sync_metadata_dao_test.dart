@@ -16,8 +16,8 @@ void main() {
   group('SyncMetadataDao', () {
     test('updateLastPullAt creates or updates record', () async {
       final pullTime = DateTime(2025, 6, 15, 10, 0);
-      await db.syncMetadataDao.updateLastPullAt('products', pullTime,
-          syncCount: 50);
+      await db.syncMetadataDao
+          .updateLastPullAt('products', pullTime, syncCount: 50);
 
       final metadata = await db.syncMetadataDao.getForTable('products');
       expect(metadata, isNotNull);
@@ -28,8 +28,8 @@ void main() {
 
     test('updateLastPushAt creates or updates record', () async {
       final pushTime = DateTime(2025, 6, 15, 11, 0);
-      await db.syncMetadataDao.updateLastPushAt('sales', pushTime,
-          syncCount: 10);
+      await db.syncMetadataDao
+          .updateLastPushAt('sales', pushTime, syncCount: 10);
 
       final metadata = await db.syncMetadataDao.getForTable('sales');
       expect(metadata, isNotNull);
@@ -37,16 +37,13 @@ void main() {
     });
 
     test('getForTable returns null for unknown table', () async {
-      final metadata =
-          await db.syncMetadataDao.getForTable('non_existent');
+      final metadata = await db.syncMetadataDao.getForTable('non_existent');
       expect(metadata, isNull);
     });
 
     test('getAll returns all metadata records', () async {
-      await db.syncMetadataDao
-          .updateLastPullAt('products', DateTime.now());
-      await db.syncMetadataDao
-          .updateLastPullAt('sales', DateTime.now());
+      await db.syncMetadataDao.updateLastPullAt('products', DateTime.now());
+      await db.syncMetadataDao.updateLastPullAt('sales', DateTime.now());
 
       final all = await db.syncMetadataDao.getAll();
       expect(all, hasLength(2));
@@ -55,14 +52,12 @@ void main() {
     test('markInitialSynced sets flag to true', () async {
       await db.syncMetadataDao.markInitialSynced('customers');
 
-      final synced =
-          await db.syncMetadataDao.isInitialSynced('customers');
+      final synced = await db.syncMetadataDao.isInitialSynced('customers');
       expect(synced, true);
     });
 
     test('isInitialSynced returns false for unknown table', () async {
-      final synced =
-          await db.syncMetadataDao.isInitialSynced('unknown_table');
+      final synced = await db.syncMetadataDao.isInitialSynced('unknown_table');
       expect(synced, false);
     });
 
@@ -75,16 +70,14 @@ void main() {
     });
 
     test('setError records error message', () async {
-      await db.syncMetadataDao
-          .setError('products', 'فشل الاتصال بالسيرفر');
+      await db.syncMetadataDao.setError('products', 'فشل الاتصال بالسيرفر');
 
       final metadata = await db.syncMetadataDao.getForTable('products');
       expect(metadata!.lastError, 'فشل الاتصال بالسيرفر');
     });
 
     test('clearError removes error message', () async {
-      await db.syncMetadataDao
-          .setError('products', 'خطأ');
+      await db.syncMetadataDao.setError('products', 'خطأ');
       await db.syncMetadataDao.clearError('products');
 
       final metadata = await db.syncMetadataDao.getForTable('products');
@@ -95,14 +88,12 @@ void main() {
       final time = DateTime(2025, 6, 15, 12, 30);
       await db.syncMetadataDao.updateLastPullAt('products', time);
 
-      final lastPull =
-          await db.syncMetadataDao.getLastPullAt('products');
+      final lastPull = await db.syncMetadataDao.getLastPullAt('products');
       expect(lastPull, time);
     });
 
     test('getLastPullAt returns null for unknown table', () async {
-      final lastPull =
-          await db.syncMetadataDao.getLastPullAt('unknown');
+      final lastPull = await db.syncMetadataDao.getLastPullAt('unknown');
       expect(lastPull, isNull);
     });
 
@@ -123,10 +114,8 @@ void main() {
     });
 
     test('resetTable removes metadata for specific table', () async {
-      await db.syncMetadataDao
-          .updateLastPullAt('products', DateTime.now());
-      await db.syncMetadataDao
-          .updateLastPullAt('sales', DateTime.now());
+      await db.syncMetadataDao.updateLastPullAt('products', DateTime.now());
+      await db.syncMetadataDao.updateLastPullAt('sales', DateTime.now());
 
       await db.syncMetadataDao.resetTable('products');
 
@@ -138,10 +127,8 @@ void main() {
     });
 
     test('resetAll removes all metadata', () async {
-      await db.syncMetadataDao
-          .updateLastPullAt('products', DateTime.now());
-      await db.syncMetadataDao
-          .updateLastPullAt('sales', DateTime.now());
+      await db.syncMetadataDao.updateLastPullAt('products', DateTime.now());
+      await db.syncMetadataDao.updateLastPullAt('sales', DateTime.now());
 
       await db.syncMetadataDao.resetAll();
 

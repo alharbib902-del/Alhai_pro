@@ -21,10 +21,12 @@ class AiPromotionDesignerScreen extends ConsumerStatefulWidget {
   const AiPromotionDesignerScreen({super.key});
 
   @override
-  ConsumerState<AiPromotionDesignerScreen> createState() => _AiPromotionDesignerScreenState();
+  ConsumerState<AiPromotionDesignerScreen> createState() =>
+      _AiPromotionDesignerScreenState();
 }
 
-class _AiPromotionDesignerScreenState extends ConsumerState<AiPromotionDesignerScreen>
+class _AiPromotionDesignerScreenState
+    extends ConsumerState<AiPromotionDesignerScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
@@ -48,43 +50,47 @@ class _AiPromotionDesignerScreenState extends ConsumerState<AiPromotionDesignerS
     final l10n = AppLocalizations.of(context)!;
 
     return Column(
-              children: [
-                AppHeader(
-                  title: l10n.aiPromotionDesigner,
-                  onMenuTap: isWideScreen
-                      ? null
-                      : () => Scaffold.of(context).openDrawer(),
-                  onNotificationsTap: () => context.push('/notifications'),
-                  notificationsCount: 3,
-                  userName: l10n.defaultUserName,
-                  userRole: l10n.branchManager,
-                ),
-                Container(
-                  color: isDark ? const Color(0xFF1E293B) : Colors.white,
-                  child: TabBar(
-                    controller: _tabController,
-                    labelColor: AppColors.primary,
-                    unselectedLabelColor: isDark ? Colors.white60 : AppColors.textSecondary,
-                    indicatorColor: AppColors.primary,
-                    tabs: [
-                      Tab(icon: const Icon(Icons.auto_awesome), text: l10n.aiSuggestedPromotions),
-                      Tab(icon: const Icon(Icons.trending_up), text: l10n.aiRoiAnalysis),
-                      Tab(icon: const Icon(Icons.science), text: l10n.aiAbTest),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: TabBarView(
-                    controller: _tabController,
-                    children: [
-                      _buildPromotionsTab(isDark, isWideScreen),
-                      _buildRoiTab(isDark, isWideScreen),
-                      _buildAbTestTab(isDark, isWideScreen),
-                    ],
-                  ),
-                ),
-              ],
-            );
+      children: [
+        AppHeader(
+          title: l10n.aiPromotionDesigner,
+          onMenuTap:
+              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onNotificationsTap: () => context.push('/notifications'),
+          notificationsCount: 3,
+          userName: l10n.defaultUserName,
+          userRole: l10n.branchManager,
+        ),
+        Container(
+          color: isDark ? const Color(0xFF1E293B) : Colors.white,
+          child: TabBar(
+            controller: _tabController,
+            labelColor: AppColors.primary,
+            unselectedLabelColor:
+                isDark ? Colors.white60 : AppColors.textSecondary,
+            indicatorColor: AppColors.primary,
+            tabs: [
+              Tab(
+                  icon: const Icon(Icons.auto_awesome),
+                  text: l10n.aiSuggestedPromotions),
+              Tab(
+                  icon: const Icon(Icons.trending_up),
+                  text: l10n.aiRoiAnalysis),
+              Tab(icon: const Icon(Icons.science), text: l10n.aiAbTest),
+            ],
+          ),
+        ),
+        Expanded(
+          child: TabBarView(
+            controller: _tabController,
+            children: [
+              _buildPromotionsTab(isDark, isWideScreen),
+              _buildRoiTab(isDark, isWideScreen),
+              _buildAbTestTab(isDark, isWideScreen),
+            ],
+          ),
+        ),
+      ],
+    );
   }
 
   // ============================================================================
@@ -105,12 +111,14 @@ class _AiPromotionDesignerScreenState extends ConsumerState<AiPromotionDesignerS
       },
       data: (promos) {
         return SingleChildScrollView(
-          padding: EdgeInsets.all(isWideScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+          padding:
+              EdgeInsets.all(isWideScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // بطاقة AI Header
-              _buildAiHeader(isDark, totalRevenue, avgConfidence, promos.length),
+              _buildAiHeader(
+                  isDark, totalRevenue, avgConfidence, promos.length),
               const SizedBox(height: AlhaiSpacing.mdl),
 
               // فلتر الأنواع
@@ -129,7 +137,8 @@ class _AiPromotionDesignerScreenState extends ConsumerState<AiPromotionDesignerS
     );
   }
 
-  Widget _buildAiHeader(bool isDark, AsyncValue<double> totalRevenue, AsyncValue<double> avgConfidence, int count) {
+  Widget _buildAiHeader(bool isDark, AsyncValue<double> totalRevenue,
+      AsyncValue<double> avgConfidence, int count) {
     final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
@@ -159,7 +168,8 @@ class _AiPromotionDesignerScreenState extends ConsumerState<AiPromotionDesignerS
                   color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(Icons.auto_awesome, color: Colors.white, size: 24),
+                child: const Icon(Icons.auto_awesome,
+                    color: Colors.white, size: 24),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
@@ -218,7 +228,8 @@ class _AiPromotionDesignerScreenState extends ConsumerState<AiPromotionDesignerS
   Widget _buildHeaderStat(String label, String value, IconData icon) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 10),
+        padding: const EdgeInsets.symmetric(
+            horizontal: AlhaiSpacing.sm, vertical: 10),
         decoration: BoxDecoration(
           color: Colors.white.withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(10),
@@ -259,7 +270,8 @@ class _AiPromotionDesignerScreenState extends ConsumerState<AiPromotionDesignerS
       scrollDirection: Axis.horizontal,
       child: Row(
         children: [
-          _buildFilterChip(isDark, AppLocalizations.of(context)!.all, null, selected == null),
+          _buildFilterChip(isDark, AppLocalizations.of(context)!.all, null,
+              selected == null),
           ...types.map((type) => _buildFilterChip(
                 isDark,
                 AiPromotionDesignerService.getPromotionTypeLabel(type),
@@ -271,7 +283,8 @@ class _AiPromotionDesignerScreenState extends ConsumerState<AiPromotionDesignerS
     );
   }
 
-  Widget _buildFilterChip(bool isDark, String label, PromotionType? type, bool isSelected) {
+  Widget _buildFilterChip(
+      bool isDark, String label, PromotionType? type, bool isSelected) {
     final color = type != null
         ? Color(AiPromotionDesignerService.getPromotionTypeColorValue(type))
         : AppColors.primary;
@@ -287,14 +300,18 @@ class _AiPromotionDesignerScreenState extends ConsumerState<AiPromotionDesignerS
         selectedColor: color.withValues(alpha: 0.15),
         backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
         labelStyle: TextStyle(
-          color: isSelected ? color : (isDark ? Colors.white70 : AppColors.textSecondary),
+          color: isSelected
+              ? color
+              : (isDark ? Colors.white70 : AppColors.textSecondary),
           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
           fontSize: 12,
         ),
         side: BorderSide(
           color: isSelected
               ? color
-              : (isDark ? Colors.white.withValues(alpha: 0.12) : AppColors.border),
+              : (isDark
+                  ? Colors.white.withValues(alpha: 0.12)
+                  : AppColors.border),
         ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
@@ -319,10 +336,12 @@ class _AiPromotionDesignerScreenState extends ConsumerState<AiPromotionDesignerS
             onApply: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(AppLocalizations.of(context)!.aiPromotionApplied(p.title)),
+                  content: Text(AppLocalizations.of(context)!
+                      .aiPromotionApplied(p.title)),
                   backgroundColor: AppColors.success,
                   behavior: SnackBarBehavior.floating,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
                 ),
               );
             },
@@ -348,10 +367,12 @@ class _AiPromotionDesignerScreenState extends ConsumerState<AiPromotionDesignerS
             onApply: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(AppLocalizations.of(context)!.aiPromotionApplied(p.title)),
+                  content: Text(AppLocalizations.of(context)!
+                      .aiPromotionApplied(p.title)),
                   backgroundColor: AppColors.success,
                   behavior: SnackBarBehavior.floating,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
                 ),
               );
             },
@@ -384,7 +405,8 @@ class _AiPromotionDesignerScreenState extends ConsumerState<AiPromotionDesignerS
           // رسم بياني ROI
           roiForecast.when(
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (e, _) => Center(child: Text(l10n.aiErrorOccurred(e.toString()))),
+            error: (e, _) =>
+                Center(child: Text(l10n.aiErrorOccurred(e.toString()))),
             data: (forecasts) => RoiForecastChart(forecasts: forecasts),
           ),
 
@@ -419,7 +441,8 @@ class _AiPromotionDesignerScreenState extends ConsumerState<AiPromotionDesignerS
     final l10n = AppLocalizations.of(context)!;
     final textColor = isDark ? Colors.white : AppColors.textPrimary;
     final subtextColor = isDark ? Colors.white70 : AppColors.textSecondary;
-    final typeColor = Color(AiPromotionDesignerService.getPromotionTypeColorValue(promo.type));
+    final typeColor = Color(
+        AiPromotionDesignerService.getPromotionTypeColorValue(promo.type));
 
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
@@ -437,7 +460,8 @@ class _AiPromotionDesignerScreenState extends ConsumerState<AiPromotionDesignerS
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
                   color: typeColor.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(8),
@@ -453,13 +477,15 @@ class _AiPromotionDesignerScreenState extends ConsumerState<AiPromotionDesignerS
               ),
               const Spacer(),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
                   color: AppColors.success.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
-                  l10n.aiConfidencePercent((promo.confidence * 100).toStringAsFixed(0)),
+                  l10n.aiConfidencePercent(
+                      (promo.confidence * 100).toStringAsFixed(0)),
                   style: const TextStyle(
                     color: AppColors.success,
                     fontSize: 12,
@@ -490,14 +516,27 @@ class _AiPromotionDesignerScreenState extends ConsumerState<AiPromotionDesignerS
           const SizedBox(height: AlhaiSpacing.md),
           Row(
             children: [
-              _buildDetailStat(l10n.aiRevenueLabel, '${promo.projectedRevenue.toStringAsFixed(0)} ر.س', AppColors.success, isDark),
+              _buildDetailStat(
+                  l10n.aiRevenueLabel,
+                  '${promo.projectedRevenue.toStringAsFixed(0)} ر.س',
+                  AppColors.success,
+                  isDark),
               const SizedBox(width: AlhaiSpacing.sm),
-              _buildDetailStat(l10n.aiCostLabel, '${promo.projectedCost.toStringAsFixed(0)} ر.س', AppColors.error, isDark),
+              _buildDetailStat(
+                  l10n.aiCostLabel,
+                  '${promo.projectedCost.toStringAsFixed(0)} ر.س',
+                  AppColors.error,
+                  isDark),
               const SizedBox(width: AlhaiSpacing.sm),
-              _buildDetailStat('ROI', '${promo.roi.toStringAsFixed(0)}%', const Color(0xFF8B5CF6), isDark),
+              _buildDetailStat('ROI', '${promo.roi.toStringAsFixed(0)}%',
+                  const Color(0xFF8B5CF6), isDark),
               if (promo.discountAmount > 0) ...[
                 const SizedBox(width: AlhaiSpacing.sm),
-                _buildDetailStat(l10n.aiDiscountLabel, '${promo.discountAmount.toStringAsFixed(0)}%', typeColor, isDark),
+                _buildDetailStat(
+                    l10n.aiDiscountLabel,
+                    '${promo.discountAmount.toStringAsFixed(0)}%',
+                    typeColor,
+                    isDark),
               ],
             ],
           ),
@@ -506,7 +545,8 @@ class _AiPromotionDesignerScreenState extends ConsumerState<AiPromotionDesignerS
     );
   }
 
-  Widget _buildDetailStat(String label, String value, Color color, bool isDark) {
+  Widget _buildDetailStat(
+      String label, String value, Color color, bool isDark) {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
@@ -571,7 +611,8 @@ class _AiPromotionDesignerScreenState extends ConsumerState<AiPromotionDesignerS
             ),
             child: Row(
               children: [
-                const Icon(Icons.info_outline, color: Color(0xFF8B5CF6), size: 20),
+                const Icon(Icons.info_outline,
+                    color: Color(0xFF8B5CF6), size: 20),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
@@ -617,7 +658,8 @@ class _AiPromotionDesignerScreenState extends ConsumerState<AiPromotionDesignerS
                     content: Text(l10n.aiAbTestLaunched),
                     backgroundColor: const Color(0xFF8B5CF6),
                     behavior: SnackBarBehavior.floating,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
                   ),
                 );
               },

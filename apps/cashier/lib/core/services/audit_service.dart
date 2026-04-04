@@ -325,7 +325,8 @@ class AuditService {
           if (purchaseNumber != null) 'purchaseNumber': purchaseNumber,
           'itemCount': itemCount,
         },
-        description: 'استلام مشتريات${purchaseNumber != null ? ' #$purchaseNumber' : ''} - $itemCount صنف',
+        description:
+            'استلام مشتريات${purchaseNumber != null ? ' #$purchaseNumber' : ''} - $itemCount صنف',
       );
 
   // ============================================================================

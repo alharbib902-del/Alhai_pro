@@ -49,7 +49,8 @@ class StoresRemoteDataSourceImpl implements StoresRemoteDataSource {
   }
 
   @override
-  Future<StoreResponse> updateStore(String id, Map<String, dynamic> data) async {
+  Future<StoreResponse> updateStore(
+      String id, Map<String, dynamic> data) async {
     final response = await _dio.patch('/stores/$id', data: data);
     return StoreResponse.fromJson(response.data);
   }

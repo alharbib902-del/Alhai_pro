@@ -28,9 +28,9 @@ abstract class ProductsRemoteDataSource {
   Future<ProductResponse> createProduct(CreateProductRequest request);
 
   /// Updates an existing product
-  Future<ProductResponse> updateProduct(String id, UpdateProductRequest request);
+  Future<ProductResponse> updateProduct(
+      String id, UpdateProductRequest request);
 
   /// Deletes a product by ID
   Future<void> deleteProduct(String id);
 }
-

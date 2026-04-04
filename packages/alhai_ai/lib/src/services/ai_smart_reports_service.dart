@@ -249,14 +249,38 @@ class AiSmartReportsService {
   /// اقتراحات الاستعلامات
   static List<QuerySuggestion> getSuggestions() {
     return const [
-      QuerySuggestion(text: 'كم مبيعات اليوم؟', category: 'مبيعات', expectedChart: ChartType.number),
-      QuerySuggestion(text: 'أفضل 10 منتجات مبيعاً', category: 'منتجات', expectedChart: ChartType.barChart),
-      QuerySuggestion(text: 'مقارنة شهرية للمبيعات', category: 'مبيعات', expectedChart: ChartType.lineChart),
-      QuerySuggestion(text: 'توزيع المبيعات حسب التصنيف', category: 'منتجات', expectedChart: ChartType.pieChart),
-      QuerySuggestion(text: 'ما هي أوقات الذروة؟', category: 'عملاء', expectedChart: ChartType.lineChart),
-      QuerySuggestion(text: 'منتجات قاربت على النفاد', category: 'مخزون', expectedChart: ChartType.table),
-      QuerySuggestion(text: 'هوامش الربح للمنتجات', category: 'مالية', expectedChart: ChartType.table),
-      QuerySuggestion(text: 'إجمالي إيرادات هذا الشهر', category: 'مالية', expectedChart: ChartType.number),
+      QuerySuggestion(
+          text: 'كم مبيعات اليوم؟',
+          category: 'مبيعات',
+          expectedChart: ChartType.number),
+      QuerySuggestion(
+          text: 'أفضل 10 منتجات مبيعاً',
+          category: 'منتجات',
+          expectedChart: ChartType.barChart),
+      QuerySuggestion(
+          text: 'مقارنة شهرية للمبيعات',
+          category: 'مبيعات',
+          expectedChart: ChartType.lineChart),
+      QuerySuggestion(
+          text: 'توزيع المبيعات حسب التصنيف',
+          category: 'منتجات',
+          expectedChart: ChartType.pieChart),
+      QuerySuggestion(
+          text: 'ما هي أوقات الذروة؟',
+          category: 'عملاء',
+          expectedChart: ChartType.lineChart),
+      QuerySuggestion(
+          text: 'منتجات قاربت على النفاد',
+          category: 'مخزون',
+          expectedChart: ChartType.table),
+      QuerySuggestion(
+          text: 'هوامش الربح للمنتجات',
+          category: 'مالية',
+          expectedChart: ChartType.table),
+      QuerySuggestion(
+          text: 'إجمالي إيرادات هذا الشهر',
+          category: 'مالية',
+          expectedChart: ChartType.number),
     ];
   }
 
@@ -275,7 +299,24 @@ class AiSmartReportsService {
 
   /// استخراج الكلمات المفتاحية
   static List<String> _extractKeywords(String query) {
-    final stopWords = {'ما', 'هي', 'هو', 'كم', 'في', 'من', 'إلى', 'على', 'عن', 'مع', 'هل', 'لي', 'لـ', 'عرض', 'أعطني', 'أرني'};
+    final stopWords = {
+      'ما',
+      'هي',
+      'هو',
+      'كم',
+      'في',
+      'من',
+      'إلى',
+      'على',
+      'عن',
+      'مع',
+      'هل',
+      'لي',
+      'لـ',
+      'عرض',
+      'أعطني',
+      'أرني'
+    };
     return query
         .split(RegExp(r'[\s,،.؟?!]+'))
         .where((w) => w.length > 1 && !stopWords.contains(w))
@@ -345,7 +386,8 @@ class AiSmartReportsService {
       id: 'rpt_daily_${DateTime.now().millisecondsSinceEpoch}',
       title: 'Daily Sales',
       titleAr: 'مبيعات اليوم',
-      summary: 'إجمالي مبيعات اليوم ${total.toStringAsFixed(0)} ر.س مع ${data.length} ساعة نشاط. أعلى ساعة هي الظهر.',
+      summary:
+          'إجمالي مبيعات اليوم ${total.toStringAsFixed(0)} ر.س مع ${data.length} ساعة نشاط. أعلى ساعة هي الظهر.',
       chartType: ChartType.barChart,
       data: data,
       generatedAt: DateTime.now(),
@@ -357,16 +399,34 @@ class AiSmartReportsService {
 
   static GeneratedReport _generateTopProducts() {
     final products = [
-      'حليب المراعي 1 لتر', 'أرز بسمتي 5 كجم', 'خبز توست لوزين',
-      'بيض 30 حبة', 'زيت ذرة 1.5 لتر', 'تونة قودي 185 جم',
-      'سكر أبيض 5 كجم', 'شاي ربيع 200 كيس', 'دجاج مبرد 1 كجم',
+      'حليب المراعي 1 لتر',
+      'أرز بسمتي 5 كجم',
+      'خبز توست لوزين',
+      'بيض 30 حبة',
+      'زيت ذرة 1.5 لتر',
+      'تونة قودي 185 جم',
+      'سكر أبيض 5 كجم',
+      'شاي ربيع 200 كيس',
+      'دجاج مبرد 1 كجم',
       'ماء معدني 12 لتر',
     ];
     final data = products.asMap().entries.map((e) {
       return ReportDataRow(
         label: e.value,
-        value: ((_random.nextDouble() * 500 + 100) * (10 - e.key)).roundToDouble(),
-        category: ['ألبان', 'أرز', 'مخبوزات', 'بيض', 'زيوت', 'معلبات', 'سكر', 'مشروبات', 'لحوم', 'مشروبات'][e.key],
+        value:
+            ((_random.nextDouble() * 500 + 100) * (10 - e.key)).roundToDouble(),
+        category: [
+          'ألبان',
+          'أرز',
+          'مخبوزات',
+          'بيض',
+          'زيوت',
+          'معلبات',
+          'سكر',
+          'مشروبات',
+          'لحوم',
+          'مشروبات'
+        ][e.key],
       );
     }).toList();
 
@@ -374,7 +434,8 @@ class AiSmartReportsService {
       id: 'rpt_top_${DateTime.now().millisecondsSinceEpoch}',
       title: 'Top 10 Products',
       titleAr: 'أفضل 10 منتجات مبيعاً',
-      summary: 'حليب المراعي يتصدر القائمة بأكبر عدد مبيعات. 60% من المبيعات تأتي من أول 3 منتجات.',
+      summary:
+          'حليب المراعي يتصدر القائمة بأكبر عدد مبيعات. 60% من المبيعات تأتي من أول 3 منتجات.',
       chartType: ChartType.barChart,
       data: data,
       generatedAt: DateTime.now(),
@@ -384,8 +445,20 @@ class AiSmartReportsService {
   }
 
   static GeneratedReport _generateMonthlyComparison() {
-    final months = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
-      'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+    final months = [
+      'يناير',
+      'فبراير',
+      'مارس',
+      'أبريل',
+      'مايو',
+      'يونيو',
+      'يوليو',
+      'أغسطس',
+      'سبتمبر',
+      'أكتوبر',
+      'نوفمبر',
+      'ديسمبر'
+    ];
     final data = months.asMap().entries.map((e) {
       return ReportDataRow(
         label: e.value,
@@ -453,7 +526,8 @@ class AiSmartReportsService {
       id: 'rpt_hourly_${DateTime.now().millisecondsSinceEpoch}',
       title: 'Hourly Traffic',
       titleAr: 'حركة العملاء بالساعة',
-      summary: 'أوقات الذروة بين 11-14 ظهراً و 17-20 مساءً. أقل حركة عند 7 صباحاً.',
+      summary:
+          'أوقات الذروة بين 11-14 ظهراً و 17-20 مساءً. أقل حركة عند 7 صباحاً.',
       chartType: ChartType.lineChart,
       data: data,
       generatedAt: DateTime.now(),
@@ -514,7 +588,8 @@ class AiSmartReportsService {
       id: 'rpt_stock_${DateTime.now().millisecondsSinceEpoch}',
       title: 'Low Stock Alert',
       titleAr: 'تنبيهات المخزون المنخفض',
-      summary: '5 منتجات تحت الحد الأدنى. الدجاج المبرد الأكثر حرجاً (2 وحدة فقط).',
+      summary:
+          '5 منتجات تحت الحد الأدنى. الدجاج المبرد الأكثر حرجاً (2 وحدة فقط).',
       chartType: ChartType.table,
       data: data,
       generatedAt: DateTime.now(),
@@ -531,7 +606,8 @@ class AiSmartReportsService {
       summary: 'إجمالي إيرادات الشهر الحالي مع نمو 8.5% عن الشهر السابق.',
       chartType: ChartType.number,
       data: const [
-        ReportDataRow(label: 'إجمالي الشهر', value: 185750, previousValue: 171200),
+        ReportDataRow(
+            label: 'إجمالي الشهر', value: 185750, previousValue: 171200),
       ],
       generatedAt: DateTime.now(),
       templateId: 'total_revenue',

@@ -283,7 +283,8 @@ class BackupManager {
       });
 
       addBreadcrumb(
-        message: 'Backup restored: $restoredRows rows, $restoredTables tables (v$version)',
+        message:
+            'Backup restored: $restoredRows rows, $restoredTables tables (v$version)',
         category: 'backup',
       );
 

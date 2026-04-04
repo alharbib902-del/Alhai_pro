@@ -69,7 +69,8 @@ void main() {
         expect(exception.message, equals('Validation failed'));
         expect(exception.fieldErrors, isNotNull);
         expect(exception.fieldErrors!['name'], contains('Name is required'));
-        expect(exception.fieldErrors!['price'], contains('Price must be positive'));
+        expect(exception.fieldErrors!['price'],
+            contains('Price must be positive'));
       });
 
       test('should allow null field errors', () {
@@ -180,7 +181,8 @@ void main() {
         expect(result.code, equals('TIMEOUT'));
       });
 
-      test('should map connectionError to NetworkException with NO_INTERNET', () {
+      test('should map connectionError to NetworkException with NO_INTERNET',
+          () {
         final dioError = DioException(
           type: DioExceptionType.connectionError,
           requestOptions: RequestOptions(path: '/test'),

@@ -36,7 +36,8 @@ class LocalCacheService {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_deliveriesKey, jsonEncode(deliveries));
     await _setTimestamp(prefs, 'deliveries');
-    if (kDebugMode) debugPrint('LocalCache: cached ${deliveries.length} deliveries');
+    if (kDebugMode)
+      debugPrint('LocalCache: cached ${deliveries.length} deliveries');
   }
 
   /// Return cached delivery list, or `null` if absent / expired.
@@ -51,7 +52,8 @@ class LocalCacheService {
       _deliveriesCache = List.unmodifiable(list);
       return _deliveriesCache;
     } catch (e) {
-      if (kDebugMode) debugPrint('LocalCache: failed to decode deliveries – $e');
+      if (kDebugMode)
+        debugPrint('LocalCache: failed to decode deliveries – $e');
       return null;
     }
   }
@@ -59,7 +61,8 @@ class LocalCacheService {
   // ─── Single delivery detail ───────────────────────────────────────────────
 
   /// Persist a single delivery's full detail (includes order items).
-  Future<void> cacheDeliveryDetail(String id, Map<String, dynamic> delivery) async {
+  Future<void> cacheDeliveryDetail(
+      String id, Map<String, dynamic> delivery) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('cache_delivery_$id', jsonEncode(delivery));
     await _setTimestamp(prefs, 'delivery_$id');
@@ -75,7 +78,8 @@ class LocalCacheService {
     try {
       return jsonDecode(raw) as Map<String, dynamic>;
     } catch (e) {
-      if (kDebugMode) debugPrint('LocalCache: failed to decode delivery $id – $e');
+      if (kDebugMode)
+        debugPrint('LocalCache: failed to decode delivery $id – $e');
       return null;
     }
   }
@@ -85,7 +89,8 @@ class LocalCacheService {
   /// Merges [patch] into the stored JSON without a round-trip to the server.
   /// Call before sending the mutation; revert by calling [cacheDeliveryDetail]
   /// with the original map if the server rejects the change.
-  Future<void> patchCachedDelivery(String id, Map<String, dynamic> patch) async {
+  Future<void> patchCachedDelivery(
+      String id, Map<String, dynamic> patch) async {
     final existing = await getCachedDeliveryDetail(id) ?? {};
     final merged = {...existing, ...patch};
     await cacheDeliveryDetail(id, merged);
@@ -147,7 +152,8 @@ class LocalCacheService {
     try {
       return jsonDecode(raw) as Map<String, dynamic>;
     } catch (e) {
-      if (kDebugMode) debugPrint('LocalCache: failed to decode earnings ($period) – $e');
+      if (kDebugMode)
+        debugPrint('LocalCache: failed to decode earnings ($period) – $e');
       return null;
     }
   }
@@ -159,11 +165,13 @@ class LocalCacheService {
     _deliveriesCache = null;
     _profileCache = null;
     final prefs = await SharedPreferences.getInstance();
-    final toRemove = prefs.getKeys().where((k) => k.startsWith('cache_')).toList();
+    final toRemove =
+        prefs.getKeys().where((k) => k.startsWith('cache_')).toList();
     for (final key in toRemove) {
       await prefs.remove(key);
     }
-    if (kDebugMode) debugPrint('LocalCache: cleared ${toRemove.length} entries');
+    if (kDebugMode)
+      debugPrint('LocalCache: cleared ${toRemove.length} entries');
   }
 
   // ─── Private helpers ──────────────────────────────────────────────────────

@@ -17,8 +17,7 @@ class DatabaseSeeder {
   static const _uuid = Uuid();
 
   /// معرف المتجر الحقيقي في Supabase
-  static const String defaultStoreId =
-      'b10f215e-2c70-4832-a37e-a42a74406a8d';
+  static const String defaultStoreId = 'b10f215e-2c70-4832-a37e-a42a74406a8d';
   static const String defaultUserId = 'user_demo_001';
 
   DatabaseSeeder(this._db);
@@ -259,16 +258,66 @@ class DatabaseSeeder {
 
   /// بيانات العملاء
   static final List<Map<String, dynamic>> _accountsData = [
-    {'name': 'أحمد محمد العلي', 'phone': '0501234567', 'balance': 350.00, 'limit': 1000.00},
-    {'name': 'فاطمة عبدالله', 'phone': '0551234567', 'balance': 0.00, 'limit': 500.00},
-    {'name': 'محمد سعد الدوسري', 'phone': '0561234567', 'balance': 1250.00, 'limit': 2000.00},
-    {'name': 'نورة أحمد', 'phone': '0541234567', 'balance': 75.50, 'limit': 300.00},
-    {'name': 'عبدالرحمن خالد', 'phone': '0591234567', 'balance': 0.00, 'limit': 1500.00},
-    {'name': 'سارة محمد', 'phone': '0531234567', 'balance': 450.00, 'limit': 800.00},
-    {'name': 'يوسف علي الغامدي', 'phone': '0571234567', 'balance': 2100.00, 'limit': 3000.00},
-    {'name': 'هند عبدالعزيز', 'phone': '0521234567', 'balance': 180.00, 'limit': 500.00},
-    {'name': 'خالد إبراهيم', 'phone': '0581234567', 'balance': 0.00, 'limit': 1000.00},
-    {'name': 'ريم سعود', 'phone': '0511234567', 'balance': 620.00, 'limit': 1000.00},
+    {
+      'name': 'أحمد محمد العلي',
+      'phone': '0501234567',
+      'balance': 350.00,
+      'limit': 1000.00
+    },
+    {
+      'name': 'فاطمة عبدالله',
+      'phone': '0551234567',
+      'balance': 0.00,
+      'limit': 500.00
+    },
+    {
+      'name': 'محمد سعد الدوسري',
+      'phone': '0561234567',
+      'balance': 1250.00,
+      'limit': 2000.00
+    },
+    {
+      'name': 'نورة أحمد',
+      'phone': '0541234567',
+      'balance': 75.50,
+      'limit': 300.00
+    },
+    {
+      'name': 'عبدالرحمن خالد',
+      'phone': '0591234567',
+      'balance': 0.00,
+      'limit': 1500.00
+    },
+    {
+      'name': 'سارة محمد',
+      'phone': '0531234567',
+      'balance': 450.00,
+      'limit': 800.00
+    },
+    {
+      'name': 'يوسف علي الغامدي',
+      'phone': '0571234567',
+      'balance': 2100.00,
+      'limit': 3000.00
+    },
+    {
+      'name': 'هند عبدالعزيز',
+      'phone': '0521234567',
+      'balance': 180.00,
+      'limit': 500.00
+    },
+    {
+      'name': 'خالد إبراهيم',
+      'phone': '0581234567',
+      'balance': 0.00,
+      'limit': 1000.00
+    },
+    {
+      'name': 'ريم سعود',
+      'phone': '0511234567',
+      'balance': 620.00,
+      'limit': 1000.00
+    },
   ];
 
   Future<void> seedAccounts() async {

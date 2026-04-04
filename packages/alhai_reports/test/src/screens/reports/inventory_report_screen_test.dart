@@ -33,8 +33,7 @@ void main() {
     });
 
     testWidgets('shows loading indicator initially', (tester) async {
-      when(() => mockProductsDao.getAllProducts(any()))
-          .thenAnswer((_) async {
+      when(() => mockProductsDao.getAllProducts(any())).thenAnswer((_) async {
         await Future.delayed(const Duration(seconds: 2));
         return <ProductsTableData>[];
       });
@@ -116,8 +115,7 @@ void main() {
 
     testWidgets('retry button reloads data on error', (tester) async {
       int callCount = 0;
-      when(() => mockProductsDao.getAllProducts(any()))
-          .thenAnswer((_) async {
+      when(() => mockProductsDao.getAllProducts(any())).thenAnswer((_) async {
         callCount++;
         if (callCount == 1) {
           throw Exception('Database error');

@@ -50,17 +50,19 @@ class _OnlineOrdersScreenState extends ConsumerState<OnlineOrdersScreen> {
       // Map DB rows to UI model.
       // If no orders in DB yet, show placeholder data for demo purposes.
       if (dbOrders.isNotEmpty) {
-        _orders = dbOrders.map((o) => _OnlineOrder(
-          id: o.orderNumber,
-          customerName: o.customerId ?? '',
-          phone: '',
-          items: [o.notes ?? ''],
-          total: o.total,
-          status: o.status,
-          platform: o.channel,
-          address: o.deliveryAddress ?? '',
-          createdAt: o.orderDate,
-        )).toList();
+        _orders = dbOrders
+            .map((o) => _OnlineOrder(
+                  id: o.orderNumber,
+                  customerName: o.customerId ?? '',
+                  phone: '',
+                  items: [o.notes ?? ''],
+                  total: o.total,
+                  status: o.status,
+                  platform: o.channel,
+                  address: o.deliveryAddress ?? '',
+                  createdAt: o.orderDate,
+                ))
+            .toList();
       } else {
         // Placeholder data when DB is empty (first run / demo)
         _orders = [
@@ -68,22 +70,30 @@ class _OnlineOrdersScreenState extends ConsumerState<OnlineOrdersScreen> {
             id: 'ORD-001',
             customerName: '\u0623\u062D\u0645\u062F \u0645\u062D\u0645\u062F',
             phone: '0501234567',
-            items: ['\u0643\u0648\u0643\u0627\u0643\u0648\u0644\u0627 \u00D7 2', '\u0634\u064A\u0628\u0633 \u00D7 1'],
+            items: [
+              '\u0643\u0648\u0643\u0627\u0643\u0648\u0644\u0627 \u00D7 2',
+              '\u0634\u064A\u0628\u0633 \u00D7 1'
+            ],
             total: 45.50,
             status: 'created',
             platform: 'app',
-            address: '\u062D\u064A \u0627\u0644\u0639\u0644\u064A\u0627\u060C \u0627\u0644\u0631\u064A\u0627\u0636',
+            address:
+                '\u062D\u064A \u0627\u0644\u0639\u0644\u064A\u0627\u060C \u0627\u0644\u0631\u064A\u0627\u0636',
             createdAt: DateTime.now().subtract(const Duration(minutes: 15)),
           ),
           _OnlineOrder(
             id: 'ORD-002',
             customerName: '\u0633\u0627\u0631\u0629 \u0639\u0644\u064A',
             phone: '0559876543',
-            items: ['\u0639\u0635\u064A\u0631 \u0628\u0631\u062A\u0642\u0627\u0644 \u00D7 3', '\u0645\u0627\u0621 \u00D7 6'],
+            items: [
+              '\u0639\u0635\u064A\u0631 \u0628\u0631\u062A\u0642\u0627\u0644 \u00D7 3',
+              '\u0645\u0627\u0621 \u00D7 6'
+            ],
             total: 78.00,
             status: 'preparing',
             platform: 'website',
-            address: '\u062D\u064A \u0627\u0644\u0645\u0644\u0642\u0627\u060C \u0627\u0644\u0631\u064A\u0627\u0636',
+            address:
+                '\u062D\u064A \u0627\u0644\u0645\u0644\u0642\u0627\u060C \u0627\u0644\u0631\u064A\u0627\u0636',
             createdAt: DateTime.now().subtract(const Duration(hours: 1)),
           ),
         ];
@@ -110,68 +120,103 @@ class _OnlineOrdersScreenState extends ConsumerState<OnlineOrdersScreen> {
 
   Color _statusColor(String status) {
     switch (status) {
-      case 'created': return Colors.orange;
-      case 'preparing': return Colors.blue;
-      case 'ready': return Colors.purple;
-      case 'out_for_delivery': return Colors.teal;
-      case 'delivered': return Colors.green;
-      case 'cancelled': return Colors.red;
-      default: return Theme.of(context).colorScheme.outline;
+      case 'created':
+        return Colors.orange;
+      case 'preparing':
+        return Colors.blue;
+      case 'ready':
+        return Colors.purple;
+      case 'out_for_delivery':
+        return Colors.teal;
+      case 'delivered':
+        return Colors.green;
+      case 'cancelled':
+        return Colors.red;
+      default:
+        return Theme.of(context).colorScheme.outline;
     }
   }
 
   IconData _statusIcon(String status) {
     switch (status) {
-      case 'created': return Icons.fiber_new;
-      case 'preparing': return Icons.restaurant;
-      case 'ready': return Icons.check_circle_outline;
-      case 'out_for_delivery': return Icons.local_shipping;
-      case 'delivered': return Icons.done_all;
-      case 'cancelled': return Icons.cancel;
-      default: return Icons.info_outline;
+      case 'created':
+        return Icons.fiber_new;
+      case 'preparing':
+        return Icons.restaurant;
+      case 'ready':
+        return Icons.check_circle_outline;
+      case 'out_for_delivery':
+        return Icons.local_shipping;
+      case 'delivered':
+        return Icons.done_all;
+      case 'cancelled':
+        return Icons.cancel;
+      default:
+        return Icons.info_outline;
     }
   }
 
   String _statusLabel(String status, BuildContext context) {
     final l10n = AppLocalizations.of(context);
     switch (status) {
-      case 'created': return l10n.statusNew;
-      case 'preparing': return l10n.statusPreparing;
-      case 'ready': return l10n.statusReadyForPickup;
-      case 'out_for_delivery': return l10n.statusShipped;
-      case 'delivered': return l10n.statusDelivered;
-      case 'cancelled': return l10n.statusCancelled;
-      default: return status;
+      case 'created':
+        return l10n.statusNew;
+      case 'preparing':
+        return l10n.statusPreparing;
+      case 'ready':
+        return l10n.statusReadyForPickup;
+      case 'out_for_delivery':
+        return l10n.statusShipped;
+      case 'delivered':
+        return l10n.statusDelivered;
+      case 'cancelled':
+        return l10n.statusCancelled;
+      default:
+        return status;
     }
   }
 
   String _nextStatus(String status) {
     switch (status) {
-      case 'created': return 'preparing';
-      case 'preparing': return 'ready';
-      case 'ready': return 'out_for_delivery';
-      case 'out_for_delivery': return 'delivered';
-      default: return status;
+      case 'created':
+        return 'preparing';
+      case 'preparing':
+        return 'ready';
+      case 'ready':
+        return 'out_for_delivery';
+      case 'out_for_delivery':
+        return 'delivered';
+      default:
+        return status;
     }
   }
 
   String _nextStatusLabel(String status, BuildContext context) {
     final l10n = AppLocalizations.of(context);
     switch (status) {
-      case 'created': return l10n.nextStatusAcceptOrder;
-      case 'preparing': return l10n.nextStatusReady;
-      case 'ready': return l10n.nextStatusShipped;
-      case 'out_for_delivery': return l10n.nextStatusDelivered;
-      default: return '';
+      case 'created':
+        return l10n.nextStatusAcceptOrder;
+      case 'preparing':
+        return l10n.nextStatusReady;
+      case 'ready':
+        return l10n.nextStatusShipped;
+      case 'out_for_delivery':
+        return l10n.nextStatusDelivered;
+      default:
+        return '';
     }
   }
 
   String _platformIcon(String platform) {
     switch (platform) {
-      case 'whatsapp': return '💬';
-      case 'website': return '🌐';
-      case 'app': return '📱';
-      default: return '📦';
+      case 'whatsapp':
+        return '💬';
+      case 'website':
+        return '🌐';
+      case 'app':
+        return '📱';
+      default:
+        return '📦';
     }
   }
 
@@ -202,14 +247,20 @@ class _OnlineOrdersScreenState extends ConsumerState<OnlineOrdersScreen> {
                 ),
                 child: Text(
                   '$pendingCount',
-                  style: TextStyle(color: Theme.of(context).colorScheme.onError, fontSize: 12, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.onError,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold),
                 ),
               ),
             ],
           ],
         ),
         actions: [
-          IconButton(icon: const Icon(Icons.refresh_rounded), onPressed: _loadOrders, tooltip: AppLocalizations.of(context).retry),
+          IconButton(
+              icon: const Icon(Icons.refresh_rounded),
+              onPressed: _loadOrders,
+              tooltip: AppLocalizations.of(context).retry),
         ],
       ),
       body: Column(
@@ -232,18 +283,23 @@ class _OnlineOrdersScreenState extends ConsumerState<OnlineOrdersScreen> {
                     label: Text('${tab.$2} ${count > 0 ? "($count)" : ""}',
                         style: TextStyle(
                           fontSize: 12,
-                          color: isSelected ? Theme.of(context).colorScheme.onPrimary : null,
+                          color: isSelected
+                              ? Theme.of(context).colorScheme.onPrimary
+                              : null,
                         )),
                     selected: isSelected,
                     onSelected: (_) {
                       setState(() => _statusFilter = tab.$1);
                       _applyFilter();
                     },
-                    selectedColor: _statusColor(tab.$1 == 'all' ? 'preparing' : tab.$1),
-                    backgroundColor: _statusColor(tab.$1 == 'all' ? 'preparing' : tab.$1)
-                        .withValues(alpha: 0.1),
+                    selectedColor:
+                        _statusColor(tab.$1 == 'all' ? 'preparing' : tab.$1),
+                    backgroundColor:
+                        _statusColor(tab.$1 == 'all' ? 'preparing' : tab.$1)
+                            .withValues(alpha: 0.1),
                     showCheckmark: false,
-                    padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xxs),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: AlhaiSpacing.xxs),
                   ),
                 );
               }).toList(),
@@ -275,18 +331,23 @@ class _OnlineOrdersScreenState extends ConsumerState<OnlineOrdersScreen> {
                                     Row(
                                       children: [
                                         Text(_platformIcon(order.platform),
-                                            style: const TextStyle(fontSize: 18)),
+                                            style:
+                                                const TextStyle(fontSize: 18)),
                                         const SizedBox(width: AlhaiSpacing.xs),
                                         Expanded(
                                           child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
                                               Text(order.customerName,
                                                   style: const TextStyle(
-                                                      fontWeight: FontWeight.bold)),
+                                                      fontWeight:
+                                                          FontWeight.bold)),
                                               Text(order.id,
                                                   style: TextStyle(
-                                                      fontSize: 11, color: Theme.of(context).hintColor)),
+                                                      fontSize: 11,
+                                                      color: Theme.of(context)
+                                                          .hintColor)),
                                             ],
                                           ),
                                         ),
@@ -295,16 +356,21 @@ class _OnlineOrdersScreenState extends ConsumerState<OnlineOrdersScreen> {
                                               horizontal: 10, vertical: 4),
                                           decoration: BoxDecoration(
                                             color: color.withValues(alpha: 0.1),
-                                            borderRadius: BorderRadius.circular(10),
-                                            border: Border.all(color: color.withValues(alpha: 0.3)),
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            border: Border.all(
+                                                color: color.withValues(
+                                                    alpha: 0.3)),
                                           ),
                                           child: Row(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
-                                              Icon(_statusIcon(order.status), size: 12, color: color),
+                                              Icon(_statusIcon(order.status),
+                                                  size: 12, color: color),
                                               const SizedBox(width: 4),
                                               Text(
-                                                _statusLabel(order.status, context),
+                                                _statusLabel(
+                                                    order.status, context),
                                                 style: TextStyle(
                                                   fontSize: 11,
                                                   color: color,
@@ -320,15 +386,22 @@ class _OnlineOrdersScreenState extends ConsumerState<OnlineOrdersScreen> {
 
                                     // Items
                                     ...order.items.map((item) => Padding(
-                                      padding: const EdgeInsets.only(bottom: 2),
-                                      child: Row(
-                                        children: [
-                                          ExcludeSemantics(child: Icon(Icons.circle, size: 6, color: Theme.of(context).hintColor)),
-                                          const SizedBox(width: 6),
-                                          Text(item, style: const TextStyle(fontSize: 13)),
-                                        ],
-                                      ),
-                                    )),
+                                          padding:
+                                              const EdgeInsets.only(bottom: 2),
+                                          child: Row(
+                                            children: [
+                                              ExcludeSemantics(
+                                                  child: Icon(Icons.circle,
+                                                      size: 6,
+                                                      color: Theme.of(context)
+                                                          .hintColor)),
+                                              const SizedBox(width: 6),
+                                              Text(item,
+                                                  style: const TextStyle(
+                                                      fontSize: 13)),
+                                            ],
+                                          ),
+                                        )),
 
                                     const SizedBox(height: AlhaiSpacing.xs),
 
@@ -337,18 +410,25 @@ class _OnlineOrdersScreenState extends ConsumerState<OnlineOrdersScreen> {
                                       children: [
                                         ExcludeSemantics(
                                           child: Icon(Icons.location_on_rounded,
-                                              size: 14, color: Theme.of(context).hintColor),
+                                              size: 14,
+                                              color:
+                                                  Theme.of(context).hintColor),
                                         ),
                                         const SizedBox(width: AlhaiSpacing.xxs),
                                         Expanded(
                                           child: Text(
                                             order.address,
-                                            style: TextStyle(fontSize: 11, color: Theme.of(context).hintColor),
+                                            style: TextStyle(
+                                                fontSize: 11,
+                                                color: Theme.of(context)
+                                                    .hintColor),
                                             overflow: TextOverflow.ellipsis,
                                           ),
                                         ),
                                         Text(
-                                          AppLocalizations.of(context).amountSar(order.total.toStringAsFixed(2)),
+                                          AppLocalizations.of(context)
+                                              .amountSar(order.total
+                                                  .toStringAsFixed(2)),
                                           style: const TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 15,
@@ -359,42 +439,57 @@ class _OnlineOrdersScreenState extends ConsumerState<OnlineOrdersScreen> {
 
                                     const SizedBox(height: 6),
                                     Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
                                           _timeAgo(order.createdAt, context),
-                                          style: TextStyle(fontSize: 11, color: Theme.of(context).hintColor),
+                                          style: TextStyle(
+                                              fontSize: 11,
+                                              color:
+                                                  Theme.of(context).hintColor),
                                         ),
-                                        if (_nextStatusLabel(order.status, context).isNotEmpty)
+                                        if (_nextStatusLabel(
+                                                order.status, context)
+                                            .isNotEmpty)
                                           SizedBox(
                                             height: 30,
                                             child: FilledButton(
                                               onPressed: () {
                                                 setState(() {
-                                                  final idx = _orders.indexOf(order);
+                                                  final idx =
+                                                      _orders.indexOf(order);
                                                   if (idx >= 0) {
                                                     _orders[idx] = _OnlineOrder(
                                                       id: order.id,
-                                                      customerName: order.customerName,
+                                                      customerName:
+                                                          order.customerName,
                                                       phone: order.phone,
                                                       items: order.items,
                                                       total: order.total,
-                                                      status: _nextStatus(order.status),
+                                                      status: _nextStatus(
+                                                          order.status),
                                                       platform: order.platform,
                                                       address: order.address,
-                                                      createdAt: order.createdAt,
+                                                      createdAt:
+                                                          order.createdAt,
                                                     );
                                                   }
                                                 });
                                                 _applyFilter();
                                               },
                                               style: FilledButton.styleFrom(
-                                                padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal:
+                                                            AlhaiSpacing.sm),
                                                 backgroundColor: color,
                                               ),
                                               child: Text(
-                                                _nextStatusLabel(order.status, context),
-                                                style: const TextStyle(fontSize: 12),
+                                                _nextStatusLabel(
+                                                    order.status, context),
+                                                style: const TextStyle(
+                                                    fontSize: 12),
                                               ),
                                             ),
                                           ),

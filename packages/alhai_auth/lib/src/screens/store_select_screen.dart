@@ -78,7 +78,8 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
       if (stores.isEmpty) {
         final hasProds = await db.productsDao.hasProducts(kDefaultStoreId);
         if (hasProds) {
-          debugPrint('[StoreSelect] Products exist but no store record - creating default');
+          debugPrint(
+              '[StoreSelect] Products exist but no store record - creating default');
           await db.storesDao.insertStore(StoresTableCompanion.insert(
             id: kDefaultStoreId,
             name: 'سوبرماركت الحي',
@@ -96,7 +97,9 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
       }
 
       if (stores.isNotEmpty) {
-        final branches = stores.asMap().entries
+        final branches = stores
+            .asMap()
+            .entries
             .map((e) => _mapStoreToBranch(e.value, isFirst: e.key == 0))
             .toList();
 
@@ -142,7 +145,8 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
   }
 
   /// مزامنة المتاجر في الخلفية بدون تأخير العرض
-  Future<void> _syncStoresInBackground(AppDatabase db, String? currentUserId) async {
+  Future<void> _syncStoresInBackground(
+      AppDatabase db, String? currentUserId) async {
     try {
       await _syncStoresFromSupabase(db);
       // بعد المزامنة، نتحقق إذا تغيرت القائمة
@@ -154,7 +158,9 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
               .map((us) => us.storeId)
               .toList();
           final stores = await db.storesDao.getStoresByIds(activeIds);
-          final branches = stores.asMap().entries
+          final branches = stores
+              .asMap()
+              .entries
               .map((e) => _mapStoreToBranch(e.value, isFirst: e.key == 0))
               .toList();
           if (mounted && branches.length != _stores.length) {
@@ -199,8 +205,10 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
       } on Exception catch (e) {
         lastError = e;
         if (attempt < maxRetries - 1) {
-          final delay = initialDelay * (1 << attempt); // exponential: 1s, 2s, 4s
-          debugPrint('[$label] Attempt ${attempt + 1} failed, retrying in ${delay.inMilliseconds}ms: $e');
+          final delay =
+              initialDelay * (1 << attempt); // exponential: 1s, 2s, 4s
+          debugPrint(
+              '[$label] Attempt ${attempt + 1} failed, retrying in ${delay.inMilliseconds}ms: $e');
           await Future.delayed(delay);
         }
       }
@@ -215,7 +223,8 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
 
     final supabase = Supabase.instance.client;
     final authUser = supabase.auth.currentUser;
-    debugPrint('[StoreSelect] currentUser: ${authUser?.id} / phone: ${authUser?.phone}');
+    debugPrint(
+        '[StoreSelect] currentUser: ${authUser?.id} / phone: ${authUser?.phone}');
 
     if (authUser == null) {
       debugPrint('[StoreSelect] No authenticated user - returning empty');
@@ -244,7 +253,9 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
         name: s['name'] as String? ?? '',
         address: s['address'] as String?,
         type: BranchType.store,
-        status: (s['is_active'] as bool? ?? true) ? BranchStatus.open : BranchStatus.closed,
+        status: (s['is_active'] as bool? ?? true)
+            ? BranchStatus.open
+            : BranchStatus.closed,
         isDefault: i == 0,
       ));
     }
@@ -261,14 +272,16 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
 
       // استخدام RPC لتفادي مشاكل RLS مع retry
       final response = await _retryRpc(
-        () => supabase.rpc('get_my_stores').timeout(const Duration(seconds: 10)),
+        () =>
+            supabase.rpc('get_my_stores').timeout(const Duration(seconds: 10)),
         label: 'sync_get_my_stores',
         maxRetries: 2,
       );
       final storesList = response is List ? response : <dynamic>[];
       if (storesList.isEmpty) return;
 
-      debugPrint('[StoreSelect] Syncing ${storesList.length} stores to local DB');
+      debugPrint(
+          '[StoreSelect] Syncing ${storesList.length} stores to local DB');
       final now = DateTime.now();
 
       for (final s in storesList) {
@@ -280,7 +293,8 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
         await db.storesDao.insertStore(StoresTableCompanion.insert(
           id: storeId,
           name: s['name'] as String? ?? '',
-          createdAt: DateTime.tryParse(s['created_at']?.toString() ?? '') ?? now,
+          createdAt:
+              DateTime.tryParse(s['created_at']?.toString() ?? '') ?? now,
           currency: Value(s['currency'] as String? ?? 'SAR'),
           timezone: Value(s['timezone'] as String? ?? 'Asia/Riyadh'),
           isActive: Value(s['is_active'] as bool? ?? true),
@@ -303,7 +317,8 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
           createdAt: now,
         ));
       }
-      debugPrint('[StoreSelect] Stores + user_stores synced to local DB successfully');
+      debugPrint(
+          '[StoreSelect] Stores + user_stores synced to local DB successfully');
     } catch (e) {
       debugPrint('خطأ في مزامنة المتاجر من Supabase: $e');
     }
@@ -376,11 +391,15 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
     // تشغيل RPC التصنيفات والمنتجات بالتوازي بدلاً من التسلسل
     final results = await Future.wait([
       _retryRpc(
-        () => supabase.rpc('get_store_categories', params: {'p_store_id': storeId}).timeout(const Duration(seconds: 20)),
+        () => supabase.rpc('get_store_categories', params: {
+          'p_store_id': storeId
+        }).timeout(const Duration(seconds: 20)),
         label: 'get_store_categories',
       ),
       _retryRpc(
-        () => supabase.rpc('get_store_products', params: {'p_store_id': storeId}).timeout(const Duration(seconds: 20)),
+        () => supabase.rpc('get_store_products', params: {
+          'p_store_id': storeId
+        }).timeout(const Duration(seconds: 20)),
         label: 'get_store_products',
       ),
     ]);
@@ -398,16 +417,16 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
     debugPrint('[Sync] ✅ اكتملت المزامنة');
   }
 
-  Future<void> _saveCategoriesLocally(AppDatabase db, List<dynamic> catList) async {
-    final categories = catList
-        .where((c) => c is Map<String, dynamic>)
-        .map((c) {
+  Future<void> _saveCategoriesLocally(
+      AppDatabase db, List<dynamic> catList) async {
+    final categories = catList.where((c) => c is Map<String, dynamic>).map((c) {
       final cat = c as Map<String, dynamic>;
       return CategoriesTableCompanion.insert(
         id: cat['id'] as String? ?? '',
         storeId: cat['store_id'] as String? ?? '',
         name: cat['name'] as String? ?? '',
-        createdAt: DateTime.tryParse(cat['created_at']?.toString() ?? '') ?? DateTime.now(),
+        createdAt: DateTime.tryParse(cat['created_at']?.toString() ?? '') ??
+            DateTime.now(),
         orgId: Value(cat['org_id'] as String?),
         nameEn: Value(cat['name_en'] as String?),
         parentId: Value(cat['parent_id'] as String?),
@@ -416,7 +435,8 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
         icon: Value(cat['icon'] as String?),
         sortOrder: Value(cat['sort_order'] as int? ?? 0),
         isActive: Value(cat['is_active'] as bool? ?? true),
-        updatedAt: Value(DateTime.tryParse(cat['updated_at']?.toString() ?? '')),
+        updatedAt:
+            Value(DateTime.tryParse(cat['updated_at']?.toString() ?? '')),
         syncedAt: Value(DateTime.now()),
       );
     }).toList();
@@ -425,7 +445,8 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
     debugPrint('[Sync] ✅ تم مزامنة ${categories.length} تصنيف');
   }
 
-  Future<void> _saveProductsLocally(AppDatabase db, List<dynamic> prodList) async {
+  Future<void> _saveProductsLocally(
+      AppDatabase db, List<dynamic> prodList) async {
     for (final p in prodList) {
       if (p is! Map<String, dynamic>) continue;
       final prod = p;
@@ -434,7 +455,8 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
         storeId: prod['store_id'] as String? ?? '',
         name: prod['name'] as String? ?? '',
         price: (prod['price'] as num?)?.toDouble() ?? 0.0,
-        createdAt: DateTime.tryParse(prod['created_at']?.toString() ?? '') ?? DateTime.now(),
+        createdAt: DateTime.tryParse(prod['created_at']?.toString() ?? '') ??
+            DateTime.now(),
         orgId: Value(prod['org_id'] as String?),
         sku: Value(prod['sku'] as String?),
         barcode: Value(prod['barcode'] as String?),
@@ -450,7 +472,8 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
         categoryId: Value(prod['category_id'] as String?),
         isActive: Value(prod['is_active'] as bool? ?? true),
         trackInventory: Value(prod['track_inventory'] as bool? ?? true),
-        updatedAt: Value(DateTime.tryParse(prod['updated_at']?.toString() ?? '')),
+        updatedAt:
+            Value(DateTime.tryParse(prod['updated_at']?.toString() ?? '')),
         syncedAt: Value(DateTime.now()),
       ));
     }
@@ -701,7 +724,9 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
       children: [
         Expanded(child: _buildStatItem('24/7', l10n?.support247 ?? 'دعم فني')),
         const SizedBox(width: AlhaiSpacing.md),
-        Expanded(child: _buildStatItem('50+', l10n?.analyticsTools ?? 'أدوات تحليل')),
+        Expanded(
+            child:
+                _buildStatItem('50+', l10n?.analyticsTools ?? 'أدوات تحليل')),
         const SizedBox(width: AlhaiSpacing.md),
         Expanded(child: _buildStatItem('99.9%', l10n?.uptime ?? 'وقت التشغيل')),
       ],
@@ -778,7 +803,8 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
                 ),
                 const SizedBox(height: AlhaiSpacing.xxs),
                 Text(
-                  AppLocalizations.of(context)?.selectYourBranchToContinue ?? 'اختر فرعك للمتابعة',
+                  AppLocalizations.of(context)?.selectYourBranchToContinue ??
+                      'اختر فرعك للمتابعة',
                   style: TextStyle(
                     color: Colors.white.withValues(alpha: 0.9),
                     fontSize: 14,
@@ -825,7 +851,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
     final localeState = ref.watch(localeProvider);
     final l10n = AppLocalizations.of(context);
     final iconSize = isMobile ? 36.0 : 44.0;
-    
+
     return Container(
       padding: EdgeInsets.all(isMobile ? AlhaiSpacing.sm : AlhaiSpacing.lg),
       child: Column(
@@ -841,24 +867,28 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
                 isDarkMode: isDarkMode,
                 size: iconSize,
               ),
-              
+
               SizedBox(width: isMobile ? AlhaiSpacing.xs : AlhaiSpacing.sm),
-              
+
               // === معلومات المستخدم ===
               Expanded(
                 child: _buildUserInfo(isDarkMode, isMobile: isMobile),
               ),
-              
+
               // === اليمين: اللغة + Dark Mode ===
-              _buildLanguageSelector(isDarkMode, localeState, isMobile: isMobile),
-              
+              _buildLanguageSelector(isDarkMode, localeState,
+                  isMobile: isMobile),
+
               SizedBox(width: isMobile ? 6 : AlhaiSpacing.xs),
-              
+
               // M-THEME-FIX: توحيد أيقونة الثيم مع شاشة Login
               IconButton(
-                onPressed: () => ref.read(themeProvider.notifier).toggleDarkMode(),
+                onPressed: () =>
+                    ref.read(themeProvider.notifier).toggleDarkMode(),
                 icon: Icon(
-                  isDarkMode ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
+                  isDarkMode
+                      ? Icons.light_mode_rounded
+                      : Icons.dark_mode_rounded,
                   color: isDarkMode ? Colors.white70 : AppColors.textSecondary,
                 ),
                 tooltip: isDarkMode ? 'الوضع النهاري' : 'الوضع الليلي',
@@ -881,7 +911,8 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
           const SizedBox(height: AlhaiSpacing.xs),
 
           Text(
-            l10n?.youHaveAccessToBranches ?? 'لديك صلاحية الوصول إلى الفروع التالية. اختر فرعاً للبدء.',
+            l10n?.youHaveAccessToBranches ??
+                'لديك صلاحية الوصول إلى الفروع التالية. اختر فرعاً للبدء.',
             style: TextStyle(
               color: isDarkMode ? Colors.white60 : AppColors.textSecondary,
               fontSize: 14,
@@ -910,19 +941,24 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
         width: size,
         height: size,
         decoration: BoxDecoration(
-          color: isDarkMode ? Colors.white.withValues(alpha: 0.1) : Theme.of(context).colorScheme.surfaceContainerLow,
+          color: isDarkMode
+              ? Colors.white.withValues(alpha: 0.1)
+              : Theme.of(context).colorScheme.surfaceContainerLow,
           borderRadius: BorderRadius.circular(size * 0.27),
         ),
         child: Icon(
           icon,
-          color: isDarkMode ? Colors.white70 : Theme.of(context).colorScheme.onSurfaceVariant,
+          color: isDarkMode
+              ? Colors.white70
+              : Theme.of(context).colorScheme.onSurfaceVariant,
           size: size * 0.45,
         ),
       ),
     );
   }
 
-  Widget _buildLanguageSelector(bool isDarkMode, LocaleState localeState, {bool isMobile = false}) {
+  Widget _buildLanguageSelector(bool isDarkMode, LocaleState localeState,
+      {bool isMobile = false}) {
     return PopupMenuButton<Locale>(
       offset: const Offset(0, 48),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -933,7 +969,9 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
           vertical: isMobile ? 8 : 10,
         ),
         decoration: BoxDecoration(
-          color: isDarkMode ? Colors.white.withValues(alpha: 0.1) : Theme.of(context).colorScheme.surfaceContainerLow,
+          color: isDarkMode
+              ? Colors.white.withValues(alpha: 0.1)
+              : Theme.of(context).colorScheme.surfaceContainerLow,
           borderRadius: BorderRadius.circular(isMobile ? 10 : 12),
         ),
         child: Row(
@@ -958,7 +996,9 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
             Icon(
               Icons.keyboard_arrow_down,
               size: isMobile ? 16 : 18,
-              color: isDarkMode ? Colors.white54 : Theme.of(context).colorScheme.onSurfaceVariant,
+              color: isDarkMode
+                  ? Colors.white54
+                  : Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ],
         ),
@@ -988,27 +1028,43 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
 
   String _getLanguageFlag(String code) {
     switch (code) {
-      case 'ar': return '🇸🇦';
-      case 'en': return '🇺🇸';
-      case 'hi': return '🇮🇳';
-      case 'bn': return '🇧🇩';
-      case 'id': return '🇮🇩';
-      case 'tl': return '🇵🇭';
-      case 'ur': return '🇵🇰';
-      default: return '🌍';
+      case 'ar':
+        return '🇸🇦';
+      case 'en':
+        return '🇺🇸';
+      case 'hi':
+        return '🇮🇳';
+      case 'bn':
+        return '🇧🇩';
+      case 'id':
+        return '🇮🇩';
+      case 'tl':
+        return '🇵🇭';
+      case 'ur':
+        return '🇵🇰';
+      default:
+        return '🌍';
     }
   }
 
   String _getLanguageName(String code) {
     switch (code) {
-      case 'ar': return 'العربية';
-      case 'en': return 'English';
-      case 'hi': return 'हिंदी';
-      case 'bn': return 'বাংলা';
-      case 'id': return 'Indonesia';
-      case 'tl': return 'Filipino';
-      case 'ur': return 'اردو';
-      default: return code;
+      case 'ar':
+        return 'العربية';
+      case 'en':
+        return 'English';
+      case 'hi':
+        return 'हिंदी';
+      case 'bn':
+        return 'বাংলা';
+      case 'id':
+        return 'Indonesia';
+      case 'tl':
+        return 'Filipino';
+      case 'ur':
+        return 'اردو';
+      default:
+        return code;
     }
   }
 
@@ -1104,20 +1160,25 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide(
-            color: isDarkMode ? Colors.white12 : Theme.of(context).colorScheme.outlineVariant,
+            color: isDarkMode
+                ? Colors.white12
+                : Theme.of(context).colorScheme.outlineVariant,
           ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide(
-            color: isDarkMode ? Colors.white12 : Theme.of(context).colorScheme.outlineVariant,
+            color: isDarkMode
+                ? Colors.white12
+                : Theme.of(context).colorScheme.outlineVariant,
           ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: const BorderSide(color: AppColors.primary, width: 2),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.mdl, vertical: AlhaiSpacing.md),
+        contentPadding: const EdgeInsets.symmetric(
+            horizontal: AlhaiSpacing.mdl, vertical: AlhaiSpacing.md),
       ),
     );
   }
@@ -1134,7 +1195,9 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error_outline, size: 64, color: isDarkMode ? Colors.red.shade300 : Colors.red.shade400),
+            Icon(Icons.error_outline,
+                size: 64,
+                color: isDarkMode ? Colors.red.shade300 : Colors.red.shade400),
             const SizedBox(height: AlhaiSpacing.md),
             Text(
               AppLocalizations.of(context)?.errorOccurred ?? 'حدث خطأ',
@@ -1157,7 +1220,8 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
             TextButton.icon(
               onPressed: _loadStores,
               icon: const Icon(Icons.refresh),
-              label: Text(AppLocalizations.of(context)?.retry ?? 'إعادة المحاولة'),
+              label:
+                  Text(AppLocalizations.of(context)?.retry ?? 'إعادة المحاولة'),
             ),
           ],
         ),
@@ -1169,7 +1233,8 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
     }
 
     return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg, vertical: AlhaiSpacing.md),
+      padding: const EdgeInsets.symmetric(
+          horizontal: AlhaiSpacing.lg, vertical: AlhaiSpacing.md),
       itemCount: _filteredStores.length + 1,
       itemBuilder: (context, index) {
         if (index == _filteredStores.length) {
@@ -1231,13 +1296,19 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
         padding: const EdgeInsets.all(AlhaiSpacing.md),
         decoration: BoxDecoration(
           color: isDarkMode
-              ? (isSelected ? AppColors.primary.withValues(alpha: 0.1) : Colors.white.withValues(alpha: 0.05))
-              : (isSelected ? AppColors.primary.withValues(alpha: 0.05) : Theme.of(context).colorScheme.surfaceContainerLowest),
+              ? (isSelected
+                  ? AppColors.primary.withValues(alpha: 0.1)
+                  : Colors.white.withValues(alpha: 0.05))
+              : (isSelected
+                  ? AppColors.primary.withValues(alpha: 0.05)
+                  : Theme.of(context).colorScheme.surfaceContainerLowest),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isSelected
                 ? AppColors.primary
-                : (isDarkMode ? Colors.white12 : Theme.of(context).colorScheme.outlineVariant),
+                : (isDarkMode
+                    ? Colors.white12
+                    : Theme.of(context).colorScheme.outlineVariant),
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -1253,7 +1324,9 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
             else
               Icon(
                 Icons.chevron_left,
-                color: isDarkMode ? Colors.white38 : Theme.of(context).colorScheme.outlineVariant,
+                color: isDarkMode
+                    ? Colors.white38
+                    : Theme.of(context).colorScheme.outlineVariant,
               ),
 
             const SizedBox(width: AlhaiSpacing.sm),
@@ -1274,7 +1347,9 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
                     width: 6,
                     height: 6,
                     decoration: BoxDecoration(
-                      color: isOpen ? AppColors.success : Theme.of(context).disabledColor,
+                      color: isOpen
+                          ? AppColors.success
+                          : Theme.of(context).disabledColor,
                       shape: BoxShape.circle,
                     ),
                   ),
@@ -1282,11 +1357,14 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
                   Text(
                     isOpen
                         ? (l10n?.openNow ?? 'مفتوح الآن')
-                        : (store.closedUntil != null 
-                            ? (l10n?.closedOpensAt(store.closedUntil!) ?? 'مغلق (يفتح ${store.closedUntil})')
+                        : (store.closedUntil != null
+                            ? (l10n?.closedOpensAt(store.closedUntil!) ??
+                                'مغلق (يفتح ${store.closedUntil})')
                             : (l10n?.branchClosed ?? 'مغلق')),
                     style: TextStyle(
-                      color: isOpen ? AppColors.success : Theme.of(context).disabledColor,
+                      color: isOpen
+                          ? AppColors.success
+                          : Theme.of(context).disabledColor,
                       fontSize: 11,
                       fontWeight: FontWeight.w500,
                     ),
@@ -1320,7 +1398,9 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
                         child: Text(
                           store.address ?? '',
                           style: TextStyle(
-                            color: isDarkMode ? Colors.white54 : AppColors.textSecondary,
+                            color: isDarkMode
+                                ? Colors.white54
+                                : AppColors.textSecondary,
                             fontSize: 13,
                           ),
                           textAlign: TextAlign.end,
@@ -1331,7 +1411,9 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
                       Icon(
                         Icons.location_on_outlined,
                         size: 14,
-                        color: isDarkMode ? Colors.white38 : AppColors.textTertiary,
+                        color: isDarkMode
+                            ? Colors.white38
+                            : AppColors.textTertiary,
                       ),
                     ],
                   ),
@@ -1367,17 +1449,21 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
             SnackBar(
               content: Text(l10n?.comingSoon ?? 'سيتم إضافة هذه الميزة قريباً'),
               behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
             ),
           );
         },
         style: OutlinedButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.mdl),
           side: BorderSide(
-            color: isDarkMode ? Colors.white24 : Theme.of(context).colorScheme.outlineVariant,
+            color: isDarkMode
+                ? Colors.white24
+                : Theme.of(context).colorScheme.outlineVariant,
             style: BorderStyle.solid,
           ),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -1412,7 +1498,8 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
           ),
           const SizedBox(height: AlhaiSpacing.md),
           Text(
-            AppLocalizations.of(context)?.noResultsFoundSearch ?? 'لا توجد نتائج',
+            AppLocalizations.of(context)?.noResultsFoundSearch ??
+                'لا توجد نتائج',
             style: TextStyle(
               color: isDarkMode ? Colors.white54 : AppColors.textSecondary,
               fontSize: 18,
@@ -1427,7 +1514,8 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
   Widget _buildFooter(bool isDarkMode) {
     final l10n = AppLocalizations.of(context);
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+      padding: const EdgeInsets.symmetric(
+          horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
       decoration: BoxDecoration(
         border: Border(
           top: BorderSide(
@@ -1445,8 +1533,10 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
           Wrap(
             spacing: 12,
             children: [
-              _buildFooterLink(l10n?.technicalSupport ?? 'الدعم الفني', Icons.headset_mic_outlined, isDarkMode),
-              _buildFooterLink(l10n?.privacyPolicy ?? 'سياسة الخصوصية', Icons.shield_outlined, isDarkMode),
+              _buildFooterLink(l10n?.technicalSupport ?? 'الدعم الفني',
+                  Icons.headset_mic_outlined, isDarkMode),
+              _buildFooterLink(l10n?.privacyPolicy ?? 'سياسة الخصوصية',
+                  Icons.shield_outlined, isDarkMode),
             ],
           ),
           // حقوق النشر
@@ -1467,7 +1557,8 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
       onTap: () {},
       borderRadius: BorderRadius.circular(8),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
+        padding: const EdgeInsets.symmetric(
+            horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [

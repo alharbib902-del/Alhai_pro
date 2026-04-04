@@ -119,9 +119,11 @@ class _NavigationScreenState extends ConsumerState<NavigationScreen> {
         final deliveryLng = (data['delivery_lng'] as num?)?.toDouble();
 
         // Determine destination based on status
-        final bool isHeadingToCustomer =
-            ['picked_up', 'heading_to_customer', 'arrived_at_customer']
-                .contains(status);
+        final bool isHeadingToCustomer = [
+          'picked_up',
+          'heading_to_customer',
+          'arrived_at_customer'
+        ].contains(status);
 
         final destLat = isHeadingToCustomer ? deliveryLat : pickupLat;
         final destLng = isHeadingToCustomer ? deliveryLng : pickupLng;
@@ -217,7 +219,8 @@ class _NavigationScreenState extends ConsumerState<NavigationScreen> {
                         width: 40,
                         height: 4,
                         decoration: BoxDecoration(
-                          color: theme.colorScheme.outline.withValues(alpha: 0.3),
+                          color:
+                              theme.colorScheme.outline.withValues(alpha: 0.3),
                           borderRadius: BorderRadius.circular(2),
                         ),
                       ),
@@ -264,7 +267,8 @@ class _NavigationScreenState extends ConsumerState<NavigationScreen> {
                           style: FilledButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 14),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(AlhaiRadius.button),
+                              borderRadius:
+                                  BorderRadius.circular(AlhaiRadius.button),
                             ),
                           ),
                         ),
@@ -311,8 +315,7 @@ class _NavigationScreenState extends ConsumerState<NavigationScreen> {
   }
 
   Future<void> _openInGoogleMaps(double lat, double lng) async {
-    final uri = Uri.parse(
-        'google.navigation:q=$lat,$lng&mode=d');
+    final uri = Uri.parse('google.navigation:q=$lat,$lng&mode=d');
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri);
     } else {

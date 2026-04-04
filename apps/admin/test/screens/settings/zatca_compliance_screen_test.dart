@@ -24,8 +24,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const ZatcaComplianceScreen()));
+      await tester.pumpWidget(createTestWidget(const ZatcaComplianceScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(ZatcaComplianceScreen), findsOneWidget);
@@ -39,8 +38,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const ZatcaComplianceScreen()));
+      await tester.pumpWidget(createTestWidget(const ZatcaComplianceScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.verified_rounded), findsWidgets);
@@ -54,8 +52,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const ZatcaComplianceScreen()));
+      await tester.pumpWidget(createTestWidget(const ZatcaComplianceScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(SwitchListTile), findsWidgets);
@@ -69,8 +66,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const ZatcaComplianceScreen()));
+      await tester.pumpWidget(createTestWidget(const ZatcaComplianceScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.send_rounded), findsWidgets);

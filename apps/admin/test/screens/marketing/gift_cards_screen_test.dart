@@ -20,8 +20,7 @@ void main() {
 
   group('GiftCardsScreen', () {
     testWidgets('renders with AppBar and tabs', (tester) async {
-      await tester
-          .pumpWidget(createTestWidget(const GiftCardsScreen()));
+      await tester.pumpWidget(createTestWidget(const GiftCardsScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(GiftCardsScreen), findsOneWidget);
@@ -31,8 +30,7 @@ void main() {
     });
 
     testWidgets('shows cards list after loading', (tester) async {
-      await tester
-          .pumpWidget(createTestWidget(const GiftCardsScreen()));
+      await tester.pumpWidget(createTestWidget(const GiftCardsScreen()));
       await tester.pumpAndSettle();
 
       // Mock data is loaded after delay, should show card codes
@@ -42,16 +40,14 @@ void main() {
     });
 
     testWidgets('shows search field', (tester) async {
-      await tester
-          .pumpWidget(createTestWidget(const GiftCardsScreen()));
+      await tester.pumpWidget(createTestWidget(const GiftCardsScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.search_rounded), findsOneWidget);
     });
 
     testWidgets('shows filter chips', (tester) async {
-      await tester
-          .pumpWidget(createTestWidget(const GiftCardsScreen()));
+      await tester.pumpWidget(createTestWidget(const GiftCardsScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(FilterChip), findsNWidgets(4));
@@ -59,16 +55,14 @@ void main() {
 
     testWidgets('has floating action button for issuing gift card',
         (tester) async {
-      await tester
-          .pumpWidget(createTestWidget(const GiftCardsScreen()));
+      await tester.pumpWidget(createTestWidget(const GiftCardsScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(FloatingActionButton), findsOneWidget);
     });
 
     testWidgets('statistics tab shows stat cards', (tester) async {
-      await tester
-          .pumpWidget(createTestWidget(const GiftCardsScreen()));
+      await tester.pumpWidget(createTestWidget(const GiftCardsScreen()));
       await tester.pumpAndSettle();
 
       // Navigate to statistics tab

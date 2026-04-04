@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:alhai_l10n/alhai_l10n.dart';
 
 import '../../providers/sa_dashboard_providers.dart';
 
@@ -109,16 +109,17 @@ class _SALogsScreenState extends ConsumerState<SALogsScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Activity Logs'),
+        title: Text(l10n.saActivityLogs),
         actions: [
           SegmentedButton<String>(
-            segments: const [
-              ButtonSegment(value: 'all', label: Text('All')),
-              ButtonSegment(value: 'info', label: Text('Info')),
-              ButtonSegment(value: 'warning', label: Text('Warnings')),
+            segments: [
+              const ButtonSegment(value: 'all', label: Text('All')),
+              const ButtonSegment(value: 'info', label: Text('Info')),
+              ButtonSegment(value: 'warning', label: Text(l10n.saWarnings)),
             ],
             selected: {_filterLevel},
             onSelectionChanged: (v) => setState(() => _filterLevel = v.first),
@@ -145,7 +146,7 @@ class _SALogsScreenState extends ConsumerState<SALogsScreen> {
                       const SizedBox(height: 16),
                       FilledButton.tonal(
                         onPressed: _loadLogs,
-                        child: const Text('Retry'),
+                        child: Text(l10n.retry),
                       ),
                     ],
                   ),
@@ -159,7 +160,7 @@ class _SALogsScreenState extends ConsumerState<SALogsScreen> {
                               size: 48,
                               color: theme.colorScheme.onSurfaceVariant),
                           const SizedBox(height: 16),
-                          Text('No logs found',
+                          Text(l10n.saNoLogsFound,
                               style: theme.textTheme.bodyLarge),
                         ],
                       ),
@@ -194,8 +195,8 @@ class _SALogsScreenState extends ConsumerState<SALogsScreen> {
                               style: theme.textTheme.bodyMedium),
                           subtitle: Text(log['detail'] as String? ?? '',
                               style: theme.textTheme.bodySmall),
-                          trailing: Text(timeStr,
-                              style: theme.textTheme.labelSmall),
+                          trailing:
+                              Text(timeStr, style: theme.textTheme.labelSmall),
                         );
                       },
                     ),

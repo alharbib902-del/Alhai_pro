@@ -26,8 +26,7 @@ void main() {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
 
-      await tester.pumpWidget(
-          createTestWidget(const DriverManagementScreen()));
+      await tester.pumpWidget(createTestWidget(const DriverManagementScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(DriverManagementScreen), findsOneWidget);
@@ -40,8 +39,7 @@ void main() {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
 
-      await tester.pumpWidget(
-          createTestWidget(const DriverManagementScreen()));
+      await tester.pumpWidget(createTestWidget(const DriverManagementScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(DriverManagementScreen), findsOneWidget);
@@ -54,8 +52,7 @@ void main() {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
 
-      await tester.pumpWidget(
-          createTestWidget(const DriverManagementScreen()));
+      await tester.pumpWidget(createTestWidget(const DriverManagementScreen()));
       await tester.pump();
 
       expect(find.byType(DriverManagementScreen), findsOneWidget);
@@ -68,8 +65,7 @@ void main() {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
 
-      await tester.pumpWidget(
-          createTestWidget(const DriverManagementScreen()));
+      await tester.pumpWidget(createTestWidget(const DriverManagementScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(DriverManagementScreen), findsOneWidget);

@@ -60,14 +60,17 @@ class _SACreateStoreScreenState extends ConsumerState<SACreateStoreScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context).storeCreatedSuccess)),
+          SnackBar(
+              content: Text(AppLocalizations.of(context).storeCreatedSuccess)),
         );
         context.go('/stores');
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e'), backgroundColor: Theme.of(context).colorScheme.error),
+          SnackBar(
+              content: Text('Error: $e'),
+              backgroundColor: Theme.of(context).colorScheme.error),
         );
       }
     } finally {
@@ -104,7 +107,6 @@ class _SACreateStoreScreenState extends ConsumerState<SACreateStoreScreen> {
               ],
             ),
             const SizedBox(height: AlhaiSpacing.lg),
-
             Center(
               child: ConstrainedBox(
                 constraints: BoxConstraints(
@@ -142,7 +144,8 @@ class _SACreateStoreScreenState extends ConsumerState<SACreateStoreScreen> {
                         },
                         controlsBuilder: (context, details) {
                           return Padding(
-                            padding: const EdgeInsets.only(top: AlhaiSpacing.md),
+                            padding:
+                                const EdgeInsets.only(top: AlhaiSpacing.md),
                             child: Row(
                               children: [
                                 if (_currentStep > 0)
@@ -184,21 +187,19 @@ class _SACreateStoreScreenState extends ConsumerState<SACreateStoreScreen> {
                                   controller: _nameController,
                                   decoration: InputDecoration(
                                     labelText: l10n.storeName,
-                                    prefixIcon:
-                                        const Icon(Icons.store_rounded),
+                                    prefixIcon: const Icon(Icons.store_rounded),
                                   ),
-                                  validator: (v) =>
-                                      (v == null || v.isEmpty)
-                                          ? l10n.storeName
-                                          : null,
+                                  validator: (v) => (v == null || v.isEmpty)
+                                      ? l10n.storeName
+                                      : null,
                                 ),
                                 const SizedBox(height: AlhaiSpacing.md),
                                 DropdownButtonFormField<String>(
                                   value: _selectedBusiness,
                                   decoration: InputDecoration(
                                     labelText: l10n.businessType,
-                                    prefixIcon: const Icon(
-                                        Icons.business_rounded),
+                                    prefixIcon:
+                                        const Icon(Icons.business_rounded),
                                   ),
                                   items: const [
                                     DropdownMenuItem(
@@ -208,22 +209,21 @@ class _SACreateStoreScreenState extends ConsumerState<SACreateStoreScreen> {
                                         value: 'restaurant',
                                         child: Text('Restaurant')),
                                     DropdownMenuItem(
-                                        value: 'retail',
-                                        child: Text('Retail')),
+                                        value: 'retail', child: Text('Retail')),
                                     DropdownMenuItem(
                                         value: 'services',
                                         child: Text('Services')),
                                   ],
-                                  onChanged: (v) => setState(
-                                      () => _selectedBusiness = v!),
+                                  onChanged: (v) =>
+                                      setState(() => _selectedBusiness = v!),
                                 ),
                                 const SizedBox(height: AlhaiSpacing.md),
                                 TextFormField(
                                   controller: _branchCountController,
                                   decoration: InputDecoration(
                                     labelText: l10n.branchCountLabel,
-                                    prefixIcon: const Icon(
-                                        Icons.account_tree_rounded),
+                                    prefixIcon:
+                                        const Icon(Icons.account_tree_rounded),
                                   ),
                                   keyboardType: TextInputType.number,
                                 ),
@@ -247,18 +247,16 @@ class _SACreateStoreScreenState extends ConsumerState<SACreateStoreScreen> {
                                     prefixIcon:
                                         const Icon(Icons.person_rounded),
                                   ),
-                                  validator: (v) =>
-                                      (v == null || v.isEmpty)
-                                          ? l10n.ownerName
-                                          : null,
+                                  validator: (v) => (v == null || v.isEmpty)
+                                      ? l10n.ownerName
+                                      : null,
                                 ),
                                 const SizedBox(height: AlhaiSpacing.md),
                                 TextFormField(
                                   controller: _ownerPhoneController,
                                   decoration: InputDecoration(
                                     labelText: l10n.ownerPhone,
-                                    prefixIcon:
-                                        const Icon(Icons.phone_rounded),
+                                    prefixIcon: const Icon(Icons.phone_rounded),
                                   ),
                                   keyboardType: TextInputType.phone,
                                 ),
@@ -267,11 +265,9 @@ class _SACreateStoreScreenState extends ConsumerState<SACreateStoreScreen> {
                                   controller: _ownerEmailController,
                                   decoration: InputDecoration(
                                     labelText: l10n.ownerEmail,
-                                    prefixIcon:
-                                        const Icon(Icons.email_rounded),
+                                    prefixIcon: const Icon(Icons.email_rounded),
                                   ),
-                                  keyboardType:
-                                      TextInputType.emailAddress,
+                                  keyboardType: TextInputType.emailAddress,
                                 ),
                               ],
                             ),
@@ -286,11 +282,10 @@ class _SACreateStoreScreenState extends ConsumerState<SACreateStoreScreen> {
                                 _PlanOption(
                                   title: l10n.basicPlan,
                                   price: '99',
-                                  features:
-                                      '1 branch, 500 products, 3 users',
+                                  features: '1 branch, 500 products, 3 users',
                                   isSelected: _selectedPlan == 'basic',
-                                  onTap: () => setState(
-                                      () => _selectedPlan = 'basic'),
+                                  onTap: () =>
+                                      setState(() => _selectedPlan = 'basic'),
                                 ),
                                 const SizedBox(height: AlhaiSpacing.sm),
                                 _PlanOption(
@@ -298,8 +293,7 @@ class _SACreateStoreScreenState extends ConsumerState<SACreateStoreScreen> {
                                   price: '249',
                                   features:
                                       '3 branches, 2000 products, 10 users',
-                                  isSelected:
-                                      _selectedPlan == 'advanced',
+                                  isSelected: _selectedPlan == 'advanced',
                                   onTap: () => setState(
                                       () => _selectedPlan = 'advanced'),
                                 ),
@@ -309,10 +303,9 @@ class _SACreateStoreScreenState extends ConsumerState<SACreateStoreScreen> {
                                   price: '499',
                                   features:
                                       'Unlimited branches, products, users',
-                                  isSelected:
-                                      _selectedPlan == 'professional',
-                                  onTap: () => setState(() =>
-                                      _selectedPlan = 'professional'),
+                                  isSelected: _selectedPlan == 'professional',
+                                  onTap: () => setState(
+                                      () => _selectedPlan = 'professional'),
                                 ),
                               ],
                             ),

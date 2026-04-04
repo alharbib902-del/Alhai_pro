@@ -14,7 +14,8 @@ import 'package:alhai_core/src/models/enums/payment_method.dart';
 import 'package:alhai_core/src/repositories/impl/orders_repository_impl.dart';
 
 // Mock class
-class MockOrdersRemoteDataSource extends Mock implements OrdersRemoteDataSource {}
+class MockOrdersRemoteDataSource extends Mock
+    implements OrdersRemoteDataSource {}
 
 // Fake classes
 class FakeCreateOrderRequest extends Fake implements CreateOrderRequest {}
@@ -189,7 +190,8 @@ void main() {
             .thenAnswer((_) async => testOrderResponse);
 
         // Act
-        final result = await repository.updateStatus('order-1', OrderStatus.confirmed);
+        final result =
+            await repository.updateStatus('order-1', OrderStatus.confirmed);
 
         // Assert
         expect(result.id, equals('order-1'));
@@ -208,7 +210,8 @@ void main() {
           repository.cancelOrder('order-1', reason: 'Customer request'),
           completes,
         );
-        verify(() => mockRemote.cancelOrder('order-1', reason: 'Customer request'))
+        verify(() =>
+                mockRemote.cancelOrder('order-1', reason: 'Customer request'))
             .called(1);
       });
 

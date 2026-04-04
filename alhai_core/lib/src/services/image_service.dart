@@ -86,17 +86,26 @@ class ImageService {
       final large = img.copyResize(image, width: 1200);
 
       // 4. L63: Encode to WebP (25-35% smaller) with JPEG fallback
-      final thumbEncoded = _encodeOptimized(thumb, quality: 80, preferWebP: preferWebP);
-      final mediumEncoded = _encodeOptimized(medium, quality: 85, preferWebP: preferWebP);
-      final largeEncoded = _encodeOptimized(large, quality: 90, preferWebP: preferWebP);
+      final thumbEncoded =
+          _encodeOptimized(thumb, quality: 80, preferWebP: preferWebP);
+      final mediumEncoded =
+          _encodeOptimized(medium, quality: 85, preferWebP: preferWebP);
+      final largeEncoded =
+          _encodeOptimized(large, quality: 90, preferWebP: preferWebP);
 
       // 5. Upload to Supabase Storage
       final basePath = '$storeId/$productId';
 
       await Future.wait([
-        _uploadFile('$basePath/thumb_$hash.${thumbEncoded.ext}', thumbEncoded.bytes, contentType: thumbEncoded.mimeType),
-        _uploadFile('$basePath/medium_$hash.${mediumEncoded.ext}', mediumEncoded.bytes, contentType: mediumEncoded.mimeType),
-        _uploadFile('$basePath/large_$hash.${largeEncoded.ext}', largeEncoded.bytes, contentType: largeEncoded.mimeType),
+        _uploadFile(
+            '$basePath/thumb_$hash.${thumbEncoded.ext}', thumbEncoded.bytes,
+            contentType: thumbEncoded.mimeType),
+        _uploadFile(
+            '$basePath/medium_$hash.${mediumEncoded.ext}', mediumEncoded.bytes,
+            contentType: mediumEncoded.mimeType),
+        _uploadFile(
+            '$basePath/large_$hash.${largeEncoded.ext}', largeEncoded.bytes,
+            contentType: largeEncoded.mimeType),
       ]);
 
       // 6. Get public URLs
@@ -155,16 +164,25 @@ class ImageService {
       final large = img.copyResize(image, width: 1200);
 
       // L63: Encode to WebP (25-35% smaller) with JPEG fallback
-      final thumbEncoded = _encodeOptimized(thumb, quality: 80, preferWebP: preferWebP);
-      final mediumEncoded = _encodeOptimized(medium, quality: 85, preferWebP: preferWebP);
-      final largeEncoded = _encodeOptimized(large, quality: 90, preferWebP: preferWebP);
+      final thumbEncoded =
+          _encodeOptimized(thumb, quality: 80, preferWebP: preferWebP);
+      final mediumEncoded =
+          _encodeOptimized(medium, quality: 85, preferWebP: preferWebP);
+      final largeEncoded =
+          _encodeOptimized(large, quality: 90, preferWebP: preferWebP);
 
       final basePath = '$storeId/$productId';
 
       await Future.wait([
-        _uploadFile('$basePath/thumb_$hash.${thumbEncoded.ext}', thumbEncoded.bytes, contentType: thumbEncoded.mimeType),
-        _uploadFile('$basePath/medium_$hash.${mediumEncoded.ext}', mediumEncoded.bytes, contentType: mediumEncoded.mimeType),
-        _uploadFile('$basePath/large_$hash.${largeEncoded.ext}', largeEncoded.bytes, contentType: largeEncoded.mimeType),
+        _uploadFile(
+            '$basePath/thumb_$hash.${thumbEncoded.ext}', thumbEncoded.bytes,
+            contentType: thumbEncoded.mimeType),
+        _uploadFile(
+            '$basePath/medium_$hash.${mediumEncoded.ext}', mediumEncoded.bytes,
+            contentType: mediumEncoded.mimeType),
+        _uploadFile(
+            '$basePath/large_$hash.${largeEncoded.ext}', largeEncoded.bytes,
+            contentType: largeEncoded.mimeType),
       ]);
 
       final thumbUrl = _supabase.storage
@@ -203,10 +221,11 @@ class ImageService {
           .timeout(const Duration(seconds: 30));
 
       if (list.isNotEmpty) {
-        final paths = list
-            .map((f) => '$storeId/$productId/${f.name}')
-            .toList();
-        await _supabase.storage.from(_bucket).remove(paths).timeout(const Duration(seconds: 30));
+        final paths = list.map((f) => '$storeId/$productId/${f.name}').toList();
+        await _supabase.storage
+            .from(_bucket)
+            .remove(paths)
+            .timeout(const Duration(seconds: 30));
       }
     } catch (e) {
       throw UploadException('Failed to delete images: $e');
@@ -219,14 +238,17 @@ class ImageService {
     String contentType = 'image/jpeg',
   }) async {
     try {
-      await _supabase.storage.from(_bucket).uploadBinary(
-        path,
-        bytes,
-        fileOptions: FileOptions(
-          contentType: contentType,
-          upsert: true,
-        ),
-      ).timeout(const Duration(seconds: 60));
+      await _supabase.storage
+          .from(_bucket)
+          .uploadBinary(
+            path,
+            bytes,
+            fileOptions: FileOptions(
+              contentType: contentType,
+              upsert: true,
+            ),
+          )
+          .timeout(const Duration(seconds: 60));
     } catch (e) {
       throw UploadException('Failed to upload $path: $e');
     }

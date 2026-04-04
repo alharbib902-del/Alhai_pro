@@ -44,19 +44,26 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
 
     // AI routes
     if (location.startsWith('/ai/assistant')) return 'ai-assistant';
-    if (location.startsWith('/ai/sales-forecasting')) return 'ai-sales-forecasting';
+    if (location.startsWith('/ai/sales-forecasting'))
+      return 'ai-sales-forecasting';
     if (location.startsWith('/ai/smart-pricing')) return 'ai-smart-pricing';
     if (location.startsWith('/ai/fraud-detection')) return 'ai-fraud-detection';
     if (location.startsWith('/ai/basket-analysis')) return 'ai-basket-analysis';
-    if (location.startsWith('/ai/customer-recommendations')) return 'ai-customer-recommendations';
+    if (location.startsWith('/ai/customer-recommendations'))
+      return 'ai-customer-recommendations';
     if (location.startsWith('/ai/smart-inventory')) return 'ai-smart-inventory';
-    if (location.startsWith('/ai/competitor-analysis')) return 'ai-competitor-analysis';
+    if (location.startsWith('/ai/competitor-analysis'))
+      return 'ai-competitor-analysis';
     if (location.startsWith('/ai/smart-reports')) return 'ai-smart-reports';
     if (location.startsWith('/ai/staff-analytics')) return 'ai-staff-analytics';
-    if (location.startsWith('/ai/product-recognition')) return 'ai-product-recognition';
-    if (location.startsWith('/ai/sentiment-analysis')) return 'ai-sentiment-analysis';
-    if (location.startsWith('/ai/return-prediction')) return 'ai-return-prediction';
-    if (location.startsWith('/ai/promotion-designer')) return 'ai-promotion-designer';
+    if (location.startsWith('/ai/product-recognition'))
+      return 'ai-product-recognition';
+    if (location.startsWith('/ai/sentiment-analysis'))
+      return 'ai-sentiment-analysis';
+    if (location.startsWith('/ai/return-prediction'))
+      return 'ai-return-prediction';
+    if (location.startsWith('/ai/promotion-designer'))
+      return 'ai-promotion-designer';
     if (location.startsWith('/ai/chat-with-data')) return 'ai-chat-with-data';
 
     // New feature routes (must come before generic matches)
@@ -86,7 +93,8 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
     if (location.startsWith('/loyalty')) return 'loyalty';
     if (location.startsWith('/shifts')) return 'shifts';
     if (location.startsWith('/settings')) return 'settings';
-    if (location.startsWith('/marketing') || location.startsWith('/promotions')) return 'marketing';
+    if (location.startsWith('/marketing') || location.startsWith('/promotions'))
+      return 'marketing';
     if (location.startsWith('/sync')) return 'sync';
     if (location.startsWith('/drivers')) return 'drivers';
     if (location.startsWith('/branches')) return 'branches';
@@ -244,9 +252,8 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
 
     if (isDesktop) {
       return Scaffold(
-        backgroundColor: isDark
-            ? AppColors.backgroundDark
-            : AppColors.backgroundSecondary,
+        backgroundColor:
+            isDark ? AppColors.backgroundDark : AppColors.backgroundSecondary,
         body: Row(
           children: [
             sidebar,
@@ -257,9 +264,8 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
     } else {
       // Mobile: drawer sidebar
       return Scaffold(
-        backgroundColor: isDark
-            ? AppColors.backgroundDark
-            : AppColors.backgroundSecondary,
+        backgroundColor:
+            isDark ? AppColors.backgroundDark : AppColors.backgroundSecondary,
         drawer: Drawer(
           child: AppSidebar(
             storeName: l10n.brandName,

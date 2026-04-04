@@ -48,18 +48,15 @@ void main() {
     test('getOpenShift finds open shift for cashier', () async {
       await db.shiftsDao.openShift(_makeShift());
 
-      final shift =
-          await db.shiftsDao.getOpenShift('store-1', 'cashier-1');
+      final shift = await db.shiftsDao.getOpenShift('store-1', 'cashier-1');
       expect(shift, isNotNull);
       expect(shift!.id, 'shift-1');
     });
 
     test('getOpenShift returns null when no open shift', () async {
-      await db.shiftsDao
-          .openShift(_makeShift(status: 'closed'));
+      await db.shiftsDao.openShift(_makeShift(status: 'closed'));
 
-      final shift =
-          await db.shiftsDao.getOpenShift('store-1', 'cashier-1');
+      final shift = await db.shiftsDao.getOpenShift('store-1', 'cashier-1');
       expect(shift, isNull);
     });
 

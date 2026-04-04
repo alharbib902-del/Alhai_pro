@@ -34,7 +34,8 @@ void main() async {
   configureDependencies();
 
   // FIX 5: Configure image cache for better performance
-  PaintingBinding.instance.imageCache.maximumSizeBytes = 100 * 1024 * 1024; // 100MB
+  PaintingBinding.instance.imageCache.maximumSizeBytes =
+      100 * 1024 * 1024; // 100MB
   PaintingBinding.instance.imageCache.maximumSize = 200; // 200 images max
 
   runApp(

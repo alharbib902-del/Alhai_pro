@@ -79,10 +79,17 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
   static const int _pageSize = 10;
 
   List<ReturnModel> _filterReturns(List<ReturnModel> allReturns) {
-    var list = allReturns.where((r) => r.type == (_activeTab == 'sales' ? 'sales' : 'purchase')).toList();
+    var list = allReturns
+        .where((r) => r.type == (_activeTab == 'sales' ? 'sales' : 'purchase'))
+        .toList();
     if (_searchQuery.isNotEmpty) {
       final q = _searchQuery.toLowerCase();
-      list = list.where((r) => r.id.toLowerCase().contains(q) || r.customer.toLowerCase().contains(q) || r.invoiceNo.toLowerCase().contains(q)).toList();
+      list = list
+          .where((r) =>
+              r.id.toLowerCase().contains(q) ||
+              r.customer.toLowerCase().contains(q) ||
+              r.invoiceNo.toLowerCase().contains(q))
+          .toList();
     }
     return list;
   }
@@ -151,7 +158,8 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
             position: Tween<Offset>(
               begin: Offset(isRtl ? 1.0 : -1.0, 0),
               end: Offset.zero,
-            ).animate(CurvedAnimation(parent: animation, curve: AlhaiMotion.standardDecelerate)),
+            ).animate(CurvedAnimation(
+                parent: animation, curve: AlhaiMotion.standardDecelerate)),
             child: child,
           );
         },
@@ -191,7 +199,8 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
           children: [
             Icon(Icons.check_circle, color: colorScheme.onPrimary, size: 20),
             const SizedBox(width: AlhaiSpacing.xs),
-            Text(l10n.returnCreatedSuccess, style: const TextStyle(fontWeight: FontWeight.bold)),
+            Text(l10n.returnCreatedSuccess,
+                style: const TextStyle(fontWeight: FontWeight.bold)),
           ],
         ),
         backgroundColor: AppColors.success,
@@ -224,31 +233,43 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
           : null,
       body: SafeArea(
         child: Column(
-              children: [
-                _buildHeader(context, isWideScreen, isDark, l10n),
-                Expanded(
-                  child: ref.watch(returnsListProvider).when(
-                    loading: () => const Center(child: CircularProgressIndicator()),
+          children: [
+            _buildHeader(context, isWideScreen, isDark, l10n),
+            Expanded(
+              child: ref.watch(returnsListProvider).when(
+                    loading: () =>
+                        const Center(child: CircularProgressIndicator()),
                     error: (e, _) => AppErrorState.general(
                       context,
                       message: e.toString(),
                       onRetry: () => ref.invalidate(returnsListProvider),
                     ),
                     data: (returnsData) {
-                      final allReturns = returnsData.map((r) => ReturnModel.fromData(r)).toList();
+                      final allReturns = returnsData
+                          .map((r) => ReturnModel.fromData(r))
+                          .toList();
                       final filteredReturns = _filterReturns(allReturns);
                       return SingleChildScrollView(
-                        padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+                        padding: EdgeInsets.all(
+                            isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
                         child: Column(
                           children: [
                             // Tabs
                             _buildTabs(l10n, isDark),
-                            SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+                            SizedBox(
+                                height: isMediumScreen
+                                    ? AlhaiSpacing.lg
+                                    : AlhaiSpacing.md),
                             // Stats
-                            _buildStatsSection(filteredReturns, l10n, isDark, isWideScreen, isMediumScreen),
-                            SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+                            _buildStatsSection(filteredReturns, l10n, isDark,
+                                isWideScreen, isMediumScreen),
+                            SizedBox(
+                                height: isMediumScreen
+                                    ? AlhaiSpacing.lg
+                                    : AlhaiSpacing.md),
                             // Data Table
-                            _buildTableSection(filteredReturns, l10n, isDark, isWideScreen, isMediumScreen),
+                            _buildTableSection(filteredReturns, l10n, isDark,
+                                isWideScreen, isMediumScreen),
                             const SizedBox(height: AlhaiSpacing.lg),
                             _buildFooter(l10n, isDark),
                           ],
@@ -256,9 +277,9 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
                       );
                     },
                   ),
-                ),
-              ],
             ),
+          ],
+        ),
       ),
     );
   }
@@ -267,31 +288,42 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
   // HEADER
   // ============================================================================
 
-  Widget _buildHeader(BuildContext context, bool isWideScreen, bool isDark, AppLocalizations l10n) {
+  Widget _buildHeader(BuildContext context, bool isWideScreen, bool isDark,
+      AppLocalizations l10n) {
     final colorScheme = Theme.of(context).colorScheme;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg, vertical: 14),
+      padding:
+          const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg, vertical: 14),
       decoration: BoxDecoration(
         color: colorScheme.surface,
-        border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor)),
+        border:
+            Border(bottom: BorderSide(color: Theme.of(context).dividerColor)),
       ),
       child: Row(
         children: [
           // Menu button
           IconButton(
-            onPressed: isWideScreen
-                ? null
-                : () => Scaffold.of(context).openDrawer(),
-            icon: Icon(Icons.menu_rounded, color: isDark ? AppColors.textMutedDark : AppColors.textSecondary),
+            onPressed:
+                isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+            icon: Icon(Icons.menu_rounded,
+                color:
+                    isDark ? AppColors.textMutedDark : AppColors.textSecondary),
           ),
           const SizedBox(width: AlhaiSpacing.xs),
           Text(
             l10n.returns,
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: colorScheme.onSurface),
+            style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: colorScheme.onSurface),
           ),
 
           if (isWideScreen) ...[
-            Container(height: 28, width: 1, margin: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md), color: Theme.of(context).dividerColor),
+            Container(
+                height: 28,
+                width: 1,
+                margin: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md),
+                color: Theme.of(context).dividerColor),
             // New return button
             FilledButton.icon(
               onPressed: _openCreateReturn,
@@ -300,8 +332,10 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
               style: FilledButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 foregroundColor: colorScheme.onPrimary,
-                padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.mdl, vertical: AlhaiSpacing.sm),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: AlhaiSpacing.mdl, vertical: AlhaiSpacing.sm),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
               ),
             ),
           ],
@@ -319,13 +353,23 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
                 }),
                 decoration: InputDecoration(
                   hintText: l10n.quickSearch,
-                  hintStyle: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 14),
-                  prefixIcon: Icon(Icons.search, color: colorScheme.onSurfaceVariant),
+                  hintStyle: TextStyle(
+                      color: colorScheme.onSurfaceVariant, fontSize: 14),
+                  prefixIcon:
+                      Icon(Icons.search, color: colorScheme.onSurfaceVariant),
                   filled: true,
-                  fillColor: isDark ? AppColors.backgroundDark : AppColors.backgroundSecondary,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
-                  focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: AppColors.primary.withValues(alpha: 0.5))),
+                  fillColor: isDark
+                      ? AppColors.backgroundDark
+                      : AppColors.backgroundSecondary,
+                  contentPadding: const EdgeInsets.symmetric(
+                      horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none),
+                  focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                          color: AppColors.primary.withValues(alpha: 0.5))),
                 ),
                 style: TextStyle(color: colorScheme.onSurface, fontSize: 14),
               ),
@@ -337,7 +381,10 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
             icon: Badge(
               smallSize: 8,
               backgroundColor: AppColors.secondary,
-              child: Icon(Icons.notifications_outlined, color: isDark ? AppColors.textMutedDark : AppColors.textSecondary),
+              child: Icon(Icons.notifications_outlined,
+                  color: isDark
+                      ? AppColors.textMutedDark
+                      : AppColors.textSecondary),
             ),
           ),
           // Dark mode toggle
@@ -382,7 +429,9 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
               // Show search bottom sheet
               _showMobileSearch(l10n, isDark);
             },
-            icon: Icon(Icons.search, color: isDark ? AppColors.textMutedDark : AppColors.textSecondary),
+            icon: Icon(Icons.search,
+                color:
+                    isDark ? AppColors.textMutedDark : AppColors.textSecondary),
           ),
       ],
     );
@@ -398,11 +447,10 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
       }),
       child: AnimatedContainer(
         duration: AlhaiDurations.standard,
-        padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.mdl, vertical: 10),
+        padding: const EdgeInsets.symmetric(
+            horizontal: AlhaiSpacing.mdl, vertical: 10),
         decoration: BoxDecoration(
-          color: isActive
-              ? colorScheme.surface
-              : Colors.transparent,
+          color: isActive ? colorScheme.surface : Colors.transparent,
           borderRadius: BorderRadius.circular(10),
           boxShadow: isActive ? AppSizes.shadowSm : null,
         ),
@@ -411,9 +459,8 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
           style: TextStyle(
             fontSize: 14,
             fontWeight: isActive ? FontWeight.bold : FontWeight.w500,
-            color: isActive
-                ? colorScheme.onSurface
-                : colorScheme.onSurfaceVariant,
+            color:
+                isActive ? colorScheme.onSurface : colorScheme.onSurfaceVariant,
           ),
         ),
       ),
@@ -428,13 +475,20 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
       ),
       builder: (context) => Padding(
         padding: EdgeInsetsDirectional.only(
-          start: 16, end: 16, top: 16,
+          start: 16,
+          end: 16,
+          top: 16,
           bottom: MediaQuery.viewInsetsOf(context).bottom + 16,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(width: 40, height: 4, decoration: BoxDecoration(color: AppColors.grey300, borderRadius: BorderRadius.circular(2))),
+            Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                    color: AppColors.grey300,
+                    borderRadius: BorderRadius.circular(2))),
             const SizedBox(height: AlhaiSpacing.md),
             TextField(
               autofocus: true,
@@ -446,8 +500,12 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
                 hintText: l10n.quickSearch,
                 prefixIcon: const Icon(Icons.search),
                 filled: true,
-                fillColor: isDark ? AppColors.surfaceVariantDark : AppColors.backgroundSecondary,
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                fillColor: isDark
+                    ? AppColors.surfaceVariantDark
+                    : AppColors.backgroundSecondary,
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none),
               ),
             ),
             const SizedBox(height: AlhaiSpacing.md),
@@ -461,11 +519,23 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
   // STATS SECTION
   // ============================================================================
 
-  Widget _buildStatsSection(List<ReturnModel> currentReturns, AppLocalizations l10n, bool isDark, bool isWideScreen, bool isMediumScreen) {
+  Widget _buildStatsSection(
+      List<ReturnModel> currentReturns,
+      AppLocalizations l10n,
+      bool isDark,
+      bool isWideScreen,
+      bool isMediumScreen) {
     final totalCount = currentReturns.length;
-    final totalAmount = currentReturns.fold<double>(0.0, (sum, r) => sum + r.amount);
+    final totalAmount =
+        currentReturns.fold<double>(0.0, (sum, r) => sum + r.amount);
     final processedPercent = totalCount > 0
-        ? ((currentReturns.where((r) => r.status == 'refunded' || r.status == 'completed').length / totalCount) * 100).round()
+        ? ((currentReturns
+                        .where((r) =>
+                            r.status == 'refunded' || r.status == 'completed')
+                        .length /
+                    totalCount) *
+                100)
+            .round()
         : 0;
 
     // Most returned product (calculated from current returns)
@@ -474,13 +544,14 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
     if (currentReturns.isNotEmpty) {
       final counts = <String, int>{};
       for (final r in currentReturns) {
-        final key = r.invoiceNo.isNotEmpty ? r.invoiceNo : AppLocalizations.of(context)!.notSpecified;
+        final key = r.invoiceNo.isNotEmpty
+            ? r.invoiceNo
+            : AppLocalizations.of(context)!.notSpecified;
         counts[key] = (counts[key] ?? 0) + 1;
       }
       if (counts.isNotEmpty) {
-        mostReturnedProduct = counts.entries
-            .reduce((a, b) => a.value > b.value ? a : b)
-            .key;
+        mostReturnedProduct =
+            counts.entries.reduce((a, b) => a.value > b.value ? a : b).key;
       }
     }
 
@@ -520,21 +591,25 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
 
     if (isWideScreen) {
       return Row(
-        children: stats.map((s) => Expanded(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 6),
-            child: ReturnsStatCard(data: s),
-          ),
-        )).toList(),
+        children: stats
+            .map((s) => Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 6),
+                    child: ReturnsStatCard(data: s),
+                  ),
+                ))
+            .toList(),
       );
     }
 
     // Mobile/Tablet: stacked
     return Column(
-      children: stats.map((s) => Padding(
-        padding: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
-        child: ReturnsStatCard(data: s, compact: !isMediumScreen),
-      )).toList(),
+      children: stats
+          .map((s) => Padding(
+                padding: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
+                child: ReturnsStatCard(data: s, compact: !isMediumScreen),
+              ))
+          .toList(),
     );
   }
 
@@ -542,7 +617,8 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
   // TABLE SECTION
   // ============================================================================
 
-  Widget _buildTableSection(List<ReturnModel> filtered, AppLocalizations l10n, bool isDark, bool isWideScreen, bool isMediumScreen) {
+  Widget _buildTableSection(List<ReturnModel> filtered, AppLocalizations l10n,
+      bool isDark, bool isWideScreen, bool isMediumScreen) {
     final colorScheme = Theme.of(context).colorScheme;
     final paginated = _paginateReturns(filtered);
 
@@ -574,12 +650,17 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
     );
   }
 
-  Widget _buildTableToolbar(AppLocalizations l10n, bool isDark, bool isWideScreen) {
+  Widget _buildTableToolbar(
+      AppLocalizations l10n, bool isDark, bool isWideScreen) {
     final colorScheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.divider)),
+        border: Border(
+            bottom: BorderSide(
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.08)
+                    : AppColors.divider)),
       ),
       child: Row(
         children: [
@@ -594,14 +675,27 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
                 }),
                 decoration: InputDecoration(
                   hintText: l10n.quickSearch,
-                  hintStyle: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 13),
-                  prefixIcon: Icon(Icons.search, size: 18, color: colorScheme.onSurfaceVariant),
+                  hintStyle: TextStyle(
+                      color: colorScheme.onSurfaceVariant, fontSize: 13),
+                  prefixIcon: Icon(Icons.search,
+                      size: 18, color: colorScheme.onSurfaceVariant),
                   filled: true,
-                  fillColor: isDark ? AppColors.backgroundDark : AppColors.grey50,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Theme.of(context).dividerColor)),
-                  enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Theme.of(context).dividerColor)),
-                  focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: AppColors.primary.withValues(alpha: 0.5))),
+                  fillColor:
+                      isDark ? AppColors.backgroundDark : AppColors.grey50,
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide:
+                          BorderSide(color: Theme.of(context).dividerColor)),
+                  enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide:
+                          BorderSide(color: Theme.of(context).dividerColor)),
+                  focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(
+                          color: AppColors.primary.withValues(alpha: 0.5))),
                 ),
                 style: TextStyle(color: colorScheme.onSurface, fontSize: 13),
               ),
@@ -624,11 +718,15 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
         onTap: () {},
         borderRadius: BorderRadius.circular(8),
         child: Container(
-          width: 36, height: 36,
+          width: 36,
+          height: 36,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Icon(icon, size: 18, color: isDark ? AppColors.textMutedDark : AppColors.textSecondary),
+          child: Icon(icon,
+              size: 18,
+              color:
+                  isDark ? AppColors.textMutedDark : AppColors.textSecondary),
         ),
       ),
     );
@@ -638,20 +736,25 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
   // MOBILE CARDS
   // ============================================================================
 
-  Widget _buildMobileCards(List<ReturnModel> paginated, AppLocalizations l10n, bool isDark) {
+  Widget _buildMobileCards(
+      List<ReturnModel> paginated, AppLocalizations l10n, bool isDark) {
     if (paginated.isEmpty) {
       return _buildEmptyState(l10n, isDark);
     }
 
     return Column(
-      children: paginated.map((r) => _buildMobileReturnCard(r, l10n, isDark)).toList(),
+      children: paginated
+          .map((r) => _buildMobileReturnCard(r, l10n, isDark))
+          .toList(),
     );
   }
 
-  Widget _buildMobileReturnCard(ReturnModel ret, AppLocalizations l10n, bool isDark) {
+  Widget _buildMobileReturnCard(
+      ReturnModel ret, AppLocalizations l10n, bool isDark) {
     final colorScheme = Theme.of(context).colorScheme;
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xxs),
+      margin: const EdgeInsets.symmetric(
+          horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xxs),
       padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: colorScheme.surface,
@@ -664,18 +767,26 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
                 decoration: BoxDecoration(
                   color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
-                  _activeTab == 'sales' ? l10n.salesReturns : l10n.purchaseReturns,
-                  style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppColors.primary),
+                  _activeTab == 'sales'
+                      ? l10n.salesReturns
+                      : l10n.purchaseReturns,
+                  style: const TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.primary),
                 ),
               ),
               const SizedBox(width: AlhaiSpacing.xs),
-              Text('#${ret.id}', style: TextStyle(fontSize: 11, color: colorScheme.onSurfaceVariant)),
+              Text('#${ret.id}',
+                  style: TextStyle(
+                      fontSize: 11, color: colorScheme.onSurfaceVariant)),
               const Spacer(),
               _buildStatusBadge(ret.status, l10n, isDark),
             ],
@@ -692,8 +803,14 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(ret.customer, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: colorScheme.onSurface)),
-                    Text('${l10n.fromInvoice} #${ret.invoiceNo}', style: TextStyle(fontSize: 11, color: colorScheme.onSurfaceVariant)),
+                    Text(ret.customer,
+                        style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: colorScheme.onSurface)),
+                    Text('${l10n.fromInvoice} #${ret.invoiceNo}',
+                        style: TextStyle(
+                            fontSize: 11, color: colorScheme.onSurfaceVariant)),
                   ],
                 ),
               ),
@@ -701,8 +818,14 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text('${ret.amount.toStringAsFixed(2)} ${l10n.sar}', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: colorScheme.onSurface)),
-                  Text(_formatDate(ret.date), style: TextStyle(fontSize: 11, color: colorScheme.onSurfaceVariant)),
+                  Text('${ret.amount.toStringAsFixed(2)} ${l10n.sar}',
+                      style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: colorScheme.onSurface)),
+                  Text(_formatDate(ret.date),
+                      style: TextStyle(
+                          fontSize: 11, color: colorScheme.onSurfaceVariant)),
                 ],
               ),
             ],
@@ -711,17 +834,31 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
           // Footer
           Container(
             padding: const EdgeInsets.only(top: AlhaiSpacing.sm),
-            decoration: BoxDecoration(border: Border(top: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.divider))),
+            decoration: BoxDecoration(
+                border: Border(
+                    top: BorderSide(
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.08)
+                            : AppColors.divider))),
             child: Row(
               children: [
                 _buildReasonIcon(ret.reason, isDark),
                 const SizedBox(width: 6),
-                Text(_getReasonText(ret.reason, l10n), style: TextStyle(fontSize: 11, color: colorScheme.onSurfaceVariant)),
+                Text(_getReasonText(ret.reason, l10n),
+                    style: TextStyle(
+                        fontSize: 11, color: colorScheme.onSurfaceVariant)),
                 const Spacer(),
                 TextButton(
                   onPressed: () {},
-                  style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: Size.zero, tapTargetSize: MaterialTapTargetSize.shrinkWrap),
-                  child: Text(l10n.viewDetails, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.primary)),
+                  style: TextButton.styleFrom(
+                      padding: EdgeInsets.zero,
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap),
+                  child: Text(l10n.viewDetails,
+                      style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.primary)),
                 ),
               ],
             ),
@@ -742,9 +879,14 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
     final to = (_currentPage * _pageSize).clamp(0, total);
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+      padding: const EdgeInsets.symmetric(
+          horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
       decoration: BoxDecoration(
-        border: Border(top: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.divider)),
+        border: Border(
+            top: BorderSide(
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.08)
+                    : AppColors.divider)),
       ),
       child: Row(
         children: [
@@ -754,25 +896,31 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
           ),
           const Spacer(),
           // Page buttons
-          _buildPageButton(l10n.previous, isDark, enabled: _currentPage > 1, onTap: () => setState(() => _currentPage--)),
+          _buildPageButton(l10n.previous, isDark,
+              enabled: _currentPage > 1,
+              onTap: () => setState(() => _currentPage--)),
           const SizedBox(width: AlhaiSpacing.xxs),
           for (int i = 1; i <= totalPages; i++) ...[
             _buildPageNumberButton(i, isDark),
             if (i < totalPages) const SizedBox(width: AlhaiSpacing.xxs),
           ],
           const SizedBox(width: AlhaiSpacing.xxs),
-          _buildPageButton(l10n.next, isDark, enabled: _currentPage < totalPages, onTap: () => setState(() => _currentPage++)),
+          _buildPageButton(l10n.next, isDark,
+              enabled: _currentPage < totalPages,
+              onTap: () => setState(() => _currentPage++)),
         ],
       ),
     );
   }
 
-  Widget _buildPageButton(String label, bool isDark, {required bool enabled, VoidCallback? onTap}) {
+  Widget _buildPageButton(String label, bool isDark,
+      {required bool enabled, VoidCallback? onTap}) {
     return InkWell(
       onTap: enabled ? onTap : null,
       borderRadius: BorderRadius.circular(8),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 6),
+        padding: const EdgeInsets.symmetric(
+            horizontal: AlhaiSpacing.sm, vertical: 6),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
           border: Border.all(color: Theme.of(context).dividerColor),
@@ -782,8 +930,11 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
           style: TextStyle(
             fontSize: 12,
             color: enabled
-                ? (isDark ? AppColors.textSecondaryDark : AppColors.textSecondary)
-                : (isDark ? AppColors.textMutedDark : AppColors.textMuted).withValues(alpha: 0.5),
+                ? (isDark
+                    ? AppColors.textSecondaryDark
+                    : AppColors.textSecondary)
+                : (isDark ? AppColors.textMutedDark : AppColors.textMuted)
+                    .withValues(alpha: 0.5),
           ),
         ),
       ),
@@ -797,19 +948,26 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
       onTap: () => setState(() => _currentPage = page),
       borderRadius: BorderRadius.circular(8),
       child: Container(
-        width: 32, height: 32,
+        width: 32,
+        height: 32,
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: isActive ? AppColors.primary : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
-          border: isActive ? null : Border.all(color: Theme.of(context).dividerColor),
+          border: isActive
+              ? null
+              : Border.all(color: Theme.of(context).dividerColor),
         ),
         child: Text(
           '$page',
           style: TextStyle(
             fontSize: 12,
             fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-            color: isActive ? colorScheme.onPrimary : (isDark ? AppColors.textSecondaryDark : AppColors.textSecondary),
+            color: isActive
+                ? colorScheme.onPrimary
+                : (isDark
+                    ? AppColors.textSecondaryDark
+                    : AppColors.textSecondary),
           ),
         ),
       ),
@@ -828,17 +986,25 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            width: 100, height: 100,
+            width: 100,
+            height: 100,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: Theme.of(context).colorScheme.surfaceContainerHighest,
             ),
-            child: Icon(Icons.inventory_2_outlined, size: 40, color: colorScheme.onSurfaceVariant),
+            child: Icon(Icons.inventory_2_outlined,
+                size: 40, color: colorScheme.onSurfaceVariant),
           ),
           const SizedBox(height: AlhaiSpacing.md),
-          Text(l10n.noReturns, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: colorScheme.onSurface)),
+          Text(l10n.noReturns,
+              style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: colorScheme.onSurface)),
           const SizedBox(height: AlhaiSpacing.xs),
-          Text(l10n.noReturnsDesc, style: TextStyle(fontSize: 13, color: colorScheme.onSurfaceVariant)),
+          Text(l10n.noReturnsDesc,
+              style:
+                  TextStyle(fontSize: 13, color: colorScheme.onSurfaceVariant)),
           const SizedBox(height: AlhaiSpacing.lg),
           FilledButton.icon(
             onPressed: _openCreateReturn,
@@ -847,8 +1013,10 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
             style: FilledButton.styleFrom(
               backgroundColor: AppColors.primary,
               foregroundColor: colorScheme.onPrimary,
-              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg, vertical: AlhaiSpacing.sm),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AlhaiSpacing.lg, vertical: AlhaiSpacing.sm),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14)),
             ),
           ),
         ],
@@ -869,21 +1037,33 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
 
     switch (status) {
       case 'pending':
-        bgColor = isDark ? AppColors.warning.withValues(alpha: 0.15) : AppColors.warningSurface;
+        bgColor = isDark
+            ? AppColors.warning.withValues(alpha: 0.15)
+            : AppColors.warningSurface;
         textColor = isDark ? const Color(0xFFFBBF24) : const Color(0xFFB45309);
-        borderColor = isDark ? AppColors.warning.withValues(alpha: 0.3) : const Color(0xFFFDE68A);
+        borderColor = isDark
+            ? AppColors.warning.withValues(alpha: 0.3)
+            : const Color(0xFFFDE68A);
         label = l10n.pending;
         icon = Icons.access_time;
       case 'refunded':
-        bgColor = isDark ? AppColors.success.withValues(alpha: 0.15) : AppColors.successSurface;
+        bgColor = isDark
+            ? AppColors.success.withValues(alpha: 0.15)
+            : AppColors.successSurface;
         textColor = isDark ? const Color(0xFF4ADE80) : AlhaiColors.successDark;
-        borderColor = isDark ? AppColors.success.withValues(alpha: 0.3) : const Color(0xFFBBF7D0);
+        borderColor = isDark
+            ? AppColors.success.withValues(alpha: 0.3)
+            : const Color(0xFFBBF7D0);
         label = l10n.returnRefunded;
         icon = Icons.check_circle;
       case 'rejected':
-        bgColor = isDark ? AppColors.error.withValues(alpha: 0.15) : AppColors.errorSurface;
+        bgColor = isDark
+            ? AppColors.error.withValues(alpha: 0.15)
+            : AppColors.errorSurface;
         textColor = isDark ? const Color(0xFFF87171) : const Color(0xFFB91C1C);
-        borderColor = isDark ? AppColors.error.withValues(alpha: 0.3) : const Color(0xFFFECACA);
+        borderColor = isDark
+            ? AppColors.error.withValues(alpha: 0.3)
+            : const Color(0xFFFECACA);
         label = l10n.returnRejected;
         icon = Icons.block;
       default:
@@ -894,7 +1074,8 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
+      padding: const EdgeInsets.symmetric(
+          horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
       decoration: BoxDecoration(
         color: bgColor,
         borderRadius: BorderRadius.circular(20),
@@ -907,7 +1088,9 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
             Icon(icon, size: 12, color: textColor),
             const SizedBox(width: AlhaiSpacing.xxs),
           ],
-          Text(label, style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: textColor)),
+          Text(label,
+              style: TextStyle(
+                  fontSize: 11, fontWeight: FontWeight.bold, color: textColor)),
         ],
       ),
     );
@@ -925,8 +1108,14 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
     final initial = ret.customer.isNotEmpty ? ret.customer[0] : '?';
     return CircleAvatar(
       radius: 18,
-      backgroundColor: isDark ? AppColors.surfaceVariantDark : AppColors.grey200,
-      child: Text(initial, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: isDark ? AppColors.textMutedDark : AppColors.textSecondary)),
+      backgroundColor:
+          isDark ? AppColors.surfaceVariantDark : AppColors.grey200,
+      child: Text(initial,
+          style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color:
+                  isDark ? AppColors.textMutedDark : AppColors.textSecondary)),
     );
   }
 
@@ -974,12 +1163,15 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
   Widget _buildFooter(AppLocalizations l10n, bool isDark) {
     final colorScheme = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.only(top: AlhaiSpacing.md, bottom: AlhaiSpacing.xs),
+      padding:
+          const EdgeInsets.only(top: AlhaiSpacing.md, bottom: AlhaiSpacing.xs),
       child: Column(
         children: [
           Divider(color: Theme.of(context).dividerColor),
           const SizedBox(height: AlhaiSpacing.sm),
-          Text(l10n.allRightsReservedFooter, style: TextStyle(fontSize: 12, color: colorScheme.onSurfaceVariant)),
+          Text(l10n.allRightsReservedFooter,
+              style:
+                  TextStyle(fontSize: 12, color: colorScheme.onSurfaceVariant)),
         ],
       ),
     );

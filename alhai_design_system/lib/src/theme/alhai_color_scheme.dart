@@ -80,11 +80,11 @@ abstract final class AlhaiColorScheme {
         surfaceContainerHighest: AlhaiColors.surfaceVariantDark,
         onSurfaceVariant: AlhaiColors.onSurfaceVariantDark,
         // Material 3 surface container variants (L82)
-        surfaceDim: Color(0xFF0F1318),          // darker than surface
-        surfaceBright: Color(0xFF2A3040),        // brighter than surface
+        surfaceDim: Color(0xFF0F1318), // darker than surface
+        surfaceBright: Color(0xFF2A3040), // brighter than surface
         surfaceContainerLowest: Color(0xFF0A0E13), // lowest elevation
-        surfaceContainerLow: Color(0xFF171C24),  // low elevation
-        surfaceContainer: Color(0xFF1B2129),     // default container
+        surfaceContainerLow: Color(0xFF171C24), // low elevation
+        surfaceContainer: Color(0xFF1B2129), // default container
         surfaceContainerHigh: Color(0xFF252C35), // high elevation
         // Outline
         outline: AlhaiColors.outlineDark,

@@ -21,8 +21,7 @@ void main() {
       });
 
       test('should escape single quotes', () {
-        expect(
-            InputSanitizer.sanitizeHtml("it's"), contains('&#x27;'));
+        expect(InputSanitizer.sanitizeHtml("it's"), contains('&#x27;'));
       });
 
       test('should escape script tags', () {
@@ -70,16 +69,15 @@ void main() {
       });
 
       test('should escape single quotes', () {
-        expect(
-            InputSanitizer.sanitizeForDb("it's"), contains("''"));
+        expect(InputSanitizer.sanitizeForDb("it's"), contains("''"));
       });
 
       test('should escape backslashes', () {
-        expect(InputSanitizer.sanitizeForDb('path\\to'),
-            contains('\\\\'));
+        expect(InputSanitizer.sanitizeForDb('path\\to'), contains('\\\\'));
       });
 
-      test('should handle newlines (removed as control chars then escaped)', () {
+      test('should handle newlines (removed as control chars then escaped)',
+          () {
         // Control chars [\x00-\x1F] are removed first, \n is \x0A
         final result = InputSanitizer.sanitizeForDb('line1\nline2');
         // Since \n is a control char, it gets removed in the first step
@@ -100,18 +98,18 @@ void main() {
       });
 
       test('should remove pipes', () {
-        expect(InputSanitizer.sanitizeForShell('ls | grep'),
-            isNot(contains('|')));
+        expect(
+            InputSanitizer.sanitizeForShell('ls | grep'), isNot(contains('|')));
       });
 
       test('should remove backticks', () {
-        expect(InputSanitizer.sanitizeForShell('`whoami`'),
-            isNot(contains('`')));
+        expect(
+            InputSanitizer.sanitizeForShell('`whoami`'), isNot(contains('`')));
       });
 
       test('should remove dollar signs', () {
-        expect(InputSanitizer.sanitizeForShell('\$HOME'),
-            isNot(contains('\$')));
+        expect(
+            InputSanitizer.sanitizeForShell('\$HOME'), isNot(contains('\$')));
       });
 
       test('should preserve normal alphanumeric text', () {
@@ -184,8 +182,7 @@ void main() {
       });
 
       test('should allow https URLs', () {
-        final result =
-            InputSanitizer.sanitizeUrl('https://example.com');
+        final result = InputSanitizer.sanitizeUrl('https://example.com');
         expect(result, contains('https'));
       });
 
@@ -224,18 +221,16 @@ void main() {
 
     group('sanitizePhone', () {
       test('should keep only digits and plus', () {
-        expect(InputSanitizer.sanitizePhone('+966-51-234-5678'),
-            '+966512345678');
+        expect(
+            InputSanitizer.sanitizePhone('+966-51-234-5678'), '+966512345678');
       });
 
       test('should remove spaces', () {
-        expect(InputSanitizer.sanitizePhone('051 234 5678'),
-            '0512345678');
+        expect(InputSanitizer.sanitizePhone('051 234 5678'), '0512345678');
       });
 
       test('should remove parentheses', () {
-        expect(InputSanitizer.sanitizePhone('(051)2345678'),
-            '0512345678');
+        expect(InputSanitizer.sanitizePhone('(051)2345678'), '0512345678');
       });
     });
 
@@ -375,18 +370,17 @@ void main() {
 
     group('sanitizeJsonString', () {
       test('should escape double quotes', () {
-        expect(InputSanitizer.sanitizeJsonString('say "hello"'),
-            contains('\\"'));
+        expect(
+            InputSanitizer.sanitizeJsonString('say "hello"'), contains('\\"'));
       });
 
       test('should escape backslashes', () {
-        expect(InputSanitizer.sanitizeJsonString('path\\to'),
-            contains('\\\\'));
+        expect(InputSanitizer.sanitizeJsonString('path\\to'), contains('\\\\'));
       });
 
       test('should escape newlines', () {
-        expect(InputSanitizer.sanitizeJsonString('line1\nline2'),
-            contains('\\n'));
+        expect(
+            InputSanitizer.sanitizeJsonString('line1\nline2'), contains('\\n'));
       });
     });
   });

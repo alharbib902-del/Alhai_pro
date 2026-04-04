@@ -202,8 +202,7 @@ class CsidOnboardingService {
         if (!response.isSuccess) {
           throw OnboardingException(
             step: OnboardingStep.complianceCheck,
-            message:
-                'Compliance check failed for ${spec.label}: '
+            message: 'Compliance check failed for ${spec.label}: '
                 '${response.errors.map((e) => e.message).join(', ')}',
           );
         }
@@ -370,8 +369,7 @@ class OnboardingResult {
   });
 
   /// Whether all compliance checks passed
-  bool get allChecksPassed =>
-      complianceResponses.every((r) => r.isSuccess);
+  bool get allChecksPassed => complianceResponses.every((r) => r.isSuccess);
 }
 
 /// Exception thrown during the onboarding process

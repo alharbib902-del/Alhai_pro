@@ -69,7 +69,8 @@ class XadesSigner {
     );
 
     // 3. Compute SignedProperties digest
-    final signedPropsCanonical = _canonicalizer.canonicalize(signedPropertiesXml);
+    final signedPropsCanonical =
+        _canonicalizer.canonicalize(signedPropertiesXml);
     final signedPropsDigest =
         base64Encode(sha256.convert(utf8.encode(signedPropsCanonical)).bytes);
 

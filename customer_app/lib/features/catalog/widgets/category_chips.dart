@@ -20,7 +20,8 @@ class CategoryChips extends StatelessWidget {
       height: 50,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 6),
+        padding: const EdgeInsets.symmetric(
+            horizontal: AlhaiSpacing.sm, vertical: 6),
         itemCount: categories.length + 1, // +1 for "All"
         itemBuilder: (context, index) {
           if (index == 0) {

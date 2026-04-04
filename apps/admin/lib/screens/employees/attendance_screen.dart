@@ -40,7 +40,8 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
 
       // Load employees (users in this store)
       final users = await db.usersDao.getAllUsers(storeId);
-      final dayStart = DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day);
+      final dayStart =
+          DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day);
       final dayEnd = dayStart.add(const Duration(days: 1));
 
       // Load shifts as attendance proxy
@@ -68,14 +69,21 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
       if (mounted) {
         final l10n = AppLocalizations.of(context)!;
         setState(() {
-          _employees = users.map((u) => _EmployeeOption(id: u.id, name: u.name.isNotEmpty ? u.name : (u.phone ?? l10n.employeeFallback))).toList();
+          _employees = users
+              .map((u) => _EmployeeOption(
+                  id: u.id,
+                  name: u.name.isNotEmpty
+                      ? u.name
+                      : (u.phone ?? l10n.employeeFallback)))
+              .toList();
           _records = shifts.map((row) {
             final openedAt = _parseDate(row.data['opened_at']);
             final closedAt = _parseDate(row.data['closed_at']);
             final duration = closedAt.difference(openedAt);
             return _AttendanceRecord(
               employeeId: row.data['cashier_id'] as String,
-              employeeName: row.data['employee_name'] as String? ?? l10n.employeeFallback,
+              employeeName:
+                  row.data['employee_name'] as String? ?? l10n.employeeFallback,
               checkIn: openedAt,
               checkOut: closedAt,
               duration: duration,
@@ -127,7 +135,8 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
     final presentCount = _records.where((r) => r.checkIn != null).length;
-    final absentCount = (_employees.length - presentCount).clamp(0, _employees.length);
+    final absentCount =
+        (_employees.length - presentCount).clamp(0, _employees.length);
 
     return Scaffold(
       appBar: AppBar(
@@ -146,154 +155,195 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
       body: SafeArea(
         top: false,
         child: Column(
-        children: [
-          // Date banner
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
-            color: theme.colorScheme.primaryContainer,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                InkWell(
-                  onTap: _selectDate,
-                  child: Row(
-                    children: [
-                      Icon(Icons.calendar_today_rounded,
-                          size: 18, color: theme.colorScheme.onPrimaryContainer),
-                      const SizedBox(width: AlhaiSpacing.xs),
-                      Text(
-                        '${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: theme.colorScheme.onPrimaryContainer,
-                          fontSize: 15,
+          children: [
+            // Date banner
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+              color: theme.colorScheme.primaryContainer,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  InkWell(
+                    onTap: _selectDate,
+                    child: Row(
+                      children: [
+                        Icon(Icons.calendar_today_rounded,
+                            size: 18,
+                            color: theme.colorScheme.onPrimaryContainer),
+                        const SizedBox(width: AlhaiSpacing.xs),
+                        Text(
+                          '${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: theme.colorScheme.onPrimaryContainer,
+                            fontSize: 15,
+                          ),
                         ),
-                      ),
+                      ],
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      _AttBadge(
+                          label: l10n.presentLabel,
+                          count: presentCount,
+                          color: AppColors.success),
+                      const SizedBox(width: AlhaiSpacing.xs),
+                      _AttBadge(
+                          label: l10n.absentLabel,
+                          count: absentCount,
+                          color: AppColors.error),
                     ],
                   ),
-                ),
-                Row(
-                  children: [
-                    _AttBadge(label: l10n.presentLabel, count: presentCount, color: AppColors.success),
-                    const SizedBox(width: AlhaiSpacing.xs),
-                    _AttBadge(label: l10n.absentLabel, count: absentCount, color: AppColors.error),
-                  ],
-                ),
-              ],
-            ),
-          ),
-
-          // Summary row
-          if (!_isLoading)
-            Padding(
-              padding: const EdgeInsets.all(AlhaiSpacing.sm),
-              child: Row(
-                children: [
-                  Expanded(child: _SummaryBox(
-                    label: l10n.attendanceCount,
-                    value: presentCount.toString(),
-                    color: AppColors.success,
-                  )),
-                  const SizedBox(width: AlhaiSpacing.xs),
-                  Expanded(child: _SummaryBox(
-                    label: l10n.absencesCount,
-                    value: absentCount.toString(),
-                    color: AppColors.error,
-                  )),
-                  const SizedBox(width: AlhaiSpacing.xs),
-                  Expanded(child: _SummaryBox(
-                    label: l10n.lateCount,
-                    value: _records
-                        .where((r) => r.checkIn != null && r.checkIn!.hour >= 9)
-                        .length
-                        .toString(),
-                    color: AppColors.warning,
-                  )),
-                  const SizedBox(width: AlhaiSpacing.xs),
-                  Expanded(child: _SummaryBox(
-                    label: l10n.totalEmployees,
-                    value: _employees.length.toString(),
-                    color: AppColors.info,
-                  )),
                 ],
               ),
             ),
 
-          // List
-          Expanded(
-            child: _isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : _records.isEmpty
-                    ? AppEmptyState.noData(
-                        context,
-                        title: l10n.noShifts,
-                        description: l10n.noAttendanceRecordsForDay(_selectedDate.day, _selectedDate.month),
-                      )
-                    : ListView.separated(
-                        padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm),
-                        itemCount: _records.length,
-                        separatorBuilder: (_, __) => const SizedBox(height: AlhaiSpacing.xxs),
-                        itemBuilder: (ctx, i) {
-                          final r = _records[i];
-                          final isOpen = r.checkOut == null;
-                          return Card(
-                            child: ListTile(
-                              leading: CircleAvatar(
-                                backgroundColor: isOpen
-                                    ? AppColors.success.withValues(alpha: 0.15)
-                                    : Theme.of(context).colorScheme.surfaceContainerLowest,
-                                child: Text(
-                                  r.employeeName.isNotEmpty ? r.employeeName[0] : '?',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: isOpen ? AppColors.success : Theme.of(context).colorScheme.outline,
-                                  ),
-                                ),
-                              ),
-                              title: Text(r.employeeName,
-                                  style: const TextStyle(fontWeight: FontWeight.w500)),
-                              subtitle: Row(
-                                children: [
-                                  Icon(Icons.login_rounded, size: 12, color: AppColors.success),
-                                  const SizedBox(width: AlhaiSpacing.xxs),
-                                  Text(_formatTime(r.checkIn), style: const TextStyle(fontSize: 12)),
-                                  const SizedBox(width: AlhaiSpacing.sm),
-                                  Icon(Icons.logout_rounded, size: 12, color: AppColors.error),
-                                  const SizedBox(width: AlhaiSpacing.xxs),
-                                  Text(_formatTime(r.checkOut), style: const TextStyle(fontSize: 12)),
-                                ],
-                              ),
-                              trailing: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Text(
-                                    _formatDuration(r.duration),
+            // Summary row
+            if (!_isLoading)
+              Padding(
+                padding: const EdgeInsets.all(AlhaiSpacing.sm),
+                child: Row(
+                  children: [
+                    Expanded(
+                        child: _SummaryBox(
+                      label: l10n.attendanceCount,
+                      value: presentCount.toString(),
+                      color: AppColors.success,
+                    )),
+                    const SizedBox(width: AlhaiSpacing.xs),
+                    Expanded(
+                        child: _SummaryBox(
+                      label: l10n.absencesCount,
+                      value: absentCount.toString(),
+                      color: AppColors.error,
+                    )),
+                    const SizedBox(width: AlhaiSpacing.xs),
+                    Expanded(
+                        child: _SummaryBox(
+                      label: l10n.lateCount,
+                      value: _records
+                          .where(
+                              (r) => r.checkIn != null && r.checkIn!.hour >= 9)
+                          .length
+                          .toString(),
+                      color: AppColors.warning,
+                    )),
+                    const SizedBox(width: AlhaiSpacing.xs),
+                    Expanded(
+                        child: _SummaryBox(
+                      label: l10n.totalEmployees,
+                      value: _employees.length.toString(),
+                      color: AppColors.info,
+                    )),
+                  ],
+                ),
+              ),
+
+            // List
+            Expanded(
+              child: _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : _records.isEmpty
+                      ? AppEmptyState.noData(
+                          context,
+                          title: l10n.noShifts,
+                          description: l10n.noAttendanceRecordsForDay(
+                              _selectedDate.day, _selectedDate.month),
+                        )
+                      : ListView.separated(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: AlhaiSpacing.sm),
+                          itemCount: _records.length,
+                          separatorBuilder: (_, __) =>
+                              const SizedBox(height: AlhaiSpacing.xxs),
+                          itemBuilder: (ctx, i) {
+                            final r = _records[i];
+                            final isOpen = r.checkOut == null;
+                            return Card(
+                              child: ListTile(
+                                leading: CircleAvatar(
+                                  backgroundColor: isOpen
+                                      ? AppColors.success
+                                          .withValues(alpha: 0.15)
+                                      : Theme.of(context)
+                                          .colorScheme
+                                          .surfaceContainerLowest,
+                                  child: Text(
+                                    r.employeeName.isNotEmpty
+                                        ? r.employeeName[0]
+                                        : '?',
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      color: isOpen ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurfaceVariant,
+                                      color: isOpen
+                                          ? AppColors.success
+                                          : Theme.of(context)
+                                              .colorScheme
+                                              .outline,
                                     ),
                                   ),
-                                  if (isOpen)
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                      decoration: BoxDecoration(
-                                        color: AppColors.success.withValues(alpha: 0.1),
-                                        borderRadius: BorderRadius.circular(6),
+                                ),
+                                title: Text(r.employeeName,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.w500)),
+                                subtitle: Row(
+                                  children: [
+                                    Icon(Icons.login_rounded,
+                                        size: 12, color: AppColors.success),
+                                    const SizedBox(width: AlhaiSpacing.xxs),
+                                    Text(_formatTime(r.checkIn),
+                                        style: const TextStyle(fontSize: 12)),
+                                    const SizedBox(width: AlhaiSpacing.sm),
+                                    Icon(Icons.logout_rounded,
+                                        size: 12, color: AppColors.error),
+                                    const SizedBox(width: AlhaiSpacing.xxs),
+                                    Text(_formatTime(r.checkOut),
+                                        style: const TextStyle(fontSize: 12)),
+                                  ],
+                                ),
+                                trailing: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      _formatDuration(r.duration),
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: isOpen
+                                            ? Theme.of(context)
+                                                .colorScheme
+                                                .primary
+                                            : Theme.of(context)
+                                                .colorScheme
+                                                .onSurfaceVariant,
                                       ),
-                                      child: Text(l10n.workingNow,
-                                          style: TextStyle(fontSize: 10, color: AppColors.success)),
                                     ),
-                                ],
+                                    if (isOpen)
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 6, vertical: 2),
+                                        decoration: BoxDecoration(
+                                          color: AppColors.success
+                                              .withValues(alpha: 0.1),
+                                          borderRadius:
+                                              BorderRadius.circular(6),
+                                        ),
+                                        child: Text(l10n.workingNow,
+                                            style: TextStyle(
+                                                fontSize: 10,
+                                                color: AppColors.success)),
+                                      ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          );
-                        },
-                      ),
-          ),
-        ],
-      ),
+                            );
+                          },
+                        ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -303,7 +353,8 @@ class _AttBadge extends StatelessWidget {
   final String label;
   final int count;
   final Color color;
-  const _AttBadge({required this.label, required this.count, required this.color});
+  const _AttBadge(
+      {required this.label, required this.count, required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -315,7 +366,8 @@ class _AttBadge extends StatelessWidget {
       ),
       child: Text(
         '$label: $count',
-        style: TextStyle(fontSize: 12, color: color, fontWeight: FontWeight.bold),
+        style:
+            TextStyle(fontSize: 12, color: color, fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -325,7 +377,8 @@ class _SummaryBox extends StatelessWidget {
   final String label;
   final String value;
   final Color color;
-  const _SummaryBox({required this.label, required this.value, required this.color});
+  const _SummaryBox(
+      {required this.label, required this.value, required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -338,8 +391,12 @@ class _SummaryBox extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Text(value, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: color)),
-          Text(label, style: TextStyle(fontSize: 10, color: Theme.of(context).hintColor)),
+          Text(value,
+              style: TextStyle(
+                  fontSize: 18, fontWeight: FontWeight.bold, color: color)),
+          Text(label,
+              style:
+                  TextStyle(fontSize: 10, color: Theme.of(context).hintColor)),
         ],
       ),
     );

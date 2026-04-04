@@ -257,7 +257,12 @@ class AiCompetitorAnalysisService {
       {'id': 'p4', 'name': 'سكر أبيض 5 كجم', 'cat': 'سكر', 'our': 14.50},
       {'id': 'p5', 'name': 'شاي ربيع 200 كيس', 'cat': 'مشروبات', 'our': 22.0},
       {'id': 'p6', 'name': 'تونة قودي 185 جم', 'cat': 'معلبات', 'our': 8.25},
-      {'id': 'p7', 'name': 'معجون أسنان كولجيت', 'cat': 'عناية شخصية', 'our': 12.0},
+      {
+        'id': 'p7',
+        'name': 'معجون أسنان كولجيت',
+        'cat': 'عناية شخصية',
+        'our': 12.0
+      },
       {'id': 'p8', 'name': 'دجاج مبرد 1 كجم', 'cat': 'لحوم', 'our': 15.0},
       {'id': 'p9', 'name': 'بيض 30 حبة', 'cat': 'بيض', 'our': 18.0},
       {'id': 'p10', 'name': 'خبز توست لوزين', 'cat': 'مخبوزات', 'our': 7.50},
@@ -274,7 +279,8 @@ class AiCompetitorAnalysisService {
           (ourPrice * (1 + variation)).toStringAsFixed(2),
         );
       }
-      final avgPrice = competitors.values.reduce((a, b) => a + b) / competitors.length;
+      final avgPrice =
+          competitors.values.reduce((a, b) => a + b) / competitors.length;
       final diffPercent = ((ourPrice - avgPrice) / avgPrice * 100);
 
       PricePosition position;
@@ -420,9 +426,14 @@ class AiCompetitorAnalysisService {
   /// ملخص التحليل
   static CompetitorAnalysisSummary getSummary() {
     final comparisons = getPriceComparisons();
-    final cheaper = comparisons.where((c) => c.priceDifferencePercent < -3).length;
-    final expensive = comparisons.where((c) => c.priceDifferencePercent > 3).length;
-    final avgDiff = comparisons.map((c) => c.priceDifferencePercent).reduce((a, b) => a + b) / comparisons.length;
+    final cheaper =
+        comparisons.where((c) => c.priceDifferencePercent < -3).length;
+    final expensive =
+        comparisons.where((c) => c.priceDifferencePercent > 3).length;
+    final avgDiff = comparisons
+            .map((c) => c.priceDifferencePercent)
+            .reduce((a, b) => a + b) /
+        comparisons.length;
 
     return CompetitorAnalysisSummary(
       totalProductsTracked: comparisons.length,

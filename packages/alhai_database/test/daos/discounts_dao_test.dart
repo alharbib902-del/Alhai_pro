@@ -94,8 +94,7 @@ void main() {
         ),
       );
 
-      final coupon =
-          await db.discountsDao.getCouponByCode('SAVE20', 'store-1');
+      final coupon = await db.discountsDao.getCouponByCode('SAVE20', 'store-1');
       expect(coupon, isNotNull);
       expect(coupon!.value, 20.0);
     });
@@ -174,8 +173,7 @@ void main() {
         ),
       );
 
-      final promotions =
-          await db.discountsDao.getAllPromotions('store-1');
+      final promotions = await db.discountsDao.getAllPromotions('store-1');
       expect(promotions, hasLength(1));
       expect(promotions.first.name, 'عرض الصيف');
     });

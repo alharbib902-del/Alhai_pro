@@ -87,7 +87,8 @@ class SATableSkeleton extends StatelessWidget {
             const AlhaiSkeleton.rectangle(
               width: double.infinity,
               height: 48,
-              borderRadius: BorderRadius.all(Radius.circular(AlhaiRadius.input)),
+              borderRadius:
+                  BorderRadius.all(Radius.circular(AlhaiRadius.input)),
             ),
             const SizedBox(height: AlhaiSpacing.md),
             // Table header

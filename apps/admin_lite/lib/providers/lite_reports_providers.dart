@@ -33,7 +33,8 @@ class DailySalesData {
 }
 
 /// Provider: Today's full daily sales report
-final liteDailySalesProvider = FutureProvider.autoDispose<DailySalesData>((ref) async {
+final liteDailySalesProvider =
+    FutureProvider.autoDispose<DailySalesData>((ref) async {
   final storeId = ref.watch(currentStoreIdProvider);
   if (storeId == null) throw Exception('No store selected');
 
@@ -43,10 +44,13 @@ final liteDailySalesProvider = FutureProvider.autoDispose<DailySalesData>((ref) 
   final endOfToday = startOfToday.add(const Duration(days: 1));
 
   final results = await Future.wait([
-    db.salesDao.getSalesStats(storeId, startDate: startOfToday, endDate: endOfToday),
-    db.salesDao.getPaymentMethodStats(storeId, startDate: startOfToday, endDate: endOfToday),
+    db.salesDao
+        .getSalesStats(storeId, startDate: startOfToday, endDate: endOfToday),
+    db.salesDao.getPaymentMethodStats(storeId,
+        startDate: startOfToday, endDate: endOfToday),
     db.salesDao.getHourlySales(storeId, now),
-    db.productsDao.getTopSellingProducts(storeId, limit: 5, since: startOfToday),
+    db.productsDao
+        .getTopSellingProducts(storeId, limit: 5, since: startOfToday),
   ]);
 
   // Refund stats via custom query
@@ -65,10 +69,13 @@ final liteDailySalesProvider = FutureProvider.autoDispose<DailySalesData>((ref) 
     refundStats = SalesStats(
       count: refundResult.data['count'] as int? ?? 0,
       total: _toDouble(refundResult.data['total']),
-      average: 0, maxSale: 0, minSale: 0,
+      average: 0,
+      maxSale: 0,
+      minSale: 0,
     );
   } catch (_) {
-    refundStats = const SalesStats(count: 0, total: 0, average: 0, maxSale: 0, minSale: 0);
+    refundStats = const SalesStats(
+        count: 0, total: 0, average: 0, maxSale: 0, minSale: 0);
   }
 
   return DailySalesData(
@@ -101,11 +108,13 @@ class DaySalesData {
   final String dayName;
   final double current;
   final double previous;
-  const DaySalesData({required this.dayName, required this.current, required this.previous});
+  const DaySalesData(
+      {required this.dayName, required this.current, required this.previous});
 }
 
 /// Provider: Weekly comparison (this week vs last week)
-final liteWeeklyComparisonProvider = FutureProvider.autoDispose<WeeklyComparisonData>((ref) async {
+final liteWeeklyComparisonProvider =
+    FutureProvider.autoDispose<WeeklyComparisonData>((ref) async {
   final storeId = ref.watch(currentStoreIdProvider);
   if (storeId == null) throw Exception('No store selected');
 
@@ -114,13 +123,16 @@ final liteWeeklyComparisonProvider = FutureProvider.autoDispose<WeeklyComparison
   final todayWeekday = now.weekday; // 1=Mon .. 7=Sun
   // Saturday-based week start (weekday 6)
   final daysSinceSat = (todayWeekday + 1) % 7;
-  final startOfThisWeek = DateTime(now.year, now.month, now.day).subtract(Duration(days: daysSinceSat));
+  final startOfThisWeek = DateTime(now.year, now.month, now.day)
+      .subtract(Duration(days: daysSinceSat));
   final startOfLastWeek = startOfThisWeek.subtract(const Duration(days: 7));
   final endOfThisWeek = startOfThisWeek.add(const Duration(days: 7));
 
   final results = await Future.wait([
-    db.salesDao.getSalesStats(storeId, startDate: startOfThisWeek, endDate: endOfThisWeek),
-    db.salesDao.getSalesStats(storeId, startDate: startOfLastWeek, endDate: startOfThisWeek),
+    db.salesDao.getSalesStats(storeId,
+        startDate: startOfThisWeek, endDate: endOfThisWeek),
+    db.salesDao.getSalesStats(storeId,
+        startDate: startOfLastWeek, endDate: startOfThisWeek),
   ]);
 
   final thisWeekStats = results[0] as SalesStats;
@@ -134,8 +146,10 @@ final liteWeeklyComparisonProvider = FutureProvider.autoDispose<WeeklyComparison
     final dayEnd = dayStart.add(const Duration(days: 1));
     final prevDayStart = startOfLastWeek.add(Duration(days: i));
     final prevDayEnd = prevDayStart.add(const Duration(days: 1));
-    dayFutures.add(db.salesDao.getSalesStats(storeId, startDate: dayStart, endDate: dayEnd));
-    dayFutures.add(db.salesDao.getSalesStats(storeId, startDate: prevDayStart, endDate: prevDayEnd));
+    dayFutures.add(db.salesDao
+        .getSalesStats(storeId, startDate: dayStart, endDate: dayEnd));
+    dayFutures.add(db.salesDao
+        .getSalesStats(storeId, startDate: prevDayStart, endDate: prevDayEnd));
   }
   final dayResults = await Future.wait(dayFutures);
   final dailyBreakdown = <DaySalesData>[];
@@ -191,11 +205,16 @@ class TopProductData {
   final double revenue;
   final int quantity;
   final String productId;
-  const TopProductData({required this.name, required this.revenue, required this.quantity, required this.productId});
+  const TopProductData(
+      {required this.name,
+      required this.revenue,
+      required this.quantity,
+      required this.productId});
 }
 
 /// Provider: Top selling products with revenue + quantity
-final liteTopProductsProvider = FutureProvider.autoDispose<List<TopProductData>>((ref) async {
+final liteTopProductsProvider =
+    FutureProvider.autoDispose<List<TopProductData>>((ref) async {
   final storeId = ref.watch(currentStoreIdProvider);
   if (storeId == null) return [];
 
@@ -222,21 +241,24 @@ final liteTopProductsProvider = FutureProvider.autoDispose<List<TopProductData>>
       ],
     ).get();
 
-    return result.map((row) => TopProductData(
-      name: row.data['name'] as String? ?? '',
-      revenue: _toDouble(row.data['revenue']),
-      quantity: (row.data['total_qty'] is int)
-          ? row.data['total_qty'] as int
-          : (row.data['total_qty'] as double?)?.toInt() ?? 0,
-      productId: row.data['product_id'] as String? ?? '',
-    )).toList();
+    return result
+        .map((row) => TopProductData(
+              name: row.data['name'] as String? ?? '',
+              revenue: _toDouble(row.data['revenue']),
+              quantity: (row.data['total_qty'] is int)
+                  ? row.data['total_qty'] as int
+                  : (row.data['total_qty'] as double?)?.toInt() ?? 0,
+              productId: row.data['product_id'] as String? ?? '',
+            ))
+        .toList();
   } catch (_) {
     return [];
   }
 });
 
 /// Provider: Low stock products
-final liteLowStockProvider = FutureProvider.autoDispose<List<ProductsTableData>>((ref) async {
+final liteLowStockProvider =
+    FutureProvider.autoDispose<List<ProductsTableData>>((ref) async {
   final storeId = ref.watch(currentStoreIdProvider);
   if (storeId == null) return [];
 
@@ -261,7 +283,8 @@ class EmployeePerformanceData {
 }
 
 /// Provider: Employee performance (sales grouped by cashier)
-final liteEmployeePerformanceProvider = FutureProvider.autoDispose<List<EmployeePerformanceData>>((ref) async {
+final liteEmployeePerformanceProvider =
+    FutureProvider.autoDispose<List<EmployeePerformanceData>>((ref) async {
   final storeId = ref.watch(currentStoreIdProvider);
   if (storeId == null) return [];
 
@@ -286,13 +309,15 @@ final liteEmployeePerformanceProvider = FutureProvider.autoDispose<List<Employee
       ],
     ).get();
 
-    return result.map((row) => EmployeePerformanceData(
-      userId: row.data['cashier_id'] as String? ?? '',
-      name: row.data['name'] as String? ?? 'Unknown',
-      role: row.data['role'] as String? ?? 'Cashier',
-      totalSales: _toDouble(row.data['total_sales']),
-      transactionCount: row.data['txn_count'] as int? ?? 0,
-    )).toList();
+    return result
+        .map((row) => EmployeePerformanceData(
+              userId: row.data['cashier_id'] as String? ?? '',
+              name: row.data['name'] as String? ?? 'Unknown',
+              role: row.data['role'] as String? ?? 'Cashier',
+              totalSales: _toDouble(row.data['total_sales']),
+              transactionCount: row.data['txn_count'] as int? ?? 0,
+            ))
+        .toList();
   } catch (_) {
     return [];
   }
@@ -320,7 +345,8 @@ class CashFlowData {
 }
 
 /// Provider: Cash flow overview
-final liteCashFlowProvider = FutureProvider.autoDispose<CashFlowData>((ref) async {
+final liteCashFlowProvider =
+    FutureProvider.autoDispose<CashFlowData>((ref) async {
   final storeId = ref.watch(currentStoreIdProvider);
   if (storeId == null) throw Exception('No store selected');
 
@@ -331,8 +357,10 @@ final liteCashFlowProvider = FutureProvider.autoDispose<CashFlowData>((ref) asyn
 
   // Sales (inflow) + payment breakdown
   final results = await Future.wait([
-    db.salesDao.getSalesStats(storeId, startDate: startOfToday, endDate: endOfToday),
-    db.salesDao.getPaymentMethodStats(storeId, startDate: startOfToday, endDate: endOfToday),
+    db.salesDao
+        .getSalesStats(storeId, startDate: startOfToday, endDate: endOfToday),
+    db.salesDao.getPaymentMethodStats(storeId,
+        startDate: startOfToday, endDate: endOfToday),
     db.expensesDao.getTodayExpensesTotal(storeId),
   ]);
 
@@ -361,14 +389,16 @@ final liteCashFlowProvider = FutureProvider.autoDispose<CashFlowData>((ref) asyn
   final dayNames = ['Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
   final todayWeekday = now.weekday;
   final daysSinceSat = (todayWeekday + 1) % 7;
-  final startOfWeek = DateTime(now.year, now.month, now.day).subtract(Duration(days: daysSinceSat));
+  final startOfWeek = DateTime(now.year, now.month, now.day)
+      .subtract(Duration(days: daysSinceSat));
 
   // Batch all 7 daily queries in parallel
   final trendFutures = <Future<SalesStats>>[];
   for (int i = 0; i < 7; i++) {
     final dayStart = startOfWeek.add(Duration(days: i));
     final dayEnd = dayStart.add(const Duration(days: 1));
-    trendFutures.add(db.salesDao.getSalesStats(storeId, startDate: dayStart, endDate: dayEnd));
+    trendFutures.add(db.salesDao
+        .getSalesStats(storeId, startDate: dayStart, endDate: dayEnd));
   }
   final trendResults = await Future.wait(trendFutures);
   final weeklyTrend = <DaySalesData>[];

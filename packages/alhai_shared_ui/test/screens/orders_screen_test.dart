@@ -62,9 +62,11 @@ Widget _buildTestWidget({
     overrides: [
       currentStoreIdProvider.overrideWith((ref) => 'test-store-id'),
       ordersListProvider.overrideWith(
-        (ref) => ordersValue?.when(
+        (ref) =>
+            ordersValue?.when(
               data: (d) => Future.value(d),
-              loading: () => Future.delayed(const Duration(days: 1), () => <OrdersTableData>[]),
+              loading: () => Future.delayed(
+                  const Duration(days: 1), () => <OrdersTableData>[]),
               error: (e, _) => Future.error(e!),
             ) ??
             Future.value(<OrdersTableData>[]),
@@ -123,7 +125,8 @@ void main() {
 
       final testOrders = [
         _createTestOrder(id: 'o1', orderNumber: 'ORD-001', total: 100),
-        _createTestOrder(id: 'o2', orderNumber: 'ORD-002', total: 200, status: 'pending'),
+        _createTestOrder(
+            id: 'o2', orderNumber: 'ORD-002', total: 200, status: 'pending'),
       ];
 
       await tester.pumpWidget(_buildTestWidget(

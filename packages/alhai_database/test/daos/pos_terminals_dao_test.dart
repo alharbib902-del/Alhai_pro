@@ -42,8 +42,7 @@ void main() {
     });
 
     test('getTerminal returns null for non-existent', () async {
-      final terminal =
-          await db.posTerminalsDao.getTerminal('non-existent');
+      final terminal = await db.posTerminalsDao.getTerminal('non-existent');
       expect(terminal, isNull);
     });
 
@@ -54,22 +53,19 @@ void main() {
         name: 'كاشير 2',
       ));
 
-      final terminals =
-          await db.posTerminalsDao.getStoreTerminals('store-1');
+      final terminals = await db.posTerminalsDao.getStoreTerminals('store-1');
       expect(terminals, hasLength(2));
     });
 
     test('getActiveTerminals returns only active', () async {
-      await db.posTerminalsDao
-          .upsertTerminal(_makeTerminal(isActive: true));
+      await db.posTerminalsDao.upsertTerminal(_makeTerminal(isActive: true));
       await db.posTerminalsDao.upsertTerminal(_makeTerminal(
         id: 'term-2',
         name: 'معطل',
         isActive: false,
       ));
 
-      final active =
-          await db.posTerminalsDao.getActiveTerminals('store-1');
+      final active = await db.posTerminalsDao.getActiveTerminals('store-1');
       expect(active, hasLength(1));
       expect(active.first.name, 'كاشير 1');
     });

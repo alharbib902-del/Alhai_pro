@@ -6,7 +6,8 @@ import '../tables/organizations_table.dart';
 
 part 'organizations_dao.g.dart';
 
-@DriftAccessor(tables: [OrganizationsTable, SubscriptionsTable, OrgMembersTable])
+@DriftAccessor(
+    tables: [OrganizationsTable, SubscriptionsTable, OrgMembersTable])
 class OrganizationsDao extends DatabaseAccessor<AppDatabase>
     with _$OrganizationsDaoMixin {
   OrganizationsDao(super.db);
@@ -36,8 +37,7 @@ class OrganizationsDao extends DatabaseAccessor<AppDatabase>
       update(organizationsTable).replace(org);
 
   Future<int> upsertOrganization(OrganizationsTableCompanion org) =>
-      into(organizationsTable)
-          .insert(org, mode: InsertMode.insertOrReplace);
+      into(organizationsTable).insert(org, mode: InsertMode.insertOrReplace);
 
   Future<int> deleteOrganization(String id) async {
     return transaction(() async {
@@ -50,8 +50,7 @@ class OrganizationsDao extends DatabaseAccessor<AppDatabase>
 
   Future<int> markOrgAsSynced(String id) {
     return (update(organizationsTable)..where((o) => o.id.equals(id)))
-        .write(OrganizationsTableCompanion(
-            syncedAt: Value(DateTime.now())));
+        .write(OrganizationsTableCompanion(syncedAt: Value(DateTime.now())));
   }
 
   Stream<List<OrganizationsTableData>> watchOrganizations() {
@@ -63,8 +62,7 @@ class OrganizationsDao extends DatabaseAccessor<AppDatabase>
   // === Subscriptions ===
 
   Future<SubscriptionsTableData?> getSubscription(String orgId) {
-    return (select(subscriptionsTable)
-          ..where((s) => s.orgId.equals(orgId)))
+    return (select(subscriptionsTable)..where((s) => s.orgId.equals(orgId)))
         .getSingleOrNull();
   }
 
@@ -74,21 +72,18 @@ class OrganizationsDao extends DatabaseAccessor<AppDatabase>
   }
 
   Stream<SubscriptionsTableData?> watchSubscription(String orgId) {
-    return (select(subscriptionsTable)
-          ..where((s) => s.orgId.equals(orgId)))
+    return (select(subscriptionsTable)..where((s) => s.orgId.equals(orgId)))
         .watchSingleOrNull();
   }
 
   Future<SubscriptionsTableData?> getActiveSubscription(String orgId) {
     return (select(subscriptionsTable)
-          ..where((s) =>
-              s.orgId.equals(orgId) & s.status.equals('active')))
+          ..where((s) => s.orgId.equals(orgId) & s.status.equals('active')))
         .getSingleOrNull();
   }
 
   Future<int> upsertSubscription(SubscriptionsTableCompanion sub) =>
-      into(subscriptionsTable)
-          .insert(sub, mode: InsertMode.insertOrReplace);
+      into(subscriptionsTable).insert(sub, mode: InsertMode.insertOrReplace);
 
   Future<int> deleteSubscription(String id) =>
       (delete(subscriptionsTable)..where((s) => s.id.equals(id))).go();

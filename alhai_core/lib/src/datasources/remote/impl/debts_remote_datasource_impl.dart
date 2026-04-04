@@ -63,7 +63,8 @@ class DebtsRemoteDataSourceImpl implements DebtsRemoteDataSource {
   }
 
   @override
-  Future<DebtPaymentResponse> recordPayment(RecordPaymentRequest request) async {
+  Future<DebtPaymentResponse> recordPayment(
+      RecordPaymentRequest request) async {
     final response = await _dio.post(
       '/debts/${request.debtId}/payments',
       data: request.toJson(),

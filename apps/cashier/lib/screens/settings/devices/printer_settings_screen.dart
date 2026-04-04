@@ -15,7 +15,8 @@ import '../../core/services/sentry_service.dart';
 import '../../services/printing/print_service.dart';
 import '../../services/printing/printing_providers.dart'
     hide autoPrintEnabledProvider;
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
+import 'package:alhai_design_system/alhai_design_system.dart'
+    show AlhaiBreakpoints, AlhaiSpacing;
 
 /// Printer settings screen
 class PrinterSettingsScreen extends ConsumerStatefulWidget {
@@ -26,8 +27,7 @@ class PrinterSettingsScreen extends ConsumerStatefulWidget {
       _PrinterSettingsScreenState();
 }
 
-class _PrinterSettingsScreenState
-    extends ConsumerState<PrinterSettingsScreen> {
+class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
   bool _isScanning = false;
   bool _isTesting = false;
   List<DiscoveredPrinter> _discoveredPrinters = [];
@@ -103,17 +103,18 @@ class _PrinterSettingsScreenState
 
   Future<void> _connectPrinter(DiscoveredPrinter printer) async {
     try {
-      final success = await ref
-          .read(printServiceProvider.notifier)
-          .connectAndSave(printer);
+      final success =
+          await ref.read(printServiceProvider.notifier).connectAndSave(printer);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
               success
-                  ? AppLocalizations.of(context).connectedToPrinterName(printer.name)
-                  : AppLocalizations.of(context).connectionFailedToPrinter(printer.name),
+                  ? AppLocalizations.of(context)
+                      .connectedToPrinterName(printer.name)
+                  : AppLocalizations.of(context)
+                      .connectionFailedToPrinter(printer.name),
             ),
             backgroundColor: success ? AppColors.success : AppColors.error,
           ),
@@ -137,9 +138,7 @@ class _PrinterSettingsScreenState
       return;
     }
 
-    await ref
-        .read(printServiceProvider.notifier)
-        .setServiceType('network');
+    await ref.read(printServiceProvider.notifier).setServiceType('network');
 
     final printer = DiscoveredPrinter(
       id: ip,
@@ -213,10 +212,11 @@ class _PrinterSettingsScreenState
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            result.success ? l10n.cashDrawerOpened : l10n.cashDrawerFailed(result.error ?? ''),
+            result.success
+                ? l10n.cashDrawerOpened
+                : l10n.cashDrawerFailed(result.error ?? ''),
           ),
-          backgroundColor:
-              result.success ? AppColors.success : AppColors.error,
+          backgroundColor: result.success ? AppColors.success : AppColors.error,
         ),
       );
     }
@@ -262,16 +262,15 @@ class _PrinterSettingsScreenState
             onPressed: () => context.pop(),
             tooltip: l10n.back,
           ),
-          onNotificationsTap: () =>
-              context.push(AppRoutes.notificationsCenter),
-          userName:
-              ref.watch(currentUserProvider)?.name ?? l10n.cashCustomer,
+          onNotificationsTap: () => context.push(AppRoutes.notificationsCenter),
+          userName: ref.watch(currentUserProvider)?.name ?? l10n.cashCustomer,
           userRole: l10n.cashier,
           onUserTap: () => context.push(AppRoutes.profile),
         ),
         Expanded(
           child: SingleChildScrollView(
-            padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+            padding: EdgeInsets.all(
+                isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -317,8 +316,7 @@ class _PrinterSettingsScreenState
     final statusColor = isConnected ? AppColors.success : AppColors.error;
     final statusIcon =
         isConnected ? Icons.check_circle_rounded : Icons.cancel_rounded;
-    final statusText =
-        isConnected ? 'متصل بالطابعة' : 'لا توجد طابعة متصلة';
+    final statusText = isConnected ? 'متصل بالطابعة' : 'لا توجد طابعة متصلة';
 
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
@@ -473,8 +471,7 @@ class _PrinterSettingsScreenState
             spacing: 8,
             children: [
               _connectionChip('bluetooth', 'بلوتوث', Icons.bluetooth, isDark),
-              _connectionChip(
-                  'network', 'شبكة', Icons.wifi_rounded, isDark),
+              _connectionChip('network', 'شبكة', Icons.wifi_rounded, isDark),
               _connectionChip(
                   'sunmi', 'Sunmi', Icons.smartphone_rounded, isDark),
             ],
@@ -507,7 +504,8 @@ class _PrinterSettingsScreenState
                         borderRadius: BorderRadius.circular(10),
                       ),
                       contentPadding: const EdgeInsets.symmetric(
-                          horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+                          horizontal: AlhaiSpacing.md,
+                          vertical: AlhaiSpacing.sm),
                       isDense: true,
                     ),
                   ),
@@ -518,7 +516,8 @@ class _PrinterSettingsScreenState
                   style: FilledButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     padding: const EdgeInsets.symmetric(
-                        horizontal: AlhaiSpacing.mdl, vertical: AlhaiSpacing.sm),
+                        horizontal: AlhaiSpacing.mdl,
+                        vertical: AlhaiSpacing.sm),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10)),
                   ),
@@ -548,7 +547,8 @@ class _PrinterSettingsScreenState
                 label: Text(_isScanning ? 'جاري البحث...' : 'بحث عن طابعات'),
                 style: FilledButton.styleFrom(
                   backgroundColor: AppColors.primary,
-                  padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10)),
                 ),
@@ -569,9 +569,8 @@ class _PrinterSettingsScreenState
       onSelected: (_) => setState(() => _selectedConnectionType = value),
       selectedColor: AppColors.primary.withValues(alpha: 0.15),
       labelStyle: TextStyle(
-        color: isSelected
-            ? AppColors.primary
-            : AppColors.getTextPrimary(isDark),
+        color:
+            isSelected ? AppColors.primary : AppColors.getTextPrimary(isDark),
         fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
       ),
       shape: RoundedRectangleBorder(
@@ -612,8 +611,8 @@ class _PrinterSettingsScreenState
 
             return Container(
               margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
-              padding:
-                  const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
               decoration: BoxDecoration(
                 color: isThisConnected
                     ? AppColors.success.withValues(alpha: 0.05)

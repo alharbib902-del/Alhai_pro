@@ -199,8 +199,12 @@ class _PhoneInputFieldState extends State<PhoneInputField> {
               InkWell(
                 onTap: widget.enabled ? _showCountryPicker : null,
                 borderRadius: BorderRadius.horizontal(
-                  right: Directionality.of(context) == TextDirection.rtl ? Radius.zero : const Radius.circular(12),
-                  left: Directionality.of(context) == TextDirection.rtl ? const Radius.circular(12) : Radius.zero,
+                  right: Directionality.of(context) == TextDirection.rtl
+                      ? Radius.zero
+                      : const Radius.circular(12),
+                  left: Directionality.of(context) == TextDirection.rtl
+                      ? const Radius.circular(12)
+                      : Radius.zero,
                 ),
                 child: Container(
                   padding: const EdgeInsets.symmetric(
@@ -272,7 +276,9 @@ class _PhoneInputFieldState extends State<PhoneInputField> {
                     decoration: InputDecoration(
                       hintText: '05X XXX XXXX',
                       hintStyle: TextStyle(
-                        color: isDarkMode ? Colors.white38 : AppColors.textTertiary,
+                        color: isDarkMode
+                            ? Colors.white38
+                            : AppColors.textTertiary,
                         fontSize: 18,
                         letterSpacing: 1,
                       ),
@@ -365,13 +371,20 @@ class _CountryPickerSheet extends StatelessWidget {
   String _localizedCountryName(BuildContext context, CountryData country) {
     final l10n = AppLocalizations.of(context)!;
     switch (country.code) {
-      case 'SA': return l10n.saudiArabia;
-      case 'AE': return l10n.uae;
-      case 'KW': return l10n.kuwait;
-      case 'BH': return l10n.bahrain;
-      case 'QA': return l10n.qatar;
-      case 'OM': return l10n.oman;
-      default: return country.nameAr;
+      case 'SA':
+        return l10n.saudiArabia;
+      case 'AE':
+        return l10n.uae;
+      case 'KW':
+        return l10n.kuwait;
+      case 'BH':
+        return l10n.bahrain;
+      case 'QA':
+        return l10n.qatar;
+      case 'OM':
+        return l10n.oman;
+      default:
+        return country.nameAr;
     }
   }
 

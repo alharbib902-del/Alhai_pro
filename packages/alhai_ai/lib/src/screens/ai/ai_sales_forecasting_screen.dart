@@ -60,22 +60,22 @@ class _AiSalesForecastingScreenState
     final l10n = AppLocalizations.of(context)!;
 
     return Column(
-              children: [
-                AppHeader(
-                  title: l10n.aiSalesForecasting,
-                  subtitle: l10n.aiSmartForecastSubtitle,
-                  onMenuTap: isWideScreen
-                      ? null
-                      : () => Scaffold.of(context).openDrawer(),
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-                    child: _buildContent(isDark, isWideScreen, isMediumScreen),
-                  ),
-                ),
-              ],
-            );
+      children: [
+        AppHeader(
+          title: l10n.aiSalesForecasting,
+          subtitle: l10n.aiSmartForecastSubtitle,
+          onMenuTap:
+              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+        ),
+        Expanded(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.all(
+                isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+            child: _buildContent(isDark, isWideScreen, isMediumScreen),
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _buildContent(bool isDark, bool isWideScreen, bool isMediumScreen) {
@@ -147,9 +147,8 @@ class _AiSalesForecastingScreenState
                       priceChangePercent: priceChange,
                       result: whatIfAsync.valueOrNull,
                       isLoading: whatIfAsync.isLoading,
-                      onDiscountChanged: (v) => ref
-                          .read(whatIfDiscountProvider.notifier)
-                          .state = v,
+                      onDiscountChanged: (v) =>
+                          ref.read(whatIfDiscountProvider.notifier).state = v,
                       onPriceChanged: (v) => ref
                           .read(whatIfPriceChangeProvider.notifier)
                           .state = v,
@@ -283,9 +282,8 @@ class _AiSalesForecastingScreenState
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.08)
-              : AppColors.border,
+          color:
+              isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.border,
         ),
         boxShadow: [
           BoxShadow(
@@ -314,8 +312,7 @@ class _AiSalesForecastingScreenState
                   data.label,
                   style: TextStyle(
                     fontSize: 11,
-                    color:
-                        isDark ? Colors.white54 : AppColors.textSecondary,
+                    color: isDark ? Colors.white54 : AppColors.textSecondary,
                   ),
                 ),
                 const SizedBox(height: AlhaiSpacing.xxxs),
@@ -346,9 +343,8 @@ class _AiSalesForecastingScreenState
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.08)
-              : AppColors.border,
+          color:
+              isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.border,
         ),
       ),
       child: TabBar(
@@ -359,11 +355,9 @@ class _AiSalesForecastingScreenState
           borderRadius: BorderRadius.circular(10),
         ),
         labelColor: Colors.white,
-        unselectedLabelColor:
-            isDark ? Colors.white54 : AppColors.textSecondary,
+        unselectedLabelColor: isDark ? Colors.white54 : AppColors.textSecondary,
         dividerColor: Colors.transparent,
-        labelStyle:
-            const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+        labelStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
         tabs: [
           Tab(text: AppLocalizations.of(context)!.daily),
           Tab(text: AppLocalizations.of(context)!.weekly),
@@ -474,9 +468,8 @@ class _AiSalesForecastingScreenState
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.08)
-              : AppColors.border,
+          color:
+              isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.border,
         ),
       ),
       child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),

@@ -35,8 +35,7 @@ void main() {
     // Default stubs
     when(() => categoriesDao.getAllCategories(any()))
         .thenAnswer((_) async => []);
-    when(() => productsDao.getAllProducts(any()))
-        .thenAnswer((_) async => []);
+    when(() => productsDao.getAllProducts(any())).thenAnswer((_) async => []);
   });
 
   tearDown(() => tearDownTestGetIt());

@@ -58,7 +58,8 @@ class _GiftCardsScreenState extends ConsumerState<GiftCardsScreen>
 
       if (giftCoupons.isNotEmpty) {
         _cards = giftCoupons.map((c) {
-          final balance = c.value - (c.currentUses * c.value / (c.maxUses == 0 ? 1 : c.maxUses));
+          final balance = c.value -
+              (c.currentUses * c.value / (c.maxUses == 0 ? 1 : c.maxUses));
           final now = DateTime.now();
           String status;
           if (c.expiresAt != null && c.expiresAt!.isBefore(now)) {
@@ -116,11 +117,13 @@ class _GiftCardsScreenState extends ConsumerState<GiftCardsScreen>
     setState(() {
       _filteredCards = _cards.where((c) {
         final matchFilter = _filter == 'all' ||
-            (_filter == 'active' && (c.status == 'active' || c.status == 'partially_used')) ||
+            (_filter == 'active' &&
+                (c.status == 'active' || c.status == 'partially_used')) ||
             (_filter == 'used' && c.status == 'used') ||
             (_filter == 'expired' && c.status == 'expired');
         final search = _searchController.text.toLowerCase();
-        final matchSearch = search.isEmpty || c.code.toLowerCase().contains(search);
+        final matchSearch =
+            search.isEmpty || c.code.toLowerCase().contains(search);
         return matchFilter && matchSearch;
       }).toList();
     });
@@ -129,7 +132,8 @@ class _GiftCardsScreenState extends ConsumerState<GiftCardsScreen>
   String _generateCode() {
     final rng = Random();
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    final code = List.generate(8, (_) => chars[rng.nextInt(chars.length)]).join();
+    final code =
+        List.generate(8, (_) => chars[rng.nextInt(chars.length)]).join();
     return 'GC-$code';
   }
 
@@ -168,7 +172,8 @@ class _GiftCardsScreenState extends ConsumerState<GiftCardsScreen>
                     ),
                     IconButton(
                       icon: const Icon(Icons.copy_rounded, size: 18),
-                      onPressed: () => Clipboard.setData(ClipboardData(text: code)),
+                      onPressed: () =>
+                          Clipboard.setData(ClipboardData(text: code)),
                     ),
                   ],
                 ),
@@ -199,7 +204,9 @@ class _GiftCardsScreenState extends ConsumerState<GiftCardsScreen>
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(AppLocalizations.of(context).cancel)),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(AppLocalizations.of(context).cancel)),
           FilledButton.icon(
             onPressed: () async {
               final storeId = ref.read(currentStoreIdProvider)!;
@@ -213,7 +220,8 @@ class _GiftCardsScreenState extends ConsumerState<GiftCardsScreen>
                     type: 'gift_card',
                     value: amount,
                     isActive: const Value(true),
-                    expiresAt: Value(DateTime.now().add(Duration(days: validityDays))),
+                    expiresAt:
+                        Value(DateTime.now().add(Duration(days: validityDays))),
                     createdAt: DateTime.now(),
                   ),
                 );
@@ -236,7 +244,8 @@ class _GiftCardsScreenState extends ConsumerState<GiftCardsScreen>
               if (mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(AppLocalizations.of(context).giftCardIssued(amount.toStringAsFixed(0))),
+                    content: Text(AppLocalizations.of(context)
+                        .giftCardIssued(amount.toStringAsFixed(0))),
                     backgroundColor: AppColors.success,
                   ),
                 );
@@ -267,7 +276,9 @@ class _GiftCardsScreenState extends ConsumerState<GiftCardsScreen>
           textCapitalization: TextCapitalization.characters,
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(AppLocalizations.of(context).cancel)),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(AppLocalizations.of(context).cancel)),
           FilledButton(
             onPressed: () {
               final code = codeController.text.trim().toUpperCase();
@@ -290,7 +301,8 @@ class _GiftCardsScreenState extends ConsumerState<GiftCardsScreen>
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(AppLocalizations.of(context).cardBalance(card.balance.toStringAsFixed(2))),
+                    content: Text(AppLocalizations.of(context)
+                        .cardBalance(card.balance.toStringAsFixed(2))),
                     backgroundColor: AppColors.success,
                   ),
                 );
@@ -345,12 +357,14 @@ class _GiftCardsScreenState extends ConsumerState<GiftCardsScreen>
                         hintText: AppLocalizations.of(context).searchByCode,
                         prefixIcon: const Icon(Icons.search_rounded),
                         border: const OutlineInputBorder(),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm),
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: AlhaiSpacing.sm),
                         isDense: true,
                       ),
                       onChanged: (_) {
                         _searchDebounce?.cancel();
-                        _searchDebounce = Timer(const Duration(milliseconds: 300), () {
+                        _searchDebounce =
+                            Timer(const Duration(milliseconds: 300), () {
                           _applyFilter();
                         });
                       },
@@ -362,12 +376,19 @@ class _GiftCardsScreenState extends ConsumerState<GiftCardsScreen>
                         children: [
                           for (final f in [
                             ('all', AppLocalizations.of(context).all),
-                            ('active', AppLocalizations.of(context).activeFilter),
+                            (
+                              'active',
+                              AppLocalizations.of(context).activeFilter
+                            ),
                             ('used', AppLocalizations.of(context).usedFilter),
-                            ('expired', AppLocalizations.of(context).expiredFilter),
+                            (
+                              'expired',
+                              AppLocalizations.of(context).expiredFilter
+                            ),
                           ])
                             Padding(
-                              padding: const EdgeInsetsDirectional.only(start: AlhaiSpacing.xs),
+                              padding: const EdgeInsetsDirectional.only(
+                                  start: AlhaiSpacing.xs),
                               child: FilterChip(
                                 label: Text(f.$2),
                                 selected: _filter == f.$1,
@@ -390,13 +411,16 @@ class _GiftCardsScreenState extends ConsumerState<GiftCardsScreen>
                         ? AppEmptyState(
                             icon: Icons.card_giftcard_outlined,
                             title: AppLocalizations.of(context).noGiftCards,
-                            description: AppLocalizations.of(context).issueGiftCardsDescription,
-                            actionText: AppLocalizations.of(context).issueGiftCard,
+                            description: AppLocalizations.of(context)
+                                .issueGiftCardsDescription,
+                            actionText:
+                                AppLocalizations.of(context).issueGiftCard,
                             onAction: _showIssueDialog,
                             actionIcon: Icons.add_rounded,
                           )
                         : ListView.builder(
-                            padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: AlhaiSpacing.sm),
                             itemCount: _filteredCards.length,
                             itemBuilder: (ctx, i) {
                               final card = _filteredCards[i];
@@ -412,35 +436,43 @@ class _GiftCardsScreenState extends ConsumerState<GiftCardsScreen>
             padding: const EdgeInsets.all(AlhaiSpacing.md),
             children: [
               Row(children: [
-                Expanded(child: _StatCard(
+                Expanded(
+                    child: _StatCard(
                   label: AppLocalizations.of(context).totalActiveBalance,
-                  value: '${totalActive.toStringAsFixed(0)} ${AppLocalizations.of(context).sarSuffix}',
+                  value:
+                      '${totalActive.toStringAsFixed(0)} ${AppLocalizations.of(context).sarSuffix}',
                   icon: Icons.account_balance_wallet_rounded,
                   color: Colors.green,
                 )),
                 const SizedBox(width: AlhaiSpacing.sm),
-                Expanded(child: _StatCard(
+                Expanded(
+                    child: _StatCard(
                   label: AppLocalizations.of(context).totalIssuedValue,
-                  value: '${totalIssued.toStringAsFixed(0)} ${AppLocalizations.of(context).sarSuffix}',
+                  value:
+                      '${totalIssued.toStringAsFixed(0)} ${AppLocalizations.of(context).sarSuffix}',
                   icon: Icons.card_giftcard_rounded,
                   color: Colors.purple,
                 )),
               ]),
               const SizedBox(height: AlhaiSpacing.sm),
               Row(children: [
-                Expanded(child: _StatCard(
+                Expanded(
+                    child: _StatCard(
                   label: AppLocalizations.of(context).activeCards,
                   value: _cards
-                      .where((c) => c.status == 'active' || c.status == 'partially_used')
+                      .where((c) =>
+                          c.status == 'active' || c.status == 'partially_used')
                       .length
                       .toString(),
                   icon: Icons.check_circle_rounded,
                   color: Colors.blue,
                 )),
                 const SizedBox(width: AlhaiSpacing.sm),
-                Expanded(child: _StatCard(
+                Expanded(
+                    child: _StatCard(
                   label: AppLocalizations.of(context).usedCards,
-                  value: _cards.where((c) => c.status == 'used').length.toString(),
+                  value:
+                      _cards.where((c) => c.status == 'used').length.toString(),
                   icon: Icons.done_all_rounded,
                   color: Theme.of(context).hintColor,
                 )),
@@ -464,22 +496,32 @@ class _GiftCardTile extends StatelessWidget {
 
   Color _statusColorOf(BuildContext context) {
     switch (card.status) {
-      case 'active': return Colors.green;
-      case 'partially_used': return Colors.orange;
-      case 'used': return Theme.of(context).colorScheme.outline;
-      case 'expired': return Colors.red;
-      default: return Theme.of(context).colorScheme.outline;
+      case 'active':
+        return Colors.green;
+      case 'partially_used':
+        return Colors.orange;
+      case 'used':
+        return Theme.of(context).colorScheme.outline;
+      case 'expired':
+        return Colors.red;
+      default:
+        return Theme.of(context).colorScheme.outline;
     }
   }
 
   String _statusLabel(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     switch (card.status) {
-      case 'active': return l10n.giftCardStatusActive;
-      case 'partially_used': return l10n.giftCardStatusPartiallyUsed;
-      case 'used': return l10n.giftCardStatusFullyUsed;
-      case 'expired': return l10n.giftCardStatusExpired;
-      default: return card.status;
+      case 'active':
+        return l10n.giftCardStatusActive;
+      case 'partially_used':
+        return l10n.giftCardStatusPartiallyUsed;
+      case 'used':
+        return l10n.giftCardStatusFullyUsed;
+      case 'expired':
+        return l10n.giftCardStatusExpired;
+      default:
+        return card.status;
     }
   }
 
@@ -509,14 +551,18 @@ class _GiftCardTile extends StatelessWidget {
                 ),
                 const Spacer(),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
                     color: statusColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     _statusLabel(context),
-                    style: TextStyle(fontSize: 11, color: statusColor, fontWeight: FontWeight.w500),
+                    style: TextStyle(
+                        fontSize: 11,
+                        color: statusColor,
+                        fontWeight: FontWeight.w500),
                   ),
                 ),
               ],
@@ -524,7 +570,8 @@ class _GiftCardTile extends StatelessWidget {
             const SizedBox(height: AlhaiSpacing.xs),
             LinearProgressIndicator(
               value: pctUsed,
-              backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
+              backgroundColor:
+                  Theme.of(context).colorScheme.surfaceContainerLow,
               valueColor: AlwaysStoppedAnimation<Color>(statusColor),
               minHeight: 4,
               borderRadius: BorderRadius.circular(2),
@@ -534,7 +581,9 @@ class _GiftCardTile extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  AppLocalizations.of(context).balanceDisplay(card.balance.toStringAsFixed(0), card.amount.toStringAsFixed(0)),
+                  AppLocalizations.of(context).balanceDisplay(
+                      card.balance.toStringAsFixed(0),
+                      card.amount.toStringAsFixed(0)),
                   style: TextStyle(
                     fontSize: 12,
                     color: statusColor,
@@ -542,8 +591,10 @@ class _GiftCardTile extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  AppLocalizations.of(context).expiresOn('${card.expiresAt.day}/${card.expiresAt.month}/${card.expiresAt.year}'),
-                  style: TextStyle(fontSize: 11, color: Theme.of(context).hintColor),
+                  AppLocalizations.of(context).expiresOn(
+                      '${card.expiresAt.day}/${card.expiresAt.month}/${card.expiresAt.year}'),
+                  style: TextStyle(
+                      fontSize: 11, color: Theme.of(context).hintColor),
                 ),
               ],
             ),
@@ -577,9 +628,13 @@ class _StatCard extends StatelessWidget {
           children: [
             Icon(icon, color: color, size: 28),
             const SizedBox(height: AlhaiSpacing.xs),
-            Text(value, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: color)),
+            Text(value,
+                style: TextStyle(
+                    fontSize: 20, fontWeight: FontWeight.bold, color: color)),
             const SizedBox(height: AlhaiSpacing.xxs),
-            Text(label, style: TextStyle(fontSize: 12, color: Theme.of(context).hintColor)),
+            Text(label,
+                style: TextStyle(
+                    fontSize: 12, color: Theme.of(context).hintColor)),
           ],
         ),
       ),

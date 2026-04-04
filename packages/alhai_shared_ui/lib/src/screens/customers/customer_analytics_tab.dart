@@ -150,8 +150,7 @@ class CustomerAnalyticsTab extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 AnimatedContainer(
-                  duration:
-                      Duration(milliseconds: 400 + i * 100),
+                  duration: Duration(milliseconds: 400 + i * 100),
                   height: 120 * values[i],
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
@@ -162,8 +161,8 @@ class CustomerAnalyticsTab extends StatelessWidget {
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                     ),
-                    borderRadius: const BorderRadius.vertical(
-                        top: Radius.circular(4)),
+                    borderRadius:
+                        const BorderRadius.vertical(top: Radius.circular(4)),
                   ),
                 ),
                 const SizedBox(height: 6),
@@ -184,18 +183,10 @@ class CustomerAnalyticsTab extends StatelessWidget {
 
   Widget _buildPieChartPlaceholder(bool isDark) {
     final items = [
-      {
-        'label': 'Groceries',
-        'pct': 45,
-        'color': AppColors.primary
-      },
+      {'label': 'Groceries', 'pct': 45, 'color': AppColors.primary},
       {'label': 'Dairy', 'pct': 25, 'color': AppColors.info},
       {'label': 'Meat', 'pct': 18, 'color': AppColors.warning},
-      {
-        'label': 'Other',
-        'pct': 12,
-        'color': const Color(0xFF8B5CF6)
-      },
+      {'label': 'Other', 'pct': 12, 'color': const Color(0xFF8B5CF6)},
     ];
     return Row(
       children: [
@@ -209,8 +200,7 @@ class CustomerAnalyticsTab extends StatelessWidget {
                 painter: PieChartPainter(
                   items
                       .map((e) => PieSegment(
-                            value:
-                                (e['pct'] as int).toDouble(),
+                            value: (e['pct'] as int).toDouble(),
                             color: e['color'] as Color,
                           ))
                       .toList(),
@@ -242,8 +232,7 @@ class CustomerAnalyticsTab extends StatelessWidget {
                     '${item['label']} ${item['pct']}%',
                     style: TextStyle(
                       fontSize: 11,
-                      color:
-                          AppColors.getTextSecondary(isDark),
+                      color: AppColors.getTextSecondary(isDark),
                     ),
                   ),
                 ],
@@ -324,8 +313,7 @@ class CustomerAnalyticsTab extends StatelessWidget {
     );
   }
 
-  Widget _buildAnalyticStatCard(
-      Map<String, dynamic> stat, bool isDark) {
+  Widget _buildAnalyticStatCard(Map<String, dynamic> stat, bool isDark) {
     final color = stat['color'] as Color;
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.md),
@@ -343,12 +331,10 @@ class CustomerAnalyticsTab extends StatelessWidget {
             height: 36,
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.12),
-              borderRadius:
-                  BorderRadius.circular(AppSizes.radiusMd),
+              borderRadius: BorderRadius.circular(AppSizes.radiusMd),
             ),
             alignment: Alignment.center,
-            child: Icon(stat['icon'] as IconData,
-                size: 18, color: color),
+            child: Icon(stat['icon'] as IconData, size: 18, color: color),
           ),
           SizedBox(height: AlhaiSpacing.sm),
           Text(
@@ -402,14 +388,12 @@ class PieChartPainter extends CustomPainter {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = size.width / 2;
     final innerRadius = radius * 0.55;
-    final total =
-        segments.fold<double>(0, (s, e) => s + e.value);
+    final total = segments.fold<double>(0, (s, e) => s + e.value);
 
     double startAngle = -math.pi / 2; // start from top
 
     for (final segment in segments) {
-      final sweepAngle =
-          (segment.value / total) * 2 * math.pi;
+      final sweepAngle = (segment.value / total) * 2 * math.pi;
       final paint = Paint()
         ..color = segment.color
         ..style = PaintingStyle.stroke
@@ -417,9 +401,7 @@ class PieChartPainter extends CustomPainter {
         ..strokeCap = StrokeCap.butt;
 
       canvas.drawArc(
-        Rect.fromCircle(
-            center: center,
-            radius: (radius + innerRadius) / 2),
+        Rect.fromCircle(center: center, radius: (radius + innerRadius) / 2),
         startAngle,
         sweepAngle,
         false,
@@ -430,6 +412,5 @@ class PieChartPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant PieChartPainter oldDelegate) =>
-      false;
+  bool shouldRepaint(covariant PieChartPainter oldDelegate) => false;
 }

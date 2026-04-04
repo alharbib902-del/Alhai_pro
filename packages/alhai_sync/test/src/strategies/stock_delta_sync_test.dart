@@ -34,8 +34,7 @@ void main() {
     group('sync', () {
       test('returns empty result when no pending deltas', () async {
         when(() => mockDeltasDao.getPendingDeltasForStore(any(),
-                limit: any(named: 'limit')))
-            .thenAnswer((_) async => []);
+            limit: any(named: 'limit'))).thenAnswer((_) async => []);
 
         final result = await stockDeltaSync.sync(
           orgId: 'org-1',
@@ -64,8 +63,7 @@ void main() {
         ];
 
         when(() => mockDeltasDao.getPendingDeltasForStore(any(),
-                limit: any(named: 'limit')))
-            .thenAnswer((_) async => deltas);
+            limit: any(named: 'limit'))).thenAnswer((_) async => deltas);
 
         // RPC returns builder; mock .then() to resolve with results
         setupRpcCall(mockClient, result: [
@@ -83,13 +81,10 @@ void main() {
 
         when(() => mockDb.customStatement(any(), any()))
             .thenAnswer((_) async {});
-        when(() => mockDeltasDao.markSynced(any()))
-            .thenAnswer((_) async {});
+        when(() => mockDeltasDao.markSynced(any())).thenAnswer((_) async {});
         when(() => mockMetadataDao.updateLastPushAt(any(), any(),
-                syncCount: any(named: 'syncCount')))
-            .thenAnswer((_) async {});
-        when(() => mockMetadataDao.clearError(any()))
-            .thenAnswer((_) async {});
+            syncCount: any(named: 'syncCount'))).thenAnswer((_) async {});
+        when(() => mockMetadataDao.clearError(any())).thenAnswer((_) async {});
 
         final result = await stockDeltaSync.sync(
           orgId: 'org-1',
@@ -117,8 +112,7 @@ void main() {
         ];
 
         when(() => mockDeltasDao.getPendingDeltasForStore(any(),
-                limit: any(named: 'limit')))
-            .thenAnswer((_) async => deltas);
+            limit: any(named: 'limit'))).thenAnswer((_) async => deltas);
 
         setupRpcCall(mockClient, result: [
           {
@@ -130,13 +124,10 @@ void main() {
 
         when(() => mockDb.customStatement(any(), any()))
             .thenAnswer((_) async {});
-        when(() => mockDeltasDao.markSynced(any()))
-            .thenAnswer((_) async {});
+        when(() => mockDeltasDao.markSynced(any())).thenAnswer((_) async {});
         when(() => mockMetadataDao.updateLastPushAt(any(), any(),
-                syncCount: any(named: 'syncCount')))
-            .thenAnswer((_) async {});
-        when(() => mockMetadataDao.clearError(any()))
-            .thenAnswer((_) async {});
+            syncCount: any(named: 'syncCount'))).thenAnswer((_) async {});
+        when(() => mockMetadataDao.clearError(any())).thenAnswer((_) async {});
 
         final result = await stockDeltaSync.sync(
           orgId: 'org-1',
@@ -154,8 +145,7 @@ void main() {
         ];
 
         when(() => mockDeltasDao.getPendingDeltasForStore(any(),
-                limit: any(named: 'limit')))
-            .thenAnswer((_) async => deltas);
+            limit: any(named: 'limit'))).thenAnswer((_) async => deltas);
 
         // Mock RPC to throw synchronously
         when(() => mockClient.rpc(any(), params: any(named: 'params')))
@@ -171,8 +161,7 @@ void main() {
         );
 
         expect(result.hasErrors, isTrue);
-        verify(() => mockMetadataDao.setError('stock_deltas', any()))
-            .called(1);
+        verify(() => mockMetadataDao.setError('stock_deltas', any())).called(1);
       });
 
       test('handles RPC non-list response gracefully', () async {
@@ -181,21 +170,17 @@ void main() {
         ];
 
         when(() => mockDeltasDao.getPendingDeltasForStore(any(),
-                limit: any(named: 'limit')))
-            .thenAnswer((_) async => deltas);
+            limit: any(named: 'limit'))).thenAnswer((_) async => deltas);
 
         // RPC returns non-list (e.g., a string)
         setupRpcCall(mockClient, result: 'ok');
 
         when(() => mockDb.customStatement(any(), any()))
             .thenAnswer((_) async {});
-        when(() => mockDeltasDao.markSynced(any()))
-            .thenAnswer((_) async {});
+        when(() => mockDeltasDao.markSynced(any())).thenAnswer((_) async {});
         when(() => mockMetadataDao.updateLastPushAt(any(), any(),
-                syncCount: any(named: 'syncCount')))
-            .thenAnswer((_) async {});
-        when(() => mockMetadataDao.clearError(any()))
-            .thenAnswer((_) async {});
+            syncCount: any(named: 'syncCount'))).thenAnswer((_) async {});
+        when(() => mockMetadataDao.clearError(any())).thenAnswer((_) async {});
 
         final result = await stockDeltaSync.sync(
           orgId: 'org-1',

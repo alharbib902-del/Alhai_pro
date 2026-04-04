@@ -21,7 +21,8 @@ class StoresRepositoryImpl implements StoresRepository {
     required double lat,
     required double lng,
     double radiusKm = 10,
-  }) => _datasource.getNearbyStores(lat: lat, lng: lng, radiusKm: radiusKm);
+  }) =>
+      _datasource.getNearbyStores(lat: lat, lng: lng, radiusKm: radiusKm);
 
   @override
   Future<Store> updateStore(String id, UpdateStoreParams params) {

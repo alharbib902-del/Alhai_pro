@@ -17,11 +17,12 @@ class AiSentimentAnalysisScreen extends ConsumerStatefulWidget {
   const AiSentimentAnalysisScreen({super.key});
 
   @override
-  ConsumerState<AiSentimentAnalysisScreen> createState() => _AiSentimentAnalysisScreenState();
+  ConsumerState<AiSentimentAnalysisScreen> createState() =>
+      _AiSentimentAnalysisScreenState();
 }
 
-class _AiSentimentAnalysisScreenState extends ConsumerState<AiSentimentAnalysisScreen> {
-
+class _AiSentimentAnalysisScreenState
+    extends ConsumerState<AiSentimentAnalysisScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -29,14 +30,15 @@ class _AiSentimentAnalysisScreenState extends ConsumerState<AiSentimentAnalysisS
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Column(
-              children: [
-                AppHeader(
-                  title: AppLocalizations.of(context)!.aiSentimentAnalysisTitle,
-                  onMenuTap: !isWideScreen ? () => Scaffold.of(context).openDrawer() : null,
-                ),
-                Expanded(child: _buildContent(isDark, isWideScreen)),
-              ],
-            );
+      children: [
+        AppHeader(
+          title: AppLocalizations.of(context)!.aiSentimentAnalysisTitle,
+          onMenuTap:
+              !isWideScreen ? () => Scaffold.of(context).openDrawer() : null,
+        ),
+        Expanded(child: _buildContent(isDark, isWideScreen)),
+      ],
+    );
   }
 
   Widget _buildContent(bool isDark, bool isWideScreen) {
@@ -114,11 +116,24 @@ class _AiSentimentAnalysisScreenState extends ConsumerState<AiSentimentAnalysisS
   Widget _buildDistribution(SentimentResult result, bool isDark) {
     final l10n = AppLocalizations.of(context)!;
     final entries = [
-      _DistEntry(l10n.veryPositiveSentiment, result.distribution[SentimentScore.veryPositive] ?? 0, AppColors.success),
-      _DistEntry(l10n.positiveSentiment, result.distribution[SentimentScore.positive] ?? 0, AppColors.primaryLight),
-      _DistEntry(l10n.neutralSentiment, result.distribution[SentimentScore.neutral] ?? 0, AppColors.warning),
-      _DistEntry(l10n.negativeSentiment, result.distribution[SentimentScore.negative] ?? 0, const Color(0xFFF97316)),
-      _DistEntry(l10n.veryNegativeSentiment, result.distribution[SentimentScore.veryNegative] ?? 0, AppColors.error),
+      _DistEntry(
+          l10n.veryPositiveSentiment,
+          result.distribution[SentimentScore.veryPositive] ?? 0,
+          AppColors.success),
+      _DistEntry(
+          l10n.positiveSentiment,
+          result.distribution[SentimentScore.positive] ?? 0,
+          AppColors.primaryLight),
+      _DistEntry(l10n.neutralSentiment,
+          result.distribution[SentimentScore.neutral] ?? 0, AppColors.warning),
+      _DistEntry(
+          l10n.negativeSentiment,
+          result.distribution[SentimentScore.negative] ?? 0,
+          const Color(0xFFF97316)),
+      _DistEntry(
+          l10n.veryNegativeSentiment,
+          result.distribution[SentimentScore.veryNegative] ?? 0,
+          AppColors.error),
     ];
     final total = result.totalReviews;
 
@@ -127,7 +142,10 @@ class _AiSentimentAnalysisScreenState extends ConsumerState<AiSentimentAnalysisS
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
+        border: Border.all(
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.1)
+                : AppColors.border),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
@@ -161,7 +179,9 @@ class _AiSentimentAnalysisScreenState extends ConsumerState<AiSentimentAnalysisS
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
-                        color: isDark ? Colors.white.withValues(alpha: 0.7) : AppColors.textSecondary,
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.7)
+                            : AppColors.textSecondary,
                       ),
                     ),
                   ),
@@ -171,7 +191,9 @@ class _AiSentimentAnalysisScreenState extends ConsumerState<AiSentimentAnalysisS
                       child: LinearProgressIndicator(
                         value: percent,
                         minHeight: 10,
-                        backgroundColor: isDark ? Colors.white.withValues(alpha: 0.06) : AppColors.grey200,
+                        backgroundColor: isDark
+                            ? Colors.white.withValues(alpha: 0.06)
+                            : AppColors.grey200,
                         valueColor: AlwaysStoppedAnimation(entry.color),
                       ),
                     ),
@@ -205,7 +227,10 @@ class _AiSentimentAnalysisScreenState extends ConsumerState<AiSentimentAnalysisS
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
+        border: Border.all(
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.1)
+                : AppColors.border),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
@@ -227,7 +252,8 @@ class _AiSentimentAnalysisScreenState extends ConsumerState<AiSentimentAnalysisS
                   ),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.trending_up_rounded, color: Colors.white, size: 18),
+                child: const Icon(Icons.trending_up_rounded,
+                    color: Colors.white, size: 18),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Text(
@@ -256,11 +282,16 @@ class _AiSentimentAnalysisScreenState extends ConsumerState<AiSentimentAnalysisS
     final l10n = AppLocalizations.of(context)!;
     final filters = [
       _FilterOption(null, l10n.filterAllLabel, AppColors.textSecondary),
-      _FilterOption(SentimentScore.veryPositive, l10n.veryPositiveSentiment, AppColors.success),
-      _FilterOption(SentimentScore.positive, l10n.positiveSentiment, AppColors.primaryLight),
-      _FilterOption(SentimentScore.neutral, l10n.neutralSentiment, AppColors.warning),
-      _FilterOption(SentimentScore.negative, l10n.negativeSentiment, const Color(0xFFF97316)),
-      _FilterOption(SentimentScore.veryNegative, l10n.veryNegativeSentiment, AppColors.error),
+      _FilterOption(SentimentScore.veryPositive, l10n.veryPositiveSentiment,
+          AppColors.success),
+      _FilterOption(SentimentScore.positive, l10n.positiveSentiment,
+          AppColors.primaryLight),
+      _FilterOption(
+          SentimentScore.neutral, l10n.neutralSentiment, AppColors.warning),
+      _FilterOption(SentimentScore.negative, l10n.negativeSentiment,
+          const Color(0xFFF97316)),
+      _FilterOption(SentimentScore.veryNegative, l10n.veryNegativeSentiment,
+          AppColors.error),
     ];
 
     return SingleChildScrollView(
@@ -274,16 +305,25 @@ class _AiSentimentAnalysisScreenState extends ConsumerState<AiSentimentAnalysisS
               selected: isSelected,
               label: Text(f.label),
               labelStyle: TextStyle(
-                color: isSelected ? Colors.white : (isDark ? Colors.white.withValues(alpha: 0.6) : AppColors.textSecondary),
+                color: isSelected
+                    ? Colors.white
+                    : (isDark
+                        ? Colors.white.withValues(alpha: 0.6)
+                        : AppColors.textSecondary),
                 fontSize: 12,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
               ),
               selectedColor: f.color,
               backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
               side: BorderSide(
-                color: isSelected ? f.color : (isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
+                color: isSelected
+                    ? f.color
+                    : (isDark
+                        ? Colors.white.withValues(alpha: 0.1)
+                        : AppColors.border),
               ),
-              onSelected: (_) => ref.read(sentimentFilterProvider.notifier).state = f.score,
+              onSelected: (_) =>
+                  ref.read(sentimentFilterProvider.notifier).state = f.score,
             ),
           );
         }).toList(),
@@ -319,7 +359,8 @@ class _AiSentimentAnalysisScreenState extends ConsumerState<AiSentimentAnalysisS
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color: isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.border,
+          color:
+              isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.border,
         ),
         boxShadow: [
           BoxShadow(
@@ -360,7 +401,9 @@ class _AiSentimentAnalysisScreenState extends ConsumerState<AiSentimentAnalysisS
                       _formatTimeAgo(feedback.timestamp),
                       style: TextStyle(
                         fontSize: 11,
-                        color: isDark ? Colors.white.withValues(alpha: 0.4) : AppColors.textMuted,
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.4)
+                            : AppColors.textMuted,
                       ),
                     ),
                   ],
@@ -372,11 +415,15 @@ class _AiSentimentAnalysisScreenState extends ConsumerState<AiSentimentAnalysisS
                   mainAxisSize: MainAxisSize.min,
                   children: List.generate(5, (i) {
                     return Icon(
-                      i < feedback.rating! ? Icons.star_rounded : Icons.star_outline_rounded,
+                      i < feedback.rating!
+                          ? Icons.star_rounded
+                          : Icons.star_outline_rounded,
                       size: 16,
                       color: i < feedback.rating!
                           ? const Color(0xFFFBBF24)
-                          : (isDark ? Colors.white.withValues(alpha: 0.2) : AppColors.grey300),
+                          : (isDark
+                              ? Colors.white.withValues(alpha: 0.2)
+                              : AppColors.grey300),
                     );
                   }),
                 ),
@@ -390,7 +437,9 @@ class _AiSentimentAnalysisScreenState extends ConsumerState<AiSentimentAnalysisS
             feedback.text,
             style: TextStyle(
               fontSize: 13,
-              color: isDark ? Colors.white.withValues(alpha: 0.8) : AppColors.textSecondary,
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.8)
+                  : AppColors.textSecondary,
               height: 1.5,
             ),
           ),
@@ -405,14 +454,22 @@ class _AiSentimentAnalysisScreenState extends ConsumerState<AiSentimentAnalysisS
                   spacing: 6,
                   runSpacing: 4,
                   children: feedback.keywords.map((kw) {
-                    final isPositive = AiSentimentAnalysisService.positiveWords.contains(kw) ||
-                        ['تنوع', 'عروض', 'مناسب', 'أفضل', 'جودة عالية'].contains(kw);
-                    final isNegative = AiSentimentAnalysisService.negativeWords.contains(kw) ||
-                        ['غير متوفر', 'طويل', 'مزدحم'].contains(kw);
-                    final color = isPositive ? AppColors.success : isNegative ? AppColors.error : AppColors.warning;
+                    final isPositive =
+                        AiSentimentAnalysisService.positiveWords.contains(kw) ||
+                            ['تنوع', 'عروض', 'مناسب', 'أفضل', 'جودة عالية']
+                                .contains(kw);
+                    final isNegative =
+                        AiSentimentAnalysisService.negativeWords.contains(kw) ||
+                            ['غير متوفر', 'طويل', 'مزدحم'].contains(kw);
+                    final color = isPositive
+                        ? AppColors.success
+                        : isNegative
+                            ? AppColors.error
+                            : AppColors.warning;
 
                     return Container(
-                      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 3),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: AlhaiSpacing.xs, vertical: 3),
                       decoration: BoxDecoration(
                         color: color.withValues(alpha: 0.08),
                         borderRadius: BorderRadius.circular(6),
@@ -433,7 +490,8 @@ class _AiSentimentAnalysisScreenState extends ConsumerState<AiSentimentAnalysisS
               if (feedback.productName != null) ...[
                 const SizedBox(width: AlhaiSpacing.xs),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
                   decoration: BoxDecoration(
                     color: AppColors.info.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(6),
@@ -441,7 +499,8 @@ class _AiSentimentAnalysisScreenState extends ConsumerState<AiSentimentAnalysisS
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.inventory_2_rounded, size: 12, color: AppColors.info),
+                      const Icon(Icons.inventory_2_rounded,
+                          size: 12, color: AppColors.info),
                       const SizedBox(width: AlhaiSpacing.xxs),
                       Text(
                         feedback.productName!,
@@ -467,7 +526,9 @@ class _AiSentimentAnalysisScreenState extends ConsumerState<AiSentimentAnalysisS
                 AppLocalizations.of(context)!.sentimentIndicator,
                 style: TextStyle(
                   fontSize: 10,
-                  color: isDark ? Colors.white.withValues(alpha: 0.3) : AppColors.textMuted,
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.3)
+                      : AppColors.textMuted,
                 ),
               ),
               const SizedBox(width: AlhaiSpacing.xs),
@@ -477,7 +538,9 @@ class _AiSentimentAnalysisScreenState extends ConsumerState<AiSentimentAnalysisS
                   child: LinearProgressIndicator(
                     value: (feedback.sentimentValue + 1) / 2,
                     minHeight: 4,
-                    backgroundColor: isDark ? Colors.white.withValues(alpha: 0.06) : AppColors.grey200,
+                    backgroundColor: isDark
+                        ? Colors.white.withValues(alpha: 0.06)
+                        : AppColors.grey200,
                     valueColor: AlwaysStoppedAnimation(sentimentColor),
                   ),
                 ),
@@ -535,7 +598,8 @@ class _TrendChartPainter extends CustomPainter {
 
     // Grid
     final gridPaint = Paint()
-      ..color = isDark ? Colors.white.withValues(alpha: 0.06) : AppColors.grey200
+      ..color =
+          isDark ? Colors.white.withValues(alpha: 0.06) : AppColors.grey200
       ..strokeWidth = 1;
     for (int i = 0; i <= 4; i++) {
       final y = size.height * i / 4;
@@ -543,9 +607,12 @@ class _TrendChartPainter extends CustomPainter {
     }
 
     // Draw stacked area for positive, neutral, negative
-    _drawLine(canvas, size, trend.map((t) => t.positivePercent).toList(), stepX, AppColors.success);
-    _drawLine(canvas, size, trend.map((t) => t.neutralPercent).toList(), stepX, AppColors.warning);
-    _drawLine(canvas, size, trend.map((t) => t.negativePercent).toList(), stepX, AppColors.error);
+    _drawLine(canvas, size, trend.map((t) => t.positivePercent).toList(), stepX,
+        AppColors.success);
+    _drawLine(canvas, size, trend.map((t) => t.neutralPercent).toList(), stepX,
+        AppColors.warning);
+    _drawLine(canvas, size, trend.map((t) => t.negativePercent).toList(), stepX,
+        AppColors.error);
 
     // Labels
     for (int i = 0; i < trend.length; i++) {
@@ -553,7 +620,9 @@ class _TrendChartPainter extends CustomPainter {
         text: TextSpan(
           text: trend[i].period.replaceAll('الأسبوع ', 'ع'),
           style: TextStyle(
-            color: isDark ? Colors.white.withValues(alpha: 0.4) : AppColors.textMuted,
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.4)
+                : AppColors.textMuted,
             fontSize: 9,
           ),
         ),
@@ -563,7 +632,8 @@ class _TrendChartPainter extends CustomPainter {
     }
   }
 
-  void _drawLine(Canvas canvas, Size size, List<double> values, double stepX, Color color) {
+  void _drawLine(Canvas canvas, Size size, List<double> values, double stepX,
+      Color color) {
     const maxVal = 100.0;
     final path = Path();
     final fillPath = Path();
@@ -584,19 +654,26 @@ class _TrendChartPainter extends CustomPainter {
     fillPath.lineTo((values.length - 1) * stepX, size.height);
     fillPath.lineTo(0, size.height);
     fillPath.close();
-    canvas.drawPath(fillPath, Paint()
-      ..shader = LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [color.withValues(alpha: 0.15), color.withValues(alpha: 0.02)],
-      ).createShader(Rect.fromLTWH(0, 0, size.width, size.height)));
+    canvas.drawPath(
+        fillPath,
+        Paint()
+          ..shader = LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              color.withValues(alpha: 0.15),
+              color.withValues(alpha: 0.02)
+            ],
+          ).createShader(Rect.fromLTWH(0, 0, size.width, size.height)));
 
     // Line
-    canvas.drawPath(path, Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.5
-      ..strokeCap = StrokeCap.round);
+    canvas.drawPath(
+        path,
+        Paint()
+          ..color = color
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2.5
+          ..strokeCap = StrokeCap.round);
 
     // Dots
     for (int i = 0; i < values.length; i++) {

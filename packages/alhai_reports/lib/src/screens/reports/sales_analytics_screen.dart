@@ -9,7 +9,8 @@ class SalesAnalyticsScreen extends ConsumerStatefulWidget {
   const SalesAnalyticsScreen({super.key});
 
   @override
-  ConsumerState<SalesAnalyticsScreen> createState() => _SalesAnalyticsScreenState();
+  ConsumerState<SalesAnalyticsScreen> createState() =>
+      _SalesAnalyticsScreenState();
 }
 
 class _SalesAnalyticsScreenState extends ConsumerState<SalesAnalyticsScreen> {
@@ -22,9 +23,11 @@ class _SalesAnalyticsScreenState extends ConsumerState<SalesAnalyticsScreen> {
         final start = DateTime(now.year, now.month, now.day);
         return DateRange(start: start, end: now);
       case 'week':
-        return DateRange(start: now.subtract(const Duration(days: 7)), end: now);
+        return DateRange(
+            start: now.subtract(const Duration(days: 7)), end: now);
       case 'month':
-        return DateRange(start: now.subtract(const Duration(days: 30)), end: now);
+        return DateRange(
+            start: now.subtract(const Duration(days: 30)), end: now);
       default:
         return null;
     }
@@ -57,21 +60,30 @@ class _SalesAnalyticsScreenState extends ConsumerState<SalesAnalyticsScreen> {
         error: (e, _) => Center(child: Text('${l10n.errorOccurred}: $e')),
         data: (stats) => ResponsiveBuilder(
           builder: (context, deviceType, width) {
-            final padding = getResponsiveValue<double>(context, mobile: 16, desktop: 24);
+            final padding =
+                getResponsiveValue<double>(context, mobile: 16, desktop: 24);
             return SingleChildScrollView(
               padding: EdgeInsets.all(padding),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: AlhaiSpacing.xs,
+                        vertical: AlhaiSpacing.xxs),
                     decoration: BoxDecoration(
                       color: colorScheme.primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
-                      _selectedPeriod == 'today' ? l10n.today : _selectedPeriod == 'week' ? l10n.thisWeek : l10n.thisMonth,
-                      style: TextStyle(color: colorScheme.primary, fontWeight: FontWeight.w500),
+                      _selectedPeriod == 'today'
+                          ? l10n.today
+                          : _selectedPeriod == 'week'
+                              ? l10n.thisWeek
+                              : l10n.thisMonth,
+                      style: TextStyle(
+                          color: colorScheme.primary,
+                          fontWeight: FontWeight.w500),
                     ),
                   ),
                   const SizedBox(height: AlhaiSpacing.md),
@@ -83,13 +95,27 @@ class _SalesAnalyticsScreenState extends ConsumerState<SalesAnalyticsScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(l10n.salesAnalytics, style: theme.textTheme.titleMedium),
+                          Text(l10n.salesAnalytics,
+                              style: theme.textTheme.titleMedium),
                           const Divider(),
-                          _SummaryRow(label: l10n.totalSales, value: '${stats.total.toStringAsFixed(2)} ${l10n.sar}'),
-                          _SummaryRow(label: l10n.invoices, value: '${stats.count}'),
-                          _SummaryRow(label: l10n.averageSale, value: '${stats.average.toStringAsFixed(2)} ${l10n.sar}'),
-                          _SummaryRow(label: l10n.totalSales, value: '${stats.maxSale.toStringAsFixed(2)} ${l10n.sar}'),
-                          _SummaryRow(label: l10n.averageSale, value: '${stats.minSale.toStringAsFixed(2)} ${l10n.sar}'),
+                          _SummaryRow(
+                              label: l10n.totalSales,
+                              value:
+                                  '${stats.total.toStringAsFixed(2)} ${l10n.sar}'),
+                          _SummaryRow(
+                              label: l10n.invoices, value: '${stats.count}'),
+                          _SummaryRow(
+                              label: l10n.averageSale,
+                              value:
+                                  '${stats.average.toStringAsFixed(2)} ${l10n.sar}'),
+                          _SummaryRow(
+                              label: l10n.totalSales,
+                              value:
+                                  '${stats.maxSale.toStringAsFixed(2)} ${l10n.sar}'),
+                          _SummaryRow(
+                              label: l10n.averageSale,
+                              value:
+                                  '${stats.minSale.toStringAsFixed(2)} ${l10n.sar}'),
                         ],
                       ),
                     ),
@@ -103,28 +129,57 @@ class _SalesAnalyticsScreenState extends ConsumerState<SalesAnalyticsScreen> {
     );
   }
 
-  Widget _buildMetricGrid(BuildContext context, AppLocalizations l10n, dynamic stats, DeviceType deviceType) {
+  Widget _buildMetricGrid(BuildContext context, AppLocalizations l10n,
+      dynamic stats, DeviceType deviceType) {
     final cards = [
-      _MetricCard(icon: Icons.attach_money, title: l10n.totalSales, value: '${stats.total.toStringAsFixed(0)} ${l10n.sar}', color: Colors.green),
-      _MetricCard(icon: Icons.receipt_long, title: l10n.invoices, value: '${stats.count}', color: Colors.blue),
-      _MetricCard(icon: Icons.shopping_cart, title: l10n.averageSale, value: '${stats.average.toStringAsFixed(0)} ${l10n.sar}', color: Colors.orange),
-      _MetricCard(icon: Icons.trending_up, title: l10n.totalSales, value: '${stats.maxSale.toStringAsFixed(0)} ${l10n.sar}', color: Colors.purple),
+      _MetricCard(
+          icon: Icons.attach_money,
+          title: l10n.totalSales,
+          value: '${stats.total.toStringAsFixed(0)} ${l10n.sar}',
+          color: Colors.green),
+      _MetricCard(
+          icon: Icons.receipt_long,
+          title: l10n.invoices,
+          value: '${stats.count}',
+          color: Colors.blue),
+      _MetricCard(
+          icon: Icons.shopping_cart,
+          title: l10n.averageSale,
+          value: '${stats.average.toStringAsFixed(0)} ${l10n.sar}',
+          color: Colors.orange),
+      _MetricCard(
+          icon: Icons.trending_up,
+          title: l10n.totalSales,
+          value: '${stats.maxSale.toStringAsFixed(0)} ${l10n.sar}',
+          color: Colors.purple),
     ];
 
     if (deviceType == DeviceType.desktop) {
       return Row(
-        children: cards.map((c) => Expanded(child: Padding(
-          padding: const EdgeInsetsDirectional.only(end: AlhaiSpacing.sm),
-          child: c,
-        ))).toList(),
+        children: cards
+            .map((c) => Expanded(
+                    child: Padding(
+                  padding:
+                      const EdgeInsetsDirectional.only(end: AlhaiSpacing.sm),
+                  child: c,
+                )))
+            .toList(),
       );
     }
 
     return Column(
       children: [
-        Row(children: [Expanded(child: cards[0]), const SizedBox(width: AlhaiSpacing.sm), Expanded(child: cards[1])]),
+        Row(children: [
+          Expanded(child: cards[0]),
+          const SizedBox(width: AlhaiSpacing.sm),
+          Expanded(child: cards[1])
+        ]),
         const SizedBox(height: AlhaiSpacing.sm),
-        Row(children: [Expanded(child: cards[2]), const SizedBox(width: AlhaiSpacing.sm), Expanded(child: cards[3])]),
+        Row(children: [
+          Expanded(child: cards[2]),
+          const SizedBox(width: AlhaiSpacing.sm),
+          Expanded(child: cards[3])
+        ]),
       ],
     );
   }
@@ -136,7 +191,11 @@ class _MetricCard extends StatelessWidget {
   final String value;
   final Color color;
 
-  const _MetricCard({required this.icon, required this.title, required this.value, required this.color});
+  const _MetricCard(
+      {required this.icon,
+      required this.title,
+      required this.value,
+      required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -150,10 +209,16 @@ class _MetricCard extends StatelessWidget {
             Row(children: [
               Icon(icon, size: 20, color: color),
               const SizedBox(width: AlhaiSpacing.xs),
-              Expanded(child: Text(title, style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurfaceVariant))),
+              Expanded(
+                  child: Text(title,
+                      style: TextStyle(
+                          fontSize: 12,
+                          color: theme.colorScheme.onSurfaceVariant))),
             ]),
             const SizedBox(height: AlhaiSpacing.xs),
-            Text(value, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: color)),
+            Text(value,
+                style: TextStyle(
+                    fontSize: 24, fontWeight: FontWeight.bold, color: color)),
           ],
         ),
       ),
@@ -175,7 +240,8 @@ class _SummaryRow extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: TextStyle(color: theme.colorScheme.onSurfaceVariant)),
+          Text(label,
+              style: TextStyle(color: theme.colorScheme.onSurfaceVariant)),
           Text(value, style: const TextStyle(fontWeight: FontWeight.w600)),
         ],
       ),

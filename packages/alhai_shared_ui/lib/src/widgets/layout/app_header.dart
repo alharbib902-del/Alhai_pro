@@ -6,7 +6,8 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' hide ResponsiveBuilder, ResponsiveVisibility;
+import 'package:alhai_design_system/alhai_design_system.dart'
+    hide ResponsiveBuilder, ResponsiveVisibility;
 import 'package:alhai_l10n/alhai_l10n.dart';
 import '../../core/theme/app_sizes.dart';
 import '../../core/responsive/responsive_utils.dart';
@@ -82,7 +83,8 @@ class AppHeader extends ConsumerWidget {
         child: Container(
           height: getResponsiveValue(context, mobile: 56.0, desktop: 72.0),
           padding: EdgeInsets.symmetric(
-            horizontal: getResponsiveValue(context, mobile: 12.0, desktop: 20.0),
+            horizontal:
+                getResponsiveValue(context, mobile: 12.0, desktop: 20.0),
           ),
           child: Row(
             children: [
@@ -138,7 +140,8 @@ class AppHeader extends ConsumerWidget {
                         child: Container(
                           constraints: const BoxConstraints(maxWidth: 500),
                           child: _SearchField(
-                            hint: searchHint ?? AppLocalizations.of(context).searchPlaceholder,
+                            hint: searchHint ??
+                                AppLocalizations.of(context).searchPlaceholder,
                             onChanged: onSearchChanged,
                             onTap: onSearchTap,
                           ),

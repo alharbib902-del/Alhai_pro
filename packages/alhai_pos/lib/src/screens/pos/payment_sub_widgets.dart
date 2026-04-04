@@ -8,7 +8,8 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiColors, AlhaiSpacing;
+import 'package:alhai_design_system/alhai_design_system.dart'
+    show AlhaiColors, AlhaiSpacing;
 import 'package:alhai_l10n/alhai_l10n.dart';
 
 // ============================================================================
@@ -49,7 +50,8 @@ class _PaymentMethodCardState extends State<PaymentMethodCard> {
   Widget build(BuildContext context) {
     final isDisabled = widget.disabled;
     final colorScheme = Theme.of(context).colorScheme;
-    final effectiveColor = isDisabled ? colorScheme.onSurfaceVariant : widget.color;
+    final effectiveColor =
+        isDisabled ? colorScheme.onSurfaceVariant : widget.color;
 
     return Semantics(
       label: isDisabled
@@ -59,104 +61,113 @@ class _PaymentMethodCardState extends State<PaymentMethodCard> {
       selected: widget.selected,
       enabled: !isDisabled,
       child: Opacity(
-      opacity: isDisabled ? 0.5 : 1.0,
-      child: MouseRegion(
-        onEnter: isDisabled ? null : (_) => setState(() => _isHovered = true),
-        onExit: isDisabled ? null : (_) => setState(() => _isHovered = false),
-        cursor: isDisabled ? SystemMouseCursors.forbidden : SystemMouseCursors.click,
-        child: AnimatedContainer(
-          duration: AppDurations.fast,
-          decoration: BoxDecoration(
-            color: isDisabled
-                ? colorScheme.surfaceContainerLow
-                : widget.selected
-                    ? widget.color.withValues(alpha: 0.1)
-                    : _isHovered
-                        ? colorScheme.surfaceContainerLow
-                        : AppColors.surface,
-            borderRadius: BorderRadius.circular(AppRadius.lg),
-            border: Border.all(
+        opacity: isDisabled ? 0.5 : 1.0,
+        child: MouseRegion(
+          onEnter: isDisabled ? null : (_) => setState(() => _isHovered = true),
+          onExit: isDisabled ? null : (_) => setState(() => _isHovered = false),
+          cursor: isDisabled
+              ? SystemMouseCursors.forbidden
+              : SystemMouseCursors.click,
+          child: AnimatedContainer(
+            duration: AppDurations.fast,
+            decoration: BoxDecoration(
               color: isDisabled
-                  ? colorScheme.outlineVariant
+                  ? colorScheme.surfaceContainerLow
                   : widget.selected
-                      ? widget.color
-                      : AppColors.border,
-              width: widget.selected ? 2 : 1,
-            ),
-            boxShadow: isDisabled
-                ? null
-                : widget.selected || _isHovered
-                    ? AppShadows.md
-                    : AppShadows.sm,
-          ),
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              onTap: isDisabled ? null : widget.onTap,
+                      ? widget.color.withValues(alpha: 0.1)
+                      : _isHovered
+                          ? colorScheme.surfaceContainerLow
+                          : AppColors.surface,
               borderRadius: BorderRadius.circular(AppRadius.lg),
-              child: Padding(
-                padding: const EdgeInsets.all(AppSpacing.xl),
-                child: Column(
-                  children: [
-                    // Icon
-                    AnimatedContainer(
-                      duration: AppDurations.fast,
-                      width: widget.selected ? 72 : 64,
-                      height: widget.selected ? 72 : 64,
-                      decoration: BoxDecoration(
-                        color: effectiveColor.withValues(alpha: widget.selected ? 0.2 : 0.1),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        widget.icon,
-                        size: widget.selected ? 36 : 32,
-                        color: effectiveColor,
-                      ),
-                    ),
-
-                    const SizedBox(height: AppSpacing.md),
-
-                    // Label
-                    Text(
-                      widget.label,
-                      style: AppTypography.titleMedium.copyWith(
-                        color: isDisabled
-                            ? AppColors.textMuted
-                            : widget.selected
-                                ? widget.color
-                                : AppColors.textPrimary,
-                        fontWeight: widget.selected ? FontWeight.w700 : FontWeight.w500,
-                      ),
-                    ),
-
-                    const SizedBox(height: AppSpacing.xs),
-
-                    // Shortcut or disabled label
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.sm,
-                        vertical: AppSpacing.xxs,
-                      ),
-                      decoration: BoxDecoration(
-                        color: isDisabled ? AlhaiColors.warning.withValues(alpha: 0.08) : colorScheme.surfaceContainerLow,
-                        borderRadius: BorderRadius.circular(AppRadius.xs),
-                      ),
-                      child: Text(
-                        isDisabled
-                            ? (widget.disabledLabel ?? '')
-                            : widget.shortcut,
-                        style: AppTypography.labelSmall.copyWith(
-                          color: isDisabled ? AlhaiColors.warningDark : AppColors.textMuted,
+              border: Border.all(
+                color: isDisabled
+                    ? colorScheme.outlineVariant
+                    : widget.selected
+                        ? widget.color
+                        : AppColors.border,
+                width: widget.selected ? 2 : 1,
+              ),
+              boxShadow: isDisabled
+                  ? null
+                  : widget.selected || _isHovered
+                      ? AppShadows.md
+                      : AppShadows.sm,
+            ),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: isDisabled ? null : widget.onTap,
+                borderRadius: BorderRadius.circular(AppRadius.lg),
+                child: Padding(
+                  padding: const EdgeInsets.all(AppSpacing.xl),
+                  child: Column(
+                    children: [
+                      // Icon
+                      AnimatedContainer(
+                        duration: AppDurations.fast,
+                        width: widget.selected ? 72 : 64,
+                        height: widget.selected ? 72 : 64,
+                        decoration: BoxDecoration(
+                          color: effectiveColor.withValues(
+                              alpha: widget.selected ? 0.2 : 0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          widget.icon,
+                          size: widget.selected ? 36 : 32,
+                          color: effectiveColor,
                         ),
                       ),
-                    ),
-                  ],
+
+                      const SizedBox(height: AppSpacing.md),
+
+                      // Label
+                      Text(
+                        widget.label,
+                        style: AppTypography.titleMedium.copyWith(
+                          color: isDisabled
+                              ? AppColors.textMuted
+                              : widget.selected
+                                  ? widget.color
+                                  : AppColors.textPrimary,
+                          fontWeight: widget.selected
+                              ? FontWeight.w700
+                              : FontWeight.w500,
+                        ),
+                      ),
+
+                      const SizedBox(height: AppSpacing.xs),
+
+                      // Shortcut or disabled label
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.sm,
+                          vertical: AppSpacing.xxs,
+                        ),
+                        decoration: BoxDecoration(
+                          color: isDisabled
+                              ? AlhaiColors.warning.withValues(alpha: 0.08)
+                              : colorScheme.surfaceContainerLow,
+                          borderRadius: BorderRadius.circular(AppRadius.xs),
+                        ),
+                        child: Text(
+                          isDisabled
+                              ? (widget.disabledLabel ?? '')
+                              : widget.shortcut,
+                          style: AppTypography.labelSmall.copyWith(
+                            color: isDisabled
+                                ? AlhaiColors.warningDark
+                                : AppColors.textMuted,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
         ),
-      ),
       ),
     );
   }
@@ -203,7 +214,8 @@ class _QuickAmountChipState extends State<QuickAmountChip> {
         child: AnimatedContainer(
           duration: AppDurations.fast,
           child: Material(
-            color: _isHovered ? color.withValues(alpha: 0.1) : AppColors.surface,
+            color:
+                _isHovered ? color.withValues(alpha: 0.1) : AppColors.surface,
             borderRadius: BorderRadius.circular(AppRadius.full),
             child: InkWell(
               onTap: widget.onTap,
@@ -262,7 +274,8 @@ class PaymentSummaryRow extends StatelessWidget {
         Row(
           children: [
             if (icon != null) ...[
-              Icon(icon, size: 14, color: valueColor ?? AppColors.textSecondary),
+              Icon(icon,
+                  size: 14, color: valueColor ?? AppColors.textSecondary),
               const SizedBox(width: AlhaiSpacing.xxs),
             ],
             Text(

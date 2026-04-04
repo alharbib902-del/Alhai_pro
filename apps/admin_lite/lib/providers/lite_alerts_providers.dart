@@ -14,7 +14,8 @@ import 'package:alhai_auth/alhai_auth.dart';
 // =============================================================================
 
 /// Provider: Notifications list
-final liteNotificationsProvider = FutureProvider.autoDispose<List<NotificationsTableData>>((ref) async {
+final liteNotificationsProvider =
+    FutureProvider.autoDispose<List<NotificationsTableData>>((ref) async {
   final storeId = ref.watch(currentStoreIdProvider);
   if (storeId == null) return [];
 
@@ -23,7 +24,8 @@ final liteNotificationsProvider = FutureProvider.autoDispose<List<NotificationsT
 });
 
 /// Provider: Low stock products (for stock alerts screen)
-final liteStockAlertsProvider = FutureProvider.autoDispose<List<ProductsTableData>>((ref) async {
+final liteStockAlertsProvider =
+    FutureProvider.autoDispose<List<ProductsTableData>>((ref) async {
   final storeId = ref.watch(currentStoreIdProvider);
   if (storeId == null) return [];
 
@@ -32,7 +34,8 @@ final liteStockAlertsProvider = FutureProvider.autoDispose<List<ProductsTableDat
 });
 
 /// Provider: Order alerts (new/pending orders)
-final liteOrderAlertsProvider = FutureProvider.autoDispose<List<OrderWithCustomer>>((ref) async {
+final liteOrderAlertsProvider =
+    FutureProvider.autoDispose<List<OrderWithCustomer>>((ref) async {
   final storeId = ref.watch(currentStoreIdProvider);
   if (storeId == null) return [];
 
@@ -40,7 +43,8 @@ final liteOrderAlertsProvider = FutureProvider.autoDispose<List<OrderWithCustome
   try {
     final results = await Future.wait([
       db.ordersDao.getOrdersWithCustomer(storeId, status: 'created', limit: 20),
-      db.ordersDao.getOrdersWithCustomer(storeId, status: 'confirmed', limit: 20),
+      db.ordersDao
+          .getOrdersWithCustomer(storeId, status: 'confirmed', limit: 20),
     ]);
     final all = <OrderWithCustomer>[];
     for (final list in results) {
@@ -71,7 +75,8 @@ class SystemAlertData {
 }
 
 /// Provider: System alerts (sync health, pending sync items)
-final liteSystemAlertsProvider = FutureProvider.autoDispose<List<SystemAlertData>>((ref) async {
+final liteSystemAlertsProvider =
+    FutureProvider.autoDispose<List<SystemAlertData>>((ref) async {
   final storeId = ref.watch(currentStoreIdProvider);
   if (storeId == null) return [];
 
@@ -84,7 +89,8 @@ final liteSystemAlertsProvider = FutureProvider.autoDispose<List<SystemAlertData
     if (pendingSync > 0) {
       alerts.add(SystemAlertData(
         title: 'Sync Pending',
-        description: '$pendingSync items waiting to sync. Check internet connection.',
+        description:
+            '$pendingSync items waiting to sync. Check internet connection.',
         severity: pendingSync > 10 ? 'HIGH' : 'MEDIUM',
         timestamp: DateTime.now(),
         actionLabel: 'Retry',

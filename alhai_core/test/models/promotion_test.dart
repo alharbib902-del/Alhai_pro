@@ -27,7 +27,8 @@ void main() {
         maxDiscount: maxDiscount,
         usageLimit: usageLimit,
         usageCount: usageCount,
-        startDate: startDate ?? DateTime.now().subtract(const Duration(days: 1)),
+        startDate:
+            startDate ?? DateTime.now().subtract(const Duration(days: 1)),
         endDate: endDate ?? DateTime.now().add(const Duration(days: 30)),
         isActive: isActive,
         createdAt: DateTime(2026, 1, 15),
@@ -220,9 +221,12 @@ void main() {
     });
 
     test('fromDbValue should parse values correctly', () {
-      expect(PromoTypeExt.fromDbValue('percentage'), equals(PromoType.percentage));
-      expect(PromoTypeExt.fromDbValue('fixed_amount'), equals(PromoType.fixedAmount));
-      expect(PromoTypeExt.fromDbValue('buy_x_get_y'), equals(PromoType.buyXGetY));
+      expect(
+          PromoTypeExt.fromDbValue('percentage'), equals(PromoType.percentage));
+      expect(PromoTypeExt.fromDbValue('fixed_amount'),
+          equals(PromoType.fixedAmount));
+      expect(
+          PromoTypeExt.fromDbValue('buy_x_get_y'), equals(PromoType.buyXGetY));
       expect(PromoTypeExt.fromDbValue('unknown'), equals(PromoType.percentage));
     });
   });

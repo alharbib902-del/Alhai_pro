@@ -22,7 +22,8 @@ class ValidationResult {
         errors = const [],
         warnings = const [];
 
-  factory ValidationResult.invalid(List<String> errors, [List<String> warnings = const []]) {
+  factory ValidationResult.invalid(List<String> errors,
+      [List<String> warnings = const []]) {
     return ValidationResult(
       isValid: false,
       errors: errors,
@@ -84,8 +85,10 @@ class DataValidator {
     }
 
     // طريقة الدفع
-    if (paymentMethod == null || !_validPaymentMethods.contains(paymentMethod)) {
-      errors.add('invalid payment method: $paymentMethod (allowed: $_validPaymentMethods)');
+    if (paymentMethod == null ||
+        !_validPaymentMethods.contains(paymentMethod)) {
+      errors.add(
+          'invalid payment method: $paymentMethod (allowed: $_validPaymentMethods)');
     }
 
     // المبالغ
@@ -172,8 +175,23 @@ class DataValidator {
 
   /// الحقول المطلوبة لكل جدول
   static const _requiredFieldsByTable = <String, List<String>>{
-    'sales': ['id', 'storeId', 'receiptNo', 'cashierId', 'total', 'paymentMethod'],
-    'sale_items': ['id', 'saleId', 'productId', 'productName', 'unitPrice', 'qty', 'total'],
+    'sales': [
+      'id',
+      'storeId',
+      'receiptNo',
+      'cashierId',
+      'total',
+      'paymentMethod'
+    ],
+    'sale_items': [
+      'id',
+      'saleId',
+      'productId',
+      'productName',
+      'unitPrice',
+      'qty',
+      'total'
+    ],
     'products': ['id', 'storeId', 'name', 'price'],
     'customers': ['id', 'name'],
     'inventory_movements': ['id', 'productId', 'storeId', 'type', 'qty'],
@@ -182,7 +200,8 @@ class DataValidator {
   };
 
   /// التحقق من payload المزامنة قبل الإرسال
-  static ValidationResult validateSyncPayload(String tableName, Map<String, dynamic> payload) {
+  static ValidationResult validateSyncPayload(
+      String tableName, Map<String, dynamic> payload) {
     final errors = <String>[];
     final warnings = <String>[];
 
@@ -224,7 +243,8 @@ class DataValidator {
       if (value is String && value.isNotEmpty) {
         final date = DateTime.tryParse(value);
         if (date != null) {
-          final maxFuture = DateTime.now().add(Duration(hours: _maxFutureHours));
+          final maxFuture =
+              DateTime.now().add(Duration(hours: _maxFutureHours));
           if (date.isAfter(maxFuture)) {
             warnings.add('date field "$field" is far in the future: $value');
           }

@@ -63,7 +63,8 @@ class RatingService {
   }
 
   /// ملخص التقييمات
-  Future<RatingSummary> getRatingSummary(RatingEntityType entityType, String entityId) async {
+  Future<RatingSummary> getRatingSummary(
+      RatingEntityType entityType, String entityId) async {
     return await _ratingsRepo.getRatingSummary(entityType, entityId);
   }
 

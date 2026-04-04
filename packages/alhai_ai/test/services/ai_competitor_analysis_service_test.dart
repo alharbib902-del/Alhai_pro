@@ -33,11 +33,9 @@ void main() {
     });
 
     test('competitors have unique IDs', () {
-      final ids = AiCompetitorAnalysisService.mockCompetitors
-          .map((c) => c.id)
-          .toSet();
-      expect(ids.length,
-          AiCompetitorAnalysisService.mockCompetitors.length);
+      final ids =
+          AiCompetitorAnalysisService.mockCompetitors.map((c) => c.id).toSet();
+      expect(ids.length, AiCompetitorAnalysisService.mockCompetitors.length);
     });
   });
 
@@ -93,8 +91,7 @@ void main() {
     test('competitors include us', () {
       final position = AiCompetitorAnalysisService.getMarketPosition();
 
-      final us =
-          position.competitors.where((c) => c.isUs).toList();
+      final us = position.competitors.where((c) => c.isUs).toList();
       expect(us.length, 1);
     });
 
@@ -136,9 +133,8 @@ void main() {
 
     test('price decrease alerts have negative change percent', () {
       final alerts = AiCompetitorAnalysisService.getAlerts();
-      final decreases = alerts
-          .where((a) => a.alertType == AlertType.priceDecrease)
-          .toList();
+      final decreases =
+          alerts.where((a) => a.alertType == AlertType.priceDecrease).toList();
 
       for (final a in decreases) {
         expect(a.changePercent, lessThan(0));
@@ -148,9 +144,8 @@ void main() {
 
     test('price increase alerts have positive change percent', () {
       final alerts = AiCompetitorAnalysisService.getAlerts();
-      final increases = alerts
-          .where((a) => a.alertType == AlertType.priceIncrease)
-          .toList();
+      final increases =
+          alerts.where((a) => a.alertType == AlertType.priceIncrease).toList();
 
       for (final a in increases) {
         expect(a.changePercent, greaterThan(0));

@@ -76,7 +76,8 @@ void main() {
 
     group('computeHash', () {
       test('should hash a simple XML document', () {
-        const xml = '<Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2">'
+        const xml =
+            '<Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2">'
             '<cbc:ID xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">INV-001</cbc:ID>'
             '</Invoice>';
 
@@ -129,7 +130,8 @@ void main() {
       });
 
       test('should produce consistent hash for same XML', () {
-        const xml = '<Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2">'
+        const xml =
+            '<Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2">'
             '<cbc:ID xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">INV-001</cbc:ID>'
             '</Invoice>';
 
@@ -141,7 +143,8 @@ void main() {
 
     group('computeDigestBytes', () {
       test('should return 32 raw bytes', () {
-        const xml = '<Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2">'
+        const xml =
+            '<Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2">'
             '<cbc:ID xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">INV-001</cbc:ID>'
             '</Invoice>';
 
@@ -150,7 +153,8 @@ void main() {
       });
 
       test('digest bytes should match base64 hash', () {
-        const xml = '<Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2">'
+        const xml =
+            '<Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2">'
             '<cbc:ID xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">INV-001</cbc:ID>'
             '</Invoice>';
 

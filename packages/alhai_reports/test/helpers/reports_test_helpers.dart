@@ -52,8 +52,7 @@ SalesReport createTestSalesReport({
   SalesStats? stats,
 }) {
   return SalesReport(
-    period: period ??
-        DateRange(DateTime(2026, 1, 1), DateTime(2026, 1, 2)),
+    period: period ?? DateRange(DateTime(2026, 1, 1), DateTime(2026, 1, 2)),
     stats: stats ?? createTestSalesStats(),
   );
 }

@@ -20,7 +20,8 @@ class OrderService {
   /// إجمالي السلة
   double get cartTotal => _cartItems.fold(
         0,
-        (sum, item) => sum + ((item['unitPrice'] as double) * (item['qty'] as int)),
+        (sum, item) =>
+            sum + ((item['unitPrice'] as double) * (item['qty'] as int)),
       );
 
   /// إضافة منتج للسلة
@@ -30,13 +31,14 @@ class OrderService {
     required double unitPrice,
     int qty = 1,
   }) {
-    final existingIndex = _cartItems.indexWhere((i) => i['productId'] == productId);
+    final existingIndex =
+        _cartItems.indexWhere((i) => i['productId'] == productId);
     if (existingIndex >= 0) {
-      _cartItems[existingIndex]['qty'] = 
+      _cartItems[existingIndex]['qty'] =
           (_cartItems[existingIndex]['qty'] as int) + qty;
-      _cartItems[existingIndex]['lineTotal'] = 
-          (_cartItems[existingIndex]['unitPrice'] as double) * 
-          (_cartItems[existingIndex]['qty'] as int);
+      _cartItems[existingIndex]['lineTotal'] =
+          (_cartItems[existingIndex]['unitPrice'] as double) *
+              (_cartItems[existingIndex]['qty'] as int);
     } else {
       _cartItems.add({
         'productId': productId,
@@ -56,7 +58,7 @@ class OrderService {
         _cartItems.removeAt(index);
       } else {
         _cartItems[index]['qty'] = qty;
-        _cartItems[index]['lineTotal'] = 
+        _cartItems[index]['lineTotal'] =
             (_cartItems[index]['unitPrice'] as double) * qty;
       }
     }

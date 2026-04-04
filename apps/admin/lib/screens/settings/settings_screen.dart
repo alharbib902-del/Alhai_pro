@@ -9,7 +9,8 @@ import 'package:alhai_auth/alhai_auth.dart' show authStateProvider;
 import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// Provider for store info
-final _storeInfoProvider = FutureProvider.autoDispose<StoresTableData?>((ref) async {
+final _storeInfoProvider =
+    FutureProvider.autoDispose<StoresTableData?>((ref) async {
   final storeId = ref.watch(currentStoreIdProvider);
   if (storeId == null) return null;
   final db = getIt<AppDatabase>();
@@ -33,7 +34,11 @@ class SettingsScreen extends ConsumerWidget {
     final isMediumScreen = size.width >= 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
-    final padding = size.width < 600 ? 12.0 : isWideScreen ? 24.0 : 16.0;
+    final padding = size.width < 600
+        ? 12.0
+        : isWideScreen
+            ? 24.0
+            : 16.0;
 
     // Get real user data from auth state
     final authState = ref.watch(authStateProvider);
@@ -50,60 +55,63 @@ class SettingsScreen extends ConsumerWidget {
 
     return SafeArea(
       child: Column(
-              children: [
-                AppHeader(
-                  title: storeName ?? l10n.settings,
-                  onMenuTap: isWideScreen
-                      ? null
-                      : () => Scaffold.of(context).openDrawer(),
-                  onNotificationsTap: () => context.push('/notifications'),
-                  notificationsCount: syncCount,
-                  userName: userName,
-                  userRole: userRole,
-                ),
-                Expanded(
-                  child: storeAsync.when(
-                    loading: () => const Center(child: CircularProgressIndicator()),
-                    error: (error, _) => Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(AlhaiSpacing.xl),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.error_outline_rounded, size: 64,
-                                color: isDark ? Colors.white38 : AppColors.textSecondary),
-                            const SizedBox(height: AlhaiSpacing.md),
-                            Text(
-                              '\u062D\u062F\u062B \u062E\u0637\u0623 \u0641\u064A \u062A\u062D\u0645\u064A\u0644 \u0627\u0644\u0625\u0639\u062F\u0627\u062F\u0627\u062A',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                            const SizedBox(height: AlhaiSpacing.md),
-                            FilledButton.icon(
-                              onPressed: () => ref.invalidate(_storeInfoProvider),
-                              icon: const Icon(Icons.refresh_rounded),
-                              label: Text(l10n.retry),
-                            ),
-                          ],
+        children: [
+          AppHeader(
+            title: storeName ?? l10n.settings,
+            onMenuTap:
+                isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+            onNotificationsTap: () => context.push('/notifications'),
+            notificationsCount: syncCount,
+            userName: userName,
+            userRole: userRole,
+          ),
+          Expanded(
+            child: storeAsync.when(
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (error, _) => Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(AlhaiSpacing.xl),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.error_outline_rounded,
+                          size: 64,
+                          color: isDark
+                              ? Colors.white38
+                              : AppColors.textSecondary),
+                      const SizedBox(height: AlhaiSpacing.md),
+                      Text(
+                        '\u062D\u062F\u062B \u062E\u0637\u0623 \u0641\u064A \u062A\u062D\u0645\u064A\u0644 \u0627\u0644\u0625\u0639\u062F\u0627\u062F\u0627\u062A',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
+                        textAlign: TextAlign.center,
                       ),
-                    ),
-                    data: (_) => SingleChildScrollView(
-                      padding: EdgeInsets.all(padding),
-                      child: _buildContent(
-                          context, isWideScreen, isMediumScreen, isDark, l10n),
-                    ),
+                      const SizedBox(height: AlhaiSpacing.md),
+                      FilledButton.icon(
+                        onPressed: () => ref.invalidate(_storeInfoProvider),
+                        icon: const Icon(Icons.refresh_rounded),
+                        label: Text(l10n.retry),
+                      ),
+                    ],
                   ),
                 ),
-              ],
+              ),
+              data: (_) => SingleChildScrollView(
+                padding: EdgeInsets.all(padding),
+                child: _buildContent(
+                    context, isWideScreen, isMediumScreen, isDark, l10n),
+              ),
             ),
+          ),
+        ],
+      ),
     );
   }
-  Widget _buildContent(
-      BuildContext context, bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n) {
+
+  Widget _buildContent(BuildContext context, bool isWideScreen,
+      bool isMediumScreen, bool isDark, AppLocalizations l10n) {
     final crossAxisCount = isWideScreen
         ? 4
         : isMediumScreen
@@ -174,7 +182,8 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildSettingCard(BuildContext context, _SettingsCategory cat, bool isDark) {
+  Widget _buildSettingCard(
+      BuildContext context, _SettingsCategory cat, bool isDark) {
     final adaptedColor = _adaptAccentColor(cat.color, isDark);
     return Material(
       color: Colors.transparent,
@@ -253,7 +262,8 @@ class SettingsScreen extends ConsumerWidget {
       _SettingsCategory(
         icon: Icons.print_rounded,
         title: l10n.printer,
-        subtitle: '\u0627\u0644\u0637\u0627\u0628\u0639\u0629 \u0627\u0644\u062D\u0631\u0627\u0631\u064A\u0629',
+        subtitle:
+            '\u0627\u0644\u0637\u0627\u0628\u0639\u0629 \u0627\u0644\u062D\u0631\u0627\u0631\u064A\u0629',
         color: const Color(0xFF8B5CF6),
         onTap: () => context.push(AppRoutes.settingsPrinter),
       ),
@@ -267,14 +277,16 @@ class SettingsScreen extends ConsumerWidget {
       _SettingsCategory(
         icon: Icons.qr_code_scanner_rounded,
         title: l10n.barcode,
-        subtitle: '\u0627\u0644\u0645\u0627\u0633\u062D \u0627\u0644\u0636\u0648\u0626\u064A',
+        subtitle:
+            '\u0627\u0644\u0645\u0627\u0633\u062D \u0627\u0644\u0636\u0648\u0626\u064A',
         color: const Color(0xFFF59E0B),
         onTap: () => context.push(AppRoutes.settingsBarcode),
       ),
       _SettingsCategory(
         icon: Icons.receipt_long_rounded,
         title: l10n.receipt,
-        subtitle: '\u0642\u0627\u0644\u0628 \u0627\u0644\u0625\u064A\u0635\u0627\u0644',
+        subtitle:
+            '\u0642\u0627\u0644\u0628 \u0627\u0644\u0625\u064A\u0635\u0627\u0644',
         color: const Color(0xFFEC4899),
         onTap: () => context.push(AppRoutes.settingsReceipt),
       ),
@@ -350,7 +362,8 @@ class SettingsScreen extends ConsumerWidget {
       _SettingsCategory(
         icon: Icons.verified_rounded,
         title: 'ZATCA',
-        subtitle: '\u0627\u0644\u0641\u0648\u062A\u0631\u0629 \u0627\u0644\u0625\u0644\u0643\u062A\u0631\u0648\u0646\u064A\u0629',
+        subtitle:
+            '\u0627\u0644\u0641\u0648\u062A\u0631\u0629 \u0627\u0644\u0625\u0644\u0643\u062A\u0631\u0648\u0646\u064A\u0629',
         color: AppColors.success,
         onTap: () => context.push(AppRoutes.settingsZatca),
       ),
@@ -394,7 +407,10 @@ Color _adaptAccentColor(Color color, bool isDark) {
   final hsl = HSLColor.fromColor(color);
   // In dark mode, ensure lightness is at least 0.55 so icons remain visible
   if (hsl.lightness < 0.55) {
-    return hsl.withLightness(0.55).withSaturation((hsl.saturation * 0.85).clamp(0.0, 1.0)).toColor();
+    return hsl
+        .withLightness(0.55)
+        .withSaturation((hsl.saturation * 0.85).clamp(0.0, 1.0))
+        .toColor();
   }
   return color;
 }

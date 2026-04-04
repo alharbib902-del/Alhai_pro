@@ -64,7 +64,8 @@ class AppEndpoints {
   // ─── Dynamic Endpoints ────────────────────────────────────────
 
   /// Receipt URL: `/v1/receipt/{orderId}`
-  static String receiptUrl(String orderId) => '$apiBaseVersioned/receipt/$orderId';
+  static String receiptUrl(String orderId) =>
+      '$apiBaseVersioned/receipt/$orderId';
 
   /// Product by ID: `/v1/products/{id}`
   static String productUrl(String id) => '$products/$id';

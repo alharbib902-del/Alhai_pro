@@ -11,7 +11,7 @@ class OrdersDao extends DatabaseAccessor<AppDatabase> with _$OrdersDaoMixin {
   OrdersDao(super.db);
 
   // ==================== الطلبات ====================
-  
+
   /// جلب جميع الطلبات لمتجر معين
   Future<List<OrdersTableData>> getOrders(String storeId) {
     return (select(ordersTable)
@@ -65,7 +65,8 @@ class OrdersDao extends DatabaseAccessor<AppDatabase> with _$OrdersDaoMixin {
   }
 
   /// جلب الطلبات حسب الحالة
-  Future<List<OrdersTableData>> getOrdersByStatus(String storeId, String status) {
+  Future<List<OrdersTableData>> getOrdersByStatus(
+      String storeId, String status) {
     return (select(ordersTable)
           ..where((o) => o.storeId.equals(storeId) & o.status.equals(status))
           ..orderBy([(o) => OrderingTerm.desc(o.orderDate)])
@@ -78,7 +79,13 @@ class OrdersDao extends DatabaseAccessor<AppDatabase> with _$OrdersDaoMixin {
     return (select(ordersTable)
           ..where((o) =>
               o.storeId.equals(storeId) &
-              o.status.isIn(['created', 'confirmed', 'preparing', 'ready', 'out_for_delivery']))
+              o.status.isIn([
+                'created',
+                'confirmed',
+                'preparing',
+                'ready',
+                'out_for_delivery'
+              ]))
           ..orderBy([(o) => OrderingTerm.asc(o.orderDate)])
           ..limit(200))
         .get();
@@ -91,11 +98,13 @@ class OrdersDao extends DatabaseAccessor<AppDatabase> with _$OrdersDaoMixin {
   }
 
   /// جلب طلب برقمه (مع فلتر المتجر)
-  Future<OrdersTableData?> getOrderByNumber(String orderNumber, {String? storeId}) {
+  Future<OrdersTableData?> getOrderByNumber(String orderNumber,
+      {String? storeId}) {
     return (select(ordersTable)
           ..where((o) {
             var condition = o.orderNumber.equals(orderNumber);
-            if (storeId != null) condition = condition & o.storeId.equals(storeId);
+            if (storeId != null)
+              condition = condition & o.storeId.equals(storeId);
             return condition;
           }))
         .getSingleOrNull();
@@ -113,7 +122,7 @@ class OrdersDao extends DatabaseAccessor<AppDatabase> with _$OrdersDaoMixin {
       'status': status,
       'updatedAt': now,
     };
-    
+
     // تحديث التاريخ المناسب للحالة
     switch (status) {
       case 'confirmed':
@@ -135,48 +144,48 @@ class OrdersDao extends DatabaseAccessor<AppDatabase> with _$OrdersDaoMixin {
         statusUpdate['cancelledAt'] = now;
         break;
     }
-    
+
     return (update(ordersTable)..where((o) => o.id.equals(id)))
         .write(OrdersTableCompanion(
-          status: Value(status),
-          updatedAt: Value(now),
-          confirmedAt: status == 'confirmed' ? Value(now) : const Value.absent(),
-          preparingAt: status == 'preparing' ? Value(now) : const Value.absent(),
-          readyAt: status == 'ready' ? Value(now) : const Value.absent(),
-          deliveringAt: status == 'out_for_delivery' ? Value(now) : const Value.absent(),
-          deliveredAt: status == 'delivered' ? Value(now) : const Value.absent(),
-          cancelledAt: status == 'cancelled' ? Value(now) : const Value.absent(),
-        ));
+      status: Value(status),
+      updatedAt: Value(now),
+      confirmedAt: status == 'confirmed' ? Value(now) : const Value.absent(),
+      preparingAt: status == 'preparing' ? Value(now) : const Value.absent(),
+      readyAt: status == 'ready' ? Value(now) : const Value.absent(),
+      deliveringAt:
+          status == 'out_for_delivery' ? Value(now) : const Value.absent(),
+      deliveredAt: status == 'delivered' ? Value(now) : const Value.absent(),
+      cancelledAt: status == 'cancelled' ? Value(now) : const Value.absent(),
+    ));
   }
 
   /// تعيين سائق للطلب
   Future<int> assignDriver(String orderId, String driverId) {
     return (update(ordersTable)..where((o) => o.id.equals(orderId)))
         .write(OrdersTableCompanion(
-          driverId: Value(driverId),
-          status: const Value('out_for_delivery'),
-          deliveringAt: Value(DateTime.now()),
-          updatedAt: Value(DateTime.now()),
-        ));
+      driverId: Value(driverId),
+      status: const Value('out_for_delivery'),
+      deliveringAt: Value(DateTime.now()),
+      updatedAt: Value(DateTime.now()),
+    ));
   }
 
   /// إلغاء الطلب
   Future<int> cancelOrder(String id, String reason) {
     return (update(ordersTable)..where((o) => o.id.equals(id)))
         .write(OrdersTableCompanion(
-          status: const Value('cancelled'),
-          cancelReason: Value(reason),
-          cancelledAt: Value(DateTime.now()),
-          updatedAt: Value(DateTime.now()),
-        ));
+      status: const Value('cancelled'),
+      cancelReason: Value(reason),
+      cancelledAt: Value(DateTime.now()),
+      updatedAt: Value(DateTime.now()),
+    ));
   }
 
   // ==================== عناصر الطلب ====================
-  
+
   /// جلب عناصر طلب
   Future<List<OrderItemsTableData>> getOrderItems(String orderId) {
-    return (select(orderItemsTable)
-          ..where((i) => i.orderId.equals(orderId)))
+    return (select(orderItemsTable)..where((i) => i.orderId.equals(orderId)))
         .get();
   }
 
@@ -266,7 +275,8 @@ class OrdersDao extends DatabaseAccessor<AppDatabase> with _$OrdersDaoMixin {
     DateTime? startDate,
     DateTime? endDate,
   }) async {
-    final start = startDate ?? DateTime.now().subtract(const Duration(days: 30));
+    final start =
+        startDate ?? DateTime.now().subtract(const Duration(days: 30));
     final end = endDate ?? DateTime.now();
 
     final result = await customSelect(
@@ -321,17 +331,19 @@ class OrdersDao extends DatabaseAccessor<AppDatabase> with _$OrdersDaoMixin {
     // These are the canonical names in the Drift schema (order_items_table.dart).
     // The Supabase schema uses 'qty', 'unit_price', 'total_price' but that
     // mapping is handled by the sync layer (sync_payload_utils.dart).
-    final items = itemsResult.map((row) => OrderItemWithProduct(
-      id: row.data['id'] as String,
-      orderId: row.data['order_id'] as String,
-      productId: row.data['product_id'] as String,
-      productName: row.data['product_name'] as String? ?? '',
-      productBarcode: row.data['product_barcode'] as String?,
-      productImage: row.data['product_image'] as String?,
-      qty: _toDouble(row.data['quantity']),
-      price: _toDouble(row.data['unit_price']),
-      total: _toDouble(row.data['total']),
-    )).toList();
+    final items = itemsResult
+        .map((row) => OrderItemWithProduct(
+              id: row.data['id'] as String,
+              orderId: row.data['order_id'] as String,
+              productId: row.data['product_id'] as String,
+              productName: row.data['product_name'] as String? ?? '',
+              productBarcode: row.data['product_barcode'] as String?,
+              productImage: row.data['product_image'] as String?,
+              qty: _toDouble(row.data['quantity']),
+              price: _toDouble(row.data['unit_price']),
+              total: _toDouble(row.data['total']),
+            ))
+        .toList();
 
     return OrderWithItems(order: order, items: items);
   }
@@ -360,20 +372,27 @@ class OrdersDao extends DatabaseAccessor<AppDatabase> with _$OrdersDaoMixin {
          WHERE $whereClause
          ORDER BY o.order_date DESC
          LIMIT ? OFFSET ?''',
-      variables: [...variables, Variable.withInt(limit), Variable.withInt(offset)],
+      variables: [
+        ...variables,
+        Variable.withInt(limit),
+        Variable.withInt(offset)
+      ],
     ).get();
 
-    return result.map((row) => OrderWithCustomer(
-      id: row.data['id'] as String,
-      orderNumber: row.data['order_number'] as String,
-      status: row.data['status'] as String,
-      total: _toDouble(row.data['total']),
-      orderDate: DateTime.tryParse(row.data['order_date'].toString()) ?? DateTime.now(),
-      customerName: row.data['customer_name'] as String?,
-      customerPhone: row.data['customer_phone'] as String?,
-      deliveryType: row.data['delivery_type'] as String?,
-      paymentMethod: row.data['payment_method'] as String?,
-    )).toList();
+    return result
+        .map((row) => OrderWithCustomer(
+              id: row.data['id'] as String,
+              orderNumber: row.data['order_number'] as String,
+              status: row.data['status'] as String,
+              total: _toDouble(row.data['total']),
+              orderDate: DateTime.tryParse(row.data['order_date'].toString()) ??
+                  DateTime.now(),
+              customerName: row.data['customer_name'] as String?,
+              customerPhone: row.data['customer_phone'] as String?,
+              deliveryType: row.data['delivery_type'] as String?,
+              paymentMethod: row.data['payment_method'] as String?,
+            ))
+        .toList();
   }
 
   double _toDouble(dynamic value) {

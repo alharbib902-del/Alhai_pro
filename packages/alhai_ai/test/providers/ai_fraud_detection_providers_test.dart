@@ -18,8 +18,8 @@ void main() {
 
       container.read(fraudSeverityFilterProvider.notifier).state =
           FraudSeverity.critical;
-      expect(container.read(fraudSeverityFilterProvider),
-          FraudSeverity.critical);
+      expect(
+          container.read(fraudSeverityFilterProvider), FraudSeverity.critical);
     });
 
     test('can be reset to null', () {

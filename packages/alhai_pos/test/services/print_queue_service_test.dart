@@ -305,7 +305,8 @@ void main() {
       expect(freshQueue.failedJobs, hasLength(1));
       expect(freshQueue.failedJobs.first.id, 'persisted-job-1');
       expect(freshQueue.failedJobs.first.lastError, 'Saved error');
-      expect(freshQueue.failedJobs.first.receipt.receiptNumber, 'INV-PERSISTED');
+      expect(
+          freshQueue.failedJobs.first.receipt.receiptNumber, 'INV-PERSISTED');
 
       freshQueue.dispose();
     });

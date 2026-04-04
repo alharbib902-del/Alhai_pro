@@ -28,7 +28,8 @@ class GeneratedPromotionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
-    final typeColor = Color(AiPromotionDesignerService.getPromotionTypeColorValue(promotion.type));
+    final typeColor = Color(
+        AiPromotionDesignerService.getPromotionTypeColorValue(promotion.type));
     final textColor = isDark ? Colors.white : AppColors.textPrimary;
     final subtextColor = isDark ? Colors.white70 : AppColors.textSecondary;
 
@@ -71,7 +72,8 @@ class GeneratedPromotionCard extends StatelessWidget {
               Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     decoration: BoxDecoration(
                       color: typeColor.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(8),
@@ -86,7 +88,8 @@ class GeneratedPromotionCard extends StatelessWidget {
                         ),
                         const SizedBox(width: AlhaiSpacing.xxs),
                         Text(
-                          AiPromotionDesignerService.getPromotionTypeLabel(promotion.type),
+                          AiPromotionDesignerService.getPromotionTypeLabel(
+                              promotion.type),
                           style: TextStyle(
                             color: typeColor,
                             fontSize: 11,
@@ -99,7 +102,9 @@ class GeneratedPromotionCard extends StatelessWidget {
                   const Spacer(),
                   // شارة الثقة
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: AlhaiSpacing.xs,
+                        vertical: AlhaiSpacing.xxs),
                     decoration: BoxDecoration(
                       color: isDark
                           ? Colors.white.withValues(alpha: 0.05)
@@ -165,7 +170,8 @@ class GeneratedPromotionCard extends StatelessWidget {
                 runSpacing: 4,
                 children: promotion.products.take(3).map((product) {
                   return Container(
-                    padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 3),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: AlhaiSpacing.xs, vertical: 3),
                     decoration: BoxDecoration(
                       color: isDark
                           ? Colors.white.withValues(alpha: 0.06)
@@ -237,12 +243,14 @@ class GeneratedPromotionCard extends StatelessWidget {
                               ? Colors.white.withValues(alpha: 0.15)
                               : AppColors.border,
                         ),
-                        padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: AlhaiSpacing.xs),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      child: Text(l10n.details, style: const TextStyle(fontSize: 12)),
+                      child: Text(l10n.details,
+                          style: const TextStyle(fontSize: 12)),
                     ),
                   ),
                   const SizedBox(width: AlhaiSpacing.xs),
@@ -252,13 +260,15 @@ class GeneratedPromotionCard extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: typeColor,
                         foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: AlhaiSpacing.xs),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
                         elevation: 0,
                       ),
-                      child: Text(l10n.apply, style: const TextStyle(fontSize: 12)),
+                      child: Text(l10n.apply,
+                          style: const TextStyle(fontSize: 12)),
                     ),
                   ),
                 ],
@@ -270,7 +280,8 @@ class GeneratedPromotionCard extends StatelessWidget {
     );
   }
 
-  Widget _buildMetric(String label, String value, Color valueColor, Color labelColor) {
+  Widget _buildMetric(
+      String label, String value, Color valueColor, Color labelColor) {
     return Expanded(
       child: Column(
         children: [
@@ -296,9 +307,7 @@ class GeneratedPromotionCard extends StatelessWidget {
     return Container(
       width: 1,
       height: 30,
-      color: isDark
-          ? Colors.white.withValues(alpha: 0.1)
-          : AppColors.grey200,
+      color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.grey200,
     );
   }
 

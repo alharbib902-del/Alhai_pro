@@ -20,7 +20,8 @@ class AiFraudDetectionScreen extends ConsumerStatefulWidget {
   const AiFraudDetectionScreen({super.key});
 
   @override
-  ConsumerState<AiFraudDetectionScreen> createState() => _AiFraudDetectionScreenState();
+  ConsumerState<AiFraudDetectionScreen> createState() =>
+      _AiFraudDetectionScreenState();
 }
 
 class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
@@ -57,16 +58,17 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
     final l10n = AppLocalizations.of(context)!;
 
     return Column(
-              children: [
-                AppHeader(
-                  title: l10n.aiFraudDetection,
-                  onMenuTap: !isWideScreen ? () => Scaffold.of(context).openDrawer() : null,
-                ),
-                Expanded(
-                  child: _buildContent(isDark, isWideScreen),
-                ),
-              ],
-            );
+      children: [
+        AppHeader(
+          title: l10n.aiFraudDetection,
+          onMenuTap:
+              !isWideScreen ? () => Scaffold.of(context).openDrawer() : null,
+        ),
+        Expanded(
+          child: _buildContent(isDark, isWideScreen),
+        ),
+      ],
+    );
   }
 
   Widget _buildContent(bool isDark, bool isWideScreen) {
@@ -76,8 +78,11 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
     final summaryAsync = ref.watch(fraudSummaryProvider);
 
     return alertsAsync.when(
-      loading: () => const Center(child: CircularProgressIndicator(color: AppColors.primary)),
-      error: (e, _) => Center(child: Text(AppLocalizations.of(context)!.aiErrorWithMessage(e.toString()))),
+      loading: () => const Center(
+          child: CircularProgressIndicator(color: AppColors.primary)),
+      error: (e, _) => Center(
+          child: Text(
+              AppLocalizations.of(context)!.aiErrorWithMessage(e.toString()))),
       data: (alerts) {
         return SingleChildScrollView(
           padding: const EdgeInsets.all(AlhaiSpacing.mdl),
@@ -86,7 +91,8 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
             children: [
               // Summary cards row
               summaryAsync.when(
-                data: (summary) => _buildSummaryCards(isDark, summary, isWideScreen),
+                data: (summary) =>
+                    _buildSummaryCards(isDark, summary, isWideScreen),
                 loading: () => const SizedBox.shrink(),
                 error: (_, __) => const SizedBox.shrink(),
               ),
@@ -108,13 +114,17 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
                   color: isDark ? const Color(0xFF1E293B) : Colors.white,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.1)
+                        : AppColors.border,
                   ),
                 ),
                 child: TabBar(
                   controller: _tabController,
                   labelColor: AppColors.primary,
-                  unselectedLabelColor: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textSecondary,
+                  unselectedLabelColor: isDark
+                      ? Colors.white.withValues(alpha: 0.5)
+                      : AppColors.textSecondary,
                   indicatorColor: AppColors.primary,
                   indicatorSize: TabBarIndicatorSize.label,
                   dividerColor: Colors.transparent,
@@ -136,8 +146,10 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
                   children: [
                     _buildAlertsTab(isDark, alerts),
                     scoresAsync.when(
-                      data: (scores) => _buildBehaviorTab(isDark, scores, isWideScreen),
-                      loading: () => const Center(child: CircularProgressIndicator()),
+                      data: (scores) =>
+                          _buildBehaviorTab(isDark, scores, isWideScreen),
+                      loading: () =>
+                          const Center(child: CircularProgressIndicator()),
                       error: (e, _) => Center(child: Text('$e')),
                     ),
                     _buildInvestigationTab(isDark),
@@ -151,7 +163,8 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
     );
   }
 
-  Widget _buildSummaryCards(bool isDark, FraudDetectionSummary summary, bool isWideScreen) {
+  Widget _buildSummaryCards(
+      bool isDark, FraudDetectionSummary summary, bool isWideScreen) {
     final l10n = AppLocalizations.of(context)!;
     final cards = [
       _SummaryCardData(
@@ -176,7 +189,8 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
         title: l10n.aiRiskLevel,
         value: '${summary.overallRiskScore.toInt()}%',
         icon: Icons.shield_rounded,
-        color: summary.overallRiskScore > 60 ? AppColors.error : AppColors.success,
+        color:
+            summary.overallRiskScore > 60 ? AppColors.error : AppColors.success,
       ),
     ];
 
@@ -187,63 +201,71 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
           runSpacing: 16,
           children: cards.map((card) {
             return SizedBox(
-              width: isWideScreen ? constraints.maxWidth / 4 - 16 : double.infinity,
+              width: isWideScreen
+                  ? constraints.maxWidth / 4 - 16
+                  : double.infinity,
               child: Container(
-            padding: const EdgeInsets.all(AlhaiSpacing.md),
-            decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF1E293B) : Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
+                padding: const EdgeInsets.all(AlhaiSpacing.md),
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.1)
+                        : AppColors.border,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color:
+                          Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: card.color.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(card.icon, color: card.color, size: 22),
+                    ),
+                    const SizedBox(width: AlhaiSpacing.sm),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            card.title,
+                            style: TextStyle(
+                              color: isDark
+                                  ? Colors.white.withValues(alpha: 0.6)
+                                  : AppColors.textSecondary,
+                              fontSize: 12,
+                            ),
+                          ),
+                          const SizedBox(height: AlhaiSpacing.xxs),
+                          Text(
+                            card.value,
+                            style: TextStyle(
+                              color:
+                                  isDark ? Colors.white : AppColors.textPrimary,
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: card.color.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Icon(card.icon, color: card.color, size: 22),
-                ),
-                const SizedBox(width: AlhaiSpacing.sm),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        card.title,
-                        style: TextStyle(
-                          color: isDark ? Colors.white.withValues(alpha: 0.6) : AppColors.textSecondary,
-                          fontSize: 12,
-                        ),
-                      ),
-                      const SizedBox(height: AlhaiSpacing.xxs),
-                      Text(
-                        card.value,
-                        style: TextStyle(
-                          color: isDark ? Colors.white : AppColors.textPrimary,
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
+            );
+          }).toList(),
         );
-      }).toList(),
-    );
       },
     );
   }
@@ -256,7 +278,8 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
+          color:
+              isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
         ),
         boxShadow: [
           BoxShadow(
@@ -271,7 +294,8 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
         children: [
           Row(
             children: [
-              const Icon(Icons.speed_rounded, color: AppColors.primary, size: 22),
+              const Icon(Icons.speed_rounded,
+                  color: AppColors.primary, size: 22),
               const SizedBox(width: AlhaiSpacing.xs),
               Text(
                 l10n.aiRiskMeter,
@@ -307,9 +331,13 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
                         ),
                       ),
                       Text(
-                        summary.overallRiskScore > 60 ? l10n.aiHighRisk : l10n.aiLowRisk,
+                        summary.overallRiskScore > 60
+                            ? l10n.aiHighRisk
+                            : l10n.aiLowRisk,
                         style: TextStyle(
-                          color: summary.overallRiskScore > 60 ? AppColors.error : AppColors.success,
+                          color: summary.overallRiskScore > 60
+                              ? AppColors.error
+                              : AppColors.success,
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
                         ),
@@ -327,15 +355,20 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
             runSpacing: 8,
             children: summary.patternCounts.entries.map((entry) {
               return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
-                  color: isDark ? Colors.white.withValues(alpha: 0.05) : AppColors.grey50,
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.05)
+                      : AppColors.grey50,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
                   '${_patternName(entry.key)}: ${entry.value}',
                   style: TextStyle(
-                    color: isDark ? Colors.white.withValues(alpha: 0.7) : AppColors.textSecondary,
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.7)
+                        : AppColors.textSecondary,
                     fontSize: 11,
                   ),
                 ),
@@ -371,7 +404,8 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.check_circle_outline_rounded, size: 64, color: AppColors.success),
+            const Icon(Icons.check_circle_outline_rounded,
+                size: 64, color: AppColors.success),
             const SizedBox(height: AlhaiSpacing.md),
             Text(
               AppLocalizations.of(context)!.aiNoFraudAlerts,
@@ -405,12 +439,14 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
     );
   }
 
-  Widget _buildBehaviorTab(bool isDark, List<BehaviorScore> scores, bool isWideScreen) {
+  Widget _buildBehaviorTab(
+      bool isDark, List<BehaviorScore> scores, bool isWideScreen) {
     if (isWideScreen) {
       return GridView.builder(
         padding: const EdgeInsets.all(AlhaiSpacing.xxs),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: getResponsiveGridColumns(context, mobile: 2, desktop: 4),
+          crossAxisCount:
+              getResponsiveGridColumns(context, mobile: 2, desktop: 4),
           childAspectRatio: 0.75,
           crossAxisSpacing: 16,
           mainAxisSpacing: 16,
@@ -444,13 +480,17 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
             Icon(
               Icons.touch_app_rounded,
               size: 64,
-              color: isDark ? Colors.white.withValues(alpha: 0.3) : AppColors.textMuted,
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.3)
+                  : AppColors.textMuted,
             ),
             const SizedBox(height: AlhaiSpacing.md),
             Text(
               AppLocalizations.of(context)!.aiSelectAlertToInvestigate,
               style: TextStyle(
-                color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textSecondary,
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.5)
+                    : AppColors.textSecondary,
                 fontSize: 14,
               ),
             ),
@@ -507,7 +547,9 @@ class _RiskMeterPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = 12
       ..strokeCap = StrokeCap.round
-      ..color = isDark ? Colors.white.withValues(alpha: 0.1) : const Color(0xFFE5E7EB);
+      ..color = isDark
+          ? Colors.white.withValues(alpha: 0.1)
+          : const Color(0xFFE5E7EB);
 
     canvas.drawArc(
       Rect.fromCircle(center: center, radius: radius),
@@ -557,7 +599,8 @@ class _RiskMeterPainter extends CustomPainter {
     canvas.drawLine(center, needleEnd, needlePaint);
 
     // Center dot
-    final dotPaint = Paint()..color = isDark ? Colors.white : const Color(0xFF374151);
+    final dotPaint = Paint()
+      ..color = isDark ? Colors.white : const Color(0xFF374151);
     canvas.drawCircle(center, 5, dotPaint);
   }
 

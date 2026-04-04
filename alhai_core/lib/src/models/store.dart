@@ -31,8 +31,7 @@ class Store with _$Store {
     DateTime? updatedAt,
   }) = _Store;
 
-  factory Store.fromJson(Map<String, dynamic> json) =>
-      _$StoreFromJson(json);
+  factory Store.fromJson(Map<String, dynamic> json) => _$StoreFromJson(json);
 
   /// Check if store is currently open
   bool isOpenNow() {
@@ -41,17 +40,25 @@ class Store with _$Store {
     final dayName = _getDayName(now.weekday);
     final hours = workingHours!.toJson()[dayName] as Map<String, dynamic>?;
     if (hours == null || hours['isClosed'] == true) return false;
-    
+
     final openTime = _parseTime(hours['open'] as String?);
     final closeTime = _parseTime(hours['close'] as String?);
     if (openTime == null || closeTime == null) return false;
-    
+
     final nowMinutes = now.hour * 60 + now.minute;
     return nowMinutes >= openTime && nowMinutes <= closeTime;
   }
 
   String _getDayName(int weekday) {
-    const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+    const days = [
+      'monday',
+      'tuesday',
+      'wednesday',
+      'thursday',
+      'friday',
+      'saturday',
+      'sunday'
+    ];
     return days[weekday - 1];
   }
 

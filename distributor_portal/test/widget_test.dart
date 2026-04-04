@@ -4,7 +4,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 
 void main() {
-  testWidgets('Distributor Portal App renders correctly', (WidgetTester tester) async {
+  testWidgets('Distributor Portal App renders correctly',
+      (WidgetTester tester) async {
     // Build a simple MaterialApp for testing
     await tester.pumpWidget(
       MaterialApp(
@@ -27,9 +28,9 @@ void main() {
         ),
       ),
     );
-    
+
     await tester.pumpAndSettle();
-    
+
     expect(find.text('Distributor Portal'), findsOneWidget);
   });
 }

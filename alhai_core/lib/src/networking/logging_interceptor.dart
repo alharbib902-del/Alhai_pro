@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import '../utils/logger.dart';
 
 /// Logging interceptor for Dio requests/responses
-/// 
+///
 /// Provides:
 /// - Request/response logging with sensitive data masking
 /// - Correlation IDs for tracing
@@ -14,7 +14,7 @@ class LoggingInterceptor extends Interceptor {
   final bool logRequestBody;
   final bool logResponseBody;
   final int maxBodyLength;
-  
+
   /// Sensitive headers to mask
   static const _sensitiveHeaders = [
     'authorization',
@@ -22,7 +22,7 @@ class LoggingInterceptor extends Interceptor {
     'cookie',
     'set-cookie',
   ];
-  
+
   /// Sensitive body fields to mask
   static const _sensitiveFields = [
     'password',
@@ -47,15 +47,15 @@ class LoggingInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     _requestTimes[options] = DateTime.now();
-    
+
     // Generate correlation ID for tracing
     final correlationId = _generateCorrelationId();
     options.headers['X-Correlation-ID'] = correlationId;
-    
+
     // Extract context from headers (if set by app)
     final userId = options.headers['X-User-ID'];
     final storeId = options.headers['X-Store-ID'];
-    
+
     logger.info(
       '→ ${options.method} ${options.uri}',
       data: {
@@ -63,11 +63,11 @@ class LoggingInterceptor extends Interceptor {
         if (userId != null) 'userId': userId,
         if (storeId != null) 'storeId': storeId,
         'headers': _maskHeaders(options.headers),
-        if (logRequestBody && options.data != null) 
+        if (logRequestBody && options.data != null)
           'body': _maskAndTruncate(options.data),
       },
     );
-    
+
     logger.addBreadcrumb(
       '${options.method} ${options.path}',
       category: 'http.request',
@@ -85,7 +85,7 @@ class LoggingInterceptor extends Interceptor {
   void onResponse(Response response, ResponseInterceptorHandler handler) {
     final duration = _getDuration(response.requestOptions);
     final correlationId = response.requestOptions.headers['X-Correlation-ID'];
-    
+
     logger.info(
       '← ${response.statusCode} ${response.requestOptions.method} ${response.requestOptions.uri} (${duration}ms)',
       data: {
@@ -97,7 +97,7 @@ class LoggingInterceptor extends Interceptor {
           'body': _maskAndTruncate(response.data),
       },
     );
-    
+
     logger.addBreadcrumb(
       '${response.statusCode} ${response.requestOptions.path}',
       category: 'http.response',
@@ -114,7 +114,7 @@ class LoggingInterceptor extends Interceptor {
   void onError(DioException err, ErrorInterceptorHandler handler) {
     final duration = _getDuration(err.requestOptions);
     final correlationId = err.requestOptions.headers['X-Correlation-ID'];
-    
+
     logger.error(
       '✕ ${err.response?.statusCode ?? 'ERR'} ${err.requestOptions.method} ${err.requestOptions.uri} (${duration}ms)',
       error: err,
@@ -129,7 +129,7 @@ class LoggingInterceptor extends Interceptor {
           'responseBody': _maskAndTruncate(err.response!.data),
       },
     );
-    
+
     logger.addBreadcrumb(
       'Error: ${err.type.name}',
       category: 'http.error',
@@ -165,7 +165,7 @@ class LoggingInterceptor extends Interceptor {
   /// Masks sensitive fields and truncates
   String _maskAndTruncate(dynamic data) {
     if (data == null) return '';
-    
+
     String text;
     if (data is Map) {
       final masked = _maskMap(data);
@@ -173,10 +173,10 @@ class LoggingInterceptor extends Interceptor {
     } else {
       text = data.toString();
     }
-    
+
     return _truncate(text);
   }
-  
+
   /// Recursively masks sensitive fields in a map
   Map<String, dynamic> _maskMap(Map data) {
     final masked = <String, dynamic>{};

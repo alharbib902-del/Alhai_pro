@@ -23,9 +23,8 @@ void main() {
       final negative = keywords
           .where((k) => k.sentiment == SentimentScore.negative)
           .toList();
-      final neutral = keywords
-          .where((k) => k.sentiment == SentimentScore.neutral)
-          .toList();
+      final neutral =
+          keywords.where((k) => k.sentiment == SentimentScore.neutral).toList();
 
       expect(positive, isNotEmpty);
       expect(negative, isNotEmpty);
@@ -150,8 +149,7 @@ void main() {
       final trend = AiSentimentAnalysisService.getTrend();
 
       for (final t in trend) {
-        final total =
-            t.positivePercent + t.neutralPercent + t.negativePercent;
+        final total = t.positivePercent + t.neutralPercent + t.negativePercent;
         expect(total, closeTo(100, 1));
       }
     });
@@ -199,19 +197,21 @@ void main() {
 
   group('getSentimentLabel', () {
     test('returns correct label for each score', () {
-      expect(AiSentimentAnalysisService.getSentimentLabel(
+      expect(
+          AiSentimentAnalysisService.getSentimentLabel(
               SentimentScore.veryPositive),
           isNotEmpty);
-      expect(AiSentimentAnalysisService.getSentimentLabel(
-              SentimentScore.positive),
+      expect(
+          AiSentimentAnalysisService.getSentimentLabel(SentimentScore.positive),
           isNotEmpty);
-      expect(AiSentimentAnalysisService.getSentimentLabel(
-              SentimentScore.neutral),
+      expect(
+          AiSentimentAnalysisService.getSentimentLabel(SentimentScore.neutral),
           isNotEmpty);
-      expect(AiSentimentAnalysisService.getSentimentLabel(
-              SentimentScore.negative),
+      expect(
+          AiSentimentAnalysisService.getSentimentLabel(SentimentScore.negative),
           isNotEmpty);
-      expect(AiSentimentAnalysisService.getSentimentLabel(
+      expect(
+          AiSentimentAnalysisService.getSentimentLabel(
               SentimentScore.veryNegative),
           isNotEmpty);
     });

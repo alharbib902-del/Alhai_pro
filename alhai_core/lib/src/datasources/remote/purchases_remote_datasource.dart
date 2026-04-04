@@ -18,7 +18,8 @@ abstract class PurchasesRemoteDataSource {
   Future<PurchaseOrderResponse> getPurchaseOrder(String id);
 
   /// Creates a new purchase order
-  Future<PurchaseOrderResponse> createPurchaseOrder(CreatePurchaseOrderRequest request);
+  Future<PurchaseOrderResponse> createPurchaseOrder(
+      CreatePurchaseOrderRequest request);
 
   /// Updates a purchase order
   Future<PurchaseOrderResponse> updatePurchaseOrder(
@@ -30,7 +31,8 @@ abstract class PurchasesRemoteDataSource {
   Future<void> cancelPurchaseOrder(String id, {String? reason});
 
   /// Receives items from a purchase order
-  Future<PurchaseOrderResponse> receiveItems(String id, ReceiveItemsRequest request);
+  Future<PurchaseOrderResponse> receiveItems(
+      String id, ReceiveItemsRequest request);
 
   /// Records payment for a purchase order
   Future<PurchaseOrderResponse> recordPayment(String id, double amount);

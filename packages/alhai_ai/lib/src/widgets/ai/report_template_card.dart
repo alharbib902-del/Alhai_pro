@@ -66,7 +66,9 @@ class _ReportTemplateCardState extends State<ReportTemplateCard> {
           border: Border.all(
             color: _isHovered
                 ? chartColor.withValues(alpha: 0.4)
-                : (isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.border),
+                : (isDark
+                    ? Colors.white.withValues(alpha: 0.08)
+                    : AppColors.border),
             width: _isHovered ? 2 : 1,
           ),
           boxShadow: [
@@ -130,7 +132,9 @@ class _ReportTemplateCardState extends State<ReportTemplateCard> {
               widget.template.descriptionAr,
               style: TextStyle(
                 fontSize: 12,
-                color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textMuted,
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.5)
+                    : AppColors.textMuted,
                 height: 1.4,
               ),
               maxLines: 2,
@@ -144,27 +148,37 @@ class _ReportTemplateCardState extends State<ReportTemplateCard> {
               children: [
                 // Last run
                 if (widget.template.lastRun != null) ...[
-                  Icon(Icons.schedule_rounded, size: 12,
-                    color: isDark ? Colors.white.withValues(alpha: 0.3) : AppColors.textMuted),
+                  Icon(Icons.schedule_rounded,
+                      size: 12,
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.3)
+                          : AppColors.textMuted),
                   const SizedBox(width: AlhaiSpacing.xxs),
                   Text(
                     _formatLastRun(widget.template.lastRun!),
                     style: TextStyle(
                       fontSize: 10,
-                      color: isDark ? Colors.white.withValues(alpha: 0.3) : AppColors.textMuted,
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.3)
+                          : AppColors.textMuted,
                     ),
                   ),
                   const SizedBox(width: 10),
                 ],
                 // Run count
-                Icon(Icons.replay_rounded, size: 12,
-                  color: isDark ? Colors.white.withValues(alpha: 0.3) : AppColors.textMuted),
+                Icon(Icons.replay_rounded,
+                    size: 12,
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.3)
+                        : AppColors.textMuted),
                 const SizedBox(width: AlhaiSpacing.xxs),
                 Text(
                   '${widget.template.runCount} مرة',
                   style: TextStyle(
                     fontSize: 10,
-                    color: isDark ? Colors.white.withValues(alpha: 0.3) : AppColors.textMuted,
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.3)
+                        : AppColors.textMuted,
                   ),
                 ),
                 const Spacer(),
@@ -175,10 +189,14 @@ class _ReportTemplateCardState extends State<ReportTemplateCard> {
                     onTap: widget.onRun,
                     borderRadius: BorderRadius.circular(8),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: AlhaiSpacing.sm, vertical: 6),
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          colors: [chartColor, chartColor.withValues(alpha: 0.8)],
+                          colors: [
+                            chartColor,
+                            chartColor.withValues(alpha: 0.8)
+                          ],
                         ),
                         borderRadius: BorderRadius.circular(8),
                         boxShadow: [
@@ -192,7 +210,8 @@ class _ReportTemplateCardState extends State<ReportTemplateCard> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 14),
+                          const Icon(Icons.play_arrow_rounded,
+                              color: Colors.white, size: 14),
                           const SizedBox(width: AlhaiSpacing.xxs),
                           Text(
                             l10n.run,

@@ -31,8 +31,7 @@ void main() {
 
     group('requiresApproval', () {
       test('should return true for protected actions', () {
-        expect(
-            ManagerApprovalService.requiresApproval('void_sale'), isTrue);
+        expect(ManagerApprovalService.requiresApproval('void_sale'), isTrue);
         expect(ManagerApprovalService.requiresApproval('refund'), isTrue);
         expect(
             ManagerApprovalService.requiresApproval('delete_product'), isTrue);
@@ -109,8 +108,7 @@ void main() {
               reason: 'Action "$action" should have a name');
           // Known actions should not return the raw action code
           expect(name, isNot(equals(action)),
-              reason:
-                  'Action "$action" name should be Arabic, not the code');
+              reason: 'Action "$action" name should be Arabic, not the code');
         }
       });
 
@@ -121,8 +119,7 @@ void main() {
               ManagerApprovalService.getActionDescription(action);
           // Description should generally be longer than name
           expect(description.length >= name.length, isTrue,
-              reason:
-                  'Description for "$action" should be >= name length');
+              reason: 'Description for "$action" should be >= name length');
         }
       });
     });

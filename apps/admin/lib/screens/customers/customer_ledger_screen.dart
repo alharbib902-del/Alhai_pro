@@ -111,8 +111,8 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
       list = list
           .where((t) =>
               (t['date'] as DateTime).isAfter(_customDateRange!.start) &&
-              (t['date'] as DateTime).isBefore(
-                  _customDateRange!.end.add(const Duration(days: 1))))
+              (t['date'] as DateTime)
+                  .isBefore(_customDateRange!.end.add(const Duration(days: 1))))
           .toList();
     }
 
@@ -171,9 +171,8 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
       children: [
         AppHeader(
           title: l10n.customerLedger,
-          onMenuTap: isWideScreen
-              ? null
-              : () => Scaffold.of(context).openDrawer(),
+          onMenuTap:
+              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 0,
           userName: _customerName,
@@ -234,8 +233,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                                 ? _buildMobileTransactions(isDark, l10n)
                                 : _buildDesktopTable(isDark, l10n),
                             const SizedBox(height: AlhaiSpacing.md),
-                            if (!isMobile)
-                              _buildSummaryBar(isDark, l10n),
+                            if (!isMobile) _buildSummaryBar(isDark, l10n),
                             const SizedBox(height: AlhaiSpacing.lg),
                           ],
                         ),
@@ -264,8 +262,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
       decoration: BoxDecoration(
         color: cardColor,
         borderRadius: BorderRadius.circular(AppSizes.radiusXl),
-        border: Border.all(
-            color: Theme.of(context).dividerColor),
+        border: Border.all(color: Theme.of(context).dividerColor),
         boxShadow: isDark ? null : AppSizes.shadowSm,
       ),
       child: Row(
@@ -275,7 +272,10 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
             height: isMobile ? 48 : 56,
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [Theme.of(context).colorScheme.primary, Theme.of(context).colorScheme.primary.withValues(alpha: 0.8)],
+                colors: [
+                  Theme.of(context).colorScheme.primary,
+                  Theme.of(context).colorScheme.primary.withValues(alpha: 0.8)
+                ],
                 begin: AlignmentDirectional.topStart,
                 end: AlignmentDirectional.bottomEnd,
               ),
@@ -308,8 +308,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                 Row(
                   children: [
                     Icon(Icons.phone_outlined,
-                        size: 14,
-                        color: Theme.of(context).hintColor),
+                        size: 14, color: Theme.of(context).hintColor),
                     const SizedBox(width: AlhaiSpacing.xxs),
                     Text(
                       _account?.phone ?? '-',
@@ -371,8 +370,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
       decoration: BoxDecoration(
         color: cardColor,
         borderRadius: BorderRadius.circular(AppSizes.radiusXl),
-        border: Border.all(
-            color: Theme.of(context).dividerColor),
+        border: Border.all(color: Theme.of(context).dividerColor),
         boxShadow: isDark ? null : AppSizes.shadowSm,
       ),
       child: Column(
@@ -382,7 +380,10 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
             children: [
               Icon(Icons.calendar_today_outlined,
                   size: 16,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5)),
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurfaceVariant
+                      .withValues(alpha: 0.5)),
               const SizedBox(width: AlhaiSpacing.xs),
               Text(
                 l10n.date,
@@ -413,14 +414,20 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                 _buildFilterChip(
                   l10n.thisMonthPeriod,
                   _dateFilter == 'thisMonth',
-                  () => setState(() { _dateFilter = 'thisMonth'; _invalidateFilterCache(); }),
+                  () => setState(() {
+                    _dateFilter = 'thisMonth';
+                    _invalidateFilterCache();
+                  }),
                   isDark,
                 ),
                 const SizedBox(width: AlhaiSpacing.xs),
                 _buildFilterChip(
                   l10n.threeMonths,
                   _dateFilter == 'threeMonths',
-                  () => setState(() { _dateFilter = 'threeMonths'; _invalidateFilterCache(); }),
+                  () => setState(() {
+                    _dateFilter = 'threeMonths';
+                    _invalidateFilterCache();
+                  }),
                   isDark,
                 ),
                 const SizedBox(width: AlhaiSpacing.xs),
@@ -439,7 +446,10 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
             children: [
               Icon(Icons.filter_list_rounded,
                   size: 16,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5)),
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurfaceVariant
+                      .withValues(alpha: 0.5)),
               const SizedBox(width: AlhaiSpacing.xs),
               Text(
                 l10n.type,
@@ -459,35 +469,50 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                 _buildFilterChip(
                   l10n.allMovements,
                   _typeFilter == 'all',
-                  () => setState(() { _typeFilter = 'all'; _invalidateFilterCache(); }),
+                  () => setState(() {
+                    _typeFilter = 'all';
+                    _invalidateFilterCache();
+                  }),
                   isDark,
                 ),
                 const SizedBox(width: AlhaiSpacing.xs),
                 _buildFilterChip(
                   l10n.invoices,
                   _typeFilter == 'invoice',
-                  () => setState(() { _typeFilter = 'invoice'; _invalidateFilterCache(); }),
+                  () => setState(() {
+                    _typeFilter = 'invoice';
+                    _invalidateFilterCache();
+                  }),
                   isDark,
                 ),
                 const SizedBox(width: AlhaiSpacing.xs),
                 _buildFilterChip(
                   l10n.payment,
                   _typeFilter == 'payment',
-                  () => setState(() { _typeFilter = 'payment'; _invalidateFilterCache(); }),
+                  () => setState(() {
+                    _typeFilter = 'payment';
+                    _invalidateFilterCache();
+                  }),
                   isDark,
                 ),
                 const SizedBox(width: AlhaiSpacing.xs),
                 _buildFilterChip(
                   l10n.returns,
                   _typeFilter == 'return',
-                  () => setState(() { _typeFilter = 'return'; _invalidateFilterCache(); }),
+                  () => setState(() {
+                    _typeFilter = 'return';
+                    _invalidateFilterCache();
+                  }),
                   isDark,
                 ),
                 const SizedBox(width: AlhaiSpacing.xs),
                 _buildFilterChip(
                   l10n.adjustments,
                   _typeFilter == 'adjustment',
-                  () => setState(() { _typeFilter = 'adjustment'; _invalidateFilterCache(); }),
+                  () => setState(() {
+                    _typeFilter = 'adjustment';
+                    _invalidateFilterCache();
+                  }),
                   isDark,
                 ),
               ],
@@ -517,9 +542,8 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
               : Theme.of(context).colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(AppSizes.radiusFull),
           border: Border.all(
-            color: isSelected
-                ? AppColors.primary
-                : Theme.of(context).dividerColor,
+            color:
+                isSelected ? AppColors.primary : Theme.of(context).dividerColor,
           ),
         ),
         child: Row(
@@ -568,16 +592,14 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
       decoration: BoxDecoration(
         color: cardColor,
         borderRadius: BorderRadius.circular(AppSizes.radiusXl),
-        border: Border.all(
-            color: Theme.of(context).dividerColor),
+        border: Border.all(color: Theme.of(context).dividerColor),
         boxShadow: isDark ? null : AppSizes.shadowSm,
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(
         children: [
           Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surfaceContainerHighest,
             ),
@@ -647,7 +669,10 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
             : (index.isEven
                 ? Colors.transparent
                 : (isDark
-                    ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.03)
+                    ? Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withValues(alpha: 0.03)
                     : AppColors.surfaceVariant.withValues(alpha: 0.5))),
         border: Border(
           bottom: BorderSide(
@@ -721,9 +746,8 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: debit > 0 ? FontWeight.w600 : FontWeight.w400,
-                color: debit > 0
-                    ? AppColors.error
-                    : Theme.of(context).hintColor,
+                color:
+                    debit > 0 ? AppColors.error : Theme.of(context).hintColor,
               ),
             ),
           ),
@@ -831,8 +855,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                           width: 32,
                           height: 32,
                           decoration: BoxDecoration(
-                            color:
-                                _getTypeColor(type).withValues(alpha: 0.12),
+                            color: _getTypeColor(type).withValues(alpha: 0.12),
                             borderRadius:
                                 BorderRadius.circular(AppSizes.radiusMd),
                           ),
@@ -888,16 +911,20 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                                 vertical: 2,
                               ),
                               decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                                borderRadius: BorderRadius.circular(
-                                    AppSizes.radiusFull),
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .surfaceContainerHighest,
+                                borderRadius:
+                                    BorderRadius.circular(AppSizes.radiusFull),
                               ),
                               child: Text(
                                 '${l10n.balanceCol}: ${balance.toStringAsFixed(0)}',
                                 style: TextStyle(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w600,
-                                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurfaceVariant,
                                 ),
                               ),
                             ),
@@ -911,8 +938,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                         children: [
                           const SizedBox(width: 42),
                           Icon(Icons.tag_rounded,
-                              size: 12,
-                              color: Theme.of(context).hintColor),
+                              size: 12, color: Theme.of(context).hintColor),
                           const SizedBox(width: AlhaiSpacing.xxs),
                           Text(
                             txn['reference'] as String,
@@ -948,8 +974,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
       decoration: BoxDecoration(
         color: cardColor,
         borderRadius: BorderRadius.circular(AppSizes.radiusXl),
-        border: Border.all(
-            color: Theme.of(context).dividerColor),
+        border: Border.all(color: Theme.of(context).dividerColor),
         boxShadow: isDark ? null : AppSizes.shadowSm,
       ),
       child: Row(
@@ -1047,13 +1072,12 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
     final cardColor = Theme.of(context).colorScheme.surface;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+      padding: const EdgeInsets.symmetric(
+          horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
       decoration: BoxDecoration(
         color: cardColor,
         border: Border(
-          top: BorderSide(
-              color: Theme.of(context).dividerColor,
-              width: 1),
+          top: BorderSide(color: Theme.of(context).dividerColor, width: 1),
         ),
         boxShadow: [
           BoxShadow(
@@ -1076,7 +1100,10 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                     style: TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.w500,
-                      color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurfaceVariant
+                          .withValues(alpha: 0.5),
                     ),
                   ),
                   const SizedBox(height: AlhaiSpacing.xxxs),
@@ -1100,7 +1127,10 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                     style: TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.w500,
-                      color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurfaceVariant
+                          .withValues(alpha: 0.5),
                     ),
                   ),
                   const SizedBox(height: AlhaiSpacing.xxxs),
@@ -1117,13 +1147,12 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
             ),
             Expanded(
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xs),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xs),
                 decoration: BoxDecoration(
-                  color: (finalBalance > 0
-                          ? AppColors.error
-                          : AppColors.success)
-                      .withValues(alpha: 0.1),
+                  color:
+                      (finalBalance > 0 ? AppColors.error : AppColors.success)
+                          .withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(AppSizes.radiusLg),
                 ),
                 child: Column(
@@ -1134,7 +1163,10 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                       style: TextStyle(
                         fontSize: 10,
                         fontWeight: FontWeight.w500,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurfaceVariant
+                            .withValues(alpha: 0.5),
                       ),
                     ),
                     const SizedBox(height: AlhaiSpacing.xxxs),
@@ -1170,8 +1202,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
       decoration: BoxDecoration(
         color: cardColor,
         borderRadius: BorderRadius.circular(AppSizes.radiusXl),
-        border: Border.all(
-            color: Theme.of(context).dividerColor),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Center(
         child: Column(
@@ -1181,7 +1212,10 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
               Icons.receipt_long_outlined,
               size: 64,
               color: isDark
-                  ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2)
+                  ? Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.2)
                   : AppColors.textMuted.withValues(alpha: 0.4),
             ),
             const SizedBox(height: AlhaiSpacing.md),
@@ -1190,7 +1224,10 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
-                color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurfaceVariant
+                    .withValues(alpha: 0.5),
               ),
             ),
           ],
@@ -1215,8 +1252,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
         builder: (dialogContext, setDialogState) {
           final dialogIsDark =
               Theme.of(dialogContext).brightness == Brightness.dark;
-          final dialogCardColor =
-              Theme.of(dialogContext).colorScheme.surface;
+          final dialogCardColor = Theme.of(dialogContext).colorScheme.surface;
 
           return Dialog(
             shape: RoundedRectangleBorder(
@@ -1257,7 +1293,9 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                       IconButton(
                         onPressed: () => Navigator.pop(dialogContext),
                         icon: Icon(Icons.close_rounded,
-                            color: Theme.of(dialogContext).colorScheme.onSurfaceVariant),
+                            color: Theme.of(dialogContext)
+                                .colorScheme
+                                .onSurfaceVariant),
                       ),
                     ],
                   ),
@@ -1267,7 +1305,8 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
-                      color: Theme.of(dialogContext).colorScheme.onSurfaceVariant,
+                      color:
+                          Theme.of(dialogContext).colorScheme.onSurfaceVariant,
                     ),
                   ),
                   const SizedBox(height: AlhaiSpacing.xs),
@@ -1279,8 +1318,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                           Icons.arrow_upward_rounded,
                           AppColors.error,
                           adjustmentType == 'debit',
-                          () => setDialogState(
-                              () => adjustmentType = 'debit'),
+                          () => setDialogState(() => adjustmentType = 'debit'),
                           dialogIsDark,
                         ),
                       ),
@@ -1291,8 +1329,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                           Icons.arrow_downward_rounded,
                           AppColors.success,
                           adjustmentType == 'credit',
-                          () => setDialogState(
-                              () => adjustmentType = 'credit'),
+                          () => setDialogState(() => adjustmentType = 'credit'),
                           dialogIsDark,
                         ),
                       ),
@@ -1304,7 +1341,8 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
-                      color: Theme.of(dialogContext).colorScheme.onSurfaceVariant,
+                      color:
+                          Theme.of(dialogContext).colorScheme.onSurfaceVariant,
                     ),
                   ),
                   const SizedBox(height: AlhaiSpacing.xs),
@@ -1316,14 +1354,15 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                     ),
                     decoration: InputDecoration(
                       hintText: '0.00',
-                      hintStyle: TextStyle(
-                          color: Theme.of(dialogContext).hintColor),
+                      hintStyle:
+                          TextStyle(color: Theme.of(dialogContext).hintColor),
                       prefixText: '${l10n.sar} ',
                       filled: true,
-                      fillColor: Theme.of(dialogContext).colorScheme.surfaceContainerHighest,
+                      fillColor: Theme.of(dialogContext)
+                          .colorScheme
+                          .surfaceContainerHighest,
                       border: OutlineInputBorder(
-                        borderRadius:
-                            BorderRadius.circular(AppSizes.radiusLg),
+                        borderRadius: BorderRadius.circular(AppSizes.radiusLg),
                         borderSide: BorderSide.none,
                       ),
                       contentPadding: const EdgeInsets.symmetric(
@@ -1336,7 +1375,8 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
-                      color: Theme.of(dialogContext).colorScheme.onSurfaceVariant,
+                      color:
+                          Theme.of(dialogContext).colorScheme.onSurfaceVariant,
                     ),
                   ),
                   const SizedBox(height: AlhaiSpacing.xs),
@@ -1348,13 +1388,14 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                     ),
                     decoration: InputDecoration(
                       hintText: l10n.adjustmentReason,
-                      hintStyle: TextStyle(
-                          color: Theme.of(dialogContext).hintColor),
+                      hintStyle:
+                          TextStyle(color: Theme.of(dialogContext).hintColor),
                       filled: true,
-                      fillColor: Theme.of(dialogContext).colorScheme.surfaceContainerHighest,
+                      fillColor: Theme.of(dialogContext)
+                          .colorScheme
+                          .surfaceContainerHighest,
                       border: OutlineInputBorder(
-                        borderRadius:
-                            BorderRadius.circular(AppSizes.radiusLg),
+                        borderRadius: BorderRadius.circular(AppSizes.radiusLg),
                         borderSide: BorderSide.none,
                       ),
                       contentPadding: const EdgeInsets.symmetric(
@@ -1367,7 +1408,8 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
-                      color: Theme.of(dialogContext).colorScheme.onSurfaceVariant,
+                      color:
+                          Theme.of(dialogContext).colorScheme.onSurfaceVariant,
                     ),
                   ),
                   const SizedBox(height: AlhaiSpacing.xs),
@@ -1383,15 +1425,15 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                         setDialogState(() => selectedDate = picked);
                       }
                     },
-                    borderRadius:
-                        BorderRadius.circular(AppSizes.radiusLg),
+                    borderRadius: BorderRadius.circular(AppSizes.radiusLg),
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 14),
                       decoration: BoxDecoration(
-                        color: Theme.of(dialogContext).colorScheme.surfaceContainerHighest,
-                        borderRadius:
-                            BorderRadius.circular(AppSizes.radiusLg),
+                        color: Theme.of(dialogContext)
+                            .colorScheme
+                            .surfaceContainerHighest,
+                        borderRadius: BorderRadius.circular(AppSizes.radiusLg),
                       ),
                       child: Row(
                         children: [
@@ -1403,7 +1445,8 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                             _formatDate(selectedDate),
                             style: TextStyle(
                               fontSize: 14,
-                              color: Theme.of(dialogContext).colorScheme.onSurface,
+                              color:
+                                  Theme.of(dialogContext).colorScheme.onSurface,
                             ),
                           ),
                         ],
@@ -1415,17 +1458,17 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                     children: [
                       Expanded(
                         child: OutlinedButton(
-                          onPressed: () =>
-                              Navigator.pop(dialogContext),
+                          onPressed: () => Navigator.pop(dialogContext),
                           style: OutlinedButton.styleFrom(
-                            foregroundColor: Theme.of(dialogContext).colorScheme.onSurfaceVariant,
+                            foregroundColor: Theme.of(dialogContext)
+                                .colorScheme
+                                .onSurfaceVariant,
                             side: BorderSide(
                                 color: Theme.of(dialogContext).dividerColor),
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 14),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                  AppSizes.radiusLg),
+                              borderRadius:
+                                  BorderRadius.circular(AppSizes.radiusLg),
                             ),
                           ),
                           child: Text(l10n.cancel),
@@ -1435,14 +1478,12 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                       Expanded(
                         child: FilledButton.icon(
                           onPressed: () {
-                            final amount = double.tryParse(
-                                amountController.text);
+                            final amount =
+                                double.tryParse(amountController.text);
                             if (amount == null || amount <= 0) {
-                              ScaffoldMessenger.of(dialogContext)
-                                  .showSnackBar(
+                              ScaffoldMessenger.of(dialogContext).showSnackBar(
                                 SnackBar(
-                                  content:
-                                      Text(l10n.enterValidAmount),
+                                  content: Text(l10n.enterValidAmount),
                                   backgroundColor: AppColors.error,
                                 ),
                               );
@@ -1457,17 +1498,16 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                               l10n,
                             );
                           },
-                          icon: const Icon(Icons.save_outlined,
-                              size: 18),
+                          icon: const Icon(Icons.save_outlined, size: 18),
                           label: Text(l10n.saveAdjustment),
                           style: FilledButton.styleFrom(
                             backgroundColor: AppColors.primary,
-                            foregroundColor: Theme.of(dialogContext).colorScheme.onPrimary,
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 14),
+                            foregroundColor:
+                                Theme.of(dialogContext).colorScheme.onPrimary,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                  AppSizes.radiusLg),
+                              borderRadius:
+                                  BorderRadius.circular(AppSizes.radiusLg),
                             ),
                           ),
                         ),
@@ -1503,9 +1543,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
               : Theme.of(context).colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(AppSizes.radiusLg),
           border: Border.all(
-            color: isSelected
-                ? color
-                : Theme.of(context).dividerColor,
+            color: isSelected ? color : Theme.of(context).dividerColor,
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -1522,8 +1560,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
               label,
               style: TextStyle(
                 fontSize: 13,
-                fontWeight:
-                    isSelected ? FontWeight.w700 : FontWeight.w500,
+                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                 color: isSelected
                     ? color
                     : Theme.of(context).colorScheme.onSurfaceVariant,

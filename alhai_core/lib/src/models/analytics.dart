@@ -7,16 +7,22 @@ part 'analytics.g.dart';
 enum AlertType {
   /// Product stock is low
   lowStock,
+
   /// Product hasn't sold in a while
   slowMoving,
+
   /// Product expiring soon
   expiringSoon,
+
   /// Product has high demand
   highDemand,
+
   /// Customer debt overdue
   debtOverdue,
+
   /// Market price changed
   priceChange,
+
   /// Suggested reorder
   reorderSuggestion,
 }

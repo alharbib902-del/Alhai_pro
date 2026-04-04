@@ -11,7 +11,8 @@ import '../services/ai_smart_inventory_service.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 
 /// مزود خدمة المخزون الذكي - Smart Inventory Service Provider
-final aiSmartInventoryServiceProvider = Provider<AiSmartInventoryService>((ref) {
+final aiSmartInventoryServiceProvider =
+    Provider<AiSmartInventoryService>((ref) {
   final db = GetIt.I<AppDatabase>();
   return AiSmartInventoryService(db);
 });
@@ -29,19 +30,22 @@ final abcAnalysisProvider = FutureProvider<List<AbcItem>>((ref) async {
 });
 
 /// مزود توقعات الهدر - Waste Predictions Provider
-final wastePredictionsProvider = FutureProvider<List<WastePrediction>>((ref) async {
+final wastePredictionsProvider =
+    FutureProvider<List<WastePrediction>>((ref) async {
   final service = ref.watch(aiSmartInventoryServiceProvider);
   return service.getWastePredictions(ref.read(currentStoreIdProvider)!);
 });
 
 /// مزود اقتراحات إعادة الطلب - Reorder Suggestions Provider
-final reorderSuggestionsProvider = FutureProvider<List<ReorderSuggestion>>((ref) async {
+final reorderSuggestionsProvider =
+    FutureProvider<List<ReorderSuggestion>>((ref) async {
   final service = ref.watch(aiSmartInventoryServiceProvider);
   return service.getReorderSuggestions(ref.read(currentStoreIdProvider)!);
 });
 
 /// مزود ملخص المخزون الذكي - Smart Inventory Summary Provider
-final smartInventorySummaryProvider = FutureProvider<SmartInventorySummary>((ref) async {
+final smartInventorySummaryProvider =
+    FutureProvider<SmartInventorySummary>((ref) async {
   final service = ref.watch(aiSmartInventoryServiceProvider);
   return service.getSummary(ref.read(currentStoreIdProvider)!);
 });

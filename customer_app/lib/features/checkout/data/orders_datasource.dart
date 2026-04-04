@@ -10,10 +10,12 @@ class OrdersDatasource {
 
   Future<Order> createOrder(CreateOrderParams params) async {
     // 1. Reserve stock for all items at once (atomic)
-    final itemsJson = params.items.map((item) => {
-      'product_id': item.productId,
-      'qty': item.qty,
-    }).toList();
+    final itemsJson = params.items
+        .map((item) => {
+              'product_id': item.productId,
+              'qty': item.qty,
+            })
+        .toList();
 
     final stockResult = await _client.rpc('reserve_online_stock', params: {
       'p_store_id': params.storeId,
@@ -49,7 +51,11 @@ class OrdersDatasource {
       orderMap['notes'] = params.deliveryAddress;
     }
 
-    final orderData = await _client.from('orders').insert(orderMap).select().single()
+    final orderData = await _client
+        .from('orders')
+        .insert(orderMap)
+        .select()
+        .single()
         .timeout(AppConstants.networkTimeout);
 
     final orderId = orderData['id'] as String;

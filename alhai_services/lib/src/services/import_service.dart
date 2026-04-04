@@ -35,8 +35,11 @@ class ImportService {
           name: values[1].trim(),
           price: double.tryParse(values[2].trim()) ?? 0,
           barcode: values[0].trim().isNotEmpty ? values[0].trim() : null,
-          stockQty: values.length > 3 ? (double.tryParse(values[3].trim()) ?? 0) : 0,
-          categoryId: values.length > 4 && values[4].trim().isNotEmpty ? values[4].trim() : null,
+          stockQty:
+              values.length > 3 ? (double.tryParse(values[3].trim()) ?? 0) : 0,
+          categoryId: values.length > 4 && values[4].trim().isNotEmpty
+              ? values[4].trim()
+              : null,
           isActive: true,
           createdAt: DateTime.now(),
         );
@@ -47,7 +50,8 @@ class ImportService {
         }
 
         if (product.price <= 0) {
-          failed.add(ImportError(line: i + 1, error: 'السعر يجب أن يكون أكبر من صفر'));
+          failed.add(
+              ImportError(line: i + 1, error: 'السعر يجب أن يكون أكبر من صفر'));
           continue;
         }
 
@@ -153,7 +157,8 @@ class ImportService {
   }
 
   /// التحقق من صحة ملف CSV
-  CsvValidationResult validateCsv(String csvContent, List<String> requiredColumns) {
+  CsvValidationResult validateCsv(
+      String csvContent, List<String> requiredColumns) {
     final lines = const LineSplitter().convert(csvContent);
     if (lines.isEmpty) {
       return CsvValidationResult(
@@ -166,11 +171,14 @@ class ImportService {
     }
 
     final headerValues = _parseCsvLine(lines[0]);
-    final missingColumns = requiredColumns.where((col) => !headerValues.contains(col)).toList();
+    final missingColumns =
+        requiredColumns.where((col) => !headerValues.contains(col)).toList();
 
     return CsvValidationResult(
       isValid: missingColumns.isEmpty,
-      error: missingColumns.isNotEmpty ? 'أعمدة مفقودة: ${missingColumns.join(', ')}' : null,
+      error: missingColumns.isNotEmpty
+          ? 'أعمدة مفقودة: ${missingColumns.join(', ')}'
+          : null,
       rowCount: lines.length - 1, // Exclude header
       columnCount: headerValues.length,
       columns: headerValues,

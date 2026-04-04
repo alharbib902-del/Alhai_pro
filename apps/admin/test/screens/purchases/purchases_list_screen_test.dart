@@ -36,8 +36,7 @@ void main() {
       when(() => mockPurchasesDao.getPurchasesByStatus(any(), any()))
           .thenAnswer((_) => completer2.future.then((v) => v.cast()));
 
-      await tester
-          .pumpWidget(createTestWidget(const PurchasesListScreen()));
+      await tester.pumpWidget(createTestWidget(const PurchasesListScreen()));
       await tester.pump();
 
       expect(find.byType(ShimmerList), findsWidgets);
@@ -49,8 +48,7 @@ void main() {
       when(() => mockPurchasesDao.getPurchasesByStatus(any(), any()))
           .thenAnswer((_) async => []);
 
-      await tester
-          .pumpWidget(createTestWidget(const PurchasesListScreen()));
+      await tester.pumpWidget(createTestWidget(const PurchasesListScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(TabBar), findsOneWidget);
@@ -63,8 +61,7 @@ void main() {
       when(() => mockPurchasesDao.getPurchasesByStatus(any(), any()))
           .thenAnswer((_) async => []);
 
-      await tester
-          .pumpWidget(createTestWidget(const PurchasesListScreen()));
+      await tester.pumpWidget(createTestWidget(const PurchasesListScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.shopping_cart_outlined), findsOneWidget);
@@ -73,18 +70,14 @@ void main() {
     testWidgets('displays purchases when data is available', (tester) async {
       final purchases = [
         createTestPurchase(
-            id: 'p-1',
-            purchaseNumber: 'PUR-001',
-            status: 'draft',
-            total: 500),
+            id: 'p-1', purchaseNumber: 'PUR-001', status: 'draft', total: 500),
       ];
       when(() => mockPurchasesDao.getAllPurchases(any()))
           .thenAnswer((_) async => purchases);
       when(() => mockPurchasesDao.getPurchasesByStatus(any(), any()))
           .thenAnswer((_) async => []);
 
-      await tester
-          .pumpWidget(createTestWidget(const PurchasesListScreen()));
+      await tester.pumpWidget(createTestWidget(const PurchasesListScreen()));
       await tester.pumpAndSettle();
 
       expect(find.text('PUR-001'), findsOneWidget);
@@ -99,8 +92,7 @@ void main() {
       when(() => mockPurchasesDao.getPurchasesByStatus(any(), any()))
           .thenAnswer((_) async => []);
 
-      await tester
-          .pumpWidget(createTestWidget(const PurchasesListScreen()));
+      await tester.pumpWidget(createTestWidget(const PurchasesListScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(FloatingActionButton), findsOneWidget);
@@ -112,8 +104,7 @@ void main() {
       when(() => mockPurchasesDao.getPurchasesByStatus(any(), any()))
           .thenAnswer((_) async => []);
 
-      await tester
-          .pumpWidget(createTestWidget(const PurchasesListScreen()));
+      await tester.pumpWidget(createTestWidget(const PurchasesListScreen()));
       await tester.pumpAndSettle();
 
       expect(find.text('الكل'), findsOneWidget);

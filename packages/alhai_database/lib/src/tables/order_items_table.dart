@@ -12,14 +12,16 @@ class OrderItemsTable extends Table {
 
   // المعرفات
   TextColumn get id => text()();
-  TextColumn get orderId => text().references(OrdersTable, #id, onDelete: KeyAction.cascade)();
-  TextColumn get productId => text().references(ProductsTable, #id, onDelete: KeyAction.restrict)();
-  
+  TextColumn get orderId =>
+      text().references(OrdersTable, #id, onDelete: KeyAction.cascade)();
+  TextColumn get productId =>
+      text().references(ProductsTable, #id, onDelete: KeyAction.restrict)();
+
   // معلومات المنتج (نسخة وقت الطلب)
   TextColumn get productName => text()();
   TextColumn get productNameEn => text().nullable()();
   TextColumn get barcode => text().nullable()();
-  
+
   // الكميات والأسعار
   RealColumn get quantity => real()();
   RealColumn get unitPrice => real()();
@@ -27,13 +29,13 @@ class OrderItemsTable extends Table {
   RealColumn get taxRate => real().withDefault(const Constant(15))();
   RealColumn get taxAmount => real().withDefault(const Constant(0))();
   RealColumn get total => real()();
-  
+
   // ملاحظات
   TextColumn get notes => text().nullable()();
-  
+
   // حالة الحجز
   BoolColumn get isReserved => boolean().withDefault(const Constant(false))();
-  
+
   @override
   Set<Column> get primaryKey => {id};
 }

@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import '../../tokens/alhai_spacing.dart';
 
 /// AlhaiPriceText - Formatted price display with optional original price
-/// 
+///
 /// Supports:
 /// - Currency + amount formatting
 /// - Original price (strikethrough) for discounts
@@ -100,7 +100,8 @@ class AlhaiPriceText extends StatelessWidget {
     }
 
     final priceText = _formatPrice(context, amount, currency);
-    final originalText = hasDiscount ? _formatPrice(context, originalAmount!, currency) : null;
+    final originalText =
+        hasDiscount ? _formatPrice(context, originalAmount!, currency) : null;
 
     if (!hasDiscount) {
       return Text(
@@ -128,7 +129,8 @@ class AlhaiPriceText extends StatelessWidget {
     );
   }
 
-  String _formatPrice(BuildContext context, double value, String currencyLabel) {
+  String _formatPrice(
+      BuildContext context, double value, String currencyLabel) {
     // M160: Locale-aware formatting with thousands separators
     final locale = Localizations.localeOf(context).toString();
     final decimals = value.truncateToDouble() == value ? 0 : 2;

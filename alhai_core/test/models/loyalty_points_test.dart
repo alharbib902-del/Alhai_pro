@@ -35,7 +35,8 @@ void main() {
       });
 
       test('should return 0 for platinum (max tier)', () {
-        final loyalty = createLoyalty(balance: 15000, tier: LoyaltyTier.platinum);
+        final loyalty =
+            createLoyalty(balance: 15000, tier: LoyaltyTier.platinum);
         expect(loyalty.pointsToNextTier, equals(0));
       });
     });
@@ -76,7 +77,8 @@ void main() {
       });
 
       test('should return platinum for >= 10000 points', () {
-        expect(LoyaltyPoints.calculateTier(10000), equals(LoyaltyTier.platinum));
+        expect(
+            LoyaltyPoints.calculateTier(10000), equals(LoyaltyTier.platinum));
       });
 
       test('should return bronze for 0 points', () {
@@ -84,7 +86,8 @@ void main() {
       });
 
       test('should return platinum for very high points', () {
-        expect(LoyaltyPoints.calculateTier(100000), equals(LoyaltyTier.platinum));
+        expect(
+            LoyaltyPoints.calculateTier(100000), equals(LoyaltyTier.platinum));
       });
     });
 

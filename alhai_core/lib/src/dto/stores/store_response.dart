@@ -56,8 +56,8 @@ class StoreResponse with _$StoreResponse {
       deliveryFee: deliveryFee,
       acceptsDelivery: acceptsDelivery,
       acceptsPickup: acceptsPickup,
-      workingHours: workingHoursJson != null 
-          ? WorkingHours.fromJson(workingHoursJson!) 
+      workingHours: workingHoursJson != null
+          ? WorkingHours.fromJson(workingHoursJson!)
           : null,
       createdAt: DateTime.tryParse(createdAt) ?? DateTime.now(),
       updatedAt: updatedAt != null ? DateTime.tryParse(updatedAt!) : null,

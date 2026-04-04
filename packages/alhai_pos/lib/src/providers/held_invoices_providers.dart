@@ -82,7 +82,8 @@ Future<HeldInvoice> holdCurrentInvoice(
   final now = DateTime.now();
 
   // تحويل عناصر السلة إلى JSON
-  final itemsJson = jsonEncode(cart.items.map((item) => item.toJson()).toList());
+  final itemsJson =
+      jsonEncode(cart.items.map((item) => item.toJson()).toList());
 
   // حفظ في قاعدة البيانات
   await db.into(db.heldInvoicesTable).insert(

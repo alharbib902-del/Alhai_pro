@@ -26,8 +26,7 @@ class JsonColumnConverter {
   bool isJsonbField(String tableName, String fieldName) =>
       _jsonbFields[tableName]?.contains(fieldName) ?? false;
 
-  Set<String> getJsonbFields(String tableName) =>
-      _jsonbFields[tableName] ?? {};
+  Set<String> getJsonbFields(String tableName) => _jsonbFields[tableName] ?? {};
 
   /// Local (Text) -> Remote (JSONB): parse JSON strings into objects
   Map<String, dynamic> toRemote(

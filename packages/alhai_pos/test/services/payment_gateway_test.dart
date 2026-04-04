@@ -133,7 +133,8 @@ void main() {
         errorType: PaymentErrorType.network,
       );
 
-      expect(result.errorMessage, equals(PaymentErrorType.network.arabicMessage));
+      expect(
+          result.errorMessage, equals(PaymentErrorType.network.arabicMessage));
     });
 
     test('failed factory allows custom error message', () {

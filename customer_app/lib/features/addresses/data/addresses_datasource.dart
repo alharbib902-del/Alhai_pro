@@ -44,23 +44,27 @@ class AddressesDatasource {
     if (params.isDefault) {
       await _client
           .from('addresses')
-          .update({'is_default': false})
-          .eq('user_id', _userId);
+          .update({'is_default': false}).eq('user_id', _userId);
     }
 
-    final data = await _client.from('addresses').insert({
-      'user_id': _userId,
-      'label': params.label,
-      'full_address': params.fullAddress,
-      'city': params.city,
-      'district': params.district,
-      'street': params.street,
-      'building': params.buildingNumber,
-      'apartment': params.apartmentNumber,
-      'latitude': params.lat,
-      'longitude': params.lng,
-      'is_default': params.isDefault,
-    }).select().single().timeout(AppConstants.networkTimeout);
+    final data = await _client
+        .from('addresses')
+        .insert({
+          'user_id': _userId,
+          'label': params.label,
+          'full_address': params.fullAddress,
+          'city': params.city,
+          'district': params.district,
+          'street': params.street,
+          'building': params.buildingNumber,
+          'apartment': params.apartmentNumber,
+          'latitude': params.lat,
+          'longitude': params.lng,
+          'is_default': params.isDefault,
+        })
+        .select()
+        .single()
+        .timeout(AppConstants.networkTimeout);
 
     return _addressFromRow(data);
   }

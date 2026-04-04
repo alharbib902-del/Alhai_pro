@@ -160,9 +160,7 @@ String? _guardRedirect(Ref ref, GoRouterState state) {
   }
 
   // Authenticated but no store selected
-  if (storeId == null &&
-      path != AppRoutes.storeSelect &&
-      !isPublic) {
+  if (storeId == null && path != AppRoutes.storeSelect && !isPublic) {
     return AppRoutes.storeSelect;
   }
 
@@ -200,7 +198,8 @@ Widget _errorBuilder(BuildContext context, GoRouterState state) {
         children: [
           const Icon(Icons.error_outline, size: 64, color: Colors.red),
           const SizedBox(height: AlhaiSpacing.md),
-          Text(l10n?.pageNotFoundMessage(state.uri.path) ?? 'Page not found: ${state.uri.path}'),
+          Text(l10n?.pageNotFoundMessage(state.uri.path) ??
+              'Page not found: ${state.uri.path}'),
           const SizedBox(height: AlhaiSpacing.lg),
           FilledButton(
             onPressed: () => GoRouter.of(context).go(AppRoutes.pos),

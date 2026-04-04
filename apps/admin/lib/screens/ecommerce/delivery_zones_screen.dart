@@ -16,7 +16,8 @@ class DeliveryZonesScreen extends ConsumerStatefulWidget {
   const DeliveryZonesScreen({super.key});
 
   @override
-  ConsumerState<DeliveryZonesScreen> createState() => _DeliveryZonesScreenState();
+  ConsumerState<DeliveryZonesScreen> createState() =>
+      _DeliveryZonesScreenState();
 }
 
 class _DeliveryZonesScreenState extends ConsumerState<DeliveryZonesScreen> {
@@ -37,18 +38,54 @@ class _DeliveryZonesScreenState extends ConsumerState<DeliveryZonesScreen> {
     try {
       final storeId = ref.read(currentStoreIdProvider)!;
       final rows = await (_db.select(_db.settingsTable)
-            ..where((s) => s.storeId.equals(storeId) & s.key.equals(_settingsKey)))
+            ..where(
+                (s) => s.storeId.equals(storeId) & s.key.equals(_settingsKey)))
           .get();
       if (rows.isNotEmpty) {
-        final List<dynamic> jsonList = jsonDecode(rows.first.value) as List<dynamic>;
-        _zones = jsonList.map((j) => _DeliveryZone.fromJson(j as Map<String, dynamic>)).toList();
+        final List<dynamic> jsonList =
+            jsonDecode(rows.first.value) as List<dynamic>;
+        _zones = jsonList
+            .map((j) => _DeliveryZone.fromJson(j as Map<String, dynamic>))
+            .toList();
       } else {
         // Default zones on first load
         _zones = [
-          _DeliveryZone(id: '1', name: '\u062F\u0627\u062E\u0644 \u0627\u0644\u0645\u062F\u064A\u0646\u0629', minKm: 0, maxKm: 5, fee: 10, minOrder: 50, estimatedMinutes: 30),
-          _DeliveryZone(id: '2', name: '\u0636\u0648\u0627\u062D\u064A \u0627\u0644\u0645\u062F\u064A\u0646\u0629', minKm: 5, maxKm: 15, fee: 20, minOrder: 80, estimatedMinutes: 45),
-          _DeliveryZone(id: '3', name: '\u062E\u0627\u0631\u062C \u0627\u0644\u0645\u062F\u064A\u0646\u0629', minKm: 15, maxKm: 30, fee: 35, minOrder: 120, estimatedMinutes: 60),
-          _DeliveryZone(id: '4', name: '\u0645\u0646\u0627\u0637\u0642 \u0628\u0639\u064A\u062F\u0629', minKm: 30, maxKm: 100, fee: 60, minOrder: 200, estimatedMinutes: 90),
+          _DeliveryZone(
+              id: '1',
+              name:
+                  '\u062F\u0627\u062E\u0644 \u0627\u0644\u0645\u062F\u064A\u0646\u0629',
+              minKm: 0,
+              maxKm: 5,
+              fee: 10,
+              minOrder: 50,
+              estimatedMinutes: 30),
+          _DeliveryZone(
+              id: '2',
+              name:
+                  '\u0636\u0648\u0627\u062D\u064A \u0627\u0644\u0645\u062F\u064A\u0646\u0629',
+              minKm: 5,
+              maxKm: 15,
+              fee: 20,
+              minOrder: 80,
+              estimatedMinutes: 45),
+          _DeliveryZone(
+              id: '3',
+              name:
+                  '\u062E\u0627\u0631\u062C \u0627\u0644\u0645\u062F\u064A\u0646\u0629',
+              minKm: 15,
+              maxKm: 30,
+              fee: 35,
+              minOrder: 120,
+              estimatedMinutes: 60),
+          _DeliveryZone(
+              id: '4',
+              name:
+                  '\u0645\u0646\u0627\u0637\u0642 \u0628\u0639\u064A\u062F\u0629',
+              minKm: 30,
+              maxKm: 100,
+              fee: 60,
+              minOrder: 200,
+              estimatedMinutes: 90),
         ];
         await _persistZones();
       }
@@ -64,24 +101,29 @@ class _DeliveryZonesScreenState extends ConsumerState<DeliveryZonesScreen> {
     final id = 'setting_${storeId}_$_settingsKey';
     final jsonStr = jsonEncode(_zones.map((z) => z.toJson()).toList());
     await _db.into(_db.settingsTable).insertOnConflictUpdate(
-      SettingsTableCompanion.insert(
-        id: id,
-        storeId: storeId,
-        key: _settingsKey,
-        value: jsonStr,
-        updatedAt: DateTime.now(),
-      ),
-    );
+          SettingsTableCompanion.insert(
+            id: id,
+            storeId: storeId,
+            key: _settingsKey,
+            value: jsonStr,
+            updatedAt: DateTime.now(),
+          ),
+        );
   }
 
   void _showAddZoneDialog({_DeliveryZone? existing}) {
     final isEdit = existing != null;
     final nameController = TextEditingController(text: existing?.name ?? '');
-    final feeController = TextEditingController(text: existing?.fee.toStringAsFixed(0) ?? '');
-    final minOrderController = TextEditingController(text: existing?.minOrder.toStringAsFixed(0) ?? '');
-    final minKmController = TextEditingController(text: existing?.minKm.toStringAsFixed(0) ?? '');
-    final maxKmController = TextEditingController(text: existing?.maxKm.toStringAsFixed(0) ?? '');
-    final etaController = TextEditingController(text: existing?.estimatedMinutes.toString() ?? '30');
+    final feeController =
+        TextEditingController(text: existing?.fee.toStringAsFixed(0) ?? '');
+    final minOrderController = TextEditingController(
+        text: existing?.minOrder.toStringAsFixed(0) ?? '');
+    final minKmController =
+        TextEditingController(text: existing?.minKm.toStringAsFixed(0) ?? '');
+    final maxKmController =
+        TextEditingController(text: existing?.maxKm.toStringAsFixed(0) ?? '');
+    final etaController = TextEditingController(
+        text: existing?.estimatedMinutes.toString() ?? '30');
 
     final l10n = AppLocalizations.of(context);
     showDialog(
@@ -171,7 +213,8 @@ class _DeliveryZonesScreenState extends ConsumerState<DeliveryZonesScreen> {
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l10n.cancel)),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx), child: Text(l10n.cancel)),
           FilledButton(
             onPressed: () {
               final name = nameController.text.trim();
@@ -226,9 +269,12 @@ class _DeliveryZonesScreenState extends ConsumerState<DeliveryZonesScreen> {
         title: Text(AppLocalizations.of(context).deleteZone),
         content: Text(AppLocalizations.of(context).deleteZoneConfirm),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(AppLocalizations.of(context).cancel)),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(AppLocalizations.of(context).cancel)),
           FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
+            style: FilledButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.error),
             onPressed: () {
               setState(() => _zones.removeWhere((z) => z.id == id));
               _persistZones();
@@ -269,14 +315,16 @@ class _DeliveryZonesScreenState extends ConsumerState<DeliveryZonesScreen> {
             color: Theme.of(context).colorScheme.primaryContainer,
             child: Row(
               children: [
-                Expanded(child: _SummaryCard(
+                Expanded(
+                    child: _SummaryCard(
                   label: AppLocalizations.of(context).activeZones,
                   value: '${sorted.where((z) => z.isActive).length}',
                   icon: Icons.check_circle_outline,
                   color: AppColors.success,
                 )),
                 const SizedBox(width: AlhaiSpacing.xs),
-                Expanded(child: _SummaryCard(
+                Expanded(
+                    child: _SummaryCard(
                   label: AppLocalizations.of(context).lowestFee,
                   value: sorted.isNotEmpty
                       ? '${sorted.map((z) => z.fee).reduce((a, b) => a < b ? a : b).toStringAsFixed(0)} ${AppLocalizations.of(context).sarSuffix}'
@@ -285,7 +333,8 @@ class _DeliveryZonesScreenState extends ConsumerState<DeliveryZonesScreen> {
                   color: AppColors.info,
                 )),
                 const SizedBox(width: AlhaiSpacing.xs),
-                Expanded(child: _SummaryCard(
+                Expanded(
+                    child: _SummaryCard(
                   label: AppLocalizations.of(context).highestFee,
                   value: sorted.isNotEmpty
                       ? '${sorted.map((z) => z.fee).reduce((a, b) => a > b ? a : b).toStringAsFixed(0)} ${AppLocalizations.of(context).sarSuffix}'
@@ -303,7 +352,8 @@ class _DeliveryZonesScreenState extends ConsumerState<DeliveryZonesScreen> {
                 ? AppEmptyState(
                     icon: Icons.map_outlined,
                     title: AppLocalizations.of(context).noDeliveryZones,
-                    description: AppLocalizations.of(context).addDeliveryZonesDescription,
+                    description: AppLocalizations.of(context)
+                        .addDeliveryZonesDescription,
                     actionText: AppLocalizations.of(context).addDeliveryZone,
                     onAction: _showAddZoneDialog,
                     actionIcon: Icons.add_location_alt_rounded,
@@ -311,7 +361,8 @@ class _DeliveryZonesScreenState extends ConsumerState<DeliveryZonesScreen> {
                 : ListView.separated(
                     padding: const EdgeInsets.all(AlhaiSpacing.md),
                     itemCount: sorted.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: AlhaiSpacing.xs),
+                    separatorBuilder: (_, __) =>
+                        const SizedBox(height: AlhaiSpacing.xs),
                     itemBuilder: (ctx, i) {
                       final zone = sorted[i];
                       return Card(
@@ -323,30 +374,43 @@ class _DeliveryZonesScreenState extends ConsumerState<DeliveryZonesScreen> {
                               Row(
                                 children: [
                                   Container(
-                                    padding: const EdgeInsets.all(AlhaiSpacing.xs),
+                                    padding:
+                                        const EdgeInsets.all(AlhaiSpacing.xs),
                                     decoration: BoxDecoration(
                                       color: zone.isActive
-                                          ? AppColors.success.withValues(alpha: 0.1)
-                                          : Theme.of(context).colorScheme.surfaceContainerLowest,
+                                          ? AppColors.success
+                                              .withValues(alpha: 0.1)
+                                          : Theme.of(context)
+                                              .colorScheme
+                                              .surfaceContainerLowest,
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Icon(
                                       Icons.place_rounded,
-                                      color: zone.isActive ? AppColors.success : Theme.of(context).colorScheme.outline,
+                                      color: zone.isActive
+                                          ? AppColors.success
+                                          : Theme.of(context)
+                                              .colorScheme
+                                              .outline,
                                       size: 20,
                                     ),
                                   ),
                                   const SizedBox(width: AlhaiSpacing.sm),
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(zone.name,
                                             style: const TextStyle(
-                                                fontSize: 15, fontWeight: FontWeight.bold)),
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.bold)),
                                         Text(
                                           '${zone.minKm.toStringAsFixed(0)} - ${zone.maxKm.toStringAsFixed(0)} ${AppLocalizations.of(context).kmUnit}',
-                                          style: TextStyle(color: Theme.of(context).hintColor, fontSize: 12),
+                                          style: TextStyle(
+                                              color:
+                                                  Theme.of(context).hintColor,
+                                              fontSize: 12),
                                         ),
                                       ],
                                     ),
@@ -355,9 +419,11 @@ class _DeliveryZonesScreenState extends ConsumerState<DeliveryZonesScreen> {
                                     value: zone.isActive,
                                     onChanged: (v) {
                                       setState(() {
-                                        final idx = _zones.indexWhere((z) => z.id == zone.id);
+                                        final idx = _zones
+                                            .indexWhere((z) => z.id == zone.id);
                                         if (idx >= 0) {
-                                          _zones[idx] = _zones[idx].copyWith(isActive: v);
+                                          _zones[idx] =
+                                              _zones[idx].copyWith(isActive: v);
                                         }
                                       });
                                       _persistZones();
@@ -370,22 +436,28 @@ class _DeliveryZonesScreenState extends ConsumerState<DeliveryZonesScreen> {
                                 children: [
                                   _InfoChip(
                                     icon: Icons.local_shipping_outlined,
-                                    label: AppLocalizations.of(context).deliveryFee,
-                                    value: '${zone.fee.toStringAsFixed(0)} ${AppLocalizations.of(context).sarSuffix}',
+                                    label: AppLocalizations.of(context)
+                                        .deliveryFee,
+                                    value:
+                                        '${zone.fee.toStringAsFixed(0)} ${AppLocalizations.of(context).sarSuffix}',
                                     color: AppColors.info,
                                   ),
                                   const SizedBox(width: AlhaiSpacing.xs),
                                   _InfoChip(
                                     icon: Icons.shopping_bag_outlined,
-                                    label: AppLocalizations.of(context).minOrderAmount,
-                                    value: '${zone.minOrder.toStringAsFixed(0)} ${AppLocalizations.of(context).sarSuffix}',
+                                    label: AppLocalizations.of(context)
+                                        .minOrderAmount,
+                                    value:
+                                        '${zone.minOrder.toStringAsFixed(0)} ${AppLocalizations.of(context).sarSuffix}',
                                     color: Colors.purple, // zone detail color
                                   ),
                                   const SizedBox(width: AlhaiSpacing.xs),
                                   _InfoChip(
                                     icon: Icons.timer_outlined,
-                                    label: AppLocalizations.of(context).deliveryTime,
-                                    value: '${zone.estimatedMinutes} ${AppLocalizations.of(context).minuteAbbr}',
+                                    label: AppLocalizations.of(context)
+                                        .deliveryTime,
+                                    value:
+                                        '${zone.estimatedMinutes} ${AppLocalizations.of(context).minuteAbbr}',
                                     color: AppColors.warning,
                                   ),
                                 ],
@@ -395,14 +467,21 @@ class _DeliveryZonesScreenState extends ConsumerState<DeliveryZonesScreen> {
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
                                   TextButton.icon(
-                                    onPressed: () => _showAddZoneDialog(existing: zone),
-                                    icon: const Icon(Icons.edit_outlined, size: 16),
-                                    label: Text(AppLocalizations.of(context).edit),
+                                    onPressed: () =>
+                                        _showAddZoneDialog(existing: zone),
+                                    icon: const Icon(Icons.edit_outlined,
+                                        size: 16),
+                                    label:
+                                        Text(AppLocalizations.of(context).edit),
                                   ),
                                   TextButton.icon(
                                     onPressed: () => _deleteZone(zone.id),
-                                    icon: Icon(Icons.delete_outline, size: 16, color: AppColors.error),
-                                    label: Text(AppLocalizations.of(context).delete, style: TextStyle(color: AppColors.error)),
+                                    icon: Icon(Icons.delete_outline,
+                                        size: 16, color: AppColors.error),
+                                    label: Text(
+                                        AppLocalizations.of(context).delete,
+                                        style:
+                                            TextStyle(color: AppColors.error)),
                                   ),
                                 ],
                               ),
@@ -451,8 +530,12 @@ class _SummaryCard extends StatelessWidget {
         children: [
           Icon(icon, color: color, size: 20),
           const SizedBox(height: AlhaiSpacing.xxs),
-          Text(value, style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 15)),
-          Text(label, style: TextStyle(color: Theme.of(context).hintColor, fontSize: 10)),
+          Text(value,
+              style: TextStyle(
+                  color: color, fontWeight: FontWeight.bold, fontSize: 15)),
+          Text(label,
+              style:
+                  TextStyle(color: Theme.of(context).hintColor, fontSize: 10)),
         ],
       ),
     );
@@ -488,8 +571,12 @@ class _InfoChip extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(label, style: TextStyle(fontSize: 9, color: Theme.of(context).hintColor)),
-              Text(value, style: TextStyle(fontSize: 12, color: color, fontWeight: FontWeight.bold)),
+              Text(label,
+                  style: TextStyle(
+                      fontSize: 9, color: Theme.of(context).hintColor)),
+              Text(value,
+                  style: TextStyle(
+                      fontSize: 12, color: color, fontWeight: FontWeight.bold)),
             ],
           ),
         ],
@@ -522,35 +609,35 @@ class _DeliveryZone {
   });
 
   factory _DeliveryZone.fromJson(Map<String, dynamic> j) => _DeliveryZone(
-    id: j['id'] as String? ?? '',
-    name: j['name'] as String? ?? '',
-    minKm: (j['minKm'] as num?)?.toDouble() ?? 0,
-    maxKm: (j['maxKm'] as num?)?.toDouble() ?? 0,
-    fee: (j['fee'] as num?)?.toDouble() ?? 0,
-    minOrder: (j['minOrder'] as num?)?.toDouble() ?? 0,
-    estimatedMinutes: (j['estimatedMinutes'] as num?)?.toInt() ?? 30,
-    isActive: j['isActive'] as bool? ?? true,
-  );
+        id: j['id'] as String? ?? '',
+        name: j['name'] as String? ?? '',
+        minKm: (j['minKm'] as num?)?.toDouble() ?? 0,
+        maxKm: (j['maxKm'] as num?)?.toDouble() ?? 0,
+        fee: (j['fee'] as num?)?.toDouble() ?? 0,
+        minOrder: (j['minOrder'] as num?)?.toDouble() ?? 0,
+        estimatedMinutes: (j['estimatedMinutes'] as num?)?.toInt() ?? 30,
+        isActive: j['isActive'] as bool? ?? true,
+      );
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'name': name,
-    'minKm': minKm,
-    'maxKm': maxKm,
-    'fee': fee,
-    'minOrder': minOrder,
-    'estimatedMinutes': estimatedMinutes,
-    'isActive': isActive,
-  };
+        'id': id,
+        'name': name,
+        'minKm': minKm,
+        'maxKm': maxKm,
+        'fee': fee,
+        'minOrder': minOrder,
+        'estimatedMinutes': estimatedMinutes,
+        'isActive': isActive,
+      };
 
   _DeliveryZone copyWith({bool? isActive}) => _DeliveryZone(
-    id: id,
-    name: name,
-    minKm: minKm,
-    maxKm: maxKm,
-    fee: fee,
-    minOrder: minOrder,
-    estimatedMinutes: estimatedMinutes,
-    isActive: isActive ?? this.isActive,
-  );
+        id: id,
+        name: name,
+        minKm: minKm,
+        maxKm: maxKm,
+        fee: fee,
+        minOrder: minOrder,
+        estimatedMinutes: estimatedMinutes,
+        isActive: isActive ?? this.isActive,
+      );
 }

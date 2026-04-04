@@ -80,8 +80,7 @@ class SAStoreDetailScreen extends ConsumerWidget {
                       ),
                     ),
                     OutlinedButton.icon(
-                      onPressed: () =>
-                          context.go('/stores/$storeId/settings'),
+                      onPressed: () => context.go('/stores/$storeId/settings'),
                       icon: const Icon(Icons.settings_rounded, size: 18),
                       label: Text(l10n.storeSettings),
                     ),
@@ -114,6 +113,24 @@ class SAStoreDetailScreen extends ConsumerWidget {
                           planPrice: planPrice,
                           status: subStatus,
                           renewal: renewal,
+                          onUpgrade: () => _showChangePlanDialog(
+                            context,
+                            ref,
+                            storeId,
+                            store.subscriptions.isNotEmpty
+                                ? store.subscriptions.first.planSlug
+                                : null,
+                            isUpgrade: true,
+                          ),
+                          onDowngrade: () => _showChangePlanDialog(
+                            context,
+                            ref,
+                            storeId,
+                            store.subscriptions.isNotEmpty
+                                ? store.subscriptions.first.planSlug
+                                : null,
+                            isUpgrade: false,
+                          ),
                         ),
                       ),
                     ],
@@ -136,6 +153,24 @@ class SAStoreDetailScreen extends ConsumerWidget {
                     planPrice: planPrice,
                     status: subStatus,
                     renewal: renewal,
+                    onUpgrade: () => _showChangePlanDialog(
+                      context,
+                      ref,
+                      storeId,
+                      store.subscriptions.isNotEmpty
+                          ? store.subscriptions.first.planSlug
+                          : null,
+                      isUpgrade: true,
+                    ),
+                    onDowngrade: () => _showChangePlanDialog(
+                      context,
+                      ref,
+                      storeId,
+                      store.subscriptions.isNotEmpty
+                          ? store.subscriptions.first.planSlug
+                          : null,
+                      isUpgrade: false,
+                    ),
                   ),
                 ],
                 const SizedBox(height: AlhaiSpacing.lg),
@@ -189,6 +224,102 @@ class SAStoreDetailScreen extends ConsumerWidget {
             ),
           );
         },
+      ),
+    );
+  }
+
+  void _showChangePlanDialog(
+    BuildContext context,
+    WidgetRef ref,
+    String storeId,
+    String? currentPlanSlug, {
+    required bool isUpgrade,
+  }) {
+    final l10n = AppLocalizations.of(context);
+    final plansAsync = ref.read(saPlansListProvider);
+    final plans = plansAsync.valueOrNull ?? [];
+
+    if (plans.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.noPlansAvailable)),
+      );
+      return;
+    }
+
+    // Filter plans based on upgrade/downgrade relative to current plan
+    final currentIndex = plans.indexWhere((p) => p.slug == currentPlanSlug);
+    final availablePlans = plans.where((p) {
+      if (p.slug == currentPlanSlug) return false;
+      if (currentIndex < 0) return true;
+      final idx = plans.indexOf(p);
+      return isUpgrade ? idx > currentIndex : idx < currentIndex;
+    }).toList();
+
+    if (availablePlans.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+              isUpgrade ? l10n.alreadyOnHighestPlan : l10n.alreadyOnLowestPlan),
+        ),
+      );
+      return;
+    }
+
+    String? selectedSlug = availablePlans.first.slug;
+
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setState) => AlertDialog(
+          title: Text(isUpgrade ? l10n.upgradePlan : l10n.downgradePlan),
+          content: SizedBox(
+            width: 400,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${l10n.currentPlan}: ${currentPlanSlug?.replaceAll('_', ' ') ?? '-'}',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                const SizedBox(height: AlhaiSpacing.md),
+                DropdownButtonFormField<String>(
+                  initialValue: selectedSlug,
+                  decoration: InputDecoration(
+                    labelText: l10n.selectPlan,
+                    border: const OutlineInputBorder(),
+                  ),
+                  items: availablePlans.map((p) {
+                    final price = p.monthlyPrice?.toStringAsFixed(0) ?? '0';
+                    return DropdownMenuItem(
+                      value: p.slug,
+                      child: Text(
+                          '${p.name ?? p.slug} - $price ${l10n.sar}${l10n.perMonth}'),
+                    );
+                  }).toList(),
+                  onChanged: (v) => setState(() => selectedSlug = v),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(l10n.cancel),
+            ),
+            FilledButton(
+              onPressed: () async {
+                if (selectedSlug == null) return;
+                final ds = ref.read(saStoresDatasourceProvider);
+                await ds.updateStorePlan(storeId, selectedSlug!);
+                ref.invalidate(saStoreDetailProvider(storeId));
+                ref.invalidate(saStoresListProvider);
+                if (ctx.mounted) Navigator.pop(ctx);
+              },
+              child: Text(l10n.confirm),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -281,6 +412,8 @@ class _SubscriptionCard extends StatelessWidget {
   final String planPrice;
   final String status;
   final String renewal;
+  final VoidCallback? onUpgrade;
+  final VoidCallback? onDowngrade;
 
   const _SubscriptionCard({
     required this.l10n,
@@ -288,6 +421,8 @@ class _SubscriptionCard extends StatelessWidget {
     required this.planPrice,
     required this.status,
     required this.renewal,
+    this.onUpgrade,
+    this.onDowngrade,
   });
 
   @override
@@ -323,14 +458,14 @@ class _SubscriptionCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: OutlinedButton(
-                    onPressed: () {},
+                    onPressed: onUpgrade,
                     child: Text(l10n.upgradePlan),
                   ),
                 ),
                 const SizedBox(width: AlhaiSpacing.sm),
                 Expanded(
                   child: OutlinedButton(
-                    onPressed: () {},
+                    onPressed: onDowngrade,
                     child: Text(l10n.downgradePlan),
                   ),
                 ),

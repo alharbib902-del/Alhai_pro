@@ -17,11 +17,12 @@ class AiProductRecognitionScreen extends ConsumerStatefulWidget {
   const AiProductRecognitionScreen({super.key});
 
   @override
-  ConsumerState<AiProductRecognitionScreen> createState() => _AiProductRecognitionScreenState();
+  ConsumerState<AiProductRecognitionScreen> createState() =>
+      _AiProductRecognitionScreenState();
 }
 
-class _AiProductRecognitionScreenState extends ConsumerState<AiProductRecognitionScreen> {
-
+class _AiProductRecognitionScreenState
+    extends ConsumerState<AiProductRecognitionScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -30,14 +31,15 @@ class _AiProductRecognitionScreenState extends ConsumerState<AiProductRecognitio
     final l10n = AppLocalizations.of(context)!;
 
     return Column(
-              children: [
-                AppHeader(
-                  title: l10n.aiProductRecognition,
-                  onMenuTap: !isWideScreen ? () => Scaffold.of(context).openDrawer() : null,
-                ),
-                Expanded(child: _buildContent(isDark, isWideScreen)),
-              ],
-            );
+      children: [
+        AppHeader(
+          title: l10n.aiProductRecognition,
+          onMenuTap:
+              !isWideScreen ? () => Scaffold.of(context).openDrawer() : null,
+        ),
+        Expanded(child: _buildContent(isDark, isWideScreen)),
+      ],
+    );
   }
 
   Widget _buildContent(bool isDark, bool isWideScreen) {
@@ -49,7 +51,8 @@ class _AiProductRecognitionScreenState extends ConsumerState<AiProductRecognitio
       children: [
         // Mode selector
         Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl, AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.zero),
+          padding: EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl,
+              AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.zero),
           child: _buildModeSelector(scanMode, isDark),
         ),
 
@@ -69,7 +72,8 @@ class _AiProductRecognitionScreenState extends ConsumerState<AiProductRecognitio
                             _buildCameraArea(isDark, scanMode),
                             const SizedBox(height: AlhaiSpacing.md),
                             Expanded(
-                              child: _buildResultsList(recognitionResult, isDark),
+                              child:
+                                  _buildResultsList(recognitionResult, isDark),
                             ),
                           ],
                         ),
@@ -80,15 +84,21 @@ class _AiProductRecognitionScreenState extends ConsumerState<AiProductRecognitio
                         width: 360,
                         child: OcrDataPanel(
                           extraction: ocrExtraction,
-                          onExtract: () => ref.read(ocrExtractionProvider.notifier).extractFromImage(),
-                          onFieldChanged: (entry) => ref.read(ocrExtractionProvider.notifier).updateField(entry.key, entry.value),
+                          onExtract: () => ref
+                              .read(ocrExtractionProvider.notifier)
+                              .extractFromImage(),
+                          onFieldChanged: (entry) => ref
+                              .read(ocrExtractionProvider.notifier)
+                              .updateField(entry.key, entry.value),
                           onSave: () {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text(AppLocalizations.of(context)!.aiProductSaved),
+                                content: Text(AppLocalizations.of(context)!
+                                    .aiProductSaved),
                                 backgroundColor: AppColors.success,
                                 behavior: SnackBarBehavior.floating,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10)),
                               ),
                             );
                           },
@@ -110,8 +120,12 @@ class _AiProductRecognitionScreenState extends ConsumerState<AiProductRecognitio
                           height: 500,
                           child: OcrDataPanel(
                             extraction: ocrExtraction,
-                            onExtract: () => ref.read(ocrExtractionProvider.notifier).extractFromImage(),
-                            onFieldChanged: (entry) => ref.read(ocrExtractionProvider.notifier).updateField(entry.key, entry.value),
+                            onExtract: () => ref
+                                .read(ocrExtractionProvider.notifier)
+                                .extractFromImage(),
+                            onFieldChanged: (entry) => ref
+                                .read(ocrExtractionProvider.notifier)
+                                .updateField(entry.key, entry.value),
                             onSave: () {},
                           ),
                         ),
@@ -127,9 +141,12 @@ class _AiProductRecognitionScreenState extends ConsumerState<AiProductRecognitio
   Widget _buildModeSelector(ScanMode mode, bool isDark) {
     final l10n = AppLocalizations.of(context)!;
     final modes = [
-      _ModeOption(ScanMode.singleProduct, Icons.center_focus_strong_rounded, l10n.aiSingleProduct),
-      _ModeOption(ScanMode.shelfScan, Icons.view_column_rounded, l10n.aiShelfScan),
-      _ModeOption(ScanMode.barcodeOcr, Icons.qr_code_scanner_rounded, l10n.aiBarcodeOcr),
+      _ModeOption(ScanMode.singleProduct, Icons.center_focus_strong_rounded,
+          l10n.aiSingleProduct),
+      _ModeOption(
+          ScanMode.shelfScan, Icons.view_column_rounded, l10n.aiShelfScan),
+      _ModeOption(ScanMode.barcodeOcr, Icons.qr_code_scanner_rounded,
+          l10n.aiBarcodeOcr),
       _ModeOption(ScanMode.priceTag, Icons.sell_rounded, l10n.aiPriceTag),
     ];
 
@@ -139,7 +156,8 @@ class _AiProductRecognitionScreenState extends ConsumerState<AiProductRecognitio
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
+          color:
+              isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
         ),
       ),
       child: Row(
@@ -165,14 +183,24 @@ class _AiProductRecognitionScreenState extends ConsumerState<AiProductRecognitio
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(m.icon, size: 16,
-                        color: isSelected ? Colors.white : (isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textSecondary)),
+                      Icon(m.icon,
+                          size: 16,
+                          color: isSelected
+                              ? Colors.white
+                              : (isDark
+                                  ? Colors.white.withValues(alpha: 0.5)
+                                  : AppColors.textSecondary)),
                       const SizedBox(width: 6),
                       Text(
                         m.label,
                         style: TextStyle(
-                          color: isSelected ? Colors.white : (isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textSecondary),
-                          fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                          color: isSelected
+                              ? Colors.white
+                              : (isDark
+                                  ? Colors.white.withValues(alpha: 0.5)
+                                  : AppColors.textSecondary),
+                          fontWeight:
+                              isSelected ? FontWeight.w600 : FontWeight.w500,
                           fontSize: 12,
                         ),
                       ),
@@ -195,7 +223,8 @@ class _AiProductRecognitionScreenState extends ConsumerState<AiProductRecognitio
         color: isDark ? const Color(0xFF0F172A) : AppColors.grey100,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
+          color:
+              isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
           width: 2,
         ),
       ),
@@ -224,14 +253,18 @@ class _AiProductRecognitionScreenState extends ConsumerState<AiProductRecognitio
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textSecondary,
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.5)
+                        : AppColors.textSecondary,
                   ),
                 ),
                 Text(
                   l10n.aiPointCameraAtProduct,
                   style: TextStyle(
                     fontSize: 12,
-                    color: isDark ? Colors.white.withValues(alpha: 0.3) : AppColors.textMuted,
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.3)
+                        : AppColors.textMuted,
                   ),
                 ),
               ],
@@ -257,8 +290,10 @@ class _AiProductRecognitionScreenState extends ConsumerState<AiProductRecognitio
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF3B82F6),
                   foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
                   elevation: 4,
                   shadowColor: const Color(0xFF3B82F6).withValues(alpha: 0.4),
                 ),
@@ -317,25 +352,33 @@ class _AiProductRecognitionScreenState extends ConsumerState<AiProductRecognitio
       Positioned(
         top: 20,
         left: 20,
-        child: CustomPaint(size: const Size(size, size), painter: _CornerPainter(guideColor, thickness, Corner.topLeft)),
+        child: CustomPaint(
+            size: const Size(size, size),
+            painter: _CornerPainter(guideColor, thickness, Corner.topLeft)),
       ),
       // Top-right
       Positioned(
         top: 20,
         right: 20,
-        child: CustomPaint(size: const Size(size, size), painter: _CornerPainter(guideColor, thickness, Corner.topRight)),
+        child: CustomPaint(
+            size: const Size(size, size),
+            painter: _CornerPainter(guideColor, thickness, Corner.topRight)),
       ),
       // Bottom-left
       Positioned(
         bottom: 60,
         left: 20,
-        child: CustomPaint(size: const Size(size, size), painter: _CornerPainter(guideColor, thickness, Corner.bottomLeft)),
+        child: CustomPaint(
+            size: const Size(size, size),
+            painter: _CornerPainter(guideColor, thickness, Corner.bottomLeft)),
       ),
       // Bottom-right
       Positioned(
         bottom: 60,
         right: 20,
-        child: CustomPaint(size: const Size(size, size), painter: _CornerPainter(guideColor, thickness, Corner.bottomRight)),
+        child: CustomPaint(
+            size: const Size(size, size),
+            painter: _CornerPainter(guideColor, thickness, Corner.bottomRight)),
       ),
     ];
   }
@@ -346,7 +389,10 @@ class _AiProductRecognitionScreenState extends ConsumerState<AiProductRecognitio
         decoration: BoxDecoration(
           color: isDark ? const Color(0xFF1E293B) : Colors.white,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.border),
+          border: Border.all(
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.08)
+                  : AppColors.border),
         ),
         child: Center(
           child: Column(
@@ -364,33 +410,45 @@ class _AiProductRecognitionScreenState extends ConsumerState<AiProductRecognitio
               Text(
                 AppLocalizations.of(context)!.aiAnalyzingImage,
                 style: TextStyle(
-                  color: isDark ? Colors.white.withValues(alpha: 0.6) : AppColors.textSecondary,
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.6)
+                      : AppColors.textSecondary,
                 ),
               ),
             ],
           ),
         ),
       ),
-      error: (e, _) => Center(child: Text(AppLocalizations.of(context)!.aiErrorWithMessage(e.toString()))),
+      error: (e, _) => Center(
+          child: Text(
+              AppLocalizations.of(context)!.aiErrorWithMessage(e.toString()))),
       data: (data) {
         if (data == null) {
           return Container(
             decoration: BoxDecoration(
               color: isDark ? const Color(0xFF1E293B) : Colors.white,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.border),
+              border: Border.all(
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.08)
+                      : AppColors.border),
             ),
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.image_search_rounded, size: 48,
-                    color: isDark ? Colors.white.withValues(alpha: 0.2) : AppColors.textMuted),
+                  Icon(Icons.image_search_rounded,
+                      size: 48,
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.2)
+                          : AppColors.textMuted),
                   const SizedBox(height: AlhaiSpacing.sm),
                   Text(
                     AppLocalizations.of(context)!.aiStartScanToSeeResults,
                     style: TextStyle(
-                      color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textSecondary,
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.5)
+                          : AppColors.textSecondary,
                     ),
                   ),
                 ],
@@ -403,7 +461,10 @@ class _AiProductRecognitionScreenState extends ConsumerState<AiProductRecognitio
           decoration: BoxDecoration(
             color: isDark ? const Color(0xFF1E293B) : Colors.white,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.border),
+            border: Border.all(
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.08)
+                    : AppColors.border),
           ),
           child: Column(
             children: [
@@ -421,17 +482,31 @@ class _AiProductRecognitionScreenState extends ConsumerState<AiProductRecognitio
                       ),
                     ),
                     const Spacer(),
-                    _buildResultBadge(AppLocalizations.of(context)!.aiDetectedCount(data.totalDetected), AppColors.info, isDark),
+                    _buildResultBadge(
+                        AppLocalizations.of(context)!
+                            .aiDetectedCount(data.totalDetected),
+                        AppColors.info,
+                        isDark),
                     const SizedBox(width: AlhaiSpacing.xs),
-                    _buildResultBadge(AppLocalizations.of(context)!.aiMatchedCount(data.totalMatched), AppColors.success, isDark),
+                    _buildResultBadge(
+                        AppLocalizations.of(context)!
+                            .aiMatchedCount(data.totalMatched),
+                        AppColors.success,
+                        isDark),
                     const SizedBox(width: AlhaiSpacing.xs),
-                    _buildResultBadge(AppLocalizations.of(context)!.aiAccuracyPercent('${(data.avgConfidence * 100).toInt()}'), AppColors.primary, isDark),
+                    _buildResultBadge(
+                        AppLocalizations.of(context)!.aiAccuracyPercent(
+                            '${(data.avgConfidence * 100).toInt()}'),
+                        AppColors.primary,
+                        isDark),
                   ],
                 ),
               ),
               Divider(
                 height: 1,
-                color: isDark ? Colors.white.withValues(alpha: 0.06) : AppColors.grey100,
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.06)
+                    : AppColors.grey100,
               ),
               Expanded(
                 child: ListView.builder(
@@ -443,19 +518,25 @@ class _AiProductRecognitionScreenState extends ConsumerState<AiProductRecognitio
                       product: product,
                       onAccept: () {
                         if (product.matchedId != null) {
-                          ref.read(recognitionResultProvider.notifier).acceptProduct(product.matchedId!);
+                          ref
+                              .read(recognitionResultProvider.notifier)
+                              .acceptProduct(product.matchedId!);
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text(AppLocalizations.of(context)!.aiProductAccepted(product.nameAr)),
+                              content: Text(AppLocalizations.of(context)!
+                                  .aiProductAccepted(product.nameAr)),
                               backgroundColor: AppColors.success,
                               behavior: SnackBarBehavior.floating,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
                             ),
                           );
                         }
                       },
                       onReject: () {
-                        ref.read(recognitionResultProvider.notifier).rejectProduct(product.nameAr);
+                        ref
+                            .read(recognitionResultProvider.notifier)
+                            .rejectProduct(product.nameAr);
                       },
                     );
                   },
@@ -470,7 +551,8 @@ class _AiProductRecognitionScreenState extends ConsumerState<AiProductRecognitio
 
   Widget _buildResultBadge(String text, Color color, bool isDark) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
+      padding: const EdgeInsets.symmetric(
+          horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(6),
@@ -488,10 +570,14 @@ class _AiProductRecognitionScreenState extends ConsumerState<AiProductRecognitio
 
   String _getModeLabel(ScanMode mode) {
     switch (mode) {
-      case ScanMode.singleProduct: return AppLocalizations.of(context)!.aiSingleProduct;
-      case ScanMode.shelfScan: return AppLocalizations.of(context)!.aiShelfScan;
-      case ScanMode.barcodeOcr: return AppLocalizations.of(context)!.aiBarcodeOcr;
-      case ScanMode.priceTag: return AppLocalizations.of(context)!.aiPriceTag;
+      case ScanMode.singleProduct:
+        return AppLocalizations.of(context)!.aiSingleProduct;
+      case ScanMode.shelfScan:
+        return AppLocalizations.of(context)!.aiShelfScan;
+      case ScanMode.barcodeOcr:
+        return AppLocalizations.of(context)!.aiBarcodeOcr;
+      case ScanMode.priceTag:
+        return AppLocalizations.of(context)!.aiPriceTag;
     }
   }
 }
@@ -519,13 +605,17 @@ class _CornerPainter extends CustomPainter {
         canvas.drawLine(Offset.zero, Offset(0, size.height), paint);
       case Corner.topRight:
         canvas.drawLine(Offset(size.width, 0), Offset.zero, paint);
-        canvas.drawLine(Offset(size.width, 0), Offset(size.width, size.height), paint);
+        canvas.drawLine(
+            Offset(size.width, 0), Offset(size.width, size.height), paint);
       case Corner.bottomLeft:
-        canvas.drawLine(Offset(0, size.height), Offset(size.width, size.height), paint);
+        canvas.drawLine(
+            Offset(0, size.height), Offset(size.width, size.height), paint);
         canvas.drawLine(Offset(0, size.height), Offset.zero, paint);
       case Corner.bottomRight:
-        canvas.drawLine(Offset(size.width, size.height), Offset(0, size.height), paint);
-        canvas.drawLine(Offset(size.width, size.height), Offset(size.width, 0), paint);
+        canvas.drawLine(
+            Offset(size.width, size.height), Offset(0, size.height), paint);
+        canvas.drawLine(
+            Offset(size.width, size.height), Offset(size.width, 0), paint);
     }
   }
 

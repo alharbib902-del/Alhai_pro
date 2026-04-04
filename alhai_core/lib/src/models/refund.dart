@@ -130,7 +130,8 @@ class Refund with _$Refund {
   int get totalItems => items.fold(0, (sum, item) => sum + item.quantity);
 
   /// Requires supervisor approval
-  bool get requiresSupervisor => totalAmount > 50 || reason == RefundReason.priceError;
+  bool get requiresSupervisor =>
+      totalAmount > 50 || reason == RefundReason.priceError;
 }
 
 /// RefundItem domain model

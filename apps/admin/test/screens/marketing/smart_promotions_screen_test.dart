@@ -41,8 +41,7 @@ void main() {
       when(() => mockProductsDao.getLowStockProducts(any()))
           .thenAnswer((_) => completerProducts.future.then((v) => v.cast()));
 
-      await tester
-          .pumpWidget(createTestWidget(const SmartPromotionsScreen()));
+      await tester.pumpWidget(createTestWidget(const SmartPromotionsScreen()));
       await tester.pump();
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
@@ -54,8 +53,7 @@ void main() {
       when(() => mockProductsDao.getLowStockProducts(any()))
           .thenAnswer((_) async => []);
 
-      await tester
-          .pumpWidget(createTestWidget(const SmartPromotionsScreen()));
+      await tester.pumpWidget(createTestWidget(const SmartPromotionsScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(Tab), findsNWidgets(3));
@@ -69,8 +67,7 @@ void main() {
       when(() => mockProductsDao.getLowStockProducts(any()))
           .thenAnswer((_) async => []);
 
-      await tester
-          .pumpWidget(createTestWidget(const SmartPromotionsScreen()));
+      await tester.pumpWidget(createTestWidget(const SmartPromotionsScreen()));
       await tester.pumpAndSettle();
 
       // First tab (AI suggestions) is active by default
@@ -91,8 +88,7 @@ void main() {
                 ),
               ]);
 
-      await tester
-          .pumpWidget(createTestWidget(const SmartPromotionsScreen()));
+      await tester.pumpWidget(createTestWidget(const SmartPromotionsScreen()));
       await tester.pumpAndSettle();
 
       expect(find.text('منتج بطيء'), findsOneWidget);
@@ -118,8 +114,7 @@ void main() {
       when(() => mockProductsDao.getLowStockProducts(any()))
           .thenAnswer((_) async => []);
 
-      await tester
-          .pumpWidget(createTestWidget(const SmartPromotionsScreen()));
+      await tester.pumpWidget(createTestWidget(const SmartPromotionsScreen()));
       await tester.pumpAndSettle();
 
       // Navigate to second tab
@@ -135,8 +130,7 @@ void main() {
       when(() => mockProductsDao.getLowStockProducts(any()))
           .thenAnswer((_) async => []);
 
-      await tester
-          .pumpWidget(createTestWidget(const SmartPromotionsScreen()));
+      await tester.pumpWidget(createTestWidget(const SmartPromotionsScreen()));
       await tester.pumpAndSettle();
 
       // Navigate to third tab

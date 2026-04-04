@@ -68,8 +68,7 @@ void main() {
     test('searchSuppliers finds by name', () async {
       await db.suppliersDao.insertSupplier(_makeSupplier());
 
-      final results =
-          await db.suppliersDao.searchSuppliers('أغذية', 'store-1');
+      final results = await db.suppliersDao.searchSuppliers('أغذية', 'store-1');
       expect(results, hasLength(1));
     });
 

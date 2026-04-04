@@ -62,7 +62,8 @@ void main() {
   final expiredTokensEntity = AuthTokensEntity(
     accessToken: 'expired-access-token',
     refreshToken: 'expired-refresh-token',
-    expiresAt: DateTime.now().subtract(const Duration(hours: 1)).toIso8601String(),
+    expiresAt:
+        DateTime.now().subtract(const Duration(hours: 1)).toIso8601String(),
   );
 
   setUpAll(() {
@@ -145,7 +146,8 @@ void main() {
     group('refreshToken', () {
       test('refreshes token and stores new tokens', () async {
         // Arrange
-        when(() => mockLocal.getTokens()).thenAnswer((_) async => testTokensEntity);
+        when(() => mockLocal.getTokens())
+            .thenAnswer((_) async => testTokensEntity);
         when(() => mockRemote.refreshToken(any()))
             .thenAnswer((_) async => testAuthTokensResponse);
         when(() => mockLocal.saveTokens(any())).thenAnswer((_) async {});
@@ -216,7 +218,8 @@ void main() {
     group('isAuthenticated', () {
       test('returns true when valid tokens exist', () async {
         // Arrange
-        when(() => mockLocal.getTokens()).thenAnswer((_) async => testTokensEntity);
+        when(() => mockLocal.getTokens())
+            .thenAnswer((_) async => testTokensEntity);
 
         // Act
         final result = await repository.isAuthenticated();
@@ -238,7 +241,8 @@ void main() {
 
       test('refreshes token when expired and returns true', () async {
         // Arrange
-        when(() => mockLocal.getTokens()).thenAnswer((_) async => expiredTokensEntity);
+        when(() => mockLocal.getTokens())
+            .thenAnswer((_) async => expiredTokensEntity);
         when(() => mockRemote.refreshToken(any()))
             .thenAnswer((_) async => testAuthTokensResponse);
         when(() => mockLocal.saveTokens(any())).thenAnswer((_) async {});
@@ -253,7 +257,8 @@ void main() {
 
       test('returns false and logs out when refresh fails', () async {
         // Arrange
-        when(() => mockLocal.getTokens()).thenAnswer((_) async => expiredTokensEntity);
+        when(() => mockLocal.getTokens())
+            .thenAnswer((_) async => expiredTokensEntity);
         when(() => mockRemote.refreshToken(any())).thenThrow(DioException(
           type: DioExceptionType.badResponse,
           response: Response(

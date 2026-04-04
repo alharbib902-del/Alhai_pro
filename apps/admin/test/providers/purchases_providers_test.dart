@@ -126,8 +126,7 @@ void main() {
       ]);
       addTearDown(container.dispose);
 
-      final result =
-          await container.read(purchaseDetailProvider('p-1').future);
+      final result = await container.read(purchaseDetailProvider('p-1').future);
 
       expect(result, isNotNull);
       expect(result!.purchase.id, 'p-1');

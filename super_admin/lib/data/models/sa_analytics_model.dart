@@ -244,8 +244,7 @@ class SAPlatformSettings {
   factory SAPlatformSettings.fromJson(Map<String, dynamic> json) {
     return SAPlatformSettings(
       zatcaEnabled: json['zatca_enabled'] as bool? ?? true,
-      zatcaEnvironment:
-          json['zatca_environment'] as String? ?? 'production',
+      zatcaEnvironment: json['zatca_environment'] as String? ?? 'production',
       vatRate: (json['vat_rate'] as num?)?.toDouble() ?? 15.0,
       defaultLanguage: json['default_language'] as String? ?? 'ar',
       defaultCurrency: json['default_currency'] as String? ?? 'SAR',

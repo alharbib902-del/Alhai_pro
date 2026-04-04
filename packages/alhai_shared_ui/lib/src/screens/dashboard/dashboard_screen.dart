@@ -42,23 +42,23 @@ class DashboardScreen extends ConsumerWidget {
           subtitle: _getDateSubtitle(l10n),
           showSearch: isWideScreen,
           searchHint: l10n.searchPlaceholder,
-          onMenuTap: isWideScreen
-              ? null
-              : () => Scaffold.of(context).openDrawer(),
+          onMenuTap:
+              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 3,
           userName: l10n.defaultUserName,
           userRole: l10n.branchManager,
           onUserTap: () {},
         ),
-
         Expanded(
           child: RefreshIndicator(
             onRefresh: () => _refreshDashboard(ref),
             child: SingleChildScrollView(
-              padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+              padding: EdgeInsets.all(
+                  isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
               child: dashboardAsync.when(
-                data: (data) => _buildContent(context, data, isWideScreen, isMediumScreen, l10n),
+                data: (data) => _buildContent(
+                    context, data, isWideScreen, isMediumScreen, l10n),
                 loading: () => Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -78,13 +78,16 @@ class DashboardScreen extends ConsumerWidget {
                         Icon(
                           Icons.error_outline_rounded,
                           size: 48,
-                          color: isDark ? Colors.white.withValues(alpha: 0.3) : AppColors.textTertiary,
+                          color: isDark
+                              ? Colors.white.withValues(alpha: 0.3)
+                              : AppColors.textTertiary,
                         ),
                         SizedBox(height: AlhaiSpacing.md),
                         Text(
                           l10n.errorOccurred,
                           style: TextStyle(
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                         ),
                         SizedBox(height: AlhaiSpacing.sm),
@@ -106,7 +109,8 @@ class DashboardScreen extends ConsumerWidget {
   }
 
   /// Main content with real data
-  Widget _buildContent(BuildContext context, DashboardData data, bool isWideScreen, bool isMediumScreen, AppLocalizations l10n) {
+  Widget _buildContent(BuildContext context, DashboardData data,
+      bool isWideScreen, bool isMediumScreen, AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -136,12 +140,16 @@ class DashboardScreen extends ConsumerWidget {
   }
 
   /// Stats section with real data from DB
-  Widget _buildStatsSection(BuildContext context, DashboardData data, bool isWideScreen, bool isMediumScreen, AppLocalizations l10n) {
-    final isLandscape = MediaQuery.orientationOf(context) == Orientation.landscape;
+  Widget _buildStatsSection(BuildContext context, DashboardData data,
+      bool isWideScreen, bool isMediumScreen, AppLocalizations l10n) {
+    final isLandscape =
+        MediaQuery.orientationOf(context) == Orientation.landscape;
     final cards = [
       DefaultStatCards.todaySales(
         l10n: l10n,
-        value: CurrencyFormatter.formatNumberWithContext(context, data.todaySales, decimalDigits: 0),
+        value: CurrencyFormatter.formatNumberWithContext(
+            context, data.todaySales,
+            decimalDigits: 0),
         change: data.salesChangePercent,
         onTap: () => context.push('/sales'),
       ),
@@ -206,7 +214,8 @@ class DashboardScreen extends ConsumerWidget {
   }
 
   /// Desktop main row: Chart(2/3) + QuickActions+TopSelling(1/3)
-  Widget _buildMainRow(BuildContext context, DashboardData data, AppLocalizations l10n) {
+  Widget _buildMainRow(
+      BuildContext context, DashboardData data, AppLocalizations l10n) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -232,7 +241,8 @@ class DashboardScreen extends ConsumerWidget {
               SizedBox(height: AlhaiSpacing.lg),
               TopProductsList(
                 products: _buildTopProducts(data),
-                onProductTap: (id) => context.push(AppRoutes.productDetailPath(id)),
+                onProductTap: (id) =>
+                    context.push(AppRoutes.productDetailPath(id)),
               ),
             ],
           ),
@@ -242,7 +252,8 @@ class DashboardScreen extends ConsumerWidget {
   }
 
   /// Mobile/Tablet main column
-  Widget _buildMainColumn(BuildContext context, DashboardData data, AppLocalizations l10n) {
+  Widget _buildMainColumn(
+      BuildContext context, DashboardData data, AppLocalizations l10n) {
     return Column(
       children: [
         SalesChartCard(
@@ -267,7 +278,8 @@ class DashboardScreen extends ConsumerWidget {
   }
 
   /// Recent transactions from real sales data
-  Widget _buildRecentTransactions(BuildContext context, DashboardData data, AppLocalizations l10n) {
+  Widget _buildRecentTransactions(
+      BuildContext context, DashboardData data, AppLocalizations l10n) {
     final transactions = data.recentSales.map((sale) {
       return Transaction(
         id: sale.receiptNo,
@@ -294,11 +306,13 @@ class DashboardScreen extends ConsumerWidget {
         onTap: () => context.push(AppRoutes.expiryTracking),
         borderRadius: BorderRadius.circular(12),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+          padding: const EdgeInsets.symmetric(
+              horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
           decoration: BoxDecoration(
             color: AlhaiColors.warning.withValues(alpha: 0.08),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AlhaiColors.warning.withValues(alpha: 0.4)),
+            border:
+                Border.all(color: AlhaiColors.warning.withValues(alpha: 0.4)),
           ),
           child: Row(
             children: [
@@ -351,7 +365,8 @@ class DashboardScreen extends ConsumerWidget {
   }
 
   /// Build chart data from real weekly/monthly sales
-  Map<ChartPeriod, List<ChartDataPoint>> _buildChartData(DashboardData data, AppLocalizations l10n) {
+  Map<ChartPeriod, List<ChartDataPoint>> _buildChartData(
+      DashboardData data, AppLocalizations l10n) {
     // Weekly data from real DB queries
     final weeklyData = data.weeklySales.map((day) {
       return ChartDataPoint(

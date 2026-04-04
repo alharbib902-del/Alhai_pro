@@ -135,7 +135,8 @@ class ZatcaOfflineQueue {
     }
 
     // Process retryable invoices in queue order
-    final retryable = _queue.where((item) => !item.isMaxRetriesExceeded).toList();
+    final retryable =
+        _queue.where((item) => !item.isMaxRetriesExceeded).toList();
 
     for (final item in retryable) {
       try {

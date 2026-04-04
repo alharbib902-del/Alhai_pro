@@ -208,8 +208,8 @@ class _DistributorOrdersScreenState
         children: [
           // Header
           Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(
-                padding, padding, padding, 0),
+            padding:
+                EdgeInsetsDirectional.fromSTEB(padding, padding, padding, 0),
             child: Text(
               l10n?.distributorOrders ?? 'Incoming Orders',
               style: TextStyle(
@@ -234,8 +234,7 @@ class _DistributorOrdersScreenState
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
                 decoration: InputDecoration(
-                  hintText:
-                      'Search by store name or order number...',
+                  hintText: 'Search by store name or order number...',
                   hintStyle: TextStyle(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
@@ -342,8 +341,10 @@ class _DistributorOrdersScreenState
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ExcludeSemantics(
-                      child: Icon(Icons.error_outline, size: 48,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant),
+                      child: Icon(Icons.error_outline,
+                          size: 48,
+                          color:
+                              Theme.of(context).colorScheme.onSurfaceVariant),
                     ),
                     const SizedBox(height: AlhaiSpacing.md),
                     Text(l10n?.distributorLoadError ?? 'Error loading data'),
@@ -378,10 +379,12 @@ class _DistributorOrdersScreenState
                         Text(
                           _searchQuery.isNotEmpty
                               ? 'No orders match your search'
-                              : (l10n?.distributorNoOrders ?? 'No orders found'),
+                              : (l10n?.distributorNoOrders ??
+                                  'No orders found'),
                           style: TextStyle(
                             fontSize: 16,
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                         ),
                         const SizedBox(height: AlhaiSpacing.md),
@@ -430,7 +433,8 @@ class _DistributorOrdersScreenState
 
   Widget _buildBulkActionBar(bool isDark, AppLocalizations? l10n) {
     return Semantics(
-      label: '${_selectedOrderIds.length} orders selected. Bulk actions available.',
+      label:
+          '${_selectedOrderIds.length} orders selected. Bulk actions available.',
       child: Material(
         elevation: 8,
         borderRadius: BorderRadius.circular(AlhaiRadius.lg),
@@ -527,7 +531,8 @@ class _DistributorOrdersScreenState
     final allPendingSelected = _allPendingSelected(orders);
 
     return SingleChildScrollView(
-      padding: EdgeInsets.symmetric(horizontal: responsivePadding(MediaQuery.sizeOf(context).width)),
+      padding: EdgeInsets.symmetric(
+          horizontal: responsivePadding(MediaQuery.sizeOf(context).width)),
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
@@ -551,8 +556,7 @@ class _DistributorOrdersScreenState
                 ),
               ),
             ),
-            DataColumn(
-                label: Text(l10n?.distributorOrderNumber ?? 'Order #')),
+            DataColumn(label: Text(l10n?.distributorOrderNumber ?? 'Order #')),
             DataColumn(label: Text(l10n?.distributorStore ?? 'Store')),
             DataColumn(
               label: Text(l10n?.distributorDate ?? 'Date'),
@@ -590,8 +594,7 @@ class _DistributorOrdersScreenState
 
             return DataRow(
               selected: isSelected,
-              onSelectChanged: (_) =>
-                  context.go('/orders/${order.id}'),
+              onSelectChanged: (_) => context.go('/orders/${order.id}'),
               cells: [
                 DataCell(
                   isPending
@@ -614,7 +617,8 @@ class _DistributorOrdersScreenState
                       : const SizedBox.shrink(),
                 ),
                 DataCell(Semantics(
-                  label: '${l10n?.distributorOrderNumber ?? 'Order'} ${order.purchaseNumber}',
+                  label:
+                      '${l10n?.distributorOrderNumber ?? 'Order'} ${order.purchaseNumber}',
                   child: Text(
                     order.purchaseNumber,
                     style: TextStyle(
@@ -644,7 +648,8 @@ class _DistributorOrdersScreenState
                 )),
                 DataCell(
                   Semantics(
-                    label: '${l10n?.status ?? 'Status'}: ${_statusLabel(order.status, l10n)}',
+                    label:
+                        '${l10n?.status ?? 'Status'}: ${_statusLabel(order.status, l10n)}',
                     child: StatusBadge(
                       status: order.status,
                       label: _statusLabel(order.status, l10n),
@@ -663,17 +668,18 @@ class _DistributorOrdersScreenState
   Widget _buildCardList(
       List<DistributorOrder> orders, bool isDark, AppLocalizations? l10n) {
     return ListView.builder(
-      padding: EdgeInsets.symmetric(horizontal: responsivePadding(MediaQuery.sizeOf(context).width)),
+      padding: EdgeInsets.symmetric(
+          horizontal: responsivePadding(MediaQuery.sizeOf(context).width)),
       itemCount: orders.length,
       itemBuilder: (context, index) {
         final order = orders[index];
-        final isPending =
-            order.status == 'sent' || order.status == 'pending';
+        final isPending = order.status == 'sent' || order.status == 'pending';
         final isSelected = _selectedOrderIds.contains(order.id);
 
         return Semantics(
           button: true,
-          label: '${order.purchaseNumber} - ${order.storeName} - ${_statusLabel(order.status, l10n)}',
+          label:
+              '${order.purchaseNumber} - ${order.storeName} - ${_statusLabel(order.status, l10n)}',
           child: Card(
             margin: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
             color: isSelected
@@ -724,8 +730,7 @@ class _DistributorOrdersScreenState
                                       onChanged: (_) {
                                         setState(() {
                                           if (isSelected) {
-                                            _selectedOrderIds
-                                                .remove(order.id);
+                                            _selectedOrderIds.remove(order.id);
                                           } else {
                                             _selectedOrderIds.add(order.id);
                                           }
@@ -741,8 +746,7 @@ class _DistributorOrdersScreenState
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
-                                color:
-                                    Theme.of(context).colorScheme.onSurface,
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
                             ),
                           ],
@@ -758,8 +762,7 @@ class _DistributorOrdersScreenState
                     Text(
                       order.storeName,
                       style: TextStyle(
-                        color:
-                            Theme.of(context).colorScheme.onSurfaceVariant,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
                     const SizedBox(height: AlhaiSpacing.xs),
@@ -777,8 +780,7 @@ class _DistributorOrdersScreenState
                           '${NumberFormat('#,##0').format(order.total)} ${l10n?.distributorSar ?? 'SAR'}',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color:
-                                Theme.of(context).colorScheme.onSurface,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
                       ],

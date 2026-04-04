@@ -14,7 +14,8 @@ import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:drift/drift.dart' show Value;
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
+import 'package:alhai_design_system/alhai_design_system.dart'
+    show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 import '../../core/services/audit_service.dart';
@@ -106,9 +107,8 @@ class _EditPriceScreenState extends ConsumerState<EditPriceScreen> {
           subtitle: _product?.name ?? '',
           showSearch: false,
           searchHint: l10n.searchPlaceholder,
-          onMenuTap: isWideScreen
-              ? null
-              : () => Scaffold.of(context).openDrawer(),
+          onMenuTap:
+              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 3,
           userName: user?.name ?? l10n.cashCustomer,
@@ -119,14 +119,17 @@ class _EditPriceScreenState extends ConsumerState<EditPriceScreen> {
           child: _isLoading
               ? const AppLoadingState()
               : _error != null
-                  ? AppErrorState.general(context, message: _error!, onRetry: _loadProduct)
+                  ? AppErrorState.general(context,
+                      message: _error!, onRetry: _loadProduct)
                   : _product == null
                       ? _buildNotFound(colorScheme, l10n)
                       : SingleChildScrollView(
-                      padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-                      child: _buildContent(
-                          isWideScreen, isMediumScreen, colorScheme, l10n),
-                    ),
+                          padding: EdgeInsets.all(isMediumScreen
+                              ? AlhaiSpacing.lg
+                              : AlhaiSpacing.md),
+                          child: _buildContent(
+                              isWideScreen, isMediumScreen, colorScheme, l10n),
+                        ),
         ),
       ],
     );
@@ -157,8 +160,8 @@ class _EditPriceScreenState extends ConsumerState<EditPriceScreen> {
     );
   }
 
-  Widget _buildContent(
-      bool isWideScreen, bool isMediumScreen, ColorScheme colorScheme, AppLocalizations l10n) {
+  Widget _buildContent(bool isWideScreen, bool isMediumScreen,
+      ColorScheme colorScheme, AppLocalizations l10n) {
     if (isWideScreen) {
       return Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -246,8 +249,7 @@ class _EditPriceScreenState extends ConsumerState<EditPriceScreen> {
                   children: [
                     if (product.barcode != null) ...[
                       Icon(Icons.qr_code_rounded,
-                          size: 14,
-                          color: colorScheme.onSurfaceVariant),
+                          size: 14, color: colorScheme.onSurfaceVariant),
                       const SizedBox(width: AlhaiSpacing.xxs),
                       Text(
                         product.barcode!,
@@ -260,8 +262,7 @@ class _EditPriceScreenState extends ConsumerState<EditPriceScreen> {
                       const SizedBox(width: AlhaiSpacing.sm),
                     ],
                     Icon(Icons.inventory_outlined,
-                        size: 14,
-                        color: colorScheme.onSurfaceVariant),
+                        size: 14, color: colorScheme.onSurfaceVariant),
                     const SizedBox(width: AlhaiSpacing.xxs),
                     Text(
                       '${l10n.stock}: ${product.stockQty}',
@@ -281,8 +282,7 @@ class _EditPriceScreenState extends ConsumerState<EditPriceScreen> {
               Text(
                 'Current Price',
                 style: TextStyle(
-                    fontSize: 11,
-                    color: colorScheme.onSurfaceVariant),
+                    fontSize: 11, color: colorScheme.onSurfaceVariant),
               ),
               const SizedBox(height: AlhaiSpacing.xxs),
               Text(
@@ -358,9 +358,8 @@ class _EditPriceScreenState extends ConsumerState<EditPriceScreen> {
                 fontWeight: FontWeight.bold,
               ),
               suffixText: l10n.sar,
-              suffixStyle: TextStyle(
-                  fontSize: 14,
-                  color: colorScheme.onSurfaceVariant),
+              suffixStyle:
+                  TextStyle(fontSize: 14, color: colorScheme.onSurfaceVariant),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(color: colorScheme.outlineVariant),
@@ -395,9 +394,8 @@ class _EditPriceScreenState extends ConsumerState<EditPriceScreen> {
               hintText: '0.00',
               hintStyle: TextStyle(color: colorScheme.onSurfaceVariant),
               suffixText: l10n.sar,
-              suffixStyle: TextStyle(
-                  fontSize: 14,
-                  color: colorScheme.onSurfaceVariant),
+              suffixStyle:
+                  TextStyle(fontSize: 14, color: colorScheme.onSurfaceVariant),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(color: colorScheme.outlineVariant),
@@ -413,8 +411,8 @@ class _EditPriceScreenState extends ConsumerState<EditPriceScreen> {
               ),
               filled: true,
               fillColor: colorScheme.surfaceContainerLow,
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: 14),
+              contentPadding: const EdgeInsets.symmetric(
+                  horizontal: AlhaiSpacing.md, vertical: 14),
             ),
           ),
         ],
@@ -422,7 +420,8 @@ class _EditPriceScreenState extends ConsumerState<EditPriceScreen> {
     );
   }
 
-  Widget _buildPriceComparisonCard(ColorScheme colorScheme, AppLocalizations l10n) {
+  Widget _buildPriceComparisonCard(
+      ColorScheme colorScheme, AppLocalizations l10n) {
     final oldPrice = _product?.price ?? 0;
     final newPrice = double.tryParse(_newPriceController.text) ?? 0;
     final costPrice = double.tryParse(_costPriceController.text) ?? 0;
@@ -464,31 +463,30 @@ class _EditPriceScreenState extends ConsumerState<EditPriceScreen> {
             ],
           ),
           const SizedBox(height: AlhaiSpacing.mdl),
-          _buildComparisonRow('Current Price',
-              CurrencyFormatter.format(oldPrice), colorScheme),
-          _buildComparisonRow(l10n.newPrice,
-              CurrencyFormatter.format(newPrice), colorScheme),
+          _buildComparisonRow(
+              'Current Price', CurrencyFormatter.format(oldPrice), colorScheme),
+          _buildComparisonRow(
+              l10n.newPrice, CurrencyFormatter.format(newPrice), colorScheme),
           _buildComparisonRow(
             l10n.difference,
             '${priceDiff >= 0 ? '+' : ''}${CurrencyFormatter.format(priceDiff.abs())}',
             colorScheme,
-            valueColor:
-                priceDiff >= 0 ? AppColors.success : AppColors.error,
+            valueColor: priceDiff >= 0 ? AppColors.success : AppColors.error,
           ),
           Divider(height: 24, color: colorScheme.outlineVariant),
           _buildComparisonRow(
             l10n.profitMargin,
             '${margin.toStringAsFixed(1)}%',
             colorScheme,
-            valueColor:
-                margin > 20 ? AppColors.success : AppColors.warning,
+            valueColor: margin > 20 ? AppColors.success : AppColors.warning,
           ),
         ],
       ),
     );
   }
 
-  Widget _buildComparisonRow(String label, String value, ColorScheme colorScheme,
+  Widget _buildComparisonRow(
+      String label, String value, ColorScheme colorScheme,
       {Color? valueColor}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
@@ -496,9 +494,8 @@ class _EditPriceScreenState extends ConsumerState<EditPriceScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(label,
-              style: TextStyle(
-                  fontSize: 13,
-                  color: colorScheme.onSurfaceVariant)),
+              style:
+                  TextStyle(fontSize: 13, color: colorScheme.onSurfaceVariant)),
           Text(value,
               style: TextStyle(
                   fontSize: 14,
@@ -509,7 +506,8 @@ class _EditPriceScreenState extends ConsumerState<EditPriceScreen> {
     );
   }
 
-  Widget _buildPriceHistoryCard(ColorScheme colorScheme, AppLocalizations l10n) {
+  Widget _buildPriceHistoryCard(
+      ColorScheme colorScheme, AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
@@ -549,8 +547,7 @@ class _EditPriceScreenState extends ConsumerState<EditPriceScreen> {
                 padding: const EdgeInsets.all(AlhaiSpacing.md),
                 child: Text(l10n.noPriceHistory,
                     style: TextStyle(
-                        fontSize: 13,
-                        color: colorScheme.onSurfaceVariant)),
+                        fontSize: 13, color: colorScheme.onSurfaceVariant)),
               ),
             )
           else
@@ -567,14 +564,12 @@ class _EditPriceScreenState extends ConsumerState<EditPriceScreen> {
                 child: Row(
                   children: [
                     Icon(Icons.schedule_rounded,
-                        size: 16,
-                        color: colorScheme.onSurfaceVariant),
+                        size: 16, color: colorScheme.onSurfaceVariant),
                     const SizedBox(width: AlhaiSpacing.xs),
                     Text(
                       '${date.day}/${date.month}/${date.year}',
                       style: TextStyle(
-                          fontSize: 12,
-                          color: colorScheme.onSurfaceVariant),
+                          fontSize: 12, color: colorScheme.onSurfaceVariant),
                     ),
                     const Spacer(),
                     Text(
@@ -608,14 +603,13 @@ class _EditPriceScreenState extends ConsumerState<EditPriceScreen> {
               )
             : const Icon(Icons.save_rounded, size: 20),
         label: Text(l10n.saveChanges,
-            style:
-                const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.primary,
           foregroundColor: colorScheme.onPrimary,
           padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
       ),
     );

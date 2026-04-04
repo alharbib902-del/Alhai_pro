@@ -70,8 +70,7 @@ class WhatsAppMessagesDao extends DatabaseAccessor<AppDatabase>
 
   /// تحديث إلى "جاري الرفع"
   Future<int> markAsUploading(String id) {
-    return (update(whatsAppMessagesTable)
-          ..where((q) => q.id.equals(id)))
+    return (update(whatsAppMessagesTable)..where((q) => q.id.equals(id)))
         .write(WhatsAppMessagesTableCompanion(
       status: const Value('uploading'),
       lastAttemptAt: Value(DateTime.now()),
@@ -80,8 +79,7 @@ class WhatsAppMessagesDao extends DatabaseAccessor<AppDatabase>
 
   /// تحديث إلى "جاري الإرسال"
   Future<int> markAsSending(String id) {
-    return (update(whatsAppMessagesTable)
-          ..where((q) => q.id.equals(id)))
+    return (update(whatsAppMessagesTable)..where((q) => q.id.equals(id)))
         .write(WhatsAppMessagesTableCompanion(
       status: const Value('sending'),
       lastAttemptAt: Value(DateTime.now()),
@@ -90,8 +88,7 @@ class WhatsAppMessagesDao extends DatabaseAccessor<AppDatabase>
 
   /// تحديث إلى "تم الإرسال"
   Future<int> markAsSent(String id, String externalMsgId) {
-    return (update(whatsAppMessagesTable)
-          ..where((q) => q.id.equals(id)))
+    return (update(whatsAppMessagesTable)..where((q) => q.id.equals(id)))
         .write(WhatsAppMessagesTableCompanion(
       status: const Value('sent'),
       externalMsgId: Value(externalMsgId),
@@ -101,8 +98,7 @@ class WhatsAppMessagesDao extends DatabaseAccessor<AppDatabase>
 
   /// تحديث إلى "تم التوصيل"
   Future<int> markAsDelivered(String id) {
-    return (update(whatsAppMessagesTable)
-          ..where((q) => q.id.equals(id)))
+    return (update(whatsAppMessagesTable)..where((q) => q.id.equals(id)))
         .write(WhatsAppMessagesTableCompanion(
       status: const Value('delivered'),
       deliveredAt: Value(DateTime.now()),
@@ -111,8 +107,7 @@ class WhatsAppMessagesDao extends DatabaseAccessor<AppDatabase>
 
   /// تحديث إلى "تم القراءة"
   Future<int> markAsRead(String id) {
-    return (update(whatsAppMessagesTable)
-          ..where((q) => q.id.equals(id)))
+    return (update(whatsAppMessagesTable)..where((q) => q.id.equals(id)))
         .write(WhatsAppMessagesTableCompanion(
       status: const Value('read'),
       readAt: Value(DateTime.now()),
@@ -139,8 +134,7 @@ class WhatsAppMessagesDao extends DatabaseAccessor<AppDatabase>
 
   /// تحديث رابط الوسائط بعد الرفع
   Future<int> updateMediaUrl(String id, String mediaUrl) {
-    return (update(whatsAppMessagesTable)
-          ..where((q) => q.id.equals(id)))
+    return (update(whatsAppMessagesTable)..where((q) => q.id.equals(id)))
         .write(WhatsAppMessagesTableCompanion(
       mediaUrl: Value(mediaUrl),
     ));
@@ -251,8 +245,7 @@ class WhatsAppMessagesDao extends DatabaseAccessor<AppDatabase>
 
   /// إعادة تعيين رسالة فاشلة للمحاولة مرة أخرى
   Future<int> retryMessage(String id) {
-    return (update(whatsAppMessagesTable)
-          ..where((q) => q.id.equals(id)))
+    return (update(whatsAppMessagesTable)..where((q) => q.id.equals(id)))
         .write(const WhatsAppMessagesTableCompanion(
       status: Value('pending'),
       retryCount: Value(0),

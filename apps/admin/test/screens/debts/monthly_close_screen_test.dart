@@ -37,8 +37,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const MonthlyCloseScreen()));
+      await tester.pumpWidget(createTestWidget(const MonthlyCloseScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(MonthlyCloseScreen), findsOneWidget);
@@ -52,8 +51,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const MonthlyCloseScreen()));
+      await tester.pumpWidget(createTestWidget(const MonthlyCloseScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.calendar_month_rounded), findsWidgets);
@@ -67,8 +65,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const MonthlyCloseScreen()));
+      await tester.pumpWidget(createTestWidget(const MonthlyCloseScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.people_rounded), findsWidgets);
@@ -82,8 +79,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const MonthlyCloseScreen()));
+      await tester.pumpWidget(createTestWidget(const MonthlyCloseScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.check_rounded), findsWidgets);

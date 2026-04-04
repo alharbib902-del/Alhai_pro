@@ -112,7 +112,9 @@ void main() {
       expect(product.salesChangePercent, 100.0);
     });
 
-    test('salesChangePercent returns 100 when last week was 0 and this week > 0', () {
+    test(
+        'salesChangePercent returns 100 when last week was 0 and this week > 0',
+        () {
       const product = ProductAnalyticsData(
         id: 'p1',
         name: 'Test',
@@ -472,9 +474,8 @@ void main() {
         outOfStockCount: 0,
       );
 
-      final salesInsights = insights
-          .where((i) => i.type == InsightType.salesTrend)
-          .toList();
+      final salesInsights =
+          insights.where((i) => i.type == InsightType.salesTrend).toList();
       expect(salesInsights, isNotEmpty);
     });
 
@@ -486,9 +487,8 @@ void main() {
         outOfStockCount: 0,
       );
 
-      final salesInsights = insights
-          .where((i) => i.type == InsightType.salesTrend)
-          .toList();
+      final salesInsights =
+          insights.where((i) => i.type == InsightType.salesTrend).toList();
       expect(salesInsights, isNotEmpty);
     });
 
@@ -500,9 +500,8 @@ void main() {
         outOfStockCount: 3,
       );
 
-      final stockWarnings = insights
-          .where((i) => i.type == InsightType.stockWarning)
-          .toList();
+      final stockWarnings =
+          insights.where((i) => i.type == InsightType.stockWarning).toList();
       expect(stockWarnings, isNotEmpty);
       expect(stockWarnings.first.priority, InsightPriority.critical);
     });
@@ -515,9 +514,8 @@ void main() {
         outOfStockCount: 0,
       );
 
-      final stockWarnings = insights
-          .where((i) => i.type == InsightType.stockWarning)
-          .toList();
+      final stockWarnings =
+          insights.where((i) => i.type == InsightType.stockWarning).toList();
       expect(stockWarnings, isNotEmpty);
       expect(stockWarnings.first.priority, InsightPriority.high);
     });

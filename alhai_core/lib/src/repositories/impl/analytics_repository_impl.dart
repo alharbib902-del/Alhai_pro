@@ -120,7 +120,8 @@ class AnalyticsRepositoryImpl implements AnalyticsRepository {
     int limit = 20,
   }) async {
     try {
-      final responses = await _remote.getCustomerPatterns(storeId, limit: limit);
+      final responses =
+          await _remote.getCustomerPatterns(storeId, limit: limit);
       return responses.map((r) => r.toDomain()).toList();
     } on DioException catch (e) {
       throw ErrorMapper.fromDioError(e);

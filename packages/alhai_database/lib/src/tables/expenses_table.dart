@@ -17,6 +17,7 @@ class ExpensesTable extends Table {
   TextColumn get description => text().nullable()();
   TextColumn get paymentMethod => text().withDefault(const Constant('cash'))();
   TextColumn get receiptImage => text().nullable()();
+
   /// NOTE: Naming inconsistency - this column is called [createdBy] but other
   /// tables (audit_log, notifications, inventory_movements, org_members) use
   /// [userId] for the same concept. Preferred standard: [userId] to match

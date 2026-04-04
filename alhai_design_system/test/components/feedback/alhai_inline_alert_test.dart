@@ -49,7 +49,8 @@ void main() {
       expect(closed, isTrue);
     });
 
-    testWidgets('does not show close button when onClose is null', (tester) async {
+    testWidgets('does not show close button when onClose is null',
+        (tester) async {
       await tester.pumpWidget(createTestWidget(
         const AlhaiInlineAlert(
           type: AlhaiInlineAlertType.info,
@@ -60,7 +61,8 @@ void main() {
       expect(find.byIcon(Icons.close), findsNothing);
     });
 
-    testWidgets('shows action button when actionText and onAction provided', (tester) async {
+    testWidgets('shows action button when actionText and onAction provided',
+        (tester) async {
       var actionCalled = false;
       await tester.pumpWidget(createTestWidget(
         AlhaiInlineAlert(
@@ -117,7 +119,8 @@ void main() {
       });
     });
 
-    testWidgets('outlined style renders without filled background', (tester) async {
+    testWidgets('outlined style renders without filled background',
+        (tester) async {
       await tester.pumpWidget(createTestWidget(
         const AlhaiInlineAlert(
           type: AlhaiInlineAlertType.info,

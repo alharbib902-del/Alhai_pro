@@ -23,13 +23,13 @@ void main() {
         .thenAnswer((_) async => []);
     when(() => loyaltyDao.getAvailableRewards(any()))
         .thenAnswer((_) async => []);
-    when(() => loyaltyDao.getStats(any())).thenAnswer((_) async =>
-        const LoyaltyStats(
-          totalEarned: 0,
-          totalRedeemed: 0,
-          activeCustomers: 0,
-          totalTransactions: 0,
-        ));
+    when(() => loyaltyDao.getStats(any()))
+        .thenAnswer((_) async => const LoyaltyStats(
+              totalEarned: 0,
+              totalRedeemed: 0,
+              activeCustomers: 0,
+              totalTransactions: 0,
+            ));
   });
 
   tearDown(() => tearDownTestGetIt());
@@ -40,8 +40,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const LoyaltyProgramScreen()));
+      await tester.pumpWidget(createTestWidget(const LoyaltyProgramScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(LoyaltyProgramScreen), findsOneWidget);
@@ -55,8 +54,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const LoyaltyProgramScreen()));
+      await tester.pumpWidget(createTestWidget(const LoyaltyProgramScreen()));
       await tester.pumpAndSettle();
 
       // Program is enabled by default → shows TabBar
@@ -71,8 +69,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const LoyaltyProgramScreen()));
+      await tester.pumpWidget(createTestWidget(const LoyaltyProgramScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(Switch), findsWidgets);
@@ -86,8 +83,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const LoyaltyProgramScreen()));
+      await tester.pumpWidget(createTestWidget(const LoyaltyProgramScreen()));
       await tester.pumpAndSettle();
 
       // Program is enabled → shows TabBarView

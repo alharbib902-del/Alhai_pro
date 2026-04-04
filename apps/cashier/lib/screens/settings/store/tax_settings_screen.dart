@@ -13,7 +13,8 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
+import 'package:alhai_design_system/alhai_design_system.dart'
+    show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 
@@ -22,8 +23,7 @@ class TaxSettingsScreen extends ConsumerStatefulWidget {
   const TaxSettingsScreen({super.key});
 
   @override
-  ConsumerState<TaxSettingsScreen> createState() =>
-      _TaxSettingsScreenState();
+  ConsumerState<TaxSettingsScreen> createState() => _TaxSettingsScreenState();
 }
 
 class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
@@ -54,14 +54,14 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
     final storeId = ref.read(currentStoreIdProvider)!;
     final id = 'setting_${storeId}_$key';
     await _db.into(_db.settingsTable).insertOnConflictUpdate(
-      SettingsTableCompanion.insert(
-        id: id,
-        storeId: storeId,
-        key: key,
-        value: value,
-        updatedAt: DateTime.now(),
-      ),
-    );
+          SettingsTableCompanion.insert(
+            id: id,
+            storeId: storeId,
+            key: key,
+            value: value,
+            updatedAt: DateTime.now(),
+          ),
+        );
   }
 
   Future<void> _loadSettings() async {
@@ -78,10 +78,9 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
         }
       }
       // Load from settings table
-      final settings = await (
-        _db.select(_db.settingsTable)
-          ..where((s) => s.storeId.equals(storeId))
-      ).get();
+      final settings = await (_db.select(_db.settingsTable)
+            ..where((s) => s.storeId.equals(storeId)))
+          .get();
       for (final s in settings) {
         if (s.key == 'tax_rate') {
           _taxRateController.text = s.value.isNotEmpty ? s.value : '15';
@@ -120,7 +119,8 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(AppLocalizations.of(context).errorSavingSettings('$e')),
+            content:
+                Text(AppLocalizations.of(context).errorSavingSettings('$e')),
             backgroundColor: AppColors.error,
           ),
         );
@@ -153,8 +153,7 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
             tooltip: l10n.back,
           ),
           onNotificationsTap: () => context.push(AppRoutes.notificationsCenter),
-          userName:
-              ref.watch(currentUserProvider)?.name ?? l10n.cashCustomer,
+          userName: ref.watch(currentUserProvider)?.name ?? l10n.cashCustomer,
           userRole: l10n.cashier,
           onUserTap: () => context.push(AppRoutes.profile),
         ),
@@ -162,12 +161,14 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
           child: _isLoading
               ? const AppLoadingState()
               : _error != null
-                  ? AppErrorState.general(context, message: _error!, onRetry: _loadSettings)
-              : SingleChildScrollView(
-                  padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-                  child: _buildContent(
-                      isWideScreen, isMediumScreen, isDark, l10n),
-                ),
+                  ? AppErrorState.general(context,
+                      message: _error!, onRetry: _loadSettings)
+                  : SingleChildScrollView(
+                      padding: EdgeInsets.all(
+                          isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+                      child: _buildContent(
+                          isWideScreen, isMediumScreen, isDark, l10n),
+                    ),
         ),
       ],
     );
@@ -428,9 +429,8 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
             subtitle: l10n.pricesIncludeTax,
             value: _taxInclusive,
             isDark: isDark,
-            onChanged: _taxEnabled
-                ? (v) => setState(() => _taxInclusive = v)
-                : null,
+            onChanged:
+                _taxEnabled ? (v) => setState(() => _taxInclusive = v) : null,
           ),
         ],
       ),

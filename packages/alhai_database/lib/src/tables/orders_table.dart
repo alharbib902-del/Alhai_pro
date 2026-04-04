@@ -24,10 +24,15 @@ import 'customers_table.dart';
 @TableIndex(name: 'idx_orders_status', columns: {#status})
 @TableIndex(name: 'idx_orders_order_date', columns: {#orderDate})
 @TableIndex(name: 'idx_orders_store_status', columns: {#storeId, #status})
-@TableIndex(name: 'idx_orders_store_order_date', columns: {#storeId, #orderDate})
+@TableIndex(
+    name: 'idx_orders_store_order_date', columns: {#storeId, #orderDate})
 @TableIndex(name: 'idx_orders_synced_at', columns: {#syncedAt})
-@TableIndex(name: 'idx_orders_customer_created', columns: {#customerId, #createdAt})
-@TableIndex(name: 'idx_orders_store_number_unique', columns: {#storeId, #orderNumber}, unique: true)
+@TableIndex(
+    name: 'idx_orders_customer_created', columns: {#customerId, #createdAt})
+@TableIndex(
+    name: 'idx_orders_store_number_unique',
+    columns: {#storeId, #orderNumber},
+    unique: true)
 class OrdersTable extends Table {
   @override
   String get tableName => 'orders';
@@ -36,42 +41,48 @@ class OrdersTable extends Table {
   TextColumn get id => text()();
   TextColumn get orgId => text().nullable()();
   TextColumn get storeId => text().references(StoresTable, #id)();
-  TextColumn get customerId => text().nullable().references(CustomersTable, #id)();
-  
+  TextColumn get customerId =>
+      text().nullable().references(CustomersTable, #id)();
+
   // معلومات الطلب
   TextColumn get orderNumber => text()(); // ORD-YYYYMMDD-XXX
-  TextColumn get channel => text().withDefault(const Constant('app'))(); // app, pos
+  TextColumn get channel =>
+      text().withDefault(const Constant('app'))(); // app, pos
   TextColumn get status => text().withDefault(const Constant('created'))();
   // created, confirmed, preparing, ready, out_for_delivery, delivered, picked_up, completed, cancelled, refunded
-  
+
   // المبالغ
   RealColumn get subtotal => real().withDefault(const Constant(0))();
   RealColumn get taxAmount => real().withDefault(const Constant(0))();
   RealColumn get deliveryFee => real().withDefault(const Constant(0))();
   RealColumn get discount => real().withDefault(const Constant(0))();
   RealColumn get total => real().withDefault(const Constant(0))();
-  
+
   // الدفع
   TextColumn get paymentMethod => text().nullable()(); // cash, card, online
-  TextColumn get paymentStatus => text().withDefault(const Constant('pending'))();
+  TextColumn get paymentStatus =>
+      text().withDefault(const Constant('pending'))();
   // pending, paid, refunded
-  
+
   // التوصيل
-  TextColumn get deliveryType => text().withDefault(const Constant('delivery'))();
+  TextColumn get deliveryType =>
+      text().withDefault(const Constant('delivery'))();
   // delivery, pickup
   TextColumn get deliveryAddress => text().nullable()();
   RealColumn get deliveryLat => real().nullable()();
   RealColumn get deliveryLng => real().nullable()();
   TextColumn get driverId => text().nullable()();
-  
+
   // الملاحظات
   TextColumn get notes => text().nullable()();
   TextColumn get cancelReason => text().nullable()();
 
   // تأكيد التسليم
   TextColumn get confirmationCode => text().nullable()();
-  IntColumn get confirmationAttempts => integer().withDefault(const Constant(0))();
-  BoolColumn get autoReorderTriggered => boolean().withDefault(const Constant(false))();
+  IntColumn get confirmationAttempts =>
+      integer().withDefault(const Constant(0))();
+  BoolColumn get autoReorderTriggered =>
+      boolean().withDefault(const Constant(false))();
 
   // التواريخ
   DateTimeColumn get orderDate => dateTime()();
@@ -81,7 +92,7 @@ class OrdersTable extends Table {
   DateTimeColumn get deliveringAt => dateTime().nullable()();
   DateTimeColumn get deliveredAt => dateTime().nullable()();
   DateTimeColumn get cancelledAt => dateTime().nullable()();
-  
+
   // المزامنة
   DateTimeColumn get createdAt => dateTime()();
   DateTimeColumn get updatedAt => dateTime().nullable()();

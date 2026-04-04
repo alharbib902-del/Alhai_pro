@@ -43,22 +43,20 @@ class Order with _$Order {
     DateTime? updatedAt,
   }) = _Order;
 
-  factory Order.fromJson(Map<String, dynamic> json) =>
-      _$OrderFromJson(json);
+  factory Order.fromJson(Map<String, dynamic> json) => _$OrderFromJson(json);
 
   /// Get items count
   int get itemCount => items.fold(0, (sum, item) => sum + item.qty);
 
   /// Check if order can be cancelled
-  bool get canCancel => 
-      status == OrderStatus.created || 
-      status == OrderStatus.confirmed;
+  bool get canCancel =>
+      status == OrderStatus.created || status == OrderStatus.confirmed;
 
   /// Check if order is completed
-  bool get isCompleted => 
-      status == OrderStatus.delivered || 
-      status == OrderStatus.cancelled;
+  bool get isCompleted =>
+      status == OrderStatus.delivered || status == OrderStatus.cancelled;
 
   /// Get display-friendly order number
-  String get displayNumber => orderNumber ?? '#${id.substring(0, 8).toUpperCase()}';
+  String get displayNumber =>
+      orderNumber ?? '#${id.substring(0, 8).toUpperCase()}';
 }

@@ -45,8 +45,9 @@ class _SkeletonLoaderState extends State<SkeletonLoader>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final effectiveDuration =
-        context.prefersReducedMotion ? Duration.zero : const Duration(milliseconds: 1500);
+    final effectiveDuration = context.prefersReducedMotion
+        ? Duration.zero
+        : const Duration(milliseconds: 1500);
     if (_controller.duration != effectiveDuration) {
       _controller
         ..stop()
@@ -66,10 +67,12 @@ class _SkeletonLoaderState extends State<SkeletonLoader>
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final baseColor =
-        isDark ? Colors.white.withValues(alpha: 0.06) : Colors.black.withValues(alpha: 0.06);
-    final highlightColor =
-        isDark ? Colors.white.withValues(alpha: 0.12) : Colors.black.withValues(alpha: 0.12);
+    final baseColor = isDark
+        ? Colors.white.withValues(alpha: 0.06)
+        : Colors.black.withValues(alpha: 0.06);
+    final highlightColor = isDark
+        ? Colors.white.withValues(alpha: 0.12)
+        : Colors.black.withValues(alpha: 0.12);
 
     return AnimatedBuilder(
       animation: _animation,
@@ -183,8 +186,10 @@ class SkeletonTable extends StatelessWidget {
               columns,
               (i) => Expanded(
                 child: Padding(
-                  padding: const EdgeInsetsDirectional.only(end: AlhaiSpacing.xs),
-                  child: const SkeletonLoader(height: 14, width: double.infinity),
+                  padding:
+                      const EdgeInsetsDirectional.only(end: AlhaiSpacing.xs),
+                  child:
+                      const SkeletonLoader(height: 14, width: double.infinity),
                 ),
               ),
             ),
@@ -204,8 +209,10 @@ class SkeletonTable extends StatelessWidget {
                 columns,
                 (i) => Expanded(
                   child: Padding(
-                    padding: const EdgeInsetsDirectional.only(end: AlhaiSpacing.xs),
-                    child: const SkeletonLoader(height: 12, width: double.infinity),
+                    padding:
+                        const EdgeInsetsDirectional.only(end: AlhaiSpacing.xs),
+                    child: const SkeletonLoader(
+                        height: 12, width: double.infinity),
                   ),
                 ),
               ),

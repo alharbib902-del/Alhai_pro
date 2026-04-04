@@ -50,7 +50,8 @@ class AppBadge extends StatelessWidget {
   });
 
   /// شارة النجاح
-  factory AppBadge.success(String label, {AppBadgeSize size = AppBadgeSize.medium}) {
+  factory AppBadge.success(String label,
+      {AppBadgeSize size = AppBadgeSize.medium}) {
     return AppBadge(
       label: label,
       color: AppColors.success,
@@ -60,7 +61,8 @@ class AppBadge extends StatelessWidget {
   }
 
   /// شارة التحذير
-  factory AppBadge.warning(String label, {AppBadgeSize size = AppBadgeSize.medium}) {
+  factory AppBadge.warning(String label,
+      {AppBadgeSize size = AppBadgeSize.medium}) {
     return AppBadge(
       label: label,
       color: AppColors.warning,
@@ -70,7 +72,8 @@ class AppBadge extends StatelessWidget {
   }
 
   /// شارة الخطأ
-  factory AppBadge.error(String label, {AppBadgeSize size = AppBadgeSize.medium}) {
+  factory AppBadge.error(String label,
+      {AppBadgeSize size = AppBadgeSize.medium}) {
     return AppBadge(
       label: label,
       color: AppColors.error,
@@ -80,7 +83,8 @@ class AppBadge extends StatelessWidget {
   }
 
   /// شارة المعلومات
-  factory AppBadge.info(String label, {AppBadgeSize size = AppBadgeSize.medium}) {
+  factory AppBadge.info(String label,
+      {AppBadgeSize size = AppBadgeSize.medium}) {
     return AppBadge(
       label: label,
       color: AppColors.info,
@@ -90,7 +94,8 @@ class AppBadge extends StatelessWidget {
   }
 
   /// شارة المخزون
-  static AppBadge stock(BuildContext context, double quantity, {double minQuantity = 5}) {
+  static AppBadge stock(BuildContext context, double quantity,
+      {double minQuantity = 5}) {
     final l10n = AppLocalizations.of(context)!;
     if (quantity <= 0) {
       return AppBadge(
@@ -505,7 +510,8 @@ class _StatusDotState extends State<_StatusDot>
                   height: widget.size * 2 * (1 + _animation.value * 0.5),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: widget.color.withValues(alpha: _animation.value * 0.3),
+                    color:
+                        widget.color.withValues(alpha: _animation.value * 0.3),
                   ),
                 );
               },
@@ -561,7 +567,9 @@ class AppCategoryBadge extends StatelessWidget {
           vertical: AppSpacing.sm,
         ),
         decoration: BoxDecoration(
-          color: isSelected ? effectiveColor : effectiveColor.withValues(alpha: 0.1),
+          color: isSelected
+              ? effectiveColor
+              : effectiveColor.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(AppRadius.full),
           border: Border.all(
             color: effectiveColor,

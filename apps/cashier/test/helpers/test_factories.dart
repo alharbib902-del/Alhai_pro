@@ -18,7 +18,8 @@ import 'package:alhai_database/alhai_database.dart';
 ProductsTableData createTestProduct({
   String id = 'prod-1',
   String storeId = 'test-store-1',
-  String name = '\u0645\u0646\u062a\u062c \u062a\u062c\u0631\u064a\u0628\u064a', // منتج تجريبي
+  String name =
+      '\u0645\u0646\u062a\u062c \u062a\u062c\u0631\u064a\u0628\u064a', // منتج تجريبي
   String? sku,
   String? barcode,
   double price = 25.0,
@@ -115,7 +116,8 @@ SaleItemsTableData createTestSaleItem({
   String id = 'item-1',
   String saleId = 'sale-1',
   String productId = 'prod-1',
-  String productName = '\u0645\u0646\u062a\u062c \u062a\u062c\u0631\u064a\u0628\u064a', // منتج تجريبي
+  String productName =
+      '\u0645\u0646\u062a\u062c \u062a\u062c\u0631\u064a\u0628\u064a', // منتج تجريبي
   String? productSku,
   String? productBarcode,
   int qty = 2,
@@ -207,7 +209,8 @@ OrdersTableData createTestOrder({
 CustomersTableData createTestCustomer({
   String id = 'cust-1',
   String storeId = 'test-store-1',
-  String name = '\u0639\u0645\u064a\u0644 \u062a\u062c\u0631\u064a\u0628\u064a', // عميل تجريبي
+  String name =
+      '\u0639\u0645\u064a\u0644 \u062a\u062c\u0631\u064a\u0628\u064a', // عميل تجريبي
   String? phone = '0501234567',
   String? email,
   String? address,
@@ -243,7 +246,8 @@ ShiftsTableData createTestShift({
   String id = 'shift-1',
   String storeId = 'test-store-1',
   String cashierId = 'test-user-1',
-  String cashierName = '\u0643\u0627\u0634\u064a\u0631 \u062a\u062c\u0631\u064a\u0628\u064a', // كاشير تجريبي
+  String cashierName =
+      '\u0643\u0627\u0634\u064a\u0631 \u062a\u062c\u0631\u064a\u0628\u064a', // كاشير تجريبي
   double openingCash = 500.0,
   double? closingCash,
   double? expectedCash,
@@ -285,7 +289,8 @@ ShiftsTableData createTestShift({
 CategoriesTableData createTestCategory({
   String id = 'cat-1',
   String storeId = 'test-store-1',
-  String name = '\u062a\u0635\u0646\u064a\u0641 \u062a\u062c\u0631\u064a\u0628\u064a', // تصنيف تجريبي
+  String name =
+      '\u062a\u0635\u0646\u064a\u0641 \u062a\u062c\u0631\u064a\u0628\u064a', // تصنيف تجريبي
   String? nameEn = 'Test Category',
   String? parentId,
   String? imageUrl,
@@ -321,8 +326,10 @@ ReturnsTableData createTestReturn({
   String returnNumber = 'RET-20260115-001',
   String saleId = 'sale-1',
   String? customerId,
-  String? customerName = '\u0639\u0645\u064a\u0644 \u062a\u062c\u0631\u064a\u0628\u064a', // عميل تجريبي
-  String? reason = '\u0639\u064a\u0628 \u0641\u064a \u0627\u0644\u0645\u0646\u062a\u062c', // عيب في المنتج
+  String? customerName =
+      '\u0639\u0645\u064a\u0644 \u062a\u062c\u0631\u064a\u0628\u064a', // عميل تجريبي
+  String? reason =
+      '\u0639\u064a\u0628 \u0641\u064a \u0627\u0644\u0645\u0646\u062a\u062c', // عيب في المنتج
   String type = 'full',
   String refundMethod = 'cash',
   double totalRefund = 50.0,
@@ -361,7 +368,8 @@ ReturnsTableData createTestReturn({
 /// when(() => dao.watchAllByStore('test-store-1'))
 ///     .thenAnswer((_) => Stream.value(products));
 /// ```
-List<ProductsTableData> createTestProductList(int n, {String storeId = 'test-store-1'}) {
+List<ProductsTableData> createTestProductList(int n,
+    {String storeId = 'test-store-1'}) {
   return List.generate(n, (i) {
     return createTestProduct(
       id: 'prod-${i + 1}',
@@ -374,7 +382,8 @@ List<ProductsTableData> createTestProductList(int n, {String storeId = 'test-sto
 }
 
 /// Generate a list of [n] test sales with sequential IDs.
-List<SalesTableData> createTestSaleList(int n, {String storeId = 'test-store-1'}) {
+List<SalesTableData> createTestSaleList(int n,
+    {String storeId = 'test-store-1'}) {
   return List.generate(n, (i) {
     return createTestSale(
       id: 'sale-${i + 1}',
@@ -386,7 +395,8 @@ List<SalesTableData> createTestSaleList(int n, {String storeId = 'test-store-1'}
 }
 
 /// Generate a list of [n] test categories with sequential IDs.
-List<CategoriesTableData> createTestCategoryList(int n, {String storeId = 'test-store-1'}) {
+List<CategoriesTableData> createTestCategoryList(int n,
+    {String storeId = 'test-store-1'}) {
   return List.generate(n, (i) {
     return createTestCategory(
       id: 'cat-${i + 1}',
@@ -398,7 +408,8 @@ List<CategoriesTableData> createTestCategoryList(int n, {String storeId = 'test-
 }
 
 /// Generate a list of [n] test customers with sequential IDs.
-List<CustomersTableData> createTestCustomerList(int n, {String storeId = 'test-store-1'}) {
+List<CustomersTableData> createTestCustomerList(int n,
+    {String storeId = 'test-store-1'}) {
   return List.generate(n, (i) {
     return createTestCustomer(
       id: 'cust-${i + 1}',

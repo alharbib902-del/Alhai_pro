@@ -77,7 +77,8 @@ class ProductsFtsService {
     ''');
 
     // تحسين الفهرس
-    await _db.customStatement("INSERT INTO products_fts(products_fts) VALUES('optimize')");
+    await _db.customStatement(
+        "INSERT INTO products_fts(products_fts) VALUES('optimize')");
   }
 
   /// البحث السريع باستخدام FTS5
@@ -219,7 +220,8 @@ class ProductsFtsService {
     // تنظيف الاستعلام
     var cleaned = query
         .trim()
-        .replaceAll(RegExp(r'[^\w\u0600-\u06FF\s]'), ' ') // إزالة الأحرف الخاصة مع الحفاظ على العربية
+        .replaceAll(RegExp(r'[^\w\u0600-\u06FF\s]'),
+            ' ') // إزالة الأحرف الخاصة مع الحفاظ على العربية
         .replaceAll(RegExp(r'\s+'), ' '); // تقليل المسافات
 
     // إضافة * لكل كلمة للبحث الجزئي

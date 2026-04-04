@@ -58,7 +58,7 @@ class _SidebarHeader extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.primary.withValues(alpha:0.3),
+                      color: AppColors.primary.withValues(alpha: 0.3),
                       blurRadius: 15,
                       offset: const Offset(0, 4),
                     ),
@@ -101,7 +101,7 @@ class _SidebarHeader extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
-                        color: AppColors.primary.withValues(alpha:0.3),
+                        color: AppColors.primary.withValues(alpha: 0.3),
                         blurRadius: 15,
                         offset: const Offset(0, 4),
                       ),
@@ -151,7 +151,8 @@ class _SidebarHeader extends StatelessWidget {
                         return Text(
                           l10n.posSystem,
                           style: TextStyle(
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
                             fontSize: 12,
                           ),
                         );
@@ -164,7 +165,6 @@ class _SidebarHeader extends StatelessWidget {
     );
   }
 }
-
 
 /// عنصر في القائمة
 class _SidebarItemWidget extends StatefulWidget {
@@ -213,9 +213,11 @@ class _SidebarItemWidgetState extends State<_SidebarItemWidget> {
               ),
               decoration: BoxDecoration(
                 color: widget.isSelected
-                    ? AppColors.primary.withValues(alpha:0.1)
+                    ? AppColors.primary.withValues(alpha: 0.1)
                     : _isHovered
-                        ? (Theme.of(context).colorScheme.surfaceContainerHighest)
+                        ? (Theme.of(context)
+                            .colorScheme
+                            .surfaceContainerHighest)
                         : Colors.transparent,
                 borderRadius: BorderRadius.circular(12),
                 border: widget.isSelected
@@ -248,7 +250,9 @@ class _SidebarItemWidgetState extends State<_SidebarItemWidget> {
                               : widget.item.icon,
                           color: widget.isSelected
                               ? AppColors.primary
-                              : (Theme.of(context).colorScheme.onSurfaceVariant),
+                              : (Theme.of(context)
+                                  .colorScheme
+                                  .onSurfaceVariant),
                           size: 20,
                         ),
                         SizedBox(width: AlhaiSpacing.md),
@@ -279,7 +283,7 @@ class _SidebarItemWidgetState extends State<_SidebarItemWidget> {
                               vertical: AlhaiSpacing.xxxs,
                             ),
                             decoration: BoxDecoration(
-                              color: AppColors.error.withValues(alpha:0.1),
+                              color: AppColors.error.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Text(
@@ -373,7 +377,8 @@ class _UserProfileCardState extends State<_UserProfileCard> {
                       children: [
                         CircleAvatar(
                           radius: 18,
-                          backgroundColor: AppColors.primary.withValues(alpha:0.15),
+                          backgroundColor:
+                              AppColors.primary.withValues(alpha: 0.15),
                           backgroundImage: widget.avatarUrl != null
                               ? CachedNetworkImageProvider(widget.avatarUrl!)
                               : null,
@@ -417,7 +422,8 @@ class _UserProfileCardState extends State<_UserProfileCard> {
                         children: [
                           CircleAvatar(
                             radius: 18,
-                            backgroundColor: AppColors.primary.withValues(alpha:0.15),
+                            backgroundColor:
+                                AppColors.primary.withValues(alpha: 0.15),
                             backgroundImage: widget.avatarUrl != null
                                 ? CachedNetworkImageProvider(widget.avatarUrl!)
                                 : null,
@@ -476,7 +482,9 @@ class _UserProfileCardState extends State<_UserProfileCard> {
                               Text(
                                 widget.role!,
                                 style: TextStyle(
-                                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurfaceVariant,
                                   fontSize: 11,
                                 ),
                                 maxLines: 1,
@@ -491,7 +499,7 @@ class _UserProfileCardState extends State<_UserProfileCard> {
                       Icon(
                         Icons.chevron_left_rounded,
                         color: isDark
-                            ? Colors.white.withValues(alpha:0.3)
+                            ? Colors.white.withValues(alpha: 0.3)
                             : AppColors.textTertiary,
                         size: 18,
                       ),
@@ -579,9 +587,8 @@ class _FooterButtonState extends State<_FooterButton> {
 
   @override
   Widget build(BuildContext context) {
-    final color = widget.isDestructive
-        ? AppColors.error
-        : AppColors.textSecondary;
+    final color =
+        widget.isDestructive ? AppColors.error : AppColors.textSecondary;
 
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
@@ -600,7 +607,7 @@ class _FooterButtonState extends State<_FooterButton> {
             decoration: BoxDecoration(
               color: _isHovered
                   ? (widget.isDestructive
-                      ? AppColors.error.withValues(alpha:0.05)
+                      ? AppColors.error.withValues(alpha: 0.05)
                       : AppColors.backgroundSecondary)
                   : Colors.transparent,
               borderRadius: BorderRadius.circular(8),
@@ -952,7 +959,14 @@ class DefaultSidebarItems {
       ),
       SidebarGroup(
         title: l10n.storeManagement,
-        items: [products, categories, inventory, customers, suppliers2, mediaLibrary],
+        items: [
+          products,
+          categories,
+          inventory,
+          customers,
+          suppliers2,
+          mediaLibrary
+        ],
       ),
       SidebarGroup(
         title: l10n.ecommerceSection,
@@ -960,7 +974,18 @@ class DefaultSidebarItems {
       ),
       SidebarGroup(
         title: l10n.finance,
-        items: [invoices, orders, sales, returns, voidTransaction, expenses, wallet, reports, complaintsReport, printQueue],
+        items: [
+          invoices,
+          orders,
+          sales,
+          returns,
+          voidTransaction,
+          expenses,
+          wallet,
+          reports,
+          complaintsReport,
+          printQueue
+        ],
       ),
       SidebarGroup(
         title: l10n.teamSection,
@@ -997,31 +1022,74 @@ class DefaultSidebarItems {
   static const List<SidebarGroup> defaultGroups = [
     SidebarGroup(
       items: [
-        AppSidebarItem(id: 'dashboard', title: 'Dashboard', icon: Icons.dashboard_outlined, activeIcon: Icons.dashboard_rounded),
-        AppSidebarItem(id: 'pos', title: 'POS', icon: Icons.point_of_sale_outlined, activeIcon: Icons.point_of_sale_rounded),
+        AppSidebarItem(
+            id: 'dashboard',
+            title: 'Dashboard',
+            icon: Icons.dashboard_outlined,
+            activeIcon: Icons.dashboard_rounded),
+        AppSidebarItem(
+            id: 'pos',
+            title: 'POS',
+            icon: Icons.point_of_sale_outlined,
+            activeIcon: Icons.point_of_sale_rounded),
       ],
     ),
     SidebarGroup(
       title: 'Store',
       items: [
-        AppSidebarItem(id: 'products', title: 'Products', icon: Icons.inventory_2_outlined, activeIcon: Icons.inventory_2_rounded),
-        AppSidebarItem(id: 'categories', title: 'Categories', icon: Icons.category_outlined, activeIcon: Icons.category_rounded),
-        AppSidebarItem(id: 'inventory', title: 'Inventory', icon: Icons.warehouse_outlined, activeIcon: Icons.warehouse_rounded, badge: '5', badgeColor: Color(0xFFF59E0B)),
-        AppSidebarItem(id: 'customers', title: 'Customers', icon: Icons.people_outline_rounded, activeIcon: Icons.people_rounded),
+        AppSidebarItem(
+            id: 'products',
+            title: 'Products',
+            icon: Icons.inventory_2_outlined,
+            activeIcon: Icons.inventory_2_rounded),
+        AppSidebarItem(
+            id: 'categories',
+            title: 'Categories',
+            icon: Icons.category_outlined,
+            activeIcon: Icons.category_rounded),
+        AppSidebarItem(
+            id: 'inventory',
+            title: 'Inventory',
+            icon: Icons.warehouse_outlined,
+            activeIcon: Icons.warehouse_rounded,
+            badge: '5',
+            badgeColor: Color(0xFFF59E0B)),
+        AppSidebarItem(
+            id: 'customers',
+            title: 'Customers',
+            icon: Icons.people_outline_rounded,
+            activeIcon: Icons.people_rounded),
       ],
     ),
     SidebarGroup(
       title: 'Finance',
       items: [
-        AppSidebarItem(id: 'sales', title: 'Sales', icon: Icons.receipt_long_outlined, activeIcon: Icons.receipt_long_rounded),
-        AppSidebarItem(id: 'reports', title: 'Reports', icon: Icons.analytics_outlined, activeIcon: Icons.analytics_rounded),
+        AppSidebarItem(
+            id: 'sales',
+            title: 'Sales',
+            icon: Icons.receipt_long_outlined,
+            activeIcon: Icons.receipt_long_rounded),
+        AppSidebarItem(
+            id: 'reports',
+            title: 'Reports',
+            icon: Icons.analytics_outlined,
+            activeIcon: Icons.analytics_rounded),
       ],
     ),
     SidebarGroup(
       title: 'Team',
       items: [
-        AppSidebarItem(id: 'employees', title: 'Employees', icon: Icons.badge_outlined, activeIcon: Icons.badge_rounded),
-        AppSidebarItem(id: 'loyalty', title: 'Loyalty', icon: Icons.card_giftcard_outlined, activeIcon: Icons.card_giftcard_rounded, isNew: true),
+        AppSidebarItem(
+            id: 'employees',
+            title: 'Employees',
+            icon: Icons.badge_outlined,
+            activeIcon: Icons.badge_rounded),
+        AppSidebarItem(
+            id: 'loyalty',
+            title: 'Loyalty',
+            icon: Icons.card_giftcard_outlined,
+            activeIcon: Icons.card_giftcard_rounded,
+            isNew: true),
       ],
     ),
   ];

@@ -38,15 +38,17 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
     final logs = await db.auditLogDao.getLogs(storeId, limit: 100);
     if (mounted) {
       setState(() {
-        _activities = logs.map((log) => _ActivityItem(
-          user: log.userName,
-          action: log.action,
-          details: log.description ?? '',
-          time: _formatTimeAgo(log.createdAt),
-          icon: _getActionIcon(log.action),
-          color: _getActionColor(log.action),
-          type: _getActionType(log.action),
-        )).toList();
+        _activities = logs
+            .map((log) => _ActivityItem(
+                  user: log.userName,
+                  action: log.action,
+                  details: log.description ?? '',
+                  time: _formatTimeAgo(log.createdAt),
+                  icon: _getActionIcon(log.action),
+                  color: _getActionColor(log.action),
+                  type: _getActionType(log.action),
+                ))
+            .toList();
         _updateFilteredList();
         _isLoading = false;
       });
@@ -63,7 +65,8 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
     if (action.contains('login')) return Icons.login_rounded;
     if (action.contains('logout')) return Icons.logout_rounded;
     if (action.contains('sale')) return Icons.receipt_long_rounded;
-    if (action.contains('product') || action.contains('price')) return Icons.edit_rounded;
+    if (action.contains('product') || action.contains('price'))
+      return Icons.edit_rounded;
     if (action.contains('refund')) return Icons.assignment_return_rounded;
     if (action.contains('stock')) return Icons.inventory_rounded;
     if (action.contains('shift')) return Icons.schedule_rounded;
@@ -73,18 +76,26 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
   }
 
   static Color _getActionColor(String action) {
-    if (action.contains('login') || action.contains('backup')) return AppColors.success;
+    if (action.contains('login') || action.contains('backup'))
+      return AppColors.success;
     if (action.contains('logout')) return AppColors.textSecondary;
-    if (action.contains('sale') && !action.contains('refund')) return AppColors.primary;
-    if (action.contains('edit') || action.contains('price') || action.contains('stock')) return AppColors.warning;
-    if (action.contains('refund') || action.contains('cancel') || action.contains('delete')) return AppColors.error;
+    if (action.contains('sale') && !action.contains('refund'))
+      return AppColors.primary;
+    if (action.contains('edit') ||
+        action.contains('price') ||
+        action.contains('stock')) return AppColors.warning;
+    if (action.contains('refund') ||
+        action.contains('cancel') ||
+        action.contains('delete')) return AppColors.error;
     return AppColors.info;
   }
 
   static String _getActionType(String action) {
     if (action.contains('login') || action.contains('logout')) return 'auth';
     if (action.contains('sale') || action.contains('refund')) return 'sales';
-    if (action.contains('product') || action.contains('price') || action.contains('stock')) return 'products';
+    if (action.contains('product') ||
+        action.contains('price') ||
+        action.contains('stock')) return 'products';
     if (action.contains('shift') || action.contains('cash')) return 'system';
     return 'system';
   }
@@ -92,8 +103,10 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
   static String _formatTimeAgo(DateTime dt) {
     final diff = DateTime.now().difference(dt);
     if (diff.inMinutes < 1) return '\u0627\u0644\u0622\u0646';
-    if (diff.inMinutes < 60) return '\u0645\u0646\u0630 ${diff.inMinutes} \u062f\u0642\u064a\u0642\u0629';
-    if (diff.inHours < 24) return '\u0645\u0646\u0630 ${diff.inHours} \u0633\u0627\u0639\u0629';
+    if (diff.inMinutes < 60)
+      return '\u0645\u0646\u0630 ${diff.inMinutes} \u062f\u0642\u064a\u0642\u0629';
+    if (diff.inHours < 24)
+      return '\u0645\u0646\u0630 ${diff.inHours} \u0633\u0627\u0639\u0629';
     return '\u0645\u0646\u0630 ${diff.inDays} \u064a\u0648\u0645';
   }
 
@@ -105,11 +118,13 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
 
-    return SafeArea(child: Column(
+    return SafeArea(
+        child: Column(
       children: [
         AppHeader(
           title: l10n.activityLog,
-          onMenuTap: isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onMenuTap:
+              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 3,
           userName: l10n.defaultUserName,
@@ -120,14 +135,16 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
               ? const Center(child: CircularProgressIndicator())
               : SingleChildScrollView(
                   padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-                  child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
+                  child:
+                      _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
                 ),
         ),
       ],
     ));
   }
 
-  Widget _buildContent(bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n) {
+  Widget _buildContent(bool isWideScreen, bool isMediumScreen, bool isDark,
+      AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -149,8 +166,12 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
           ]),
         ),
         const SizedBox(height: AlhaiSpacing.mdl),
-        _buildGroup('${l10n.activityLog} (${_filteredActivities.length})',
-            _filteredActivities.map((a) => _buildActivityTile(a, isDark)).toList(), isDark,
+        _buildGroup(
+            '${l10n.activityLog} (${_filteredActivities.length})',
+            _filteredActivities
+                .map((a) => _buildActivityTile(a, isDark))
+                .toList(),
+            isDark,
             noItemsText: l10n.noActivities),
       ],
     );
@@ -159,19 +180,28 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
   Widget _buildFilterChip(String filter, String label, bool isDark) {
     final sel = _selectedFilter == filter;
     return FilterChip(
-      label: Text(label, style: TextStyle(
-        color: sel ? Colors.white : (Theme.of(context).colorScheme.onSurface),
-        fontWeight: sel ? FontWeight.bold : FontWeight.normal, fontSize: 12)),
+      label: Text(label,
+          style: TextStyle(
+              color: sel
+                  ? Colors.white
+                  : (Theme.of(context).colorScheme.onSurface),
+              fontWeight: sel ? FontWeight.bold : FontWeight.normal,
+              fontSize: 12)),
       selected: sel,
-      onSelected: (_) => setState(() { _selectedFilter = filter; _updateFilteredList(); }),
+      onSelected: (_) => setState(() {
+        _selectedFilter = filter;
+        _updateFilteredList();
+      }),
       selectedColor: AppColors.primary,
       backgroundColor: Theme.of(context).colorScheme.surface,
-      side: BorderSide(color: sel ? AppColors.primary : (Theme.of(context).dividerColor)),
+      side: BorderSide(
+          color: sel ? AppColors.primary : (Theme.of(context).dividerColor)),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
     );
   }
 
-  Widget _buildGroup(String title, List<Widget> children, bool isDark, {String noItemsText = ''}) {
+  Widget _buildGroup(String title, List<Widget> children, bool isDark,
+      {String noItemsText = ''}) {
     return Container(
       margin: const EdgeInsets.only(bottom: AlhaiSpacing.md),
       decoration: BoxDecoration(
@@ -181,15 +211,24 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Padding(
-          padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl, AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.xs),
-          child: Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.onSurface)),
+          padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl,
+              AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.xs),
+          child: Text(title,
+              style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onSurface)),
         ),
         if (children.isEmpty)
-          Padding(padding: const EdgeInsets.all(AlhaiSpacing.xl), child: Center(
-            child: Text(noItemsText, style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurfaceVariant))))
-        else ...children,
+          Padding(
+              padding: const EdgeInsets.all(AlhaiSpacing.xl),
+              child: Center(
+                  child: Text(noItemsText,
+                      style: TextStyle(
+                          color:
+                              Theme.of(context).colorScheme.onSurfaceVariant))))
+        else
+          ...children,
       ]),
     );
   }
@@ -198,20 +237,34 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
     return ListTile(
       leading: Container(
         padding: const EdgeInsets.all(AlhaiSpacing.xs),
-        decoration: BoxDecoration(color: a.color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
+        decoration: BoxDecoration(
+            color: a.color.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(8)),
         child: Icon(a.icon, color: a.color, size: 20),
       ),
       title: Row(children: [
-        Expanded(child: Text(a.action, style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.w500))),
-        Text(a.time, style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 11)),
+        Expanded(
+            child: Text(a.action,
+                style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    fontWeight: FontWeight.w500))),
+        Text(a.time,
+            style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                fontSize: 11)),
       ]),
       subtitle: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(a.details, style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 12)),
-        Text(a.user, style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.6), fontSize: 11)),
+        Text(a.details,
+            style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                fontSize: 12)),
+        Text(a.user,
+            style: TextStyle(
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurfaceVariant
+                    .withValues(alpha: 0.6),
+                fontSize: 11)),
       ]),
     );
   }
@@ -221,6 +274,12 @@ class _ActivityItem {
   final String user, action, details, time, type;
   final IconData icon;
   final Color color;
-  _ActivityItem({required this.user, required this.action, required this.details,
-      required this.time, required this.icon, required this.color, required this.type});
+  _ActivityItem(
+      {required this.user,
+      required this.action,
+      required this.details,
+      required this.time,
+      required this.icon,
+      required this.color,
+      required this.type});
 }

@@ -225,7 +225,8 @@ class _AlhaiAppBarState extends State<AlhaiAppBar> {
 
     // Elevation from theme
     final baseElevation = appBarTheme.elevation ?? 0;
-    final scrolledElevation = appBarTheme.scrolledUnderElevation ?? baseElevation;
+    final scrolledElevation =
+        appBarTheme.scrolledUnderElevation ?? baseElevation;
 
     // Build leading widget
     Widget? leadingWidget;
@@ -261,8 +262,8 @@ class _AlhaiAppBarState extends State<AlhaiAppBar> {
       effectiveActions.insert(
         0,
         IconButton(
-          icon: Icon(_isSearching 
-              ? (widget.closeIcon ?? Icons.close) 
+          icon: Icon(_isSearching
+              ? (widget.closeIcon ?? Icons.close)
               : (widget.searchIcon ?? Icons.search)),
           onPressed: _toggleSearch,
           tooltip: _isSearching ? closeTooltip : searchTooltip,
@@ -314,8 +315,8 @@ class _AlhaiAppBarState extends State<AlhaiAppBar> {
   }
 
   Widget _buildSearchField(ThemeData theme, TextDirection textDirection) {
-    final searchHint = widget.searchHint ??
-        MaterialLocalizations.of(context).searchFieldLabel;
+    final searchHint =
+        widget.searchHint ?? MaterialLocalizations.of(context).searchFieldLabel;
 
     return TextField(
       controller: _searchController,

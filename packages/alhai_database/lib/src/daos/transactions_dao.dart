@@ -7,20 +7,23 @@ part 'transactions_dao.g.dart';
 
 /// DAO لحركات الحسابات
 @DriftAccessor(tables: [TransactionsTable])
-class TransactionsDao extends DatabaseAccessor<AppDatabase> with _$TransactionsDaoMixin {
+class TransactionsDao extends DatabaseAccessor<AppDatabase>
+    with _$TransactionsDaoMixin {
   TransactionsDao(super.db);
-  
+
   /// الحصول على حركات الحساب (مع فلتر المتجر)
-  Future<List<TransactionsTableData>> getAccountTransactions(String accountId, {String? storeId}) {
+  Future<List<TransactionsTableData>> getAccountTransactions(String accountId,
+      {String? storeId}) {
     return (select(transactionsTable)
-      ..where((t) {
-        var condition = t.accountId.equals(accountId);
-        if (storeId != null) condition = condition & t.storeId.equals(storeId);
-        return condition;
-      })
-      ..orderBy([(t) => OrderingTerm.desc(t.createdAt)])
-      ..limit(200))
-      .get();
+          ..where((t) {
+            var condition = t.accountId.equals(accountId);
+            if (storeId != null)
+              condition = condition & t.storeId.equals(storeId);
+            return condition;
+          })
+          ..orderBy([(t) => OrderingTerm.desc(t.createdAt)])
+          ..limit(200))
+        .get();
   }
 
   /// الحصول على حركات حساب مع فلترة النوع
@@ -30,14 +33,15 @@ class TransactionsDao extends DatabaseAccessor<AppDatabase> with _$TransactionsD
     String? storeId,
   }) {
     return (select(transactionsTable)
-      ..where((t) {
-        var condition = t.accountId.equals(accountId) & t.type.equals(type);
-        if (storeId != null) condition = condition & t.storeId.equals(storeId);
-        return condition;
-      })
-      ..orderBy([(t) => OrderingTerm.desc(t.createdAt)])
-      ..limit(200))
-      .get();
+          ..where((t) {
+            var condition = t.accountId.equals(accountId) & t.type.equals(type);
+            if (storeId != null)
+              condition = condition & t.storeId.equals(storeId);
+            return condition;
+          })
+          ..orderBy([(t) => OrderingTerm.desc(t.createdAt)])
+          ..limit(200))
+        .get();
   }
 
   /// الحصول على حركات فترة زمنية
@@ -48,23 +52,24 @@ class TransactionsDao extends DatabaseAccessor<AppDatabase> with _$TransactionsD
     String? storeId,
   }) {
     return (select(transactionsTable)
-      ..where((t) {
-        var condition = t.accountId.equals(accountId) &
-          t.createdAt.isBiggerOrEqualValue(start) &
-          t.createdAt.isSmallerOrEqualValue(end);
-        if (storeId != null) condition = condition & t.storeId.equals(storeId);
-        return condition;
-      })
-      ..orderBy([(t) => OrderingTerm.desc(t.createdAt)])
-      ..limit(500))
-      .get();
+          ..where((t) {
+            var condition = t.accountId.equals(accountId) &
+                t.createdAt.isBiggerOrEqualValue(start) &
+                t.createdAt.isSmallerOrEqualValue(end);
+            if (storeId != null)
+              condition = condition & t.storeId.equals(storeId);
+            return condition;
+          })
+          ..orderBy([(t) => OrderingTerm.desc(t.createdAt)])
+          ..limit(500))
+        .get();
   }
-  
+
   /// إضافة حركة
   Future<int> insertTransaction(TransactionsTableCompanion transaction) {
     return into(transactionsTable).insert(transaction);
   }
-  
+
   /// تسجيل فاتورة (دين على العميل)
   Future<int> recordInvoice({
     required String id,
@@ -88,7 +93,7 @@ class TransactionsDao extends DatabaseAccessor<AppDatabase> with _$TransactionsD
       createdAt: DateTime.now(),
     ));
   }
-  
+
   /// تسجيل دفعة من العميل
   Future<int> recordPayment({
     required String id,
@@ -113,7 +118,7 @@ class TransactionsDao extends DatabaseAccessor<AppDatabase> with _$TransactionsD
       createdAt: DateTime.now(),
     ));
   }
-  
+
   /// تسجيل فائدة شهرية
   Future<int> recordInterest({
     required String id,
@@ -136,18 +141,18 @@ class TransactionsDao extends DatabaseAccessor<AppDatabase> with _$TransactionsD
       createdAt: DateTime.now(),
     ));
   }
-  
+
   /// التحقق من وجود فائدة لفترة معينة
   Future<bool> hasInterestForPeriod(String accountId, String periodKey) async {
     final result = await (select(transactionsTable)
-      ..where((t) => 
-        t.accountId.equals(accountId) & 
-        t.type.equals('interest') &
-        t.periodKey.equals(periodKey)))
-      .get();
+          ..where((t) =>
+              t.accountId.equals(accountId) &
+              t.type.equals('interest') &
+              t.periodKey.equals(periodKey)))
+        .get();
     return result.isNotEmpty;
   }
-  
+
   /// إجمالي المدفوعات لحساب
   Future<double> getTotalPayments(String accountId) async {
     final result = await customSelect(
@@ -156,16 +161,17 @@ class TransactionsDao extends DatabaseAccessor<AppDatabase> with _$TransactionsD
          WHERE account_id = ? AND type = 'payment' ''',
       variables: [Variable.withString(accountId)],
     ).getSingle();
-    
+
     return result.data['total'] as double? ?? 0.0;
   }
-  
+
   /// مراقبة حركات الحساب
-  Stream<List<TransactionsTableData>> watchAccountTransactions(String accountId) {
+  Stream<List<TransactionsTableData>> watchAccountTransactions(
+      String accountId) {
     return (select(transactionsTable)
-      ..where((t) => t.accountId.equals(accountId))
-      ..orderBy([(t) => OrderingTerm.desc(t.createdAt)])
-      ..limit(50))
-      .watch();
+          ..where((t) => t.accountId.equals(accountId))
+          ..orderBy([(t) => OrderingTerm.desc(t.createdAt)])
+          ..limit(50))
+        .watch();
   }
 }

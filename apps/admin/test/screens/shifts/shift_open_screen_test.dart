@@ -24,8 +24,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const ShiftOpenScreen()));
+      await tester.pumpWidget(createTestWidget(const ShiftOpenScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(ShiftOpenScreen), findsOneWidget);
@@ -39,8 +38,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const ShiftOpenScreen()));
+      await tester.pumpWidget(createTestWidget(const ShiftOpenScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.account_balance_wallet_rounded), findsWidgets);
@@ -54,8 +52,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const ShiftOpenScreen()));
+      await tester.pumpWidget(createTestWidget(const ShiftOpenScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.info_outline_rounded), findsWidgets);
@@ -69,8 +66,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const ShiftOpenScreen()));
+      await tester.pumpWidget(createTestWidget(const ShiftOpenScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.login_rounded), findsWidgets);

@@ -64,10 +64,14 @@ void main() {
   group('LoyaltyTransactionType', () {
     test('should have all expected values', () {
       expect(LoyaltyTransactionType.values, hasLength(4));
-      expect(LoyaltyTransactionType.values, contains(LoyaltyTransactionType.earned));
-      expect(LoyaltyTransactionType.values, contains(LoyaltyTransactionType.redeemed));
-      expect(LoyaltyTransactionType.values, contains(LoyaltyTransactionType.expired));
-      expect(LoyaltyTransactionType.values, contains(LoyaltyTransactionType.adjusted));
+      expect(LoyaltyTransactionType.values,
+          contains(LoyaltyTransactionType.earned));
+      expect(LoyaltyTransactionType.values,
+          contains(LoyaltyTransactionType.redeemed));
+      expect(LoyaltyTransactionType.values,
+          contains(LoyaltyTransactionType.expired));
+      expect(LoyaltyTransactionType.values,
+          contains(LoyaltyTransactionType.adjusted));
     });
   });
 

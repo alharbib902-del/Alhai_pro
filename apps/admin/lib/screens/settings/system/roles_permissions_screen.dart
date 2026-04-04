@@ -11,7 +11,8 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_core/alhai_core.dart';
-import 'package:alhai_auth/alhai_auth.dart' show isAdminProvider, currentUserProvider;
+import 'package:alhai_auth/alhai_auth.dart'
+    show isAdminProvider, currentUserProvider;
 import 'package:alhai_design_system/alhai_design_system.dart';
 
 import '../../../core/constants/admin_permissions.dart';
@@ -25,8 +26,7 @@ class RolesPermissionsScreen extends ConsumerStatefulWidget {
       _RolesPermissionsScreenState();
 }
 
-class _RolesPermissionsScreenState
-    extends ConsumerState<RolesPermissionsScreen>
+class _RolesPermissionsScreenState extends ConsumerState<RolesPermissionsScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   bool _isLoading = true;
@@ -36,81 +36,86 @@ class _RolesPermissionsScreenState
 
   // بيانات تجريبية احتياطية
   static List<Role> get _defaultRoles => [
-    Role(
-      id: '1',
-      name: '\u0645\u062f\u064a\u0631 \u0627\u0644\u0646\u0638\u0627\u0645',
-      description: '\u0635\u0644\u0627\u062d\u064a\u0627\u062a \u0643\u0627\u0645\u0644\u0629 \u0644\u0644\u0646\u0638\u0627\u0645',
-      color: Colors.purple,
-      icon: Icons.admin_panel_settings,
-      usersCount: 1,
-      isSystemRole: true,
-      permissions: Permission.values.map((p) => p.name).toList(),
-    ),
-    Role(
-      id: '2',
-      name: '\u0645\u062f\u064a\u0631 \u0627\u0644\u0645\u062a\u062c\u0631',
-      description: '\u0625\u062f\u0627\u0631\u0629 \u0627\u0644\u0645\u062a\u062c\u0631 \u0648\u0627\u0644\u0645\u0648\u0638\u0641\u064a\u0646',
-      color: AppColors.primary,
-      icon: Icons.store,
-      usersCount: 2,
-      isSystemRole: true,
-      permissions: [
-        'pos_access',
-        'products_manage',
-        'inventory_manage',
-        'customers_manage',
-        'reports_view',
-        'staff_manage',
-        'discounts_create',
-        'refunds_approve',
-      ],
-    ),
-    Role(
-      id: '3',
-      name: '\u0643\u0627\u0634\u064a\u0631',
-      description: '\u0639\u0645\u0644\u064a\u0627\u062a \u0627\u0644\u0628\u064a\u0639 \u0648\u0627\u0644\u062f\u0641\u0639',
-      color: AppColors.success,
-      icon: Icons.point_of_sale,
-      usersCount: 5,
-      isSystemRole: true,
-      permissions: [
-        'pos_access',
-        'products_view',
-        'customers_view',
-        'discounts_apply',
-      ],
-    ),
-    Role(
-      id: '4',
-      name: '\u0623\u0645\u064a\u0646 \u0645\u062e\u0632\u0646',
-      description: '\u0625\u062f\u0627\u0631\u0629 \u0627\u0644\u0645\u062e\u0632\u0648\u0646 \u0648\u0627\u0644\u0645\u0646\u062a\u062c\u0627\u062a',
-      color: AppColors.warning,
-      icon: Icons.inventory,
-      usersCount: 2,
-      isSystemRole: false,
-      permissions: [
-        'products_manage',
-        'inventory_manage',
-        'inventory_adjust',
-        'suppliers_view',
-      ],
-    ),
-    Role(
-      id: '5',
-      name: '\u0645\u062d\u0627\u0633\u0628',
-      description: '\u0627\u0644\u062a\u0642\u0627\u0631\u064a\u0631 \u0627\u0644\u0645\u0627\u0644\u064a\u0629 \u0648\u0627\u0644\u062d\u0633\u0627\u0628\u0627\u062a',
-      color: AppColors.info,
-      icon: Icons.account_balance,
-      usersCount: 1,
-      isSystemRole: false,
-      permissions: [
-        'reports_view',
-        'reports_export',
-        'debts_manage',
-        'expenses_manage',
-      ],
-    ),
-  ];
+        Role(
+          id: '1',
+          name: '\u0645\u062f\u064a\u0631 \u0627\u0644\u0646\u0638\u0627\u0645',
+          description:
+              '\u0635\u0644\u0627\u062d\u064a\u0627\u062a \u0643\u0627\u0645\u0644\u0629 \u0644\u0644\u0646\u0638\u0627\u0645',
+          color: Colors.purple,
+          icon: Icons.admin_panel_settings,
+          usersCount: 1,
+          isSystemRole: true,
+          permissions: Permission.values.map((p) => p.name).toList(),
+        ),
+        Role(
+          id: '2',
+          name: '\u0645\u062f\u064a\u0631 \u0627\u0644\u0645\u062a\u062c\u0631',
+          description:
+              '\u0625\u062f\u0627\u0631\u0629 \u0627\u0644\u0645\u062a\u062c\u0631 \u0648\u0627\u0644\u0645\u0648\u0638\u0641\u064a\u0646',
+          color: AppColors.primary,
+          icon: Icons.store,
+          usersCount: 2,
+          isSystemRole: true,
+          permissions: [
+            'pos_access',
+            'products_manage',
+            'inventory_manage',
+            'customers_manage',
+            'reports_view',
+            'staff_manage',
+            'discounts_create',
+            'refunds_approve',
+          ],
+        ),
+        Role(
+          id: '3',
+          name: '\u0643\u0627\u0634\u064a\u0631',
+          description:
+              '\u0639\u0645\u0644\u064a\u0627\u062a \u0627\u0644\u0628\u064a\u0639 \u0648\u0627\u0644\u062f\u0641\u0639',
+          color: AppColors.success,
+          icon: Icons.point_of_sale,
+          usersCount: 5,
+          isSystemRole: true,
+          permissions: [
+            'pos_access',
+            'products_view',
+            'customers_view',
+            'discounts_apply',
+          ],
+        ),
+        Role(
+          id: '4',
+          name: '\u0623\u0645\u064a\u0646 \u0645\u062e\u0632\u0646',
+          description:
+              '\u0625\u062f\u0627\u0631\u0629 \u0627\u0644\u0645\u062e\u0632\u0648\u0646 \u0648\u0627\u0644\u0645\u0646\u062a\u062c\u0627\u062a',
+          color: AppColors.warning,
+          icon: Icons.inventory,
+          usersCount: 2,
+          isSystemRole: false,
+          permissions: [
+            'products_manage',
+            'inventory_manage',
+            'inventory_adjust',
+            'suppliers_view',
+          ],
+        ),
+        Role(
+          id: '5',
+          name: '\u0645\u062d\u0627\u0633\u0628',
+          description:
+              '\u0627\u0644\u062a\u0642\u0627\u0631\u064a\u0631 \u0627\u0644\u0645\u0627\u0644\u064a\u0629 \u0648\u0627\u0644\u062d\u0633\u0627\u0628\u0627\u062a',
+          color: AppColors.info,
+          icon: Icons.account_balance,
+          usersCount: 1,
+          isSystemRole: false,
+          permissions: [
+            'reports_view',
+            'reports_export',
+            'debts_manage',
+            'expenses_manage',
+          ],
+        ),
+      ];
 
   @override
   void initState() {
@@ -143,7 +148,11 @@ class _RolesPermissionsScreenState
             final map = jsonDecode(r.permissions) as Map<String, dynamic>;
             permissions = map.keys.where((k) => map[k] == true).toList();
           } else {
-            permissions = r.permissions.split(',').map((s) => s.trim()).where((s) => s.isNotEmpty).toList();
+            permissions = r.permissions
+                .split(',')
+                .map((s) => s.trim())
+                .where((s) => s.isNotEmpty)
+                .toList();
           }
         } catch (_) {
           permissions = [];
@@ -174,20 +183,34 @@ class _RolesPermissionsScreenState
   }
 
   Color _getRoleColor(String roleName) {
-    if (roleName.contains('\u0645\u062f\u064a\u0631 \u0627\u0644\u0646\u0638\u0627\u0645') || roleName.toLowerCase().contains('admin')) return Colors.purple;
-    if (roleName.contains('\u0645\u062f\u064a\u0631') || roleName.toLowerCase().contains('manager')) return AppColors.primary;
-    if (roleName.contains('\u0643\u0627\u0634\u064a\u0631') || roleName.toLowerCase().contains('cashier')) return AppColors.success;
-    if (roleName.contains('\u0623\u0645\u064a\u0646') || roleName.toLowerCase().contains('warehouse')) return AppColors.warning;
-    if (roleName.contains('\u0645\u062d\u0627\u0633\u0628') || roleName.toLowerCase().contains('accountant')) return AppColors.info;
+    if (roleName.contains(
+            '\u0645\u062f\u064a\u0631 \u0627\u0644\u0646\u0638\u0627\u0645') ||
+        roleName.toLowerCase().contains('admin')) return Colors.purple;
+    if (roleName.contains('\u0645\u062f\u064a\u0631') ||
+        roleName.toLowerCase().contains('manager')) return AppColors.primary;
+    if (roleName.contains('\u0643\u0627\u0634\u064a\u0631') ||
+        roleName.toLowerCase().contains('cashier')) return AppColors.success;
+    if (roleName.contains('\u0623\u0645\u064a\u0646') ||
+        roleName.toLowerCase().contains('warehouse')) return AppColors.warning;
+    if (roleName.contains('\u0645\u062d\u0627\u0633\u0628') ||
+        roleName.toLowerCase().contains('accountant')) return AppColors.info;
     return AppColors.primary;
   }
 
   IconData _getRoleIcon(String roleName) {
-    if (roleName.contains('\u0645\u062f\u064a\u0631 \u0627\u0644\u0646\u0638\u0627\u0645') || roleName.toLowerCase().contains('admin')) return Icons.admin_panel_settings;
-    if (roleName.contains('\u0645\u062f\u064a\u0631') || roleName.toLowerCase().contains('manager')) return Icons.store;
-    if (roleName.contains('\u0643\u0627\u0634\u064a\u0631') || roleName.toLowerCase().contains('cashier')) return Icons.point_of_sale;
-    if (roleName.contains('\u0623\u0645\u064a\u0646') || roleName.toLowerCase().contains('warehouse')) return Icons.inventory;
-    if (roleName.contains('\u0645\u062d\u0627\u0633\u0628') || roleName.toLowerCase().contains('accountant')) return Icons.account_balance;
+    if (roleName.contains(
+            '\u0645\u062f\u064a\u0631 \u0627\u0644\u0646\u0638\u0627\u0645') ||
+        roleName.toLowerCase().contains('admin'))
+      return Icons.admin_panel_settings;
+    if (roleName.contains('\u0645\u062f\u064a\u0631') ||
+        roleName.toLowerCase().contains('manager')) return Icons.store;
+    if (roleName.contains('\u0643\u0627\u0634\u064a\u0631') ||
+        roleName.toLowerCase().contains('cashier')) return Icons.point_of_sale;
+    if (roleName.contains('\u0623\u0645\u064a\u0646') ||
+        roleName.toLowerCase().contains('warehouse')) return Icons.inventory;
+    if (roleName.contains('\u0645\u062d\u0627\u0633\u0628') ||
+        roleName.toLowerCase().contains('accountant'))
+      return Icons.account_balance;
     return Icons.badge;
   }
 
@@ -196,6 +219,7 @@ class _RolesPermissionsScreenState
     _tabController.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     final isWideScreen = context.isDesktop;
@@ -203,43 +227,44 @@ class _RolesPermissionsScreenState
     final l10n = AppLocalizations.of(context);
 
     return Column(
-              children: [
-                AppHeader(
-                  title: l10n.rolesPermissions,
-                  onMenuTap: isWideScreen
-                      ? null
-                      : () => Scaffold.of(context).openDrawer(),
-                  onNotificationsTap: () => context.push('/notifications'),
-                  notificationsCount: 3,
-                  userName: l10n.defaultUserName,
-                  userRole: l10n.branchManager,
-                ),
-                // Tab bar
-                Container(
-                  color: Theme.of(context).colorScheme.surface,
-                  child: TabBar(
-                    controller: _tabController,
-                    labelColor: AppColors.primary,
-                    unselectedLabelColor: Theme.of(context).colorScheme.onSurfaceVariant,
-                    indicatorColor: AppColors.primary,
-                    tabs: [
-                      Tab(icon: const Icon(Icons.groups), text: l10n.rolesTab),
-                      Tab(icon: const Icon(Icons.security), text: l10n.permissionsTab),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: TabBarView(
-                    controller: _tabController,
-                    children: [
-                      _buildRolesTab(isDark),
-                      _buildPermissionsTab(isDark),
-                    ],
-                  ),
-                ),
-              ],
-            );
+      children: [
+        AppHeader(
+          title: l10n.rolesPermissions,
+          onMenuTap:
+              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onNotificationsTap: () => context.push('/notifications'),
+          notificationsCount: 3,
+          userName: l10n.defaultUserName,
+          userRole: l10n.branchManager,
+        ),
+        // Tab bar
+        Container(
+          color: Theme.of(context).colorScheme.surface,
+          child: TabBar(
+            controller: _tabController,
+            labelColor: AppColors.primary,
+            unselectedLabelColor:
+                Theme.of(context).colorScheme.onSurfaceVariant,
+            indicatorColor: AppColors.primary,
+            tabs: [
+              Tab(icon: const Icon(Icons.groups), text: l10n.rolesTab),
+              Tab(icon: const Icon(Icons.security), text: l10n.permissionsTab),
+            ],
+          ),
+        ),
+        Expanded(
+          child: TabBarView(
+            controller: _tabController,
+            children: [
+              _buildRolesTab(isDark),
+              _buildPermissionsTab(isDark),
+            ],
+          ),
+        ),
+      ],
+    );
   }
+
   Widget _buildRolesTab(bool isDark) {
     final l10n = AppLocalizations.of(context);
     if (_isLoading) {
@@ -269,7 +294,7 @@ class _RolesPermissionsScreenState
           if (_roles.isEmpty)
             AppEmptyState.noData(context, title: l10n.rolesPermissions)
           else
-          ..._roles.map((role) => _buildRoleCard(role, isDark)),
+            ..._roles.map((role) => _buildRoleCard(role, isDark)),
         ],
       ),
     );
@@ -283,8 +308,7 @@ class _RolesPermissionsScreenState
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color:
-              Theme.of(context).dividerColor,
+          color: Theme.of(context).dividerColor,
         ),
       ),
       child: InkWell(
@@ -314,8 +338,7 @@ class _RolesPermissionsScreenState
                           role.name,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color:
-                                Theme.of(context).colorScheme.onSurface,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
                         if (role.isSystemRole) ...[
@@ -333,7 +356,9 @@ class _RolesPermissionsScreenState
                               l10n.systemBadge,
                               style: TextStyle(
                                 fontSize: 10,
-                                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurfaceVariant,
                               ),
                             ),
                           ),
@@ -351,25 +376,31 @@ class _RolesPermissionsScreenState
                     const SizedBox(height: AlhaiSpacing.xxs),
                     Row(
                       children: [
-                        Icon(Icons.person, size: 14,
-                            color: Theme.of(context).colorScheme.onSurfaceVariant),
+                        Icon(Icons.person,
+                            size: 14,
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant),
                         const SizedBox(width: AlhaiSpacing.xxs),
                         Text(
                           l10n.userCountLabel(role.usersCount),
                           style: TextStyle(
                             fontSize: 11,
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                         ),
                         const SizedBox(width: AlhaiSpacing.md),
-                        Icon(Icons.key, size: 14,
-                            color: Theme.of(context).colorScheme.onSurfaceVariant),
+                        Icon(Icons.key,
+                            size: 14,
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant),
                         const SizedBox(width: AlhaiSpacing.xxs),
                         Text(
                           l10n.permissionCountLabel(role.permissions.length),
                           style: TextStyle(
                             fontSize: 11,
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                         ),
                       ],
@@ -384,8 +415,11 @@ class _RolesPermissionsScreenState
                 itemBuilder: (context) {
                   final l10n = AppLocalizations.of(context);
                   return [
-                    PopupMenuItem(value: 'edit', child: Text(l10n.editRoleMenu)),
-                    PopupMenuItem(value: 'duplicate', child: Text(l10n.duplicateRoleMenu)),
+                    PopupMenuItem(
+                        value: 'edit', child: Text(l10n.editRoleMenu)),
+                    PopupMenuItem(
+                        value: 'duplicate',
+                        child: Text(l10n.duplicateRoleMenu)),
                     PopupMenuItem(value: 'users', child: Text(l10n.users)),
                     if (!role.isSystemRole)
                       PopupMenuItem(
@@ -425,8 +459,7 @@ class _RolesPermissionsScreenState
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color:
-              Theme.of(context).dividerColor,
+          color: Theme.of(context).dividerColor,
         ),
       ),
       child: ExpansionTile(
@@ -459,8 +492,7 @@ class _RolesPermissionsScreenState
                 size: 20),
             title: Text(
               permission.label,
-              style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurface),
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
             ),
             subtitle: Text(
               permission.description,
@@ -541,7 +573,9 @@ class _RolesPermissionsScreenState
                         Text(role.description,
                             style: TextStyle(
                               fontSize: 12,
-                              color: Theme.of(context).colorScheme.onSurfaceVariant,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurfaceVariant,
                             )),
                       ],
                     ),
@@ -582,8 +616,7 @@ class _RolesPermissionsScreenState
                                       color: AppColors.primary)),
                               Text(l10n.users,
                                   style: const TextStyle(
-                                      fontSize: 11,
-                                      color: AppColors.primary)),
+                                      fontSize: 11, color: AppColors.primary)),
                             ],
                           ),
                         ],
@@ -612,8 +645,7 @@ class _RolesPermissionsScreenState
                                       color: AppColors.success)),
                               Text(l10n.permissionsTab,
                                   style: const TextStyle(
-                                      fontSize: 11,
-                                      color: AppColors.success)),
+                                      fontSize: 11, color: AppColors.success)),
                             ],
                           ),
                         ],
@@ -626,7 +658,8 @@ class _RolesPermissionsScreenState
             const SizedBox(height: AlhaiSpacing.md),
             Expanded(
               child: ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg),
                 itemCount: role.permissions.length,
                 itemBuilder: (context, index) {
                   final permissionName = role.permissions[index];
@@ -704,7 +737,9 @@ class _RolesPermissionsScreenState
     if (!isAdmin) {
       final l10n = AppLocalizations.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.errorOccurred), backgroundColor: AppColors.error),
+        SnackBar(
+            content: Text(l10n.errorOccurred),
+            backgroundColor: AppColors.error),
       );
       debugPrint('Security: non-admin attempted sensitive role operation');
       return false;
@@ -777,8 +812,8 @@ class _RolesPermissionsScreenState
                 ),
                 title: Text(
                   '${l10n.users} ${index + 1}',
-                  style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurface),
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.onSurface),
                 ),
                 subtitle: Text('user${index + 1}@example.com'),
               ),
@@ -897,7 +932,9 @@ class _RoleFormDialogState extends State<_RoleFormDialog> {
               child: Row(
                 children: [
                   Text(
-                    widget.role == null ? l10n.addRoleTitle : l10n.editRoleTitle,
+                    widget.role == null
+                        ? l10n.addRoleTitle
+                        : l10n.editRoleTitle,
                     style: const TextStyle(
                         fontSize: 18, fontWeight: FontWeight.bold),
                   ),
@@ -948,21 +985,18 @@ class _RoleFormDialogState extends State<_RoleFormDialog> {
                           .where((p) => p.category == category)
                           .toList();
                       return ExpansionTile(
-                        leading:
-                            Icon(category.icon, color: category.color),
+                        leading: Icon(category.icon, color: category.color),
                         title: Text(category.label),
                         children: permissions.map((permission) {
                           return CheckboxListTile(
-                            value: _selectedPermissions
-                                .contains(permission.name),
+                            value:
+                                _selectedPermissions.contains(permission.name),
                             onChanged: (value) {
                               setState(() {
                                 if (value == true) {
-                                  _selectedPermissions
-                                      .add(permission.name);
+                                  _selectedPermissions.add(permission.name);
                                 } else {
-                                  _selectedPermissions
-                                      .remove(permission.name);
+                                  _selectedPermissions.remove(permission.name);
                                 }
                               });
                             },
@@ -971,8 +1005,7 @@ class _RoleFormDialogState extends State<_RoleFormDialog> {
                                 style: const TextStyle(
                                     fontSize: 12,
                                     color: AppColors.textSecondary)),
-                            controlAffinity:
-                                ListTileControlAffinity.leading,
+                            controlAffinity: ListTileControlAffinity.leading,
                           );
                         }).toList(),
                       );
@@ -1039,166 +1072,299 @@ class Role {
 
 /// فئات الصلاحيات
 enum PermissionCategory {
-  pos, products, inventory, customers, sales, reports, settings, staff;
+  pos,
+  products,
+  inventory,
+  customers,
+  sales,
+  reports,
+  settings,
+  staff;
 
   String get label => '';
   String localizedLabel(AppLocalizations l10n) {
     switch (this) {
-      case PermissionCategory.pos: return l10n.permCategoryPosLabel;
-      case PermissionCategory.products: return l10n.permCategoryProductsLabel;
-      case PermissionCategory.inventory: return l10n.permCategoryInventoryLabel;
-      case PermissionCategory.customers: return l10n.permCategoryCustomersLabel;
-      case PermissionCategory.sales: return l10n.permCategorySalesLabel;
-      case PermissionCategory.reports: return l10n.permCategoryReportsLabel;
-      case PermissionCategory.settings: return l10n.permCategorySettingsLabel;
-      case PermissionCategory.staff: return l10n.permCategoryStaffLabel;
+      case PermissionCategory.pos:
+        return l10n.permCategoryPosLabel;
+      case PermissionCategory.products:
+        return l10n.permCategoryProductsLabel;
+      case PermissionCategory.inventory:
+        return l10n.permCategoryInventoryLabel;
+      case PermissionCategory.customers:
+        return l10n.permCategoryCustomersLabel;
+      case PermissionCategory.sales:
+        return l10n.permCategorySalesLabel;
+      case PermissionCategory.reports:
+        return l10n.permCategoryReportsLabel;
+      case PermissionCategory.settings:
+        return l10n.permCategorySettingsLabel;
+      case PermissionCategory.staff:
+        return l10n.permCategoryStaffLabel;
     }
   }
 
   IconData get icon {
     switch (this) {
-      case PermissionCategory.pos: return Icons.point_of_sale;
-      case PermissionCategory.products: return Icons.inventory_2;
-      case PermissionCategory.inventory: return Icons.warehouse;
-      case PermissionCategory.customers: return Icons.people;
-      case PermissionCategory.sales: return Icons.shopping_cart;
-      case PermissionCategory.reports: return Icons.analytics;
-      case PermissionCategory.settings: return Icons.settings;
-      case PermissionCategory.staff: return Icons.badge;
+      case PermissionCategory.pos:
+        return Icons.point_of_sale;
+      case PermissionCategory.products:
+        return Icons.inventory_2;
+      case PermissionCategory.inventory:
+        return Icons.warehouse;
+      case PermissionCategory.customers:
+        return Icons.people;
+      case PermissionCategory.sales:
+        return Icons.shopping_cart;
+      case PermissionCategory.reports:
+        return Icons.analytics;
+      case PermissionCategory.settings:
+        return Icons.settings;
+      case PermissionCategory.staff:
+        return Icons.badge;
     }
   }
 
   Color get color {
     switch (this) {
-      case PermissionCategory.pos: return AppColors.primary;
-      case PermissionCategory.products: return AppColors.success;
-      case PermissionCategory.inventory: return AppColors.warning;
-      case PermissionCategory.customers: return AppColors.info;
-      case PermissionCategory.sales: return Colors.purple;
-      case PermissionCategory.reports: return Colors.teal;
-      case PermissionCategory.settings: return AppColors.grey600;
-      case PermissionCategory.staff: return Colors.indigo;
+      case PermissionCategory.pos:
+        return AppColors.primary;
+      case PermissionCategory.products:
+        return AppColors.success;
+      case PermissionCategory.inventory:
+        return AppColors.warning;
+      case PermissionCategory.customers:
+        return AppColors.info;
+      case PermissionCategory.sales:
+        return Colors.purple;
+      case PermissionCategory.reports:
+        return Colors.teal;
+      case PermissionCategory.settings:
+        return AppColors.grey600;
+      case PermissionCategory.staff:
+        return Colors.indigo;
     }
   }
 }
 
 /// الصلاحيات
 enum Permission {
-  posAccess, posHold, posSplitPayment,
-  productsView, productsManage, productsDelete,
-  inventoryView, inventoryManage, inventoryAdjust,
-  customersView, customersManage, customersDelete,
-  discountsApply, discountsCreate, refundsRequest, refundsApprove,
-  reportsView, reportsExport,
-  settingsView, settingsManage,
-  staffView, staffManage;
+  posAccess,
+  posHold,
+  posSplitPayment,
+  productsView,
+  productsManage,
+  productsDelete,
+  inventoryView,
+  inventoryManage,
+  inventoryAdjust,
+  customersView,
+  customersManage,
+  customersDelete,
+  discountsApply,
+  discountsCreate,
+  refundsRequest,
+  refundsApprove,
+  reportsView,
+  reportsExport,
+  settingsView,
+  settingsManage,
+  staffView,
+  staffManage;
 
   /// Returns the permission string identifier from [AdminPermissions].
   String get name {
     switch (this) {
-      case Permission.posAccess: return AdminPermissions.posAccess;
-      case Permission.posHold: return AdminPermissions.posHold;
-      case Permission.posSplitPayment: return AdminPermissions.posSplitPayment;
-      case Permission.productsView: return AdminPermissions.productsView;
-      case Permission.productsManage: return AdminPermissions.productsManage;
-      case Permission.productsDelete: return AdminPermissions.productsDelete;
-      case Permission.inventoryView: return AdminPermissions.inventoryView;
-      case Permission.inventoryManage: return AdminPermissions.inventoryManage;
-      case Permission.inventoryAdjust: return AdminPermissions.inventoryAdjust;
-      case Permission.customersView: return AdminPermissions.customersView;
-      case Permission.customersManage: return AdminPermissions.customersManage;
-      case Permission.customersDelete: return AdminPermissions.customersDelete;
-      case Permission.discountsApply: return AdminPermissions.discountsApply;
-      case Permission.discountsCreate: return AdminPermissions.discountsCreate;
-      case Permission.refundsRequest: return AdminPermissions.refundsRequest;
-      case Permission.refundsApprove: return AdminPermissions.refundsApprove;
-      case Permission.reportsView: return AdminPermissions.reportsView;
-      case Permission.reportsExport: return AdminPermissions.reportsExport;
-      case Permission.settingsView: return AdminPermissions.settingsView;
-      case Permission.settingsManage: return AdminPermissions.settingsManage;
-      case Permission.staffView: return AdminPermissions.staffView;
-      case Permission.staffManage: return AdminPermissions.staffManage;
+      case Permission.posAccess:
+        return AdminPermissions.posAccess;
+      case Permission.posHold:
+        return AdminPermissions.posHold;
+      case Permission.posSplitPayment:
+        return AdminPermissions.posSplitPayment;
+      case Permission.productsView:
+        return AdminPermissions.productsView;
+      case Permission.productsManage:
+        return AdminPermissions.productsManage;
+      case Permission.productsDelete:
+        return AdminPermissions.productsDelete;
+      case Permission.inventoryView:
+        return AdminPermissions.inventoryView;
+      case Permission.inventoryManage:
+        return AdminPermissions.inventoryManage;
+      case Permission.inventoryAdjust:
+        return AdminPermissions.inventoryAdjust;
+      case Permission.customersView:
+        return AdminPermissions.customersView;
+      case Permission.customersManage:
+        return AdminPermissions.customersManage;
+      case Permission.customersDelete:
+        return AdminPermissions.customersDelete;
+      case Permission.discountsApply:
+        return AdminPermissions.discountsApply;
+      case Permission.discountsCreate:
+        return AdminPermissions.discountsCreate;
+      case Permission.refundsRequest:
+        return AdminPermissions.refundsRequest;
+      case Permission.refundsApprove:
+        return AdminPermissions.refundsApprove;
+      case Permission.reportsView:
+        return AdminPermissions.reportsView;
+      case Permission.reportsExport:
+        return AdminPermissions.reportsExport;
+      case Permission.settingsView:
+        return AdminPermissions.settingsView;
+      case Permission.settingsManage:
+        return AdminPermissions.settingsManage;
+      case Permission.staffView:
+        return AdminPermissions.staffView;
+      case Permission.staffManage:
+        return AdminPermissions.staffManage;
     }
   }
 
   String get label {
     switch (this) {
-      case Permission.posAccess: return '\u0627\u0644\u0648\u0635\u0648\u0644 \u0644\u0646\u0642\u0637\u0629 \u0627\u0644\u0628\u064a\u0639';
-      case Permission.posHold: return '\u062a\u0639\u0644\u064a\u0642 \u0627\u0644\u0641\u0648\u0627\u062a\u064a\u0631';
-      case Permission.posSplitPayment: return '\u062a\u0642\u0633\u064a\u0645 \u0627\u0644\u062f\u0641\u0639';
-      case Permission.productsView: return '\u0639\u0631\u0636 \u0627\u0644\u0645\u0646\u062a\u062c\u0627\u062a';
-      case Permission.productsManage: return '\u0625\u062f\u0627\u0631\u0629 \u0627\u0644\u0645\u0646\u062a\u062c\u0627\u062a';
-      case Permission.productsDelete: return '\u062d\u0630\u0641 \u0627\u0644\u0645\u0646\u062a\u062c\u0627\u062a';
-      case Permission.inventoryView: return '\u0639\u0631\u0636 \u0627\u0644\u0645\u062e\u0632\u0648\u0646';
-      case Permission.inventoryManage: return '\u0625\u062f\u0627\u0631\u0629 \u0627\u0644\u0645\u062e\u0632\u0648\u0646';
-      case Permission.inventoryAdjust: return '\u062a\u0639\u062f\u064a\u0644 \u0627\u0644\u0645\u062e\u0632\u0648\u0646';
-      case Permission.customersView: return '\u0639\u0631\u0636 \u0627\u0644\u0639\u0645\u0644\u0627\u0621';
-      case Permission.customersManage: return '\u0625\u062f\u0627\u0631\u0629 \u0627\u0644\u0639\u0645\u0644\u0627\u0621';
-      case Permission.customersDelete: return '\u062d\u0630\u0641 \u0627\u0644\u0639\u0645\u0644\u0627\u0621';
-      case Permission.discountsApply: return '\u062a\u0637\u0628\u064a\u0642 \u0627\u0644\u062e\u0635\u0648\u0645\u0627\u062a';
-      case Permission.discountsCreate: return '\u0625\u0646\u0634\u0627\u0621 \u0627\u0644\u062e\u0635\u0648\u0645\u0627\u062a';
-      case Permission.refundsRequest: return '\u0637\u0644\u0628 \u0627\u0633\u062a\u0631\u062c\u0627\u0639';
-      case Permission.refundsApprove: return '\u0627\u0644\u0645\u0648\u0627\u0641\u0642\u0629 \u0639\u0644\u0649 \u0627\u0633\u062a\u0631\u062c\u0627\u0639';
-      case Permission.reportsView: return '\u0639\u0631\u0636 \u0627\u0644\u062a\u0642\u0627\u0631\u064a\u0631';
-      case Permission.reportsExport: return '\u062a\u0635\u062f\u064a\u0631 \u0627\u0644\u062a\u0642\u0627\u0631\u064a\u0631';
-      case Permission.settingsView: return '\u0639\u0631\u0636 \u0627\u0644\u0625\u0639\u062f\u0627\u062f\u0627\u062a';
-      case Permission.settingsManage: return '\u0625\u062f\u0627\u0631\u0629 \u0627\u0644\u0625\u0639\u062f\u0627\u062f\u0627\u062a';
-      case Permission.staffView: return '\u0639\u0631\u0636 \u0627\u0644\u0645\u0648\u0638\u0641\u064a\u0646';
-      case Permission.staffManage: return '\u0625\u062f\u0627\u0631\u0629 \u0627\u0644\u0645\u0648\u0638\u0641\u064a\u0646';
+      case Permission.posAccess:
+        return '\u0627\u0644\u0648\u0635\u0648\u0644 \u0644\u0646\u0642\u0637\u0629 \u0627\u0644\u0628\u064a\u0639';
+      case Permission.posHold:
+        return '\u062a\u0639\u0644\u064a\u0642 \u0627\u0644\u0641\u0648\u0627\u062a\u064a\u0631';
+      case Permission.posSplitPayment:
+        return '\u062a\u0642\u0633\u064a\u0645 \u0627\u0644\u062f\u0641\u0639';
+      case Permission.productsView:
+        return '\u0639\u0631\u0636 \u0627\u0644\u0645\u0646\u062a\u062c\u0627\u062a';
+      case Permission.productsManage:
+        return '\u0625\u062f\u0627\u0631\u0629 \u0627\u0644\u0645\u0646\u062a\u062c\u0627\u062a';
+      case Permission.productsDelete:
+        return '\u062d\u0630\u0641 \u0627\u0644\u0645\u0646\u062a\u062c\u0627\u062a';
+      case Permission.inventoryView:
+        return '\u0639\u0631\u0636 \u0627\u0644\u0645\u062e\u0632\u0648\u0646';
+      case Permission.inventoryManage:
+        return '\u0625\u062f\u0627\u0631\u0629 \u0627\u0644\u0645\u062e\u0632\u0648\u0646';
+      case Permission.inventoryAdjust:
+        return '\u062a\u0639\u062f\u064a\u0644 \u0627\u0644\u0645\u062e\u0632\u0648\u0646';
+      case Permission.customersView:
+        return '\u0639\u0631\u0636 \u0627\u0644\u0639\u0645\u0644\u0627\u0621';
+      case Permission.customersManage:
+        return '\u0625\u062f\u0627\u0631\u0629 \u0627\u0644\u0639\u0645\u0644\u0627\u0621';
+      case Permission.customersDelete:
+        return '\u062d\u0630\u0641 \u0627\u0644\u0639\u0645\u0644\u0627\u0621';
+      case Permission.discountsApply:
+        return '\u062a\u0637\u0628\u064a\u0642 \u0627\u0644\u062e\u0635\u0648\u0645\u0627\u062a';
+      case Permission.discountsCreate:
+        return '\u0625\u0646\u0634\u0627\u0621 \u0627\u0644\u062e\u0635\u0648\u0645\u0627\u062a';
+      case Permission.refundsRequest:
+        return '\u0637\u0644\u0628 \u0627\u0633\u062a\u0631\u062c\u0627\u0639';
+      case Permission.refundsApprove:
+        return '\u0627\u0644\u0645\u0648\u0627\u0641\u0642\u0629 \u0639\u0644\u0649 \u0627\u0633\u062a\u0631\u062c\u0627\u0639';
+      case Permission.reportsView:
+        return '\u0639\u0631\u0636 \u0627\u0644\u062a\u0642\u0627\u0631\u064a\u0631';
+      case Permission.reportsExport:
+        return '\u062a\u0635\u062f\u064a\u0631 \u0627\u0644\u062a\u0642\u0627\u0631\u064a\u0631';
+      case Permission.settingsView:
+        return '\u0639\u0631\u0636 \u0627\u0644\u0625\u0639\u062f\u0627\u062f\u0627\u062a';
+      case Permission.settingsManage:
+        return '\u0625\u062f\u0627\u0631\u0629 \u0627\u0644\u0625\u0639\u062f\u0627\u062f\u0627\u062a';
+      case Permission.staffView:
+        return '\u0639\u0631\u0636 \u0627\u0644\u0645\u0648\u0638\u0641\u064a\u0646';
+      case Permission.staffManage:
+        return '\u0625\u062f\u0627\u0631\u0629 \u0627\u0644\u0645\u0648\u0638\u0641\u064a\u0646';
     }
   }
 
   String get description {
     switch (this) {
-      case Permission.posAccess: return '\u0627\u0644\u0648\u0635\u0648\u0644 \u0625\u0644\u0649 \u0634\u0627\u0634\u0629 \u0646\u0642\u0637\u0629 \u0627\u0644\u0628\u064a\u0639';
-      case Permission.posHold: return '\u062a\u0639\u0644\u064a\u0642 \u0627\u0644\u0641\u0648\u0627\u062a\u064a\u0631 \u0648\u0627\u0633\u062a\u0643\u0645\u0627\u0644\u0647\u0627 \u0644\u0627\u062d\u0642\u0627\u064b';
-      case Permission.posSplitPayment: return '\u062a\u0642\u0633\u064a\u0645 \u0627\u0644\u062f\u0641\u0639 \u0628\u064a\u0646 \u0637\u0631\u0642 \u0645\u062e\u062a\u0644\u0641\u0629';
-      case Permission.productsView: return '\u0639\u0631\u0636 \u0642\u0627\u0626\u0645\u0629 \u0627\u0644\u0645\u0646\u062a\u062c\u0627\u062a \u0648\u062a\u0641\u0627\u0635\u064a\u0644\u0647\u0627';
-      case Permission.productsManage: return '\u0625\u0636\u0627\u0641\u0629 \u0648\u062a\u0639\u062f\u064a\u0644 \u0627\u0644\u0645\u0646\u062a\u062c\u0627\u062a';
-      case Permission.productsDelete: return '\u062d\u0630\u0641 \u0627\u0644\u0645\u0646\u062a\u062c\u0627\u062a \u0645\u0646 \u0627\u0644\u0646\u0638\u0627\u0645';
-      case Permission.inventoryView: return '\u0639\u0631\u0636 \u0643\u0645\u064a\u0627\u062a \u0627\u0644\u0645\u062e\u0632\u0648\u0646';
-      case Permission.inventoryManage: return '\u0625\u062f\u0627\u0631\u0629 \u0627\u0644\u0645\u062e\u0632\u0648\u0646 \u0648\u0627\u0644\u0646\u0642\u0644';
-      case Permission.inventoryAdjust: return '\u062a\u0639\u062f\u064a\u0644 \u0643\u0645\u064a\u0627\u062a \u0627\u0644\u0645\u062e\u0632\u0648\u0646 \u064a\u062f\u0648\u064a\u0627\u064b';
-      case Permission.customersView: return '\u0639\u0631\u0636 \u0628\u064a\u0627\u0646\u0627\u062a \u0627\u0644\u0639\u0645\u0644\u0627\u0621';
-      case Permission.customersManage: return '\u0625\u0636\u0627\u0641\u0629 \u0648\u062a\u0639\u062f\u064a\u0644 \u0627\u0644\u0639\u0645\u0644\u0627\u0621';
-      case Permission.customersDelete: return '\u062d\u0630\u0641 \u0627\u0644\u0639\u0645\u0644\u0627\u0621 \u0645\u0646 \u0627\u0644\u0646\u0638\u0627\u0645';
-      case Permission.discountsApply: return '\u062a\u0637\u0628\u064a\u0642 \u062e\u0635\u0648\u0645\u0627\u062a \u0645\u0648\u062c\u0648\u062f\u0629';
-      case Permission.discountsCreate: return '\u0625\u0646\u0634\u0627\u0621 \u062e\u0635\u0648\u0645\u0627\u062a \u062c\u062f\u064a\u062f\u0629';
-      case Permission.refundsRequest: return '\u0637\u0644\u0628 \u0627\u0633\u062a\u0631\u062c\u0627\u0639 \u0644\u0644\u0645\u0646\u062a\u062c\u0627\u062a';
-      case Permission.refundsApprove: return '\u0627\u0644\u0645\u0648\u0627\u0641\u0642\u0629 \u0639\u0644\u0649 \u0637\u0644\u0628\u0627\u062a \u0627\u0644\u0627\u0633\u062a\u0631\u062c\u0627\u0639';
-      case Permission.reportsView: return '\u0639\u0631\u0636 \u0627\u0644\u062a\u0642\u0627\u0631\u064a\u0631 \u0648\u0627\u0644\u0625\u062d\u0635\u0627\u0626\u064a\u0627\u062a';
-      case Permission.reportsExport: return '\u062a\u0635\u062f\u064a\u0631 \u0627\u0644\u062a\u0642\u0627\u0631\u064a\u0631 \u0628\u0635\u064a\u063a \u0645\u062e\u062a\u0644\u0641\u0629';
-      case Permission.settingsView: return '\u0639\u0631\u0636 \u0625\u0639\u062f\u0627\u062f\u0627\u062a \u0627\u0644\u0646\u0638\u0627\u0645';
-      case Permission.settingsManage: return '\u062a\u0639\u062f\u064a\u0644 \u0625\u0639\u062f\u0627\u062f\u0627\u062a \u0627\u0644\u0646\u0638\u0627\u0645';
-      case Permission.staffView: return '\u0639\u0631\u0636 \u0642\u0627\u0626\u0645\u0629 \u0627\u0644\u0645\u0648\u0638\u0641\u064a\u0646';
-      case Permission.staffManage: return '\u0625\u0636\u0627\u0641\u0629 \u0648\u062a\u0639\u062f\u064a\u0644 \u0627\u0644\u0645\u0648\u0638\u0641\u064a\u0646';
+      case Permission.posAccess:
+        return '\u0627\u0644\u0648\u0635\u0648\u0644 \u0625\u0644\u0649 \u0634\u0627\u0634\u0629 \u0646\u0642\u0637\u0629 \u0627\u0644\u0628\u064a\u0639';
+      case Permission.posHold:
+        return '\u062a\u0639\u0644\u064a\u0642 \u0627\u0644\u0641\u0648\u0627\u062a\u064a\u0631 \u0648\u0627\u0633\u062a\u0643\u0645\u0627\u0644\u0647\u0627 \u0644\u0627\u062d\u0642\u0627\u064b';
+      case Permission.posSplitPayment:
+        return '\u062a\u0642\u0633\u064a\u0645 \u0627\u0644\u062f\u0641\u0639 \u0628\u064a\u0646 \u0637\u0631\u0642 \u0645\u062e\u062a\u0644\u0641\u0629';
+      case Permission.productsView:
+        return '\u0639\u0631\u0636 \u0642\u0627\u0626\u0645\u0629 \u0627\u0644\u0645\u0646\u062a\u062c\u0627\u062a \u0648\u062a\u0641\u0627\u0635\u064a\u0644\u0647\u0627';
+      case Permission.productsManage:
+        return '\u0625\u0636\u0627\u0641\u0629 \u0648\u062a\u0639\u062f\u064a\u0644 \u0627\u0644\u0645\u0646\u062a\u062c\u0627\u062a';
+      case Permission.productsDelete:
+        return '\u062d\u0630\u0641 \u0627\u0644\u0645\u0646\u062a\u062c\u0627\u062a \u0645\u0646 \u0627\u0644\u0646\u0638\u0627\u0645';
+      case Permission.inventoryView:
+        return '\u0639\u0631\u0636 \u0643\u0645\u064a\u0627\u062a \u0627\u0644\u0645\u062e\u0632\u0648\u0646';
+      case Permission.inventoryManage:
+        return '\u0625\u062f\u0627\u0631\u0629 \u0627\u0644\u0645\u062e\u0632\u0648\u0646 \u0648\u0627\u0644\u0646\u0642\u0644';
+      case Permission.inventoryAdjust:
+        return '\u062a\u0639\u062f\u064a\u0644 \u0643\u0645\u064a\u0627\u062a \u0627\u0644\u0645\u062e\u0632\u0648\u0646 \u064a\u062f\u0648\u064a\u0627\u064b';
+      case Permission.customersView:
+        return '\u0639\u0631\u0636 \u0628\u064a\u0627\u0646\u0627\u062a \u0627\u0644\u0639\u0645\u0644\u0627\u0621';
+      case Permission.customersManage:
+        return '\u0625\u0636\u0627\u0641\u0629 \u0648\u062a\u0639\u062f\u064a\u0644 \u0627\u0644\u0639\u0645\u0644\u0627\u0621';
+      case Permission.customersDelete:
+        return '\u062d\u0630\u0641 \u0627\u0644\u0639\u0645\u0644\u0627\u0621 \u0645\u0646 \u0627\u0644\u0646\u0638\u0627\u0645';
+      case Permission.discountsApply:
+        return '\u062a\u0637\u0628\u064a\u0642 \u062e\u0635\u0648\u0645\u0627\u062a \u0645\u0648\u062c\u0648\u062f\u0629';
+      case Permission.discountsCreate:
+        return '\u0625\u0646\u0634\u0627\u0621 \u062e\u0635\u0648\u0645\u0627\u062a \u062c\u062f\u064a\u062f\u0629';
+      case Permission.refundsRequest:
+        return '\u0637\u0644\u0628 \u0627\u0633\u062a\u0631\u062c\u0627\u0639 \u0644\u0644\u0645\u0646\u062a\u062c\u0627\u062a';
+      case Permission.refundsApprove:
+        return '\u0627\u0644\u0645\u0648\u0627\u0641\u0642\u0629 \u0639\u0644\u0649 \u0637\u0644\u0628\u0627\u062a \u0627\u0644\u0627\u0633\u062a\u0631\u062c\u0627\u0639';
+      case Permission.reportsView:
+        return '\u0639\u0631\u0636 \u0627\u0644\u062a\u0642\u0627\u0631\u064a\u0631 \u0648\u0627\u0644\u0625\u062d\u0635\u0627\u0626\u064a\u0627\u062a';
+      case Permission.reportsExport:
+        return '\u062a\u0635\u062f\u064a\u0631 \u0627\u0644\u062a\u0642\u0627\u0631\u064a\u0631 \u0628\u0635\u064a\u063a \u0645\u062e\u062a\u0644\u0641\u0629';
+      case Permission.settingsView:
+        return '\u0639\u0631\u0636 \u0625\u0639\u062f\u0627\u062f\u0627\u062a \u0627\u0644\u0646\u0638\u0627\u0645';
+      case Permission.settingsManage:
+        return '\u062a\u0639\u062f\u064a\u0644 \u0625\u0639\u062f\u0627\u062f\u0627\u062a \u0627\u0644\u0646\u0638\u0627\u0645';
+      case Permission.staffView:
+        return '\u0639\u0631\u0636 \u0642\u0627\u0626\u0645\u0629 \u0627\u0644\u0645\u0648\u0638\u0641\u064a\u0646';
+      case Permission.staffManage:
+        return '\u0625\u0636\u0627\u0641\u0629 \u0648\u062a\u0639\u062f\u064a\u0644 \u0627\u0644\u0645\u0648\u0638\u0641\u064a\u0646';
     }
   }
 
   IconData get icon {
     switch (this) {
-      case Permission.posAccess: return Icons.point_of_sale;
-      case Permission.posHold: return Icons.pause_circle;
-      case Permission.posSplitPayment: return Icons.call_split;
-      case Permission.productsView: return Icons.visibility;
-      case Permission.productsManage: return Icons.edit;
-      case Permission.productsDelete: return Icons.delete;
-      case Permission.inventoryView: return Icons.visibility;
-      case Permission.inventoryManage: return Icons.inventory;
-      case Permission.inventoryAdjust: return Icons.tune;
-      case Permission.customersView: return Icons.visibility;
-      case Permission.customersManage: return Icons.edit;
-      case Permission.customersDelete: return Icons.delete;
-      case Permission.discountsApply: return Icons.local_offer;
-      case Permission.discountsCreate: return Icons.add_circle;
-      case Permission.refundsRequest: return Icons.assignment_return;
-      case Permission.refundsApprove: return Icons.check_circle;
-      case Permission.reportsView: return Icons.analytics;
-      case Permission.reportsExport: return Icons.download;
-      case Permission.settingsView: return Icons.visibility;
-      case Permission.settingsManage: return Icons.settings;
-      case Permission.staffView: return Icons.visibility;
-      case Permission.staffManage: return Icons.manage_accounts;
+      case Permission.posAccess:
+        return Icons.point_of_sale;
+      case Permission.posHold:
+        return Icons.pause_circle;
+      case Permission.posSplitPayment:
+        return Icons.call_split;
+      case Permission.productsView:
+        return Icons.visibility;
+      case Permission.productsManage:
+        return Icons.edit;
+      case Permission.productsDelete:
+        return Icons.delete;
+      case Permission.inventoryView:
+        return Icons.visibility;
+      case Permission.inventoryManage:
+        return Icons.inventory;
+      case Permission.inventoryAdjust:
+        return Icons.tune;
+      case Permission.customersView:
+        return Icons.visibility;
+      case Permission.customersManage:
+        return Icons.edit;
+      case Permission.customersDelete:
+        return Icons.delete;
+      case Permission.discountsApply:
+        return Icons.local_offer;
+      case Permission.discountsCreate:
+        return Icons.add_circle;
+      case Permission.refundsRequest:
+        return Icons.assignment_return;
+      case Permission.refundsApprove:
+        return Icons.check_circle;
+      case Permission.reportsView:
+        return Icons.analytics;
+      case Permission.reportsExport:
+        return Icons.download;
+      case Permission.settingsView:
+        return Icons.visibility;
+      case Permission.settingsManage:
+        return Icons.settings;
+      case Permission.staffView:
+        return Icons.visibility;
+      case Permission.staffManage:
+        return Icons.manage_accounts;
     }
   }
 

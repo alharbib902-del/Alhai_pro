@@ -210,7 +210,8 @@ class ZatcaInvoice {
       buyer: buyer ?? this.buyer,
       lines: lines ?? this.lines,
       documentDiscount: documentDiscount ?? this.documentDiscount,
-      documentDiscountReason: documentDiscountReason ?? this.documentDiscountReason,
+      documentDiscountReason:
+          documentDiscountReason ?? this.documentDiscountReason,
       paymentMeansCode: paymentMeansCode ?? this.paymentMeansCode,
       paymentNote: paymentNote ?? this.paymentNote,
       billingReferenceId: billingReferenceId ?? this.billingReferenceId,

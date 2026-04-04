@@ -12,7 +12,8 @@ class OrderTrackingScreen extends ConsumerStatefulWidget {
   const OrderTrackingScreen({super.key});
 
   @override
-  ConsumerState<OrderTrackingScreen> createState() => _OrderTrackingScreenState();
+  ConsumerState<OrderTrackingScreen> createState() =>
+      _OrderTrackingScreenState();
 }
 
 class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
@@ -55,9 +56,11 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
         }
 
         // جلب بيانات العميل إذا كان موجوداً
-        if (order.customerId != null && !customersMap.containsKey(order.customerId)) {
+        if (order.customerId != null &&
+            !customersMap.containsKey(order.customerId)) {
           try {
-            final customer = await db.customersDao.getCustomerById(order.customerId!);
+            final customer =
+                await db.customersDao.getCustomerById(order.customerId!);
             if (customer != null) {
               customersMap[order.customerId!] = customer;
             }
@@ -97,7 +100,10 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
         await syncService.enqueueUpdate(
           tableName: 'orders',
           recordId: order.id,
-          changes: {'status': newStatus, 'updatedAt': DateTime.now().toIso8601String()},
+          changes: {
+            'status': newStatus,
+            'updatedAt': DateTime.now().toIso8601String()
+          },
         );
       } catch (_) {
         // المزامنة اختيارية
@@ -113,7 +119,9 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${AppLocalizations.of(context)!.errorOccurred}: $e')),
+          SnackBar(
+              content:
+                  Text('${AppLocalizations.of(context)!.errorOccurred}: $e')),
         );
       }
     }
@@ -139,9 +147,16 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.error_outline, size: 64, color: isDark ? AppColors.error.withValues(alpha: 0.7) : AppColors.error.withValues(alpha: 0.5)),
+              Icon(Icons.error_outline,
+                  size: 64,
+                  color: isDark
+                      ? AppColors.error.withValues(alpha: 0.7)
+                      : AppColors.error.withValues(alpha: 0.5)),
               SizedBox(height: AlhaiSpacing.md),
-              Text(l10n.errorOccurred, style: TextStyle(fontSize: 18, color: Theme.of(context).colorScheme.onSurface)),
+              Text(l10n.errorOccurred,
+                  style: TextStyle(
+                      fontSize: 18,
+                      color: Theme.of(context).colorScheme.onSurface)),
               SizedBox(height: AlhaiSpacing.xs),
               TextButton.icon(
                 onPressed: _loadData,
@@ -173,27 +188,31 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
             children: [
               // إحصائيات سريعة للطلبات النشطة
               Container(
-                padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: AlhaiSpacing.md),
+                padding: EdgeInsets.symmetric(
+                    horizontal: horizontalPadding, vertical: AlhaiSpacing.md),
                 child: Row(
                   children: [
                     _StatCard(
                       icon: Icons.pending,
                       label: l10n.pending,
-                      value: '${_orders.where((o) => o.status == "created").length}',
+                      value:
+                          '${_orders.where((o) => o.status == "created").length}',
                       color: AlhaiColors.warning,
                     ),
                     SizedBox(width: AlhaiSpacing.sm),
                     _StatCard(
                       icon: Icons.restaurant,
                       label: l10n.orderStatusPreparing,
-                      value: '${_orders.where((o) => o.status == "preparing" || o.status == "confirmed").length}',
+                      value:
+                          '${_orders.where((o) => o.status == "preparing" || o.status == "confirmed").length}',
                       color: AlhaiColors.info,
                     ),
                     SizedBox(width: AlhaiSpacing.sm),
                     _StatCard(
                       icon: Icons.delivery_dining,
                       label: l10n.orderStatusDelivering,
-                      value: '${_orders.where((o) => o.status == "out_for_delivery" || o.status == "ready").length}',
+                      value:
+                          '${_orders.where((o) => o.status == "out_for_delivery" || o.status == "ready").length}',
                       color: AlhaiColors.success,
                     ),
                   ],
@@ -207,9 +226,19 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.delivery_dining, size: 64, color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.3)),
+                            Icon(Icons.delivery_dining,
+                                size: 64,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurfaceVariant
+                                    .withValues(alpha: 0.3)),
                             SizedBox(height: AlhaiSpacing.md),
-                            Text(l10n.noOrders, style: TextStyle(fontSize: 18, color: Theme.of(context).colorScheme.onSurfaceVariant)),
+                            Text(l10n.noOrders,
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurfaceVariant)),
                           ],
                         ),
                       )
@@ -217,8 +246,10 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
                         onRefresh: _loadData,
                         child: isWide
                             ? GridView.builder(
-                                padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-                                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: horizontalPadding),
+                                gridDelegate:
+                                    const SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: 2,
                                   crossAxisSpacing: 16,
                                   mainAxisSpacing: 0,
@@ -228,26 +259,51 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
                                 itemBuilder: (context, index) {
                                   final order = _orders[index];
                                   final items = _orderItems[order.id] ?? [];
-                                  final customer = order.customerId != null ? _customers[order.customerId] : null;
-                                  final customerName = customer?.name ?? (order.customerId ?? l10n.guestCustomer);
+                                  final customer = order.customerId != null
+                                      ? _customers[order.customerId]
+                                      : null;
+                                  final customerName = customer?.name ??
+                                      (order.customerId ?? l10n.guestCustomer);
                                   final customerPhone = customer?.phone ?? '';
                                   final address = order.deliveryAddress ?? '';
 
-                                  return _buildOrderCard(context, order, items, customerName, customerPhone, address, isDark, subtleColor, l10n);
+                                  return _buildOrderCard(
+                                      context,
+                                      order,
+                                      items,
+                                      customerName,
+                                      customerPhone,
+                                      address,
+                                      isDark,
+                                      subtleColor,
+                                      l10n);
                                 },
                               )
                             : ListView.builder(
-                                padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: horizontalPadding),
                                 itemCount: _orders.length,
                                 itemBuilder: (context, index) {
                                   final order = _orders[index];
                                   final items = _orderItems[order.id] ?? [];
-                                  final customer = order.customerId != null ? _customers[order.customerId] : null;
-                                  final customerName = customer?.name ?? (order.customerId ?? l10n.guestCustomer);
+                                  final customer = order.customerId != null
+                                      ? _customers[order.customerId]
+                                      : null;
+                                  final customerName = customer?.name ??
+                                      (order.customerId ?? l10n.guestCustomer);
                                   final customerPhone = customer?.phone ?? '';
                                   final address = order.deliveryAddress ?? '';
 
-                                  return _buildOrderCard(context, order, items, customerName, customerPhone, address, isDark, subtleColor, l10n);
+                                  return _buildOrderCard(
+                                      context,
+                                      order,
+                                      items,
+                                      customerName,
+                                      customerPhone,
+                                      address,
+                                      isDark,
+                                      subtleColor,
+                                      l10n);
                                 },
                               ),
                       ),
@@ -259,12 +315,22 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
     );
   }
 
-  Widget _buildOrderCard(BuildContext context, OrdersTableData order, List<OrderItemsTableData> items, String customerName, String customerPhone, String address, bool isDark, Color subtleColor, AppLocalizations l10n) {
+  Widget _buildOrderCard(
+      BuildContext context,
+      OrdersTableData order,
+      List<OrderItemsTableData> items,
+      String customerName,
+      String customerPhone,
+      String address,
+      bool isDark,
+      Color subtleColor,
+      AppLocalizations l10n) {
     return Card(
       margin: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
       color: Theme.of(context).colorScheme.surface,
       child: InkWell(
-        onTap: () => _showOrderDetails(order, items, customerName, customerPhone, address),
+        onTap: () => _showOrderDetails(
+            order, items, customerName, customerPhone, address),
         borderRadius: BorderRadius.circular(12),
         child: Padding(
           padding: const EdgeInsets.all(AlhaiSpacing.md),
@@ -273,7 +339,11 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
             children: [
               Row(
                 children: [
-                  Text(order.orderNumber, style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'monospace', color: Theme.of(context).colorScheme.onSurface)),
+                  Text(order.orderNumber,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'monospace',
+                          color: Theme.of(context).colorScheme.onSurface)),
                   const Spacer(),
                   _StatusChip(status: order.status),
                 ],
@@ -283,9 +353,14 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
                 children: [
                   Icon(Icons.person, size: 16, color: subtleColor),
                   SizedBox(width: AlhaiSpacing.xxs),
-                  Text(customerName, style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
+                  Text(customerName,
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface)),
                   const Spacer(),
-                  Text(l10n.priceWithCurrency(order.total.toStringAsFixed(0)), style: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
+                  Text(l10n.priceWithCurrency(order.total.toStringAsFixed(0)),
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.onSurface)),
                 ],
               ),
               if (address.isNotEmpty) ...[
@@ -294,7 +369,10 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
                   children: [
                     Icon(Icons.location_on, size: 16, color: subtleColor),
                     SizedBox(width: AlhaiSpacing.xxs),
-                    Expanded(child: Text(address, style: TextStyle(fontSize: 12, color: subtleColor), overflow: TextOverflow.ellipsis)),
+                    Expanded(
+                        child: Text(address,
+                            style: TextStyle(fontSize: 12, color: subtleColor),
+                            overflow: TextOverflow.ellipsis)),
                   ],
                 ),
               ],
@@ -302,16 +380,26 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
               Row(
                 children: [
                   if (order.driverId != null) ...[
-                    Icon(Icons.directions_car, size: 16, color: AlhaiColors.info),
+                    Icon(Icons.directions_car,
+                        size: 16, color: AlhaiColors.info),
                     SizedBox(width: AlhaiSpacing.xxs),
-                    Text(order.driverId!, style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurface)),
+                    Text(order.driverId!,
+                        style: TextStyle(
+                            fontSize: 12,
+                            color: Theme.of(context).colorScheme.onSurface)),
                     SizedBox(width: AlhaiSpacing.md),
                   ],
-                  Icon(Icons.timer, size: 16, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                  Icon(Icons.timer,
+                      size: 16,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant),
                   SizedBox(width: AlhaiSpacing.xxs),
-                  Text(_formatTimeSinceOrder(order.orderDate, l10n), style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurface)),
+                  Text(_formatTimeSinceOrder(order.orderDate, l10n),
+                      style: TextStyle(
+                          fontSize: 12,
+                          color: Theme.of(context).colorScheme.onSurface)),
                   const Spacer(),
-                  Text('${items.length} ${l10n.products}', style: TextStyle(fontSize: 12, color: subtleColor)),
+                  Text('${items.length} ${l10n.products}',
+                      style: TextStyle(fontSize: 12, color: subtleColor)),
                 ],
               ),
             ],
@@ -335,7 +423,8 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
 
   void _showMap() {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppLocalizations.of(context)!.featureNotAvailableNow)),
+      SnackBar(
+          content: Text(AppLocalizations.of(context)!.featureNotAvailableNow)),
     );
   }
 
@@ -359,11 +448,21 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
           padding: const EdgeInsets.all(AlhaiSpacing.lg),
           children: [
             Center(
-              child: Container(width: 40, height: 4, margin: const EdgeInsets.only(bottom: AlhaiSpacing.lg), decoration: BoxDecoration(color: Theme.of(context).dividerColor, borderRadius: BorderRadius.circular(2))),
+              child: Container(
+                  width: 40,
+                  height: 4,
+                  margin: const EdgeInsets.only(bottom: AlhaiSpacing.lg),
+                  decoration: BoxDecoration(
+                      color: Theme.of(context).dividerColor,
+                      borderRadius: BorderRadius.circular(2))),
             ),
             Row(
               children: [
-                Text(order.orderNumber, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'monospace')),
+                Text(order.orderNumber,
+                    style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'monospace')),
                 const Spacer(),
                 _StatusChip(status: order.status),
               ],
@@ -374,29 +473,48 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
             _buildTimeline(order),
 
             const Divider(height: 32),
-            ListTile(leading: const Icon(Icons.person), title: Text(customerName), subtitle: customerPhone.isNotEmpty ? Text(customerPhone) : null),
+            ListTile(
+                leading: const Icon(Icons.person),
+                title: Text(customerName),
+                subtitle:
+                    customerPhone.isNotEmpty ? Text(customerPhone) : null),
             if (address.isNotEmpty)
-              ListTile(leading: const Icon(Icons.location_on), title: Text(l10n.addressLabel), subtitle: Text(address)),
+              ListTile(
+                  leading: const Icon(Icons.location_on),
+                  title: Text(l10n.addressLabel),
+                  subtitle: Text(address)),
             if (order.driverId != null)
-              ListTile(leading: const Icon(Icons.directions_car), title: Text(order.driverId!), subtitle: Text(l10n.driverName)),
+              ListTile(
+                  leading: const Icon(Icons.directions_car),
+                  title: Text(order.driverId!),
+                  subtitle: Text(l10n.driverName)),
 
             // عناصر الطلب
             if (items.isNotEmpty) ...[
               const Divider(height: 24),
-              Text(l10n.products, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              Text(l10n.products,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 16)),
               SizedBox(height: AlhaiSpacing.xs),
               ...items.map((item) => ListTile(
-                dense: true,
-                title: Text(item.productName),
-                trailing: Text(l10n.priceWithCurrency(item.total.toStringAsFixed(0))),
-                subtitle: Text('x${item.quantity.toStringAsFixed(0)}'),
-              )),
+                    dense: true,
+                    title: Text(item.productName),
+                    trailing: Text(
+                        l10n.priceWithCurrency(item.total.toStringAsFixed(0))),
+                    subtitle: Text('x${item.quantity.toStringAsFixed(0)}'),
+                  )),
               const Divider(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(l10n.total, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  Text(l10n.priceWithCurrency(order.total.toStringAsFixed(0)), style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.success)),
+                  Text(l10n.total,
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold)),
+                  Text(l10n.priceWithCurrency(order.total.toStringAsFixed(0)),
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.success)),
                 ],
               ),
             ],
@@ -405,15 +523,45 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
 
             // أزرار تقدم الحالة
             if (order.status == 'created')
-              FilledButton.icon(onPressed: () { Navigator.pop(context); _updateStatus(order, 'confirmed'); }, icon: const Icon(Icons.check), label: Text(l10n.orderStatusConfirmed))
+              FilledButton.icon(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    _updateStatus(order, 'confirmed');
+                  },
+                  icon: const Icon(Icons.check),
+                  label: Text(l10n.orderStatusConfirmed))
             else if (order.status == 'confirmed')
-              FilledButton.icon(onPressed: () { Navigator.pop(context); _updateStatus(order, 'preparing'); }, icon: const Icon(Icons.restaurant), label: Text(l10n.orderStatusPreparing))
+              FilledButton.icon(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    _updateStatus(order, 'preparing');
+                  },
+                  icon: const Icon(Icons.restaurant),
+                  label: Text(l10n.orderStatusPreparing))
             else if (order.status == 'preparing')
-              FilledButton.icon(onPressed: () { Navigator.pop(context); _updateStatus(order, 'ready'); }, icon: const Icon(Icons.check_circle), label: Text(l10n.orderStatusReady))
+              FilledButton.icon(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    _updateStatus(order, 'ready');
+                  },
+                  icon: const Icon(Icons.check_circle),
+                  label: Text(l10n.orderStatusReady))
             else if (order.status == 'ready')
-              FilledButton.icon(onPressed: () { Navigator.pop(context); _updateStatus(order, 'out_for_delivery'); }, icon: const Icon(Icons.delivery_dining), label: Text(l10n.orderStatusDelivering))
+              FilledButton.icon(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    _updateStatus(order, 'out_for_delivery');
+                  },
+                  icon: const Icon(Icons.delivery_dining),
+                  label: Text(l10n.orderStatusDelivering))
             else if (order.status == 'out_for_delivery')
-              FilledButton.icon(onPressed: () { Navigator.pop(context); _updateStatus(order, 'delivered'); }, icon: const Icon(Icons.done_all), label: Text(l10n.completed)),
+              FilledButton.icon(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    _updateStatus(order, 'delivered');
+                  },
+                  icon: const Icon(Icons.done_all),
+                  label: Text(l10n.completed)),
 
             // زر إلغاء الطلب
             if (order.status != 'delivered' && order.status != 'cancelled') ...[
@@ -423,9 +571,14 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
                   Navigator.pop(context);
                   _updateStatus(order, 'cancelled');
                 },
-                icon: Icon(Icons.cancel, color: Theme.of(context).colorScheme.error),
-                label: Text(l10n.cancelled, style: TextStyle(color: Theme.of(context).colorScheme.error)),
-                style: OutlinedButton.styleFrom(side: BorderSide(color: Theme.of(context).colorScheme.error)),
+                icon: Icon(Icons.cancel,
+                    color: Theme.of(context).colorScheme.error),
+                label: Text(l10n.cancelled,
+                    style:
+                        TextStyle(color: Theme.of(context).colorScheme.error)),
+                style: OutlinedButton.styleFrom(
+                    side:
+                        BorderSide(color: Theme.of(context).colorScheme.error)),
               ),
             ],
           ],
@@ -440,8 +593,15 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final steps = [
       {'label': l10n.pending, 'done': true},
-      {'label': l10n.orderStatusPreparing, 'done': order.status != 'created' && order.status != 'confirmed'},
-      {'label': l10n.orderStatusDelivering, 'done': order.status == 'out_for_delivery' || order.status == 'delivered'},
+      {
+        'label': l10n.orderStatusPreparing,
+        'done': order.status != 'created' && order.status != 'confirmed'
+      },
+      {
+        'label': l10n.orderStatusDelivering,
+        'done':
+            order.status == 'out_for_delivery' || order.status == 'delivered'
+      },
       {'label': l10n.completed, 'done': order.status == 'delivered'},
     ];
     return Row(
@@ -454,15 +614,44 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
               Column(
                 children: [
                   Container(
-                    width: 24, height: 24,
-                    decoration: BoxDecoration(shape: BoxShape.circle, color: step['done'] == true ? AppColors.success : (isDark ? Theme.of(context).colorScheme.surfaceContainerHighest : AppColors.grey300)),
-                    child: Icon(step['done'] == true ? Icons.check : Icons.circle, size: 12, color: Theme.of(context).colorScheme.onPrimary),
+                    width: 24,
+                    height: 24,
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: step['done'] == true
+                            ? AppColors.success
+                            : (isDark
+                                ? Theme.of(context)
+                                    .colorScheme
+                                    .surfaceContainerHighest
+                                : AppColors.grey300)),
+                    child: Icon(
+                        step['done'] == true ? Icons.check : Icons.circle,
+                        size: 12,
+                        color: Theme.of(context).colorScheme.onPrimary),
                   ),
                   SizedBox(height: AlhaiSpacing.xxs),
-                  Text(step['label'] as String, style: TextStyle(fontSize: 10, color: step['done'] == true ? AppColors.success : Theme.of(context).colorScheme.onSurfaceVariant)),
+                  Text(step['label'] as String,
+                      style: TextStyle(
+                          fontSize: 10,
+                          color: step['done'] == true
+                              ? AppColors.success
+                              : Theme.of(context)
+                                  .colorScheme
+                                  .onSurfaceVariant)),
                 ],
               ),
-              if (!isLast) Expanded(child: Container(height: 2, color: step['done'] == true ? AppColors.success : (isDark ? Theme.of(context).colorScheme.surfaceContainerHighest : AppColors.grey300))),
+              if (!isLast)
+                Expanded(
+                    child: Container(
+                        height: 2,
+                        color: step['done'] == true
+                            ? AppColors.success
+                            : (isDark
+                                ? Theme.of(context)
+                                    .colorScheme
+                                    .surfaceContainerHighest
+                                : AppColors.grey300))),
             ],
           ),
         );
@@ -475,16 +664,24 @@ class _StatCard extends StatelessWidget {
   final IconData icon;
   final String label, value;
   final Color color;
-  const _StatCard({required this.icon, required this.label, required this.value, required this.color});
+  const _StatCard(
+      {required this.icon,
+      required this.label,
+      required this.value,
+      required this.color});
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.all(AlhaiSpacing.sm),
-        decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)),
+        decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(12)),
         child: Column(children: [
           Icon(icon, color: color),
-          Text(value, style: TextStyle(fontWeight: FontWeight.bold, color: color, fontSize: 24)),
+          Text(value,
+              style: TextStyle(
+                  fontWeight: FontWeight.bold, color: color, fontSize: 24)),
           Text(label, style: TextStyle(fontSize: 11, color: color)),
         ]),
       ),
@@ -517,9 +714,17 @@ class _StatusChip extends StatelessWidget {
       'cancelled': l10n.cancelled,
     };
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
-      decoration: BoxDecoration(color: (colors[status] ?? Theme.of(context).colorScheme.outline).withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
-      child: Text(labels[status] ?? status, style: TextStyle(fontSize: 11, color: colors[status] ?? Theme.of(context).colorScheme.outline, fontWeight: FontWeight.w500)),
+      padding: const EdgeInsets.symmetric(
+          horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
+      decoration: BoxDecoration(
+          color: (colors[status] ?? Theme.of(context).colorScheme.outline)
+              .withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(8)),
+      child: Text(labels[status] ?? status,
+          style: TextStyle(
+              fontSize: 11,
+              color: colors[status] ?? Theme.of(context).colorScheme.outline,
+              fontWeight: FontWeight.w500)),
     );
   }
 }

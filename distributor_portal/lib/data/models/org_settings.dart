@@ -88,7 +88,17 @@ class OrgSettings {
 
   @override
   int get hashCode => Object.hash(
-      id, companyName, phone, email, address, deliveryZones,
-      minOrderAmount, deliveryFee, freeDeliveryMin, freeDeliveryEnabled,
-      emailNotifications, pushNotifications, smsNotifications);
+      id,
+      companyName,
+      phone,
+      email,
+      address,
+      deliveryZones,
+      minOrderAmount,
+      deliveryFee,
+      freeDeliveryMin,
+      freeDeliveryEnabled,
+      emailNotifications,
+      pushNotifications,
+      smsNotifications);
 }

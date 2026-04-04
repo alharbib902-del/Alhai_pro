@@ -268,6 +268,7 @@ class AlhaiRotateIn extends StatelessWidget {
   final Widget child;
   final Duration duration;
   final Curve curve;
+
   /// Starting rotation in turns (1.0 = 360 degrees).
   final double beginTurns;
 
@@ -318,7 +319,8 @@ class AlhaiPageTransitionsBuilder {
     final begin = Offset(isRtl ? -1.0 : 1.0, 0.0);
     return SlideTransition(
       position: Tween(begin: begin, end: Offset.zero).animate(
-        CurvedAnimation(parent: animation, curve: AlhaiMotion.standardDecelerate),
+        CurvedAnimation(
+            parent: animation, curve: AlhaiMotion.standardDecelerate),
       ),
       child: FadeTransition(
         opacity: CurvedAnimation(parent: animation, curve: AlhaiMotion.fadeIn),
@@ -349,7 +351,8 @@ class AlhaiPageTransitionsBuilder {
   ) {
     return ScaleTransition(
       scale: Tween(begin: 0.92, end: 1.0).animate(
-        CurvedAnimation(parent: animation, curve: AlhaiMotion.emphasizedDecelerate),
+        CurvedAnimation(
+            parent: animation, curve: AlhaiMotion.emphasizedDecelerate),
       ),
       child: FadeTransition(
         opacity: CurvedAnimation(parent: animation, curve: AlhaiMotion.fadeIn),

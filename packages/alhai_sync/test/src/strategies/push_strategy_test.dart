@@ -87,8 +87,7 @@ void main() {
         when(() => mockSyncQueueDao.markAsSynced(any()))
             .thenAnswer((_) async => 1);
         when(() => mockMetadataDao.updateLastPushAt(any(), any(),
-                syncCount: any(named: 'syncCount')))
-            .thenAnswer((_) async {});
+            syncCount: any(named: 'syncCount'))).thenAnswer((_) async {});
 
         final queryBuilder = MockSupabaseQueryBuilder();
         when(() => mockClient.from('sales')).thenAnswer((_) => queryBuilder);
@@ -143,8 +142,7 @@ void main() {
         when(() => mockSyncQueueDao.markAsConflict(any(), any()))
             .thenAnswer((_) async => 1);
         when(() => mockMetadataDao.updateLastPushAt(any(), any(),
-                syncCount: any(named: 'syncCount')))
-            .thenAnswer((_) async {});
+            syncCount: any(named: 'syncCount'))).thenAnswer((_) async {});
 
         final queryBuilder = MockSupabaseQueryBuilder();
         when(() => mockClient.from('sales')).thenAnswer((_) => queryBuilder);
@@ -176,8 +174,7 @@ void main() {
         when(() => mockSyncQueueDao.markAsSynced(any()))
             .thenAnswer((_) async => 1);
         when(() => mockMetadataDao.updateLastPushAt(any(), any(),
-                syncCount: any(named: 'syncCount')))
-            .thenAnswer((_) async {});
+            syncCount: any(named: 'syncCount'))).thenAnswer((_) async {});
 
         final queryBuilder = MockSupabaseQueryBuilder();
         when(() => mockClient.from('sales')).thenAnswer((_) => queryBuilder);

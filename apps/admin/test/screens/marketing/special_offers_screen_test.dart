@@ -33,8 +33,7 @@ void main() {
       when(() => mockDiscountsDao.getAllPromotions(any()))
           .thenAnswer((_) => completer.future.then((v) => v.cast()));
 
-      await tester
-          .pumpWidget(createTestWidget(const SpecialOffersScreen()));
+      await tester.pumpWidget(createTestWidget(const SpecialOffersScreen()));
       await tester.pump();
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
@@ -44,8 +43,7 @@ void main() {
       when(() => mockDiscountsDao.getAllPromotions(any()))
           .thenAnswer((_) async => []);
 
-      await tester
-          .pumpWidget(createTestWidget(const SpecialOffersScreen()));
+      await tester.pumpWidget(createTestWidget(const SpecialOffersScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(SpecialOffersScreen), findsOneWidget);
@@ -71,8 +69,7 @@ void main() {
       when(() => mockDiscountsDao.getAllPromotions(any()))
           .thenAnswer((_) async => promotions);
 
-      await tester
-          .pumpWidget(createTestWidget(const SpecialOffersScreen()));
+      await tester.pumpWidget(createTestWidget(const SpecialOffersScreen()));
       await tester.pumpAndSettle();
 
       expect(find.text('عرض البنطلون'), findsOneWidget);
@@ -107,16 +104,14 @@ void main() {
       when(() => mockDiscountsDao.getAllPromotions(any()))
           .thenAnswer((_) async => promotions);
 
-      await tester
-          .pumpWidget(createTestWidget(const SpecialOffersScreen()));
+      await tester.pumpWidget(createTestWidget(const SpecialOffersScreen()));
       await tester.pumpAndSettle();
 
       // Total: 2
       expect(find.text('2'), findsOneWidget);
     });
 
-    testWidgets('contains switch for toggling promotion state',
-        (tester) async {
+    testWidgets('contains switch for toggling promotion state', (tester) async {
       final now = DateTime.now();
       final promotions = [
         PromotionsTableData(
@@ -134,8 +129,7 @@ void main() {
       when(() => mockDiscountsDao.getAllPromotions(any()))
           .thenAnswer((_) async => promotions);
 
-      await tester
-          .pumpWidget(createTestWidget(const SpecialOffersScreen()));
+      await tester.pumpWidget(createTestWidget(const SpecialOffersScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(Switch), findsWidgets);
@@ -159,8 +153,7 @@ void main() {
       when(() => mockDiscountsDao.getAllPromotions(any()))
           .thenAnswer((_) async => promotions);
 
-      await tester
-          .pumpWidget(createTestWidget(const SpecialOffersScreen()));
+      await tester.pumpWidget(createTestWidget(const SpecialOffersScreen()));
       await tester.pumpAndSettle();
 
       // flash_sale uses Icons.flash_on

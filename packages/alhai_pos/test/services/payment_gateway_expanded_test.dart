@@ -59,8 +59,8 @@ void main() {
     });
 
     group('processPayment error handling', () {
-      test(
-          'should catch gateway exceptions and return failed result', () async {
+      test('should catch gateway exceptions and return failed result',
+          () async {
         // Arrange - register a gateway that throws
         // Note: PaymentService.isMethodAvailable only allows cash right now
         // so we test the error handling path by using a mock gateway for cash
@@ -117,8 +117,7 @@ void main() {
           reason: 'test',
         );
 
-        final result =
-            await service.refund(request, PaymentMethod.wallet);
+        final result = await service.refund(request, PaymentMethod.wallet);
 
         expect(result.success, isFalse);
         expect(result.refundedAmount, equals(0));
@@ -132,8 +131,7 @@ void main() {
           reason: 'test',
         );
 
-        final result =
-            await service.refund(request, PaymentMethod.tamara);
+        final result = await service.refund(request, PaymentMethod.tamara);
 
         expect(result.success, isFalse);
         expect(result.refundedAmount, equals(0));
@@ -219,10 +217,12 @@ void main() {
       final result = PaymentResult.success(transactionId: 'tx-1');
       final after = DateTime.now();
 
-      expect(result.timestamp.isAfter(before) ||
+      expect(
+          result.timestamp.isAfter(before) ||
               result.timestamp.isAtSameMomentAs(before),
           isTrue);
-      expect(result.timestamp.isBefore(after) ||
+      expect(
+          result.timestamp.isBefore(after) ||
               result.timestamp.isAtSameMomentAs(after),
           isTrue);
     });

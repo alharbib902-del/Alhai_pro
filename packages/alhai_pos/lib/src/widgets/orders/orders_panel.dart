@@ -4,18 +4,19 @@ import 'package:drift/drift.dart' hide Column;
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
-import 'package:alhai_database/alhai_database.dart' hide OrderStatus, PaymentStatus;
+import 'package:alhai_database/alhai_database.dart'
+    hide OrderStatus, PaymentStatus;
 import 'package:get_it/get_it.dart';
 import '../../models/online_order.dart';
 import '../../providers/online_orders_provider.dart';
 import 'order_card.dart';
 
 /// لوحة الطلبات الأونلاين
-/// 
+///
 /// تعرض الطلبات الواردة مع إجراءات سريعة
 class OrdersPanel extends ConsumerWidget {
   final VoidCallback? onClose;
-  
+
   const OrdersPanel({
     super.key,
     this.onClose,
@@ -47,10 +48,10 @@ class OrdersPanel extends ConsumerWidget {
         children: [
           // Header
           _buildHeader(context, ref, ordersState),
-          
+
           // Status Tabs
           _buildStatusTabs(context, ordersState),
-          
+
           // Orders List
           Expanded(
             child: ordersState.isLoading
@@ -64,7 +65,8 @@ class OrdersPanel extends ConsumerWidget {
     );
   }
 
-  Widget _buildHeader(BuildContext context, WidgetRef ref, OnlineOrdersState state) {
+  Widget _buildHeader(
+      BuildContext context, WidgetRef ref, OnlineOrdersState state) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
 
@@ -97,7 +99,8 @@ class OrdersPanel extends ConsumerWidget {
                 Text(
                   l10n.pendingOrdersCount(state.pendingOrders.length),
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onPrimaryContainer.withValues(alpha: 0.7),
+                    color: theme.colorScheme.onPrimaryContainer
+                        .withValues(alpha: 0.7),
                   ),
                 ),
               ],
@@ -106,7 +109,8 @@ class OrdersPanel extends ConsumerWidget {
           // Refresh Button
           IconButton(
             icon: const Icon(Icons.refresh),
-            onPressed: () => ref.read(onlineOrdersProvider.notifier).refreshOrders(),
+            onPressed: () =>
+                ref.read(onlineOrdersProvider.notifier).refreshOrders(),
             tooltip: l10n.refresh,
           ),
           if (onClose != null)
@@ -124,7 +128,8 @@ class OrdersPanel extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xs),
+      padding: const EdgeInsets.symmetric(
+          horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xs),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
@@ -191,17 +196,20 @@ class OrdersPanel extends ConsumerWidget {
     );
   }
 
-  Widget _buildOrdersList(BuildContext context, WidgetRef ref, OnlineOrdersState state) {
+  Widget _buildOrdersList(
+      BuildContext context, WidgetRef ref, OnlineOrdersState state) {
     // ترتيب الطلبات: المعلقة أولاً ثم بالوقت
     final sortedOrders = [...state.orders]..sort((a, b) {
-      if (a.status == OrderStatus.pending && b.status != OrderStatus.pending) {
-        return -1;
-      }
-      if (b.status == OrderStatus.pending && a.status != OrderStatus.pending) {
-        return 1;
-      }
-      return b.createdAt.compareTo(a.createdAt);
-    });
+        if (a.status == OrderStatus.pending &&
+            b.status != OrderStatus.pending) {
+          return -1;
+        }
+        if (b.status == OrderStatus.pending &&
+            a.status != OrderStatus.pending) {
+          return 1;
+        }
+        return b.createdAt.compareTo(a.createdAt);
+      });
 
     return ListView.builder(
       padding: const EdgeInsets.all(AlhaiSpacing.xs),
@@ -212,7 +220,8 @@ class OrdersPanel extends ConsumerWidget {
           padding: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
           child: OrderCard(
             order: order,
-            onAccept: () => ref.read(onlineOrdersProvider.notifier).acceptOrder(order.id),
+            onAccept: () =>
+                ref.read(onlineOrdersProvider.notifier).acceptOrder(order.id),
             onReject: () => _showRejectDialog(context, ref, order),
             onPrint: () => _printOrder(context, order),
             onAssignDriver: () => _showDriverDialog(context, ref, order),
@@ -222,7 +231,8 @@ class OrdersPanel extends ConsumerWidget {
     );
   }
 
-  void _showRejectDialog(BuildContext context, WidgetRef ref, OnlineOrder order) {
+  void _showRejectDialog(
+      BuildContext context, WidgetRef ref, OnlineOrder order) {
     final l10n = AppLocalizations.of(context)!;
 
     showDialog(
@@ -237,7 +247,9 @@ class OrdersPanel extends ConsumerWidget {
           ),
           FilledButton(
             onPressed: () {
-              ref.read(onlineOrdersProvider.notifier).cancelOrder(order.id, reason: l10n.rejectedBySeller);
+              ref
+                  .read(onlineOrdersProvider.notifier)
+                  .cancelOrder(order.id, reason: l10n.rejectedBySeller);
               Navigator.pop(context);
             },
             style: FilledButton.styleFrom(
@@ -265,7 +277,8 @@ class OrdersPanel extends ConsumerWidget {
     );
   }
 
-  void _showDriverDialog(BuildContext context, WidgetRef ref, OnlineOrder order) {
+  void _showDriverDialog(
+      BuildContext context, WidgetRef ref, OnlineOrder order) {
     final storeId = ref.read(currentStoreIdProvider);
     if (storeId == null) return;
 
@@ -275,7 +288,8 @@ class OrdersPanel extends ConsumerWidget {
       context: context,
       builder: (dialogContext) => FutureBuilder<List<DriversTableData>>(
         future: (db.select(db.driversTable)
-              ..where((d) => d.storeId.equals(storeId) & d.isActive.equals(true))
+              ..where(
+                  (d) => d.storeId.equals(storeId) & d.isActive.equals(true))
               ..orderBy([(d) => OrderingTerm.asc(d.name)]))
             .get(),
         builder: (ctx, snapshot) {
@@ -313,25 +327,29 @@ class OrdersPanel extends ConsumerWidget {
             title: Text(l10n.selectDriverTitle),
             content: Column(
               mainAxisSize: MainAxisSize.min,
-              children: drivers.map((driver) => ListTile(
-                leading: const CircleAvatar(child: Icon(Icons.person)),
-                title: Text(driver.name),
-                subtitle: driver.phone != null ? Text(driver.phone!) : null,
-                onTap: () {
-                  ref.read(onlineOrdersProvider.notifier).assignDriver(
-                    order.id,
-                    driver.id,
-                    driver.name,
-                  );
-                  Navigator.pop(ctx);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(l10n.orderDeliveredToDriver(driver.name)),
-                      backgroundColor: AppColors.success,
-                    ),
-                  );
-                },
-              )).toList(),
+              children: drivers
+                  .map((driver) => ListTile(
+                        leading: const CircleAvatar(child: Icon(Icons.person)),
+                        title: Text(driver.name),
+                        subtitle:
+                            driver.phone != null ? Text(driver.phone!) : null,
+                        onTap: () {
+                          ref.read(onlineOrdersProvider.notifier).assignDriver(
+                                order.id,
+                                driver.id,
+                                driver.name,
+                              );
+                          Navigator.pop(ctx);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                  l10n.orderDeliveredToDriver(driver.name)),
+                              backgroundColor: AppColors.success,
+                            ),
+                          );
+                        },
+                      ))
+                  .toList(),
             ),
           );
         },
@@ -357,11 +375,14 @@ class _StatusChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 6),
+      padding:
+          const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 6),
       decoration: BoxDecoration(
-        color: isSelected ? color.withValues(alpha: 0.2) : theme.colorScheme.surfaceContainerHighest,
+        color: isSelected
+            ? color.withValues(alpha: 0.2)
+            : theme.colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: isSelected ? color : Colors.transparent,

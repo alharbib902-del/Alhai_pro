@@ -13,7 +13,8 @@ import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import '../../widgets/cash/denomination_counter_widget.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
+import 'package:alhai_design_system/alhai_design_system.dart'
+    show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import 'package:alhai_core/alhai_core.dart' show UserRole;
 import '../../core/services/sentry_service.dart';
@@ -92,9 +93,8 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
           subtitle: _getDateSubtitle(l10n),
           showSearch: false,
           searchHint: l10n.searchPlaceholder,
-          onMenuTap: isWideScreen
-              ? null
-              : () => Scaffold.of(context).openDrawer(),
+          onMenuTap:
+              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: ref.watch(unreadNotificationsCountProvider),
           userName: userName,
@@ -103,48 +103,53 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
         ),
         Expanded(
           child: ref.watch(openShiftProvider).when(
-            data: (shift) {
-              if (shift == null) {
-                return _buildNoShiftMessage(isDark, l10n);
-              }
-              final movementsAsync = ref.watch(shiftMovementsProvider(shift.id));
-              final cashTotalsAsync = ref.watch(shiftCashTotalsProvider(shift.id));
-              return movementsAsync.when(
-                data: (movements) => cashTotalsAsync.when(
-                  data: (cashTotals) => SingleChildScrollView(
-                    padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-                    child: _buildContent(
-                      shift,
-                      movements,
-                      cashTotals,
-                      isWideScreen,
-                      isMediumScreen,
-                      isDark,
-                      l10n,
+                data: (shift) {
+                  if (shift == null) {
+                    return _buildNoShiftMessage(isDark, l10n);
+                  }
+                  final movementsAsync =
+                      ref.watch(shiftMovementsProvider(shift.id));
+                  final cashTotalsAsync =
+                      ref.watch(shiftCashTotalsProvider(shift.id));
+                  return movementsAsync.when(
+                    data: (movements) => cashTotalsAsync.when(
+                      data: (cashTotals) => SingleChildScrollView(
+                        padding: EdgeInsets.all(
+                            isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+                        child: _buildContent(
+                          shift,
+                          movements,
+                          cashTotals,
+                          isWideScreen,
+                          isMediumScreen,
+                          isDark,
+                          l10n,
+                        ),
+                      ),
+                      loading: () => const AppLoadingState(),
+                      error: (e, _) => AppErrorState.general(
+                        context,
+                        message: '$e',
+                        onRetry: () =>
+                            ref.invalidate(shiftCashTotalsProvider(shift.id)),
+                      ),
                     ),
-                  ),
-                  loading: () => const AppLoadingState(),
-                  error: (e, _) => AppErrorState.general(
-                    context,
-                    message: '$e',
-                    onRetry: () => ref.invalidate(shiftCashTotalsProvider(shift.id)),
-                  ),
-                ),
+                    loading: () => const AppLoadingState(),
+                    error: (e, _) => AppErrorState.general(
+                      context,
+                      message: '$e',
+                      onRetry: () =>
+                          ref.invalidate(shiftMovementsProvider(shift.id)),
+                    ),
+                  );
+                },
                 loading: () => const AppLoadingState(),
                 error: (e, _) => AppErrorState.general(
                   context,
                   message: '$e',
-                  onRetry: () => ref.invalidate(shiftMovementsProvider(shift.id)),
+                  onRetry: () => ref.invalidate(openShiftProvider),
                 ),
-              );
-            },
-            loading: () => const AppLoadingState(),
-            error: (e, _) => AppErrorState.general(
-              context,
-              message: '$e',
-              onRetry: () => ref.invalidate(openShiftProvider),
-            ),
-          ),
+              ),
         ),
       ],
     );
@@ -226,8 +231,14 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
                 _buildShiftInfoCard(user, shift, isDark, l10n),
                 const SizedBox(height: AlhaiSpacing.lg),
                 _buildSalesSummaryCard(
-                  openingCash, totalSalesAmount, totalRefundsAmount,
-                  cashIn, cashOut, expectedCash, isDark, l10n,
+                  openingCash,
+                  totalSalesAmount,
+                  totalRefundsAmount,
+                  cashIn,
+                  cashOut,
+                  expectedCash,
+                  isDark,
+                  l10n,
                 ),
               ],
             ),
@@ -253,8 +264,14 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
         _buildShiftInfoCard(user, shift, isDark, l10n),
         SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
         _buildSalesSummaryCard(
-          openingCash, totalSalesAmount, totalRefundsAmount,
-          cashIn, cashOut, expectedCash, isDark, l10n,
+          openingCash,
+          totalSalesAmount,
+          totalRefundsAmount,
+          cashIn,
+          cashOut,
+          expectedCash,
+          isDark,
+          l10n,
         ),
         SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
         _buildActualCashCard(actualCash, difference, isDark, l10n),
@@ -415,10 +432,8 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
                         color: AppColors.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: const Icon(
-                          Icons.account_balance_wallet_rounded,
-                          color: AppColors.primary,
-                          size: 16),
+                      child: const Icon(Icons.account_balance_wallet_rounded,
+                          color: AppColors.primary, size: 16),
                     ),
                     const SizedBox(width: 10),
                     Text(
@@ -446,8 +461,8 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
     );
   }
 
-  Widget _buildActualCashCard(
-      double actualCash, double difference, bool isDark, AppLocalizations l10n) {
+  Widget _buildActualCashCard(double actualCash, double difference, bool isDark,
+      AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
@@ -483,12 +498,13 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
           const SizedBox(height: AlhaiSpacing.md),
           // زر عد العملات
           SizedBox(
-            width:double.infinity,
+            width: double.infinity,
             child: OutlinedButton.icon(
               onPressed: () async {
                 final total = await showDenominationCounterSheet(
                   context,
-                  initialTotal: double.tryParse(_actualCashController.text) ?? 0,
+                  initialTotal:
+                      double.tryParse(_actualCashController.text) ?? 0,
                 );
                 if (total != null && mounted) {
                   setState(() {
@@ -497,12 +513,14 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
                 }
               },
               icon: const Icon(Icons.calculate_rounded, size: 18),
-              label: Text('${AppLocalizations.of(context).countDenominationsBtn} 🪙'),
+              label: Text(
+                  '${AppLocalizations.of(context).countDenominationsBtn} 🪙'),
               style: OutlinedButton.styleFrom(
                 foregroundColor: AppColors.warning,
                 side: const BorderSide(color: AppColors.warning),
                 padding: const EdgeInsets.symmetric(vertical: 10),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
               ),
             ),
           ),
@@ -628,8 +646,8 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
     );
   }
 
-  Widget _buildCloseButton(
-      ShiftsTableData shift, double expectedCash, bool isDark, AppLocalizations l10n) {
+  Widget _buildCloseButton(ShiftsTableData shift, double expectedCash,
+      bool isDark, AppLocalizations l10n) {
     return SizedBox(
       width: double.infinity,
       child: FilledButton.icon(
@@ -682,7 +700,8 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
                       ? l10n.surplusAmount(
                           CurrencyFormatter.formatCompact(difference), l10n.sar)
                       : l10n.deficitAmount(
-                          CurrencyFormatter.formatCompact(difference), l10n.sar),
+                          CurrencyFormatter.formatCompact(difference),
+                          l10n.sar),
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 color: difference == 0
@@ -782,8 +801,7 @@ class _InfoRow extends StatelessWidget {
           const SizedBox(width: 10),
           Text(
             '$label:',
-            style:
-                TextStyle(color: AppColors.getTextSecondary(isDark)),
+            style: TextStyle(color: AppColors.getTextSecondary(isDark)),
           ),
           const Spacer(),
           Text(
@@ -831,8 +849,7 @@ class _SummaryRow extends StatelessWidget {
           Expanded(
             child: Text(
               label,
-              style: TextStyle(
-                  color: AppColors.getTextSecondary(isDark)),
+              style: TextStyle(color: AppColors.getTextSecondary(isDark)),
             ),
           ),
           Text(

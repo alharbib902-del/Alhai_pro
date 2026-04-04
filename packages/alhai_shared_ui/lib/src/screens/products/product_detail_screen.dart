@@ -98,15 +98,16 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
       // 3. Load stock movements
       List<InventoryMovementsTableData> movements = [];
       try {
-        movements =
-            await db.inventoryDao.getMovementsByProduct(widget.productId, storeId: productData.storeId);
+        movements = await db.inventoryDao.getMovementsByProduct(
+            widget.productId,
+            storeId: productData.storeId);
       } catch (_) {}
 
       // 4. Load total sales count
       int salesCount = 0;
       try {
-        final count =
-            await db.saleItemsDao.getProductSalesCount(widget.productId, productData.storeId);
+        final count = await db.saleItemsDao
+            .getProductSalesCount(widget.productId, productData.storeId);
         salesCount = count.toInt();
       } catch (_) {}
 
@@ -121,6 +122,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
       setState(() => _isLoading = false);
     }
   }
+
   void _copyToClipboard(String text, String label) {
     Clipboard.setData(ClipboardData(text: text));
     if (mounted) {
@@ -152,68 +154,68 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
     final l10n = AppLocalizations.of(context)!;
 
     return Column(
-              children: [
-                AppHeader(
-                  title: _product?.name ?? l10n.productDetails,
-                  subtitle: l10n.productDetails,
-                  showSearch: false,
-                  onMenuTap: isWideScreen
-                      ? null
-                      : () => Scaffold.of(context).openDrawer(),
-                  onNotificationsTap: () => context.push('/notifications'),
-                  notificationsCount: 3,
-                  userName: l10n.defaultUserName,
-                  userRole: l10n.branchManager,
-                  onUserTap: () {},
-                  actions: isWideScreen && _product != null
-                      ? [
-                          AlhaiButton(
-                            label: l10n.edit,
-                            variant: AlhaiButtonVariant.outlined,
-                            size: AlhaiButtonSize.small,
-                            leadingIcon: Icons.edit_outlined,
-                            onPressed: () async {
-                              await context.push(AppRoutes.productsEditPath(_product!.id));
-                              _loadProductData();
-                            },
-                          ),
-                          SizedBox(width: AlhaiSpacing.xs),
-                          AlhaiButton(
-                            label: l10n.printLabel,
-                            variant: AlhaiButtonVariant.filled,
-                            size: AlhaiButtonSize.small,
-                            leadingIcon: Icons.print_outlined,
-                            onPressed: () {},
-                          ),
-                          SizedBox(width: AlhaiSpacing.xs),
-                          AlhaiIconButton(
-                            icon: Icons.more_horiz,
-                            onPressed: () => _showMoreOptions(context),
-                            tooltip: l10n.moreOptions,
-                          ),
-                        ]
-                      : null,
-                ),
-                Expanded(
-                  child: RefreshIndicator(
-                    onRefresh: _loadProductData,
-                    child: SingleChildScrollView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-                      child: _buildContent(
-                          isWideScreen, isMediumScreen, isDark, l10n),
-                    ),
+      children: [
+        AppHeader(
+          title: _product?.name ?? l10n.productDetails,
+          subtitle: l10n.productDetails,
+          showSearch: false,
+          onMenuTap:
+              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onNotificationsTap: () => context.push('/notifications'),
+          notificationsCount: 3,
+          userName: l10n.defaultUserName,
+          userRole: l10n.branchManager,
+          onUserTap: () {},
+          actions: isWideScreen && _product != null
+              ? [
+                  AlhaiButton(
+                    label: l10n.edit,
+                    variant: AlhaiButtonVariant.outlined,
+                    size: AlhaiButtonSize.small,
+                    leadingIcon: Icons.edit_outlined,
+                    onPressed: () async {
+                      await context
+                          .push(AppRoutes.productsEditPath(_product!.id));
+                      _loadProductData();
+                    },
                   ),
-                ),
-              ],
-            );
+                  SizedBox(width: AlhaiSpacing.xs),
+                  AlhaiButton(
+                    label: l10n.printLabel,
+                    variant: AlhaiButtonVariant.filled,
+                    size: AlhaiButtonSize.small,
+                    leadingIcon: Icons.print_outlined,
+                    onPressed: () {},
+                  ),
+                  SizedBox(width: AlhaiSpacing.xs),
+                  AlhaiIconButton(
+                    icon: Icons.more_horiz,
+                    onPressed: () => _showMoreOptions(context),
+                    tooltip: l10n.moreOptions,
+                  ),
+                ]
+              : null,
+        ),
+        Expanded(
+          child: RefreshIndicator(
+            onRefresh: _loadProductData,
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: EdgeInsets.all(
+                  isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+              child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
+            ),
+          ),
+        ),
+      ],
+    );
   }
   // ============================================================================
   // CONTENT
   // ============================================================================
 
-  Widget _buildContent(
-      bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n) {
+  Widget _buildContent(bool isWideScreen, bool isMediumScreen, bool isDark,
+      AppLocalizations l10n) {
     if (_isLoading) {
       return const Center(
         child: Padding(
@@ -359,22 +361,35 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                                   width: 200,
                                   height: 200,
                                   decoration: BoxDecoration(
-                                    color: Theme.of(context).colorScheme.scrim.withValues(alpha: 0.5),
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .scrim
+                                        .withValues(alpha: 0.5),
                                   ),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       IconButton(
-                                        icon: Icon(Icons.edit_outlined, color: Theme.of(context).colorScheme.onPrimary, size: 22),
+                                        icon: Icon(Icons.edit_outlined,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onPrimary,
+                                            size: 22),
                                         onPressed: () async {
-                                          await context.push(AppRoutes.productsEditPath(product.id));
+                                          await context.push(
+                                              AppRoutes.productsEditPath(
+                                                  product.id));
                                           _loadProductData();
                                         },
                                         tooltip: l10n.edit,
                                       ),
                                       SizedBox(width: AlhaiSpacing.xs),
                                       IconButton(
-                                        icon: Icon(Icons.fullscreen_rounded, color: Theme.of(context).colorScheme.onPrimary, size: 22),
+                                        icon: Icon(Icons.fullscreen_rounded,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onPrimary,
+                                            size: 22),
                                         onPressed: () {
                                           // TODO: Full screen image viewer
                                         },
@@ -468,8 +483,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                 label: l10n.barcode,
                 value: product.barcode!,
                 isDark: isDark,
-                onCopy: () =>
-                    _copyToClipboard(product.barcode!, l10n.barcode),
+                onCopy: () => _copyToClipboard(product.barcode!, l10n.barcode),
               ),
           ],
         ),
@@ -479,8 +493,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
         _buildPriceSection(product, isDark, l10n),
 
         // Description
-        if (product.description != null &&
-            product.description!.isNotEmpty) ...[
+        if (product.description != null && product.description!.isNotEmpty) ...[
           SizedBox(height: AlhaiSpacing.md),
           Divider(color: AppColors.getBorder(isDark)),
           SizedBox(height: AlhaiSpacing.sm),
@@ -509,10 +522,16 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3),
+        color: Theme.of(context)
+            .colorScheme
+            .primaryContainer
+            .withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.5),
+          color: Theme.of(context)
+              .colorScheme
+              .primaryContainer
+              .withValues(alpha: 0.5),
         ),
       ),
       child: Row(
@@ -607,7 +626,8 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
 
   Widget _buildStockPanel(bool isDark, AppLocalizations l10n) {
     final product = _product!;
-    final stockColor = AppColors.getStockColor(product.stockQty, product.minQty);
+    final stockColor =
+        AppColors.getStockColor(product.stockQty, product.minQty);
 
     return _card(
       isDark: isDark,
@@ -616,8 +636,8 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
         children: [
           Row(
             children: [
-              Icon(Icons.inventory_2_outlined, size: 20,
-                  color: AppColors.getTextSecondary(isDark)),
+              Icon(Icons.inventory_2_outlined,
+                  size: 20, color: AppColors.getTextSecondary(isDark)),
               SizedBox(width: AlhaiSpacing.xs),
               Text(
                 l10n.stockStatus,
@@ -739,7 +759,8 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
 
   Widget _buildMobileStockCard(bool isDark, AppLocalizations l10n) {
     final product = _product!;
-    final stockColor = AppColors.getStockColor(product.stockQty, product.minQty);
+    final stockColor =
+        AppColors.getStockColor(product.stockQty, product.minQty);
 
     return _card(
       isDark: isDark,
@@ -748,8 +769,8 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
         children: [
           Row(
             children: [
-              Icon(Icons.inventory_2_outlined, size: 20,
-                  color: AppColors.getTextSecondary(isDark)),
+              Icon(Icons.inventory_2_outlined,
+                  size: 20, color: AppColors.getTextSecondary(isDark)),
               SizedBox(width: AlhaiSpacing.xs),
               Text(
                 l10n.stockStatus,
@@ -760,8 +781,8 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
               ),
               const Spacer(),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: AlhaiSpacing.xxs),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 10, vertical: AlhaiSpacing.xxs),
                 decoration: BoxDecoration(
                   color: stockColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
@@ -1219,11 +1240,10 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                   children: [
                     Text(
                       _category?.name ?? l10n.uncategorized,
-                      style:
-                          Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.getTextPrimary(isDark),
-                              ),
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.getTextPrimary(isDark),
+                          ),
                     ),
                   ],
                 ),
@@ -1258,18 +1278,16 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                   children: [
                     Text(
                       l10n.supplier,
-                      style:
-                          Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: AppColors.getTextMuted(isDark),
-                              ),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: AppColors.getTextMuted(isDark),
+                          ),
                     ),
                     SizedBox(height: AlhaiSpacing.xxxs),
                     Text(
                       l10n.noSupplier,
-                      style:
-                          Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                color: AppColors.getTextSecondary(isDark),
-                              ),
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            color: AppColors.getTextSecondary(isDark),
+                          ),
                     ),
                   ],
                 ),
@@ -1412,7 +1430,8 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
   Widget _statusBadge(bool isActive, AppLocalizations l10n) {
     final color = isActive ? AppColors.success : AppColors.grey400;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: AlhaiSpacing.xxs),
+      padding: const EdgeInsets.symmetric(
+          horizontal: 10, vertical: AlhaiSpacing.xxs),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
@@ -1493,8 +1512,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
     );
   }
 
-  Widget _movementTypeBadge(
-      String type, bool isDark, AppLocalizations l10n) {
+  Widget _movementTypeBadge(String type, bool isDark, AppLocalizations l10n) {
     Color color;
     String label;
 
@@ -1525,7 +1543,8 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 3),
+      padding:
+          const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 3),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(6),
@@ -1579,7 +1598,8 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                 onTap: () => Navigator.pop(context),
               ),
               ListTile(
-                leading: const Icon(Icons.delete_outline, color: AppColors.error),
+                leading:
+                    const Icon(Icons.delete_outline, color: AppColors.error),
                 title: Text(l10n.delete,
                     style: const TextStyle(color: AppColors.error)),
                 onTap: () => Navigator.pop(context),

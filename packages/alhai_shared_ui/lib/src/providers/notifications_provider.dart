@@ -24,20 +24,28 @@ const String _currency = StoreSettings.defaultCurrencySymbol;
 enum NotificationType {
   /// طلب جديد
   newOrder,
+
   /// تنبيه مخزون منخفض
   lowStock,
+
   /// تنبيه نفاد المخزون
   outOfStock,
+
   /// بيع جديد
   newSale,
+
   /// دين جديد
   newDebt,
+
   /// تذكير دفع
   paymentReminder,
+
   /// اقتراح AI
   aiSuggestion,
+
   /// تحديث النظام
   systemUpdate,
+
   /// عام
   general,
 }
@@ -117,7 +125,8 @@ class AppNotification {
       message: json['message'],
       type: NotificationType.values[json['type']],
       priority: NotificationPriority.values[json['priority']],
-      createdAt: DateTime.tryParse(json['createdAt'] as String) ?? DateTime.now(),
+      createdAt:
+          DateTime.tryParse(json['createdAt'] as String) ?? DateTime.now(),
       isRead: json['isRead'] ?? false,
       data: json['data'],
       actionRoute: json['actionRoute'],
@@ -213,8 +222,7 @@ class NotificationsState {
 
   /// الإشعارات العاجلة
   List<AppNotification> get urgentNotifications => notifications
-      .where((n) =>
-          !n.isRead && n.priority == NotificationPriority.urgent)
+      .where((n) => !n.isRead && n.priority == NotificationPriority.urgent)
       .toList();
 }
 
@@ -239,9 +247,8 @@ class NotificationsNotifier extends StateNotifier<NotificationsState> {
 
       if (jsonString != null) {
         final List<dynamic> jsonList = jsonDecode(jsonString);
-        final notifications = jsonList
-            .map((json) => AppNotification.fromJson(json))
-            .toList();
+        final notifications =
+            jsonList.map((json) => AppNotification.fromJson(json)).toList();
 
         // ترتيب حسب التاريخ (الأحدث أولاً)
         notifications.sort((a, b) => b.createdAt.compareTo(a.createdAt));
@@ -317,9 +324,8 @@ class NotificationsNotifier extends StateNotifier<NotificationsState> {
 
   /// تعيين الكل كمقروء
   Future<void> markAllAsRead() async {
-    final notifications = state.notifications
-        .map((n) => n.copyWith(isRead: true))
-        .toList();
+    final notifications =
+        state.notifications.map((n) => n.copyWith(isRead: true)).toList();
     state = state.copyWith(notifications: notifications);
     await _saveNotifications();
   }
@@ -340,8 +346,7 @@ class NotificationsNotifier extends StateNotifier<NotificationsState> {
 
   /// حذف الإشعارات المقروءة
   Future<void> clearRead() async {
-    final notifications =
-        state.notifications.where((n) => !n.isRead).toList();
+    final notifications = state.notifications.where((n) => !n.isRead).toList();
     state = state.copyWith(notifications: notifications);
     await _saveNotifications();
   }
@@ -376,7 +381,8 @@ class NotificationsNotifier extends StateNotifier<NotificationsState> {
   }) async {
     await notify(
       title: '⚠️ مخزون منخفض',
-      message: '$productName - الكمية المتبقية: $currentStock (الحد الأدنى: $minStock)',
+      message:
+          '$productName - الكمية المتبقية: $currentStock (الحد الأدنى: $minStock)',
       type: NotificationType.lowStock,
       priority: NotificationPriority.high,
       data: {'productName': productName, 'currentStock': currentStock},
@@ -405,7 +411,8 @@ class NotificationsNotifier extends StateNotifier<NotificationsState> {
   }) async {
     await notify(
       title: '✅ بيع جديد',
-      message: 'فاتورة #$invoiceNumber - ${total.toStringAsFixed(2)} $_currency',
+      message:
+          'فاتورة #$invoiceNumber - ${total.toStringAsFixed(2)} $_currency',
       type: NotificationType.newSale,
       data: {'invoiceNumber': invoiceNumber, 'total': total},
     );

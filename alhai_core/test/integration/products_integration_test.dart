@@ -12,9 +12,11 @@ import 'package:alhai_core/src/models/create_product_params.dart';
 import 'package:alhai_core/src/models/update_product_params.dart';
 
 /// Mock classes
-class MockProductsRemoteDataSource extends Mock implements ProductsRemoteDataSource {}
+class MockProductsRemoteDataSource extends Mock
+    implements ProductsRemoteDataSource {}
 
 class FakeCreateProductRequest extends Fake implements CreateProductRequest {}
+
 class FakeUpdateProductRequest extends Fake implements UpdateProductRequest {}
 
 /// Integration Tests for ProductsRepository

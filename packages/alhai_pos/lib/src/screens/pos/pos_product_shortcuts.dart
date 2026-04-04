@@ -55,86 +55,94 @@ class _PosProductCardState extends State<PosProductCard> {
         child: GestureDetector(
           onTap: isOutOfStock ? null : widget.onAddToCart,
           child: AnimatedScale(
-          scale: _isHovered && !isOutOfStock ? 1.02 : 1.0,
-          duration: AlhaiDurations.standard,
-          child: Container(
-            decoration: BoxDecoration(
-              color: colorScheme.surface,
-              borderRadius: BorderRadius.circular(AppRadius.lg),
-              border: Border.all(
-                color: colorScheme.outlineVariant,
-                width: 0.5,
+            scale: _isHovered && !isOutOfStock ? 1.02 : 1.0,
+            duration: AlhaiDurations.standard,
+            child: Container(
+              decoration: BoxDecoration(
+                color: colorScheme.surface,
+                borderRadius: BorderRadius.circular(AppRadius.lg),
+                border: Border.all(
+                  color: colorScheme.outlineVariant,
+                  width: 0.5,
+                ),
+                boxShadow: _isHovered ? AppShadows.md : AppShadows.sm,
               ),
-              boxShadow: _isHovered ? AppShadows.md : AppShadows.sm,
-            ),
-            clipBehavior: Clip.hardEdge,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Image area with overlays
-                _buildImageArea(product, imageHeight, isOutOfStock, isDark, l10n),
+              clipBehavior: Clip.hardEdge,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Image area with overlays
+                  _buildImageArea(
+                      product, imageHeight, isOutOfStock, isDark, l10n),
 
-                // Info area - Row with consistent + button position
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.xs, AlhaiSpacing.xxs, AlhaiSpacing.xxs, AlhaiSpacing.xxs),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        // Product name
-                        Expanded(
-                          child: Text(
-                            product.name,
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: isDark
-                                  ? AppColors.textPrimaryDark
-                                  : AppColors.textPrimary,
+                  // Info area - Row with consistent + button position
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsetsDirectional.fromSTEB(
+                          AlhaiSpacing.xs,
+                          AlhaiSpacing.xxs,
+                          AlhaiSpacing.xxs,
+                          AlhaiSpacing.xxs),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          // Product name
+                          Expanded(
+                            child: Text(
+                              product.name,
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: isDark
+                                    ? AppColors.textPrimaryDark
+                                    : AppColors.textPrimary,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
                           ),
-                        ),
 
-                        // Add to cart button (+)
-                        if (!isOutOfStock)
-                          Padding(
-                            padding: const EdgeInsetsDirectional.only(start: AlhaiSpacing.xxs),
-                            child: Tooltip(
-                              message: l10n.addToCart,
-                              child: Material(
-                                color: AppColors.primary,
-                                shape: const CircleBorder(),
-                                elevation: 2,
-                                child: InkWell(
-                                  onTap: widget.onAddWithQuantity ?? widget.onAddToCart,
-                                  customBorder: const CircleBorder(),
-                                  child: SizedBox(
-                                    width: 28,
-                                    height: 28,
-                                    child: Icon(Icons.add_rounded,
-                                        color: colorScheme.onPrimary, size: 16),
+                          // Add to cart button (+)
+                          if (!isOutOfStock)
+                            Padding(
+                              padding: const EdgeInsetsDirectional.only(
+                                  start: AlhaiSpacing.xxs),
+                              child: Tooltip(
+                                message: l10n.addToCart,
+                                child: Material(
+                                  color: AppColors.primary,
+                                  shape: const CircleBorder(),
+                                  elevation: 2,
+                                  child: InkWell(
+                                    onTap: widget.onAddWithQuantity ??
+                                        widget.onAddToCart,
+                                    customBorder: const CircleBorder(),
+                                    child: SizedBox(
+                                      width: 28,
+                                      height: 28,
+                                      child: Icon(Icons.add_rounded,
+                                          color: colorScheme.onPrimary,
+                                          size: 16),
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
         ),
       ),
     );
   }
 
-  Widget _buildImageArea(
-      Product product, double height, bool isOutOfStock, bool isDark, AppLocalizations l10n) {
+  Widget _buildImageArea(Product product, double height, bool isOutOfStock,
+      bool isDark, AppLocalizations l10n) {
     final colorScheme = Theme.of(context).colorScheme;
     Widget imageWidget = Semantics(
       label: product.name,
@@ -188,8 +196,7 @@ class _PosProductCardState extends State<PosProductCard> {
             top: 6,
             end: 6,
             child: Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
               decoration: BoxDecoration(
                 color: colorScheme.surfaceContainerHigh.withValues(alpha: 0.92),
                 borderRadius: BorderRadius.circular(6),
@@ -218,8 +225,8 @@ class _PosProductCardState extends State<PosProductCard> {
               child: Transform.rotate(
                 angle: -0.3,
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: AlhaiSpacing.xxs),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 10, vertical: AlhaiSpacing.xxs),
                   decoration: BoxDecoration(
                     color: AppColors.error.withValues(alpha: 0.9),
                     borderRadius: BorderRadius.circular(6),
@@ -293,7 +300,8 @@ class PosShortcutsBar extends ConsumerWidget {
     final heldCount = ref.watch(dbHeldInvoicesCountProvider);
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg, vertical: 10),
+      padding:
+          const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg, vertical: 10),
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(AppRadius.full),
@@ -342,7 +350,8 @@ class PosShortcutsBar extends ConsumerWidget {
                     end: -4,
                     child: Container(
                       padding: const EdgeInsets.all(3),
-                      constraints: const BoxConstraints(minWidth: 18, minHeight: 18),
+                      constraints:
+                          const BoxConstraints(minWidth: 18, minHeight: 18),
                       decoration: const BoxDecoration(
                         color: AppColors.warning,
                         shape: BoxShape.circle,
@@ -395,7 +404,8 @@ class PosShortcutButton extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xxs, vertical: 2),
+          padding: const EdgeInsets.symmetric(
+              horizontal: AlhaiSpacing.xxs, vertical: 2),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -450,14 +460,16 @@ class PosFab extends StatelessWidget {
         child: Stack(
           alignment: Alignment.center,
           children: [
-            Icon(Icons.shopping_cart_rounded, color: colorScheme.onPrimary, size: 26),
+            Icon(Icons.shopping_cart_rounded,
+                color: colorScheme.onPrimary, size: 26),
             if (itemCount > 0)
               PositionedDirectional(
                 top: 6,
                 end: 6,
                 child: Container(
                   padding: const EdgeInsets.all(2),
-                  constraints: const BoxConstraints(minWidth: 18, minHeight: 18),
+                  constraints:
+                      const BoxConstraints(minWidth: 18, minHeight: 18),
                   decoration: const BoxDecoration(
                     color: AppColors.error,
                     shape: BoxShape.circle,

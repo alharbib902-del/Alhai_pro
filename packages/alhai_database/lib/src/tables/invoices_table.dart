@@ -12,7 +12,10 @@ import 'stores_table.dart';
 ///
 /// كل فاتورة مرتبطة بـ sale (عملية بيع) أو مستقلة
 @TableIndex(name: 'idx_invoices_store_id', columns: {#storeId})
-@TableIndex(name: 'idx_invoices_number', columns: {#storeId, #invoiceNumber}, unique: true)
+@TableIndex(
+    name: 'idx_invoices_number',
+    columns: {#storeId, #invoiceNumber},
+    unique: true)
 @TableIndex(name: 'idx_invoices_type', columns: {#storeId, #invoiceType})
 @TableIndex(name: 'idx_invoices_status', columns: {#status})
 @TableIndex(name: 'idx_invoices_created_at', columns: {#createdAt})
@@ -34,7 +37,8 @@ class InvoicesTable extends Table {
 
   /// نوع الفاتورة
   /// simplified_tax | standard_tax | credit_note | debit_note
-  TextColumn get invoiceType => text().withDefault(const Constant('simplified_tax'))();
+  TextColumn get invoiceType =>
+      text().withDefault(const Constant('simplified_tax'))();
 
   /// حالة الفاتورة
   /// draft | issued | sent | paid | partially_paid | overdue | cancelled | archived
@@ -55,7 +59,8 @@ class InvoicesTable extends Table {
   TextColumn get customerName => text().nullable()();
   TextColumn get customerPhone => text().nullable()();
   TextColumn get customerEmail => text().nullable()();
-  TextColumn get customerVatNumber => text().nullable()(); // للفاتورة الضريبية B2B
+  TextColumn get customerVatNumber =>
+      text().nullable()(); // للفاتورة الضريبية B2B
   TextColumn get customerAddress => text().nullable()();
 
   // ═══════════ المبالغ ═══════════
@@ -66,7 +71,8 @@ class InvoicesTable extends Table {
   RealColumn get total => real().withDefault(const Constant(0))();
 
   // ═══════════ الدفع ═══════════
-  TextColumn get paymentMethod => text().nullable()(); // cash, card, mixed, credit, transfer
+  TextColumn get paymentMethod =>
+      text().nullable()(); // cash, card, mixed, credit, transfer
   RealColumn get amountPaid => real().withDefault(const Constant(0))();
   RealColumn get amountDue => real().withDefault(const Constant(0))();
   TextColumn get currency => text().withDefault(const Constant('SAR'))();

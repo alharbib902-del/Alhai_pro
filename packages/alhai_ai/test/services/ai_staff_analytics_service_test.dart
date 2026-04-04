@@ -83,8 +83,7 @@ void main() {
       final rankings = AiStaffAnalyticsService.getStaffRankings();
 
       for (int i = 0; i < rankings.length - 1; i++) {
-        expect(
-            rankings[i].score, greaterThanOrEqualTo(rankings[i + 1].score));
+        expect(rankings[i].score, greaterThanOrEqualTo(rankings[i + 1].score));
       }
     });
 

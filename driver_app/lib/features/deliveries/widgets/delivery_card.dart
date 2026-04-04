@@ -38,84 +38,84 @@ class DeliveryCard extends StatelessWidget {
       label: semanticsLabel,
       button: true,
       child: Card(
-      elevation: 0,
-      clipBehavior: Clip.antiAlias,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AlhaiRadius.md),
-      ),
-      margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(AlhaiSpacing.md),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header: order number + status badge
-              Row(
-                children: [
-                  if (orderNumber.isNotEmpty)
-                    Text(
-                      '#$orderNumber',
-                      style: theme.textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  const Spacer(),
-                  DeliveryStatusBadge(status: status),
-                ],
-              ),
-              const SizedBox(height: AlhaiSpacing.xs),
-
-              // Customer name
-              if (customerName.isNotEmpty) ...[
+        elevation: 0,
+        clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AlhaiRadius.md),
+        ),
+        margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
+        child: InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.all(AlhaiSpacing.md),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header: order number + status badge
                 Row(
                   children: [
-                    Icon(Icons.person_outline,
-                        size: 16, color: theme.colorScheme.outline),
-                    const SizedBox(width: AlhaiSpacing.xxs),
-                    Text(
-                      customerName,
-                      style: theme.textTheme.bodyMedium,
-                    ),
+                    if (orderNumber.isNotEmpty)
+                      Text(
+                        '#$orderNumber',
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    const Spacer(),
+                    DeliveryStatusBadge(status: status),
                   ],
                 ),
-                const SizedBox(height: AlhaiSpacing.xxs),
-              ],
+                const SizedBox(height: AlhaiSpacing.xs),
 
-              // Address
-              Row(
-                children: [
-                  Icon(Icons.location_on_outlined,
-                      size: 16, color: theme.colorScheme.outline),
-                  const SizedBox(width: AlhaiSpacing.xxs),
-                  Expanded(
-                    child: Text(
-                      address,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.outline,
+                // Customer name
+                if (customerName.isNotEmpty) ...[
+                  Row(
+                    children: [
+                      Icon(Icons.person_outline,
+                          size: 16, color: theme.colorScheme.outline),
+                      const SizedBox(width: AlhaiSpacing.xxs),
+                      Text(
+                        customerName,
+                        style: theme.textTheme.bodyMedium,
                       ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                    ],
                   ),
-                  if (fee != null) ...[
-                    const SizedBox(width: AlhaiSpacing.xs),
-                    Text(
-                      '${(fee as num).toStringAsFixed(0)} ر.س',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: theme.colorScheme.primary,
+                  const SizedBox(height: AlhaiSpacing.xxs),
+                ],
+
+                // Address
+                Row(
+                  children: [
+                    Icon(Icons.location_on_outlined,
+                        size: 16, color: theme.colorScheme.outline),
+                    const SizedBox(width: AlhaiSpacing.xxs),
+                    Expanded(
+                      child: Text(
+                        address,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.outline,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
+                    if (fee != null) ...[
+                      const SizedBox(width: AlhaiSpacing.xs),
+                      Text(
+                        '${(fee as num).toStringAsFixed(0)} ر.س',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: theme.colorScheme.primary,
+                        ),
+                      ),
+                    ],
                   ],
-                ],
-              ),
-            ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
-    ),
     );
   }
 

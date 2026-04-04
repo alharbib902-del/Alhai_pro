@@ -32,8 +32,7 @@ void main() {
       when(() => mockDiscountsDao.getAllCoupons(any()))
           .thenAnswer((_) => completer.future.then((v) => v.cast()));
 
-      await tester.pumpWidget(
-          createTestWidget(const CouponManagementScreen()));
+      await tester.pumpWidget(createTestWidget(const CouponManagementScreen()));
       await tester.pump();
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
@@ -43,15 +42,13 @@ void main() {
       when(() => mockDiscountsDao.getAllCoupons(any()))
           .thenAnswer((_) async => []);
 
-      await tester.pumpWidget(
-          createTestWidget(const CouponManagementScreen()));
+      await tester.pumpWidget(createTestWidget(const CouponManagementScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(CouponManagementScreen), findsOneWidget);
     });
 
-    testWidgets('displays coupon list when data is available',
-        (tester) async {
+    testWidgets('displays coupon list when data is available', (tester) async {
       final coupons = [
         createTestCoupon(id: 'c-1', code: 'SAVE10', type: 'percentage'),
         createTestCoupon(id: 'c-2', code: 'FREE50', type: 'fixed'),
@@ -59,8 +56,7 @@ void main() {
       when(() => mockDiscountsDao.getAllCoupons(any()))
           .thenAnswer((_) async => coupons);
 
-      await tester.pumpWidget(
-          createTestWidget(const CouponManagementScreen()));
+      await tester.pumpWidget(createTestWidget(const CouponManagementScreen()));
       await tester.pumpAndSettle();
 
       expect(find.text('SAVE10'), findsOneWidget);
@@ -75,8 +71,7 @@ void main() {
       when(() => mockDiscountsDao.getAllCoupons(any()))
           .thenAnswer((_) async => coupons);
 
-      await tester.pumpWidget(
-          createTestWidget(const CouponManagementScreen()));
+      await tester.pumpWidget(createTestWidget(const CouponManagementScreen()));
       await tester.pumpAndSettle();
 
       // Total coupons count
@@ -96,8 +91,7 @@ void main() {
       when(() => mockDiscountsDao.getAllCoupons(any()))
           .thenAnswer((_) async => coupons);
 
-      await tester.pumpWidget(
-          createTestWidget(const CouponManagementScreen()));
+      await tester.pumpWidget(createTestWidget(const CouponManagementScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(Switch), findsWidgets);
@@ -110,8 +104,7 @@ void main() {
       when(() => mockDiscountsDao.getAllCoupons(any()))
           .thenAnswer((_) async => coupons);
 
-      await tester.pumpWidget(
-          createTestWidget(const CouponManagementScreen()));
+      await tester.pumpWidget(createTestWidget(const CouponManagementScreen()));
       await tester.pumpAndSettle();
 
       // Percentage type uses Icons.percent

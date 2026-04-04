@@ -29,8 +29,7 @@ class SASystemHealthScreen extends ConsumerWidget {
           final error = health.error;
 
           // Derive service statuses from health check
-          final dbStatus =
-              status == 'healthy' ? 'healthy' : 'degraded';
+          final dbStatus = status == 'healthy' ? 'healthy' : 'degraded';
 
           return SingleChildScrollView(
             padding: const EdgeInsets.all(AlhaiSpacing.lg),
@@ -48,8 +47,7 @@ class SASystemHealthScreen extends ConsumerWidget {
                       ),
                     ),
                     FilledButton.tonal(
-                      onPressed: () =>
-                          ref.invalidate(saSystemHealthProvider),
+                      onPressed: () => ref.invalidate(saSystemHealthProvider),
                       child: const Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -86,9 +84,8 @@ class SASystemHealthScreen extends ConsumerWidget {
                       status: status,
                       icon: Icons.dns_rounded,
                       metrics: {
-                        l10n.uptime: status == 'healthy'
-                            ? '99.97%'
-                            : 'Degraded',
+                        l10n.uptime:
+                            status == 'healthy' ? '99.97%' : 'Degraded',
                         'Response Time': '${dbResponseMs}ms',
                       },
                       l10n: l10n,
@@ -99,9 +96,7 @@ class SASystemHealthScreen extends ConsumerWidget {
                       icon: Icons.storage_rounded,
                       metrics: {
                         'Query Time': '${dbResponseMs}ms',
-                        'Status': dbStatus == 'healthy'
-                            ? 'Connected'
-                            : 'Error',
+                        'Status': dbStatus == 'healthy' ? 'Connected' : 'Error',
                       },
                       l10n: l10n,
                     ),
@@ -114,12 +109,12 @@ class SASystemHealthScreen extends ConsumerWidget {
                               : 'down',
                       icon: Icons.speed_rounded,
                       metrics: {
-                        'DB Round-trip': '${dbResponseMs}ms',
+                        l10n.saDbRoundTrip: '${dbResponseMs}ms',
                         'Rating': dbResponseMs < 100
-                            ? 'Excellent'
+                            ? l10n.saExcellent
                             : dbResponseMs < 200
-                                ? 'Good'
-                                : 'Slow',
+                                ? l10n.saGood
+                                : l10n.saSlow,
                       },
                       l10n: l10n,
                     ),
@@ -129,7 +124,7 @@ class SASystemHealthScreen extends ConsumerWidget {
 
                 // Resource usage
                 Text(
-                  'Resource Usage',
+                  l10n.saResourceUsage,
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
@@ -158,8 +153,12 @@ class SASystemHealthScreen extends ConsumerWidget {
                               ? '42%'
                               : '65%',
                       color: dbResponseMs < 100
-                          ? (isDark ? const Color(0xFF4ADE80) : const Color(0xFF16A34A))
-                          : (isDark ? const Color(0xFFFBBF24) : const Color(0xFFD97706)),
+                          ? (isDark
+                              ? const Color(0xFF4ADE80)
+                              : const Color(0xFF16A34A))
+                          : (isDark
+                              ? const Color(0xFFFBBF24)
+                              : const Color(0xFFD97706)),
                     ),
                     _ResourceGauge(
                       title: l10n.memoryUsage,
@@ -175,8 +174,12 @@ class SASystemHealthScreen extends ConsumerWidget {
                               ? '~55%'
                               : '~78%',
                       color: dbResponseMs < 150
-                          ? (isDark ? const Color(0xFF4ADE80) : const Color(0xFF16A34A))
-                          : (isDark ? const Color(0xFFFBBF24) : const Color(0xFFD97706)),
+                          ? (isDark
+                              ? const Color(0xFF4ADE80)
+                              : const Color(0xFF16A34A))
+                          : (isDark
+                              ? const Color(0xFFFBBF24)
+                              : const Color(0xFFD97706)),
                     ),
                     _ResourceGauge(
                       title: l10n.diskUsage,
@@ -219,8 +222,7 @@ class SASystemHealthScreen extends ConsumerWidget {
                   Card(
                     elevation: 0,
                     shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(AlhaiRadius.card),
+                      borderRadius: BorderRadius.circular(AlhaiRadius.card),
                       side: BorderSide(
                         color: colorScheme.error.withValues(alpha: 0.3),
                         width: AlhaiSpacing.strokeXs,
@@ -265,8 +267,16 @@ class _OverallStatusBanner extends StatelessWidget {
     final isDark = theme.brightness == Brightness.dark;
     final colorScheme = theme.colorScheme;
     final (color, icon, label) = switch (status) {
-      'healthy' => (isDark ? const Color(0xFF4ADE80) : const Color(0xFF16A34A), Icons.check_circle_rounded, l10n.healthy),
-      'degraded' => (isDark ? const Color(0xFFFBBF24) : const Color(0xFFD97706), Icons.warning_rounded, l10n.degraded),
+      'healthy' => (
+          isDark ? const Color(0xFF4ADE80) : const Color(0xFF16A34A),
+          Icons.check_circle_rounded,
+          l10n.healthy
+        ),
+      'degraded' => (
+          isDark ? const Color(0xFFFBBF24) : const Color(0xFFD97706),
+          Icons.warning_rounded,
+          l10n.degraded
+        ),
       'down' => (colorScheme.error, Icons.error_rounded, l10n.down),
       _ => (colorScheme.outline, Icons.help_rounded, 'Unknown'),
     };
@@ -391,18 +401,16 @@ class _ServiceCard extends StatelessWidget {
                 Text(
                   statusLabel,
                   style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                    color: statusColor,
-                  ),
+                        color: statusColor,
+                      ),
                 ),
               ],
             ),
             const Divider(height: AlhaiSpacing.lg),
             ...metrics.entries.map((e) => Padding(
-                  padding:
-                      const EdgeInsets.only(bottom: AlhaiSpacing.xs),
+                  padding: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
                   child: Row(
-                    mainAxisAlignment:
-                        MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         e.key,
@@ -480,8 +488,8 @@ class _ResourceGauge extends StatelessWidget {
               borderRadius: BorderRadius.circular(AlhaiRadius.full),
               child: LinearProgressIndicator(
                 value: value,
-                backgroundColor: theme.colorScheme.outlineVariant
-                    .withValues(alpha: 0.3),
+                backgroundColor:
+                    theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
                 valueColor: AlwaysStoppedAnimation<Color>(color),
                 minHeight: 8,
               ),
@@ -522,7 +530,13 @@ class _ErrorRateCard extends StatelessWidget {
                     isHealthy ? '0.00%' : 'Elevated',
                     style: theme.textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: isHealthy ? (isDark ? const Color(0xFF4ADE80) : const Color(0xFF16A34A)) : (isDark ? const Color(0xFFFBBF24) : const Color(0xFFD97706)),
+                      color: isHealthy
+                          ? (isDark
+                              ? const Color(0xFF4ADE80)
+                              : const Color(0xFF16A34A))
+                          : (isDark
+                              ? const Color(0xFFFBBF24)
+                              : const Color(0xFFD97706)),
                     ),
                   ),
                   Text(
@@ -542,7 +556,11 @@ class _ErrorRateCard extends StatelessWidget {
                   ? Icons.check_circle_outline_rounded
                   : Icons.warning_amber_rounded,
               size: 48,
-              color: isHealthy ? (isDark ? const Color(0xFF4ADE80) : const Color(0xFF16A34A)) : (isDark ? const Color(0xFFFBBF24) : const Color(0xFFD97706)),
+              color: isHealthy
+                  ? (isDark ? const Color(0xFF4ADE80) : const Color(0xFF16A34A))
+                  : (isDark
+                      ? const Color(0xFFFBBF24)
+                      : const Color(0xFFD97706)),
             ),
           ],
         ),

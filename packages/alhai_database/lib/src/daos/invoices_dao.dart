@@ -47,8 +47,7 @@ class InvoicesDao extends DatabaseAccessor<AppDatabase>
     int limit = 50,
   }) {
     return (select(invoicesTable)
-          ..where(
-              (i) => i.storeId.equals(storeId) & i.status.equals(status))
+          ..where((i) => i.storeId.equals(storeId) & i.status.equals(status))
           ..orderBy([(i) => OrderingTerm.desc(i.createdAt)])
           ..limit(limit))
         .get();

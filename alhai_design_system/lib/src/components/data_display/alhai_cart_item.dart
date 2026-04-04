@@ -7,7 +7,7 @@ import '../data_display/alhai_price_text.dart';
 import '../inputs/alhai_quantity_control.dart';
 
 /// AlhaiCartItem - Compact cart item row for cart & checkout screens
-/// 
+///
 /// Features:
 /// - Title + Price display
 /// - Quantity control (AlhaiQuantityControl)

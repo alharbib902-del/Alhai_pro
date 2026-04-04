@@ -282,8 +282,7 @@ void main() {
             any(),
             notes: any(named: 'notes'),
           )).thenAnswer((invocation) async {
-        processedDeliveries
-            .add(invocation.positionalArguments[0] as String);
+        processedDeliveries.add(invocation.positionalArguments[0] as String);
         return {'success': true};
       });
 

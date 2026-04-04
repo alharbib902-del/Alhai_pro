@@ -37,7 +37,7 @@ class QuickActionsPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    
+
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.lg),
       decoration: BoxDecoration(
@@ -73,7 +73,7 @@ class QuickActionsPanel extends StatelessWidget {
               ),
             ),
           ),
-          
+
           // المحتوى
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -87,9 +87,9 @@ class QuickActionsPanel extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              
+
               SizedBox(height: AlhaiSpacing.md),
-              
+
               // أزرار الإجراءات
               GridView.builder(
                 shrinkWrap: true,
@@ -103,14 +103,56 @@ class QuickActionsPanel extends StatelessWidget {
                 itemCount: 8,
                 itemBuilder: (context, index) {
                   final actions = [
-                    (Icons.shopping_cart_checkout_rounded, l10n.newSale, onNewSale, true, null),
-                    (Icons.add_box_rounded, l10n.addProduct, onAddProduct, false, null),
+                    (
+                      Icons.shopping_cart_checkout_rounded,
+                      l10n.newSale,
+                      onNewSale,
+                      true,
+                      null
+                    ),
+                    (
+                      Icons.add_box_rounded,
+                      l10n.addProduct,
+                      onAddProduct,
+                      false,
+                      null
+                    ),
                     (Icons.replay_rounded, l10n.refund, onRefund, false, null),
-                    (Icons.description_rounded, l10n.dailyReport, onDailyReport, false, null),
-                    (Icons.inventory_2_rounded, l10n.inventory, onInventory, false, inventoryBadge),
-                    (Icons.people_rounded, l10n.customers, onCustomers, false, null),
-                    (Icons.settings_rounded, l10n.settings, onSettings, false, null),
-                    (Icons.nightlight_round, l10n.closeDay, onCloseDay, false, null),
+                    (
+                      Icons.description_rounded,
+                      l10n.dailyReport,
+                      onDailyReport,
+                      false,
+                      null
+                    ),
+                    (
+                      Icons.inventory_2_rounded,
+                      l10n.inventory,
+                      onInventory,
+                      false,
+                      inventoryBadge
+                    ),
+                    (
+                      Icons.people_rounded,
+                      l10n.customers,
+                      onCustomers,
+                      false,
+                      null
+                    ),
+                    (
+                      Icons.settings_rounded,
+                      l10n.settings,
+                      onSettings,
+                      false,
+                      null
+                    ),
+                    (
+                      Icons.nightlight_round,
+                      l10n.closeDay,
+                      onCloseDay,
+                      false,
+                      null
+                    ),
                   ];
                   final action = actions[index];
                   return _QuickActionItem(
@@ -187,9 +229,9 @@ class _QuickActionItemState extends State<_QuickActionItem> {
                   size: widget.isPrimary ? 32 : 24,
                 ),
               ),
-              
+
               SizedBox(height: AlhaiSpacing.xs),
-              
+
               // النص
               Text(
                 widget.label,

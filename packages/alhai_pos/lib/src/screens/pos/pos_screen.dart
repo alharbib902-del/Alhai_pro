@@ -4,7 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart' hide TextDirection;
 import 'package:alhai_auth/alhai_auth.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' hide ResponsiveBuilder;
+import 'package:alhai_design_system/alhai_design_system.dart'
+    hide ResponsiveBuilder;
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import '../../core/utils/keyboard_shortcuts.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
@@ -86,7 +87,8 @@ class _PosScreenState extends ConsumerState<PosScreen> {
     Future.microtask(() {
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId != null) {
-        ref.read(productsStateProvider.notifier)
+        ref
+            .read(productsStateProvider.notifier)
             .loadProducts(storeId: storeId, refresh: true);
       }
       // التحقق من وجود مسودة سلة محفوظة واستعادتها مع تأكيد
@@ -124,7 +126,8 @@ class _PosScreenState extends ConsumerState<PosScreen> {
         orgId: '', // سيتم تجاهله للجداول بدون org_id
         storeId: storeId,
       );
-      debugPrint('[POS] Initial sync done: ${result.totalRecords} records, errors: ${result.errors}');
+      debugPrint(
+          '[POS] Initial sync done: ${result.totalRecords} records, errors: ${result.errors}');
     } catch (e) {
       debugPrint('[POS] Initial sync error: $e');
     }
@@ -309,7 +312,8 @@ class _PosScreenState extends ConsumerState<PosScreen> {
                   ),
                 ),
                 // Cart content
-                Expanded(child: PosCartPanel(
+                Expanded(
+                    child: PosCartPanel(
                   isBottomSheet: true,
                   onHoldInvoice: () {
                     Navigator.pop(context);
@@ -392,62 +396,62 @@ class _PosScreenState extends ConsumerState<PosScreen> {
           final colorScheme = Theme.of(ctx).colorScheme;
           return StatefulBuilder(
             builder: (ctx, setSheetState) => Container(
-            decoration: BoxDecoration(
-              color: colorScheme.surface,
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(24)),
-            ),
-            padding: const EdgeInsets.all(AlhaiSpacing.md),
-            child: Stack(
-              children: [
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
-                      width: 40,
-                      height: 4,
-                      decoration: BoxDecoration(
-                        color: colorScheme.outlineVariant,
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
-                    InlinePayment(
-                      total: total,
-                      storeId: ref.read(currentStoreIdProvider) ?? '',
-                      onCancel: () {
-                        if (!_isProcessingSale) {
-                          Navigator.pop(ctx);
-                        }
-                      },
-                      onComplete: (result) async {
-                        // Bug 2 fix: show loading overlay, don't block navigation
-                        setState(() => _isProcessingSale = true);
-                        setSheetState(() {});
-                        await _handlePaymentComplete(result);
-                        if (ctx.mounted) Navigator.pop(ctx);
-                      },
-                    ),
-                  ],
-                ),
-                // Bug 2 fix: loading overlay during sale processing
-                if (_isProcessingSale)
-                  Positioned.fill(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.black.withValues(alpha: 0.3),
-                        borderRadius: const BorderRadius.vertical(
-                          top: Radius.circular(24),
+              decoration: BoxDecoration(
+                color: colorScheme.surface,
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(24)),
+              ),
+              padding: const EdgeInsets.all(AlhaiSpacing.md),
+              child: Stack(
+                children: [
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
+                        width: 40,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: colorScheme.outlineVariant,
+                          borderRadius: BorderRadius.circular(2),
                         ),
                       ),
-                      child: const Center(
-                        child: CircularProgressIndicator(),
+                      InlinePayment(
+                        total: total,
+                        storeId: ref.read(currentStoreIdProvider) ?? '',
+                        onCancel: () {
+                          if (!_isProcessingSale) {
+                            Navigator.pop(ctx);
+                          }
+                        },
+                        onComplete: (result) async {
+                          // Bug 2 fix: show loading overlay, don't block navigation
+                          setState(() => _isProcessingSale = true);
+                          setSheetState(() {});
+                          await _handlePaymentComplete(result);
+                          if (ctx.mounted) Navigator.pop(ctx);
+                        },
+                      ),
+                    ],
+                  ),
+                  // Bug 2 fix: loading overlay during sale processing
+                  if (_isProcessingSale)
+                    Positioned.fill(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.3),
+                          borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(24),
+                          ),
+                        ),
+                        child: const Center(
+                          child: CircularProgressIndicator(),
+                        ),
                       ),
                     ),
-                  ),
-              ],
+                ],
+              ),
             ),
-          ),
           );
         },
       ).then((_) {
@@ -487,7 +491,8 @@ class _PosScreenState extends ConsumerState<PosScreen> {
           cardAmount = saleTotal;
         } else if (result.method == PaymentMethod.credit) {
           creditAmount = saleTotal;
-        } else if (result.method == PaymentMethod.mixed && result.splits != null) {
+        } else if (result.method == PaymentMethod.mixed &&
+            result.splits != null) {
           // مجموع الدفعات المستلمة فعلاً (نقد + بطاقة) بدون الآجل
           amountReceived = result.splits!
               .where((s) => s.method != PaymentMethod.credit)
@@ -551,10 +556,12 @@ class _PosScreenState extends ConsumerState<PosScreen> {
         await showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
-            icon: const Icon(Icons.error_outline, color: AppColors.error, size: 40),
+            icon: const Icon(Icons.error_outline,
+                color: AppColors.error, size: 40),
             title: Text(AppLocalizations.of(context)!.saleSaveFailed),
             content: Text(
-              AppLocalizations.of(context)!.errorSavingSaleMessage(e.toString()),
+              AppLocalizations.of(context)!
+                  .errorSavingSaleMessage(e.toString()),
               textDirection: TextDirection.rtl,
             ),
             actions: [
@@ -592,7 +599,8 @@ class _PosScreenState extends ConsumerState<PosScreen> {
         context: context,
         receiptNumber: receiptNumber,
         amount: result.amountPaid,
-        paymentMethodLabel: result.method.localizedLabel(AppLocalizations.of(context)!),
+        paymentMethodLabel:
+            result.method.localizedLabel(AppLocalizations.of(context)!),
         customerPhone: result.customerPhone,
         customerName: result.customerName,
         saleId: saleId,
@@ -616,7 +624,8 @@ class _PosScreenState extends ConsumerState<PosScreen> {
     if (product != null) {
       ref.read(cartStateProvider.notifier).addProduct(product);
       HapticFeedback.lightImpact();
-      _showSnackBar(context, '${l10n.addedToCart}: ${product.name}', isSuccess: true);
+      _showSnackBar(context, '${l10n.addedToCart}: ${product.name}',
+          isSuccess: true);
     } else {
       _showSnackBar(
         context,
@@ -652,12 +661,14 @@ class _PosScreenState extends ConsumerState<PosScreen> {
         // F1 = toggle keyboard shortcuts help overlay
         const SingleActivator(LogicalKeyboardKey.f1): _toggleShortcutsOverlay,
         // F2 = focus search field
-        const SingleActivator(LogicalKeyboardKey.f2): () => _searchFocusNode.requestFocus(),
+        const SingleActivator(LogicalKeyboardKey.f2): () =>
+            _searchFocusNode.requestFocus(),
         // F5 = refresh products list
         const SingleActivator(LogicalKeyboardKey.f5): () {
           final storeId = ref.read(currentStoreIdProvider);
           if (storeId != null) {
-            ref.read(productsStateProvider.notifier)
+            ref
+                .read(productsStateProvider.notifier)
                 .loadProducts(storeId: storeId, refresh: true);
             _showSnackBar(context, l10n.refresh, isSuccess: true);
           }
@@ -674,172 +685,187 @@ class _PosScreenState extends ConsumerState<PosScreen> {
       child: Focus(
         autofocus: true,
         child: BarcodeListener(
-      onBarcodeScanned: _handleBarcodeScan,
-      child: PosKeyboardListener(
-      onSearch: () => _searchFocusNode.requestFocus(),
-      onNewSale: () {
-        ref.read(cartStateProvider.notifier).clear();
-        setState(() => _orderCounter++);
-      },
-      onCheckout: () {
-        final cartState = ref.read(cartStateProvider);
-        if (cartState.items.isNotEmpty) {
-          final subtotal = cartState.subtotal;
-          final tax = VatCalculator.vatFromNet(netAmount: subtotal);
-          final total = subtotal + tax - cartState.discount;
-          _showPaymentDialog(total);
-        }
-      },
-      onUndo: () {
-        final action = ref.read(cartStateProvider.notifier).undo();
-        if (action == null) {
-          _showSnackBar(context, l10n.nothingToUndo);
-          return;
-        }
-        switch (action.type) {
-          case CartUndoType.add:
-            _showSnackBar(context, l10n.undoneRemoved(action.productName));
-          case CartUndoType.remove:
-            _showSnackBar(context, l10n.undoneAdded(action.productName));
-          case CartUndoType.quantityChange:
-            _showSnackBar(context, l10n.undoneQtyChanged(
-              action.productName,
-              action.newQuantity ?? 0,
-              action.previousQuantity ?? 0,
-            ));
-        }
-      },
-      onCancel: () => context.go(AppRoutes.home),
-      onQuickAdd: _addQuickProduct,
-      onQuantityChange: (increase) {},
-      child: Scaffold(
-        // Mobile FAB
-        floatingActionButton: context.isMobile
-            ? PosFab(
-                itemCount: cartItemCount,
-                onTap: _showCartBottomSheet,
-              )
-            : null,
-        body: SafeArea(
-          child: CashierModeWrapper(
-          child: Stack(
-            children: [
-            Column(
-            children: [
-              // Header
-              AppHeader(
-                title: l10n.pos,
-                subtitle: _getDateSubtitle(l10n),
-                showSearch: isWideScreen,
-                searchHint: l10n.searchPlaceholder,
-                onMenuTap: isWideScreen
-                    ? null
-                    : () => Scaffold.of(context).openDrawer(),
-                onNotificationsTap: () {},
-                notificationsCount: 0,
-                userName: ref.watch(currentUserProvider)?.name ?? l10n.cashCustomer,
-                userRole: _localizedRole(ref.watch(currentUserProvider)?.role, l10n),
-                onUserTap: () {},
-              ),
+          onBarcodeScanned: _handleBarcodeScan,
+          child: PosKeyboardListener(
+            onSearch: () => _searchFocusNode.requestFocus(),
+            onNewSale: () {
+              ref.read(cartStateProvider.notifier).clear();
+              setState(() => _orderCounter++);
+            },
+            onCheckout: () {
+              final cartState = ref.read(cartStateProvider);
+              if (cartState.items.isNotEmpty) {
+                final subtotal = cartState.subtotal;
+                final tax = VatCalculator.vatFromNet(netAmount: subtotal);
+                final total = subtotal + tax - cartState.discount;
+                _showPaymentDialog(total);
+              }
+            },
+            onUndo: () {
+              final action = ref.read(cartStateProvider.notifier).undo();
+              if (action == null) {
+                _showSnackBar(context, l10n.nothingToUndo);
+                return;
+              }
+              switch (action.type) {
+                case CartUndoType.add:
+                  _showSnackBar(
+                      context, l10n.undoneRemoved(action.productName));
+                case CartUndoType.remove:
+                  _showSnackBar(context, l10n.undoneAdded(action.productName));
+                case CartUndoType.quantityChange:
+                  _showSnackBar(
+                      context,
+                      l10n.undoneQtyChanged(
+                        action.productName,
+                        action.newQuantity ?? 0,
+                        action.previousQuantity ?? 0,
+                      ));
+              }
+            },
+            onCancel: () => context.go(AppRoutes.home),
+            onQuickAdd: _addQuickProduct,
+            onQuantityChange: (increase) {},
+            child: Scaffold(
+              // Mobile FAB
+              floatingActionButton: context.isMobile
+                  ? PosFab(
+                      itemCount: cartItemCount,
+                      onTap: _showCartBottomSheet,
+                    )
+                  : null,
+              body: SafeArea(
+                child: CashierModeWrapper(
+                  child: Stack(
+                    children: [
+                      Column(
+                        children: [
+                          // Header
+                          AppHeader(
+                            title: l10n.pos,
+                            subtitle: _getDateSubtitle(l10n),
+                            showSearch: isWideScreen,
+                            searchHint: l10n.searchPlaceholder,
+                            onMenuTap: isWideScreen
+                                ? null
+                                : () => Scaffold.of(context).openDrawer(),
+                            onNotificationsTap: () {},
+                            notificationsCount: 0,
+                            userName: ref.watch(currentUserProvider)?.name ??
+                                l10n.cashCustomer,
+                            userRole: _localizedRole(
+                                ref.watch(currentUserProvider)?.role, l10n),
+                            onUserTap: () {},
+                          ),
 
-              // Offline + Sync pending banners
-              const StatusBanners(),
+                          // Offline + Sync pending banners
+                          const StatusBanners(),
 
-              // Orders panel + main content
-              Expanded(
-                child: Row(
-                  children: [
-                    if (_showOrdersPanel)
-                      OrdersPanel(
-                        onClose: () =>
-                            setState(() => _showOrdersPanel = false),
-                      ),
+                          // Orders panel + main content
+                          Expanded(
+                            child: Row(
+                              children: [
+                                if (_showOrdersPanel)
+                                  OrdersPanel(
+                                    onClose: () => setState(
+                                        () => _showOrdersPanel = false),
+                                  ),
 
-                    // Main POS content (L56: RepaintBoundary isolates repaints)
-                    Expanded(
-                      child: ResponsiveBuilder(
-                        builder: (context, deviceType, screenWidth) {
-                          if (deviceType.isMobile) {
-                            // L56: RepaintBoundary isolates product grid
-                            // scroll repaints from header/FAB
-                            return RepaintBoundary(
-                              child: PosProductsPanel(
-                                selectedCategoryId: _selectedCategoryId,
-                                onCategorySelected: _onCategorySelected,
-                                columns: 3,
-                                showShortcutsBar: false,
-                                onHoldInvoice: _holdCurrentInvoice,
-                                onShowHeldInvoices: _showHeldInvoices,
-                              ),
-                            );
-                          }
+                                // Main POS content (L56: RepaintBoundary isolates repaints)
+                                Expanded(
+                                  child: ResponsiveBuilder(
+                                    builder:
+                                        (context, deviceType, screenWidth) {
+                                      if (deviceType.isMobile) {
+                                        // L56: RepaintBoundary isolates product grid
+                                        // scroll repaints from header/FAB
+                                        return RepaintBoundary(
+                                          child: PosProductsPanel(
+                                            selectedCategoryId:
+                                                _selectedCategoryId,
+                                            onCategorySelected:
+                                                _onCategorySelected,
+                                            columns: 3,
+                                            showShortcutsBar: false,
+                                            onHoldInvoice: _holdCurrentInvoice,
+                                            onShowHeldInvoices:
+                                                _showHeldInvoices,
+                                          ),
+                                        );
+                                      }
 
-                          final isTablet = deviceType.isTablet;
-                          // In landscape, give more space to products (70/30)
-                          final isLandscape = MediaQuery.orientationOf(context) == Orientation.landscape;
-                          // Tablet: 55/45 split to give cart enough room; Desktop: 70/30 or 65/35
-                          final productsFlex = isTablet
-                              ? (isLandscape ? 60 : 55)
-                              : (isLandscape ? 70 : 65);
-                          final cartFlex = isTablet
-                              ? (isLandscape ? 40 : 45)
-                              : (isLandscape ? 30 : 35);
+                                      final isTablet = deviceType.isTablet;
+                                      // In landscape, give more space to products (70/30)
+                                      final isLandscape =
+                                          MediaQuery.orientationOf(context) ==
+                                              Orientation.landscape;
+                                      // Tablet: 55/45 split to give cart enough room; Desktop: 70/30 or 65/35
+                                      final productsFlex = isTablet
+                                          ? (isLandscape ? 60 : 55)
+                                          : (isLandscape ? 70 : 65);
+                                      final cartFlex = isTablet
+                                          ? (isLandscape ? 40 : 45)
+                                          : (isLandscape ? 30 : 35);
 
-                          return Row(
-                            children: [
-                              // L56: RepaintBoundary on product grid
-                              Expanded(
-                                flex: productsFlex,
-                                child: RepaintBoundary(
-                                  child: PosProductsPanel(
-                                    selectedCategoryId:
-                                        _selectedCategoryId,
-                                    onCategorySelected:
-                                        _onCategorySelected,
-                                    // Tablet: 3 columns + horizontal category bar (no sidebar)
-                                    // Desktop: 4 columns + vertical category sidebar
-                                    columns: isTablet ? 3 : 4,
-                                    showShortcutsBar: !isTablet,
-                                    onHoldInvoice: _holdCurrentInvoice,
-                                    onShowHeldInvoices: _showHeldInvoices,
+                                      return Row(
+                                        children: [
+                                          // L56: RepaintBoundary on product grid
+                                          Expanded(
+                                            flex: productsFlex,
+                                            child: RepaintBoundary(
+                                              child: PosProductsPanel(
+                                                selectedCategoryId:
+                                                    _selectedCategoryId,
+                                                onCategorySelected:
+                                                    _onCategorySelected,
+                                                // Tablet: 3 columns + horizontal category bar (no sidebar)
+                                                // Desktop: 4 columns + vertical category sidebar
+                                                columns: isTablet ? 3 : 4,
+                                                showShortcutsBar: !isTablet,
+                                                onHoldInvoice:
+                                                    _holdCurrentInvoice,
+                                                onShowHeldInvoices:
+                                                    _showHeldInvoices,
+                                              ),
+                                            ),
+                                          ),
+                                          // L56: RepaintBoundary on cart panel
+                                          Expanded(
+                                            flex: cartFlex,
+                                            child: RepaintBoundary(
+                                              child: PosCartPanel(
+                                                orderNumber:
+                                                    'ORD-${DateTime.now().year}-${_orderCounter.toString().padLeft(3, '0')}',
+                                                onPayTap: _showPaymentDialog,
+                                                onHoldInvoice:
+                                                    _holdCurrentInvoice,
+                                                onShowHeldInvoices:
+                                                    _showHeldInvoices,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    },
                                   ),
                                 ),
-                              ),
-                              // L56: RepaintBoundary on cart panel
-                              Expanded(
-                                flex: cartFlex,
-                                child: RepaintBoundary(
-                                  child: PosCartPanel(
-                                    orderNumber:
-                                        'ORD-${DateTime.now().year}-${_orderCounter.toString().padLeft(3, '0')}',
-                                    onPayTap: _showPaymentDialog,
-                                    onHoldInvoice: _holdCurrentInvoice,
-                                    onShowHeldInvoices: _showHeldInvoices,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          );
-                        },
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
+
+                      // L35: Keyboard shortcuts overlay
+                      if (_showShortcutsOverlay)
+                        _PosShortcutsOverlay(onClose: _toggleShortcutsOverlay),
+                    ],
+                  ),
                 ),
               ),
-            ],
+            ),
           ),
-
-            // L35: Keyboard shortcuts overlay
-            if (_showShortcutsOverlay)
-              _PosShortcutsOverlay(onClose: _toggleShortcutsOverlay),
-          ],
-        ),
         ),
       ),
-        ),
-    ),
-    ),
-    ),
     );
   }
 
@@ -867,7 +893,9 @@ class _PosScreenState extends ConsumerState<PosScreen> {
               Text(
                 '${dialogL10n.nItems(cartState.itemCount)} • ${CurrencyFormatter.formatWithContext(context, cartState.total)}',
                 style: TextStyle(
-                  color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                  color: isDark
+                      ? AppColors.textSecondaryDark
+                      : AppColors.textSecondary,
                   fontSize: 14,
                 ),
               ),
@@ -984,9 +1012,10 @@ class _PosShortcutsOverlay extends StatelessWidget {
                       children: [
                         Text(
                           l10n.keyboardShortcuts,
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style:
+                              Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                         ),
                         IconButton(
                           icon: const Icon(Icons.close),
@@ -997,44 +1026,51 @@ class _PosShortcutsOverlay extends StatelessWidget {
                     ),
                     const SizedBox(height: AlhaiSpacing.md),
                     ...shortcuts.map((s) => Padding(
-                      padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxs),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 72,
-                            padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
-                            decoration: BoxDecoration(
-                              color: colorScheme.surfaceContainerHighest,
-                              borderRadius: BorderRadius.circular(6),
-                              border: Border.all(
-                                color: colorScheme.outline.withValues(alpha: 0.3),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: AlhaiSpacing.xxs),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 72,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: AlhaiSpacing.xs,
+                                    vertical: AlhaiSpacing.xxs),
+                                decoration: BoxDecoration(
+                                  color: colorScheme.surfaceContainerHighest,
+                                  borderRadius: BorderRadius.circular(6),
+                                  border: Border.all(
+                                    color: colorScheme.outline
+                                        .withValues(alpha: 0.3),
+                                  ),
+                                ),
+                                child: Text(
+                                  s.key,
+                                  textAlign: TextAlign.center,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .labelMedium
+                                      ?.copyWith(
+                                        fontFamily: 'monospace',
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                ),
                               ),
-                            ),
-                            child: Text(
-                              s.key,
-                              textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                                fontFamily: 'monospace',
-                                fontWeight: FontWeight.bold,
+                              const SizedBox(width: AlhaiSpacing.sm),
+                              Expanded(
+                                child: Text(
+                                  s.label,
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                ),
                               ),
-                            ),
+                            ],
                           ),
-                          const SizedBox(width: AlhaiSpacing.sm),
-                          Expanded(
-                            child: Text(
-                              s.label,
-                              style: Theme.of(context).textTheme.bodyMedium,
-                            ),
-                          ),
-                        ],
-                      ),
-                    )),
+                        )),
                     const SizedBox(height: AlhaiSpacing.sm),
                     Text(
                       'F1 ${l10n.help}',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: colorScheme.onSurfaceVariant,
-                      ),
+                            color: colorScheme.onSurfaceVariant,
+                          ),
                     ),
                   ],
                 ),

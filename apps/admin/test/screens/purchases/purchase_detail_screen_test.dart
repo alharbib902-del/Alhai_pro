@@ -33,8 +33,8 @@ void main() {
       when(() => mockPurchasesDao.getPurchaseById(any()))
           .thenAnswer((_) => completer.future);
 
-      await tester.pumpWidget(createTestWidget(
-          const PurchaseDetailScreen(purchaseId: 'pur-1')));
+      await tester.pumpWidget(
+          createTestWidget(const PurchaseDetailScreen(purchaseId: 'pur-1')));
       await tester.pump();
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
@@ -63,8 +63,8 @@ void main() {
       when(() => mockPurchasesDao.getPurchaseItems('pur-1'))
           .thenAnswer((_) async => []);
 
-      await tester.pumpWidget(createTestWidget(
-          const PurchaseDetailScreen(purchaseId: 'pur-1')));
+      await tester.pumpWidget(
+          createTestWidget(const PurchaseDetailScreen(purchaseId: 'pur-1')));
       await tester.pumpAndSettle();
 
       expect(find.text('PUR-TEST-001'), findsWidgets);
@@ -80,8 +80,8 @@ void main() {
       when(() => mockPurchasesDao.getPurchaseItems('pur-1'))
           .thenAnswer((_) async => []);
 
-      await tester.pumpWidget(createTestWidget(
-          const PurchaseDetailScreen(purchaseId: 'pur-1')));
+      await tester.pumpWidget(
+          createTestWidget(const PurchaseDetailScreen(purchaseId: 'pur-1')));
       await tester.pumpAndSettle();
 
       // Timeline should show status flow
@@ -98,8 +98,8 @@ void main() {
       when(() => mockPurchasesDao.getPurchaseItems('pur-1'))
           .thenAnswer((_) async => []);
 
-      await tester.pumpWidget(createTestWidget(
-          const PurchaseDetailScreen(purchaseId: 'pur-1')));
+      await tester.pumpWidget(
+          createTestWidget(const PurchaseDetailScreen(purchaseId: 'pur-1')));
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.send_rounded), findsOneWidget);
@@ -115,8 +115,8 @@ void main() {
       when(() => mockPurchasesDao.getPurchaseItems('pur-1'))
           .thenAnswer((_) async => []);
 
-      await tester.pumpWidget(createTestWidget(
-          const PurchaseDetailScreen(purchaseId: 'pur-1')));
+      await tester.pumpWidget(
+          createTestWidget(const PurchaseDetailScreen(purchaseId: 'pur-1')));
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.check_circle_rounded), findsWidgets);

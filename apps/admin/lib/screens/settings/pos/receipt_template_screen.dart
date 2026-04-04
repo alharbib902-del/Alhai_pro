@@ -32,9 +32,12 @@ class ReceiptTemplateScreen extends ConsumerStatefulWidget {
 }
 
 class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
-  final _headerController = TextEditingController(text: '\u0645\u062a\u062c\u0631 \u0627\u0644\u0625\u064a\u0645\u0627\u0646');
-  final _footerController =
-      TextEditingController(text: '\u0634\u0643\u0631\u0627\u064b \u0644\u0632\u064a\u0627\u0631\u062a\u0643\u0645 - \u0646\u062a\u0645\u0646\u0649 \u0644\u0643\u0645 \u062a\u062c\u0631\u0628\u0629 \u0645\u0645\u062a\u0639\u0629');
+  final _headerController = TextEditingController(
+      text:
+          '\u0645\u062a\u062c\u0631 \u0627\u0644\u0625\u064a\u0645\u0627\u0646');
+  final _footerController = TextEditingController(
+      text:
+          '\u0634\u0643\u0631\u0627\u064b \u0644\u0632\u064a\u0627\u0631\u062a\u0643\u0645 - \u0646\u062a\u0645\u0646\u0649 \u0644\u0643\u0645 \u062a\u062c\u0631\u0628\u0629 \u0645\u0645\u062a\u0639\u0629');
 
   bool _showLogo = true;
   bool _showStoreName = true;
@@ -134,7 +137,8 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('\u062d\u062f\u062b \u062e\u0637\u0623 \u0623\u062b\u0646\u0627\u0621 \u0627\u0644\u062d\u0641\u0638'),
+            content: Text(
+                '\u062d\u062f\u062b \u062e\u0637\u0623 \u0623\u062b\u0646\u0627\u0621 \u0627\u0644\u062d\u0641\u0638'),
             backgroundColor: AppColors.error,
             behavior: SnackBarBehavior.floating,
           ),
@@ -163,13 +167,13 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
     final l10n = AppLocalizations.of(context);
 
     if (_isLoading) {
-      return SafeArea(child: Column(
+      return SafeArea(
+          child: Column(
         children: [
           AppHeader(
             title: l10n.receiptTemplateTitle,
-            onMenuTap: isWideScreen
-                ? null
-                : () => Scaffold.of(context).openDrawer(),
+            onMenuTap:
+                isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
             onNotificationsTap: () => context.push('/notifications'),
             notificationsCount: 3,
             userName: l10n.defaultUserName,
@@ -182,26 +186,26 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
       ));
     }
 
-    return SafeArea(child: Column(
-              children: [
-                AppHeader(
-                  title: l10n.receiptTemplateTitle,
-                  onMenuTap: isWideScreen
-                      ? null
-                      : () => Scaffold.of(context).openDrawer(),
-                  onNotificationsTap: () => context.push('/notifications'),
-                  notificationsCount: 3,
-                  userName: l10n.defaultUserName,
-                  userRole: l10n.branchManager,
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-                    child: _buildContent(isDark, l10n),
-                  ),
-                ),
-              ],
-            ));
+    return SafeArea(
+        child: Column(
+      children: [
+        AppHeader(
+          title: l10n.receiptTemplateTitle,
+          onMenuTap:
+              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onNotificationsTap: () => context.push('/notifications'),
+          notificationsCount: 3,
+          userName: l10n.defaultUserName,
+          userRole: l10n.branchManager,
+        ),
+        Expanded(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+            child: _buildContent(isDark, l10n),
+          ),
+        ),
+      ],
+    ));
   }
 
   Widget _buildContent(bool isDark, AppLocalizations l10n) {
@@ -215,71 +219,73 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
         _buildSettingsGroup(l10n.headerAndFooter, Icons.text_fields_rounded,
             const Color(0xFFEC4899), isDark, [
           Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl, AlhaiSpacing.xs, AlhaiSpacing.mdl, AlhaiSpacing.xs),
+            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl,
+                AlhaiSpacing.xs, AlhaiSpacing.mdl, AlhaiSpacing.xs),
             child: TextField(
               controller: _headerController,
               decoration: InputDecoration(
                 labelText: l10n.receiptTitleField,
                 prefixIcon: const Icon(Icons.title),
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12)),
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
             ),
           ),
           Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl, AlhaiSpacing.xs, AlhaiSpacing.mdl, AlhaiSpacing.md),
+            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl,
+                AlhaiSpacing.xs, AlhaiSpacing.mdl, AlhaiSpacing.md),
             child: TextField(
               controller: _footerController,
               maxLines: 2,
               decoration: InputDecoration(
                 labelText: l10n.footerText,
                 prefixIcon: const Icon(Icons.notes),
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12)),
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
             ),
           ),
         ]),
 
         // Fields to show
-        _buildSettingsGroup(l10n.displayedFields, Icons.list_rounded,
-            AppColors.info, isDark, [
+        _buildSettingsGroup(
+            l10n.displayedFields, Icons.list_rounded, AppColors.info, isDark, [
           SwitchListTile(
             title: Text(l10n.storeLogo,
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface)),
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
             secondary: const Icon(Icons.image),
             value: _showLogo,
             onChanged: (v) => setState(() => _showLogo = v),
           ),
           SwitchListTile(
             title: Text(l10n.storeName,
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface)),
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
             secondary: const Icon(Icons.store),
             value: _showStoreName,
             onChanged: (v) => setState(() => _showStoreName = v),
           ),
           SwitchListTile(
             title: Text(l10n.addressField,
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface)),
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
             secondary: const Icon(Icons.location_on),
             value: _showAddress,
             onChanged: (v) => setState(() => _showAddress = v),
           ),
           SwitchListTile(
             title: Text(l10n.phoneNumberField,
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface)),
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
             secondary: const Icon(Icons.phone),
             value: _showPhone,
             onChanged: (v) => setState(() => _showPhone = v),
           ),
           SwitchListTile(
             title: Text(l10n.vatNumberField,
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface)),
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
             secondary: const Icon(Icons.numbers),
             value: _showVatNumber,
             onChanged: (v) => setState(() => _showVatNumber = v),
@@ -287,16 +293,16 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
           const Divider(indent: 16, endIndent: 16),
           SwitchListTile(
             title: Text(l10n.dateAndTime,
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface)),
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
             secondary: const Icon(Icons.access_time),
             value: _showDate,
             onChanged: (v) => setState(() => _showDate = v),
           ),
           SwitchListTile(
             title: Text(l10n.cashierName,
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface)),
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
             secondary: const Icon(Icons.person),
             value: _showCashier,
             onChanged: (v) => setState(() => _showCashier = v),
@@ -304,16 +310,16 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
           const Divider(indent: 16, endIndent: 16),
           SwitchListTile(
             title: Text(l10n.invoiceBarcode,
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface)),
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
             secondary: const Icon(Icons.qr_code),
             value: _showBarcode,
             onChanged: (v) => setState(() => _showBarcode = v),
           ),
           SwitchListTile(
             title: Text(l10n.qrCodeField,
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface)),
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
             subtitle: Text(l10n.qrCodeEInvoice),
             secondary: const Icon(Icons.qr_code_2),
             value: _showQrCode,
@@ -438,7 +444,8 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl, AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.xs),
+            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl,
+                AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.xs),
             child: Row(
               children: [
                 Container(
@@ -454,8 +461,7 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
                     style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color:
-                            Theme.of(context).colorScheme.onSurface)),
+                        color: Theme.of(context).colorScheme.onSurface)),
               ],
             ),
           ),

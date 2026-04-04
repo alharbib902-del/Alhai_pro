@@ -2,7 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiColors, AlhaiSpacing;
+import 'package:alhai_design_system/alhai_design_system.dart'
+    show AlhaiColors, AlhaiSpacing;
 import 'package:alhai_l10n/alhai_l10n.dart';
 import '../../providers/sync_providers.dart';
 
@@ -13,14 +14,15 @@ class OfflineBanner extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isOnlineAsync = ref.watch(isOnlineProvider);
-    
+
     return isOnlineAsync.when(
       data: (isOnline) {
         if (isOnline) return const SizedBox.shrink();
-        
+
         return Container(
           width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
+          padding: const EdgeInsets.symmetric(
+              horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
           color: AlhaiColors.warningDark,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -65,7 +67,8 @@ class UnsyncedSalesBanner extends ConsumerStatefulWidget {
   const UnsyncedSalesBanner({super.key});
 
   @override
-  ConsumerState<UnsyncedSalesBanner> createState() => _UnsyncedSalesBannerState();
+  ConsumerState<UnsyncedSalesBanner> createState() =>
+      _UnsyncedSalesBannerState();
 }
 
 class _UnsyncedSalesBannerState extends ConsumerState<UnsyncedSalesBanner> {
@@ -174,7 +177,8 @@ class DeadLetterBanner extends ConsumerWidget {
           color: Colors.amber.shade700,
           child: Row(
             children: [
-              const Icon(Icons.warning_amber_rounded, color: Colors.white, size: 18),
+              const Icon(Icons.warning_amber_rounded,
+                  color: Colors.white, size: 18),
               const SizedBox(width: AlhaiSpacing.xs),
               Expanded(
                 child: Text(
@@ -201,7 +205,8 @@ class DeadLetterBanner extends ConsumerWidget {
                   ),
                 ),
                 style: TextButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs),
                   minimumSize: Size.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),

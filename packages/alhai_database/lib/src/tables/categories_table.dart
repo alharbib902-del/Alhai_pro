@@ -25,7 +25,8 @@ class CategoriesTable extends Table {
   // البيانات الأساسية
   TextColumn get name => text()();
   TextColumn get nameEn => text().nullable()();
-  TextColumn get parentId => text().nullable().references(CategoriesTable, #id)();
+  TextColumn get parentId =>
+      text().nullable().references(CategoriesTable, #id)();
   TextColumn get imageUrl => text().nullable()();
   TextColumn get color => text().nullable()();
   TextColumn get icon => text().nullable()();

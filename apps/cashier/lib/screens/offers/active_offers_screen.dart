@@ -13,7 +13,8 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
+import 'package:alhai_design_system/alhai_design_system.dart'
+    show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 
@@ -22,8 +23,7 @@ class ActiveOffersScreen extends ConsumerStatefulWidget {
   const ActiveOffersScreen({super.key});
 
   @override
-  ConsumerState<ActiveOffersScreen> createState() =>
-      _ActiveOffersScreenState();
+  ConsumerState<ActiveOffersScreen> createState() => _ActiveOffersScreenState();
 }
 
 class _ActiveOffersScreenState extends ConsumerState<ActiveOffersScreen> {
@@ -84,12 +84,12 @@ class _ActiveOffersScreenState extends ConsumerState<ActiveOffersScreen> {
       children: [
         AppHeader(
           title: l10n.activeOffers,
-          subtitle: '${_offers.length} ${l10n.activeOffers} \u2022 ${l10n.mainBranch}',
+          subtitle:
+              '${_offers.length} ${l10n.activeOffers} \u2022 ${l10n.mainBranch}',
           showSearch: false,
           searchHint: l10n.searchPlaceholder,
-          onMenuTap: isWideScreen
-              ? null
-              : () => Scaffold.of(context).openDrawer(),
+          onMenuTap:
+              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 3,
           userName: user?.name ?? l10n.cashCustomer,
@@ -100,32 +100,35 @@ class _ActiveOffersScreenState extends ConsumerState<ActiveOffersScreen> {
           child: _isLoading
               ? const AppLoadingState()
               : _error != null
-                  ? AppErrorState.general(context, message: _error!, onRetry: _loadOffers)
+                  ? AppErrorState.general(context,
+                      message: _error!, onRetry: _loadOffers)
                   : Column(
-                  children: [
-                    // Filter chips
-                    Padding(
-                      padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-                      child: _buildFilterChips(isDark, l10n),
+                      children: [
+                        // Filter chips
+                        Padding(
+                          padding: EdgeInsets.all(isMediumScreen
+                              ? AlhaiSpacing.lg
+                              : AlhaiSpacing.md),
+                          child: _buildFilterChips(isDark, l10n),
+                        ),
+                        // Offers list
+                        Expanded(
+                          child: _filteredOffers.isEmpty
+                              ? _buildEmptyState(isDark, l10n)
+                              : ListView.separated(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: isMediumScreen ? 24 : 16,
+                                      vertical: AlhaiSpacing.xs),
+                                  itemCount: _filteredOffers.length,
+                                  separatorBuilder: (_, __) =>
+                                      const SizedBox(height: AlhaiSpacing.sm),
+                                  itemBuilder: (context, index) =>
+                                      _buildOfferCard(
+                                          _filteredOffers[index], isDark, l10n),
+                                ),
+                        ),
+                      ],
                     ),
-                    // Offers list
-                    Expanded(
-                      child: _filteredOffers.isEmpty
-                          ? _buildEmptyState(isDark, l10n)
-                          : ListView.separated(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: isMediumScreen ? 24 : 16,
-                                  vertical: AlhaiSpacing.xs),
-                              itemCount: _filteredOffers.length,
-                              separatorBuilder: (_, __) =>
-                                  const SizedBox(height: AlhaiSpacing.sm),
-                              itemBuilder: (context, index) =>
-                                  _buildOfferCard(
-                                      _filteredOffers[index], isDark, l10n),
-                            ),
-                    ),
-                  ],
-                ),
         ),
       ],
     );
@@ -161,16 +164,16 @@ class _ActiveOffersScreenState extends ConsumerState<ActiveOffersScreen> {
       onTap: onTap,
       borderRadius: BorderRadius.circular(999),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: AlhaiSpacing.xs),
+        padding: const EdgeInsets.symmetric(
+            horizontal: 14, vertical: AlhaiSpacing.xs),
         decoration: BoxDecoration(
           color: isSelected
               ? AppColors.primary
               : AppColors.getSurfaceVariant(isDark),
           borderRadius: BorderRadius.circular(999),
           border: Border.all(
-              color: isSelected
-                  ? AppColors.primary
-                  : AppColors.getBorder(isDark)),
+              color:
+                  isSelected ? AppColors.primary : AppColors.getBorder(isDark)),
         ),
         child: Text(label,
             style: TextStyle(
@@ -208,8 +211,8 @@ class _ActiveOffersScreenState extends ConsumerState<ActiveOffersScreen> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 alignment: Alignment.center,
-                child: Icon(_getTypeIcon(offer.type),
-                    color: typeColor, size: 24),
+                child:
+                    Icon(_getTypeIcon(offer.type), color: typeColor, size: 24),
               ),
               const SizedBox(width: AlhaiSpacing.md),
               Expanded(
@@ -217,12 +220,15 @@ class _ActiveOffersScreenState extends ConsumerState<ActiveOffersScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(offer.name,
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700,
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
                             color: AppColors.getTextPrimary(isDark))),
                     const SizedBox(height: AlhaiSpacing.xxs),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxxs),
+                          horizontal: AlhaiSpacing.xs,
+                          vertical: AlhaiSpacing.xxxs),
                       decoration: BoxDecoration(
                         color: typeColor.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(999),
@@ -253,7 +259,8 @@ class _ActiveOffersScreenState extends ConsumerState<ActiveOffersScreen> {
                           size: 14, color: AppColors.success),
                       const SizedBox(width: AlhaiSpacing.xxs),
                       Text(l10n.autoApplied,
-                          style: const TextStyle(fontSize: 11,
+                          style: const TextStyle(
+                              fontSize: 11,
                               fontWeight: FontWeight.w600,
                               color: AppColors.success)),
                     ],
@@ -288,23 +295,24 @@ class _ActiveOffersScreenState extends ConsumerState<ActiveOffersScreen> {
           // Validity dates
           Row(
             children: [
-              Icon(Icons.calendar_today_rounded, size: 14,
-                  color: AppColors.getTextMuted(isDark)),
+              Icon(Icons.calendar_today_rounded,
+                  size: 14, color: AppColors.getTextMuted(isDark)),
               const SizedBox(width: AlhaiSpacing.xs),
-              if (offer.startDate != null) Text(
-                l10n.validFromDate(_formatDate(offer.startDate!)),
-                style: TextStyle(fontSize: 12,
-                    color: AppColors.getTextSecondary(isDark)),
-              ),
+              if (offer.startDate != null)
+                Text(
+                  l10n.validFromDate(_formatDate(offer.startDate!)),
+                  style: TextStyle(
+                      fontSize: 12, color: AppColors.getTextSecondary(isDark)),
+                ),
               if (offer.endDate != null) ...[
                 const SizedBox(width: AlhaiSpacing.md),
-                Icon(Icons.event_rounded, size: 14,
-                    color: AppColors.getTextMuted(isDark)),
+                Icon(Icons.event_rounded,
+                    size: 14, color: AppColors.getTextMuted(isDark)),
                 const SizedBox(width: AlhaiSpacing.xs),
                 Text(
                   l10n.validUntilDate(_formatDate(offer.endDate!)),
-                  style: TextStyle(fontSize: 12,
-                      color: AppColors.getTextSecondary(isDark)),
+                  style: TextStyle(
+                      fontSize: 12, color: AppColors.getTextSecondary(isDark)),
                 ),
               ],
             ],
@@ -312,8 +320,8 @@ class _ActiveOffersScreenState extends ConsumerState<ActiveOffersScreen> {
           if (offer.nameEn != null && offer.nameEn!.isNotEmpty) ...[
             const SizedBox(height: AlhaiSpacing.sm),
             Text(offer.nameEn!,
-                style: TextStyle(fontSize: 13,
-                    color: AppColors.getTextSecondary(isDark)),
+                style: TextStyle(
+                    fontSize: 13, color: AppColors.getTextSecondary(isDark)),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis),
           ],
@@ -327,11 +335,14 @@ class _ActiveOffersScreenState extends ConsumerState<ActiveOffersScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.local_offer_outlined, size: 64,
+          Icon(Icons.local_offer_outlined,
+              size: 64,
               color: AppColors.getTextMuted(isDark).withValues(alpha: 0.4)),
           const SizedBox(height: AlhaiSpacing.md),
           Text(l10n.noActiveOffers,
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500,
+              style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
                   color: AppColors.getTextMuted(isDark))),
         ],
       ),
@@ -340,31 +351,46 @@ class _ActiveOffersScreenState extends ConsumerState<ActiveOffersScreen> {
 
   Color _getTypeColor(String type) {
     switch (type) {
-      case 'percentage': return AppColors.success;
-      case 'fixed': return AppColors.info;
-      case 'buy_x_get_y': return AppColors.purple;
-      case 'bundle': return AppColors.secondary;
-      default: return AppColors.primary;
+      case 'percentage':
+        return AppColors.success;
+      case 'fixed':
+        return AppColors.info;
+      case 'buy_x_get_y':
+        return AppColors.purple;
+      case 'bundle':
+        return AppColors.secondary;
+      default:
+        return AppColors.primary;
     }
   }
 
   IconData _getTypeIcon(String type) {
     switch (type) {
-      case 'percentage': return Icons.percent_rounded;
-      case 'fixed': return Icons.attach_money_rounded;
-      case 'buy_x_get_y': return Icons.card_giftcard_rounded;
-      case 'bundle': return Icons.inventory_2_rounded;
-      default: return Icons.local_offer_rounded;
+      case 'percentage':
+        return Icons.percent_rounded;
+      case 'fixed':
+        return Icons.attach_money_rounded;
+      case 'buy_x_get_y':
+        return Icons.card_giftcard_rounded;
+      case 'bundle':
+        return Icons.inventory_2_rounded;
+      default:
+        return Icons.local_offer_rounded;
     }
   }
 
   String _getTypeLabel(String type, AppLocalizations l10n) {
     switch (type) {
-      case 'percentage': return l10n.percentageOff;
-      case 'fixed': return l10n.fixedAmount;
-      case 'buy_x_get_y': return l10n.buyXGetY;
-      case 'bundle': return l10n.bundle;
-      default: return type;
+      case 'percentage':
+        return l10n.percentageOff;
+      case 'fixed':
+        return l10n.fixedAmount;
+      case 'buy_x_get_y':
+        return l10n.buyXGetY;
+      case 'bundle':
+        return l10n.bundle;
+      default:
+        return type;
     }
   }
 
@@ -377,6 +403,5 @@ class _ActiveOffersScreenState extends ConsumerState<ActiveOffersScreen> {
     return offer.value.toStringAsFixed(0);
   }
 
-  String _formatDate(DateTime date) =>
-      '${date.day}/${date.month}/${date.year}';
+  String _formatDate(DateTime date) => '${date.day}/${date.month}/${date.year}';
 }

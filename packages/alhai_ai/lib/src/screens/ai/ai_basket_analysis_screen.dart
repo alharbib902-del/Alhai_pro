@@ -17,7 +17,8 @@ class AiBasketAnalysisScreen extends ConsumerStatefulWidget {
   const AiBasketAnalysisScreen({super.key});
 
   @override
-  ConsumerState<AiBasketAnalysisScreen> createState() => _AiBasketAnalysisScreenState();
+  ConsumerState<AiBasketAnalysisScreen> createState() =>
+      _AiBasketAnalysisScreenState();
 }
 
 class _AiBasketAnalysisScreenState extends ConsumerState<AiBasketAnalysisScreen>
@@ -43,14 +44,15 @@ class _AiBasketAnalysisScreenState extends ConsumerState<AiBasketAnalysisScreen>
     final l10n = AppLocalizations.of(context)!;
 
     return Column(
-              children: [
-                AppHeader(
-                  title: l10n.aiBasketAnalysis,
-                  onMenuTap: !isWideScreen ? () => Scaffold.of(context).openDrawer() : null,
-                ),
-                Expanded(child: _buildContent(isDark, isWideScreen)),
-              ],
-            );
+      children: [
+        AppHeader(
+          title: l10n.aiBasketAnalysis,
+          onMenuTap:
+              !isWideScreen ? () => Scaffold.of(context).openDrawer() : null,
+        ),
+        Expanded(child: _buildContent(isDark, isWideScreen)),
+      ],
+    );
   }
 
   Widget _buildContent(bool isDark, bool isWideScreen) {
@@ -63,8 +65,10 @@ class _AiBasketAnalysisScreenState extends ConsumerState<AiBasketAnalysisScreen>
         children: [
           // Insights summary
           insightsAsync.when(
-            data: (insights) => _buildInsightsSummary(isDark, insights, isWideScreen),
-            loading: () => const Center(child: CircularProgressIndicator(color: AppColors.primary)),
+            data: (insights) =>
+                _buildInsightsSummary(isDark, insights, isWideScreen),
+            loading: () => const Center(
+                child: CircularProgressIndicator(color: AppColors.primary)),
             error: (e, _) => Text('$e'),
           ),
 
@@ -76,13 +80,17 @@ class _AiBasketAnalysisScreenState extends ConsumerState<AiBasketAnalysisScreen>
               color: isDark ? const Color(0xFF1E293B) : Colors.white,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.1)
+                    : AppColors.border,
               ),
             ),
             child: TabBar(
               controller: _tabController,
               labelColor: AppColors.primary,
-              unselectedLabelColor: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textSecondary,
+              unselectedLabelColor: isDark
+                  ? Colors.white.withValues(alpha: 0.5)
+                  : AppColors.textSecondary,
               indicatorColor: AppColors.primary,
               indicatorSize: TabBarIndicatorSize.label,
               dividerColor: Colors.transparent,
@@ -113,7 +121,8 @@ class _AiBasketAnalysisScreenState extends ConsumerState<AiBasketAnalysisScreen>
     );
   }
 
-  Widget _buildInsightsSummary(bool isDark, BasketInsight insights, bool isWideScreen) {
+  Widget _buildInsightsSummary(
+      bool isDark, BasketInsight insights, bool isWideScreen) {
     final l10n = AppLocalizations.of(context)!;
     final cards = [
       _InsightCardData(
@@ -149,76 +158,84 @@ class _AiBasketAnalysisScreenState extends ConsumerState<AiBasketAnalysisScreen>
     return LayoutBuilder(
       builder: (context, constraints) {
         return Wrap(
-      spacing: 16,
-      runSpacing: 16,
-      children: cards.map((card) {
-        return SizedBox(
-          width: isWideScreen
-              ? (constraints.maxWidth) / 4 - 16
-              : double.infinity,
-          child: Container(
-            padding: const EdgeInsets.all(AlhaiSpacing.md),
-            decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF1E293B) : Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
+          spacing: 16,
+          runSpacing: 16,
+          children: cards.map((card) {
+            return SizedBox(
+              width: isWideScreen
+                  ? (constraints.maxWidth) / 4 - 16
+                  : double.infinity,
+              child: Container(
+                padding: const EdgeInsets.all(AlhaiSpacing.md),
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.1)
+                        : AppColors.border,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color:
+                          Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: card.color.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(card.icon, color: card.color, size: 22),
+                    ),
+                    const SizedBox(width: AlhaiSpacing.sm),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            card.title,
+                            style: TextStyle(
+                              color: isDark
+                                  ? Colors.white.withValues(alpha: 0.6)
+                                  : AppColors.textSecondary,
+                              fontSize: 11,
+                            ),
+                          ),
+                          const SizedBox(height: AlhaiSpacing.xxxs),
+                          Text(
+                            card.value,
+                            style: TextStyle(
+                              color:
+                                  isDark ? Colors.white : AppColors.textPrimary,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            card.subtitle,
+                            style: TextStyle(
+                              color: isDark
+                                  ? Colors.white.withValues(alpha: 0.4)
+                                  : AppColors.textMuted,
+                              fontSize: 10,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: card.color.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Icon(card.icon, color: card.color, size: 22),
-                ),
-                const SizedBox(width: AlhaiSpacing.sm),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        card.title,
-                        style: TextStyle(
-                          color: isDark ? Colors.white.withValues(alpha: 0.6) : AppColors.textSecondary,
-                          fontSize: 11,
-                        ),
-                      ),
-                      const SizedBox(height: AlhaiSpacing.xxxs),
-                      Text(
-                        card.value,
-                        style: TextStyle(
-                          color: isDark ? Colors.white : AppColors.textPrimary,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        card.subtitle,
-                        style: TextStyle(
-                          color: isDark ? Colors.white.withValues(alpha: 0.4) : AppColors.textMuted,
-                          fontSize: 10,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
+            );
+          }).toList(),
         );
-      }).toList(),
-    );
       },
     );
   }
@@ -233,7 +250,9 @@ class _AiBasketAnalysisScreenState extends ConsumerState<AiBasketAnalysisScreen>
           // Show pair details
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(AppLocalizations.of(context)!.aiAssociationFrequency(pair.productAName, pair.productBName, pair.frequency)),
+              content: Text(AppLocalizations.of(context)!
+                  .aiAssociationFrequency(
+                      pair.productAName, pair.productBName, pair.frequency)),
               backgroundColor: AppColors.primary,
             ),
           );
@@ -252,7 +271,8 @@ class _AiBasketAnalysisScreenState extends ConsumerState<AiBasketAnalysisScreen>
         if (isWideScreen) {
           return GridView.builder(
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: getResponsiveGridColumns(context, mobile: 2, desktop: 3),
+              crossAxisCount:
+                  getResponsiveGridColumns(context, mobile: 2, desktop: 3),
               childAspectRatio: 0.85,
               crossAxisSpacing: 16,
               mainAxisSpacing: 16,
@@ -264,7 +284,8 @@ class _AiBasketAnalysisScreenState extends ConsumerState<AiBasketAnalysisScreen>
                 onActivate: () {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text(AppLocalizations.of(context)!.aiBundleActivated(bundles[index].name)),
+                      content: Text(AppLocalizations.of(context)!
+                          .aiBundleActivated(bundles[index].name)),
                       backgroundColor: AppColors.success,
                     ),
                   );
@@ -314,7 +335,9 @@ class _AiBasketAnalysisScreenState extends ConsumerState<AiBasketAnalysisScreen>
                 color: isDark ? const Color(0xFF1E293B) : Colors.white,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.1)
+                      : AppColors.border,
                 ),
               ),
               child: Row(
@@ -329,13 +352,15 @@ class _AiBasketAnalysisScreenState extends ConsumerState<AiBasketAnalysisScreen>
                             color: AppColors.info.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: const Icon(Icons.shopping_bag_outlined, color: AppColors.info, size: 24),
+                          child: const Icon(Icons.shopping_bag_outlined,
+                              color: AppColors.info, size: 24),
                         ),
                         const SizedBox(height: AlhaiSpacing.xs),
                         Text(
                           opp.triggerProduct,
                           style: TextStyle(
-                            color: isDark ? Colors.white : AppColors.textPrimary,
+                            color:
+                                isDark ? Colors.white : AppColors.textPrimary,
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
                           ),
@@ -356,7 +381,8 @@ class _AiBasketAnalysisScreenState extends ConsumerState<AiBasketAnalysisScreen>
                         ),
                         const SizedBox(height: AlhaiSpacing.xxs),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 3),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: AlhaiSpacing.xs, vertical: 3),
                           decoration: BoxDecoration(
                             color: AppColors.primary.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(10),
@@ -383,13 +409,15 @@ class _AiBasketAnalysisScreenState extends ConsumerState<AiBasketAnalysisScreen>
                             color: AppColors.success.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: const Icon(Icons.add_shopping_cart_rounded, color: AppColors.success, size: 24),
+                          child: const Icon(Icons.add_shopping_cart_rounded,
+                              color: AppColors.success, size: 24),
                         ),
                         const SizedBox(height: AlhaiSpacing.xs),
                         Text(
                           opp.suggestedProduct,
                           style: TextStyle(
-                            color: isDark ? Colors.white : AppColors.textPrimary,
+                            color:
+                                isDark ? Colors.white : AppColors.textPrimary,
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
                           ),

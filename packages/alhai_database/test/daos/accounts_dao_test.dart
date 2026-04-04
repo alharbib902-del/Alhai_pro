@@ -59,11 +59,10 @@ void main() {
     test('getReceivableAccounts filters by type', () async {
       await db.accountsDao
           .insertAccount(_makeAccount(id: 'acc-r', type: 'receivable'));
-      await db.accountsDao.insertAccount(_makeAccount(
-          id: 'acc-p', name: 'مورد', type: 'payable'));
+      await db.accountsDao.insertAccount(
+          _makeAccount(id: 'acc-p', name: 'مورد', type: 'payable'));
 
-      final receivables =
-          await db.accountsDao.getReceivableAccounts('store-1');
+      final receivables = await db.accountsDao.getReceivableAccounts('store-1');
       expect(receivables, hasLength(1));
       expect(receivables.first.type, 'receivable');
     });
@@ -71,8 +70,8 @@ void main() {
     test('getPayableAccounts filters by type', () async {
       await db.accountsDao
           .insertAccount(_makeAccount(id: 'acc-r', type: 'receivable'));
-      await db.accountsDao.insertAccount(_makeAccount(
-          id: 'acc-p', name: 'مورد', type: 'payable'));
+      await db.accountsDao.insertAccount(
+          _makeAccount(id: 'acc-p', name: 'مورد', type: 'payable'));
 
       final payables = await db.accountsDao.getPayableAccounts('store-1');
       expect(payables, hasLength(1));

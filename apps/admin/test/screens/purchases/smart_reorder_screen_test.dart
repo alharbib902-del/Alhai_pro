@@ -36,8 +36,7 @@ void main() {
       when(() => mockSuppliersDao.getActiveSuppliers(any()))
           .thenAnswer((_) => completer.future.then((v) => v.cast()));
 
-      await tester
-          .pumpWidget(createTestWidget(const SmartReorderScreen()));
+      await tester.pumpWidget(createTestWidget(const SmartReorderScreen()));
       await tester.pump();
 
       // Screen renders while suppliers are loading (no standalone CircularProgressIndicator)
@@ -48,8 +47,7 @@ void main() {
       when(() => mockSuppliersDao.getActiveSuppliers(any()))
           .thenAnswer((_) async => []);
 
-      await tester
-          .pumpWidget(createTestWidget(const SmartReorderScreen()));
+      await tester.pumpWidget(createTestWidget(const SmartReorderScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(SmartReorderScreen), findsOneWidget);
@@ -59,8 +57,7 @@ void main() {
       when(() => mockSuppliersDao.getActiveSuppliers(any()))
           .thenAnswer((_) async => []);
 
-      await tester
-          .pumpWidget(createTestWidget(const SmartReorderScreen()));
+      await tester.pumpWidget(createTestWidget(const SmartReorderScreen()));
       await tester.pumpAndSettle();
 
       // Budget field should have default value '5000'
@@ -74,8 +71,7 @@ void main() {
       when(() => mockSuppliersDao.getActiveSuppliers(any()))
           .thenAnswer((_) async => suppliers);
 
-      await tester
-          .pumpWidget(createTestWidget(const SmartReorderScreen()));
+      await tester.pumpWidget(createTestWidget(const SmartReorderScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(SmartReorderScreen), findsOneWidget);

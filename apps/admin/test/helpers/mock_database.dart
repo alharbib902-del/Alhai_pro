@@ -187,8 +187,7 @@ MockAppDatabase setupMockDatabase({
       .thenReturn(transactionsDao ?? MockTransactionsDao());
   when(() => db.ordersDao).thenReturn(ordersDao ?? MockOrdersDao());
   when(() => db.auditLogDao).thenReturn(auditLogDao ?? MockAuditLogDao());
-  when(() => db.categoriesDao)
-      .thenReturn(categoriesDao ?? MockCategoriesDao());
+  when(() => db.categoriesDao).thenReturn(categoriesDao ?? MockCategoriesDao());
   when(() => db.loyaltyDao).thenReturn(loyaltyDao ?? MockLoyaltyDao());
 
   // High-priority DAOs
@@ -215,8 +214,7 @@ MockAppDatabase setupMockDatabase({
   // Multi-tenant DAOs
   when(() => db.organizationsDao)
       .thenReturn(organizationsDao ?? MockOrganizationsDao());
-  when(() => db.orgMembersDao)
-      .thenReturn(orgMembersDao ?? MockOrgMembersDao());
+  when(() => db.orgMembersDao).thenReturn(orgMembersDao ?? MockOrgMembersDao());
   when(() => db.posTerminalsDao)
       .thenReturn(posTerminalsDao ?? MockPosTerminalsDao());
 

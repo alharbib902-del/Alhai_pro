@@ -45,8 +45,7 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
                         _isEditMode = !_isEditMode;
                       });
                     },
-                    icon:
-                        Icon(_isEditMode ? Icons.check : Icons.edit_outlined),
+                    icon: Icon(_isEditMode ? Icons.check : Icons.edit_outlined),
                     tooltip: _isEditMode ? l10n.doneMode : l10n.editMode,
                   )
                 : const SizedBox.shrink(),
@@ -57,87 +56,87 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
       body: SafeArea(
         top: false,
         child: favoritesAsync.when(
-        // حالة التحميل
-        loading: () => const Center(child: CircularProgressIndicator()),
-        // حالة الخطأ
-        error: (error, _) => Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.error_outline, size: 48, color: Theme.of(context).colorScheme.error),
-              const SizedBox(height: AppSizes.md),
-              Text(
-                l10n.errorLoadingFavorites,
-                style: AppTypography.titleMedium,
-              ),
-              const SizedBox(height: AppSizes.sm),
-              Text(
-                error.toString(),
-                style: AppTypography.bodySmall
-                    .copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: AppSizes.lg),
-              ElevatedButton.icon(
-                onPressed: () => ref.invalidate(favoritesListProvider),
-                icon: const Icon(Icons.refresh),
-                label: Text(l10n.retryAction),
-              ),
-            ],
+          // حالة التحميل
+          loading: () => const Center(child: CircularProgressIndicator()),
+          // حالة الخطأ
+          error: (error, _) => Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.error_outline,
+                    size: 48, color: Theme.of(context).colorScheme.error),
+                const SizedBox(height: AppSizes.md),
+                Text(
+                  l10n.errorLoadingFavorites,
+                  style: AppTypography.titleMedium,
+                ),
+                const SizedBox(height: AppSizes.sm),
+                Text(
+                  error.toString(),
+                  style: AppTypography.bodySmall.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: AppSizes.lg),
+                ElevatedButton.icon(
+                  onPressed: () => ref.invalidate(favoritesListProvider),
+                  icon: const Icon(Icons.refresh),
+                  label: Text(l10n.retryAction),
+                ),
+              ],
+            ),
           ),
-        ),
-        // حالة البيانات
-        data: (favorites) => favorites.isEmpty
-            ? AppEmptyState(
-                icon: Icons.favorite_border,
-                title: l10n.noFavoriteProducts,
-                description: l10n.addFavoritesFromProducts,
-              )
-            : Column(
-                children: [
-                  // Header info
-                  Container(
-                    padding: const EdgeInsets.all(AppSizes.md),
-                    color: Theme.of(context).colorScheme.primaryContainer,
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.info_outline,
-                          size: 18,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                        const SizedBox(width: AppSizes.sm),
-                        Text(
-                          l10n.tapProductToAddToCart,
-                          style: AppTypography.bodySmall.copyWith(
+          // حالة البيانات
+          data: (favorites) => favorites.isEmpty
+              ? AppEmptyState(
+                  icon: Icons.favorite_border,
+                  title: l10n.noFavoriteProducts,
+                  description: l10n.addFavoritesFromProducts,
+                )
+              : Column(
+                  children: [
+                    // Header info
+                    Container(
+                      padding: const EdgeInsets.all(AppSizes.md),
+                      color: Theme.of(context).colorScheme.primaryContainer,
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.info_outline,
+                            size: 18,
                             color: Theme.of(context).colorScheme.primary,
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // Grid
-                  Expanded(
-                    child: GridView.builder(
-                      padding: const EdgeInsets.all(AppSizes.md),
-                      gridDelegate:
-                          SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: getResponsiveGridColumns(context,
-                            mobile: 2, desktop: 4),
-                        crossAxisSpacing: AppSizes.md,
-                        mainAxisSpacing: AppSizes.md,
-                        childAspectRatio: 0.85,
+                          const SizedBox(width: AppSizes.sm),
+                          Text(
+                            l10n.tapProductToAddToCart,
+                            style: AppTypography.bodySmall.copyWith(
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                        ],
                       ),
-                      itemCount: favorites.length,
-                      itemBuilder: (context, index) {
-                        return _buildProductCard(favorites[index], index);
-                      },
                     ),
-                  ),
-                ],
-              ),
-      ),
+
+                    // Grid
+                    Expanded(
+                      child: GridView.builder(
+                        padding: const EdgeInsets.all(AppSizes.md),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: getResponsiveGridColumns(context,
+                              mobile: 2, desktop: 4),
+                          crossAxisSpacing: AppSizes.md,
+                          mainAxisSpacing: AppSizes.md,
+                          childAspectRatio: 0.85,
+                        ),
+                        itemCount: favorites.length,
+                        itemBuilder: (context, index) {
+                          return _buildProductCard(favorites[index], index);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+        ),
       ),
     );
   }
@@ -153,9 +152,7 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
             borderRadius: BorderRadius.circular(AppSizes.radiusLg),
           ),
           child: InkWell(
-            onTap: _isEditMode
-                ? null
-                : () => _addToCart(favoriteData),
+            onTap: _isEditMode ? null : () => _addToCart(favoriteData),
             onLongPress: () => _showProductOptions(favoriteData, index),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -164,14 +161,16 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
                 Expanded(
                   flex: 3,
                   child: Container(
-                    color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                    color:
+                        Theme.of(context).colorScheme.surfaceContainerHighest,
                     child: Stack(
                       children: [
                         Center(
                           child: Icon(
                             Icons.inventory_2_outlined,
                             size: 40,
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                         ),
                         // Stock badge
@@ -341,8 +340,8 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
               },
             ),
             ListTile(
-              leading:
-                  Icon(Icons.delete_outline, color: Theme.of(context).colorScheme.error),
+              leading: Icon(Icons.delete_outline,
+                  color: Theme.of(context).colorScheme.error),
               title: Text(
                 l10n.removeFromFavorites,
                 style: TextStyle(color: Theme.of(context).colorScheme.error),
@@ -367,9 +366,9 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
 
     // مزامنة الحذف
     ref.read(syncServiceProvider).enqueueDelete(
-      tableName: 'favorites',
-      recordId: favoriteData.id,
-    );
+          tableName: 'favorites',
+          recordId: favoriteData.id,
+        );
 
     if (!mounted) return;
 

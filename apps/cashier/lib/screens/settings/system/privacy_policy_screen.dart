@@ -10,7 +10,8 @@ import 'package:go_router/go_router.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_auth/alhai_auth.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
+import 'package:alhai_design_system/alhai_design_system.dart'
+    show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 
 /// Privacy policy and data rights screen
@@ -38,16 +39,15 @@ class PrivacyPolicyScreen extends ConsumerWidget {
             onPressed: () => context.pop(),
             tooltip: l10n.back,
           ),
-          onNotificationsTap: () =>
-              context.push(AppRoutes.notificationsCenter),
-          userName:
-              ref.watch(currentUserProvider)?.name ?? l10n.cashCustomer,
+          onNotificationsTap: () => context.push(AppRoutes.notificationsCenter),
+          userName: ref.watch(currentUserProvider)?.name ?? l10n.cashCustomer,
           userRole: l10n.cashier,
           onUserTap: () => context.push(AppRoutes.profile),
         ),
         Expanded(
           child: SingleChildScrollView(
-            padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+            padding: EdgeInsets.all(
+                isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
             child: Center(
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 800),
@@ -76,12 +76,18 @@ class PrivacyPolicyScreen extends ConsumerWidget {
                       color: AppColors.info,
                       title: 'البيانات التي نجمعها',
                       children: const [
-                        _PolicyBullet('بيانات المتجر: اسم المتجر، العنوان، الرقم الضريبي، الشعار.'),
-                        _PolicyBullet('بيانات المنتجات: أسماء المنتجات، الأسعار، الباركود، المخزون.'),
-                        _PolicyBullet('بيانات المبيعات: الفواتير، طرق الدفع، المبالغ، التاريخ والوقت.'),
-                        _PolicyBullet('بيانات العملاء: الاسم، رقم الهاتف، البريد الإلكتروني (اختياري)، سجل المشتريات.'),
-                        _PolicyBullet('بيانات الموظفين: اسم المستخدم، الدور، سجل الورديات.'),
-                        _PolicyBullet('بيانات الجهاز: نوع الجهاز، نظام التشغيل (لأغراض الدعم الفني فقط).'),
+                        _PolicyBullet(
+                            'بيانات المتجر: اسم المتجر، العنوان، الرقم الضريبي، الشعار.'),
+                        _PolicyBullet(
+                            'بيانات المنتجات: أسماء المنتجات، الأسعار، الباركود، المخزون.'),
+                        _PolicyBullet(
+                            'بيانات المبيعات: الفواتير، طرق الدفع، المبالغ، التاريخ والوقت.'),
+                        _PolicyBullet(
+                            'بيانات العملاء: الاسم، رقم الهاتف، البريد الإلكتروني (اختياري)، سجل المشتريات.'),
+                        _PolicyBullet(
+                            'بيانات الموظفين: اسم المستخدم، الدور، سجل الورديات.'),
+                        _PolicyBullet(
+                            'بيانات الجهاز: نوع الجهاز، نظام التشغيل (لأغراض الدعم الفني فقط).'),
                       ],
                     ),
                     const SizedBox(height: AlhaiSpacing.md),
@@ -91,8 +97,10 @@ class PrivacyPolicyScreen extends ConsumerWidget {
                       color: AppColors.secondary,
                       title: 'كيف نستخدم بياناتك',
                       children: const [
-                        _PolicyBullet('تشغيل نظام نقطة البيع ومعالجة المبيعات والمدفوعات.'),
-                        _PolicyBullet('إنشاء التقارير والإحصائيات لمساعدتك في إدارة متجرك.'),
+                        _PolicyBullet(
+                            'تشغيل نظام نقطة البيع ومعالجة المبيعات والمدفوعات.'),
+                        _PolicyBullet(
+                            'إنشاء التقارير والإحصائيات لمساعدتك في إدارة متجرك.'),
                         _PolicyBullet('إدارة حسابات العملاء والديون والولاء.'),
                         _PolicyBullet('إدارة المخزون وتتبع المنتجات.'),
                         _PolicyBullet('النسخ الاحتياطي واستعادة البيانات.'),
@@ -110,11 +118,16 @@ class PrivacyPolicyScreen extends ConsumerWidget {
                       color: AppColors.success,
                       title: 'كيف نحمي بياناتك',
                       children: const [
-                        _PolicyBullet('التخزين المحلي: جميع بيانات المبيعات والعملاء تُخزن محلياً على جهازك.'),
-                        _PolicyBullet('التشفير: البيانات الحساسة مشفرة باستخدام تقنيات التشفير الحديثة.'),
-                        _PolicyBullet('النسخ الاحتياطي: يمكنك إنشاء نسخ احتياطية مشفرة من بياناتك.'),
-                        _PolicyBullet('المصادقة: الوصول محمي بكلمة مرور وصلاحيات المستخدمين.'),
-                        _PolicyBullet('العمل بدون إنترنت: التطبيق يعمل 100% بدون اتصال، بياناتك لا تُرسل لخوادم خارجية.'),
+                        _PolicyBullet(
+                            'التخزين المحلي: جميع بيانات المبيعات والعملاء تُخزن محلياً على جهازك.'),
+                        _PolicyBullet(
+                            'التشفير: البيانات الحساسة مشفرة باستخدام تقنيات التشفير الحديثة.'),
+                        _PolicyBullet(
+                            'النسخ الاحتياطي: يمكنك إنشاء نسخ احتياطية مشفرة من بياناتك.'),
+                        _PolicyBullet(
+                            'المصادقة: الوصول محمي بكلمة مرور وصلاحيات المستخدمين.'),
+                        _PolicyBullet(
+                            'العمل بدون إنترنت: التطبيق يعمل 100% بدون اتصال، بياناتك لا تُرسل لخوادم خارجية.'),
                       ],
                     ),
                     const SizedBox(height: AlhaiSpacing.md),
@@ -126,23 +139,28 @@ class PrivacyPolicyScreen extends ConsumerWidget {
                       children: const [
                         _PolicyRight(
                           title: 'حق الوصول',
-                          description: 'يحق لك الاطلاع على جميع بياناتك المخزنة في التطبيق في أي وقت.',
+                          description:
+                              'يحق لك الاطلاع على جميع بياناتك المخزنة في التطبيق في أي وقت.',
                         ),
                         _PolicyRight(
                           title: 'حق التصحيح',
-                          description: 'يحق لك تعديل أو تصحيح أي بيانات غير دقيقة.',
+                          description:
+                              'يحق لك تعديل أو تصحيح أي بيانات غير دقيقة.',
                         ),
                         _PolicyRight(
                           title: 'حق الحذف',
-                          description: 'يحق لك طلب حذف بياناتك الشخصية. يمكنك حذف بيانات العملاء من شاشة إدارة العملاء.',
+                          description:
+                              'يحق لك طلب حذف بياناتك الشخصية. يمكنك حذف بيانات العملاء من شاشة إدارة العملاء.',
                         ),
                         _PolicyRight(
                           title: 'حق التصدير',
-                          description: 'يحق لك تصدير نسخة من بياناتك بصيغة JSON.',
+                          description:
+                              'يحق لك تصدير نسخة من بياناتك بصيغة JSON.',
                         ),
                         _PolicyRight(
                           title: 'حق الإلغاء',
-                          description: 'يحق لك إلغاء أي موافقة سابقة على معالجة بياناتك.',
+                          description:
+                              'يحق لك إلغاء أي موافقة سابقة على معالجة بياناتك.',
                         ),
                       ],
                     ),
@@ -156,9 +174,12 @@ class PrivacyPolicyScreen extends ConsumerWidget {
                         _PolicyText(
                           'يمكنك حذف بيانات العملاء من خلال إعدادات التطبيق. عند حذف بيانات عميل:',
                         ),
-                        _PolicyBullet('يتم حذف المعلومات الشخصية (الاسم، الهاتف، البريد) بشكل نهائي.'),
-                        _PolicyBullet('يتم إخفاء هوية العميل في سجلات المبيعات السابقة (تظهر كـ "عميل محذوف").'),
-                        _PolicyBullet('يتم حذف حسابات الديون والعناوين المرتبطة.'),
+                        _PolicyBullet(
+                            'يتم حذف المعلومات الشخصية (الاسم، الهاتف، البريد) بشكل نهائي.'),
+                        _PolicyBullet(
+                            'يتم إخفاء هوية العميل في سجلات المبيعات السابقة (تظهر كـ "عميل محذوف").'),
+                        _PolicyBullet(
+                            'يتم حذف حسابات الديون والعناوين المرتبطة.'),
                         _PolicyText(
                           'ملاحظة: لا يمكن التراجع عن حذف البيانات بعد تنفيذه.',
                           isBold: true,
@@ -274,7 +295,8 @@ class _PolicyBullet extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
-      padding: const EdgeInsetsDirectional.only(bottom: 6, end: AlhaiSpacing.xs, start: AlhaiSpacing.xs),
+      padding: const EdgeInsetsDirectional.only(
+          bottom: 6, end: AlhaiSpacing.xs, start: AlhaiSpacing.xs),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

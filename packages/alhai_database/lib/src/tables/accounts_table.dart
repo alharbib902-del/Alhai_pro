@@ -30,21 +30,23 @@ class AccountsTable extends Table {
   TextColumn get type => text()(); // receivable (عميل), payable (مورد)
 
   // صاحب الحساب
-  TextColumn get customerId => text().nullable().references(CustomersTable, #id)();
-  TextColumn get supplierId => text().nullable().references(SuppliersTable, #id)();
+  TextColumn get customerId =>
+      text().nullable().references(CustomersTable, #id)();
+  TextColumn get supplierId =>
+      text().nullable().references(SuppliersTable, #id)();
   TextColumn get name => text()();
   TextColumn get phone => text().nullable()();
-  
+
   // الرصيد
   RealColumn get balance => real().withDefault(const Constant(0))();
   RealColumn get creditLimit => real().withDefault(const Constant(0))();
-  
+
   // حالة الحساب
   BoolColumn get isActive => boolean().withDefault(const Constant(true))();
-  
+
   // آخر حركة
   DateTimeColumn get lastTransactionAt => dateTime().nullable()();
-  
+
   // التواريخ
   DateTimeColumn get createdAt => dateTime()();
   DateTimeColumn get updatedAt => dateTime().nullable()();

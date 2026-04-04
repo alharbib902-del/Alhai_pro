@@ -198,8 +198,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       }
 
                       // Pending (local) messages
-                      final pm =
-                          stillPending[index - list.length];
+                      final pm = stillPending[index - list.length];
                       return _MessageBubble(
                         key: ValueKey('pending_${pm.id}'),
                         text: pm.text,
@@ -238,10 +237,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             height: 40,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
-              padding:
-                  const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md),
+              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md),
               itemCount: quickMessages.length,
-              separatorBuilder: (_, __) => const SizedBox(width: AlhaiSpacing.xs),
+              separatorBuilder: (_, __) =>
+                  const SizedBox(width: AlhaiSpacing.xs),
               itemBuilder: (context, index) {
                 return Semantics(
                   label: 'رسالة سريعة: ${quickMessages[index]}',
@@ -353,8 +352,7 @@ class _MessageBubble extends StatelessWidget {
         alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
         child: Container(
           margin: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxs),
-          padding:
-              const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
           constraints: BoxConstraints(
             maxWidth: MediaQuery.of(context).size.width * 0.75,
           ),
@@ -458,7 +456,8 @@ class _SendStatusIcon extends StatelessWidget {
           ),
         );
       case _SendStatus.sent:
-        return Icon(Icons.done, size: 12, color: foreground.withValues(alpha: 0.7));
+        return Icon(Icons.done,
+            size: 12, color: foreground.withValues(alpha: 0.7));
       case _SendStatus.failed:
         return GestureDetector(
           onTap: onRetry,

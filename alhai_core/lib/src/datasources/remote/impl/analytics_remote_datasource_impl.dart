@@ -21,7 +21,8 @@ class AnalyticsRemoteDataSourceImpl implements AnalyticsRemoteDataSource {
       '/analytics/dashboard',
       queryParameters: {'store_id': storeId},
     );
-    return DashboardSummaryResponse.fromJson(response.data as Map<String, dynamic>);
+    return DashboardSummaryResponse.fromJson(
+        response.data as Map<String, dynamic>);
   }
 
   @override
@@ -40,7 +41,8 @@ class AnalyticsRemoteDataSourceImpl implements AnalyticsRemoteDataSource {
     );
     final list = response.data['data'] as List<dynamic>;
     return list
-        .map((e) => SlowMovingProductResponse.fromJson(e as Map<String, dynamic>))
+        .map((e) =>
+            SlowMovingProductResponse.fromJson(e as Map<String, dynamic>))
         .toList();
   }
 
@@ -109,7 +111,8 @@ class AnalyticsRemoteDataSourceImpl implements AnalyticsRemoteDataSource {
     );
     final list = response.data['data'] as List<dynamic>;
     return list
-        .map((e) => ReorderSuggestionResponse.fromJson(e as Map<String, dynamic>))
+        .map((e) =>
+            ReorderSuggestionResponse.fromJson(e as Map<String, dynamic>))
         .toList();
   }
 
@@ -127,7 +130,8 @@ class AnalyticsRemoteDataSourceImpl implements AnalyticsRemoteDataSource {
         if (endDate != null) 'end_date': endDate,
       },
     );
-    return PeakHoursAnalysisResponse.fromJson(response.data as Map<String, dynamic>);
+    return PeakHoursAnalysisResponse.fromJson(
+        response.data as Map<String, dynamic>);
   }
 
   @override

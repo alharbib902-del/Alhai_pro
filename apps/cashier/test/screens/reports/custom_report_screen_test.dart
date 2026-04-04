@@ -23,12 +23,9 @@ void main() {
     // CustomReportScreen calls _db.ordersDao.getOrders(),
     // _db.productsDao.getAllProducts(), _db.customersDao.getAllCustomers()
     // when generating reports. On init it just renders the form.
-    when(() => ordersDao.getOrders(any()))
-        .thenAnswer((_) async => []);
-    when(() => productsDao.getAllProducts(any()))
-        .thenAnswer((_) async => []);
-    when(() => customersDao.getAllCustomers(any()))
-        .thenAnswer((_) async => []);
+    when(() => ordersDao.getOrders(any())).thenAnswer((_) async => []);
+    when(() => productsDao.getAllProducts(any())).thenAnswer((_) async => []);
+    when(() => customersDao.getAllCustomers(any())).thenAnswer((_) async => []);
 
     final db = setupMockDatabase(
       ordersDao: ordersDao,

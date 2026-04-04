@@ -76,38 +76,37 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
     ref.listen(chatMessagesProvider, (_, __) => _scrollToBottom());
 
     return Column(
-              children: [
-                AppHeader(
-                  title: l10n.aiAssistant,
-                  subtitle: l10n.aiAskAboutStore,
-                  onMenuTap: isWideScreen
-                      ? null
-                      : () => Scaffold.of(context).openDrawer(),
-                  actions: [
-                    // زر مسح المحادثة
-                    IconButton(
-                      onPressed: () {
-                        ref.read(chatMessagesProvider.notifier).clearChat();
-                      },
-                      icon: Icon(
-                        Icons.delete_outline_rounded,
-                        color: isDark ? Colors.white54 : AppColors.textSecondary,
-                      ),
-                      tooltip: l10n.aiClearChat,
-                    ),
-                  ],
-                ),
-                Expanded(
-                  child: _buildChatArea(
-                    messages,
-                    isProcessing,
-                    templates,
-                    isDark,
-                    isWideScreen,
-                  ),
-                ),
-              ],
-            );
+      children: [
+        AppHeader(
+          title: l10n.aiAssistant,
+          subtitle: l10n.aiAskAboutStore,
+          onMenuTap:
+              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          actions: [
+            // زر مسح المحادثة
+            IconButton(
+              onPressed: () {
+                ref.read(chatMessagesProvider.notifier).clearChat();
+              },
+              icon: Icon(
+                Icons.delete_outline_rounded,
+                color: isDark ? Colors.white54 : AppColors.textSecondary,
+              ),
+              tooltip: l10n.aiClearChat,
+            ),
+          ],
+        ),
+        Expanded(
+          child: _buildChatArea(
+            messages,
+            isProcessing,
+            templates,
+            isDark,
+            isWideScreen,
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _buildChatArea(
@@ -119,7 +118,8 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
   ) {
     return Container(
       margin: isWideScreen
-          ? EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.lg, AlhaiSpacing.zero, AlhaiSpacing.lg, AlhaiSpacing.zero)
+          ? EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.lg, AlhaiSpacing.zero,
+              AlhaiSpacing.lg, AlhaiSpacing.zero)
           : EdgeInsets.zero,
       decoration: isWideScreen
           ? BoxDecoration(
@@ -133,8 +133,7 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
               ),
               boxShadow: [
                 BoxShadow(
-                  color:
-                      Colors.black.withValues(alpha: isDark ? 0.15 : 0.03),
+                  color: Colors.black.withValues(alpha: isDark ? 0.15 : 0.03),
                   blurRadius: 20,
                   offset: const Offset(0, 4),
                 ),
@@ -163,7 +162,8 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
                 ? _buildEmptyState(isDark)
                 : ListView.builder(
                     controller: _scrollController,
-                    padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
+                    padding:
+                        const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
                     itemCount: messages.length + (isProcessing ? 1 : 0),
                     itemBuilder: (context, index) {
                       if (index == messages.length && isProcessing) {
@@ -240,7 +240,8 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
   /// مؤشر الكتابة
   Widget _buildTypingIndicator(bool isDark) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xxs),
+      padding: const EdgeInsets.symmetric(
+          horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xxs),
       child: Row(
         children: [
           Container(
@@ -258,7 +259,8 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
           ),
           const SizedBox(width: AlhaiSpacing.xs),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+            padding: const EdgeInsets.symmetric(
+                horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
             decoration: BoxDecoration(
               color: isDark ? const Color(0xFF1E293B) : Colors.white,
               borderRadius: const BorderRadius.only(

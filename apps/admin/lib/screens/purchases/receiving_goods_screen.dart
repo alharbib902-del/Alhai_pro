@@ -171,81 +171,81 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
             padding: EdgeInsets.all(isWide ? 24 : 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Back button
-            Row(
               children: [
-                IconButton(
-                  onPressed: () =>
-                      context.go(AppRoutes.purchaseDetailPath(widget.purchaseId)),
-                  icon: Icon(
-                    Directionality.of(context) == TextDirection.rtl
-                        ? Icons.arrow_forward_rounded
-                        : Icons.arrow_back_rounded,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                  tooltip: l10n.back,
-                ),
-                const SizedBox(width: AlhaiSpacing.xs),
-                Expanded(
-                  child: Text(
-                    l10n.receivingGoodsTitle(purchase.purchaseNumber),
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onSurface,
+                // Back button
+                Row(
+                  children: [
+                    IconButton(
+                      onPressed: () => context
+                          .go(AppRoutes.purchaseDetailPath(widget.purchaseId)),
+                      icon: Icon(
+                        Directionality.of(context) == TextDirection.rtl
+                            ? Icons.arrow_forward_rounded
+                            : Icons.arrow_back_rounded,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                      tooltip: l10n.back,
                     ),
-                  ),
+                    const SizedBox(width: AlhaiSpacing.xs),
+                    Expanded(
+                      child: Text(
+                        l10n.receivingGoodsTitle(purchase.purchaseNumber),
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
+                const SizedBox(height: AlhaiSpacing.mdl),
+
+                if (isWide)
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: Column(
+                          children: [
+                            _buildPurchaseInfoCard(purchase, isDark),
+                            const SizedBox(height: AlhaiSpacing.md),
+                            _buildItemsTable(items, isDark, isWide),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: AlhaiSpacing.lg),
+                      Expanded(
+                        flex: 1,
+                        child: Column(
+                          children: [
+                            _buildReceiverCard(isDark),
+                            const SizedBox(height: AlhaiSpacing.md),
+                            _buildConfirmButton(isDark),
+                          ],
+                        ),
+                      ),
+                    ],
+                  )
+                else
+                  Column(
+                    children: [
+                      _buildPurchaseInfoCard(purchase, isDark),
+                      const SizedBox(height: AlhaiSpacing.md),
+                      _buildItemsTable(items, isDark, isWide),
+                      const SizedBox(height: AlhaiSpacing.md),
+                      _buildReceiverCard(isDark),
+                      const SizedBox(height: AlhaiSpacing.md),
+                      _buildConfirmButton(isDark),
+                    ],
+                  ),
+
+                const SizedBox(height: AlhaiSpacing.xl),
               ],
             ),
-            const SizedBox(height: AlhaiSpacing.mdl),
-
-            if (isWide)
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    flex: 2,
-                    child: Column(
-                      children: [
-                        _buildPurchaseInfoCard(purchase, isDark),
-                        const SizedBox(height: AlhaiSpacing.md),
-                        _buildItemsTable(items, isDark, isWide),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: AlhaiSpacing.lg),
-                  Expanded(
-                    flex: 1,
-                    child: Column(
-                      children: [
-                        _buildReceiverCard(isDark),
-                        const SizedBox(height: AlhaiSpacing.md),
-                        _buildConfirmButton(isDark),
-                      ],
-                    ),
-                  ),
-                ],
-              )
-            else
-              Column(
-                children: [
-                  _buildPurchaseInfoCard(purchase, isDark),
-                  const SizedBox(height: AlhaiSpacing.md),
-                  _buildItemsTable(items, isDark, isWide),
-                  const SizedBox(height: AlhaiSpacing.md),
-                  _buildReceiverCard(isDark),
-                  const SizedBox(height: AlhaiSpacing.md),
-                  _buildConfirmButton(isDark),
-                ],
-              ),
-
-            const SizedBox(height: AlhaiSpacing.xl),
-          ],
+          ),
         ),
-      ),
-    ),
       ),
     );
   }
@@ -289,13 +289,16 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
             ],
           ),
           const SizedBox(height: AlhaiSpacing.md),
-          _infoRow(AppLocalizations.of(context).orderNumber, purchase.purchaseNumber, isDark),
+          _infoRow(AppLocalizations.of(context).orderNumber,
+              purchase.purchaseNumber, isDark),
           const SizedBox(height: AlhaiSpacing.xs),
-          _infoRow(AppLocalizations.of(context).supplierInfoLabel, purchase.supplierName ?? '-', isDark),
+          _infoRow(AppLocalizations.of(context).supplierInfoLabel,
+              purchase.supplierName ?? '-', isDark),
           const SizedBox(height: AlhaiSpacing.xs),
           _infoRow(
             AppLocalizations.of(context).totalLabel,
-            AppLocalizations.of(context).amountSar(purchase.total.toStringAsFixed(2)),
+            AppLocalizations.of(context)
+                .amountSar(purchase.total.toStringAsFixed(2)),
             isDark,
             valueColor: isDark ? AppColors.primaryLight : AppColors.primaryDark,
           ),
@@ -304,7 +307,8 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
     );
   }
 
-  Widget _infoRow(String label, String value, bool isDark, {Color? valueColor}) {
+  Widget _infoRow(String label, String value, bool isDark,
+      {Color? valueColor}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -374,137 +378,155 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
           if (items.isEmpty)
             AppEmptyState.noProducts(context)
           else
-          ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: items.length,
-            separatorBuilder: (_, __) => Divider(
-              height: 1,
-              color: Theme.of(context).dividerColor,
-            ),
-            itemBuilder: (context, index) {
-              final item = items[index];
-              final qtyCtrl = _qtyControllers[item.id]!;
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
-                child: isWide
-                    ? Row(
-                        children: [
-                          // Product name
-                          Expanded(
-                            flex: 3,
-                            child: Text(
+            ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: items.length,
+              separatorBuilder: (_, __) => Divider(
+                height: 1,
+                color: Theme.of(context).dividerColor,
+              ),
+              itemBuilder: (context, index) {
+                final item = items[index];
+                final qtyCtrl = _qtyControllers[item.id]!;
+                return Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
+                  child: isWide
+                      ? Row(
+                          children: [
+                            // Product name
+                            Expanded(
+                              flex: 3,
+                              child: Text(
+                                item.productName,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
+                                ),
+                              ),
+                            ),
+                            // Ordered qty
+                            Expanded(
+                              child: Text(
+                                AppLocalizations.of(context)
+                                    .orderedQty(item.qty.toInt()),
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurfaceVariant,
+                                ),
+                              ),
+                            ),
+                            // Received qty (editable)
+                            ConstrainedBox(
+                              constraints: const BoxConstraints(
+                                  minWidth: 80, maxWidth: 120),
+                              child: TextFormField(
+                                controller: qtyCtrl,
+                                keyboardType: TextInputType.number,
+                                textInputAction: TextInputAction.next,
+                                onChanged: (_) {
+                                  if (!_isDirty)
+                                    setState(() => _isDirty = true);
+                                },
+                                decoration: InputDecoration(
+                                  labelText: AppLocalizations.of(context)
+                                      .receivedQtyLabel,
+                                  isDense: true,
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 8,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            // Unit cost
+                            Expanded(
+                              child: Text(
+                                AppLocalizations.of(context).amountSar(
+                                    item.unitCost.toStringAsFixed(2)),
+                                textAlign: TextAlign.end,
+                                style: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
                               item.productName,
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 color: Theme.of(context).colorScheme.onSurface,
                               ),
                             ),
-                          ),
-                          // Ordered qty
-                          Expanded(
-                            child: Text(
-                              AppLocalizations.of(context).orderedQty(item.qty.toInt()),
-                              style: TextStyle(
-                                fontSize: 13,
-                                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                              ),
-                            ),
-                          ),
-                          // Received qty (editable)
-                          ConstrainedBox(
-                            constraints: const BoxConstraints(minWidth: 80, maxWidth: 120),
-                            child: TextFormField(
-                              controller: qtyCtrl,
-                              keyboardType: TextInputType.number,
-                              textInputAction: TextInputAction.next,
-                              onChanged: (_) {
-                                if (!_isDirty) setState(() => _isDirty = true);
-                              },
-                              decoration: InputDecoration(
-                                labelText: AppLocalizations.of(context).receivedQtyLabel,
-                                isDense: true,
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
+                            const SizedBox(height: AlhaiSpacing.xs),
+                            Row(
+                              children: [
+                                Text(
+                                  AppLocalizations.of(context)
+                                      .orderedQty(item.qty.toInt()),
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurfaceVariant,
+                                  ),
                                 ),
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 8,
+                                const SizedBox(width: AlhaiSpacing.sm),
+                                Text(
+                                  AppLocalizations.of(context).pricePerUnit(
+                                      item.unitCost.toStringAsFixed(2)),
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurfaceVariant,
+                                  ),
                                 ),
-                              ),
-                            ),
-                          ),
-                          // Unit cost
-                          Expanded(
-                            child: Text(
-                              AppLocalizations.of(context).amountSar(item.unitCost.toStringAsFixed(2)),
-                              textAlign: TextAlign.end,
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.onSurface,
-                              ),
-                            ),
-                          ),
-                        ],
-                      )
-                    : Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            item.productName,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              color: Theme.of(context).colorScheme.onSurface,
-                            ),
-                          ),
-                          const SizedBox(height: AlhaiSpacing.xs),
-                          Row(
-                            children: [
-                              Text(
-                                AppLocalizations.of(context).orderedQty(item.qty.toInt()),
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                                ),
-                              ),
-                              const SizedBox(width: AlhaiSpacing.sm),
-                              Text(
-                                AppLocalizations.of(context).pricePerUnit(item.unitCost.toStringAsFixed(2)),
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                                ),
-                              ),
-                              const Spacer(),
-                              SizedBox(
-                                width: 90,
-                                child: TextFormField(
-                                  controller: qtyCtrl,
-                                  keyboardType: TextInputType.number,
-                                  textInputAction: TextInputAction.next,
-                                  onChanged: (_) {
-                                    if (!_isDirty) setState(() => _isDirty = true);
-                                  },
-                                  decoration: InputDecoration(
-                                    labelText: AppLocalizations.of(context).receivedQtyLabel,
-                                    isDense: true,
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    contentPadding:
-                                        const EdgeInsets.symmetric(
-                                      horizontal: 8,
-                                      vertical: 8,
+                                const Spacer(),
+                                SizedBox(
+                                  width: 90,
+                                  child: TextFormField(
+                                    controller: qtyCtrl,
+                                    keyboardType: TextInputType.number,
+                                    textInputAction: TextInputAction.next,
+                                    onChanged: (_) {
+                                      if (!_isDirty)
+                                        setState(() => _isDirty = true);
+                                    },
+                                    decoration: InputDecoration(
+                                      labelText: AppLocalizations.of(context)
+                                          .receivedQtyLabel,
+                                      isDense: true,
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                        vertical: 8,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-              );
-            },
-          ),
+                              ],
+                            ),
+                          ],
+                        ),
+                );
+              },
+            ),
         ],
       ),
     );
@@ -612,7 +634,9 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
                 ),
               )
             : const Icon(Icons.check_circle_rounded),
-        label: Text(_isSaving ? AppLocalizations.of(context).confirmingReceipt : AppLocalizations.of(context).confirmReceipt),
+        label: Text(_isSaving
+            ? AppLocalizations.of(context).confirmingReceipt
+            : AppLocalizations.of(context).confirmReceipt),
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.primary,
           padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
@@ -642,7 +666,8 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
 
       // 2. Update notes with receiver info
       final receiverData = jsonEncode({
-        'receivedBy': InputSanitizer.sanitizeName(_receiverNameController.text.trim()),
+        'receivedBy':
+            InputSanitizer.sanitizeName(_receiverNameController.text.trim()),
         'receiveNotes': InputSanitizer.sanitize(_notesController.text.trim()),
         'receivedAt': DateTime.now().toIso8601String(),
       });
@@ -670,8 +695,7 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
           if (receivedQty <= 0) continue;
 
           try {
-            final product =
-                await db.productsDao.getProductById(item.productId);
+            final product = await db.productsDao.getProductById(item.productId);
             if (product != null) {
               final previousQty = product.stockQty;
               final newQty = previousQty + receivedQty;

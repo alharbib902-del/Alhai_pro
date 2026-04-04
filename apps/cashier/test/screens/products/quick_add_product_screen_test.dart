@@ -32,8 +32,7 @@ void main() {
     // Default stubs
     when(() => categoriesDao.getAllCategories(any()))
         .thenAnswer((_) async => []);
-    when(() => productsDao.insertProduct(any()))
-        .thenAnswer((_) async => 1);
+    when(() => productsDao.insertProduct(any())).thenAnswer((_) async => 1);
   });
 
   tearDown(() => tearDownTestGetIt());
@@ -44,8 +43,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const QuickAddProductScreen()));
+      await tester.pumpWidget(createTestWidget(const QuickAddProductScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(QuickAddProductScreen), findsOneWidget);
@@ -65,8 +63,7 @@ void main() {
       when(() => categoriesDao.getAllCategories(any()))
           .thenAnswer((_) => completer.future);
 
-      await tester.pumpWidget(
-          createTestWidget(const QuickAddProductScreen()));
+      await tester.pumpWidget(createTestWidget(const QuickAddProductScreen()));
       await tester.pump();
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
@@ -84,8 +81,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const QuickAddProductScreen()));
+      await tester.pumpWidget(createTestWidget(const QuickAddProductScreen()));
       await tester.pumpAndSettle();
 
       expect(find.text('Product Info'), findsOneWidget);
@@ -99,13 +95,11 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const QuickAddProductScreen()));
+      await tester.pumpWidget(createTestWidget(const QuickAddProductScreen()));
       await tester.pumpAndSettle();
 
       expect(find.text('Scan'), findsOneWidget);
-      expect(
-          find.byIcon(Icons.qr_code_scanner_rounded), findsOneWidget);
+      expect(find.byIcon(Icons.qr_code_scanner_rounded), findsOneWidget);
 
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();
@@ -116,8 +110,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const QuickAddProductScreen()));
+      await tester.pumpWidget(createTestWidget(const QuickAddProductScreen()));
       await tester.pumpAndSettle();
 
       expect(find.text('Pricing Info'), findsOneWidget);
@@ -139,8 +132,7 @@ void main() {
       when(() => categoriesDao.getAllCategories(any()))
           .thenAnswer((_) async => categories);
 
-      await tester.pumpWidget(
-          createTestWidget(const QuickAddProductScreen()));
+      await tester.pumpWidget(createTestWidget(const QuickAddProductScreen()));
       await tester.pumpAndSettle();
 
       // Category dropdown should be present

@@ -12,10 +12,12 @@ class StaffPerformanceScreen extends ConsumerStatefulWidget {
   const StaffPerformanceScreen({super.key});
 
   @override
-  ConsumerState<StaffPerformanceScreen> createState() => _StaffPerformanceScreenState();
+  ConsumerState<StaffPerformanceScreen> createState() =>
+      _StaffPerformanceScreenState();
 }
 
-class _StaffPerformanceScreenState extends ConsumerState<StaffPerformanceScreen> {
+class _StaffPerformanceScreenState
+    extends ConsumerState<StaffPerformanceScreen> {
   String _period = 'today';
   bool _isLoading = true;
 
@@ -150,147 +152,169 @@ class _StaffPerformanceScreenState extends ConsumerState<StaffPerformanceScreen>
       body: _staff.isEmpty
           ? const Center(child: Text('لا توجد بيانات للفترة المحددة'))
           : ListView(
-        padding: const EdgeInsets.all(AlhaiSpacing.md),
-        children: [
-          // Leader board
-          Card(
-            child: Padding(
               padding: const EdgeInsets.all(AlhaiSpacing.md),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      const Icon(Icons.emoji_events, color: AppColors.warning),
-                      const SizedBox(width: AlhaiSpacing.xs),
-                      Text('المتصدرون', style: Theme.of(context).textTheme.titleMedium),
-                    ],
-                  ),
-                  const SizedBox(height: AlhaiSpacing.md),
-                  ...List.generate(_staff.length.clamp(0, 3), (index) {
-                    final staff = _staff[index];
-                    final colors = [AppColors.warning, AppColors.grey400, const Color(0xFF795548)];
-                    return _LeaderItem(
-                      rank: index + 1,
-                      name: staff.name,
-                      sales: staff.sales,
-                      color: colors[index],
-                    );
-                  }),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: AlhaiSpacing.md),
-
-          // Detailed stats
-          ...List.generate(_staff.length, (index) {
-            final staff = _staff[index];
-            return Card(
-              margin: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
-              child: ExpansionTile(
-                leading: CircleAvatar(
-                  child: Text(staff.name[0]),
-                ),
-                title: Text(staff.name),
-                subtitle: Text(staff.role),
-                trailing: Text(
-                  '${staff.sales.toStringAsFixed(0)} ر.س',
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                children: [
-                  Padding(
+              children: [
+                // Leader board
+                Card(
+                  child: Padding(
                     padding: const EdgeInsets.all(AlhaiSpacing.md),
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _StatRow(
-                          icon: Icons.receipt_long,
-                          label: 'عدد الفواتير',
-                          value: '${staff.transactions}',
-                          color: AppColors.info,
+                        Row(
+                          children: [
+                            const Icon(Icons.emoji_events,
+                                color: AppColors.warning),
+                            const SizedBox(width: AlhaiSpacing.xs),
+                            Text('المتصدرون',
+                                style: Theme.of(context).textTheme.titleMedium),
+                          ],
                         ),
-                        const SizedBox(height: AlhaiSpacing.sm),
-                        _StatRow(
-                          icon: Icons.trending_up,
-                          label: 'متوسط الفاتورة',
-                          value: '${staff.avgTicket} ر.س',
-                          color: AppColors.success,
-                        ),
-                        const SizedBox(height: AlhaiSpacing.sm),
-                        _StatRow(
-                          icon: Icons.speed,
-                          label: 'المبيعات/ساعة (تقديري)',
-                          value: '${(staff.sales / 8).toStringAsFixed(0)} ر.س',
-                          color: const Color(0xFF9C27B0),
-                        ),
+                        const SizedBox(height: AlhaiSpacing.md),
+                        ...List.generate(_staff.length.clamp(0, 3), (index) {
+                          final staff = _staff[index];
+                          final colors = [
+                            AppColors.warning,
+                            AppColors.grey400,
+                            const Color(0xFF795548)
+                          ];
+                          return _LeaderItem(
+                            rank: index + 1,
+                            name: staff.name,
+                            sales: staff.sales,
+                            color: colors[index],
+                          );
+                        }),
                       ],
                     ),
                   ),
-                ],
-              ),
-            );
-          }),
+                ),
+                const SizedBox(height: AlhaiSpacing.md),
 
-          // Comparison chart
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(AlhaiSpacing.md),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('مقارنة المبيعات', style: Theme.of(context).textTheme.titleMedium),
-                  const SizedBox(height: AlhaiSpacing.md),
-                  ...List.generate(_staff.length, (index) {
-                    final staff = _staff[index];
-                    final rawMax = _staff.isEmpty ? 0.0 : _staff.map((s) => s.sales).reduce((a, b) => a > b ? a : b);
-                    final maxSales = rawMax > 0 ? rawMax : 1.0;
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs),
-                      child: Column(
-                        children: [
-                          Row(
+                // Detailed stats
+                ...List.generate(_staff.length, (index) {
+                  final staff = _staff[index];
+                  return Card(
+                    margin: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
+                    child: ExpansionTile(
+                      leading: CircleAvatar(
+                        child: Text(staff.name[0]),
+                      ),
+                      title: Text(staff.name),
+                      subtitle: Text(staff.role),
+                      trailing: Text(
+                        '${staff.sales.toStringAsFixed(0)} ر.س',
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(AlhaiSpacing.md),
+                          child: Column(
                             children: [
-                              SizedBox(width: 80, child: Text(staff.name.split(' ')[0])),
-                              Expanded(
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(4),
-                                  child: LinearProgressIndicator(
-                                    value: staff.sales / maxSales,
-                                    backgroundColor: Theme.of(context).dividerColor.withValues(alpha: 0.2),
-                                    minHeight: 20,
-                                  ),
-                                ),
+                              _StatRow(
+                                icon: Icons.receipt_long,
+                                label: 'عدد الفواتير',
+                                value: '${staff.transactions}',
+                                color: AppColors.info,
                               ),
-                              const SizedBox(width: AlhaiSpacing.xs),
-                              SizedBox(
-                                width: 70,
-                                child: Text(
-                                  staff.sales.toStringAsFixed(0),
-                                  textAlign: TextAlign.end,
-                                  style: const TextStyle(fontWeight: FontWeight.bold),
-                                ),
+                              const SizedBox(height: AlhaiSpacing.sm),
+                              _StatRow(
+                                icon: Icons.trending_up,
+                                label: 'متوسط الفاتورة',
+                                value: '${staff.avgTicket} ر.س',
+                                color: AppColors.success,
+                              ),
+                              const SizedBox(height: AlhaiSpacing.sm),
+                              _StatRow(
+                                icon: Icons.speed,
+                                label: 'المبيعات/ساعة (تقديري)',
+                                value:
+                                    '${(staff.sales / 8).toStringAsFixed(0)} ر.س',
+                                color: const Color(0xFF9C27B0),
                               ),
                             ],
                           ),
-                        ],
-                      ),
-                    );
-                  }),
-                ],
-              ),
+                        ),
+                      ],
+                    ),
+                  );
+                }),
+
+                // Comparison chart
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(AlhaiSpacing.md),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('مقارنة المبيعات',
+                            style: Theme.of(context).textTheme.titleMedium),
+                        const SizedBox(height: AlhaiSpacing.md),
+                        ...List.generate(_staff.length, (index) {
+                          final staff = _staff[index];
+                          final rawMax = _staff.isEmpty
+                              ? 0.0
+                              : _staff
+                                  .map((s) => s.sales)
+                                  .reduce((a, b) => a > b ? a : b);
+                          final maxSales = rawMax > 0 ? rawMax : 1.0;
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: AlhaiSpacing.xs),
+                            child: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    SizedBox(
+                                        width: 80,
+                                        child: Text(staff.name.split(' ')[0])),
+                                    Expanded(
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(4),
+                                        child: LinearProgressIndicator(
+                                          value: staff.sales / maxSales,
+                                          backgroundColor: Theme.of(context)
+                                              .dividerColor
+                                              .withValues(alpha: 0.2),
+                                          minHeight: 20,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: AlhaiSpacing.xs),
+                                    SizedBox(
+                                      width: 70,
+                                      child: Text(
+                                        staff.sales.toStringAsFixed(0),
+                                        textAlign: TextAlign.end,
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          );
+                        }),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
     );
   }
 
   String _getPeriodName() {
     switch (_period) {
-      case 'today': return 'اليوم';
-      case 'week': return 'الأسبوع';
-      case 'month': return 'الشهر';
-      default: return 'اليوم';
+      case 'today':
+        return 'اليوم';
+      case 'week':
+        return 'الأسبوع';
+      case 'month':
+        return 'الشهر';
+      default:
+        return 'اليوم';
     }
   }
 }

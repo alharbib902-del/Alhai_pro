@@ -5,11 +5,14 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:alhai_l10n/alhai_l10n.dart' show AppLocalizations, SupportedLocales, localeProvider;
-import 'package:alhai_shared_ui/alhai_shared_ui.dart' show ThemeNotifier, themeProvider, AppTheme;
+import 'package:alhai_l10n/alhai_l10n.dart'
+    show AppLocalizations, SupportedLocales, localeProvider;
+import 'package:alhai_shared_ui/alhai_shared_ui.dart'
+    show ThemeNotifier, themeProvider, AppTheme;
 import 'dart:convert';
 import 'dart:math';
-import 'package:alhai_database/alhai_database.dart' show setDatabaseEncryptionKey;
+import 'package:alhai_database/alhai_database.dart'
+    show setDatabaseEncryptionKey;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:alhai_core/alhai_core.dart' show SupabaseConfig;
 import 'di/injection.dart';
@@ -32,68 +35,69 @@ void main() {
       return true;
     };
 
-  // Initialize Firebase (graceful fallback if not configured)
-  try {
-    await Firebase.initializeApp();
-    if (kDebugMode) {
-      debugPrint('Firebase initialized successfully');
+    // Initialize Firebase (graceful fallback if not configured)
+    try {
+      await Firebase.initializeApp();
+      if (kDebugMode) {
+        debugPrint('Firebase initialized successfully');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('Firebase not configured: $e');
+      }
+      // App continues without Firebase - analytics/crashlytics won't work
     }
-  } catch (e) {
-    if (kDebugMode) {
-      debugPrint('Firebase not configured: $e');
-    }
-    // App continues without Firebase - analytics/crashlytics won't work
-  }
 
-  // Initialize Supabase (required for Lite - sync & auth)
-  try {
-    if (!SupabaseConfig.isConfigured) {
-      throw StateError(
-        'Supabase not configured. ${SupabaseConfig.configurationError}',
+    // Initialize Supabase (required for Lite - sync & auth)
+    try {
+      if (!SupabaseConfig.isConfigured) {
+        throw StateError(
+          'Supabase not configured. ${SupabaseConfig.configurationError}',
+        );
+      }
+      await Supabase.initialize(
+        url: SupabaseConfig.url,
+        anonKey: SupabaseConfig.anonKey,
+        debug: SupabaseConfig.enableDebugLogs,
       );
+      if (kDebugMode) {
+        debugPrint('Supabase initialized successfully');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('Supabase initialization failed: $e');
+      }
     }
-    await Supabase.initialize(
-      url: SupabaseConfig.url,
-      anonKey: SupabaseConfig.anonKey,
-      debug: SupabaseConfig.enableDebugLogs,
+
+    // Initialize database encryption key before DI creates the database
+    final dbKey = await _getOrCreateDbKey();
+    setDatabaseEncryptionKey(dbKey);
+
+    // DI must run before runApp (Riverpod providers use getIt synchronously)
+    await configureDependencies();
+
+    // Pre-load theme (~50ms)
+    final prefs = await SharedPreferences.getInstance();
+    final savedTheme = prefs.getString('app_theme_mode');
+    final initialThemeMode = switch (savedTheme) {
+      'dark' => ThemeMode.dark,
+      'light' => ThemeMode.light,
+      _ => ThemeMode.system,
+    };
+
+    // M56: Pre-load onboarding state so router guard can check synchronously
+    final hasSeenOnboardingFlag = await hasSeenLiteOnboarding();
+
+    runApp(
+      ProviderScope(
+        overrides: [
+          themeProvider.overrideWith((ref) => ThemeNotifier(initialThemeMode)),
+          liteOnboardingSeenProvider
+              .overrideWith((ref) => hasSeenOnboardingFlag),
+        ],
+        child: const AdminLiteApp(),
+      ),
     );
-    if (kDebugMode) {
-      debugPrint('Supabase initialized successfully');
-    }
-  } catch (e) {
-    if (kDebugMode) {
-      debugPrint('Supabase initialization failed: $e');
-    }
-  }
-
-  // Initialize database encryption key before DI creates the database
-  final dbKey = await _getOrCreateDbKey();
-  setDatabaseEncryptionKey(dbKey);
-
-  // DI must run before runApp (Riverpod providers use getIt synchronously)
-  await configureDependencies();
-
-  // Pre-load theme (~50ms)
-  final prefs = await SharedPreferences.getInstance();
-  final savedTheme = prefs.getString('app_theme_mode');
-  final initialThemeMode = switch (savedTheme) {
-    'dark' => ThemeMode.dark,
-    'light' => ThemeMode.light,
-    _ => ThemeMode.system,
-  };
-
-  // M56: Pre-load onboarding state so router guard can check synchronously
-  final hasSeenOnboardingFlag = await hasSeenLiteOnboarding();
-
-  runApp(
-    ProviderScope(
-      overrides: [
-        themeProvider.overrideWith((ref) => ThemeNotifier(initialThemeMode)),
-        liteOnboardingSeenProvider.overrideWith((ref) => hasSeenOnboardingFlag),
-      ],
-      child: const AdminLiteApp(),
-    ),
-  );
   }, (error, stack) {
     debugPrint('Uncaught error: $error\n$stack');
   });
@@ -123,7 +127,8 @@ Future<String> _getOrCreateDbKey() async {
     // Native: use FlutterSecureStorage (encrypted keychain)
     const storage = FlutterSecureStorage(
       aOptions: AndroidOptions(encryptedSharedPreferences: true),
-      iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock_this_device),
+      iOptions: IOSOptions(
+          accessibility: KeychainAccessibility.first_unlock_this_device),
     );
     var key = await storage.read(key: keyName);
     if (key == null) {

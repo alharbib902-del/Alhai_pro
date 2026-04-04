@@ -20,7 +20,8 @@ class AiChatWithDataScreen extends ConsumerStatefulWidget {
   const AiChatWithDataScreen({super.key});
 
   @override
-  ConsumerState<AiChatWithDataScreen> createState() => _AiChatWithDataScreenState();
+  ConsumerState<AiChatWithDataScreen> createState() =>
+      _AiChatWithDataScreenState();
 }
 
 class _AiChatWithDataScreenState extends ConsumerState<AiChatWithDataScreen> {
@@ -34,22 +35,21 @@ class _AiChatWithDataScreenState extends ConsumerState<AiChatWithDataScreen> {
     final l10n = AppLocalizations.of(context)!;
 
     return Column(
-              children: [
-                AppHeader(
-                  title: l10n.aiChatWithData,
-                  onMenuTap: isWideScreen
-                      ? null
-                      : () => Scaffold.of(context).openDrawer(),
-                  onNotificationsTap: () => context.push('/notifications'),
-                  notificationsCount: 3,
-                  userName: l10n.defaultUserName,
-                  userRole: l10n.branchManager,
-                ),
-                Expanded(
-                  child: _buildContent(isDark, isWideScreen),
-                ),
-              ],
-            );
+      children: [
+        AppHeader(
+          title: l10n.aiChatWithData,
+          onMenuTap:
+              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onNotificationsTap: () => context.push('/notifications'),
+          notificationsCount: 3,
+          userName: l10n.defaultUserName,
+          userRole: l10n.branchManager,
+        ),
+        Expanded(
+          child: _buildContent(isDark, isWideScreen),
+        ),
+      ],
+    );
   }
 
   Widget _buildContent(bool isDark, bool isWideScreen) {
@@ -64,13 +64,15 @@ class _AiChatWithDataScreenState extends ConsumerState<AiChatWithDataScreen> {
           // القسم الرئيسي
           Expanded(
             flex: 3,
-            child: _buildMainArea(isDark, currentResult, isLoading, suggestions, isWideScreen),
+            child: _buildMainArea(
+                isDark, currentResult, isLoading, suggestions, isWideScreen),
           ),
           // لوحة السجل الجانبية
           SizedBox(
             width: 350,
             child: Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.zero, AlhaiSpacing.md, AlhaiSpacing.md, AlhaiSpacing.md),
+              padding: EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.zero,
+                  AlhaiSpacing.md, AlhaiSpacing.md, AlhaiSpacing.md),
               child: QueryHistoryPanel(
                 history: history,
                 onRerun: _executeQuery,
@@ -86,7 +88,8 @@ class _AiChatWithDataScreenState extends ConsumerState<AiChatWithDataScreen> {
 
     return Stack(
       children: [
-        _buildMainArea(isDark, currentResult, isLoading, suggestions, isWideScreen),
+        _buildMainArea(
+            isDark, currentResult, isLoading, suggestions, isWideScreen),
         if (_showHistory)
           Positioned.fill(
             child: GestureDetector(
@@ -137,9 +140,8 @@ class _AiChatWithDataScreenState extends ConsumerState<AiChatWithDataScreen> {
           DataQueryInput(
             suggestions: suggestions,
             onSubmit: _executeQuery,
-            onHistoryTap: isWideScreen
-                ? null
-                : () => setState(() => _showHistory = true),
+            onHistoryTap:
+                isWideScreen ? null : () => setState(() => _showHistory = true),
             isLoading: isLoading,
           ),
 
@@ -215,7 +217,8 @@ class _AiChatWithDataScreenState extends ConsumerState<AiChatWithDataScreen> {
             ),
           ),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: AlhaiSpacing.xs),
+            padding: const EdgeInsets.symmetric(
+                horizontal: 14, vertical: AlhaiSpacing.xs),
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(20),
@@ -241,7 +244,8 @@ class _AiChatWithDataScreenState extends ConsumerState<AiChatWithDataScreen> {
     );
   }
 
-  Widget _buildWelcomeArea(bool isDark, List<String> suggestions, bool isWideScreen) {
+  Widget _buildWelcomeArea(
+      bool isDark, List<String> suggestions, bool isWideScreen) {
     final l10n = AppLocalizations.of(context)!;
     final textColor = isDark ? Colors.white : AppColors.textPrimary;
     final subtextColor = isDark ? Colors.white70 : AppColors.textSecondary;
@@ -252,7 +256,8 @@ class _AiChatWithDataScreenState extends ConsumerState<AiChatWithDataScreen> {
         // عنوان الاقتراحات
         Row(
           children: [
-            const Icon(Icons.lightbulb_outline, color: AppColors.warning, size: 20),
+            const Icon(Icons.lightbulb_outline,
+                color: AppColors.warning, size: 20),
             const SizedBox(width: AlhaiSpacing.xs),
             Text(
               l10n.aiTrySampleQuestions,

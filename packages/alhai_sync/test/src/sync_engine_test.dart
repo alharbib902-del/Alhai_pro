@@ -17,8 +17,7 @@ class MockPullStrategy extends Mock implements PullStrategy {}
 
 class MockPushStrategy extends Mock implements PushStrategy {}
 
-class MockBidirectionalStrategy extends Mock
-    implements BidirectionalStrategy {}
+class MockBidirectionalStrategy extends Mock implements BidirectionalStrategy {}
 
 class MockStockDeltaSync extends Mock implements StockDeltaSync {}
 
@@ -108,8 +107,7 @@ void main() {
               orgId: any(named: 'orgId'),
               storeId: any(named: 'storeId'),
             )).thenAnswer((_) => pullCompleter.future);
-        when(() => mockStatusTracker.refreshAll())
-            .thenAnswer((_) async {});
+        when(() => mockStatusTracker.refreshAll()).thenAnswer((_) async {});
 
         // Initialize while offline (no auto sync)
         await engine.initialize(
@@ -194,8 +192,7 @@ void main() {
               oversoldProducts: [],
             ));
 
-        when(() => mockStatusTracker.refreshAll())
-            .thenAnswer((_) async {});
+        when(() => mockStatusTracker.refreshAll()).thenAnswer((_) async {});
 
         // Initialize while offline (setUp already has isOnline=false)
         await engine.initialize(
@@ -245,9 +242,8 @@ void main() {
                   errors: ['Pull error']),
             ]);
 
-        when(() => mockPush.pushPending()).thenAnswer((_) async =>
-            PushResult(
-                successCount: 0, failedCount: 1, errors: ['Push error']));
+        when(() => mockPush.pushPending()).thenAnswer((_) async => PushResult(
+            successCount: 0, failedCount: 1, errors: ['Push error']));
 
         when(() => mockBidirectional.syncAll(
               orgId: any(named: 'orgId'),
@@ -273,8 +269,7 @@ void main() {
               oversoldProducts: [],
             ));
 
-        when(() => mockStatusTracker.refreshAll())
-            .thenAnswer((_) async {});
+        when(() => mockStatusTracker.refreshAll()).thenAnswer((_) async {});
 
         // Initialize offline
         await engine.initialize(
@@ -316,8 +311,7 @@ void main() {
               errors: [],
               oversoldProducts: [],
             ));
-        when(() => mockStatusTracker.refreshAll())
-            .thenAnswer((_) async {});
+        when(() => mockStatusTracker.refreshAll()).thenAnswer((_) async {});
 
         await engine.initialize(
           orgId: 'org-1',
@@ -342,8 +336,7 @@ void main() {
               storeId: any(named: 'storeId'),
             )).thenThrow(Exception('Critical error'));
 
-        when(() => mockStatusTracker.refreshAll())
-            .thenAnswer((_) async {});
+        when(() => mockStatusTracker.refreshAll()).thenAnswer((_) async {});
 
         await engine.initialize(
           orgId: 'org-1',
@@ -390,8 +383,7 @@ void main() {
               errors: [],
               oversoldProducts: [],
             ));
-        when(() => mockStatusTracker.refreshAll())
-            .thenAnswer((_) async {});
+        when(() => mockStatusTracker.refreshAll()).thenAnswer((_) async {});
 
         await engine.initialize(
           orgId: 'org-1',
@@ -466,8 +458,7 @@ void main() {
         pullResults: [
           PullResult(tableName: 'products', recordsPulled: 10, errors: []),
         ],
-        pushResult:
-            PushResult(successCount: 5, failedCount: 0, errors: []),
+        pushResult: PushResult(successCount: 5, failedCount: 0, errors: []),
         bidirectionalResults: [
           BidirectionalResult(
             tableName: 'customers',

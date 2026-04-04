@@ -80,7 +80,8 @@ class AppDataTable<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return AppLoadingState(message: AppLocalizations.of(context)!.loadingData);
+      return AppLoadingState(
+          message: AppLocalizations.of(context)!.loadingData);
     }
 
     if (data.isEmpty) {
@@ -206,7 +207,8 @@ class AppDataTable<T> extends StatelessWidget {
               : AppColors.grey50.withValues(alpha: 0.5),
       child: InkWell(
         onTap: onRowTap != null ? () => onRowTap!(item) : null,
-        onLongPress: onRowLongPress != null ? () => onRowLongPress!(item) : null,
+        onLongPress:
+            onRowLongPress != null ? () => onRowLongPress!(item) : null,
         child: SizedBox(
           height: rowHeight,
           child: Row(
@@ -477,9 +479,8 @@ class AppPagination extends StatelessWidget {
             child: Text(
               '$i',
               style: AppTypography.labelMedium.copyWith(
-                color: i == currentPage
-                    ? AppColors.white
-                    : AppColors.textPrimary,
+                color:
+                    i == currentPage ? AppColors.white : AppColors.textPrimary,
               ),
             ),
           ),

@@ -31,7 +31,8 @@ void main() {
       expect(find.text('Add items to get started'), findsOneWidget);
     });
 
-    testWidgets('shows action button when actionText and onAction provided', (tester) async {
+    testWidgets('shows action button when actionText and onAction provided',
+        (tester) async {
       var actionCalled = false;
       await tester.pumpWidget(createTestWidget(
         AlhaiEmptyState(
@@ -50,7 +51,8 @@ void main() {
       expect(actionCalled, isTrue);
     });
 
-    testWidgets('does not show action button when only actionText is provided', (tester) async {
+    testWidgets('does not show action button when only actionText is provided',
+        (tester) async {
       await tester.pumpWidget(createTestWidget(
         const AlhaiEmptyState(
           icon: Icons.inbox,

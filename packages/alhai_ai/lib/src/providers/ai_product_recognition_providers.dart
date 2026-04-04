@@ -13,42 +13,50 @@ import 'package:alhai_auth/alhai_auth.dart';
 // ============================================================================
 
 /// مزود نتيجة التعرف
-final recognitionResultProvider = StateNotifierProvider<RecognitionResultNotifier, AsyncValue<RecognitionResult?>>((ref) {
+final recognitionResultProvider = StateNotifierProvider<
+    RecognitionResultNotifier, AsyncValue<RecognitionResult?>>((ref) {
   return RecognitionResultNotifier();
 });
 
 /// مزود بيانات OCR
-final ocrExtractionProvider = StateNotifierProvider<OcrExtractionNotifier, OcrExtraction?>((ref) {
+final ocrExtractionProvider =
+    StateNotifierProvider<OcrExtractionNotifier, OcrExtraction?>((ref) {
   return OcrExtractionNotifier();
 });
 
 /// مزود نتيجة مسح الرف
-final shelfScanProvider = StateNotifierProvider<ShelfScanNotifier, AsyncValue<ShelfScanResult?>>((ref) {
+final shelfScanProvider =
+    StateNotifierProvider<ShelfScanNotifier, AsyncValue<ShelfScanResult?>>(
+        (ref) {
   return ShelfScanNotifier();
 });
 
 /// مزود وضع المسح
-final scanModeProvider = StateProvider<ScanMode>((ref) => ScanMode.singleProduct);
+final scanModeProvider =
+    StateProvider<ScanMode>((ref) => ScanMode.singleProduct);
 
 /// مزود حالة الكاميرا
 final cameraActiveProvider = StateProvider<bool>((ref) => false);
 
 /// مزود المنتج المحدد من نتائج التعرف
-final selectedRecognizedProductProvider = StateProvider<RecognizedProduct?>((ref) => null);
+final selectedRecognizedProductProvider =
+    StateProvider<RecognizedProduct?>((ref) => null);
 
 // ============================================================================
 // NOTIFIERS
 // ============================================================================
 
 /// إدارة نتائج التعرف
-class RecognitionResultNotifier extends StateNotifier<AsyncValue<RecognitionResult?>> {
+class RecognitionResultNotifier
+    extends StateNotifier<AsyncValue<RecognitionResult?>> {
   RecognitionResultNotifier() : super(const AsyncValue.data(null));
 
   Future<void> startScan() async {
     state = const AsyncValue.loading();
     // Simulate scanning delay
     await Future.delayed(const Duration(milliseconds: 1500));
-    state = AsyncValue.data(AiProductRecognitionService.getMockRecognitionResult());
+    state =
+        AsyncValue.data(AiProductRecognitionService.getMockRecognitionResult());
   }
 
   void acceptProduct(String productId) {
@@ -61,17 +69,20 @@ class RecognitionResultNotifier extends StateNotifier<AsyncValue<RecognitionResu
   void rejectProduct(String productName) {
     final current = state.valueOrNull;
     if (current == null) return;
-    final updated = current.products.where((p) => p.nameAr != productName).toList();
+    final updated =
+        current.products.where((p) => p.nameAr != productName).toList();
     state = AsyncValue.data(RecognitionResult(
       id: current.id,
       products: updated,
       scannedAt: current.scannedAt,
       sourceType: current.sourceType,
       totalDetected: current.totalDetected,
-      totalMatched: updated.where((p) => p.status == RecognitionStatus.matched).length,
+      totalMatched:
+          updated.where((p) => p.status == RecognitionStatus.matched).length,
       avgConfidence: updated.isEmpty
           ? 0
-          : updated.map((p) => p.confidence).reduce((a, b) => a + b) / updated.length,
+          : updated.map((p) => p.confidence).reduce((a, b) => a + b) /
+              updated.length,
     ));
   }
 

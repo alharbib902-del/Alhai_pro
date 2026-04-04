@@ -7,7 +7,8 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiColors, AlhaiSpacing;
+import 'package:alhai_design_system/alhai_design_system.dart'
+    show AlhaiColors, AlhaiSpacing;
 import 'package:alhai_l10n/alhai_l10n.dart';
 
 class _Denomination {
@@ -60,8 +61,7 @@ class DenominationCounterWidget extends StatefulWidget {
       _DenominationCounterWidgetState();
 }
 
-class _DenominationCounterWidgetState
-    extends State<DenominationCounterWidget> {
+class _DenominationCounterWidgetState extends State<DenominationCounterWidget> {
   final Map<double, TextEditingController> _controllers = {};
   final Map<double, int> _counts = {};
 
@@ -214,15 +214,13 @@ class _DenominationCounterWidgetState
               keyboardType: TextInputType.number,
               textAlign: TextAlign.center,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              style:
-                  const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
               decoration: InputDecoration(
                 contentPadding: EdgeInsets.zero,
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8)),
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                 filled: true,
-                fillColor:
-                    Theme.of(context).colorScheme.surface,
+                fillColor: Theme.of(context).colorScheme.surface,
               ),
               onChanged: (v) => _onCountChanged(d.value, v),
             ),
@@ -237,10 +235,8 @@ class _DenominationCounterWidgetState
               '= ${l10n.amountWithSar(subtotal.toStringAsFixed(subtotal == subtotal.roundToDouble() ? 0 : 2))}',
               style: TextStyle(
                 fontSize: 13,
-                fontWeight:
-                    count > 0 ? FontWeight.bold : FontWeight.normal,
-                color:
-                    count > 0 ? AppColors.primary : AppColors.textSecondary,
+                fontWeight: count > 0 ? FontWeight.bold : FontWeight.normal,
+                color: count > 0 ? AppColors.primary : AppColors.textSecondary,
               ),
             ),
           ),
@@ -280,7 +276,8 @@ Future<double?> showDenominationCounterSheet(
               children: [
                 Center(
                   child: Container(
-                    margin: const EdgeInsets.only(top: 10, bottom: AlhaiSpacing.xs),
+                    margin:
+                        const EdgeInsets.only(top: 10, bottom: AlhaiSpacing.xs),
                     width: 40,
                     height: 4,
                     decoration: BoxDecoration(
@@ -290,7 +287,8 @@ Future<double?> showDenominationCounterSheet(
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md),
                   child: Row(
                     children: [
                       const Icon(Icons.calculate_rounded,
@@ -325,7 +323,8 @@ Future<double?> showDenominationCounterSheet(
                   padding: EdgeInsetsDirectional.only(
                     start: AlhaiSpacing.md,
                     end: AlhaiSpacing.md,
-                    bottom: AlhaiSpacing.md + MediaQuery.of(ctx).viewInsets.bottom,
+                    bottom:
+                        AlhaiSpacing.md + MediaQuery.of(ctx).viewInsets.bottom,
                     top: 8,
                   ),
                   child: Row(
@@ -340,11 +339,10 @@ Future<double?> showDenominationCounterSheet(
                       Expanded(
                         flex: 2,
                         child: FilledButton.icon(
-                          onPressed: () =>
-                              Navigator.pop(ctx, currentTotal),
+                          onPressed: () => Navigator.pop(ctx, currentTotal),
                           icon: const Icon(Icons.check),
-                          label: Text(
-                              l10n.confirmAmountSar(currentTotal.toStringAsFixed(2))),
+                          label: Text(l10n.confirmAmountSar(
+                              currentTotal.toStringAsFixed(2))),
                         ),
                       ),
                     ],

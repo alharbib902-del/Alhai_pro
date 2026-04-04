@@ -7,7 +7,7 @@ import '../../providers/cart_providers.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// صف المنتجات السريعة (الأكثر مبيعاً)
-/// 
+///
 /// يعرض أعلى 9 منتجات مبيعاً مع اختصارات أرقام 1-9
 class FavoritesRow extends ConsumerWidget {
   final VoidCallback? onProductAdded;
@@ -27,7 +27,8 @@ class FavoritesRow extends ConsumerWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xs),
+      padding: const EdgeInsets.symmetric(
+          horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xs),
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerLow,
         border: Border(
@@ -41,7 +42,8 @@ class FavoritesRow extends ConsumerWidget {
         children: [
           // العنوان
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
+            padding: const EdgeInsets.symmetric(
+                horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
             child: Row(
               children: [
                 Icon(
@@ -60,7 +62,7 @@ class FavoritesRow extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: AlhaiSpacing.xxs),
-          
+
           // المنتجات
           SizedBox(
             height: 80,
@@ -124,7 +126,8 @@ class _FavoriteProductCard extends StatelessWidget {
               children: [
                 // رقم الاختصار
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
                     color: theme.colorScheme.primary,
                     borderRadius: BorderRadius.circular(4),
@@ -150,7 +153,8 @@ class _FavoriteProductCard extends StatelessWidget {
                 const SizedBox(height: 2),
                 // السعر
                 Text(
-                  AppLocalizations.of(context)!.priceSar(product.price.toStringAsFixed(0)),
+                  AppLocalizations.of(context)!
+                      .priceSar(product.price.toStringAsFixed(0)),
                   style: theme.textTheme.labelSmall?.copyWith(
                     color: theme.colorScheme.primary,
                     fontWeight: FontWeight.bold,

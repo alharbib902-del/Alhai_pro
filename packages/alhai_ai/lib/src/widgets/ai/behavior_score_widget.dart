@@ -73,7 +73,9 @@ class BehaviorScoreWidget extends StatelessWidget {
             color: isDark ? const Color(0xFF1E293B) : Colors.white,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.1)
+                  : AppColors.border,
             ),
             boxShadow: [
               BoxShadow(
@@ -83,7 +85,9 @@ class BehaviorScoreWidget extends StatelessWidget {
               ),
             ],
           ),
-          child: compact ? _buildCompact(isDark, scoreColor, l10n) : _buildFull(isDark, scoreColor, l10n),
+          child: compact
+              ? _buildCompact(isDark, scoreColor, l10n)
+              : _buildFull(isDark, scoreColor, l10n),
         ),
       ),
     );
@@ -150,7 +154,8 @@ class BehaviorScoreWidget extends StatelessWidget {
         // Alert count badge
         if (score.alertCount > 0)
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 3),
+            padding: const EdgeInsets.symmetric(
+                horizontal: AlhaiSpacing.xs, vertical: 3),
             decoration: BoxDecoration(
               color: AppColors.error.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(10),
@@ -202,7 +207,9 @@ class BehaviorScoreWidget extends StatelessWidget {
                   Text(
                     '${score.totalTransactions} معاملة', // X transactions
                     style: TextStyle(
-                      color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textMuted,
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.5)
+                          : AppColors.textMuted,
                       fontSize: 12,
                     ),
                   ),
@@ -346,7 +353,9 @@ class _FactorBar extends StatelessWidget {
           child: Text(
             label,
             style: TextStyle(
-              color: isDark ? Colors.white.withValues(alpha: 0.6) : AppColors.textSecondary,
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.6)
+                  : AppColors.textSecondary,
               fontSize: 11,
             ),
           ),
@@ -357,7 +366,9 @@ class _FactorBar extends StatelessWidget {
             borderRadius: BorderRadius.circular(3),
             child: LinearProgressIndicator(
               value: value,
-              backgroundColor: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.grey200,
+              backgroundColor: isDark
+                  ? Colors.white.withValues(alpha: 0.1)
+                  : AppColors.grey200,
               valueColor: AlwaysStoppedAnimation<Color>(_getBarColor()),
               minHeight: 6,
             ),
@@ -369,7 +380,9 @@ class _FactorBar extends StatelessWidget {
           child: Text(
             '${(value * 100).toInt()}%',
             style: TextStyle(
-              color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textMuted,
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.5)
+                  : AppColors.textMuted,
               fontSize: 10,
               fontWeight: FontWeight.w500,
             ),

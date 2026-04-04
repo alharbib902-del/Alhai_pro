@@ -151,7 +151,8 @@ class _PaymentSuccessDialogState extends State<PaymentSuccessDialog>
         setState(() => _isSending = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(AppLocalizations.of(context)!.whatsappSendError(e.toString())),
+            content: Text(
+                AppLocalizations.of(context)!.whatsappSendError(e.toString())),
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
@@ -228,7 +229,8 @@ class _PaymentSuccessDialogState extends State<PaymentSuccessDialog>
                         Text(
                           AppLocalizations.of(context)!.invoiceNumberTitle,
                           style: TextStyle(
-                            color: isDark ? Colors.white60 : AppColors.textMuted,
+                            color:
+                                isDark ? Colors.white60 : AppColors.textMuted,
                           ),
                         ),
                         Text(
@@ -244,11 +246,13 @@ class _PaymentSuccessDialogState extends State<PaymentSuccessDialog>
                         Text(
                           AppLocalizations.of(context)!.amountPaidTitle,
                           style: TextStyle(
-                            color: isDark ? Colors.white60 : AppColors.textMuted,
+                            color:
+                                isDark ? Colors.white60 : AppColors.textMuted,
                           ),
                         ),
                         Text(
-                          CurrencyFormatter.formatWithContext(context, widget.amount),
+                          CurrencyFormatter.formatWithContext(
+                              context, widget.amount),
                           style: theme.textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.bold,
                             color: AppColors.success,
@@ -314,11 +318,14 @@ class _PaymentSuccessDialogState extends State<PaymentSuccessDialog>
                           _sent ? Icons.check : Icons.send,
                           size: 18,
                         ),
-                  label: Text(_sent ? AppLocalizations.of(context)!.sentLabel : AppLocalizations.of(context)!.sendWhatsapp),
+                  label: Text(_sent
+                      ? AppLocalizations.of(context)!.sentLabel
+                      : AppLocalizations.of(context)!.sendWhatsapp),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.whatsappGreen,
                     foregroundColor: AppColors.textOnPrimary,
-                    padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
+                    padding:
+                        const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -347,7 +354,8 @@ class _PaymentSuccessDialogState extends State<PaymentSuccessDialog>
                       icon: const Icon(Icons.print_outlined, size: 18),
                       label: Text(AppLocalizations.of(context)!.print),
                       style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: AlhaiSpacing.sm),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -365,7 +373,8 @@ class _PaymentSuccessDialogState extends State<PaymentSuccessDialog>
                       icon: const Icon(Icons.add_shopping_cart, size: 18),
                       label: Text(AppLocalizations.of(context)!.newSaleButton),
                       style: FilledButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: AlhaiSpacing.sm),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),

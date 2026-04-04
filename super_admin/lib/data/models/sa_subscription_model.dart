@@ -41,8 +41,8 @@ class SASubscription {
       status: json['status'] as String?,
       startDate: json['start_date'] as String? ??
           json['current_period_start'] as String?,
-      endDate: json['end_date'] as String? ??
-          json['current_period_end'] as String?,
+      endDate:
+          json['end_date'] as String? ?? json['current_period_end'] as String?,
       orgId: json['org_id'] as String? ?? json['store_id'] as String?,
       amount: (json['amount'] as num?)?.toDouble(),
       currency: json['currency'] as String?,
@@ -51,9 +51,7 @@ class SASubscription {
           ? SASubscriptionStore.fromJson(rawStore)
           : null,
       planSlug: json['plan'] as String? ??
-          (rawPlan is Map<String, dynamic>
-              ? rawPlan['slug'] as String?
-              : null),
+          (rawPlan is Map<String, dynamic> ? rawPlan['slug'] as String? : null),
     );
   }
 
@@ -73,7 +71,8 @@ class SASubscription {
       billingCycle: json['billing_cycle'] as String?,
       planSlug: json['plan'] as String?,
       store: storeName != null
-          ? SASubscriptionStore(id: json['org_id'] as String? ?? '', name: storeName)
+          ? SASubscriptionStore(
+              id: json['org_id'] as String? ?? '', name: storeName)
           : null,
     );
   }

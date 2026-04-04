@@ -54,26 +54,38 @@ class RealtimeListener {
   /// الجداول ثنائية الاتجاه (من BidirectionalStrategy.tableConfigs)
   /// هذه الجداول قد تحتوي على تغييرات محلية معلقة يجب عدم الكتابة فوقها
   static const Set<String> _bidirectionalTables = {
-    'customers', 'expenses', 'returns', 'return_items',
-    'purchases', 'purchase_items', 'shifts', 'suppliers',
-    'notifications', 'loyalty_points', 'loyalty_transactions',
-    'customer_addresses', 'accounts', 'transactions',
-    'product_expiry', 'stock_takes', 'stock_transfers',
+    'customers',
+    'expenses',
+    'returns',
+    'return_items',
+    'purchases',
+    'purchase_items',
+    'shifts',
+    'suppliers',
+    'notifications',
+    'loyalty_points',
+    'loyalty_transactions',
+    'customer_addresses',
+    'accounts',
+    'transactions',
+    'product_expiry',
+    'stock_takes',
+    'stock_transfers',
     'whatsapp_templates',
   };
 
   /// الجداول المراقبة بالـ Realtime
   /// ترتيب حسب الأولوية: stock_deltas أولاً (تعدد كاشير)
   static const List<String> watchedTables = [
-    'stock_deltas',    // أولوية قصوى: تزامن مخزون بين أجهزة الكاشير
-    'orders',          // طلبات أونلاين + تحديث حالة فوري
-    'sales',           // مبيعات POS - تحديث لوحة التحكم فوري
-    'sale_items',      // عناصر المبيعات - تفاصيل لوحة التحكم
-    'products',        // أسعار + حالة + مخزون
-    'notifications',   // إشعارات نفاد مخزون + طلبات جديدة
-    'categories',      // تصنيفات
+    'stock_deltas', // أولوية قصوى: تزامن مخزون بين أجهزة الكاشير
+    'orders', // طلبات أونلاين + تحديث حالة فوري
+    'sales', // مبيعات POS - تحديث لوحة التحكم فوري
+    'sale_items', // عناصر المبيعات - تفاصيل لوحة التحكم
+    'products', // أسعار + حالة + مخزون
+    'notifications', // إشعارات نفاد مخزون + طلبات جديدة
+    'categories', // تصنيفات
     'stock_transfers', // نقل مخزون بين الفروع
-    'invoices',        // فواتير رسمية (ZATCA)
+    'invoices', // فواتير رسمية (ZATCA)
     'shifts',
     'inventory_movements',
   ];
@@ -218,20 +230,20 @@ class RealtimeListener {
 
     channel
         .onPostgresChanges(
-          event: PostgresChangeEvent.all,
-          schema: 'public',
-          table: tableName,
-          filter: _orgId != null
-              ? PostgresChangeFilter(
-                  type: PostgresChangeFilterType.eq,
-                  column: 'store_id',
-                  value: _storeId!,
-                )
-              : null,
-          callback: (payload) {
-            _handleChange(tableName, payload);
-          },
-        )
+      event: PostgresChangeEvent.all,
+      schema: 'public',
+      table: tableName,
+      filter: _orgId != null
+          ? PostgresChangeFilter(
+              type: PostgresChangeFilterType.eq,
+              column: 'store_id',
+              value: _storeId!,
+            )
+          : null,
+      callback: (payload) {
+        _handleChange(tableName, payload);
+      },
+    )
         .subscribe((status, [error]) {
       if (kDebugMode) {
         debugPrint(
@@ -257,7 +269,9 @@ class RealtimeListener {
       }
 
       // تجاهل stock_deltas من نفس الجهاز (لتجنب التكرار)
-      if (tableName == 'stock_deltas' && _deviceId != null && newRecord.isNotEmpty) {
+      if (tableName == 'stock_deltas' &&
+          _deviceId != null &&
+          newRecord.isNotEmpty) {
         final deltaDeviceId = newRecord['device_id'] as String?;
         if (deltaDeviceId == _deviceId) return;
       }

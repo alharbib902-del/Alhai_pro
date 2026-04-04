@@ -63,8 +63,7 @@ class SyncProgress {
     this.lastSyncAt,
   });
 
-  double get progress =>
-      totalTables > 0 ? completedTables / totalTables : 0.0;
+  double get progress => totalTables > 0 ? completedTables / totalTables : 0.0;
 
   bool get isSyncing => state == SyncEngineState.syncing;
 
@@ -333,8 +332,7 @@ class SyncEngine {
       }
 
       // المرحلة 4: دلتا المخزون (Stock Delta)
-      _updateProgress(
-          _currentProgress.copyWith(phase: SyncPhase.stockDelta));
+      _updateProgress(_currentProgress.copyWith(phase: SyncPhase.stockDelta));
       final deltaResult = await _stockDeltaSync.sync(
         orgId: _orgId!,
         storeId: _storeId!,
@@ -346,9 +344,8 @@ class SyncEngine {
 
       // تحديث حالة المزامنة
       final now = DateTime.now().toUtc();
-      final finalState = allErrors.isEmpty
-          ? SyncEngineState.completed
-          : SyncEngineState.error;
+      final finalState =
+          allErrors.isEmpty ? SyncEngineState.completed : SyncEngineState.error;
 
       _updateProgress(SyncProgress(
         state: finalState,
@@ -485,8 +482,8 @@ class SyncEngineResult {
       total += pushResult!.successCount;
     }
     if (bidirectionalResults != null) {
-      total += bidirectionalResults!
-          .fold(0, (sum, r) => sum + r.pushed + r.pulled);
+      total +=
+          bidirectionalResults!.fold(0, (sum, r) => sum + r.pushed + r.pulled);
     }
     if (stockDeltaResult != null) {
       total += stockDeltaResult!.deltasSent;
@@ -532,17 +529,13 @@ class SyncHealthReport {
 
   /// هل المزامنة في حالة صحية؟
   bool get isHealthy =>
-      isServerReachable &&
-      consecutiveFailures == 0 &&
-      errors.isEmpty;
+      isServerReachable && consecutiveFailures == 0 && errors.isEmpty;
 
   /// هل المزامنة في حالة تحذير (أخطاء قليلة)؟
-  bool get isWarning =>
-      consecutiveFailures > 0 && consecutiveFailures < 3;
+  bool get isWarning => consecutiveFailures > 0 && consecutiveFailures < 3;
 
   /// هل المزامنة في حالة حرجة (أخطاء كثيرة)؟
-  bool get isCritical =>
-      !isServerReachable || consecutiveFailures >= 3;
+  bool get isCritical => !isServerReachable || consecutiveFailures >= 3;
 
   /// مدة منذ آخر مزامنة
   Duration? get timeSinceLastSync {
@@ -558,7 +551,8 @@ class SyncHealthReport {
     if (isWarning) {
       return 'Warning: $consecutiveFailures failures, $pendingItemCount pending';
     }
-    final dlSuffix = deadLetterCount > 0 ? ', $deadLetterCount dead letter' : '';
+    final dlSuffix =
+        deadLetterCount > 0 ? ', $deadLetterCount dead letter' : '';
     return 'Healthy: $pendingItemCount pending items$dlSuffix';
   }
 

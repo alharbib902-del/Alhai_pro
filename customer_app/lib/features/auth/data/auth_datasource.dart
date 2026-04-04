@@ -105,7 +105,10 @@ class AuthDatasource {
     if (email != null) updates['email'] = email;
     updates['updated_at'] = DateTime.now().toIso8601String();
 
-    await _client.from('users').update(updates).eq('id', userId)
+    await _client
+        .from('users')
+        .update(updates)
+        .eq('id', userId)
         .timeout(AppConstants.networkTimeout);
   }
 

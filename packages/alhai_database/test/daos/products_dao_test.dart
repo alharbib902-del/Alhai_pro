@@ -140,8 +140,7 @@ void main() {
     });
 
     test('getProductsByCategory filters correctly', () async {
-      await db.productsDao
-          .insertProduct(_makeProduct(categoryId: 'cat-1'));
+      await db.productsDao.insertProduct(_makeProduct(categoryId: 'cat-1'));
       await db.productsDao.insertProduct(_makeProduct(
         id: 'prod-2',
         name: 'جبنة بيضاء',
@@ -155,8 +154,7 @@ void main() {
     });
 
     test('getLowStockProducts returns products below min qty', () async {
-      await db.productsDao
-          .insertProduct(_makeProduct(stockQty: 3, minQty: 5));
+      await db.productsDao.insertProduct(_makeProduct(stockQty: 3, minQty: 5));
       await db.productsDao.insertProduct(_makeProduct(
         id: 'prod-2',
         name: 'عصير',

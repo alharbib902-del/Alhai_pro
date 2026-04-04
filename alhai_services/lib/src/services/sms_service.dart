@@ -42,9 +42,7 @@ class SmsService {
         _vonageApiSecret = vonageApiSecret;
 
   /// التحقق من التكوين
-  bool get isConfigured =>
-      _apiKey != null &&
-      _apiKey.isNotEmpty;
+  bool get isConfigured => _apiKey != null && _apiKey.isNotEmpty;
 
   // ==================== إرسال الرسائل ====================
 
@@ -104,7 +102,8 @@ class SmsService {
     required String otp,
     String? appName,
   }) async {
-    final message = '${appName ?? 'الهاي'}: رمز التحقق الخاص بك هو: $otp\nصالح لمدة 5 دقائق.';
+    final message =
+        '${appName ?? 'الهاي'}: رمز التحقق الخاص بك هو: $otp\nصالح لمدة 5 دقائق.';
 
     return await sendSms(
       phoneNumber: phoneNumber,
@@ -372,7 +371,8 @@ $trackingUrl
         // Vonage Account Balance API
         return SmsHttpRequest(
           method: 'GET',
-          url: '${AppEndpoints.nexmoBase}/account/get-balance?api_key=${_apiKey!}&api_secret=${_vonageApiSecret ?? ''}',
+          url:
+              '${AppEndpoints.nexmoBase}/account/get-balance?api_key=${_apiKey!}&api_secret=${_vonageApiSecret ?? ''}',
           headers: {
             'Accept': 'application/json',
           },
@@ -418,7 +418,7 @@ class SmsHttpRequest {
 
 /// مزود خدمة SMS
 enum SmsProvider {
-  unifonic,  // Saudi provider
+  unifonic, // Saudi provider
   twilio,
   vonage,
 }

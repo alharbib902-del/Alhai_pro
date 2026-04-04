@@ -16,7 +16,8 @@ import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import '../../core/services/sentry_service.dart';
 import '../../core/services/backup_manager.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
+import 'package:alhai_design_system/alhai_design_system.dart'
+    show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 
 /// Backup management screen
@@ -54,14 +55,14 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
     final storeId = ref.read(currentStoreIdProvider)!;
     final id = 'setting_${storeId}_$key';
     await _db.into(_db.settingsTable).insertOnConflictUpdate(
-      SettingsTableCompanion.insert(
-        id: id,
-        storeId: storeId,
-        key: key,
-        value: value,
-        updatedAt: DateTime.now(),
-      ),
-    );
+          SettingsTableCompanion.insert(
+            id: id,
+            storeId: storeId,
+            key: key,
+            value: value,
+            updatedAt: DateTime.now(),
+          ),
+        );
   }
 
   Future<void> _loadBackupSettings() async {
@@ -71,10 +72,9 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
     });
     try {
       final storeId = ref.read(currentStoreIdProvider)!;
-      final settings = await (
-        _db.select(_db.settingsTable)
-          ..where((s) => s.storeId.equals(storeId))
-      ).get();
+      final settings = await (_db.select(_db.settingsTable)
+            ..where((s) => s.storeId.equals(storeId)))
+          .get();
       for (final s in settings) {
         switch (s.key) {
           case 'auto_backup':
@@ -83,14 +83,12 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
             _backupFrequency = s.value;
           case 'last_backup_date':
             if (s.value.isNotEmpty) {
-              _lastBackupDate =
-                  DateTime.tryParse(s.value) ?? DateTime.now();
+              _lastBackupDate = DateTime.tryParse(s.value) ?? DateTime.now();
             }
           case 'backup_count':
             _backupCount = int.tryParse(s.value) ?? 0;
           case 'backup_size_mb':
-            _backupSizeMb =
-                double.tryParse(s.value) ?? 0;
+            _backupSizeMb = double.tryParse(s.value) ?? 0;
         }
       }
     } catch (_) {
@@ -123,7 +121,8 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              AppLocalizations.of(context).backupCompletedBody(bundle.totalRows, bundle.sizeMb.toStringAsFixed(1)),
+              AppLocalizations.of(context).backupCompletedBody(
+                  bundle.totalRows, bundle.sizeMb.toStringAsFixed(1)),
             ),
             backgroundColor: AppColors.success,
           ),
@@ -205,7 +204,8 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
               Navigator.pop(ctx);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(AppLocalizations.of(context).backupCopiedToClipboard),
+                  content: Text(
+                      AppLocalizations.of(context).backupCopiedToClipboard),
                   backgroundColor: AppColors.info,
                 ),
               );
@@ -224,8 +224,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: AppColors.getSurface(isDark),
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Row(
           children: [
             Container(
@@ -249,7 +248,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
           ],
         ),
         content: SizedBox(
-          width:500,
+          width: 500,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -267,7 +266,8 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                   Expanded(
                     child: OutlinedButton.icon(
                       onPressed: () async {
-                        final data = await Clipboard.getData(Clipboard.kTextPlain);
+                        final data =
+                            await Clipboard.getData(Clipboard.kTextPlain);
                         if (data?.text != null) {
                           controller.text = data!.text!;
                         }
@@ -290,7 +290,8 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                     color: AppColors.getTextPrimary(isDark),
                   ),
                   decoration: InputDecoration(
-                    hintText: '{"version":"1.0.0","storeId":"...","data":{...}}',
+                    hintText:
+                        '{"version":"1.0.0","storeId":"...","data":{...}}',
                     hintStyle: TextStyle(
                       fontSize: 12,
                       color: AppColors.getTextMuted(isDark),
@@ -305,11 +306,11 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
               Container(
                 padding: const EdgeInsets.all(AlhaiSpacing.sm),
                 decoration: BoxDecoration(
-                  color: AppColors.error
-                      .withValues(alpha: isDark ? 0.12 : 0.06),
+                  color:
+                      AppColors.error.withValues(alpha: isDark ? 0.12 : 0.06),
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                      color: AppColors.error.withValues(alpha: 0.3)),
+                  border:
+                      Border.all(color: AppColors.error.withValues(alpha: 0.3)),
                 ),
                 child: Row(
                   children: [
@@ -429,8 +430,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
             tooltip: l10n.back,
           ),
           onNotificationsTap: () => context.push(AppRoutes.notificationsCenter),
-          userName:
-              ref.watch(currentUserProvider)?.name ?? l10n.cashCustomer,
+          userName: ref.watch(currentUserProvider)?.name ?? l10n.cashCustomer,
           userRole: l10n.cashier,
           onUserTap: () => context.push(AppRoutes.profile),
         ),
@@ -438,12 +438,14 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
           child: _isLoading
               ? const AppLoadingState()
               : _error != null
-                  ? AppErrorState.general(context, message: _error!, onRetry: _loadBackupSettings)
+                  ? AppErrorState.general(context,
+                      message: _error!, onRetry: _loadBackupSettings)
                   : SingleChildScrollView(
-                  padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-                  child: _buildContent(
-                      isWideScreen, isMediumScreen, isDark, l10n),
-                ),
+                      padding: EdgeInsets.all(
+                          isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+                      child: _buildContent(
+                          isWideScreen, isMediumScreen, isDark, l10n),
+                    ),
         ),
       ],
     );
@@ -529,7 +531,9 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(
-                  hasBackup ? Icons.cloud_done_rounded : Icons.cloud_off_rounded,
+                  hasBackup
+                      ? Icons.cloud_done_rounded
+                      : Icons.cloud_off_rounded,
                   color: statusColor,
                   size: 22,
                 ),
@@ -602,8 +606,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
               decoration: BoxDecoration(
                 color: statusColor.withValues(alpha: isDark ? 0.12 : 0.06),
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(
-                    color: statusColor.withValues(alpha: 0.3)),
+                border: Border.all(color: statusColor.withValues(alpha: 0.3)),
               ),
               child: Row(
                 children: [
@@ -726,13 +729,13 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                 icon: const Icon(Icons.backup_rounded, size: 22),
                 label: const Text(
                   'Backup Now',
-                  style: TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.w600),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                 ),
                 style: FilledButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   foregroundColor: AppColors.textOnPrimary,
-                  padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12)),
                 ),
@@ -918,8 +921,8 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                     icon: const Icon(Icons.restore_rounded, size: 20),
                     label: const Text(
                       'Restore Now',
-                      style: TextStyle(
-                          fontSize: 15, fontWeight: FontWeight.w600),
+                      style:
+                          TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                     ),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AppColors.warning,

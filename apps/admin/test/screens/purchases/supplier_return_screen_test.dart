@@ -32,8 +32,7 @@ void main() {
       when(() => mockSuppliersDao.getAllSuppliers(any()))
           .thenAnswer((_) => completer.future.then((v) => v.cast()));
 
-      await tester.pumpWidget(
-          createTestWidget(const SupplierReturnScreen()));
+      await tester.pumpWidget(createTestWidget(const SupplierReturnScreen()));
       await tester.pump();
 
       expect(find.byType(CircularProgressIndicator), findsWidgets);
@@ -43,8 +42,7 @@ void main() {
       when(() => mockSuppliersDao.getAllSuppliers(any()))
           .thenAnswer((_) async => []);
 
-      await tester.pumpWidget(
-          createTestWidget(const SupplierReturnScreen()));
+      await tester.pumpWidget(createTestWidget(const SupplierReturnScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(SupplierReturnScreen), findsOneWidget);
@@ -58,8 +56,7 @@ void main() {
       when(() => mockSuppliersDao.getAllSuppliers(any()))
           .thenAnswer((_) async => suppliers);
 
-      await tester.pumpWidget(
-          createTestWidget(const SupplierReturnScreen()));
+      await tester.pumpWidget(createTestWidget(const SupplierReturnScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(SupplierReturnScreen), findsOneWidget);
@@ -69,8 +66,7 @@ void main() {
       when(() => mockSuppliersDao.getAllSuppliers(any()))
           .thenAnswer((_) async => []);
 
-      await tester.pumpWidget(
-          createTestWidget(const SupplierReturnScreen()));
+      await tester.pumpWidget(createTestWidget(const SupplierReturnScreen()));
       await tester.pumpAndSettle();
 
       // Reason options should be present in the UI

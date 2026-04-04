@@ -244,8 +244,7 @@ void main() {
         SecurityLogger.logOtpSent('+966599998888');
         SecurityLogger.logLoginSuccess('user-1');
 
-        final otpLogs =
-            SecurityLogger.getLogsByType(SecurityEventType.otpSent);
+        final otpLogs = SecurityLogger.getLogsByType(SecurityEventType.otpSent);
         expect(otpLogs, hasLength(2));
       });
 

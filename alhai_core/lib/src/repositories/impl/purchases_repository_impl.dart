@@ -58,7 +58,8 @@ class PurchasesRepositoryImpl implements PurchasesRepository {
   }
 
   @override
-  Future<PurchaseOrder> createPurchaseOrder(CreatePurchaseOrderParams params) async {
+  Future<PurchaseOrder> createPurchaseOrder(
+      CreatePurchaseOrderParams params) async {
     try {
       final request = CreatePurchaseOrderRequest.fromDomain(params);
       final response = await _remote.createPurchaseOrder(request);
@@ -104,7 +105,8 @@ class PurchasesRepositoryImpl implements PurchasesRepository {
   }
 
   @override
-  Future<PurchaseOrder> receiveItems(String id, List<ReceivedItem> items) async {
+  Future<PurchaseOrder> receiveItems(
+      String id, List<ReceivedItem> items) async {
     try {
       final request = ReceiveItemsRequest.fromDomain(items);
       final response = await _remote.receiveItems(id, request);

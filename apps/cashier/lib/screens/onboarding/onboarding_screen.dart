@@ -219,9 +219,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     )
                   else
                     const Spacer(),
-
                   const SizedBox(width: AppSizes.md),
-
                   Expanded(
                     flex: 2,
                     child: FilledButton(

@@ -309,13 +309,11 @@ void main() {
     });
 
     test('returns sorted by safe increase percent', () async {
-      when(() => mockProductsDao.getAllProducts(any()))
-          .thenAnswer((_) async => [
-                createFakeProduct(
-                    id: 'p1', price: 5, costPrice: 3, isActive: true),
-                createFakeProduct(
-                    id: 'p2', price: 8, costPrice: 5, isActive: true),
-              ]);
+      when(() => mockProductsDao.getAllProducts(any())).thenAnswer((_) async =>
+          [
+            createFakeProduct(id: 'p1', price: 5, costPrice: 3, isActive: true),
+            createFakeProduct(id: 'p2', price: 8, costPrice: 5, isActive: true),
+          ]);
 
       final options = await service.getBulkPricingOptions('store-1');
 

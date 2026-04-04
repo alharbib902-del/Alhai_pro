@@ -40,9 +40,8 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
           subtitle: _getDateSubtitle(l10n),
           showSearch: false,
           searchHint: l10n.searchPlaceholder,
-          onMenuTap: isWideScreen
-              ? null
-              : () => Scaffold.of(context).openDrawer(),
+          onMenuTap:
+              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 3,
           userName: ref.watch(currentUserProvider)?.name ?? l10n.cashCustomer,
@@ -65,8 +64,8 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
     return '$dateStr \u2022 ${l10n.mainBranch}';
   }
 
-  Widget _buildContent(
-      bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n) {
+  Widget _buildContent(bool isWideScreen, bool isMediumScreen, bool isDark,
+      AppLocalizations l10n) {
     final user = ref.watch(currentUserProvider);
 
     if (isWideScreen) {
@@ -122,8 +121,7 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-            color: Theme.of(context).dividerColor),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Row(
         children: [
@@ -205,8 +203,7 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-            color: Theme.of(context).dividerColor),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -267,13 +264,11 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
               ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(
-                    color: Theme.of(context).dividerColor),
+                borderSide: BorderSide(color: Theme.of(context).dividerColor),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(
-                    color: Theme.of(context).dividerColor),
+                borderSide: BorderSide(color: Theme.of(context).dividerColor),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -306,7 +301,9 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
                     decoration: BoxDecoration(
                       color: isSelected
                           ? AppColors.primary.withValues(alpha: 0.1)
-                          : (Theme.of(context).colorScheme.surfaceContainerHighest),
+                          : (Theme.of(context)
+                              .colorScheme
+                              .surfaceContainerHighest),
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
                         color: isSelected
@@ -393,8 +390,7 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
               )
             : const Icon(Icons.login_rounded, size: 20),
         label: Text(l10n.openShift,
-            style:
-                const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,

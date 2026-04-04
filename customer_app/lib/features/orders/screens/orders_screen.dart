@@ -80,9 +80,8 @@ class _OrdersList extends ConsumerWidget {
         ),
       ),
       data: (paginated) {
-        final orders = paginated.items
-            .where((o) => statuses.contains(o.status))
-            .toList();
+        final orders =
+            paginated.items.where((o) => statuses.contains(o.status)).toList();
 
         if (orders.isEmpty) {
           return Center(
@@ -161,8 +160,7 @@ class _OrdersList extends ConsumerWidget {
           child: isTablet
               ? GridView.builder(
                   padding: const EdgeInsets.all(AlhaiSpacing.lg),
-                  gridDelegate:
-                      SliverGridDelegateWithFixedCrossAxisCount(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount:
                         ResponsiveHelper.isLargeTablet(context) ? 3 : 2,
                     crossAxisSpacing: AlhaiSpacing.sm,
@@ -177,8 +175,7 @@ class _OrdersList extends ConsumerWidget {
                   padding: const EdgeInsets.all(AlhaiSpacing.md),
                   itemCount: orders.length,
                   itemBuilder: (context, index) => Padding(
-                    padding:
-                        const EdgeInsets.only(bottom: AlhaiSpacing.xs),
+                    padding: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
                     child: buildOrderCard(orders[index]),
                   ),
                 ),
@@ -217,7 +214,8 @@ class _StatusChip extends StatelessWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: AlhaiSpacing.xxs),
+      padding: const EdgeInsets.symmetric(
+          horizontal: 10, vertical: AlhaiSpacing.xxs),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),

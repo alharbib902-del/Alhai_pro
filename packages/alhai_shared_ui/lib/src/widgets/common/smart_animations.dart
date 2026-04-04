@@ -3,7 +3,7 @@ import 'package:alhai_core/alhai_core.dart' show StoreSettings;
 import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// مجموعة الـ Animations الذكية للـ POS
-/// 
+///
 /// تحترم إعدادات المستخدم لتقليل الحركة (Reduce Motion)
 
 /// Animation لإضافة منتج للسلة - Scale + Fade
@@ -134,7 +134,7 @@ class SimpleAnimatedCounter extends StatelessWidget {
   Widget build(BuildContext context) {
     // احترام إعدادات تقليل الحركة
     final reduceMotion = MediaQuery.of(context).disableAnimations;
-    
+
     return TweenAnimationBuilder<int>(
       tween: IntTween(begin: 0, end: value),
       duration: reduceMotion ? Duration.zero : duration,
@@ -166,7 +166,7 @@ class AnimatedPrice extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final reduceMotion = MediaQuery.of(context).disableAnimations;
-    
+
     return TweenAnimationBuilder<double>(
       tween: Tween<double>(begin: 0, end: value),
       duration: reduceMotion ? Duration.zero : duration,
@@ -263,7 +263,7 @@ class _SuccessAnimationState extends State<SuccessAnimation>
         if (_scaleAnimation.value == 0) {
           return SizedBox(width: widget.size, height: widget.size);
         }
-        
+
         return Transform.scale(
           scale: _scaleAnimation.value,
           child: Container(
@@ -327,7 +327,7 @@ class _SimpleShimmerState extends State<SimpleShimmer>
     }
 
     final reduceMotion = MediaQuery.of(context).disableAnimations;
-    
+
     if (reduceMotion) {
       return Opacity(opacity: 0.5, child: widget.child);
     }
@@ -429,7 +429,7 @@ class _PulseAnimationState extends State<PulseAnimation>
   @override
   Widget build(BuildContext context) {
     final reduceMotion = MediaQuery.of(context).disableAnimations;
-    
+
     if (reduceMotion) {
       return widget.child;
     }

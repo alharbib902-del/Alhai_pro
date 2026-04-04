@@ -26,8 +26,7 @@ void main() {
       });
 
       test('should accept IBAN with spaces', () {
-        final result = IbanValidator.validate(
-            'SA03 8000 0000 6080 1016 7519');
+        final result = IbanValidator.validate('SA03 8000 0000 6080 1016 7519');
         expect(result.isValid, isTrue);
       });
 
@@ -43,31 +42,27 @@ void main() {
       });
 
       test('should reject non-SA country code', () {
-        final result =
-            IbanValidator.validate('DE0380000000608010167519');
+        final result = IbanValidator.validate('DE0380000000608010167519');
         expect(result.isValid, isFalse);
         expect(result.errorCode, 'IBAN_INVALID_COUNTRY');
       });
 
       test('should reject unknown bank code', () {
         // Bank code 99 does not exist
-        final result =
-            IbanValidator.validate('SA0399000000608010167519');
+        final result = IbanValidator.validate('SA0399000000608010167519');
         expect(result.isValid, isFalse);
         expect(result.errorCode, 'IBAN_UNKNOWN_BANK');
       });
 
       test('should reject invalid checksum', () {
         // Change last digit to invalidate checksum
-        final result =
-            IbanValidator.validate('SA0380000000608010167510');
+        final result = IbanValidator.validate('SA0380000000608010167510');
         expect(result.isValid, isFalse);
         expect(result.errorCode, 'IBAN_INVALID_CHECKSUM');
       });
 
       test('should reject IBAN with non-numeric body', () {
-        final result =
-            IbanValidator.validate('SA03ABCDEFGHIJKLMNOPQRST');
+        final result = IbanValidator.validate('SA03ABCDEFGHIJKLMNOPQRST');
         expect(result.isValid, isFalse);
       });
     });
@@ -101,8 +96,7 @@ void main() {
       });
 
       test('should handle IBAN with existing spaces', () {
-        final formatted =
-            IbanValidator.format('SA03 8000 0000 6080 1016 7519');
+        final formatted = IbanValidator.format('SA03 8000 0000 6080 1016 7519');
         expect(formatted, 'SA03 8000 0000 6080 1016 7519');
       });
 

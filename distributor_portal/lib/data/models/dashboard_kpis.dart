@@ -43,9 +43,7 @@ class MonthlySales {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is MonthlySales &&
-          month == other.month &&
-          amount == other.amount;
+      other is MonthlySales && month == other.month && amount == other.amount;
 
   @override
   int get hashCode => Object.hash(month, amount);

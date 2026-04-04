@@ -105,7 +105,6 @@ void main() {
       });
 
       test('creates simplified tax invoice from sale', () async {
-
         final result = await invoiceService.createFromSale(
           sale: testSale,
           items: testItems,
@@ -121,7 +120,8 @@ void main() {
 
         InvoicesTableCompanion? capturedCompanion;
         when(() => mockInvoicesDao.upsertInvoice(any())).thenAnswer((inv) {
-          capturedCompanion = inv.positionalArguments[0] as InvoicesTableCompanion;
+          capturedCompanion =
+              inv.positionalArguments[0] as InvoicesTableCompanion;
           return Future.value(1);
         });
 
@@ -152,7 +152,8 @@ void main() {
 
         InvoicesTableCompanion? capturedCompanion;
         when(() => mockInvoicesDao.upsertInvoice(any())).thenAnswer((inv) {
-          capturedCompanion = inv.positionalArguments[0] as InvoicesTableCompanion;
+          capturedCompanion =
+              inv.positionalArguments[0] as InvoicesTableCompanion;
           return Future.value(1);
         });
 
@@ -170,7 +171,8 @@ void main() {
 
         InvoicesTableCompanion? capturedCompanion;
         when(() => mockInvoicesDao.upsertInvoice(any())).thenAnswer((inv) {
-          capturedCompanion = inv.positionalArguments[0] as InvoicesTableCompanion;
+          capturedCompanion =
+              inv.positionalArguments[0] as InvoicesTableCompanion;
           return Future.value(1);
         });
 
@@ -199,7 +201,8 @@ void main() {
       test('creates a credit note with correct type', () async {
         InvoicesTableCompanion? capturedCompanion;
         when(() => mockInvoicesDao.upsertInvoice(any())).thenAnswer((inv) {
-          capturedCompanion = inv.positionalArguments[0] as InvoicesTableCompanion;
+          capturedCompanion =
+              inv.positionalArguments[0] as InvoicesTableCompanion;
           return Future.value(1);
         });
 
@@ -224,7 +227,8 @@ void main() {
 
         InvoicesTableCompanion? capturedCompanion;
         when(() => mockInvoicesDao.upsertInvoice(any())).thenAnswer((inv) {
-          capturedCompanion = inv.positionalArguments[0] as InvoicesTableCompanion;
+          capturedCompanion =
+              inv.positionalArguments[0] as InvoicesTableCompanion;
           return Future.value(1);
         });
 
@@ -245,7 +249,8 @@ void main() {
       test('calculates total as amount plus tax', () async {
         InvoicesTableCompanion? capturedCompanion;
         when(() => mockInvoicesDao.upsertInvoice(any())).thenAnswer((inv) {
-          capturedCompanion = inv.positionalArguments[0] as InvoicesTableCompanion;
+          capturedCompanion =
+              inv.positionalArguments[0] as InvoicesTableCompanion;
           return Future.value(1);
         });
 
@@ -292,7 +297,8 @@ void main() {
       test('creates a debit note with correct type', () async {
         InvoicesTableCompanion? capturedCompanion;
         when(() => mockInvoicesDao.upsertInvoice(any())).thenAnswer((inv) {
-          capturedCompanion = inv.positionalArguments[0] as InvoicesTableCompanion;
+          capturedCompanion =
+              inv.positionalArguments[0] as InvoicesTableCompanion;
           return Future.value(1);
         });
 
@@ -315,7 +321,8 @@ void main() {
 
         InvoicesTableCompanion? capturedCompanion;
         when(() => mockInvoicesDao.upsertInvoice(any())).thenAnswer((inv) {
-          capturedCompanion = inv.positionalArguments[0] as InvoicesTableCompanion;
+          capturedCompanion =
+              inv.positionalArguments[0] as InvoicesTableCompanion;
           return Future.value(1);
         });
 
@@ -334,7 +341,8 @@ void main() {
       test('sets amount due instead of paid for debit notes', () async {
         InvoicesTableCompanion? capturedCompanion;
         when(() => mockInvoicesDao.upsertInvoice(any())).thenAnswer((inv) {
-          capturedCompanion = inv.positionalArguments[0] as InvoicesTableCompanion;
+          capturedCompanion =
+              inv.positionalArguments[0] as InvoicesTableCompanion;
           return Future.value(1);
         });
 

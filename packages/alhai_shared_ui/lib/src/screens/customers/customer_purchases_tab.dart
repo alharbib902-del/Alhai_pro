@@ -118,15 +118,14 @@ class _CustomerPurchasesTabState extends State<CustomerPurchasesTab> {
                         color: AppColors.getTextMuted(isDark),
                       ),
                       prefixIcon: Icon(Icons.search_rounded,
-                          size: 18,
-                          color: AppColors.getTextMuted(isDark)),
+                          size: 18, color: AppColors.getTextMuted(isDark)),
                       filled: true,
                       fillColor: AppColors.getSurfaceVariant(isDark),
                       contentPadding: const EdgeInsets.symmetric(
-                          horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.zero),
+                          horizontal: AlhaiSpacing.sm,
+                          vertical: AlhaiSpacing.zero),
                       border: OutlineInputBorder(
-                        borderRadius:
-                            BorderRadius.circular(AppSizes.radiusMd),
+                        borderRadius: BorderRadius.circular(AppSizes.radiusMd),
                         borderSide: BorderSide.none,
                       ),
                       counterText: '',
@@ -140,15 +139,13 @@ class _CustomerPurchasesTabState extends State<CustomerPurchasesTab> {
                     icon: const Icon(Icons.download_outlined, size: 16),
                     label: const Text('CSV'),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor:
-                          AppColors.getTextSecondary(isDark),
-                      side: BorderSide(
-                          color: AppColors.getBorder(isDark)),
+                      foregroundColor: AppColors.getTextSecondary(isDark),
+                      side: BorderSide(color: AppColors.getBorder(isDark)),
                       padding: const EdgeInsets.symmetric(
-                          horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xs),
+                          horizontal: AlhaiSpacing.sm,
+                          vertical: AlhaiSpacing.xs),
                       shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(AppSizes.radiusMd),
+                        borderRadius: BorderRadius.circular(AppSizes.radiusMd),
                       ),
                     ),
                   ),
@@ -165,8 +162,7 @@ class _CustomerPurchasesTabState extends State<CustomerPurchasesTab> {
               child: Center(
                 child: Text(
                   l10n.noTransactions,
-                  style: TextStyle(
-                      color: AppColors.getTextMuted(isDark)),
+                  style: TextStyle(color: AppColors.getTextMuted(isDark)),
                 ),
               ),
             )
@@ -177,15 +173,14 @@ class _CustomerPurchasesTabState extends State<CustomerPurchasesTab> {
 
           // Pagination
           if (totalPages > 1)
-            _buildPagination(
-                isDark, totalPages, filteredPurchases.length),
+            _buildPagination(isDark, totalPages, filteredPurchases.length),
         ],
       ),
     );
   }
 
-  Widget _buildPurchaseTable(List<TransactionsTableData> purchases,
-      bool isDark, AppLocalizations l10n) {
+  Widget _buildPurchaseTable(List<TransactionsTableData> purchases, bool isDark,
+      AppLocalizations l10n) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: ConstrainedBox(
@@ -229,10 +224,9 @@ class _CustomerPurchasesTabState extends State<CustomerPurchasesTab> {
                     ),
                   ),
                 ),
-                DataCell(Text(
-                    '${t.amount.abs().toStringAsFixed(2)} ${l10n.sar}')),
                 DataCell(
-                    buildStatusBadge(l10n.completed, false, isDark)),
+                    Text('${t.amount.abs().toStringAsFixed(2)} ${l10n.sar}')),
+                DataCell(buildStatusBadge(l10n.completed, false, isDark)),
                 DataCell(Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -242,18 +236,17 @@ class _CustomerPurchasesTabState extends State<CustomerPurchasesTab> {
                           size: 18, color: AppColors.info),
                       tooltip: l10n.viewAll,
                       padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(
-                          minWidth: 32, minHeight: 32),
+                      constraints:
+                          const BoxConstraints(minWidth: 32, minHeight: 32),
                     ),
                     IconButton(
                       onPressed: () {},
                       icon: Icon(Icons.print_outlined,
-                          size: 18,
-                          color: AppColors.getTextSecondary(isDark)),
+                          size: 18, color: AppColors.getTextSecondary(isDark)),
                       tooltip: l10n.printReceipt,
                       padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(
-                          minWidth: 32, minHeight: 32),
+                      constraints:
+                          const BoxConstraints(minWidth: 32, minHeight: 32),
                     ),
                   ],
                 )),
@@ -265,8 +258,8 @@ class _CustomerPurchasesTabState extends State<CustomerPurchasesTab> {
     );
   }
 
-  Widget _buildPurchaseCards(List<TransactionsTableData> purchases,
-      bool isDark, AppLocalizations l10n) {
+  Widget _buildPurchaseCards(List<TransactionsTableData> purchases, bool isDark,
+      AppLocalizations l10n) {
     return ListView.separated(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -306,8 +299,7 @@ class _CustomerPurchasesTabState extends State<CustomerPurchasesTab> {
                 children: [
                   Text(dateStr,
                       style: TextStyle(
-                          fontSize: 12,
-                          color: AppColors.getTextMuted(isDark))),
+                          fontSize: 12, color: AppColors.getTextMuted(isDark))),
                   Text(
                     '${t.amount.abs().toStringAsFixed(2)} ${l10n.sar}',
                     style: TextStyle(
@@ -324,8 +316,7 @@ class _CustomerPurchasesTabState extends State<CustomerPurchasesTab> {
     );
   }
 
-  Widget _buildPagination(
-      bool isDark, int totalPages, int totalItems) {
+  Widget _buildPagination(bool isDark, int totalPages, int totalItems) {
     return Padding(
       padding: const EdgeInsets.all(AlhaiSpacing.md),
       child: Row(
@@ -350,29 +341,26 @@ class _CustomerPurchasesTabState extends State<CustomerPurchasesTab> {
               ...List.generate(totalPages, (i) {
                 final isSelected = i == _currentPage;
                 return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xxxs),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xxxs),
                   child: InkWell(
                     onTap: () => setState(() => _currentPage = i),
-                    borderRadius:
-                        BorderRadius.circular(AppSizes.radiusMd),
+                    borderRadius: BorderRadius.circular(AppSizes.radiusMd),
                     child: Container(
                       width: 32,
                       height: 32,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: isSelected
-                            ? AppColors.primary
-                            : Colors.transparent,
-                        borderRadius:
-                            BorderRadius.circular(AppSizes.radiusMd),
+                        color:
+                            isSelected ? AppColors.primary : Colors.transparent,
+                        borderRadius: BorderRadius.circular(AppSizes.radiusMd),
                       ),
                       child: Text(
                         '${i + 1}',
                         style: TextStyle(
                           fontSize: 13,
-                          fontWeight: isSelected
-                              ? FontWeight.w600
-                              : FontWeight.w400,
+                          fontWeight:
+                              isSelected ? FontWeight.w600 : FontWeight.w400,
                           color: isSelected
                               ? Colors.white
                               : AppColors.getTextSecondary(isDark),
@@ -401,7 +389,8 @@ class _CustomerPurchasesTabState extends State<CustomerPurchasesTab> {
 Widget buildStatusBadge(String label, bool isReturned, bool isDark) {
   final color = isReturned ? AppColors.warning : AppColors.success;
   return Container(
-    padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 3),
+    padding:
+        const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 3),
     decoration: BoxDecoration(
       color: color.withValues(alpha: 0.12),
       borderRadius: BorderRadius.circular(AppSizes.radiusFull),

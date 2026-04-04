@@ -26,7 +26,8 @@ class _BalanceSheetScreenState extends ConsumerState<BalanceSheetScreen> {
   // Liabilities
   double _accountsPayable = 0;
 
-  double get _totalCurrentAssets => _cashInDrawer + _accountsReceivable + _inventoryValue;
+  double get _totalCurrentAssets =>
+      _cashInDrawer + _accountsReceivable + _inventoryValue;
   double get _totalAssets => _totalCurrentAssets;
   double get _totalLiabilities => _accountsPayable;
   double get _equity => _totalAssets - _totalLiabilities;
@@ -39,11 +40,17 @@ class _BalanceSheetScreenState extends ConsumerState<BalanceSheetScreen> {
 
   Future<void> _loadData() async {
     try {
-      setState(() { _isLoading = true; _error = null; });
+      setState(() {
+        _isLoading = true;
+        _error = null;
+      });
       final db = GetIt.I<AppDatabase>();
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) {
-        setState(() { _error = 'لم يتم تحديد المتجر'; _isLoading = false; });
+        setState(() {
+          _error = 'لم يتم تحديد المتجر';
+          _isLoading = false;
+        });
         return;
       }
 
@@ -85,7 +92,11 @@ class _BalanceSheetScreenState extends ConsumerState<BalanceSheetScreen> {
         });
       }
     } catch (e) {
-      if (mounted) setState(() { _error = e.toString(); _isLoading = false; });
+      if (mounted)
+        setState(() {
+          _error = e.toString();
+          _isLoading = false;
+        });
     }
   }
 
@@ -117,7 +128,8 @@ class _BalanceSheetScreenState extends ConsumerState<BalanceSheetScreen> {
               const SizedBox(height: AlhaiSpacing.sm),
               Text(_error!),
               const SizedBox(height: AlhaiSpacing.sm),
-              ElevatedButton(onPressed: _loadData, child: const Text('إعادة المحاولة')),
+              ElevatedButton(
+                  onPressed: _loadData, child: const Text('إعادة المحاولة')),
             ],
           ),
         ),
@@ -138,145 +150,163 @@ class _BalanceSheetScreenState extends ConsumerState<BalanceSheetScreen> {
       body: SafeArea(
         top: false,
         child: RefreshIndicator(
-        onRefresh: _loadData,
-        child: ListView(
-          padding: const EdgeInsets.all(AlhaiSpacing.md),
-          children: [
-            // Date
-            Center(
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.primaryContainer,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  'كما في ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
-                  style: TextStyle(
-                    color: theme.colorScheme.onPrimaryContainer,
-                    fontWeight: FontWeight.w500,
+          onRefresh: _loadData,
+          child: ListView(
+            padding: const EdgeInsets.all(AlhaiSpacing.md),
+            children: [
+              // Date
+              Center(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.primaryContainer,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    'كما في ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
+                    style: TextStyle(
+                      color: theme.colorScheme.onPrimaryContainer,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: AlhaiSpacing.mdl),
+              const SizedBox(height: AlhaiSpacing.mdl),
 
-            // ASSETS
-            _SectionHeader(
-              title: 'الأصول',
-              total: _totalAssets,
-              color: AlhaiColors.info,
-              icon: Icons.account_balance_wallet_rounded,
-            ),
-            const SizedBox(height: AlhaiSpacing.xs),
-            _GroupCard(
-              title: 'الأصول المتداولة',
-              isDark: isDark,
-              items: [
-                _LineItem(label: 'النقد في الصندوق', amount: _cashInDrawer),
-                _LineItem(label: 'ذمم مدينة (عملاء)', amount: _accountsReceivable),
-                _LineItem(label: 'قيمة المخزون', amount: _inventoryValue),
-              ],
-              total: _totalCurrentAssets,
-              totalLabel: 'إجمالي الأصول المتداولة',
-            ),
-            const SizedBox(height: AlhaiSpacing.sm),
-            _TotalRow(label: 'إجمالي الأصول', amount: _totalAssets, color: AlhaiColors.info),
+              // ASSETS
+              _SectionHeader(
+                title: 'الأصول',
+                total: _totalAssets,
+                color: AlhaiColors.info,
+                icon: Icons.account_balance_wallet_rounded,
+              ),
+              const SizedBox(height: AlhaiSpacing.xs),
+              _GroupCard(
+                title: 'الأصول المتداولة',
+                isDark: isDark,
+                items: [
+                  _LineItem(label: 'النقد في الصندوق', amount: _cashInDrawer),
+                  _LineItem(
+                      label: 'ذمم مدينة (عملاء)', amount: _accountsReceivable),
+                  _LineItem(label: 'قيمة المخزون', amount: _inventoryValue),
+                ],
+                total: _totalCurrentAssets,
+                totalLabel: 'إجمالي الأصول المتداولة',
+              ),
+              const SizedBox(height: AlhaiSpacing.sm),
+              _TotalRow(
+                  label: 'إجمالي الأصول',
+                  amount: _totalAssets,
+                  color: AlhaiColors.info),
 
-            const SizedBox(height: AlhaiSpacing.mdl),
-            const Divider(thickness: 2),
-            const SizedBox(height: AlhaiSpacing.mdl),
+              const SizedBox(height: AlhaiSpacing.mdl),
+              const Divider(thickness: 2),
+              const SizedBox(height: AlhaiSpacing.mdl),
 
-            // LIABILITIES
-            _SectionHeader(
-              title: 'الالتزامات',
-              total: _totalLiabilities,
-              color: AlhaiColors.error,
-              icon: Icons.account_balance_rounded,
-            ),
-            const SizedBox(height: AlhaiSpacing.xs),
-            _GroupCard(
-              title: 'الالتزامات المتداولة',
-              isDark: isDark,
-              items: [
-                _LineItem(label: 'ذمم دائنة (موردون)', amount: _accountsPayable),
-              ],
-              total: _totalLiabilities,
-              totalLabel: 'إجمالي الالتزامات المتداولة',
-            ),
-            const SizedBox(height: AlhaiSpacing.sm),
-            _TotalRow(label: 'إجمالي الالتزامات', amount: _totalLiabilities, color: AlhaiColors.error),
+              // LIABILITIES
+              _SectionHeader(
+                title: 'الالتزامات',
+                total: _totalLiabilities,
+                color: AlhaiColors.error,
+                icon: Icons.account_balance_rounded,
+              ),
+              const SizedBox(height: AlhaiSpacing.xs),
+              _GroupCard(
+                title: 'الالتزامات المتداولة',
+                isDark: isDark,
+                items: [
+                  _LineItem(
+                      label: 'ذمم دائنة (موردون)', amount: _accountsPayable),
+                ],
+                total: _totalLiabilities,
+                totalLabel: 'إجمالي الالتزامات المتداولة',
+              ),
+              const SizedBox(height: AlhaiSpacing.sm),
+              _TotalRow(
+                  label: 'إجمالي الالتزامات',
+                  amount: _totalLiabilities,
+                  color: AlhaiColors.error),
 
-            const SizedBox(height: AlhaiSpacing.mdl),
-            const Divider(thickness: 2),
-            const SizedBox(height: AlhaiSpacing.mdl),
+              const SizedBox(height: AlhaiSpacing.mdl),
+              const Divider(thickness: 2),
+              const SizedBox(height: AlhaiSpacing.mdl),
 
-            // EQUITY
-            _SectionHeader(
-              title: 'حقوق الملكية',
-              total: _equity,
-              color: AlhaiColors.success,
-              icon: Icons.trending_up_rounded,
-            ),
-            const SizedBox(height: AlhaiSpacing.xs),
-            Card(
-              color: _equity >= 0
-                  ? AlhaiColors.success.withValues(alpha: 0.08)
-                  : AlhaiColors.error.withValues(alpha: 0.08),
-              child: Padding(
-                padding: const EdgeInsets.all(AlhaiSpacing.mdl),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text('صافي حقوق الملكية',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                    Text(
-                      '${_equity.toStringAsFixed(0)} ر.س',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: _equity >= 0 ? AlhaiColors.successDark : AlhaiColors.errorDark,
+              // EQUITY
+              _SectionHeader(
+                title: 'حقوق الملكية',
+                total: _equity,
+                color: AlhaiColors.success,
+                icon: Icons.trending_up_rounded,
+              ),
+              const SizedBox(height: AlhaiSpacing.xs),
+              Card(
+                color: _equity >= 0
+                    ? AlhaiColors.success.withValues(alpha: 0.08)
+                    : AlhaiColors.error.withValues(alpha: 0.08),
+                child: Padding(
+                  padding: const EdgeInsets.all(AlhaiSpacing.mdl),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text('صافي حقوق الملكية',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold)),
+                      Text(
+                        '${_equity.toStringAsFixed(0)} ر.س',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: _equity >= 0
+                              ? AlhaiColors.successDark
+                              : AlhaiColors.errorDark,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
 
-            const SizedBox(height: AlhaiSpacing.mdl),
-            // Equation check
-            Card(
-              color: isDark ? const Color(0xFF1E293B) : theme.colorScheme.surfaceContainerLowest,
-              child: Padding(
-                padding: const EdgeInsets.all(AlhaiSpacing.md),
-                child: Column(
-                  children: [
-                    Text('معادلة المحاسبة',
-                        style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurfaceVariant)),
-                    const SizedBox(height: AlhaiSpacing.xs),
-                    Text(
-                      'الأصول = الالتزامات + حقوق الملكية',
-                      style: const TextStyle(fontWeight: FontWeight.w500),
-                    ),
-                    const SizedBox(height: AlhaiSpacing.xxs),
-                    Text(
-                      '${_totalAssets.toStringAsFixed(0)} = '
-                      '${_totalLiabilities.toStringAsFixed(0)} + '
-                      '${_equity.toStringAsFixed(0)}',
-                      style: TextStyle(
-                        color: (_totalAssets - _totalLiabilities - _equity).abs() < 1
-                            ? AlhaiColors.success
-                            : AlhaiColors.error,
-                        fontWeight: FontWeight.bold,
+              const SizedBox(height: AlhaiSpacing.mdl),
+              // Equation check
+              Card(
+                color: isDark
+                    ? const Color(0xFF1E293B)
+                    : theme.colorScheme.surfaceContainerLowest,
+                child: Padding(
+                  padding: const EdgeInsets.all(AlhaiSpacing.md),
+                  child: Column(
+                    children: [
+                      Text('معادلة المحاسبة',
+                          style: TextStyle(
+                              fontSize: 12,
+                              color: theme.colorScheme.onSurfaceVariant)),
+                      const SizedBox(height: AlhaiSpacing.xs),
+                      Text(
+                        'الأصول = الالتزامات + حقوق الملكية',
+                        style: const TextStyle(fontWeight: FontWeight.w500),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: AlhaiSpacing.xxs),
+                      Text(
+                        '${_totalAssets.toStringAsFixed(0)} = '
+                        '${_totalLiabilities.toStringAsFixed(0)} + '
+                        '${_equity.toStringAsFixed(0)}',
+                        style: TextStyle(
+                          color: (_totalAssets - _totalLiabilities - _equity)
+                                      .abs() <
+                                  1
+                              ? AlhaiColors.success
+                              : AlhaiColors.error,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
       ),
     );
   }
@@ -302,11 +332,13 @@ class _SectionHeader extends StatelessWidget {
         Icon(icon, color: color, size: 22),
         const SizedBox(width: AlhaiSpacing.xs),
         Text(title,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: color)),
+            style: TextStyle(
+                fontSize: 16, fontWeight: FontWeight.bold, color: color)),
         const Spacer(),
         Text(
           '${total.toStringAsFixed(0)} ر.س',
-          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: color),
+          style: TextStyle(
+              fontSize: 14, fontWeight: FontWeight.bold, color: color),
         ),
       ],
     );
@@ -344,27 +376,31 @@ class _GroupCard extends StatelessWidget {
                 )),
             const Divider(),
             ...items.map((item) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxs),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(item.label, style: const TextStyle(fontSize: 13)),
-                  Text(
-                    '${item.amount.toStringAsFixed(0)} ر.س',
-                    style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxs),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(item.label, style: const TextStyle(fontSize: 13)),
+                      Text(
+                        '${item.amount.toStringAsFixed(0)} ر.س',
+                        style: const TextStyle(
+                            fontSize: 13, fontWeight: FontWeight.w500),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            )),
+                )),
             const Divider(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(totalLabel,
-                    style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                    style: const TextStyle(
+                        fontSize: 13, fontWeight: FontWeight.bold)),
                 Text(
                   '${total.toStringAsFixed(0)} ر.س',
-                  style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      fontSize: 13, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -380,12 +416,14 @@ class _TotalRow extends StatelessWidget {
   final double amount;
   final Color color;
 
-  const _TotalRow({required this.label, required this.amount, required this.color});
+  const _TotalRow(
+      {required this.label, required this.amount, required this.color});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+      padding: const EdgeInsets.symmetric(
+          horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
@@ -393,10 +431,13 @@ class _TotalRow extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: TextStyle(fontWeight: FontWeight.bold, color: color, fontSize: 15)),
+          Text(label,
+              style: TextStyle(
+                  fontWeight: FontWeight.bold, color: color, fontSize: 15)),
           Text(
             '${amount.toStringAsFixed(0)} ر.س',
-            style: TextStyle(fontWeight: FontWeight.bold, color: color, fontSize: 15),
+            style: TextStyle(
+                fontWeight: FontWeight.bold, color: color, fontSize: 15),
           ),
         ],
       ),

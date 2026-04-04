@@ -147,7 +147,8 @@ void main() {
     group('rejectDelivery', () {
       test('rejects delivery with reason', () async {
         // Arrange
-        when(() => mockRemote.rejectDelivery(any(), reason: any(named: 'reason')))
+        when(() =>
+                mockRemote.rejectDelivery(any(), reason: any(named: 'reason')))
             .thenAnswer((_) async {});
 
         // Act & Assert
@@ -179,7 +180,8 @@ void main() {
             .thenAnswer((_) async => testDeliveryResponse);
 
         // Act
-        final result = await repository.markDelivered('del-1', notes: 'Left at door');
+        final result =
+            await repository.markDelivered('del-1', notes: 'Left at door');
 
         // Assert
         expect(result.id, equals('del-1'));
@@ -189,7 +191,8 @@ void main() {
     group('reportIssue', () {
       test('reports issue successfully', () async {
         // Arrange
-        when(() => mockRemote.reportIssue(any(), any())).thenAnswer((_) async {});
+        when(() => mockRemote.reportIssue(any(), any()))
+            .thenAnswer((_) async {});
 
         // Act & Assert
         await expectLater(

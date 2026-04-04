@@ -36,9 +36,8 @@ class DemandElasticityChart extends StatelessWidget {
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.08)
-              : AppColors.border,
+          color:
+              isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.border,
         ),
         boxShadow: [
           BoxShadow(
@@ -79,8 +78,7 @@ class DemandElasticityChart extends StatelessWidget {
                         color: isDark ? Colors.white : AppColors.textPrimary,
                       ),
                     ),
-                    if (elasticity != null)
-                      _buildElasticityBadge(isDark, l10n),
+                    if (elasticity != null) _buildElasticityBadge(isDark, l10n),
                   ],
                 ),
               ),
@@ -161,7 +159,8 @@ class DemandElasticityChart extends StatelessWidget {
 
     return Container(
       margin: const EdgeInsets.only(top: AlhaiSpacing.xxxs),
-      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxxs),
+      padding: const EdgeInsets.symmetric(
+          horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxxs),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(4),
@@ -252,9 +251,10 @@ class _DemandCurvePainter extends CustomPainter {
       color: isDark ? Colors.white38 : AppColors.textMuted,
     );
 
-    _drawText(canvas, priceLabel, const Offset(padding - 10, padding - 15), labelStyle);
-    _drawText(
-        canvas, demandLabel, Offset(w - padding - 10, h - padding + 8), labelStyle);
+    _drawText(canvas, priceLabel, const Offset(padding - 10, padding - 15),
+        labelStyle);
+    _drawText(canvas, demandLabel, Offset(w - padding - 10, h - padding + 8),
+        labelStyle);
 
     // منحنى الطلب
     final curvePaint = Paint()

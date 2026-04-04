@@ -19,14 +19,16 @@ import 'package:alhai_auth/alhai_auth.dart';
 enum ApprovalFilter { all, pending, approved, rejected }
 
 /// Current filter selection
-final approvalFilterProvider = StateProvider<ApprovalFilter>((ref) => ApprovalFilter.all);
+final approvalFilterProvider =
+    StateProvider<ApprovalFilter>((ref) => ApprovalFilter.all);
 
 // =============================================================================
 // PENDING REFUNDS PROVIDER
 // =============================================================================
 
 /// All refunds for the current store, optionally filtered by status
-final pendingRefundsProvider = FutureProvider.autoDispose<List<ReturnsTableData>>((ref) async {
+final pendingRefundsProvider =
+    FutureProvider.autoDispose<List<ReturnsTableData>>((ref) async {
   final storeId = ref.watch(currentStoreIdProvider);
   if (storeId == null) return [];
 
@@ -39,7 +41,8 @@ final pendingRefundsProvider = FutureProvider.autoDispose<List<ReturnsTableData>
     case ApprovalFilter.pending:
       return db.returnsDao.getReturnsByStatus(storeId, 'pending');
     case ApprovalFilter.approved:
-      return db.returnsDao.getReturnsByStatuses(storeId, ['approved', 'completed']);
+      return db.returnsDao
+          .getReturnsByStatuses(storeId, ['approved', 'completed']);
     case ApprovalFilter.rejected:
       return db.returnsDao.getReturnsByStatus(storeId, 'rejected');
   }
@@ -50,7 +53,8 @@ final pendingRefundsProvider = FutureProvider.autoDispose<List<ReturnsTableData>
 // =============================================================================
 
 /// Count of pending approvals (for badges)
-final pendingApprovalsCountProvider = FutureProvider.autoDispose<int>((ref) async {
+final pendingApprovalsCountProvider =
+    FutureProvider.autoDispose<int>((ref) async {
   final storeId = ref.watch(currentStoreIdProvider);
   if (storeId == null) return 0;
 
@@ -132,7 +136,8 @@ Future<bool> rejectRefund({
       action: AuditAction.saleRefund,
       entityType: 'return',
       entityId: returnId,
-      description: 'Rejected refund: $returnId${reason != null ? ' - $reason' : ''}',
+      description:
+          'Rejected refund: $returnId${reason != null ? ' - $reason' : ''}',
     );
 
     return true;

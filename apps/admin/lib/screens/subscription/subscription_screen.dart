@@ -13,8 +13,7 @@ class SubscriptionScreen extends ConsumerStatefulWidget {
   const SubscriptionScreen({super.key});
 
   @override
-  ConsumerState<SubscriptionScreen> createState() =>
-      _SubscriptionScreenState();
+  ConsumerState<SubscriptionScreen> createState() => _SubscriptionScreenState();
 }
 
 class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
@@ -50,8 +49,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
       // Try to get organization ID from settings
       final orgRow = await (db.select(db.settingsTable)
             ..where((s) =>
-                s.storeId.equals(storeId) &
-                s.key.equals('organization_id')))
+                s.storeId.equals(storeId) & s.key.equals('organization_id')))
           .getSingleOrNull();
       final orgId = orgRow?.value;
 
@@ -98,8 +96,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
       children: [
         AppHeader(
           title: l10n.subscription,
-          onMenuTap:
-              isWide ? null : () => Scaffold.of(context).openDrawer(),
+          onMenuTap: isWide ? null : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 0,
           userName: l10n.defaultUserName,
@@ -123,8 +120,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(Icons.error_outline,
-                size: 64,
-                color: AppColors.error.withValues(alpha: 0.7)),
+                size: 64, color: AppColors.error.withValues(alpha: 0.7)),
             const SizedBox(height: AlhaiSpacing.md),
             Text(
               _error!,
@@ -165,8 +161,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
             style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color:
-                    Theme.of(context).colorScheme.onSurface),
+                color: Theme.of(context).colorScheme.onSurface),
           ),
           const SizedBox(height: AlhaiSpacing.md),
           LayoutBuilder(
@@ -175,10 +170,50 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                   ? 4
                   : (constraints.maxWidth > 500 ? 2 : 1);
               final plans = [
-                ('Free', '0', ['10 products', '1 branch', '1 employee', 'Basic reports'], false),
-                ('Basic', '99', ['100 products', '3 branches', '5 employees', 'Advanced reports', 'Email support'], false),
-                ('Professional', '199', ['Unlimited products', '10 branches', '20 employees', 'All reports', 'Live support', 'AI features'], true),
-                ('Enterprise', '499', ['Everything unlimited', 'Unlimited branches', 'Unlimited employees', 'Advanced API', 'Dedicated manager', 'Full customization'], false),
+                (
+                  'Free',
+                  '0',
+                  ['10 products', '1 branch', '1 employee', 'Basic reports'],
+                  false
+                ),
+                (
+                  'Basic',
+                  '99',
+                  [
+                    '100 products',
+                    '3 branches',
+                    '5 employees',
+                    'Advanced reports',
+                    'Email support'
+                  ],
+                  false
+                ),
+                (
+                  'Professional',
+                  '199',
+                  [
+                    'Unlimited products',
+                    '10 branches',
+                    '20 employees',
+                    'All reports',
+                    'Live support',
+                    'AI features'
+                  ],
+                  true
+                ),
+                (
+                  'Enterprise',
+                  '499',
+                  [
+                    'Everything unlimited',
+                    'Unlimited branches',
+                    'Unlimited employees',
+                    'Advanced API',
+                    'Dedicated manager',
+                    'Full customization'
+                  ],
+                  false
+                ),
               ];
               return GridView.builder(
                 shrinkWrap: true,
@@ -214,8 +249,10 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
         width: double.infinity,
         padding: const EdgeInsets.all(AlhaiSpacing.lg),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-              colors: [Theme.of(context).colorScheme.outlineVariant, Theme.of(context).colorScheme.outline]),
+          gradient: LinearGradient(colors: [
+            Theme.of(context).colorScheme.outlineVariant,
+            Theme.of(context).colorScheme.outline
+          ]),
           borderRadius: BorderRadius.circular(16),
         ),
         child: Column(
@@ -224,12 +261,11 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
             Row(
               children: [
                 const Text('Current Plan',
-                    style:
-                        TextStyle(color: Colors.white70, fontSize: 14)),
+                    style: TextStyle(color: Colors.white70, fontSize: 14)),
                 const Spacer(),
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 12, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
                       color: Colors.white.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(20)),
@@ -250,12 +286,10 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
             const SizedBox(height: AlhaiSpacing.xs),
             const Row(
               children: [
-                Icon(Icons.info_outline,
-                    color: Colors.white70, size: 18),
+                Icon(Icons.info_outline, color: Colors.white70, size: 18),
                 SizedBox(width: 6),
                 Text('Choose a plan to get started',
-                    style:
-                        TextStyle(color: Colors.white70, fontSize: 14)),
+                    style: TextStyle(color: Colors.white70, fontSize: 14)),
               ],
             ),
           ],
@@ -296,12 +330,11 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
           Row(
             children: [
               const Text('Current Plan',
-                  style:
-                      TextStyle(color: Colors.white70, fontSize: 14)),
+                  style: TextStyle(color: Colors.white70, fontSize: 14)),
               const Spacer(),
               Container(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 12, vertical: 4),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                 decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(20)),
@@ -323,16 +356,13 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                   fontWeight: FontWeight.bold)),
           if (price > 0) ...[
             const SizedBox(height: AlhaiSpacing.xxs),
-            Text(
-                '${price.toStringAsFixed(0)} $currency / month',
-                style: const TextStyle(
-                    color: Colors.white70, fontSize: 14)),
+            Text('${price.toStringAsFixed(0)} $currency / month',
+                style: const TextStyle(color: Colors.white70, fontSize: 14)),
           ],
           const SizedBox(height: AlhaiSpacing.xs),
           Row(
             children: [
-              const Icon(Icons.timer_outlined,
-                  color: Colors.white70, size: 18),
+              const Icon(Icons.timer_outlined, color: Colors.white70, size: 18),
               const SizedBox(width: 6),
               Text(
                 '$remainingDays days remaining',
@@ -360,14 +390,12 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
             children: [
               Text(
                 'From: ${_formatDate(startDate)}',
-                style: const TextStyle(
-                    color: Colors.white54, fontSize: 12),
+                style: const TextStyle(color: Colors.white54, fontSize: 12),
               ),
               const SizedBox(width: AlhaiSpacing.md),
               Text(
                 'To: ${_formatDate(endDate)}',
-                style: const TextStyle(
-                    color: Colors.white54, fontSize: 12),
+                style: const TextStyle(color: Colors.white54, fontSize: 12),
               ),
             ],
           ),
@@ -431,8 +459,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-            color: Theme.of(context).dividerColor),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -442,8 +469,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
               Icon(icon, color: color, size: 24),
               const Spacer(),
               Container(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 8, vertical: 2),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
                   color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -511,8 +537,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-                color: Theme.of(context).dividerColor),
+            border: Border.all(color: Theme.of(context).dividerColor),
           ),
           child: Column(
             children: features
@@ -526,7 +551,9 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                           Expanded(
                               child: Text(f,
                                   style: TextStyle(
-                                      color: Theme.of(context).colorScheme.onSurface))),
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface))),
                         ],
                       ),
                     ))
@@ -537,8 +564,8 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     );
   }
 
-  Widget _buildPlanCard(String name, String price,
-      List<String> features, bool isPopular, bool isDark) {
+  Widget _buildPlanCard(String name, String price, List<String> features,
+      bool isPopular, bool isDark) {
     final isCurrentPlan =
         _subscription?.plan.toLowerCase() == name.toLowerCase();
 
@@ -561,8 +588,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
         children: [
           if (isPopular)
             Container(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 8, vertical: 2),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
               decoration: BoxDecoration(
                   color: AppColors.primary,
@@ -575,8 +601,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
             ),
           if (isCurrentPlan)
             Container(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 8, vertical: 2),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
               decoration: BoxDecoration(
                   color: AppColors.success,
@@ -620,7 +645,9 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                         child: Text(f,
                             style: TextStyle(
                                 fontSize: 12,
-                                color: Theme.of(context).colorScheme.onSurfaceVariant))),
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurfaceVariant))),
                   ],
                 ),
               )),
@@ -634,9 +661,11 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                       showDialog(
                         context: context,
                         builder: (ctx) => AlertDialog(
-                          title: Text(AppLocalizations.of(ctx).upgradeToPlan(name)),
+                          title: Text(
+                              AppLocalizations.of(ctx).upgradeToPlan(name)),
                           content: Text(
-                            AppLocalizations.of(ctx).upgradePlanPriceBody(price),
+                            AppLocalizations.of(ctx)
+                                .upgradePlanPriceBody(price),
                           ),
                           actions: [
                             TextButton(
@@ -649,7 +678,8 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Text(
-                                      AppLocalizations.of(context).upgradeContactMsg,
+                                      AppLocalizations.of(context)
+                                          .upgradeContactMsg,
                                     ),
                                   ),
                                 );
@@ -665,7 +695,9 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                     ? Theme.of(context).colorScheme.outline
                     : (isPopular
                         ? AppColors.primary
-                        : Theme.of(context).colorScheme.surfaceContainerHighest),
+                        : Theme.of(context)
+                            .colorScheme
+                            .surfaceContainerHighest),
                 foregroundColor: isCurrentPlan
                     ? Colors.white
                     : (isPopular
@@ -674,8 +706,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
               ),
-              child:
-                  Text(isCurrentPlan ? 'Current Plan' : 'Select'),
+              child: Text(isCurrentPlan ? 'Current Plan' : 'Select'),
             ),
           ),
         ],

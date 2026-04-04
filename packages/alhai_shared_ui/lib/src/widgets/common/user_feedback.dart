@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiColors, AlhaiSpacing;
+import 'package:alhai_design_system/alhai_design_system.dart'
+    show AlhaiColors, AlhaiSpacing;
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
 /// نظام جمع تقييم المستخدم بعد كل عملية
-/// 
+///
 /// "هل كانت العملية سريعة؟"
 /// يخزن النتائج للتحليل
 
@@ -27,17 +28,18 @@ class UserFeedback {
   });
 
   Map<String, dynamic> toJson() => {
-    'saleId': saleId,
-    'timestamp': timestamp.toIso8601String(),
-    'rating': rating,
-    'wasQuick': wasQuick,
-    'comment': comment,
-  };
+        'saleId': saleId,
+        'timestamp': timestamp.toIso8601String(),
+        'rating': rating,
+        'wasQuick': wasQuick,
+        'comment': comment,
+      };
 
   factory UserFeedback.fromJson(Map<String, dynamic> json) {
     return UserFeedback(
       saleId: json['saleId'],
-      timestamp: DateTime.tryParse(json['timestamp'] as String) ?? DateTime.now(),
+      timestamp:
+          DateTime.tryParse(json['timestamp'] as String) ?? DateTime.now(),
       rating: json['rating'],
       wasQuick: json['wasQuick'],
       comment: json['comment'],
@@ -90,7 +92,7 @@ class FeedbackNotifier extends StateNotifier<List<UserFeedback>> {
       wasQuick: wasQuick,
       comment: comment,
     );
-    
+
     state = [...state, feedback];
     await _saveToPrefs();
   }
@@ -117,7 +119,8 @@ class FeedbackNotifier extends StateNotifier<List<UserFeedback>> {
 }
 
 /// مزود التقييمات
-final feedbackProvider = StateNotifierProvider<FeedbackNotifier, List<UserFeedback>>(
+final feedbackProvider =
+    StateNotifierProvider<FeedbackNotifier, List<UserFeedback>>(
   (ref) => FeedbackNotifier(),
 );
 
@@ -162,14 +165,15 @@ class QuickFeedbackWidget extends ConsumerWidget {
                   color: AlhaiColors.success,
                   onTap: () {
                     ref.read(feedbackProvider.notifier).addFeedback(
-                      saleId: saleId,
-                      rating: 5,
-                      wasQuick: true,
-                    );
+                          saleId: saleId,
+                          rating: 5,
+                          wasQuick: true,
+                        );
                     onFeedbackSubmitted?.call();
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text(AppLocalizations.of(context)!.thanksFeedback),
+                        content:
+                            Text(AppLocalizations.of(context)!.thanksFeedback),
                         duration: const Duration(seconds: 1),
                       ),
                     );
@@ -181,10 +185,10 @@ class QuickFeedbackWidget extends ConsumerWidget {
                   color: AlhaiColors.warning,
                   onTap: () {
                     ref.read(feedbackProvider.notifier).addFeedback(
-                      saleId: saleId,
-                      rating: 2,
-                      wasQuick: false,
-                    );
+                          saleId: saleId,
+                          rating: 2,
+                          wasQuick: false,
+                        );
                     onFeedbackSubmitted?.call();
                     _showDetailedFeedback(context, ref, saleId);
                   },
@@ -201,9 +205,10 @@ class QuickFeedbackWidget extends ConsumerWidget {
     );
   }
 
-  void _showDetailedFeedback(BuildContext context, WidgetRef ref, String saleId) {
+  void _showDetailedFeedback(
+      BuildContext context, WidgetRef ref, String saleId) {
     final controller = TextEditingController();
-    
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -232,16 +237,17 @@ class QuickFeedbackWidget extends ConsumerWidget {
             onPressed: () {
               if (controller.text.isNotEmpty) {
                 ref.read(feedbackProvider.notifier).addFeedback(
-                  saleId: saleId,
-                  rating: 2,
-                  wasQuick: false,
-                  comment: controller.text,
-                );
+                      saleId: saleId,
+                      rating: 2,
+                      wasQuick: false,
+                      comment: controller.text,
+                    );
               }
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(AppLocalizations.of(context)!.thanksWillImprove),
+                  content:
+                      Text(AppLocalizations.of(context)!.thanksWillImprove),
                   duration: const Duration(seconds: 2),
                 ),
               );
@@ -278,7 +284,8 @@ class _FeedbackButton extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.mdl, vertical: AlhaiSpacing.sm),
+          padding: const EdgeInsets.symmetric(
+              horizontal: AlhaiSpacing.mdl, vertical: AlhaiSpacing.sm),
           child: Column(
             children: [
               Icon(icon, color: color, size: 32),

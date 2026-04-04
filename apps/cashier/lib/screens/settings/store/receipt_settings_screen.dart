@@ -13,7 +13,8 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
+import 'package:alhai_design_system/alhai_design_system.dart'
+    show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 
@@ -26,8 +27,7 @@ class ReceiptSettingsScreen extends ConsumerStatefulWidget {
       _ReceiptSettingsScreenState();
 }
 
-class _ReceiptSettingsScreenState
-    extends ConsumerState<ReceiptSettingsScreen> {
+class _ReceiptSettingsScreenState extends ConsumerState<ReceiptSettingsScreen> {
   final _db = GetIt.I<AppDatabase>();
   final _headerController = TextEditingController();
   final _footerController = TextEditingController();
@@ -61,10 +61,9 @@ class _ReceiptSettingsScreenState
     });
     try {
       final storeId = ref.read(currentStoreIdProvider)!;
-      final settings = await (
-        _db.select(_db.settingsTable)
-          ..where((s) => s.storeId.equals(storeId))
-      ).get();
+      final settings = await (_db.select(_db.settingsTable)
+            ..where((s) => s.storeId.equals(storeId)))
+          .get();
       for (final s in settings) {
         switch (s.key) {
           case 'receipt_header':
@@ -95,14 +94,14 @@ class _ReceiptSettingsScreenState
     final storeId = ref.read(currentStoreIdProvider)!;
     final id = 'setting_${storeId}_$key';
     await _db.into(_db.settingsTable).insertOnConflictUpdate(
-      SettingsTableCompanion.insert(
-        id: id,
-        storeId: storeId,
-        key: key,
-        value: value,
-        updatedAt: DateTime.now(),
-      ),
-    );
+          SettingsTableCompanion.insert(
+            id: id,
+            storeId: storeId,
+            key: key,
+            value: value,
+            updatedAt: DateTime.now(),
+          ),
+        );
   }
 
   Future<void> _saveSettings() async {
@@ -134,7 +133,8 @@ class _ReceiptSettingsScreenState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(AppLocalizations.of(context).errorSavingSettings('$e')),
+            content:
+                Text(AppLocalizations.of(context).errorSavingSettings('$e')),
             backgroundColor: AppColors.error,
           ),
         );
@@ -167,8 +167,7 @@ class _ReceiptSettingsScreenState
             tooltip: l10n.back,
           ),
           onNotificationsTap: () => context.push(AppRoutes.notificationsCenter),
-          userName:
-              ref.watch(currentUserProvider)?.name ?? l10n.cashCustomer,
+          userName: ref.watch(currentUserProvider)?.name ?? l10n.cashCustomer,
           userRole: l10n.cashier,
           onUserTap: () => context.push(AppRoutes.profile),
         ),
@@ -176,12 +175,14 @@ class _ReceiptSettingsScreenState
           child: _isLoading
               ? const AppLoadingState()
               : _error != null
-                  ? AppErrorState.general(context, message: _error!, onRetry: _loadSettings)
-              : SingleChildScrollView(
-                  padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-                  child: _buildContent(
-                      isWideScreen, isMediumScreen, isDark, l10n),
-                ),
+                  ? AppErrorState.general(context,
+                      message: _error!, onRetry: _loadSettings)
+                  : SingleChildScrollView(
+                      padding: EdgeInsets.all(
+                          isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+                      child: _buildContent(
+                          isWideScreen, isMediumScreen, isDark, l10n),
+                    ),
         ),
       ],
     );
@@ -380,7 +381,8 @@ class _ReceiptSettingsScreenState
                   child: GestureDetector(
                     onTap: () => setState(() => _receiptWidth = width),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
+                      padding:
+                          const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
                       decoration: BoxDecoration(
                         color: isSelected
                             ? AppColors.primary.withValues(alpha: 0.1)
@@ -415,7 +417,9 @@ class _ReceiptSettingsScreenState
                           ),
                           const SizedBox(height: AlhaiSpacing.xxs),
                           Text(
-                            width == '58mm' ? l10n.smallSize : l10n.standardSize,
+                            width == '58mm'
+                                ? l10n.smallSize
+                                : l10n.standardSize,
                             style: TextStyle(
                               fontSize: 12,
                               color: AppColors.getTextMuted(isDark),
@@ -507,11 +511,9 @@ class _ReceiptSettingsScreenState
                   height: 16,
                 ),
                 if (_showCashierName)
-                  _previewRow(
-                      l10n.cashier, 'Sample Cashier Name', isDark),
+                  _previewRow(l10n.cashier, 'Sample Cashier Name', isDark),
                 if (_showCustomerName)
-                  _previewRow(
-                      l10n.customer, l10n.cashCustomer, isDark),
+                  _previewRow(l10n.customer, l10n.cashCustomer, isDark),
                 Divider(
                   color: AppColors.getBorder(isDark),
                   height: 16,
@@ -602,8 +604,7 @@ class _ReceiptSettingsScreenState
     );
   }
 
-  Widget _sectionHeader(
-      IconData icon, String title, Color color, bool isDark) {
+  Widget _sectionHeader(IconData icon, String title, Color color, bool isDark) {
     return Row(
       children: [
         Container(

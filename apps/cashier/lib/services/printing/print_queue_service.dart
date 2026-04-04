@@ -112,10 +112,9 @@ class PrintQueueService {
   Stream<PrintJob> get jobStatusStream => _statusController.stream;
 
   /// Current jobs in the queue (pending + printing)
-  List<PrintJob> get pendingJobs =>
-      List.unmodifiable(_queue.where((j) =>
-          j.status == PrintJobStatus.pending ||
-          j.status == PrintJobStatus.printing));
+  List<PrintJob> get pendingJobs => List.unmodifiable(_queue.where((j) =>
+      j.status == PrintJobStatus.pending ||
+      j.status == PrintJobStatus.printing));
 
   /// Failed jobs available for manual reprint
   List<PrintJob> get failedJobs => List.unmodifiable(_failedJobs);
@@ -150,7 +149,8 @@ class PrintQueueService {
     _statusController.add(job);
 
     if (kDebugMode) {
-      debugPrint('PrintQueue: enqueued job ${job.id} (queue: ${_queue.length})');
+      debugPrint(
+          'PrintQueue: enqueued job ${job.id} (queue: ${_queue.length})');
     }
 
     // Start processing if not already running
@@ -215,7 +215,9 @@ class PrintQueueService {
 
   /// Cancel a pending job in the queue
   bool cancelJob(String jobId) {
-    final removed = _queue.where((j) => j.id == jobId && j.status == PrintJobStatus.pending).toList();
+    final removed = _queue
+        .where((j) => j.id == jobId && j.status == PrintJobStatus.pending)
+        .toList();
     for (final job in removed) {
       _queue.remove(job);
       job.status = PrintJobStatus.failed;
@@ -262,7 +264,8 @@ class PrintQueueService {
     // Check printer readiness
     if (_printService.status != PrinterStatus.connected) {
       if (kDebugMode) {
-        debugPrint('PrintQueue: printer not connected, job ${job.id} stays pending');
+        debugPrint(
+            'PrintQueue: printer not connected, job ${job.id} stays pending');
       }
       // Move to failed immediately - the caller should reconnect and retry
       job
@@ -281,7 +284,8 @@ class PrintQueueService {
     _statusController.add(job);
 
     if (kDebugMode) {
-      debugPrint('PrintQueue: printing job ${job.id} (attempt ${job.attempts}/$maxRetries)');
+      debugPrint(
+          'PrintQueue: printing job ${job.id} (attempt ${job.attempts}/$maxRetries)');
     }
 
     final result = await _printService.printReceipt(job.receipt);
@@ -364,7 +368,8 @@ class PrintQueueService {
       if (_failedJobs.isEmpty) {
         await prefs.remove(_failedJobsKey);
       } else {
-        final jsonStr = json.encode(_failedJobs.map((j) => j.toJson()).toList());
+        final jsonStr =
+            json.encode(_failedJobs.map((j) => j.toJson()).toList());
         await prefs.setString(_failedJobsKey, jsonStr);
       }
     } catch (e) {
@@ -413,18 +418,16 @@ ReceiptData _receiptFromJson(Map<String, dynamic> j) => ReceiptData(
       cashierName: j['cashierName'] as String? ?? 'كاشير',
       customerName: j['customerName'] as String?,
       customerId: j['customerId'] as String?,
-      items: (j['items'] as List<dynamic>? ?? [])
-          .map((item) {
-            final m = item as Map<String, dynamic>;
-            return ReceiptItem(
-              name: m['name'] as String? ?? '',
-              quantity: (m['quantity'] as num?)?.toDouble() ?? 0,
-              unitPrice: (m['unitPrice'] as num?)?.toDouble() ?? 0,
-              total: (m['total'] as num?)?.toDouble() ?? 0,
-              barcode: m['barcode'] as String?,
-            );
-          })
-          .toList(),
+      items: (j['items'] as List<dynamic>? ?? []).map((item) {
+        final m = item as Map<String, dynamic>;
+        return ReceiptItem(
+          name: m['name'] as String? ?? '',
+          quantity: (m['quantity'] as num?)?.toDouble() ?? 0,
+          unitPrice: (m['unitPrice'] as num?)?.toDouble() ?? 0,
+          total: (m['total'] as num?)?.toDouble() ?? 0,
+          barcode: m['barcode'] as String?,
+        );
+      }).toList(),
       subtotal: (j['subtotal'] as num?)?.toDouble() ?? 0,
       discount: (j['discount'] as num?)?.toDouble() ?? 0,
       tax: (j['tax'] as num?)?.toDouble() ?? 0,

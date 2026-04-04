@@ -18,7 +18,8 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart'
 // ============================================================================
 
 /// قراءة إعداد واحد من قاعدة البيانات
-Future<String?> getSettingValue(AppDatabase db, String storeId, String key) async {
+Future<String?> getSettingValue(
+    AppDatabase db, String storeId, String key) async {
   final result = await (db.select(db.settingsTable)
         ..where((s) => s.storeId.equals(storeId) & s.key.equals(key)))
       .getSingleOrNull();
@@ -26,7 +27,8 @@ Future<String?> getSettingValue(AppDatabase db, String storeId, String key) asyn
 }
 
 /// قراءة جميع إعدادات متجر معين من قاعدة البيانات
-Future<Map<String, String>> getAllSettings(AppDatabase db, String storeId) async {
+Future<Map<String, String>> getAllSettings(
+    AppDatabase db, String storeId) async {
   final settings = await (db.select(db.settingsTable)
         ..where((s) => s.storeId.equals(storeId)))
       .get();
@@ -145,8 +147,8 @@ final settingsByPrefixProvider = FutureProvider.autoDispose
 });
 
 /// مزود لقراءة إعداد واحد
-final singleSettingProvider = FutureProvider.autoDispose
-    .family<String?, String>((ref, key) async {
+final singleSettingProvider =
+    FutureProvider.autoDispose.family<String?, String>((ref, key) async {
   final storeId = ref.watch(currentStoreIdProvider);
   if (storeId == null) return null;
 

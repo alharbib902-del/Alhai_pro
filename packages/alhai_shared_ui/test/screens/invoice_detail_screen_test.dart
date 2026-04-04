@@ -78,9 +78,11 @@ Widget _buildTestWidget({
     overrides: [
       currentStoreIdProvider.overrideWith((ref) => 'test-store-id'),
       invoiceDetailProvider(invoiceId).overrideWith(
-        (ref) => detailValue?.when(
+        (ref) =>
+            detailValue?.when(
               data: (d) => Future.value(d),
-              loading: () => Future.delayed(const Duration(days: 1), () => null),
+              loading: () =>
+                  Future.delayed(const Duration(days: 1), () => null),
               error: (e, _) => Future.error(e!),
             ) ??
             Future.value(null),
@@ -143,7 +145,8 @@ void main() {
 
       await tester.pumpWidget(_buildTestWidget(
         invoiceId: 'error-id',
-        detailValue: AsyncValue.error(Exception('Load failed'), StackTrace.current),
+        detailValue:
+            AsyncValue.error(Exception('Load failed'), StackTrace.current),
       ));
       await tester.pumpAndSettle(const Duration(seconds: 2));
 
@@ -157,8 +160,14 @@ void main() {
       final testData = InvoiceDetailData(
         sale: _createTestSale(id: 'sale-1', receiptNo: 'INV-001', total: 100.0),
         items: [
-          _createTestSaleItem(id: 'item-1', saleId: 'sale-1', productName: 'Coffee'),
-          _createTestSaleItem(id: 'item-2', saleId: 'sale-1', productName: 'Cake', unitPrice: 15.0, qty: 1.0),
+          _createTestSaleItem(
+              id: 'item-1', saleId: 'sale-1', productName: 'Coffee'),
+          _createTestSaleItem(
+              id: 'item-2',
+              saleId: 'sale-1',
+              productName: 'Cake',
+              unitPrice: 15.0,
+              qty: 1.0),
         ],
       );
 

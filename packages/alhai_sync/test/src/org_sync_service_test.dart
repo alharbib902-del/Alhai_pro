@@ -22,7 +22,8 @@ void main() {
     group('syncOperation', () {
       test('performs upsert for CREATE operation', () async {
         final queryBuilder = MockSupabaseQueryBuilder();
-        when(() => mockClient.from('organizations')).thenAnswer((_) => queryBuilder);
+        when(() => mockClient.from('organizations'))
+            .thenAnswer((_) => queryBuilder);
         setupUpsertChain(queryBuilder);
 
         await service.syncOperation(
@@ -32,13 +33,13 @@ void main() {
         );
 
         verify(() => queryBuilder.upsert(any(),
-                onConflict: any(named: 'onConflict')))
-            .called(1);
+            onConflict: any(named: 'onConflict'))).called(1);
       });
 
       test('performs upsert for UPDATE operation', () async {
         final queryBuilder = MockSupabaseQueryBuilder();
-        when(() => mockClient.from('organizations')).thenAnswer((_) => queryBuilder);
+        when(() => mockClient.from('organizations'))
+            .thenAnswer((_) => queryBuilder);
         setupUpsertChain(queryBuilder);
 
         await service.syncOperation(
@@ -48,13 +49,13 @@ void main() {
         );
 
         verify(() => queryBuilder.upsert(any(),
-                onConflict: any(named: 'onConflict')))
-            .called(1);
+            onConflict: any(named: 'onConflict'))).called(1);
       });
 
       test('performs delete for DELETE operation', () async {
         final queryBuilder = MockSupabaseQueryBuilder();
-        when(() => mockClient.from('organizations')).thenAnswer((_) => queryBuilder);
+        when(() => mockClient.from('organizations'))
+            .thenAnswer((_) => queryBuilder);
         setupDeleteChain(queryBuilder);
 
         await service.syncOperation(
@@ -90,7 +91,8 @@ void main() {
 
       test('removes synced_at from payload', () async {
         final queryBuilder = MockSupabaseQueryBuilder();
-        when(() => mockClient.from('organizations')).thenAnswer((_) => queryBuilder);
+        when(() => mockClient.from('organizations'))
+            .thenAnswer((_) => queryBuilder);
         setupUpsertChain(queryBuilder);
 
         await service.syncOperation(
@@ -119,13 +121,15 @@ void main() {
       test('fetches using eq id for organizations table', () async {
         final queryBuilder = MockSupabaseQueryBuilder();
         final filterBuilder = MockPostgrestFilterBuilder();
-        when(() => mockClient.from('organizations')).thenAnswer((_) => queryBuilder);
+        when(() => mockClient.from('organizations'))
+            .thenAnswer((_) => queryBuilder);
         when(() => queryBuilder.select(any())).thenAnswer((_) => filterBuilder);
-        when(() => filterBuilder.eq(any(), any())).thenAnswer((_) => filterBuilder);
+        when(() => filterBuilder.eq(any(), any()))
+            .thenAnswer((_) => filterBuilder);
 
         // Mock the async resolution via then()
-        when(() => filterBuilder.then<dynamic>(any(), onError: any(named: 'onError')))
-            .thenAnswer((invocation) {
+        when(() => filterBuilder.then<dynamic>(any(),
+            onError: any(named: 'onError'))).thenAnswer((invocation) {
           final onValue = invocation.positionalArguments[0] as Function;
           return Future.value(onValue([
             {'id': 'org-1', 'name': 'Test'}
@@ -144,12 +148,14 @@ void main() {
       test('fetches using eq org_id for non-organization tables', () async {
         final queryBuilder = MockSupabaseQueryBuilder();
         final filterBuilder = MockPostgrestFilterBuilder();
-        when(() => mockClient.from('subscriptions')).thenAnswer((_) => queryBuilder);
+        when(() => mockClient.from('subscriptions'))
+            .thenAnswer((_) => queryBuilder);
         when(() => queryBuilder.select(any())).thenAnswer((_) => filterBuilder);
-        when(() => filterBuilder.eq(any(), any())).thenAnswer((_) => filterBuilder);
+        when(() => filterBuilder.eq(any(), any()))
+            .thenAnswer((_) => filterBuilder);
 
-        when(() => filterBuilder.then<dynamic>(any(), onError: any(named: 'onError')))
-            .thenAnswer((invocation) {
+        when(() => filterBuilder.then<dynamic>(any(),
+            onError: any(named: 'onError'))).thenAnswer((invocation) {
           final onValue = invocation.positionalArguments[0] as Function;
           return Future.value(onValue([
             {'id': 'sub-1', 'org_id': 'org-1'}
@@ -167,7 +173,8 @@ void main() {
 
       test('rethrows on error', () async {
         final queryBuilder = MockSupabaseQueryBuilder();
-        when(() => mockClient.from('subscriptions')).thenAnswer((_) => queryBuilder);
+        when(() => mockClient.from('subscriptions'))
+            .thenAnswer((_) => queryBuilder);
         when(() => queryBuilder.select(any()))
             .thenThrow(Exception('Network error'));
 
@@ -185,12 +192,14 @@ void main() {
       test('fetches with store_id filter', () async {
         final queryBuilder = MockSupabaseQueryBuilder();
         final filterBuilder = MockPostgrestFilterBuilder();
-        when(() => mockClient.from('pos_terminals')).thenAnswer((_) => queryBuilder);
+        when(() => mockClient.from('pos_terminals'))
+            .thenAnswer((_) => queryBuilder);
         when(() => queryBuilder.select(any())).thenAnswer((_) => filterBuilder);
-        when(() => filterBuilder.eq(any(), any())).thenAnswer((_) => filterBuilder);
+        when(() => filterBuilder.eq(any(), any()))
+            .thenAnswer((_) => filterBuilder);
 
-        when(() => filterBuilder.then<dynamic>(any(), onError: any(named: 'onError')))
-            .thenAnswer((invocation) {
+        when(() => filterBuilder.then<dynamic>(any(),
+            onError: any(named: 'onError'))).thenAnswer((invocation) {
           final onValue = invocation.positionalArguments[0] as Function;
           return Future.value(onValue([
             {'id': 'pos-1', 'store_id': 'store-1'}

@@ -162,7 +162,7 @@ void main() {
       expect(whatsAppService.isValidWhatsAppNumber('0512345678'), isTrue);
       expect(whatsAppService.isValidWhatsAppNumber('966512345678'), isTrue);
       expect(whatsAppService.isValidWhatsAppNumber('+966512345678'), isTrue);
-      
+
       // Invalid
       expect(whatsAppService.isValidWhatsAppNumber('123'), isFalse);
     });

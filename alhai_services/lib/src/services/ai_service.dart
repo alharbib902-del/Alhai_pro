@@ -324,7 +324,8 @@ class AIService {
       return SentimentResult(
         success: true,
         sentiment: sentiment,
-        score: (score + 1.0) / 2.0, // Convert to 0.0-1.0 scale for compatibility
+        score:
+            (score + 1.0) / 2.0, // Convert to 0.0-1.0 scale for compatibility
         confidence: confidence,
         matchedKeywords: matchCount,
       );

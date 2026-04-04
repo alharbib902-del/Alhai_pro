@@ -38,11 +38,23 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
   List<Map<String, dynamic>> _getReasons(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return [
-      {'id': 'damaged', 'label': l10n.damagedProduct, 'icon': Icons.broken_image},
+      {
+        'id': 'damaged',
+        'label': l10n.damagedProduct,
+        'icon': Icons.broken_image
+      },
       {'id': 'wrong', 'label': l10n.wrongOrder, 'icon': Icons.error_outline},
-      {'id': 'changed_mind', 'label': l10n.customerChangedMind, 'icon': Icons.sentiment_dissatisfied},
+      {
+        'id': 'changed_mind',
+        'label': l10n.customerChangedMind,
+        'icon': Icons.sentiment_dissatisfied
+      },
       {'id': 'expired', 'label': l10n.expiredProduct, 'icon': Icons.schedule},
-      {'id': 'quality', 'label': l10n.unsatisfactoryQuality, 'icon': Icons.thumb_down},
+      {
+        'id': 'quality',
+        'label': l10n.unsatisfactoryQuality,
+        'icon': Icons.thumb_down
+      },
       {'id': 'other', 'label': l10n.otherReason, 'icon': Icons.more_horiz},
     ];
   }
@@ -59,7 +71,8 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
 
     if (pendingRefund == null) {
       return Scaffold(
-        appBar: AppBar(title: Text(AppLocalizations.of(context)!.refundReasonTitle)),
+        appBar: AppBar(
+            title: Text(AppLocalizations.of(context)!.refundReasonTitle)),
         body: AppEmptyState(
           icon: Icons.receipt_long_outlined,
           title: AppLocalizations.of(context)!.noRefundData,
@@ -74,141 +87,192 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
       body: SafeArea(
         top: false,
         child: LayoutBuilder(
-        builder: (context, constraints) {
-          final isMobile = constraints.maxWidth < 600;
-          final isDesktop = constraints.maxWidth >= 1200;
-          final padding = isMobile ? 12.0 : isDesktop ? 24.0 : 16.0;
+          builder: (context, constraints) {
+            final isMobile = constraints.maxWidth < 600;
+            final isDesktop = constraints.maxWidth >= 1200;
+            final padding = isMobile
+                ? 12.0
+                : isDesktop
+                    ? 24.0
+                    : 16.0;
 
-          return Column(
-        children: [
-          // Refund summary banner
-          Container(
-            margin: EdgeInsets.all(padding),
-            padding: const EdgeInsets.all(AlhaiSpacing.sm),
-            decoration: BoxDecoration(
-              color: AppColors.warning.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: AppColors.warning.withValues(alpha: 0.3)),
-            ),
-            child: Row(
+            return Column(
               children: [
-                const Icon(Icons.receipt_long, color: AppColors.warning),
-                const SizedBox(width: AlhaiSpacing.sm),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                // Refund summary banner
+                Container(
+                  margin: EdgeInsets.all(padding),
+                  padding: const EdgeInsets.all(AlhaiSpacing.sm),
+                  decoration: BoxDecoration(
+                    color: AppColors.warning.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                        color: AppColors.warning.withValues(alpha: 0.3)),
+                  ),
+                  child: Row(
                     children: [
-                      Text(
-                        AppLocalizations.of(context)!.invoiceFieldLabel(pendingRefund.receiptNo),
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        AppLocalizations.of(context)!.productsCountAmount(pendingRefund.items.length, pendingRefund.amount.toStringAsFixed(2)),
-                        style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 13),
+                      const Icon(Icons.receipt_long, color: AppColors.warning),
+                      const SizedBox(width: AlhaiSpacing.sm),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              AppLocalizations.of(context)!
+                                  .invoiceFieldLabel(pendingRefund.receiptNo),
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              AppLocalizations.of(context)!.productsCountAmount(
+                                  pendingRefund.items.length,
+                                  pendingRefund.amount.toStringAsFixed(2)),
+                              style: TextStyle(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurfaceVariant,
+                                  fontSize: 13),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
                 ),
-              ],
-            ),
-          ),
 
-          Expanded(
-            child: ListView(
-              padding: EdgeInsets.symmetric(horizontal: padding),
-              children: [
-                Text(
-                  AppLocalizations.of(context)!.selectRefundReason,
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: AlhaiSpacing.md),
-
-                // Reason options
-                ...List.generate(_getReasons(context).length, (index) {
-                  final reason = _getReasons(context)[index];
-                  final isSelected = _selectedReason == reason['id'];
-
-                  return Card(
-                    margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
-                    color: isSelected ? AppColors.info.withValues(alpha: 0.1) : null,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      side: BorderSide(
-                        color: isSelected ? AppColors.info : Colors.transparent,
-                        width: 2,
+                Expanded(
+                  child: ListView(
+                    padding: EdgeInsets.symmetric(horizontal: padding),
+                    children: [
+                      Text(
+                        AppLocalizations.of(context)!.selectRefundReason,
+                        style: const TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
                       ),
-                    ),
-                    child: ListTile(
-                      onTap: () => setState(() => _selectedReason = reason['id'] as String),
-                      leading: CircleAvatar(
-                        backgroundColor: isSelected ? AppColors.info : Theme.of(context).colorScheme.surfaceContainerHighest,
-                        child: Icon(
-                          reason['icon'] as IconData,
-                          color: isSelected ? Theme.of(context).colorScheme.surface : Theme.of(context).colorScheme.onSurfaceVariant,
+                      const SizedBox(height: AlhaiSpacing.md),
+
+                      // Reason options
+                      ...List.generate(_getReasons(context).length, (index) {
+                        final reason = _getReasons(context)[index];
+                        final isSelected = _selectedReason == reason['id'];
+
+                        return Card(
+                          margin:
+                              const EdgeInsets.only(bottom: AlhaiSpacing.xs),
+                          color: isSelected
+                              ? AppColors.info.withValues(alpha: 0.1)
+                              : null,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            side: BorderSide(
+                              color: isSelected
+                                  ? AppColors.info
+                                  : Colors.transparent,
+                              width: 2,
+                            ),
+                          ),
+                          child: ListTile(
+                            onTap: () => setState(
+                                () => _selectedReason = reason['id'] as String),
+                            leading: CircleAvatar(
+                              backgroundColor: isSelected
+                                  ? AppColors.info
+                                  : Theme.of(context)
+                                      .colorScheme
+                                      .surfaceContainerHighest,
+                              child: Icon(
+                                reason['icon'] as IconData,
+                                color: isSelected
+                                    ? Theme.of(context).colorScheme.surface
+                                    : Theme.of(context)
+                                        .colorScheme
+                                        .onSurfaceVariant,
+                              ),
+                            ),
+                            title: Text(
+                              reason['label'] as String,
+                              style: TextStyle(
+                                fontWeight: isSelected
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
+                              ),
+                            ),
+                            trailing: isSelected
+                                ? const Icon(Icons.check_circle,
+                                    color: AppColors.info)
+                                : Icon(Icons.radio_button_unchecked,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurfaceVariant),
+                          ),
+                        );
+                      }),
+
+                      const SizedBox(height: AlhaiSpacing.lg),
+
+                      // Notes
+                      Text(
+                        AppLocalizations.of(context)!.additionalNotesOptional,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: AlhaiSpacing.xs),
+                      TextField(
+                        controller: _notesController,
+                        maxLines: 3,
+                        decoration: InputDecoration(
+                          hintText: AppLocalizations.of(context)!.addNotesHint,
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12)),
                         ),
                       ),
-                      title: Text(
-                        reason['label'] as String,
-                        style: TextStyle(
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                        ),
-                      ),
-                      trailing: isSelected
-                          ? const Icon(Icons.check_circle, color: AppColors.info)
-                          : Icon(Icons.radio_button_unchecked, color: Theme.of(context).colorScheme.onSurfaceVariant),
-                    ),
-                  );
-                }),
-
-                const SizedBox(height: AlhaiSpacing.lg),
-
-                // Notes
-                Text(
-                  AppLocalizations.of(context)!.additionalNotesOptional,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                    ],
+                  ),
                 ),
-                const SizedBox(height: AlhaiSpacing.xs),
-                TextField(
-                  controller: _notesController,
-                  maxLines: 3,
-                  decoration: InputDecoration(
-                    hintText: AppLocalizations.of(context)!.addNotesHint,
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+
+                // Bottom action
+                Container(
+                  padding: EdgeInsets.all(padding),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    boxShadow: [
+                      BoxShadow(
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withValues(alpha: 0.12),
+                          blurRadius: 8,
+                          offset: const Offset(0, -2))
+                    ],
+                  ),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: FilledButton.icon(
+                      onPressed: (_selectedReason == null || _isProcessing)
+                          ? null
+                          : _proceedToApproval,
+                      icon: _isProcessing
+                          ? SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Theme.of(context).colorScheme.surface),
+                            )
+                          : const AdaptiveIcon(Icons.arrow_forward),
+                      label: Text(_isProcessing
+                          ? AppLocalizations.of(context)!.processingAction
+                          : AppLocalizations.of(context)!
+                              .nextSupervisorApproval),
+                      style: FilledButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: AlhaiSpacing.md),
+                      ),
+                    ),
                   ),
                 ),
               ],
-            ),
-          ),
-
-          // Bottom action
-          Container(
-            padding: EdgeInsets.all(padding),
-            decoration: BoxDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              boxShadow: [BoxShadow(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12), blurRadius: 8, offset: const Offset(0, -2))],
-            ),
-            child: SizedBox(
-              width: double.infinity,
-              child: FilledButton.icon(
-                onPressed: (_selectedReason == null || _isProcessing) ? null : _proceedToApproval,
-                icon: _isProcessing
-                    ? SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Theme.of(context).colorScheme.surface),
-                      )
-                    : const AdaptiveIcon(Icons.arrow_forward),
-                label: Text(_isProcessing ? AppLocalizations.of(context)!.processingAction : AppLocalizations.of(context)!.nextSupervisorApproval),
-                style: FilledButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
-                ),
-              ),
-            ),
-          ),
-        ],
-          );
-        },
-      ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -247,7 +311,8 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
           saleId: Value(pendingRefund.saleId),
           storeId: Value(storeId),
           reason: Value(_selectedReason!),
-          notes: Value(_notesController.text.isEmpty ? null : _notesController.text),
+          notes: Value(
+              _notesController.text.isEmpty ? null : _notesController.text),
           totalRefund: Value(pendingRefund.amount),
           status: const Value('completed'),
           createdBy: Value(userId),
@@ -289,7 +354,8 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
           await db.productsDao.updateStock(item.productId, newQty);
 
           // تسجيل حركة المخزون بالكميات الفعلية
-          await db.inventoryDao.insertMovement(InventoryMovementsTableCompanion.insert(
+          await db.inventoryDao
+              .insertMovement(InventoryMovementsTableCompanion.insert(
             id: 'INV-RTN-${_uuid.v4()}',
             productId: item.productId,
             storeId: storeId,
@@ -333,7 +399,8 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
         setState(() => _isProcessing = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(AppLocalizations.of(context)!.refundCreationError(e.toString())),
+            content: Text(AppLocalizations.of(context)!
+                .refundCreationError(e.toString())),
             backgroundColor: AppColors.error,
           ),
         );

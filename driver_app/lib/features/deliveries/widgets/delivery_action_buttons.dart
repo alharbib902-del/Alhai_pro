@@ -23,8 +23,7 @@ class DeliveryActionButtons extends ConsumerStatefulWidget {
       _DeliveryActionButtonsState();
 }
 
-class _DeliveryActionButtonsState
-    extends ConsumerState<DeliveryActionButtons> {
+class _DeliveryActionButtonsState extends ConsumerState<DeliveryActionButtons> {
   bool _isLoading = false;
 
   Future<void> _updateStatus(String newStatus, {String? notes}) async {

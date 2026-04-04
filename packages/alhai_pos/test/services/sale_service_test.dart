@@ -79,12 +79,10 @@ void main() {
   }) {
     when(() => mockSalesDao.getTodayStoreCount(any()))
         .thenAnswer((_) async => todayStoreCount);
-    when(() => mockSalesDao.insertSale(any()))
-        .thenAnswer((_) async => 1);
+    when(() => mockSalesDao.insertSale(any())).thenAnswer((_) async => 1);
     when(() => mockProductsDao.getProductById(product.id))
         .thenAnswer((_) async => product);
-    when(() => mockSaleItemsDao.insertItem(any()))
-        .thenAnswer((_) async => 1);
+    when(() => mockSaleItemsDao.insertItem(any())).thenAnswer((_) async => 1);
     when(() => mockInventoryDao.recordSaleMovement(
           id: any(named: 'id'),
           productId: any(named: 'productId'),
@@ -102,14 +100,11 @@ void main() {
           priority: any(named: 'priority'),
         )).thenAnswer((_) async => 'sync-1');
     // Additional DAOs used by createSale
-    when(() => mockUsersDao.getUserById(any()))
-        .thenAnswer((_) async => null);
-    when(() => mockUsersDao.ensureUser(any()))
-        .thenAnswer((_) async => 1);
+    when(() => mockUsersDao.getUserById(any())).thenAnswer((_) async => null);
+    when(() => mockUsersDao.ensureUser(any())).thenAnswer((_) async => 1);
     when(() => mockCustomersDao.getCustomerById(any()))
         .thenAnswer((_) async => null);
-    when(() => mockStoresDao.getStoreById(any()))
-        .thenAnswer((_) async => null);
+    when(() => mockStoresDao.getStoreById(any())).thenAnswer((_) async => null);
     when(() => mockStockDeltasDao.addDelta(
           id: any(named: 'id'),
           productId: any(named: 'productId'),
@@ -173,14 +168,12 @@ void main() {
 
         when(() => mockSalesDao.getTodayStoreCount(any()))
             .thenAnswer((_) async => 0);
-        when(() => mockSalesDao.insertSale(any()))
-            .thenAnswer((_) async => 1);
+        when(() => mockSalesDao.insertSale(any())).thenAnswer((_) async => 1);
         when(() => mockProductsDao.getProductById('missing-prod'))
             .thenAnswer((_) async => null);
         when(() => mockUsersDao.getUserById(any()))
             .thenAnswer((_) async => null);
-        when(() => mockUsersDao.ensureUser(any()))
-            .thenAnswer((_) async => 1);
+        when(() => mockUsersDao.ensureUser(any())).thenAnswer((_) async => 1);
         when(() => mockCustomersDao.getCustomerById(any()))
             .thenAnswer((_) async => null);
 
@@ -216,14 +209,12 @@ void main() {
 
         when(() => mockSalesDao.getTodayStoreCount(any()))
             .thenAnswer((_) async => 0);
-        when(() => mockSalesDao.insertSale(any()))
-            .thenAnswer((_) async => 1);
+        when(() => mockSalesDao.insertSale(any())).thenAnswer((_) async => 1);
         when(() => mockProductsDao.getProductById('prod-1'))
             .thenAnswer((_) async => product);
         when(() => mockUsersDao.getUserById(any()))
             .thenAnswer((_) async => null);
-        when(() => mockUsersDao.ensureUser(any()))
-            .thenAnswer((_) async => 1);
+        when(() => mockUsersDao.ensureUser(any())).thenAnswer((_) async => 1);
         when(() => mockCustomersDao.getCustomerById(any()))
             .thenAnswer((_) async => null);
 
@@ -471,8 +462,7 @@ void main() {
             )).thenAnswer((_) async => 'sync-1');
         when(() => mockUsersDao.getUserById(any()))
             .thenAnswer((_) async => null);
-        when(() => mockUsersDao.ensureUser(any()))
-            .thenAnswer((_) async => 1);
+        when(() => mockUsersDao.ensureUser(any())).thenAnswer((_) async => 1);
         when(() => mockCustomersDao.getCustomerById(any()))
             .thenAnswer((_) async => null);
         when(() => mockStoresDao.getStoreById(any()))
@@ -526,8 +516,7 @@ void main() {
         expect(capturedReceipts[1], startsWith('POS-'));
       });
 
-      test('should create debt for credit portion of split payment',
-          () async {
+      test('should create debt for credit portion of split payment', () async {
         // Arrange
         final product = createTestProductsTableData(
           id: 'prod-1',
@@ -631,8 +620,7 @@ void main() {
 
         when(() => mockSalesDao.getSaleById('sale-1'))
             .thenAnswer((_) async => sale);
-        when(() => mockSalesDao.voidSale('sale-1'))
-            .thenAnswer((_) async => 1);
+        when(() => mockSalesDao.voidSale('sale-1')).thenAnswer((_) async => 1);
         when(() => mockSyncService.enqueueUpdate(
               tableName: any(named: 'tableName'),
               recordId: any(named: 'recordId'),
@@ -690,8 +678,7 @@ void main() {
             .thenAnswer((_) async => 1500.0);
 
         // Act
-        final result =
-            await saleService.getTodayTotal('store-1', 'cashier-1');
+        final result = await saleService.getTodayTotal('store-1', 'cashier-1');
 
         // Assert
         expect(result, equals(1500.0));
@@ -705,8 +692,7 @@ void main() {
             .thenAnswer((_) async => 25);
 
         // Act
-        final result =
-            await saleService.getTodayCount('store-1', 'cashier-1');
+        final result = await saleService.getTodayCount('store-1', 'cashier-1');
 
         // Assert
         expect(result, equals(25));
@@ -752,8 +738,7 @@ void main() {
             )).thenAnswer((_) async => 'sync-1');
         when(() => mockUsersDao.getUserById(any()))
             .thenAnswer((_) async => null);
-        when(() => mockUsersDao.ensureUser(any()))
-            .thenAnswer((_) async => 1);
+        when(() => mockUsersDao.ensureUser(any())).thenAnswer((_) async => 1);
         when(() => mockCustomersDao.getCustomerById(any()))
             .thenAnswer((_) async => null);
         when(() => mockStoresDao.getStoreById(any()))
@@ -772,8 +757,8 @@ void main() {
         // Capture the SalesTableCompanion passed to insertSale
         SalesTableCompanion? capturedCompanion;
         when(() => mockSalesDao.insertSale(any())).thenAnswer((invocation) {
-          capturedCompanion = invocation.positionalArguments[0]
-              as SalesTableCompanion;
+          capturedCompanion =
+              invocation.positionalArguments[0] as SalesTableCompanion;
           return Future.value(1);
         });
 

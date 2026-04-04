@@ -29,8 +29,7 @@ void main() {
     // Default stubs
     when(() => productsDao.searchProducts(any(), any()))
         .thenAnswer((_) async => []);
-    when(() => inventoryDao.insertMovement(any()))
-        .thenAnswer((_) async => 1);
+    when(() => inventoryDao.insertMovement(any())).thenAnswer((_) async => 1);
     when(() => productsDao.updateStock(any(), any()))
         .thenAnswer((_) async => 1);
   });
@@ -43,8 +42,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const RemoveInventoryScreen()));
+      await tester.pumpWidget(createTestWidget(const RemoveInventoryScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(RemoveInventoryScreen), findsOneWidget);
@@ -58,8 +56,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const RemoveInventoryScreen()));
+      await tester.pumpWidget(createTestWidget(const RemoveInventoryScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.search_rounded), findsWidgets);
@@ -74,8 +71,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const RemoveInventoryScreen()));
+      await tester.pumpWidget(createTestWidget(const RemoveInventoryScreen()));
       await tester.pumpAndSettle();
 
       expect(find.text('Quantity to Remove'), findsOneWidget);
@@ -89,8 +85,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const RemoveInventoryScreen()));
+      await tester.pumpWidget(createTestWidget(const RemoveInventoryScreen()));
       await tester.pumpAndSettle();
 
       // Reason options
@@ -107,8 +102,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-          createTestWidget(const RemoveInventoryScreen()));
+      await tester.pumpWidget(createTestWidget(const RemoveInventoryScreen()));
       await tester.pumpAndSettle();
 
       // Find the confirm removal button (last FilledButton)
@@ -133,8 +127,7 @@ void main() {
       when(() => productsDao.searchProducts(any(), any()))
           .thenAnswer((_) async => [createTestProduct(name: 'Water')]);
 
-      await tester.pumpWidget(
-          createTestWidget(const RemoveInventoryScreen()));
+      await tester.pumpWidget(createTestWidget(const RemoveInventoryScreen()));
       await tester.pumpAndSettle();
 
       // Enter search text

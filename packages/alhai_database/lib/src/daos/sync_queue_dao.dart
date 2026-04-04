@@ -11,21 +11,22 @@ part 'sync_queue_dao.g.dart';
 
 /// DAO لطابور المزامنة
 @DriftAccessor(tables: [SyncQueueTable])
-class SyncQueueDao extends DatabaseAccessor<AppDatabase> with _$SyncQueueDaoMixin {
+class SyncQueueDao extends DatabaseAccessor<AppDatabase>
+    with _$SyncQueueDaoMixin {
   SyncQueueDao(super.db);
-  
+
   /// الحصول على العناصر المعلقة
   Future<List<SyncQueueTableData>> getPendingItems() {
     return (select(syncQueueTable)
-      ..where((q) => q.status.equals('pending') | q.status.equals('failed'))
-      ..where((q) => q.retryCount.isSmallerThan(q.maxRetries))
-      ..orderBy([
-        (q) => OrderingTerm.desc(q.priority),
-        (q) => OrderingTerm.asc(q.createdAt),
-      ]))
-      .get();
+          ..where((q) => q.status.equals('pending') | q.status.equals('failed'))
+          ..where((q) => q.retryCount.isSmallerThan(q.maxRetries))
+          ..orderBy([
+            (q) => OrderingTerm.desc(q.priority),
+            (q) => OrderingTerm.asc(q.createdAt),
+          ]))
+        .get();
   }
-  
+
   /// الحصول على عدد العناصر المعلقة
   Future<int> getPendingCount() async {
     final result = await customSelect(
@@ -33,10 +34,10 @@ class SyncQueueDao extends DatabaseAccessor<AppDatabase> with _$SyncQueueDaoMixi
          WHERE (status = 'pending' OR status = 'failed') 
          AND retry_count < max_retries''',
     ).getSingle();
-    
+
     return result.data['count'] as int? ?? 0;
   }
-  
+
   /// Check if a pending/failed item with the same idempotency key exists
   Future<bool> hasExistingPendingItem(String idempotencyKey) async {
     final result = await customSelect(
@@ -75,25 +76,25 @@ class SyncQueueDao extends DatabaseAccessor<AppDatabase> with _$SyncQueueDaoMixi
       createdAt: DateTime.now(),
     ));
   }
-  
+
   /// تحديث الحالة إلى "جاري المزامنة"
   Future<int> markAsSyncing(String id) {
     return (update(syncQueueTable)..where((q) => q.id.equals(id)))
-      .write(SyncQueueTableCompanion(
-        status: const Value('syncing'),
-        lastAttemptAt: Value(DateTime.now()),
-      ));
+        .write(SyncQueueTableCompanion(
+      status: const Value('syncing'),
+      lastAttemptAt: Value(DateTime.now()),
+    ));
   }
-  
+
   /// تحديث الحالة إلى "تمت المزامنة"
   Future<int> markAsSynced(String id) {
     return (update(syncQueueTable)..where((q) => q.id.equals(id)))
-      .write(SyncQueueTableCompanion(
-        status: const Value('synced'),
-        syncedAt: Value(DateTime.now()),
-      ));
+        .write(SyncQueueTableCompanion(
+      status: const Value('synced'),
+      syncedAt: Value(DateTime.now()),
+    ));
   }
-  
+
   /// تحديث الحالة إلى "فشل" مع كشف التعارضات تلقائياً
   Future<int> markAsFailed(String id, String error) {
     final errorLower = error.toLowerCase();
@@ -129,15 +130,18 @@ class SyncQueueDao extends DatabaseAccessor<AppDatabase> with _$SyncQueueDaoMixi
       updateKind: UpdateKind.update,
     );
   }
-  
+
   /// حذف العناصر المزامنة القديمة
-  Future<int> cleanupSyncedItems({Duration olderThan = const Duration(days: 7)}) {
+  Future<int> cleanupSyncedItems(
+      {Duration olderThan = const Duration(days: 7)}) {
     final cutoff = DateTime.now().subtract(olderThan);
     return (delete(syncQueueTable)
-      ..where((q) => q.status.equals('synced') & q.syncedAt.isSmallerThanValue(cutoff)))
-      .go();
+          ..where((q) =>
+              q.status.equals('synced') &
+              q.syncedAt.isSmallerThanValue(cutoff)))
+        .go();
   }
-  
+
   /// حذف عنصر بالمعرف
   Future<int> removeItem(String id) {
     return (delete(syncQueueTable)..where((q) => q.id.equals(id))).go();
@@ -146,17 +150,17 @@ class SyncQueueDao extends DatabaseAccessor<AppDatabase> with _$SyncQueueDaoMixi
   /// تحديث البيانات (payload) لعنصر معلق
   Future<int> updatePayload(String id, String newPayload) {
     return (update(syncQueueTable)..where((t) => t.id.equals(id)))
-      .write(SyncQueueTableCompanion(
-        payload: Value(newPayload),
-      ));
+        .write(SyncQueueTableCompanion(
+      payload: Value(newPayload),
+    ));
   }
-  
+
   /// البحث عن عنصر بمفتاح idempotency
   Future<SyncQueueTableData?> findByIdempotencyKey(String key) {
     return (select(syncQueueTable)..where((q) => q.idempotencyKey.equals(key)))
-      .getSingleOrNull();
+        .getSingleOrNull();
   }
-  
+
   /// مراقبة عدد العناصر المعلقة
   Stream<int> watchPendingCount() {
     return customSelect(
@@ -190,20 +194,19 @@ class SyncQueueDao extends DatabaseAccessor<AppDatabase> with _$SyncQueueDaoMixi
   /// مراقبة قائمة العناصر المعلقة
   Stream<List<SyncQueueTableData>> watchPendingItems() {
     return (select(syncQueueTable)
-      ..where((q) => q.status.equals('pending') | q.status.equals('failed'))
-      ..where((q) => q.retryCount.isSmallerThan(q.maxRetries))
-      ..orderBy([
-        (q) => OrderingTerm.desc(q.priority),
-        (q) => OrderingTerm.asc(q.createdAt),
-      ]))
-      .watch();
+          ..where((q) => q.status.equals('pending') | q.status.equals('failed'))
+          ..where((q) => q.retryCount.isSmallerThan(q.maxRetries))
+          ..orderBy([
+            (q) => OrderingTerm.desc(q.priority),
+            (q) => OrderingTerm.asc(q.createdAt),
+          ]))
+        .watch();
   }
 
   /// Reset items stuck in 'syncing' status (from app crash) back to 'pending'
   Future<int> resetStuckItems() async {
-    return (update(syncQueueTable)
-      ..where((t) => t.status.equals('syncing'))
-    ).write(SyncQueueTableCompanion(
+    return (update(syncQueueTable)..where((t) => t.status.equals('syncing')))
+        .write(SyncQueueTableCompanion(
       status: const Value('pending'),
       lastAttemptAt: Value(DateTime.now()),
     ));
@@ -212,40 +215,40 @@ class SyncQueueDao extends DatabaseAccessor<AppDatabase> with _$SyncQueueDaoMixi
   /// الحصول على العناصر العالقة في حالة 'syncing' (بسبب إغلاق مفاجئ أو خطأ)
   Future<List<SyncQueueTableData>> getStuckSyncingItems() {
     return (select(syncQueueTable)
-      ..where((q) => q.status.equals('syncing'))
-      ..orderBy([
-        (q) => OrderingTerm.desc(q.priority),
-        (q) => OrderingTerm.asc(q.createdAt),
-      ]))
-      .get();
+          ..where((q) => q.status.equals('syncing'))
+          ..orderBy([
+            (q) => OrderingTerm.desc(q.priority),
+            (q) => OrderingTerm.asc(q.createdAt),
+          ]))
+        .get();
   }
 
   /// الحصول على العناصر المتعارضة (فشلت بعد استنفاد المحاولات)
   Future<List<SyncQueueTableData>> getConflictItems() {
     return (select(syncQueueTable)
-      ..where((q) =>
-          q.status.equals('conflict') |
-          (q.status.equals('failed') &
-              q.retryCount.isBiggerOrEqual(q.maxRetries)))
-      ..orderBy([
-        (q) => OrderingTerm.desc(q.priority),
-        (q) => OrderingTerm.asc(q.createdAt),
-      ]))
-      .get();
+          ..where((q) =>
+              q.status.equals('conflict') |
+              (q.status.equals('failed') &
+                  q.retryCount.isBiggerOrEqual(q.maxRetries)))
+          ..orderBy([
+            (q) => OrderingTerm.desc(q.priority),
+            (q) => OrderingTerm.asc(q.createdAt),
+          ]))
+        .get();
   }
 
   /// مراقبة العناصر المتعارضة
   Stream<List<SyncQueueTableData>> watchConflictItems() {
     return (select(syncQueueTable)
-      ..where((q) =>
-          q.status.equals('conflict') |
-          (q.status.equals('failed') &
-              q.retryCount.isBiggerOrEqual(q.maxRetries)))
-      ..orderBy([
-        (q) => OrderingTerm.desc(q.priority),
-        (q) => OrderingTerm.asc(q.createdAt),
-      ]))
-      .watch();
+          ..where((q) =>
+              q.status.equals('conflict') |
+              (q.status.equals('failed') &
+                  q.retryCount.isBiggerOrEqual(q.maxRetries)))
+          ..orderBy([
+            (q) => OrderingTerm.desc(q.priority),
+            (q) => OrderingTerm.asc(q.createdAt),
+          ]))
+        .watch();
   }
 
   /// عدد العناصر المتعارضة
@@ -261,49 +264,49 @@ class SyncQueueDao extends DatabaseAccessor<AppDatabase> with _$SyncQueueDaoMixi
   /// تحديث الحالة إلى "تم الحل"
   Future<int> markResolved(String id) {
     return (update(syncQueueTable)..where((q) => q.id.equals(id)))
-      .write(SyncQueueTableCompanion(
-        status: const Value('resolved'),
-        syncedAt: Value(DateTime.now()),
-      ));
+        .write(SyncQueueTableCompanion(
+      status: const Value('resolved'),
+      syncedAt: Value(DateTime.now()),
+    ));
   }
 
   /// إعادة تعيين عنصر للمحاولة مرة أخرى
   Future<int> retryItem(String id) {
     return (update(syncQueueTable)..where((q) => q.id.equals(id)))
-      .write(const SyncQueueTableCompanion(
-        status: Value('pending'),
-        retryCount: Value(0),
-        lastError: Value(null),
-      ));
+        .write(const SyncQueueTableCompanion(
+      status: Value('pending'),
+      retryCount: Value(0),
+      lastError: Value(null),
+    ));
   }
 
   /// تحديث الحالة إلى "تعارض"
   Future<int> markAsConflict(String id, String error) {
     return (update(syncQueueTable)..where((q) => q.id.equals(id)))
-      .write(SyncQueueTableCompanion(
-        status: const Value('conflict'),
-        lastError: Value(error),
-        lastAttemptAt: Value(DateTime.now()),
-      ));
+        .write(SyncQueueTableCompanion(
+      status: const Value('conflict'),
+      lastError: Value(error),
+      lastAttemptAt: Value(DateTime.now()),
+    ));
   }
 
   /// الحصول على جميع العناصر (لعرض شامل)
   Future<List<SyncQueueTableData>> getAllItems() {
     return (select(syncQueueTable)
-      ..orderBy([
-        (q) => OrderingTerm.desc(q.createdAt),
-      ]))
-      .get();
+          ..orderBy([
+            (q) => OrderingTerm.desc(q.createdAt),
+          ]))
+        .get();
   }
 
   /// الحصول على معرّفات السجلات المعلقة لجدول معين
   /// يُستخدم لمنع السحب (Pull) من الكتابة فوق تغييرات محلية لم تُدفع بعد
   Future<Set<String>> getPendingRecordIdsForTable(String tableName) async {
     final items = await (select(syncQueueTable)
-      ..where((q) =>
-          (q.status.equals('pending') | q.status.equals('syncing')) &
-          q.tableName_.equals(tableName)))
-      .get();
+          ..where((q) =>
+              (q.status.equals('pending') | q.status.equals('syncing')) &
+              q.tableName_.equals(tableName)))
+        .get();
     return items.map((item) => item.recordId).toSet();
   }
 
@@ -312,9 +315,9 @@ class SyncQueueDao extends DatabaseAccessor<AppDatabase> with _$SyncQueueDaoMixi
   Future<int> cleanOldSyncedItems() {
     final thirtyDaysAgo = DateTime.now().subtract(const Duration(days: 30));
     return (delete(syncQueueTable)
-      ..where((q) =>
-          q.status.equals('synced') &
-          q.syncedAt.isSmallerThanValue(thirtyDaysAgo)))
+          ..where((q) =>
+              q.status.equals('synced') &
+              q.syncedAt.isSmallerThanValue(thirtyDaysAgo)))
         .go();
   }
 
@@ -337,7 +340,8 @@ class SyncQueueDao extends DatabaseAccessor<AppDatabase> with _$SyncQueueDaoMixi
         recordId: recordId,
         operation: 'CONFLICT',
         payload: jsonEncode(serverData),
-        idempotencyKey: 'conflict_${tableName}_${recordId}_${now.millisecondsSinceEpoch}',
+        idempotencyKey:
+            'conflict_${tableName}_${recordId}_${now.millisecondsSinceEpoch}',
         status: const Value('conflict'),
         priority: const Value(1),
         createdAt: now,
@@ -356,9 +360,9 @@ class SyncQueueDao extends DatabaseAccessor<AppDatabase> with _$SyncQueueDaoMixi
   Future<int> markAsResolved(String id) {
     return (update(syncQueueTable)..where((t) => t.id.equals(id)))
         .write(SyncQueueTableCompanion(
-          status: const Value('resolved'),
-          syncedAt: Value(DateTime.now()),
-        ));
+      status: const Value('resolved'),
+      syncedAt: Value(DateTime.now()),
+    ));
   }
 
   // ==================== Sync Audit Log Queries ====================
@@ -366,9 +370,9 @@ class SyncQueueDao extends DatabaseAccessor<AppDatabase> with _$SyncQueueDaoMixi
   /// Get recent sync activity for display in sync status screen
   Future<List<SyncQueueTableData>> getRecentActivity({int limit = 50}) async {
     return (select(syncQueueTable)
-      ..orderBy([(t) => OrderingTerm.desc(t.createdAt)])
-      ..limit(limit)
-    ).get();
+          ..orderBy([(t) => OrderingTerm.desc(t.createdAt)])
+          ..limit(limit))
+        .get();
   }
 
   /// Get conflict count for badge display
@@ -394,14 +398,13 @@ class SyncQueueDao extends DatabaseAccessor<AppDatabase> with _$SyncQueueDaoMixi
   /// الحصول على العناصر المتعارضة لجدول معين
   Future<List<SyncQueueTableData>> getConflictItemsForTable(String tableName) {
     return (select(syncQueueTable)
-      ..where((q) =>
-          q.status.equals('conflict') &
-          q.tableName_.equals(tableName))
-      ..orderBy([
-        (q) => OrderingTerm.desc(q.priority),
-        (q) => OrderingTerm.asc(q.createdAt),
-      ]))
-      .get();
+          ..where((q) =>
+              q.status.equals('conflict') & q.tableName_.equals(tableName))
+          ..orderBy([
+            (q) => OrderingTerm.desc(q.priority),
+            (q) => OrderingTerm.asc(q.createdAt),
+          ]))
+        .get();
   }
 
   /// الحصول على عدد التعارضات لكل جدول
@@ -426,23 +429,24 @@ class SyncQueueDao extends DatabaseAccessor<AppDatabase> with _$SyncQueueDaoMixi
   /// يحدث الـ payload بالبيانات الناتجة عن الحل ويعيد الحالة إلى pending
   Future<int> resolveConflictWithData(String id, String resolvedPayload) {
     return (update(syncQueueTable)..where((q) => q.id.equals(id)))
-      .write(SyncQueueTableCompanion(
-        status: const Value('pending'),
-        payload: Value(resolvedPayload),
-        retryCount: const Value(0),
-        lastError: const Value(null),
-        lastAttemptAt: Value(DateTime.now()),
-      ));
+        .write(SyncQueueTableCompanion(
+      status: const Value('pending'),
+      payload: Value(resolvedPayload),
+      retryCount: const Value(0),
+      lastError: const Value(null),
+      lastAttemptAt: Value(DateTime.now()),
+    ));
   }
 
   /// تنظيف جميع التعارضات المحلولة
-  Future<int> cleanupResolvedConflicts({Duration olderThan = const Duration(days: 3)}) {
+  Future<int> cleanupResolvedConflicts(
+      {Duration olderThan = const Duration(days: 3)}) {
     final cutoff = DateTime.now().subtract(olderThan);
     return (delete(syncQueueTable)
-      ..where((q) =>
-          q.status.equals('resolved') &
-          q.syncedAt.isSmallerThanValue(cutoff)))
-      .go();
+          ..where((q) =>
+              q.status.equals('resolved') &
+              q.syncedAt.isSmallerThanValue(cutoff)))
+        .go();
   }
 
   // ==================== Dead Letter Queue ====================
@@ -451,14 +455,14 @@ class SyncQueueDao extends DatabaseAccessor<AppDatabase> with _$SyncQueueDaoMixi
   /// تشمل العناصر بحالة 'conflict' أو 'failed' مع retry_count >= max_retries
   Future<List<SyncQueueTableData>> getDeadLetterItems() {
     return (select(syncQueueTable)
-      ..where((q) =>
-          (q.status.equals('conflict') | q.status.equals('failed')) &
-          q.retryCount.isBiggerOrEqual(q.maxRetries))
-      ..orderBy([
-        (q) => OrderingTerm.desc(q.priority),
-        (q) => OrderingTerm.asc(q.createdAt),
-      ]))
-      .get();
+          ..where((q) =>
+              (q.status.equals('conflict') | q.status.equals('failed')) &
+              q.retryCount.isBiggerOrEqual(q.maxRetries))
+          ..orderBy([
+            (q) => OrderingTerm.desc(q.priority),
+            (q) => OrderingTerm.asc(q.createdAt),
+          ]))
+        .get();
   }
 
   /// عدد العناصر الميتة
@@ -506,13 +510,13 @@ class SyncQueueDao extends DatabaseAccessor<AppDatabase> with _$SyncQueueDaoMixi
     String operation,
   ) {
     return (select(syncQueueTable)
-      ..where((q) =>
-          q.tableName_.equals(tableName) &
-          q.recordId.equals(recordId) &
-          q.operation.equals(operation) &
-          q.status.equals('pending'))
-      ..limit(1))
-      .getSingleOrNull();
+          ..where((q) =>
+              q.tableName_.equals(tableName) &
+              q.recordId.equals(recordId) &
+              q.operation.equals(operation) &
+              q.status.equals('pending'))
+          ..limit(1))
+        .getSingleOrNull();
   }
 
   /// البحث عن جميع العناصر المعلقة لسجل معين في جدول معين
@@ -521,12 +525,12 @@ class SyncQueueDao extends DatabaseAccessor<AppDatabase> with _$SyncQueueDaoMixi
     String recordId,
   ) {
     return (select(syncQueueTable)
-      ..where((q) =>
-          q.tableName_.equals(tableName) &
-          q.recordId.equals(recordId) &
-          q.status.equals('pending'))
-      ..orderBy([(q) => OrderingTerm.asc(q.createdAt)]))
-      .get();
+          ..where((q) =>
+              q.tableName_.equals(tableName) &
+              q.recordId.equals(recordId) &
+              q.status.equals('pending'))
+          ..orderBy([(q) => OrderingTerm.asc(q.createdAt)]))
+        .get();
   }
 
   // ==================== صحة الطابور (Queue Health) ====================
@@ -566,7 +570,8 @@ class SyncQueueDao extends DatabaseAccessor<AppDatabase> with _$SyncQueueDaoMixi
       '''SELECT AVG(retry_count) as avg_retry FROM sync_queue
          WHERE status = 'pending' OR status = 'failed' ''',
     ).getSingleOrNull();
-    final avgRetryCount = (retryResult?.data['avg_retry'] as num?)?.toDouble() ?? 0.0;
+    final avgRetryCount =
+        (retryResult?.data['avg_retry'] as num?)?.toDouble() ?? 0.0;
 
     // العناصر حسب الجدول
     final tableRows = await customSelect(
@@ -622,7 +627,8 @@ class SyncQueueDao extends DatabaseAccessor<AppDatabase> with _$SyncQueueDaoMixi
       updateKind: UpdateKind.update,
     );
     if (recovered > 0) {
-      debugPrint('[SyncQueue] Recovered $recovered stuck items (>60s in syncing)');
+      debugPrint(
+          '[SyncQueue] Recovered $recovered stuck items (>60s in syncing)');
     }
     return recovered;
   }
@@ -661,7 +667,8 @@ class SyncQueueDao extends DatabaseAccessor<AppDatabase> with _$SyncQueueDaoMixi
   }
 
   /// تنظيف سجلات المزامنة القديمة (أقدم من المدة المحددة)
-  Future<int> cleanupSyncAuditLogs({Duration olderThan = const Duration(days: 7)}) {
+  Future<int> cleanupSyncAuditLogs(
+      {Duration olderThan = const Duration(days: 7)}) {
     final cutoff = DateTime.now().subtract(olderThan);
     return customUpdate(
       '''DELETE FROM audit_log
@@ -698,7 +705,8 @@ class SyncQueueHealth {
   });
 
   /// عدد العناصر النشطة (غير المكتملة)
-  int get activeCount => pendingCount + syncingCount + failedCount + conflictCount;
+  int get activeCount =>
+      pendingCount + syncingCount + failedCount + conflictCount;
 
   /// هل الطابور ممتلئ؟ (أكثر من 10,000 عنصر نشط)
   bool get isOverloaded => activeCount > 10000;

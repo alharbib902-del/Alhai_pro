@@ -13,7 +13,8 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
+import 'package:alhai_design_system/alhai_design_system.dart'
+    show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 
@@ -58,8 +59,7 @@ class _PaymentHistoryScreenState extends ConsumerState<PaymentHistoryScreen> {
       if (storeId == null) return;
       final orders = await _db.salesDao.getAllSales(storeId);
       // Only completed orders
-      final completed =
-          orders.where((o) => o.status == 'completed').toList();
+      final completed = orders.where((o) => o.status == 'completed').toList();
       completed.sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
       if (mounted) {
@@ -87,8 +87,7 @@ class _PaymentHistoryScreenState extends ConsumerState<PaymentHistoryScreen> {
         // Method filter
         bool passMethod = true;
         if (_methodFilter != 'all') {
-          passMethod =
-              order.paymentMethod == _methodFilter;
+          passMethod = order.paymentMethod == _methodFilter;
         }
 
         // Search filter
@@ -120,9 +119,8 @@ class _PaymentHistoryScreenState extends ConsumerState<PaymentHistoryScreen> {
           subtitle: _getDateSubtitle(l10n),
           showSearch: false,
           searchHint: l10n.searchPlaceholder,
-          onMenuTap: isWideScreen
-              ? null
-              : () => Scaffold.of(context).openDrawer(),
+          onMenuTap:
+              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 3,
           userName: user?.name ?? l10n.cashCustomer,
@@ -133,43 +131,45 @@ class _PaymentHistoryScreenState extends ConsumerState<PaymentHistoryScreen> {
           child: _isLoading
               ? const AppLoadingState()
               : _error != null
-                  ? AppErrorState.general(
-                      context, message: _error!, onRetry: _loadPayments)
+                  ? AppErrorState.general(context,
+                      message: _error!, onRetry: _loadPayments)
                   : Column(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-                      child: Column(
-                        children: [
-                          _buildSearchBar(isDark, l10n),
-                          const SizedBox(height: AlhaiSpacing.sm),
-                          _buildMethodFilters(isDark, l10n),
-                        ],
-                      ),
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.all(isMediumScreen
+                              ? AlhaiSpacing.lg
+                              : AlhaiSpacing.md),
+                          child: Column(
+                            children: [
+                              _buildSearchBar(isDark, l10n),
+                              const SizedBox(height: AlhaiSpacing.sm),
+                              _buildMethodFilters(isDark, l10n),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: isMediumScreen ? 24 : 16),
+                          child: _buildSummaryStats(isDark, l10n),
+                        ),
+                        const SizedBox(height: AlhaiSpacing.sm),
+                        Expanded(
+                          child: _filteredOrders.isEmpty
+                              ? _buildEmptyState(isDark, l10n)
+                              : ListView.separated(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: isMediumScreen ? 24 : 16,
+                                      vertical: AlhaiSpacing.xs),
+                                  itemCount: _filteredOrders.length,
+                                  separatorBuilder: (_, __) =>
+                                      const SizedBox(height: AlhaiSpacing.xs),
+                                  itemBuilder: (context, index) =>
+                                      _buildPaymentCard(
+                                          _filteredOrders[index], isDark, l10n),
+                                ),
+                        ),
+                      ],
                     ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: isMediumScreen ? 24 : 16),
-                      child: _buildSummaryStats(isDark, l10n),
-                    ),
-                    const SizedBox(height: AlhaiSpacing.sm),
-                    Expanded(
-                      child: _filteredOrders.isEmpty
-                          ? _buildEmptyState(isDark, l10n)
-                          : ListView.separated(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: isMediumScreen ? 24 : 16,
-                                  vertical: AlhaiSpacing.xs),
-                              itemCount: _filteredOrders.length,
-                              separatorBuilder: (_, __) =>
-                                  const SizedBox(height: AlhaiSpacing.xs),
-                              itemBuilder: (context, index) =>
-                                  _buildPaymentCard(
-                                      _filteredOrders[index], isDark, l10n),
-                            ),
-                    ),
-                  ],
-                ),
         ),
       ],
     );
@@ -187,8 +187,8 @@ class _PaymentHistoryScreenState extends ConsumerState<PaymentHistoryScreen> {
       decoration: InputDecoration(
         hintText: l10n.searchPlaceholder,
         hintStyle: TextStyle(color: AppColors.getTextMuted(isDark)),
-        prefixIcon: Icon(Icons.search_rounded,
-            color: AppColors.getTextMuted(isDark)),
+        prefixIcon:
+            Icon(Icons.search_rounded, color: AppColors.getTextMuted(isDark)),
         suffixIcon: _searchController.text.isNotEmpty
             ? IconButton(
                 onPressed: () => _searchController.clear(),
@@ -211,8 +211,8 @@ class _PaymentHistoryScreenState extends ConsumerState<PaymentHistoryScreen> {
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: AppColors.primary, width: 2),
         ),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(
+            horizontal: AlhaiSpacing.md, vertical: 14),
       ),
     );
   }
@@ -253,16 +253,16 @@ class _PaymentHistoryScreenState extends ConsumerState<PaymentHistoryScreen> {
       onTap: onTap,
       borderRadius: BorderRadius.circular(999),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: AlhaiSpacing.xs),
+        padding: const EdgeInsets.symmetric(
+            horizontal: 14, vertical: AlhaiSpacing.xs),
         decoration: BoxDecoration(
           color: isSelected
               ? AppColors.primary
               : AppColors.getSurfaceVariant(isDark),
           borderRadius: BorderRadius.circular(999),
           border: Border.all(
-              color: isSelected
-                  ? AppColors.primary
-                  : AppColors.getBorder(isDark)),
+              color:
+                  isSelected ? AppColors.primary : AppColors.getBorder(isDark)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -279,8 +279,7 @@ class _PaymentHistoryScreenState extends ConsumerState<PaymentHistoryScreen> {
               label,
               style: TextStyle(
                 fontSize: 13,
-                fontWeight:
-                    isSelected ? FontWeight.w600 : FontWeight.w500,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                 color: isSelected
                     ? Colors.white
                     : AppColors.getTextSecondary(isDark),
@@ -293,8 +292,8 @@ class _PaymentHistoryScreenState extends ConsumerState<PaymentHistoryScreen> {
   }
 
   Widget _buildSummaryStats(bool isDark, AppLocalizations l10n) {
-    final totalAmount = _filteredOrders.fold<double>(
-        0, (sum, o) => sum + o.total);
+    final totalAmount =
+        _filteredOrders.fold<double>(0, (sum, o) => sum + o.total);
     final count = _filteredOrders.length;
 
     return Container(
@@ -387,7 +386,8 @@ class _PaymentHistoryScreenState extends ConsumerState<PaymentHistoryScreen> {
                   children: [
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxxs),
+                          horizontal: AlhaiSpacing.xs,
+                          vertical: AlhaiSpacing.xxxs),
                       decoration: BoxDecoration(
                         color: color.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(999),
@@ -419,8 +419,7 @@ class _PaymentHistoryScreenState extends ConsumerState<PaymentHistoryScreen> {
                 Row(
                   children: [
                     Icon(Icons.person_outline_rounded,
-                        size: 13,
-                        color: AppColors.getTextMuted(isDark)),
+                        size: 13, color: AppColors.getTextMuted(isDark)),
                     const SizedBox(width: AlhaiSpacing.xxs),
                     Flexible(
                       child: Text(
@@ -434,8 +433,7 @@ class _PaymentHistoryScreenState extends ConsumerState<PaymentHistoryScreen> {
                     ),
                     const SizedBox(width: AlhaiSpacing.sm),
                     Icon(Icons.access_time_rounded,
-                        size: 13,
-                        color: AppColors.getTextMuted(isDark)),
+                        size: 13, color: AppColors.getTextMuted(isDark)),
                     const SizedBox(width: AlhaiSpacing.xxs),
                     Text('$date $time',
                         style: TextStyle(

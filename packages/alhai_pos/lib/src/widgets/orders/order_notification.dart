@@ -6,7 +6,7 @@ import '../../models/online_order.dart';
 import '../../providers/online_orders_provider.dart';
 
 /// Popup إشعار الطلب الجديد
-/// 
+///
 /// إشعار غير مزعج يظهر في زاوية الشاشة
 class OrderNotificationPopup extends StatefulWidget {
   final OnlineOrder order;
@@ -135,7 +135,8 @@ class _OrderNotificationPopupState extends State<OrderNotificationPopup>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            AppLocalizations.of(context)!.newOrderNotification(widget.order.id),
+                            AppLocalizations.of(context)!
+                                .newOrderNotification(widget.order.id),
                             style: theme.textTheme.titleSmall?.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
@@ -153,7 +154,8 @@ class _OrderNotificationPopupState extends State<OrderNotificationPopup>
                       icon: const Icon(Icons.close, size: 20),
                       onPressed: _dismiss,
                       padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
+                      constraints:
+                          const BoxConstraints(minWidth: 48, minHeight: 48),
                       tooltip: l10n.close,
                     ),
                   ],
@@ -187,7 +189,9 @@ class _OrderNotificationPopupState extends State<OrderNotificationPopup>
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: AlhaiSpacing.xs,
+                          vertical: AlhaiSpacing.xxs),
                       decoration: BoxDecoration(
                         color: widget.order.isPaid
                             ? AppColors.success.withValues(alpha: 0.2)
@@ -202,7 +206,9 @@ class _OrderNotificationPopupState extends State<OrderNotificationPopup>
                           Text(
                             widget.order.paymentStatus.arabicName,
                             style: TextStyle(
-                              color: widget.order.isPaid ? AppColors.success : AppColors.warning,
+                              color: widget.order.isPaid
+                                  ? AppColors.success
+                                  : AppColors.warning,
                               fontWeight: FontWeight.bold,
                               fontSize: 12,
                             ),
@@ -211,7 +217,8 @@ class _OrderNotificationPopupState extends State<OrderNotificationPopup>
                       ),
                     ),
                     Text(
-                      AppLocalizations.of(context)!.priceSar(widget.order.total.toStringAsFixed(2)),
+                      AppLocalizations.of(context)!
+                          .priceSar(widget.order.total.toStringAsFixed(2)),
                       style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: theme.colorScheme.primary,
@@ -284,7 +291,7 @@ class _OrderNotificationPopupState extends State<OrderNotificationPopup>
 /// Badge عدد الطلبات للـ AppBar
 class OrdersBadge extends ConsumerWidget {
   final VoidCallback? onTap;
-  
+
   const OrdersBadge({
     super.key,
     this.onTap,

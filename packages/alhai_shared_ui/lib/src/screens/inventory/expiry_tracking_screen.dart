@@ -70,7 +70,9 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
               Text(l10n.errorLoadingExpiryData,
                   style: TextStyle(color: colorScheme.error, fontSize: 16)),
               SizedBox(height: AlhaiSpacing.xs),
-              Text('$error', style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 12)),
+              Text('$error',
+                  style: TextStyle(
+                      color: colorScheme.onSurfaceVariant, fontSize: 12)),
               SizedBox(height: AlhaiSpacing.md),
               TextButton.icon(
                 onPressed: () => ref.invalidate(expiryTrackingProvider),
@@ -145,13 +147,20 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
             builder: (context, constraints) {
               final isMobile = constraints.maxWidth < 600;
               final isDesktop = constraints.maxWidth >= 1200;
-              final padding = isMobile ? 12.0 : isDesktop ? AlhaiSpacing.lg : AlhaiSpacing.md;
+              final padding = isMobile
+                  ? 12.0
+                  : isDesktop
+                      ? AlhaiSpacing.lg
+                      : AlhaiSpacing.md;
               return TabBarView(
                 controller: _tabController,
                 children: [
-                  _buildExpiryList(within7, colorScheme.error, l10n.noProductsExpiringIn7Days, l10n, padding),
-                  _buildExpiryList(within30, AlhaiColors.warning, l10n.noProductsExpiringInMonth, l10n, padding),
-                  _buildExpiryList(expired, colorScheme.onSurfaceVariant, l10n.noExpiredProducts, l10n, padding),
+                  _buildExpiryList(within7, colorScheme.error,
+                      l10n.noProductsExpiringIn7Days, l10n, padding),
+                  _buildExpiryList(within30, AlhaiColors.warning,
+                      l10n.noProductsExpiringInMonth, l10n, padding),
+                  _buildExpiryList(expired, colorScheme.onSurfaceVariant,
+                      l10n.noExpiredProducts, l10n, padding),
                 ],
               );
             },
@@ -166,8 +175,8 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
     );
   }
 
-  Widget _buildExpiryList(
-      List<ExpiryItemData> items, Color statusColor, String emptyMessage, AppLocalizations l10n, double padding) {
+  Widget _buildExpiryList(List<ExpiryItemData> items, Color statusColor,
+      String emptyMessage, AppLocalizations l10n, double padding) {
     if (items.isEmpty) {
       return _buildEmptyState(emptyMessage, l10n);
     }
@@ -185,7 +194,8 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
     );
   }
 
-  Widget _buildExpiryCard(ExpiryItemData item, Color statusColor, AppLocalizations l10n) {
+  Widget _buildExpiryCard(
+      ExpiryItemData item, Color statusColor, AppLocalizations l10n) {
     final daysLeft = item.expiry.expiryDate.difference(DateTime.now()).inDays;
     final dateFormatter = DateFormat('yyyy/MM/dd', 'ar');
     final isExpired = daysLeft < 0;
@@ -263,8 +273,8 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
                   ),
                 ),
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: AlhaiSpacing.sm, vertical: 6),
                   decoration: BoxDecoration(
                     color: statusColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(20),
@@ -300,22 +310,26 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
                 TextButton.icon(
                   onPressed: null,
                   icon: const Icon(Icons.local_offer, size: 16),
-                  label: Text(l10n.discount, style: const TextStyle(fontSize: 12)),
+                  label:
+                      Text(l10n.discount, style: const TextStyle(fontSize: 12)),
                   style: TextButton.styleFrom(
                     foregroundColor: colorScheme.primary,
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: AlhaiSpacing.xs,
+                        vertical: AlhaiSpacing.xxs),
                   ),
                 ),
                 SizedBox(width: AlhaiSpacing.xxs),
                 TextButton.icon(
                   onPressed: () => _confirmRemove(item, l10n),
                   icon: const Icon(Icons.delete_outline, size: 16),
-                  label: Text(l10n.remove, style: const TextStyle(fontSize: 12)),
+                  label:
+                      Text(l10n.remove, style: const TextStyle(fontSize: 12)),
                   style: TextButton.styleFrom(
                     foregroundColor: colorScheme.error,
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: AlhaiSpacing.xs,
+                        vertical: AlhaiSpacing.xxs),
                   ),
                 ),
               ],
@@ -332,7 +346,8 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.check_circle_outline, size: 64, color: AlhaiColors.success.withValues(alpha: 0.7)),
+          Icon(Icons.check_circle_outline,
+              size: 64, color: AlhaiColors.success.withValues(alpha: 0.7)),
           SizedBox(height: AlhaiSpacing.md),
           Text(
             message,
@@ -358,7 +373,8 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
   void _showDiscountDialog(ExpiryItemData item, AppLocalizations l10n) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('${l10n.applyDiscountTo} "${item.productName}" - ${l10n.featureNotAvailableNow}'),
+        content: Text(
+            '${l10n.applyDiscountTo} "${item.productName}" - ${l10n.featureNotAvailableNow}'),
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
     );
@@ -370,8 +386,7 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(l10n.confirmRemoval),
-        content: Text(
-            '${l10n.removeExpiryTrackingFor} "${item.productName}"?\n'
+        content: Text('${l10n.removeExpiryTrackingFor} "${item.productName}"?\n'
             '${l10n.batch}: ${item.expiry.batchNumber ?? "-"}\n'
             '${l10n.quantity}: ${item.expiry.quantity}'),
         actions: [
@@ -399,8 +414,12 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(success ? l10n.expiryTrackingRemoved : l10n.errorRemovingExpiryTracking),
-          backgroundColor: success ? AlhaiColors.success : Theme.of(context).colorScheme.error,
+          content: Text(success
+              ? l10n.expiryTrackingRemoved
+              : l10n.errorRemovingExpiryTracking),
+          backgroundColor: success
+              ? AlhaiColors.success
+              : Theme.of(context).colorScheme.error,
         ),
       );
     }
@@ -442,8 +461,7 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
                     ),
                     border: const OutlineInputBorder(),
                   ),
-                  onSubmitted: (value) =>
-                      _searchProduct(value, setDialogState),
+                  onSubmitted: (value) => _searchProduct(value, setDialogState),
                 ),
                 if (_selectedProductName != null) ...[
                   SizedBox(height: AlhaiSpacing.xs),
@@ -452,11 +470,13 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
                     decoration: BoxDecoration(
                       color: AlhaiColors.success.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: AlhaiColors.success.withValues(alpha: 0.3)),
+                      border: Border.all(
+                          color: AlhaiColors.success.withValues(alpha: 0.3)),
                     ),
                     child: Row(
                       children: [
-                        Icon(Icons.check_circle, size: 16, color: AlhaiColors.success),
+                        Icon(Icons.check_circle,
+                            size: 16, color: AlhaiColors.success),
                         SizedBox(width: AlhaiSpacing.xs),
                         Expanded(
                           child: Text(
@@ -477,8 +497,7 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
                   onTap: () async {
                     final date = await showDatePicker(
                       context: ctx,
-                      initialDate:
-                          DateTime.now().add(const Duration(days: 30)),
+                      initialDate: DateTime.now().add(const Duration(days: 30)),
                       firstDate: DateTime.now(),
                       lastDate:
                           DateTime.now().add(const Duration(days: 365 * 5)),
@@ -544,13 +563,13 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
               child: Text(l10n.cancel),
             ),
             FilledButton(
-              onPressed: (_selectedProductId != null &&
-                      _selectedExpiryDate != null)
-                  ? () async {
-                      Navigator.pop(ctx);
-                      await _addExpiry(l10n);
-                    }
-                  : null,
+              onPressed:
+                  (_selectedProductId != null && _selectedExpiryDate != null)
+                      ? () async {
+                          Navigator.pop(ctx);
+                          await _addExpiry(l10n);
+                        }
+                      : null,
               child: Text(l10n.add),
             ),
           ],
@@ -570,8 +589,7 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
 
     // Try barcode first
     final byBarcode = await (db.select(db.productsTable)
-          ..where((p) =>
-              p.barcode.equals(query) & p.storeId.equals(storeId)))
+          ..where((p) => p.barcode.equals(query) & p.storeId.equals(storeId)))
         .getSingleOrNull();
 
     if (byBarcode != null) {
@@ -584,8 +602,7 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
 
     // Try name search
     final byName = await (db.select(db.productsTable)
-          ..where(
-              (p) => p.name.contains(query) & p.storeId.equals(storeId))
+          ..where((p) => p.name.contains(query) & p.storeId.equals(storeId))
           ..limit(1))
         .getSingleOrNull();
 
@@ -624,8 +641,12 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(result != null ? l10n.expiryTrackingAdded : l10n.errorAddingExpiryTracking),
-          backgroundColor: result != null ? AlhaiColors.success : Theme.of(context).colorScheme.error,
+          content: Text(result != null
+              ? l10n.expiryTrackingAdded
+              : l10n.errorAddingExpiryTracking),
+          backgroundColor: result != null
+              ? AlhaiColors.success
+              : Theme.of(context).colorScheme.error,
         ),
       );
     }

@@ -25,7 +25,8 @@ class CustomerSearchDialog extends StatefulWidget {
   });
 
   /// عرض النافذة
-  static Future<CustomerSearchResult?> show(BuildContext context, {required String storeId}) {
+  static Future<CustomerSearchResult?> show(BuildContext context,
+      {required String storeId}) {
     return showModalBottomSheet<CustomerSearchResult>(
       context: context,
       isScrollControlled: true,
@@ -71,14 +72,16 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
       final customers = await _customersDao.getActiveCustomers(widget.storeId);
       if (!mounted) return;
       setState(() {
-        _allCustomers = customers.map((c) => CustomerSearchResult(
-          id: c.id,
-          name: c.name,
-          phone: c.phone ?? '',
-          balance: 0, // سيتم تحديثه لاحقاً من حساب العميل
-          loyaltyPoints: 0,
-          tier: null,
-        )).toList();
+        _allCustomers = customers
+            .map((c) => CustomerSearchResult(
+                  id: c.id,
+                  name: c.name,
+                  phone: c.phone ?? '',
+                  balance: 0, // سيتم تحديثه لاحقاً من حساب العميل
+                  loyaltyPoints: 0,
+                  tier: null,
+                ))
+            .toList();
         _filteredCustomers = _allCustomers;
         _isLoading = false;
       });
@@ -114,14 +117,16 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
       _customersDao.searchCustomers(query, widget.storeId).then((results) {
         if (!mounted) return;
         setState(() {
-          _filteredCustomers = results.map((c) => CustomerSearchResult(
-            id: c.id,
-            name: c.name,
-            phone: c.phone ?? '',
-            balance: 0,
-            loyaltyPoints: 0,
-            tier: null,
-          )).toList();
+          _filteredCustomers = results
+              .map((c) => CustomerSearchResult(
+                    id: c.id,
+                    name: c.name,
+                    phone: c.phone ?? '',
+                    balance: 0,
+                    loyaltyPoints: 0,
+                    tier: null,
+                  ))
+              .toList();
         });
       });
     }
@@ -210,10 +215,12 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
               child: ListTile(
                 leading: CircleAvatar(
                   backgroundColor: colorScheme.outlineVariant,
-                  child: const Icon(Icons.person_outline, color: AppColors.textMuted),
+                  child: const Icon(Icons.person_outline,
+                      color: AppColors.textMuted),
                 ),
                 title: Text(AppLocalizations.of(context)!.walkInCustomerLabel),
-                subtitle: Text(AppLocalizations.of(context)!.continueWithoutCustomer),
+                subtitle:
+                    Text(AppLocalizations.of(context)!.continueWithoutCustomer),
                 trailing: const AdaptiveIcon(Icons.arrow_forward_ios, size: 16),
                 onTap: () {
                   widget.onSelect(CustomerSearchResult(
@@ -236,14 +243,15 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
             child: _isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : _filteredCustomers.isEmpty
-                ? _buildEmptyState()
-                : ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: AppSizes.lg),
-                    itemCount: _filteredCustomers.length,
-                    itemBuilder: (context, index) {
-                      return _buildCustomerCard(_filteredCustomers[index]);
-                    },
-                  ),
+                    ? _buildEmptyState()
+                    : ListView.builder(
+                        padding:
+                            const EdgeInsets.symmetric(horizontal: AppSizes.lg),
+                        itemCount: _filteredCustomers.length,
+                        itemBuilder: (context, index) {
+                          return _buildCustomerCard(_filteredCustomers[index]);
+                        },
+                      ),
           ),
 
           // Add New Customer
@@ -254,7 +262,8 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
                 child: OutlinedButton.icon(
                   onPressed: widget.onAddNew,
                   icon: const Icon(Icons.person_add),
-                  label: Text(AppLocalizations.of(context)!.addNewCustomerButton),
+                  label:
+                      Text(AppLocalizations.of(context)!.addNewCustomerButton),
                   style: OutlinedButton.styleFrom(
                     minimumSize: const Size.fromHeight(48),
                   ),
@@ -300,129 +309,135 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
           child: Padding(
             padding: const EdgeInsets.all(AppSizes.md),
             child: Row(
-            children: [
-              // Avatar
-              CircleAvatar(
-                backgroundColor: _getTierColor(customer.tier).withValues(alpha: 0.1),
-                child: Text(
-                  customer.name[0],
-                  style: TextStyle(
-                    color: _getTierColor(customer.tier),
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              const SizedBox(width: AppSizes.md),
-
-              // Info
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          customer.name,
-                          style: AppTypography.titleSmall.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        if (customer.tier != null) ...[
-                          const SizedBox(width: AppSizes.xs),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 6,
-                              vertical: 2,
-                            ),
-                            decoration: BoxDecoration(
-                              color: _getTierColor(customer.tier),
-                              borderRadius:
-                                  BorderRadius.circular(AppSizes.radiusSm),
-                            ),
-                            child: Text(
-                              _localizedTier(l10n, customer.tier),
-                              style: AppTypography.labelSmall.copyWith(
-                                color: AppColors.textOnPrimary,
-                                fontSize: 10,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ],
-                    ),
-                    const SizedBox(height: 2),
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.phone_outlined,
-                          size: 14,
-                          color: AppColors.textMuted,
-                        ),
-                        const SizedBox(width: AlhaiSpacing.xxs),
-                        Text(
-                          customer.phone,
-                          style: AppTypography.bodySmall.copyWith(
-                            color: AppColors.textMuted,
-                          ),
-                        ),
-                        const SizedBox(width: AppSizes.md),
-                        const Icon(
-                          Icons.stars,
-                          size: 14,
-                          color: AppColors.warning,
-                        ),
-                        const SizedBox(width: AlhaiSpacing.xxs),
-                        Text(
-                          AppLocalizations.of(context)!.loyaltyPointsCountLabel(customer.loyaltyPoints.toString()),
-                          style: AppTypography.bodySmall.copyWith(
-                            color: AppColors.textMuted,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-
-              // Balance
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    l10n.balanceLabel,
-                    style: AppTypography.labelSmall.copyWith(
-                      color: AppColors.textMuted,
-                    ),
-                  ),
-                  Text(
-                    AppLocalizations.of(context)!.customerBalanceAmount(customer.balance.abs().toStringAsFixed(2)),
-                    style: AppTypography.titleSmall.copyWith(
-                      color: hasDebt
-                          ? AppColors.error
-                          : (hasCredit ? AppColors.success : AppColors.textSecondary),
+              children: [
+                // Avatar
+                CircleAvatar(
+                  backgroundColor:
+                      _getTierColor(customer.tier).withValues(alpha: 0.1),
+                  child: Text(
+                    customer.name[0],
+                    style: TextStyle(
+                      color: _getTierColor(customer.tier),
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  if (hasDebt)
+                ),
+                const SizedBox(width: AppSizes.md),
+
+                // Info
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            customer.name,
+                            style: AppTypography.titleSmall.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          if (customer.tier != null) ...[
+                            const SizedBox(width: AppSizes.xs),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: _getTierColor(customer.tier),
+                                borderRadius:
+                                    BorderRadius.circular(AppSizes.radiusSm),
+                              ),
+                              child: Text(
+                                _localizedTier(l10n, customer.tier),
+                                style: AppTypography.labelSmall.copyWith(
+                                  color: AppColors.textOnPrimary,
+                                  fontSize: 10,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                      const SizedBox(height: 2),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.phone_outlined,
+                            size: 14,
+                            color: AppColors.textMuted,
+                          ),
+                          const SizedBox(width: AlhaiSpacing.xxs),
+                          Text(
+                            customer.phone,
+                            style: AppTypography.bodySmall.copyWith(
+                              color: AppColors.textMuted,
+                            ),
+                          ),
+                          const SizedBox(width: AppSizes.md),
+                          const Icon(
+                            Icons.stars,
+                            size: 14,
+                            color: AppColors.warning,
+                          ),
+                          const SizedBox(width: AlhaiSpacing.xxs),
+                          Text(
+                            AppLocalizations.of(context)!
+                                .loyaltyPointsCountLabel(
+                                    customer.loyaltyPoints.toString()),
+                            style: AppTypography.bodySmall.copyWith(
+                              color: AppColors.textMuted,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Balance
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
                     Text(
-                      l10n.debtor,
+                      l10n.balanceLabel,
                       style: AppTypography.labelSmall.copyWith(
-                        color: AppColors.error,
+                        color: AppColors.textMuted,
                       ),
                     ),
-                  if (hasCredit)
                     Text(
-                      l10n.creditor,
-                      style: AppTypography.labelSmall.copyWith(
-                        color: AppColors.success,
+                      AppLocalizations.of(context)!.customerBalanceAmount(
+                          customer.balance.abs().toStringAsFixed(2)),
+                      style: AppTypography.titleSmall.copyWith(
+                        color: hasDebt
+                            ? AppColors.error
+                            : (hasCredit
+                                ? AppColors.success
+                                : AppColors.textSecondary),
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                ],
-              ),
-            ],
+                    if (hasDebt)
+                      Text(
+                        l10n.debtor,
+                        style: AppTypography.labelSmall.copyWith(
+                          color: AppColors.error,
+                        ),
+                      ),
+                    if (hasCredit)
+                      Text(
+                        l10n.creditor,
+                        style: AppTypography.labelSmall.copyWith(
+                          color: AppColors.success,
+                        ),
+                      ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
-      ),
       ),
     );
   }

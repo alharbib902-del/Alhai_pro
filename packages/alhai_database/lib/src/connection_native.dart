@@ -14,7 +14,8 @@ import 'package:path/path.dart' as p;
 QueryExecutor openNativeConnection({String? dbName, String? encryptionKey}) {
   return LazyDatabase(() async {
     final dbFolder = await getApplicationDocumentsDirectory();
-    final file = File(p.join(dbFolder.path, 'alhai_pos', dbName ?? 'pos_database.sqlite'));
+    final file = File(
+        p.join(dbFolder.path, 'alhai_pos', dbName ?? 'pos_database.sqlite'));
 
     if (!file.parent.existsSync()) {
       file.parent.createSync(recursive: true);
@@ -27,8 +28,10 @@ QueryExecutor openNativeConnection({String? dbName, String? encryptionKey}) {
         if (encryptionKey != null && encryptionKey.isNotEmpty) {
           // Validate encryption key is hex-only (prevents SQL injection)
           final hexPattern = RegExp(r'^[0-9a-fA-F]+$');
-          if (encryptionKey.length < 32 || !hexPattern.hasMatch(encryptionKey)) {
-            throw ArgumentError('Encryption key must be at least 32 hex characters');
+          if (encryptionKey.length < 32 ||
+              !hexPattern.hasMatch(encryptionKey)) {
+            throw ArgumentError(
+                'Encryption key must be at least 32 hex characters');
           }
           db.execute("PRAGMA key = '$encryptionKey'");
         }

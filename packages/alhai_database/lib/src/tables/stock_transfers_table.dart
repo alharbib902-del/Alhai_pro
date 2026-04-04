@@ -12,9 +12,11 @@ class StockTransfersTable extends Table {
   TextColumn get transferNumber => text()();
   TextColumn get fromStoreId => text()();
   TextColumn get toStoreId => text()();
-  TextColumn get status => text().withDefault(const Constant('pending'))(); // pending, approved, in_transit, completed, cancelled
+  TextColumn get status => text().withDefault(const Constant(
+      'pending'))(); // pending, approved, in_transit, completed, cancelled
   TextColumn get items => text()(); // JSON array
   TextColumn get notes => text().nullable()();
+
   /// NOTE: Naming inconsistency - this column is called [createdBy] but other
   /// tables (audit_log, notifications, inventory_movements, org_members) use
   /// [userId] for the same concept. Preferred standard: [userId] to match
@@ -23,7 +25,8 @@ class StockTransfersTable extends Table {
   TextColumn get createdBy => text().nullable()();
   TextColumn get approvedBy => text().nullable()();
   TextColumn get receivedBy => text().nullable()();
-  TextColumn get approvalStatus => text().withDefault(const Constant('pending'))();
+  TextColumn get approvalStatus =>
+      text().withDefault(const Constant('pending'))();
   // pending → approved → in_transit → received → cancelled
   DateTimeColumn get createdAt => dateTime()();
   DateTimeColumn get approvedAt => dateTime().nullable()();

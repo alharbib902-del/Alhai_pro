@@ -18,7 +18,7 @@ class LoadingWidget extends StatelessWidget {
 class ShimmerList extends StatelessWidget {
   /// عدد العناصر الوهمية
   final int itemCount;
-  
+
   /// ارتفاع كل عنصر
   final double itemHeight;
 
@@ -31,15 +31,20 @@ class ShimmerList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Shimmer.fromColors(
-      baseColor: isDark ? Theme.of(context).colorScheme.onSurface : Theme.of(context).colorScheme.outlineVariant,
-      highlightColor: isDark ? Theme.of(context).colorScheme.onSurfaceVariant : Theme.of(context).colorScheme.surfaceContainerLow,
+      baseColor: isDark
+          ? Theme.of(context).colorScheme.onSurface
+          : Theme.of(context).colorScheme.outlineVariant,
+      highlightColor: isDark
+          ? Theme.of(context).colorScheme.onSurfaceVariant
+          : Theme.of(context).colorScheme.surfaceContainerLow,
       child: ListView.builder(
         physics: const NeverScrollableScrollPhysics(),
         itemCount: itemCount,
         itemBuilder: (_, __) => Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
+          padding: const EdgeInsets.symmetric(
+              horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
           child: Container(
             height: itemHeight,
             decoration: BoxDecoration(
@@ -57,10 +62,10 @@ class ShimmerList extends StatelessWidget {
 class ShimmerGrid extends StatelessWidget {
   /// عدد العناصر الوهمية
   final int itemCount;
-  
+
   /// عدد الأعمدة
   final int crossAxisCount;
-  
+
   /// نسبة العرض للارتفاع
   final double aspectRatio;
 
@@ -74,10 +79,14 @@ class ShimmerGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Shimmer.fromColors(
-      baseColor: isDark ? Theme.of(context).colorScheme.onSurface : Theme.of(context).colorScheme.outlineVariant,
-      highlightColor: isDark ? Theme.of(context).colorScheme.onSurfaceVariant : Theme.of(context).colorScheme.surfaceContainerLow,
+      baseColor: isDark
+          ? Theme.of(context).colorScheme.onSurface
+          : Theme.of(context).colorScheme.outlineVariant,
+      highlightColor: isDark
+          ? Theme.of(context).colorScheme.onSurfaceVariant
+          : Theme.of(context).colorScheme.surfaceContainerLow,
       child: GridView.builder(
         padding: const EdgeInsets.all(AlhaiSpacing.xs),
         physics: const NeverScrollableScrollPhysics(),
@@ -103,10 +112,10 @@ class ShimmerGrid extends StatelessWidget {
 class ShimmerCard extends StatelessWidget {
   /// عرض البطاقة
   final double? width;
-  
+
   /// ارتفاع البطاقة
   final double height;
-  
+
   /// نصف قطر الحواف
   final double borderRadius;
 
@@ -120,10 +129,14 @@ class ShimmerCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Shimmer.fromColors(
-      baseColor: isDark ? Theme.of(context).colorScheme.onSurface : Theme.of(context).colorScheme.outlineVariant,
-      highlightColor: isDark ? Theme.of(context).colorScheme.onSurfaceVariant : Theme.of(context).colorScheme.surfaceContainerLow,
+      baseColor: isDark
+          ? Theme.of(context).colorScheme.onSurface
+          : Theme.of(context).colorScheme.outlineVariant,
+      highlightColor: isDark
+          ? Theme.of(context).colorScheme.onSurfaceVariant
+          : Theme.of(context).colorScheme.surfaceContainerLow,
       child: Container(
         width: width,
         height: height,

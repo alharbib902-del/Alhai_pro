@@ -13,7 +13,8 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
+import 'package:alhai_design_system/alhai_design_system.dart'
+    show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 import '../../core/services/audit_service.dart';
@@ -87,9 +88,8 @@ class _CashierReceivingScreenState
           subtitle: _getDateSubtitle(l10n),
           showSearch: false,
           searchHint: l10n.searchPlaceholder,
-          onMenuTap: isWideScreen
-              ? null
-              : () => Scaffold.of(context).openDrawer(),
+          onMenuTap:
+              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 3,
           userName: user?.name ?? l10n.cashCustomer,
@@ -100,21 +100,26 @@ class _CashierReceivingScreenState
           child: _isLoading
               ? const AppLoadingState()
               : _error != null
-                  ? AppErrorState.general(context, message: _error!, onRetry: _loadPurchases)
-              : _purchases.isEmpty
-                  ? _buildEmptyState(isDark, l10n)
-                  : RefreshIndicator(
-                      onRefresh: _loadPurchases,
-                      child: ListView.separated(
-                        padding:
-                            EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-                        itemCount: _purchases.length,
-                        separatorBuilder: (_, __) =>
-                            const SizedBox(height: AlhaiSpacing.sm),
-                        itemBuilder: (_, index) => _buildPurchaseCard(
-                            _purchases[index], isDark, isMediumScreen, l10n),
-                      ),
-                    ),
+                  ? AppErrorState.general(context,
+                      message: _error!, onRetry: _loadPurchases)
+                  : _purchases.isEmpty
+                      ? _buildEmptyState(isDark, l10n)
+                      : RefreshIndicator(
+                          onRefresh: _loadPurchases,
+                          child: ListView.separated(
+                            padding: EdgeInsets.all(isMediumScreen
+                                ? AlhaiSpacing.lg
+                                : AlhaiSpacing.md),
+                            itemCount: _purchases.length,
+                            separatorBuilder: (_, __) =>
+                                const SizedBox(height: AlhaiSpacing.sm),
+                            itemBuilder: (_, index) => _buildPurchaseCard(
+                                _purchases[index],
+                                isDark,
+                                isMediumScreen,
+                                l10n),
+                          ),
+                        ),
         ),
       ],
     );
@@ -164,8 +169,8 @@ class _CashierReceivingScreenState
             style: OutlinedButton.styleFrom(
               foregroundColor: AppColors.primary,
               side: const BorderSide(color: AppColors.primary),
-              padding:
-                  const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg, vertical: AlhaiSpacing.sm),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AlhaiSpacing.lg, vertical: AlhaiSpacing.sm),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10)),
             ),
@@ -228,8 +233,8 @@ class _CashierReceivingScreenState
                 ),
               ),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: AlhaiSpacing.xxs),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 10, vertical: AlhaiSpacing.xxs),
                 decoration: BoxDecoration(
                   color: AppColors.success.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -262,7 +267,8 @@ class _CashierReceivingScreenState
                 Container(
                   width: 1,
                   height: 24,
-                  margin: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm),
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm),
                   color: AppColors.getBorder(isDark),
                 ),
                 _infoItem(
@@ -275,7 +281,8 @@ class _CashierReceivingScreenState
                   Container(
                     width: 1,
                     height: 24,
-                    margin: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm),
+                    margin:
+                        const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm),
                     color: AppColors.getBorder(isDark),
                   ),
                   Expanded(
@@ -294,14 +301,16 @@ class _CashierReceivingScreenState
             children: [
               Expanded(
                 child: OutlinedButton.icon(
-                  onPressed: () => _showItemsBottomSheet(purchase, isDark, l10n),
+                  onPressed: () =>
+                      _showItemsBottomSheet(purchase, isDark, l10n),
                   icon: const Icon(Icons.list_alt_rounded, size: 18),
                   label: Text(l10n.viewItems,
                       style: const TextStyle(fontWeight: FontWeight.w600)),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.info,
                     side: const BorderSide(color: AppColors.info),
-                    padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
+                    padding:
+                        const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10)),
                   ),
@@ -323,13 +332,16 @@ class _CashierReceivingScreenState
                         )
                       : const Icon(Icons.check_circle_rounded, size: 18),
                   label: Text(
-                    isReceiving ? l10n.receivingInProgress : l10n.confirmReceivingBtn,
+                    isReceiving
+                        ? l10n.receivingInProgress
+                        : l10n.confirmReceivingBtn,
                     style: const TextStyle(fontWeight: FontWeight.w600),
                   ),
                   style: FilledButton.styleFrom(
                     backgroundColor: AppColors.success,
                     foregroundColor: AppColors.textOnPrimary,
-                    padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
+                    padding:
+                        const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10)),
                   ),
@@ -476,8 +488,7 @@ class _CashierReceivingScreenState
                                       decoration: BoxDecoration(
                                         color: AppColors.primary
                                             .withValues(alpha: 0.08),
-                                        borderRadius:
-                                            BorderRadius.circular(8),
+                                        borderRadius: BorderRadius.circular(8),
                                       ),
                                       alignment: Alignment.center,
                                       child: Text(
@@ -510,9 +521,8 @@ class _CashierReceivingScreenState
                                               style: TextStyle(
                                                 fontSize: 11,
                                                 fontFamily: 'monospace',
-                                                color:
-                                                    AppColors.getTextMuted(
-                                                        isDark),
+                                                color: AppColors.getTextMuted(
+                                                    isDark),
                                               ),
                                             ),
                                         ],
@@ -534,9 +544,8 @@ class _CashierReceivingScreenState
                                           '${item.unitCost.toStringAsFixed(2)} ${l10n.sar}',
                                           style: TextStyle(
                                             fontSize: 12,
-                                            color:
-                                                AppColors.getTextSecondary(
-                                                    isDark),
+                                            color: AppColors.getTextSecondary(
+                                                isDark),
                                           ),
                                         ),
                                       ],
@@ -609,7 +618,8 @@ class _CashierReceivingScreenState
       // Audit log
       final user = ref.read(currentUserProvider);
       final storeId = ref.read(currentStoreIdProvider)!;
-      final receivedItems = await _db.purchasesDao.getPurchaseItems(purchase.id);
+      final receivedItems =
+          await _db.purchasesDao.getPurchaseItems(purchase.id);
       auditService.logStockReceive(
         storeId: storeId,
         userId: user?.id ?? 'unknown',
@@ -636,7 +646,8 @@ class _CashierReceivingScreenState
       showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
-          icon: const Icon(Icons.error_outline, color: AppColors.error, size: 48),
+          icon:
+              const Icon(Icons.error_outline, color: AppColors.error, size: 48),
           title: Text(l10n.error),
           content: Text(l10n.errorWithDetails('$e')),
           actions: [

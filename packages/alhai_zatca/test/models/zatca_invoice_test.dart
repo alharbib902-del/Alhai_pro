@@ -2,7 +2,6 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:alhai_zatca/src/models/invoice_type_code.dart';
 import 'package:alhai_zatca/src/models/reporting_status.dart';
-import 'package:alhai_zatca/src/models/zatca_buyer.dart';
 import 'package:alhai_zatca/src/models/zatca_invoice.dart';
 import 'package:alhai_zatca/src/models/zatca_invoice_line.dart';
 import 'package:alhai_zatca/src/models/zatca_seller.dart';

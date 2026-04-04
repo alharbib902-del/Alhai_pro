@@ -96,13 +96,15 @@ class ZatcaSeller {
         if (crNumber != null) 'crNumber': crNumber,
         'streetName': streetName,
         'buildingNumber': buildingNumber,
-        if (plotIdentification != null) 'plotIdentification': plotIdentification,
+        if (plotIdentification != null)
+          'plotIdentification': plotIdentification,
         'city': city,
         if (district != null) 'district': district,
         'postalCode': postalCode,
         'countryCode': countryCode,
         if (additionalId != null) 'additionalId': additionalId,
-        if (additionalIdScheme != null) 'additionalIdScheme': additionalIdScheme,
+        if (additionalIdScheme != null)
+          'additionalIdScheme': additionalIdScheme,
       };
 
   factory ZatcaSeller.fromJson(Map<String, dynamic> json) => ZatcaSeller(

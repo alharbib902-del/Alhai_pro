@@ -231,7 +231,8 @@ class OtpInputFieldState extends State<OtpInputField>
               children: List.generate(widget.length, (index) {
                 return Padding(
                   padding: EdgeInsets.symmetric(
-                    horizontal: index == 0 || index == widget.length - 1 ? 0 : 4,
+                    horizontal:
+                        index == 0 || index == widget.length - 1 ? 0 : 4,
                   ),
                   child: _buildOtpBox(index),
                 );
@@ -259,7 +260,9 @@ class OtpInputFieldState extends State<OtpInputField>
       fillColor = Theme.of(context).colorScheme.surface;
     } else if (_controllers[index].text.isNotEmpty) {
       borderColor = AppColors.primaryLight;
-      fillColor = isDark ? AppColors.primaryDark.withValues(alpha: 0.2) : AppColors.primarySurface;
+      fillColor = isDark
+          ? AppColors.primaryDark.withValues(alpha: 0.2)
+          : AppColors.primarySurface;
     } else {
       borderColor = Theme.of(context).colorScheme.outline;
       fillColor = Theme.of(context).colorScheme.surface;

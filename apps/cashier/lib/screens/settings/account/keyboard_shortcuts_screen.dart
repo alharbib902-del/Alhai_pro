@@ -12,7 +12,8 @@ import 'package:go_router/go_router.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_auth/alhai_auth.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
+import 'package:alhai_design_system/alhai_design_system.dart'
+    show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 
 /// Keyboard shortcuts reference screen
@@ -51,16 +52,15 @@ class _KeyboardShortcutsScreenState
             tooltip: l10n.back,
           ),
           onNotificationsTap: () => context.push(AppRoutes.notificationsCenter),
-          userName:
-              ref.watch(currentUserProvider)?.name ?? l10n.cashCustomer,
+          userName: ref.watch(currentUserProvider)?.name ?? l10n.cashCustomer,
           userRole: l10n.cashier,
           onUserTap: () => context.push(AppRoutes.profile),
         ),
         Expanded(
           child: SingleChildScrollView(
-            padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-            child:
-                _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
+            padding: EdgeInsets.all(
+                isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+            child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
           ),
         ),
       ],
@@ -84,8 +84,7 @@ class _KeyboardShortcutsScreenState
           decoration: BoxDecoration(
             color: AppColors.info.withValues(alpha: isDark ? 0.12 : 0.06),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-                color: AppColors.info.withValues(alpha: 0.3)),
+            border: Border.all(color: AppColors.info.withValues(alpha: 0.3)),
           ),
           child: Row(
             children: [
@@ -163,16 +162,15 @@ class _KeyboardShortcutsScreenState
     return GestureDetector(
       onTap: () => setState(() => _selectedCategory = id),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
+        padding: const EdgeInsets.symmetric(
+            horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
         decoration: BoxDecoration(
           color: isSelected
               ? AppColors.primary.withValues(alpha: 0.1)
               : AppColors.getSurfaceVariant(isDark),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isSelected
-                ? AppColors.primary
-                : AppColors.getBorder(isDark),
+            color: isSelected ? AppColors.primary : AppColors.getBorder(isDark),
           ),
         ),
         child: Text(

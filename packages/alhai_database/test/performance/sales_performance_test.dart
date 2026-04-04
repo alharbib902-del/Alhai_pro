@@ -146,7 +146,8 @@ void main() {
       await db.close();
     });
 
-    test('getSalesPaginated for 7-day date range completes under 200ms', () async {
+    test('getSalesPaginated for 7-day date range completes under 200ms',
+        () async {
       final sw = Stopwatch()..start();
       final results = await db.salesDao.getSalesPaginated(
         'store-1',
@@ -157,7 +158,8 @@ void main() {
       );
       sw.stop();
 
-      expect(results, isNotEmpty, reason: 'Date range query should return results');
+      expect(results, isNotEmpty,
+          reason: 'Date range query should return results');
       expect(sw.elapsedMilliseconds, lessThan(200),
           reason: 'Date range query over 500 sales should complete under 200ms '
               '(actual: ${sw.elapsedMilliseconds}ms)');
@@ -172,7 +174,8 @@ void main() {
       );
       sw.stop();
 
-      expect(stats.count, greaterThan(0), reason: 'Single day stats should have results');
+      expect(stats.count, greaterThan(0),
+          reason: 'Single day stats should have results');
       expect(sw.elapsedMilliseconds, lessThan(100),
           reason: 'Single day stats should complete under 100ms '
               '(actual: ${sw.elapsedMilliseconds}ms)');
@@ -192,7 +195,8 @@ void main() {
       expect(results, isNotEmpty);
       expect(results.length, lessThanOrEqualTo(20));
       expect(sw.elapsedMilliseconds, lessThan(100),
-          reason: 'Paginated sales with date filter should complete under 100ms '
+          reason:
+              'Paginated sales with date filter should complete under 100ms '
               '(actual: ${sw.elapsedMilliseconds}ms)');
     });
   });
@@ -225,7 +229,8 @@ void main() {
 
       expect(stats.count, 500, reason: 'Should count all 500 sales');
       expect(stats.total, greaterThan(0), reason: 'Total should be positive');
-      expect(stats.average, greaterThan(0), reason: 'Average should be positive');
+      expect(stats.average, greaterThan(0),
+          reason: 'Average should be positive');
       expect(stats.maxSale, greaterThanOrEqualTo(stats.minSale));
       expect(sw.elapsedMilliseconds, lessThan(100),
           reason: 'Sales stats aggregation should complete under 100ms '
@@ -243,7 +248,8 @@ void main() {
               '(actual: ${sw.elapsedMilliseconds}ms)');
     });
 
-    test('getSalesStats with date range filter completes under 100ms', () async {
+    test('getSalesStats with date range filter completes under 100ms',
+        () async {
       final sw = Stopwatch()..start();
       final stats = await db.salesDao.getSalesStats(
         'store-1',
@@ -252,7 +258,8 @@ void main() {
       );
       sw.stop();
 
-      expect(stats.count, greaterThan(0), reason: 'Filtered stats should have results');
+      expect(stats.count, greaterThan(0),
+          reason: 'Filtered stats should have results');
       expect(sw.elapsedMilliseconds, lessThan(100),
           reason: 'Filtered sales stats should complete under 100ms '
               '(actual: ${sw.elapsedMilliseconds}ms)');

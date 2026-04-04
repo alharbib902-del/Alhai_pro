@@ -22,7 +22,8 @@ abstract class StoreSettingsRepository {
   });
 
   /// Updates store settings
-  Future<StoreSettings> updateSettings(String storeId, {
+  Future<StoreSettings> updateSettings(
+    String storeId, {
     String? receiptHeader,
     String? receiptFooter,
     double? taxRate,

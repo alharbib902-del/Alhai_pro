@@ -80,7 +80,11 @@ class DeliveryTimeline extends StatelessWidget {
   bool _isCompleted(int stageIndex) {
     final statusOrder = [
       [DeliveryStatus.assigned],
-      [DeliveryStatus.accepted, DeliveryStatus.headingToPickup, DeliveryStatus.arrivedAtPickup],
+      [
+        DeliveryStatus.accepted,
+        DeliveryStatus.headingToPickup,
+        DeliveryStatus.arrivedAtPickup
+      ],
       [DeliveryStatus.pickedUp],
       [DeliveryStatus.headingToCustomer, DeliveryStatus.arrivedAtCustomer],
       [DeliveryStatus.delivered],

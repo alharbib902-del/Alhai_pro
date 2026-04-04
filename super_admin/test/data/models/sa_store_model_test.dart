@@ -116,11 +116,11 @@ void main() {
         subscriptions: [
           SAStoreSubscription(
             id: 'sub-rt',
-            planId: 'plan-rt',
+            planSlug: 'trial',
             status: 'trial',
             startDate: '2024-03-01',
             endDate: '2024-03-14',
-            storeId: 'store-rt',
+            orgId: 'store-rt',
             plan: SAStorePlan(
               id: 'plan-rt',
               name: 'Trial',

@@ -7,7 +7,8 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiSpacing, AppColors;
+import 'package:alhai_design_system/alhai_design_system.dart'
+    show AlhaiSpacing, AppColors;
 import 'package:alhai_l10n/alhai_l10n.dart';
 
 class _Denomination {
@@ -54,7 +55,8 @@ class DenominationCounterWidget extends StatefulWidget {
   });
 
   @override
-  State<DenominationCounterWidget> createState() => _DenominationCounterWidgetState();
+  State<DenominationCounterWidget> createState() =>
+      _DenominationCounterWidgetState();
 }
 
 class _DenominationCounterWidgetState extends State<DenominationCounterWidget> {
@@ -121,7 +123,8 @@ class _DenominationCounterWidgetState extends State<DenominationCounterWidget> {
           ),
           child: Column(
             children: [
-              Text(l10n.totalAmountLabel, style: const TextStyle(color: Colors.white70, fontSize: 13)),
+              Text(l10n.totalAmountLabel,
+                  style: const TextStyle(color: Colors.white70, fontSize: 13)),
               const SizedBox(height: AlhaiSpacing.xxs),
               Text(
                 l10n.amountRiyal(_total.toStringAsFixed(2)),
@@ -138,12 +141,16 @@ class _DenominationCounterWidgetState extends State<DenominationCounterWidget> {
 
         // قسم الأوراق
         _buildSectionHeader(l10n.banknotes, Icons.money, isDark),
-        ..._denominations.where((d) => d.isNote).map((d) => _buildRow(d, isDark, l10n)),
+        ..._denominations
+            .where((d) => d.isNote)
+            .map((d) => _buildRow(d, isDark, l10n)),
 
         const SizedBox(height: AlhaiSpacing.xs),
         // قسم العملات المعدنية
         _buildSectionHeader(l10n.coins, Icons.toll, isDark),
-        ..._denominations.where((d) => !d.isNote).map((d) => _buildRow(d, isDark, l10n)),
+        ..._denominations
+            .where((d) => !d.isNote)
+            .map((d) => _buildRow(d, isDark, l10n)),
 
         const SizedBox(height: AlhaiSpacing.sm),
         // زر الإعادة
@@ -188,7 +195,7 @@ class _DenominationCounterWidgetState extends State<DenominationCounterWidget> {
         children: [
           // الفئة
           SizedBox(
-            width:90,
+            width: 90,
             child: Text(
               d.label(l10n),
               style: TextStyle(
@@ -210,7 +217,8 @@ class _DenominationCounterWidgetState extends State<DenominationCounterWidget> {
               style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
               decoration: InputDecoration(
                 contentPadding: EdgeInsets.zero,
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                 filled: true,
                 fillColor: Theme.of(context).colorScheme.surface,
               ),
@@ -261,14 +269,16 @@ Future<double?> showDenominationCounterSheet(
           builder: (_, scrollCtrl) => Container(
             decoration: BoxDecoration(
               color: isDark ? AppColors.backgroundDark : AppColors.surface,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(20)),
             ),
             child: Column(
               children: [
                 // Handle
                 Center(
                   child: Container(
-                    margin: const EdgeInsets.only(top: 10, bottom: AlhaiSpacing.xs),
+                    margin:
+                        const EdgeInsets.only(top: 10, bottom: AlhaiSpacing.xs),
                     width: 40,
                     height: 4,
                     decoration: BoxDecoration(
@@ -278,12 +288,16 @@ Future<double?> showDenominationCounterSheet(
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md),
                   child: Row(
                     children: [
-                      const Icon(Icons.calculate_rounded, color: AppColors.denominationAccent),
+                      const Icon(Icons.calculate_rounded,
+                          color: AppColors.denominationAccent),
                       const SizedBox(width: AlhaiSpacing.xs),
-                      Text(AppLocalizations.of(ctx)!.countCurrencyBtn, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                      Text(AppLocalizations.of(ctx)!.countCurrencyBtn,
+                          style: const TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold)),
                       const Spacer(),
                       IconButton(
                         icon: const Icon(Icons.close),
@@ -309,7 +323,8 @@ Future<double?> showDenominationCounterSheet(
                   padding: EdgeInsetsDirectional.only(
                     start: AlhaiSpacing.md,
                     end: AlhaiSpacing.md,
-                    bottom: AlhaiSpacing.md + MediaQuery.of(ctx).viewInsets.bottom,
+                    bottom:
+                        AlhaiSpacing.md + MediaQuery.of(ctx).viewInsets.bottom,
                     top: AlhaiSpacing.xs,
                   ),
                   child: Row(
@@ -326,7 +341,9 @@ Future<double?> showDenominationCounterSheet(
                         child: FilledButton.icon(
                           onPressed: () => Navigator.pop(ctx, currentTotal),
                           icon: const Icon(Icons.check),
-                          label: Text(AppLocalizations.of(ctx)!.confirmAmountSar(currentTotal.toStringAsFixed(2))),
+                          label: Text(AppLocalizations.of(ctx)!
+                              .confirmAmountSar(
+                                  currentTotal.toStringAsFixed(2))),
                         ),
                       ),
                     ],

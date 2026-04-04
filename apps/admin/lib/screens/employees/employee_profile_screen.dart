@@ -14,7 +14,8 @@ class EmployeeProfileScreen extends ConsumerStatefulWidget {
   const EmployeeProfileScreen({super.key, required this.userId});
 
   @override
-  ConsumerState<EmployeeProfileScreen> createState() => _EmployeeProfileScreenState();
+  ConsumerState<EmployeeProfileScreen> createState() =>
+      _EmployeeProfileScreenState();
 }
 
 class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
@@ -51,7 +52,10 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
   }
 
   Future<void> _loadUser() async {
-    setState(() { _isLoading = true; _error = null; });
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
     try {
       final db = GetIt.I<AppDatabase>();
       final user = await db.usersDao.getUserById(widget.userId);
@@ -68,13 +72,18 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
       debugPrint('Error loading user: $e');
       if (mounted) {
         final l10n = AppLocalizations.of(context)!;
-        setState(() { _error = l10n.errorOccurred; _isLoading = false; });
+        setState(() {
+          _error = l10n.errorOccurred;
+          _isLoading = false;
+        });
       }
     }
   }
 
   Future<void> _loadSalesPerformance() async {
-    setState(() { _salesLoading = true; });
+    setState(() {
+      _salesLoading = true;
+    });
     try {
       final db = GetIt.I<AppDatabase>();
       final storeId = ref.read(currentStoreIdProvider) ?? '';
@@ -82,9 +91,14 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
       DateTime start;
       final now = DateTime.now();
       switch (_salesPeriod) {
-        case 'week': start = now.subtract(const Duration(days: 7)); break;
-        case 'all': start = DateTime(2020); break;
-        default: start = DateTime(now.year, now.month, 1);
+        case 'week':
+          start = now.subtract(const Duration(days: 7));
+          break;
+        case 'all':
+          start = DateTime(2020);
+          break;
+        default:
+          start = DateTime(now.year, now.month, 1);
       }
 
       // Aggregate sales by cashier_id
@@ -124,10 +138,12 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
             total: _toDouble(result.data['total']),
             average: _toDouble(result.data['avg']),
           );
-          _hourlySales = hourly.map((r) => _HourlySale(
-            hour: int.tryParse(r.data['hour'] as String? ?? '0') ?? 0,
-            total: _toDouble(r.data['total']),
-          )).toList();
+          _hourlySales = hourly
+              .map((r) => _HourlySale(
+                    hour: int.tryParse(r.data['hour'] as String? ?? '0') ?? 0,
+                    total: _toDouble(r.data['total']),
+                  ))
+              .toList();
           _salesLoading = false;
         });
       }
@@ -159,10 +175,14 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
               cashierId: r.data['cashier_id'] as String,
               cashierName: (r.data['cashier_name'] as String?) ?? '',
               openedAt: _parseDate(r.data['opened_at']),
-              closedAt: r.data['closed_at'] != null ? _parseDateNullable(r.data['closed_at']) : null,
+              closedAt: r.data['closed_at'] != null
+                  ? _parseDateNullable(r.data['closed_at'])
+                  : null,
               status: r.data['status'] as String,
               openingCash: _toDouble(r.data['opening_cash']),
-              closingCash: r.data['closing_cash'] != null ? _toDouble(r.data['closing_cash']) : null,
+              closingCash: r.data['closing_cash'] != null
+                  ? _toDouble(r.data['closing_cash'])
+                  : null,
               totalSales: (r.data['total_sales'] as int?) ?? 0,
               totalSalesAmount: _toDouble(r.data['total_sales_amount']),
               totalRefunds: (r.data['total_refunds'] as int?) ?? 0,
@@ -224,7 +244,9 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
       if (mounted) {
         final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.permissionsSaved), backgroundColor: AppColors.success),
+          SnackBar(
+              content: Text(l10n.permissionsSaved),
+              backgroundColor: AppColors.success),
         );
       }
     } catch (e) {
@@ -232,7 +254,9 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
       if (mounted) {
         final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.errorOccurred), backgroundColor: Theme.of(context).colorScheme.error),
+          SnackBar(
+              content: Text(l10n.errorOccurred),
+              backgroundColor: Theme.of(context).colorScheme.error),
         );
       }
     }
@@ -243,18 +267,30 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
       final db = GetIt.I<AppDatabase>();
       final u = _user!;
       await db.usersDao.updateUser(UsersTableData(
-        id: u.id, orgId: u.orgId, storeId: u.storeId, name: u.name,
-        phone: u.phone, email: u.email, pin: u.pin, authUid: u.authUid,
-        role: u.role, roleId: u.roleId, avatar: u.avatar,
-        isActive: active, lastLoginAt: u.lastLoginAt,
-        createdAt: u.createdAt, updatedAt: DateTime.now(), syncedAt: u.syncedAt,
+        id: u.id,
+        orgId: u.orgId,
+        storeId: u.storeId,
+        name: u.name,
+        phone: u.phone,
+        email: u.email,
+        pin: u.pin,
+        authUid: u.authUid,
+        role: u.role,
+        roleId: u.roleId,
+        avatar: u.avatar,
+        isActive: active,
+        lastLoginAt: u.lastLoginAt,
+        createdAt: u.createdAt,
+        updatedAt: DateTime.now(),
+        syncedAt: u.syncedAt,
       ));
       await _loadUser();
       if (mounted) {
         final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(active ? l10n.accountActivated : l10n.accountDeactivated),
+            content:
+                Text(active ? l10n.accountActivated : l10n.accountDeactivated),
             backgroundColor: active ? AppColors.success : AppColors.warning,
           ),
         );
@@ -281,7 +317,9 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
     }
 
     final user = _user!;
-    final displayName = user.name.isNotEmpty ? user.name : (user.phone ?? l10n.employeeFallback);
+    final displayName = user.name.isNotEmpty
+        ? user.name
+        : (user.phone ?? l10n.employeeFallback);
     final initials = displayName[0].toUpperCase();
     final roleColor = _roleColor(user.role);
 
@@ -292,9 +330,15 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
           controller: _tabController,
           tabs: [
             Tab(icon: const Icon(Icons.person_outline), text: l10n.profileTab),
-            Tab(icon: const Icon(Icons.bar_chart_outlined), text: l10n.salesTab),
-            Tab(icon: const Icon(Icons.schedule_outlined), text: l10n.shiftsTab),
-            Tab(icon: const Icon(Icons.lock_outline), text: l10n.permissionsTab2),
+            Tab(
+                icon: const Icon(Icons.bar_chart_outlined),
+                text: l10n.salesTab),
+            Tab(
+                icon: const Icon(Icons.schedule_outlined),
+                text: l10n.shiftsTab),
+            Tab(
+                icon: const Icon(Icons.lock_outline),
+                text: l10n.permissionsTab2),
           ],
         ),
       ),
@@ -316,33 +360,45 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
   Color _roleColor(String role) {
     // Role-specific colors for badges
     switch (role) {
-      case 'owner': return const Color(0xFF9333EA); // role status color - Purple 600
-      case 'manager': return AppColors.info;
-      case 'supervisor': return const Color(0xFF0D9488); // role status color - Teal 600
-      default: return AppColors.success;
+      case 'owner':
+        return const Color(0xFF9333EA); // role status color - Purple 600
+      case 'manager':
+        return AppColors.info;
+      case 'supervisor':
+        return const Color(0xFF0D9488); // role status color - Teal 600
+      default:
+        return AppColors.success;
     }
   }
 
   String _roleLabel(String role) {
     final l10n = AppLocalizations.of(context)!;
     switch (role) {
-      case 'owner': return l10n.ownerRole;
-      case 'manager': return l10n.managerRole;
-      case 'supervisor': return l10n.supervisorRole;
-      default: return l10n.cashierRole;
+      case 'owner':
+        return l10n.ownerRole;
+      case 'manager':
+        return l10n.managerRole;
+      case 'supervisor':
+        return l10n.supervisorRole;
+      default:
+        return l10n.cashierRole;
     }
   }
 
-  Widget _buildProfileTab(UsersTableData user, String initials, Color roleColor) {
+  Widget _buildProfileTab(
+      UsersTableData user, String initials, Color roleColor) {
     final l10n = AppLocalizations.of(context)!;
-    final displayName = user.name.isNotEmpty ? user.name : (user.phone ?? l10n.employeeFallback);
+    final displayName = user.name.isNotEmpty
+        ? user.name
+        : (user.phone ?? l10n.employeeFallback);
     return SingleChildScrollView(
       padding: const EdgeInsets.all(AlhaiSpacing.md),
       child: Column(
         children: [
           // Avatar header
           Card(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             child: Padding(
               padding: const EdgeInsets.all(AlhaiSpacing.lg),
               child: Column(
@@ -351,39 +407,57 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
                     radius: 40,
                     backgroundColor: roleColor.withValues(alpha: 0.15),
                     child: Text(initials,
-                        style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: roleColor)),
+                        style: TextStyle(
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                            color: roleColor)),
                   ),
                   const SizedBox(height: AlhaiSpacing.sm),
                   Text(displayName,
-                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold)),
                   const SizedBox(height: AlhaiSpacing.xxs),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xxs),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: AlhaiSpacing.sm,
+                        vertical: AlhaiSpacing.xxs),
                     decoration: BoxDecoration(
                       color: roleColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(_roleLabel(user.role),
-                        style: TextStyle(color: roleColor, fontWeight: FontWeight.bold)),
+                        style: TextStyle(
+                            color: roleColor, fontWeight: FontWeight.bold)),
                   ),
                   const SizedBox(height: AlhaiSpacing.xs),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                     decoration: BoxDecoration(
-                      color: (user.isActive ? AppColors.success : Theme.of(context).disabledColor).withValues(alpha: 0.1),
+                      color: (user.isActive
+                              ? AppColors.success
+                              : Theme.of(context).disabledColor)
+                          .withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(user.isActive ? Icons.circle : Icons.circle_outlined,
+                        Icon(
+                            user.isActive
+                                ? Icons.circle
+                                : Icons.circle_outlined,
                             size: 8,
-                            color: user.isActive ? AppColors.success : Theme.of(context).disabledColor),
+                            color: user.isActive
+                                ? AppColors.success
+                                : Theme.of(context).disabledColor),
                         const SizedBox(width: AlhaiSpacing.xxs),
                         Text(user.isActive ? l10n.active : l10n.inactive,
                             style: TextStyle(
                                 fontSize: 12,
-                                color: user.isActive ? AppColors.success : Theme.of(context).disabledColor)),
+                                color: user.isActive
+                                    ? AppColors.success
+                                    : Theme.of(context).disabledColor)),
                       ],
                     ),
                   ),
@@ -394,23 +468,31 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
           const SizedBox(height: AlhaiSpacing.md),
           // Info list
           Card(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             child: Column(
               children: [
-                _infoTile(Icons.phone_outlined, l10n.mobilePhone, user.phone ?? '-'),
+                _infoTile(
+                    Icons.phone_outlined, l10n.mobilePhone, user.phone ?? '-'),
                 const Divider(height: 1, indent: 52),
-                _infoTile(Icons.email_outlined, l10n.emailLabel, user.email ?? '-'),
+                _infoTile(
+                    Icons.email_outlined, l10n.emailLabel, user.email ?? '-'),
                 const Divider(height: 1, indent: 52),
                 _infoTile(Icons.calendar_today_outlined, l10n.joinDate,
                     _formatDate(user.createdAt)),
                 const Divider(height: 1, indent: 52),
-                _infoTile(Icons.login_outlined, l10n.lastLogin,
-                    user.lastLoginAt != null ? _formatDate(user.lastLoginAt!) : l10n.neverLoggedIn),
+                _infoTile(
+                    Icons.login_outlined,
+                    l10n.lastLogin,
+                    user.lastLoginAt != null
+                        ? _formatDate(user.lastLoginAt!)
+                        : l10n.neverLoggedIn),
                 const Divider(height: 1, indent: 52),
                 SwitchListTile(
                   secondary: const Icon(Icons.toggle_on_outlined),
                   title: Text(l10n.accountActive),
-                  subtitle: Text(user.isActive ? l10n.canLogin : l10n.blockedFromLogin),
+                  subtitle: Text(
+                      user.isActive ? l10n.canLogin : l10n.blockedFromLogin),
                   value: user.isActive,
                   onChanged: _toggleActive,
                 ),
@@ -425,8 +507,11 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
   ListTile _infoTile(IconData icon, String label, String value) {
     return ListTile(
       leading: Icon(icon, size: 20, color: Theme.of(context).hintColor),
-      title: Text(label, style: TextStyle(fontSize: 12, color: Theme.of(context).hintColor)),
-      subtitle: Text(value, style: TextStyle(fontSize: 14, color: Theme.of(context).colorScheme.onSurface)),
+      title: Text(label,
+          style: TextStyle(fontSize: 12, color: Theme.of(context).hintColor)),
+      subtitle: Text(value,
+          style: TextStyle(
+              fontSize: 14, color: Theme.of(context).colorScheme.onSurface)),
     );
   }
 
@@ -466,7 +551,8 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
                       child: Column(
                         children: [
                           GridView.builder(
-                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2,
                               mainAxisSpacing: 12,
                               crossAxisSpacing: 12,
@@ -477,10 +563,34 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
                             itemCount: 4,
                             itemBuilder: (context, index) {
                               final metrics = [
-                                (Icons.attach_money_rounded, AppColors.success, l10n.totalSales, l10n.amountSar(_salesStats!.total.toStringAsFixed(0))),
-                                (Icons.receipt_long_outlined, AppColors.info, l10n.invoiceCountLabel2, '${_salesStats!.count}'),
-                                (Icons.trending_up_rounded, const Color(0xFF9333EA), l10n.averageInvoice, l10n.amountSar(_salesStats!.average.toStringAsFixed(0))), // chart metric color - Purple 600
-                                (Icons.schedule_outlined, AppColors.warning, l10n.peakHourLabel, _hourlySales.isNotEmpty ? '${_hourlySales.reduce((a, b) => a.total > b.total ? a : b).hour.toString().padLeft(2, '0')}:00' : '-'),
+                                (
+                                  Icons.attach_money_rounded,
+                                  AppColors.success,
+                                  l10n.totalSales,
+                                  l10n.amountSar(
+                                      _salesStats!.total.toStringAsFixed(0))
+                                ),
+                                (
+                                  Icons.receipt_long_outlined,
+                                  AppColors.info,
+                                  l10n.invoiceCountLabel2,
+                                  '${_salesStats!.count}'
+                                ),
+                                (
+                                  Icons.trending_up_rounded,
+                                  const Color(0xFF9333EA),
+                                  l10n.averageInvoice,
+                                  l10n.amountSar(
+                                      _salesStats!.average.toStringAsFixed(0))
+                                ), // chart metric color - Purple 600
+                                (
+                                  Icons.schedule_outlined,
+                                  AppColors.warning,
+                                  l10n.peakHourLabel,
+                                  _hourlySales.isNotEmpty
+                                      ? '${_hourlySales.reduce((a, b) => a.total > b.total ? a : b).hour.toString().padLeft(2, '0')}:00'
+                                      : '-'
+                                ),
                               ];
                               final m = metrics[index];
                               return _MetricCard(
@@ -500,7 +610,8 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(l10n.hourlySalesDistribution,
-                                        style: const TextStyle(fontWeight: FontWeight.bold)),
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold)),
                                     const SizedBox(height: AlhaiSpacing.sm),
                                     _HourlyBarChart(data: _hourlySales),
                                   ],
@@ -522,9 +633,11 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
     if (_shifts.isEmpty) {
       return Center(
         child: Column(mainAxisSize: MainAxisSize.min, children: [
-          Icon(Icons.schedule_outlined, size: 64, color: Theme.of(context).hintColor),
+          Icon(Icons.schedule_outlined,
+              size: 64, color: Theme.of(context).hintColor),
           const SizedBox(height: AlhaiSpacing.sm),
-          Text(l10n.noShifts, style: TextStyle(color: Theme.of(context).hintColor)),
+          Text(l10n.noShifts,
+              style: TextStyle(color: Theme.of(context).hintColor)),
           const SizedBox(height: AlhaiSpacing.md),
           FilledButton.icon(
             onPressed: _loadShifts,
@@ -546,8 +659,12 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
         return Card(
           child: ListTile(
             leading: Icon(
-              isClosed ? Icons.check_circle_outline : Icons.radio_button_unchecked,
-              color: isClosed ? Theme.of(context).disabledColor : AppColors.success,
+              isClosed
+                  ? Icons.check_circle_outline
+                  : Icons.radio_button_unchecked,
+              color: isClosed
+                  ? Theme.of(context).disabledColor
+                  : AppColors.success,
             ),
             title: Text(_formatDate(s.openedAt),
                 style: const TextStyle(fontWeight: FontWeight.w600)),
@@ -560,14 +677,19 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  dur != null ? l10n.hoursMinutes(dur.inHours, dur.inMinutes % 60) : l10n.shiftOpenStatus,
+                  dur != null
+                      ? l10n.hoursMinutes(dur.inHours, dur.inMinutes % 60)
+                      : l10n.shiftOpenStatus,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: isClosed ? Theme.of(context).disabledColor : AppColors.success,
+                    color: isClosed
+                        ? Theme.of(context).disabledColor
+                        : AppColors.success,
                   ),
                 ),
                 Text(l10n.invoiceCountWithNum(s.totalSales),
-                    style: TextStyle(fontSize: 11, color: Theme.of(context).hintColor)),
+                    style: TextStyle(
+                        fontSize: 11, color: Theme.of(context).hintColor)),
               ],
             ),
           ),
@@ -588,17 +710,25 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(l10n.jobRole, style: const TextStyle(fontWeight: FontWeight.bold)),
+                  Text(l10n.jobRole,
+                      style: const TextStyle(fontWeight: FontWeight.bold)),
                   const SizedBox(height: AlhaiSpacing.sm),
                   DropdownButtonFormField<String>(
                     initialValue: _selectedRole,
-                    decoration: const InputDecoration(border: OutlineInputBorder()),
+                    decoration:
+                        const InputDecoration(border: OutlineInputBorder()),
                     items: [
-                      DropdownMenuItem(value: 'manager', child: Text(l10n.managerRole)),
-                      DropdownMenuItem(value: 'supervisor', child: Text(l10n.supervisorRole)),
-                      DropdownMenuItem(value: 'cashier', child: Text(l10n.cashierRole)),
+                      DropdownMenuItem(
+                          value: 'manager', child: Text(l10n.managerRole)),
+                      DropdownMenuItem(
+                          value: 'supervisor',
+                          child: Text(l10n.supervisorRole)),
+                      DropdownMenuItem(
+                          value: 'cashier', child: Text(l10n.cashierRole)),
                     ],
-                    onChanged: (v) { if (v != null) setState(() => _selectedRole = v); },
+                    onChanged: (v) {
+                      if (v != null) setState(() => _selectedRole = v);
+                    },
                   ),
                 ],
               ),
@@ -612,9 +742,11 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
                 const Divider(height: 1),
                 _permSwitch(l10n.viewReports, Icons.bar_chart_outlined),
                 const Divider(height: 1),
-                _permSwitch(l10n.refundOperations, Icons.assignment_return_outlined),
+                _permSwitch(
+                    l10n.refundOperations, Icons.assignment_return_outlined),
                 const Divider(height: 1),
-                _permSwitch(l10n.manageCustomersPermission, Icons.people_outline),
+                _permSwitch(
+                    l10n.manageCustomersPermission, Icons.people_outline),
                 const Divider(height: 1),
                 _permSwitch(l10n.manageOffers, Icons.local_offer_outlined),
               ],
@@ -638,31 +770,45 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
                   showDialog(
                     context: context,
                     builder: (ctx) => AlertDialog(
-                      title: Text(user.isActive ? l10n.deactivateAccount : l10n.activateAccount),
+                      title: Text(user.isActive
+                          ? l10n.deactivateAccount
+                          : l10n.activateAccount),
                       content: Text(user.isActive
                           ? l10n.confirmDeactivateAccount(user.name)
                           : l10n.confirmActivateAccount(user.name)),
                       actions: [
-                        TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l10n.cancel)),
+                        TextButton(
+                            onPressed: () => Navigator.pop(ctx),
+                            child: Text(l10n.cancel)),
                         FilledButton(
                           style: FilledButton.styleFrom(
-                            backgroundColor: user.isActive ? AppColors.error : AppColors.success,
+                            backgroundColor: user.isActive
+                                ? AppColors.error
+                                : AppColors.success,
                           ),
                           onPressed: () {
                             Navigator.pop(ctx);
                             _toggleActive(!user.isActive);
                           },
-                          child: Text(user.isActive ? l10n.deactivate : l10n.activate),
+                          child: Text(
+                              user.isActive ? l10n.deactivate : l10n.activate),
                         ),
                       ],
                     ),
                   );
                 },
-                icon: Icon(user.isActive ? Icons.person_off_outlined : Icons.person_outline),
-                label: Text(user.isActive ? l10n.deactivateAccount : l10n.activateAccount),
+                icon: Icon(user.isActive
+                    ? Icons.person_off_outlined
+                    : Icons.person_outline),
+                label: Text(user.isActive
+                    ? l10n.deactivateAccount
+                    : l10n.activateAccount),
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: user.isActive ? AppColors.error : AppColors.success,
-                  side: BorderSide(color: user.isActive ? AppColors.error : AppColors.success),
+                  foregroundColor:
+                      user.isActive ? AppColors.error : AppColors.success,
+                  side: BorderSide(
+                      color:
+                          user.isActive ? AppColors.error : AppColors.success),
                 ),
               ),
             ),
@@ -708,20 +854,26 @@ class _HourlyBarChart extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 1),
               child: Tooltip(
-                message: '${h.hour.toString().padLeft(2, '0')}:00 - ${l10n.amountSar(h.total.toStringAsFixed(0))}',
+                message:
+                    '${h.hour.toString().padLeft(2, '0')}:00 - ${l10n.amountSar(h.total.toStringAsFixed(0))}',
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Container(
                       height: 60 * ratio,
                       decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.6 + ratio * 0.4),
-                        borderRadius: const BorderRadius.vertical(top: Radius.circular(3)),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .primary
+                            .withValues(alpha: 0.6 + ratio * 0.4),
+                        borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(3)),
                       ),
                     ),
                     const SizedBox(height: AlhaiSpacing.xxs),
                     Text('${h.hour}',
-                        style: TextStyle(fontSize: 9, color: Theme.of(context).hintColor)),
+                        style: TextStyle(
+                            fontSize: 9, color: Theme.of(context).hintColor)),
                   ],
                 ),
               ),
@@ -738,7 +890,11 @@ class _MetricCard extends StatelessWidget {
   final Color color;
   final String title;
   final String value;
-  const _MetricCard({required this.icon, required this.color, required this.title, required this.value});
+  const _MetricCard(
+      {required this.icon,
+      required this.color,
+      required this.title,
+      required this.value});
 
   @override
   Widget build(BuildContext context) {
@@ -757,8 +913,12 @@ class _MetricCard extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title, style: TextStyle(fontSize: 10, color: Theme.of(context).hintColor)),
-              Text(value, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: color)),
+              Text(title,
+                  style: TextStyle(
+                      fontSize: 10, color: Theme.of(context).hintColor)),
+              Text(value,
+                  style: TextStyle(
+                      fontSize: 15, fontWeight: FontWeight.bold, color: color)),
             ],
           ),
         ],
@@ -773,7 +933,8 @@ class _SalesStats {
   final int count;
   final double total;
   final double average;
-  const _SalesStats({required this.count, required this.total, required this.average});
+  const _SalesStats(
+      {required this.count, required this.total, required this.average});
 }
 
 class _HourlySale {

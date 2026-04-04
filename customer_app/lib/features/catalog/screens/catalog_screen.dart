@@ -179,12 +179,20 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
                     height: 50,
                     child: AlhaiShimmer(
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: AlhaiSpacing.md),
                         child: Row(
-                          children: List.generate(4, (_) => Padding(
-                            padding: const EdgeInsetsDirectional.only(end: AlhaiSpacing.xs),
-                            child: AlhaiSkeleton.rectangle(width: 70, height: 32, borderRadius: BorderRadius.circular(16)),
-                          )),
+                          children: List.generate(
+                              4,
+                              (_) => Padding(
+                                    padding: const EdgeInsetsDirectional.only(
+                                        end: AlhaiSpacing.xs),
+                                    child: AlhaiSkeleton.rectangle(
+                                        width: 70,
+                                        height: 32,
+                                        borderRadius:
+                                            BorderRadius.circular(16)),
+                                  )),
                         ),
                       ),
                     ),
@@ -197,7 +205,8 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
                       _categoryDebounce = Timer(
                         const Duration(milliseconds: 500),
                         () {
-                          ref.read(selectedCategoryProvider.notifier).state = id;
+                          ref.read(selectedCategoryProvider.notifier).state =
+                              id;
                         },
                       );
                     },
@@ -208,14 +217,16 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
                 loading: () => AlhaiShimmer(
                   child: GridView.builder(
                     padding: const EdgeInsets.all(AlhaiSpacing.sm),
-                    gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                    gridDelegate:
+                        const SliverGridDelegateWithMaxCrossAxisExtent(
                       maxCrossAxisExtent: 200,
                       childAspectRatio: 0.72,
                       crossAxisSpacing: 10,
                       mainAxisSpacing: 10,
                     ),
                     itemCount: 6,
-                    itemBuilder: (context, index) => AlhaiSkeleton.productCard(),
+                    itemBuilder: (context, index) =>
+                        AlhaiSkeleton.productCard(),
                   ),
                 ),
                 error: (error, _) => Center(
@@ -227,9 +238,8 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
                   ),
                 ),
                 data: (paginated) {
-                  final products = _allProducts.isNotEmpty
-                      ? _allProducts
-                      : paginated.items;
+                  final products =
+                      _allProducts.isNotEmpty ? _allProducts : paginated.items;
                   if (products.isEmpty) {
                     return Center(
                       child: AlhaiEmptyState.noProducts(
@@ -312,7 +322,8 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
                                             .read(cartProvider.notifier)
                                             .addItem(product, store.id);
                                         Navigator.pop(ctx);
-                                        ScaffoldMessenger.of(context).showSnackBar(
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
                                           SnackBar(
                                             content: Text(
                                                 'تمت إضافة ${product.name}'),
@@ -380,7 +391,8 @@ class _ProductCard extends StatelessWidget {
             ),
             // Info
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xs),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xs),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

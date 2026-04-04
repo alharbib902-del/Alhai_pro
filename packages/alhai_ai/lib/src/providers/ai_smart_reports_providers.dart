@@ -26,12 +26,14 @@ final querySuggestionsProvider = Provider<List<QuerySuggestion>>((ref) {
 final currentQueryProvider = StateProvider<String>((ref) => '');
 
 /// مزود التقرير المولد
-final generatedReportProvider = StateNotifierProvider<GeneratedReportNotifier, AsyncValue<GeneratedReport?>>((ref) {
+final generatedReportProvider = StateNotifierProvider<GeneratedReportNotifier,
+    AsyncValue<GeneratedReport?>>((ref) {
   return GeneratedReportNotifier();
 });
 
 /// مزود سجل التقارير
-final reportHistoryProvider = StateNotifierProvider<ReportHistoryNotifier, List<GeneratedReport>>((ref) {
+final reportHistoryProvider =
+    StateNotifierProvider<ReportHistoryNotifier, List<GeneratedReport>>((ref) {
   return ReportHistoryNotifier();
 });
 
@@ -39,7 +41,8 @@ final reportHistoryProvider = StateNotifierProvider<ReportHistoryNotifier, List<
 const kAllCategoryFilter = '__all__';
 
 /// مزود فلتر فئة القالب
-final templateCategoryFilterProvider = StateProvider<String>((ref) => kAllCategoryFilter);
+final templateCategoryFilterProvider =
+    StateProvider<String>((ref) => kAllCategoryFilter);
 
 /// مزود حالة التحميل
 final reportLoadingProvider = StateProvider<bool>((ref) => false);
@@ -49,7 +52,8 @@ final reportLoadingProvider = StateProvider<bool>((ref) => false);
 // ============================================================================
 
 /// إدارة التقرير المولد
-class GeneratedReportNotifier extends StateNotifier<AsyncValue<GeneratedReport?>> {
+class GeneratedReportNotifier
+    extends StateNotifier<AsyncValue<GeneratedReport?>> {
   GeneratedReportNotifier() : super(const AsyncValue.data(null));
 
   /// توليد تقرير من استعلام
@@ -60,7 +64,8 @@ class GeneratedReportNotifier extends StateNotifier<AsyncValue<GeneratedReport?>
     try {
       final analyzed = AiSmartReportsService.analyzeQuery(query);
       if (analyzed.matchedTemplateId != null) {
-        final report = AiSmartReportsService.generateReport(analyzed.matchedTemplateId!);
+        final report =
+            AiSmartReportsService.generateReport(analyzed.matchedTemplateId!);
         state = AsyncValue.data(report);
       } else {
         // Default to daily sales if no match

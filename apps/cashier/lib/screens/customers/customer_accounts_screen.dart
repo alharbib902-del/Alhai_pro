@@ -14,7 +14,8 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
+import 'package:alhai_design_system/alhai_design_system.dart'
+    show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 
@@ -86,10 +87,7 @@ class _CustomerAccountsScreenState
         if (_statusFilter == 'overdue') {
           passStatus = account.balance > 0 &&
               account.lastTransactionAt != null &&
-              DateTime.now()
-                      .difference(account.lastTransactionAt!)
-                      .inDays >
-                  30;
+              DateTime.now().difference(account.lastTransactionAt!).inDays > 30;
         } else if (_statusFilter == 'paid') {
           passStatus = account.balance <= 0;
         } else if (_statusFilter == 'outstanding') {
@@ -127,9 +125,8 @@ class _CustomerAccountsScreenState
           subtitle: _getDateSubtitle(l10n),
           showSearch: false,
           searchHint: l10n.searchPlaceholder,
-          onMenuTap: isWideScreen
-              ? null
-              : () => Scaffold.of(context).openDrawer(),
+          onMenuTap:
+              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 3,
           userName: user?.name ?? l10n.cashCustomer,
@@ -140,48 +137,50 @@ class _CustomerAccountsScreenState
           child: _isLoading
               ? const AppLoadingState()
               : _error != null
-              ? AppErrorState.general(
-                  context,
-                  message: _error,
-                  onRetry: _loadAccounts,
-                )
-              : Column(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-                      child: Column(
-                        children: [
-                          _buildSearchBar(isDark, l10n),
-                          const SizedBox(height: AlhaiSpacing.sm),
-                          _buildStatusFilters(isDark, l10n),
-                        ],
-                      ),
+                  ? AppErrorState.general(
+                      context,
+                      message: _error,
+                      onRetry: _loadAccounts,
+                    )
+                  : Column(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.all(isMediumScreen
+                              ? AlhaiSpacing.lg
+                              : AlhaiSpacing.md),
+                          child: Column(
+                            children: [
+                              _buildSearchBar(isDark, l10n),
+                              const SizedBox(height: AlhaiSpacing.sm),
+                              _buildStatusFilters(isDark, l10n),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: isMediumScreen ? 24 : 16),
+                          child: _buildSummaryStats(isDark, l10n),
+                        ),
+                        const SizedBox(height: AlhaiSpacing.sm),
+                        Expanded(
+                          child: _filteredAccounts.isEmpty
+                              ? _buildEmptyState(isDark, l10n)
+                              : ListView.separated(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: isMediumScreen ? 24 : 16,
+                                      vertical: AlhaiSpacing.xs),
+                                  itemCount: _filteredAccounts.length,
+                                  separatorBuilder: (_, __) =>
+                                      const SizedBox(height: AlhaiSpacing.xs),
+                                  itemBuilder: (context, index) =>
+                                      _buildAccountCard(
+                                          _filteredAccounts[index],
+                                          isDark,
+                                          l10n),
+                                ),
+                        ),
+                      ],
                     ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: isMediumScreen ? 24 : 16),
-                      child: _buildSummaryStats(isDark, l10n),
-                    ),
-                    const SizedBox(height: AlhaiSpacing.sm),
-                    Expanded(
-                      child: _filteredAccounts.isEmpty
-                          ? _buildEmptyState(isDark, l10n)
-                          : ListView.separated(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: isMediumScreen ? 24 : 16,
-                                  vertical: AlhaiSpacing.xs),
-                              itemCount: _filteredAccounts.length,
-                              separatorBuilder: (_, __) =>
-                                  const SizedBox(height: AlhaiSpacing.xs),
-                              itemBuilder: (context, index) =>
-                                  _buildAccountCard(
-                                      _filteredAccounts[index],
-                                      isDark,
-                                      l10n),
-                            ),
-                    ),
-                  ],
-                ),
         ),
       ],
     );
@@ -199,8 +198,8 @@ class _CustomerAccountsScreenState
       decoration: InputDecoration(
         hintText: l10n.searchPlaceholder,
         hintStyle: TextStyle(color: AppColors.getTextMuted(isDark)),
-        prefixIcon: Icon(Icons.search_rounded,
-            color: AppColors.getTextMuted(isDark)),
+        prefixIcon:
+            Icon(Icons.search_rounded, color: AppColors.getTextMuted(isDark)),
         suffixIcon: _searchController.text.isNotEmpty
             ? IconButton(
                 onPressed: () => _searchController.clear(),
@@ -223,8 +222,8 @@ class _CustomerAccountsScreenState
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: AppColors.primary, width: 2),
         ),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(
+            horizontal: AlhaiSpacing.md, vertical: 14),
       ),
     );
   }
@@ -265,16 +264,16 @@ class _CustomerAccountsScreenState
       onTap: onTap,
       borderRadius: BorderRadius.circular(999),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: AlhaiSpacing.xs),
+        padding: const EdgeInsets.symmetric(
+            horizontal: 14, vertical: AlhaiSpacing.xs),
         decoration: BoxDecoration(
           color: isSelected
               ? AppColors.primary
               : AppColors.getSurfaceVariant(isDark),
           borderRadius: BorderRadius.circular(999),
           border: Border.all(
-              color: isSelected
-                  ? AppColors.primary
-                  : AppColors.getBorder(isDark)),
+              color:
+                  isSelected ? AppColors.primary : AppColors.getBorder(isDark)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -291,8 +290,7 @@ class _CustomerAccountsScreenState
               label,
               style: TextStyle(
                 fontSize: 13,
-                fontWeight:
-                    isSelected ? FontWeight.w600 : FontWeight.w500,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                 color: isSelected
                     ? Colors.white
                     : AppColors.getTextSecondary(isDark),
@@ -460,8 +458,7 @@ class _CustomerAccountsScreenState
                           padding: const EdgeInsets.symmetric(
                               horizontal: 6, vertical: AlhaiSpacing.xxxs),
                           decoration: BoxDecoration(
-                            color:
-                                AppColors.warning.withValues(alpha: 0.1),
+                            color: AppColors.warning.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(999),
                           ),
                           child: Text(
@@ -530,7 +527,8 @@ class _CustomerAccountsScreenState
             ),
             const SizedBox(width: AlhaiSpacing.xs),
             Icon(Icons.chevron_right_rounded,
-                color: AppColors.getTextMuted(isDark), size: 20,
+                color: AppColors.getTextMuted(isDark),
+                size: 20,
                 semanticLabel: l10n.details),
           ],
         ),

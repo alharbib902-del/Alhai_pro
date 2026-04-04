@@ -260,7 +260,9 @@ class _DistributorShellState extends ConsumerState<DistributorShell> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      user?.email?.split('@').first ?? l10n?.distributorPortal ?? 'Distributor',
+                      user?.email?.split('@').first ??
+                          l10n?.distributorPortal ??
+                          'Distributor',
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
@@ -272,8 +274,7 @@ class _DistributorShellState extends ConsumerState<DistributorShell> {
                       user?.email ?? '',
                       style: TextStyle(
                         fontSize: 11,
-                        color:
-                            Theme.of(context).colorScheme.onSurfaceVariant,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -407,8 +408,7 @@ class _DistributorShellState extends ConsumerState<DistributorShell> {
 
     if (isDesktop) {
       return Scaffold(
-        backgroundColor:
-            Theme.of(context).colorScheme.surfaceContainerLow,
+        backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
         body: Row(
           children: [
             // Full sidebar
@@ -420,9 +420,7 @@ class _DistributorShellState extends ConsumerState<DistributorShell> {
                   start: BorderSide(
                     color: isDark
                         ? Theme.of(context).colorScheme.outlineVariant
-                        : Theme.of(context)
-                            .colorScheme
-                            .surfaceContainerLow,
+                        : Theme.of(context).colorScheme.surfaceContainerLow,
                   ),
                 ),
               ),
@@ -438,8 +436,7 @@ class _DistributorShellState extends ConsumerState<DistributorShell> {
     } else if (isTablet) {
       // Tablet: collapsed icon-only sidebar
       return Scaffold(
-        backgroundColor:
-            Theme.of(context).colorScheme.surfaceContainerLow,
+        backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
         body: Row(
           children: [
             Container(
@@ -450,9 +447,7 @@ class _DistributorShellState extends ConsumerState<DistributorShell> {
                   start: BorderSide(
                     color: isDark
                         ? Theme.of(context).colorScheme.outlineVariant
-                        : Theme.of(context)
-                            .colorScheme
-                            .surfaceContainerLow,
+                        : Theme.of(context).colorScheme.surfaceContainerLow,
                   ),
                 ),
               ),
@@ -467,8 +462,7 @@ class _DistributorShellState extends ConsumerState<DistributorShell> {
     } else {
       // Mobile: drawer
       return Scaffold(
-        backgroundColor:
-            Theme.of(context).colorScheme.surfaceContainerLow,
+        backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
         appBar: AppBar(
           title: Text(
             l10n?.distributorPortal ?? 'Distributor Portal',

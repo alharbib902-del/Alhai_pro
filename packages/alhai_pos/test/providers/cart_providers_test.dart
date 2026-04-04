@@ -17,12 +17,10 @@ void main() {
     when(() => mockPersistence.loadCart()).thenAnswer((_) async => null);
     when(() => mockPersistence.saveCart(any())).thenAnswer((_) async {});
     when(() => mockPersistence.clearCart()).thenAnswer((_) async {});
-    when(() => mockPersistence.saveHeldInvoice(any()))
-        .thenAnswer((_) async {});
+    when(() => mockPersistence.saveHeldInvoice(any())).thenAnswer((_) async {});
     when(() => mockPersistence.deleteHeldInvoice(any()))
         .thenAnswer((_) async {});
-    when(() => mockPersistence.loadHeldInvoices())
-        .thenAnswer((_) async => []);
+    when(() => mockPersistence.loadHeldInvoices()).thenAnswer((_) async => []);
   });
 
   group('PosCartItem', () {
@@ -56,8 +54,7 @@ void main() {
     });
 
     test('copyWith clearCustomPrice removes custom price', () {
-      final item =
-          createTestCartItem(price: 10.0, customPrice: 8.0);
+      final item = createTestCartItem(price: 10.0, customPrice: 8.0);
       final updated = item.copyWith(clearCustomPrice: true);
 
       expect(updated.customPrice, isNull);
@@ -117,8 +114,7 @@ void main() {
       final state = createTestCartState(
         items: [
           createTestCartItem(price: 10.0, quantity: 2), // 20
-          createTestCartItem(
-              productId: 'p2', price: 15.0, quantity: 1), // 15
+          createTestCartItem(productId: 'p2', price: 15.0, quantity: 1), // 15
         ],
       );
 
@@ -400,18 +396,18 @@ void main() {
 
     group('business logic calculations', () {
       test('subtotal with multiple items', () {
-        notifier.addProduct(
-            createTestProduct(id: 'p-1', price: 10.0), quantity: 3);
-        notifier.addProduct(
-            createTestProduct(id: 'p-2', price: 20.0), quantity: 2);
+        notifier.addProduct(createTestProduct(id: 'p-1', price: 10.0),
+            quantity: 3);
+        notifier.addProduct(createTestProduct(id: 'p-2', price: 20.0),
+            quantity: 2);
 
         // 10*3 + 20*2 = 70
         expect(notifier.state.subtotal, equals(70.0));
       });
 
       test('total with discount', () {
-        notifier.addProduct(
-            createTestProduct(id: 'p-1', price: 100.0), quantity: 1);
+        notifier.addProduct(createTestProduct(id: 'p-1', price: 100.0),
+            quantity: 1);
         notifier.setDiscount(15.0);
 
         expect(notifier.state.subtotal, equals(100.0));
@@ -487,21 +483,20 @@ void main() {
     late HeldInvoicesNotifier notifier;
 
     setUp(() {
-      when(() => mockPersistence.loadHeldInvoices())
-          .thenAnswer((_) async => [
-                HeldInvoice(
-                  id: 'inv-1',
-                  cart: const CartState(),
-                  name: 'Invoice 1',
-                  createdAt: DateTime.now(),
-                ),
-                HeldInvoice(
-                  id: 'inv-2',
-                  cart: const CartState(),
-                  name: 'Invoice 2',
-                  createdAt: DateTime.now(),
-                ),
-              ]);
+      when(() => mockPersistence.loadHeldInvoices()).thenAnswer((_) async => [
+            HeldInvoice(
+              id: 'inv-1',
+              cart: const CartState(),
+              name: 'Invoice 1',
+              createdAt: DateTime.now(),
+            ),
+            HeldInvoice(
+              id: 'inv-2',
+              cart: const CartState(),
+              name: 'Invoice 2',
+              createdAt: DateTime.now(),
+            ),
+          ]);
 
       notifier = HeldInvoicesNotifier(mockPersistence);
     });
@@ -526,8 +521,7 @@ void main() {
       await notifier.refresh();
 
       // loadHeldInvoices called on init + refresh
-      verify(() => mockPersistence.loadHeldInvoices())
-          .called(greaterThan(1));
+      verify(() => mockPersistence.loadHeldInvoices()).called(greaterThan(1));
     });
   });
 }

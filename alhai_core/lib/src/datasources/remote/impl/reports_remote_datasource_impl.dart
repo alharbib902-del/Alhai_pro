@@ -14,7 +14,8 @@ class ReportsRemoteDataSourceImpl implements ReportsRemoteDataSource {
   ReportsRemoteDataSourceImpl({required Dio dio}) : _dio = dio;
 
   @override
-  Future<SalesSummaryResponse> getDailySummary(String storeId, String date) async {
+  Future<SalesSummaryResponse> getDailySummary(
+      String storeId, String date) async {
     final response = await _dio.get(
       '/reports/daily-summary',
       queryParameters: {
@@ -93,11 +94,13 @@ class ReportsRemoteDataSourceImpl implements ReportsRemoteDataSource {
       '/reports/inventory-value',
       queryParameters: {'store_id': storeId},
     );
-    return InventoryValueResponse.fromJson(response.data as Map<String, dynamic>);
+    return InventoryValueResponse.fromJson(
+        response.data as Map<String, dynamic>);
   }
 
   @override
-  Future<Map<String, double>> getHourlySales(String storeId, String date) async {
+  Future<Map<String, double>> getHourlySales(
+      String storeId, String date) async {
     final response = await _dio.get(
       '/reports/hourly-sales',
       queryParameters: {
@@ -123,6 +126,7 @@ class ReportsRemoteDataSourceImpl implements ReportsRemoteDataSource {
         'month': month,
       },
     );
-    return MonthlyComparisonResponse.fromJson(response.data as Map<String, dynamic>);
+    return MonthlyComparisonResponse.fromJson(
+        response.data as Map<String, dynamic>);
   }
 }

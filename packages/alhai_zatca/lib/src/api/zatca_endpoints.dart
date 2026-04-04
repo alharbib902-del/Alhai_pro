@@ -73,6 +73,5 @@ enum ZatcaEnvironment {
 
   /// Whether this environment is safe for testing (not production)
   bool get isSandbox =>
-      this == ZatcaEnvironment.sandbox ||
-      this == ZatcaEnvironment.simulation;
+      this == ZatcaEnvironment.sandbox || this == ZatcaEnvironment.simulation;
 }

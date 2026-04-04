@@ -93,8 +93,7 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
               position: LatLng(driverLat!, driverLng!),
               icon: BitmapDescriptor.defaultMarkerWithHue(
                   BitmapDescriptor.hueBlue),
-              infoWindow: InfoWindow(
-                  title: delivery.driverName ?? 'السائق'),
+              infoWindow: InfoWindow(title: delivery.driverName ?? 'السائق'),
             ));
           }
 
@@ -162,7 +161,10 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
                             if (delivery.driverPhone != null)
                               Padding(
                                 padding: const EdgeInsetsDirectional.fromSTEB(
-                                    AlhaiSpacing.md, 0, AlhaiSpacing.md, AlhaiSpacing.sm),
+                                    AlhaiSpacing.md,
+                                    0,
+                                    AlhaiSpacing.md,
+                                    AlhaiSpacing.sm),
                                 child: Row(
                                   children: [
                                     Expanded(
@@ -180,7 +182,8 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
                                           context.push(
                                               '/orders/${widget.orderId}/chat');
                                         },
-                                        icon: const Icon(Icons.chat_bubble_outline),
+                                        icon: const Icon(
+                                            Icons.chat_bubble_outline),
                                         label: const Text('محادثة'),
                                       ),
                                     ),

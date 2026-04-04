@@ -82,7 +82,8 @@ class WholesaleService {
   }
 
   /// شحن الطلب (الموزع)
-  Future<WholesaleOrder> shipOrder(String orderId, {String? trackingNumber}) async {
+  Future<WholesaleOrder> shipOrder(String orderId,
+      {String? trackingNumber}) async {
     return await _ordersRepo.shipOrder(orderId, trackingNumber: trackingNumber);
   }
 
