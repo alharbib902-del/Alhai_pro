@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:alhai_database/alhai_database.dart' show SyncQueueDao;
 import 'package:flutter/foundation.dart';
 
 import 'connectivity_service.dart';
@@ -103,6 +104,7 @@ class SyncEngine {
   final StockDeltaSync _stockDeltaSync;
   final ConnectivityService _connectivity;
   final SyncStatusTracker _statusTracker;
+  final SyncQueueDao _syncQueueDao;
 
   /// قفل لمنع المزامنة المتزامنة
   bool _isLocked = false;
@@ -148,12 +150,14 @@ class SyncEngine {
     required StockDeltaSync stockDeltaSync,
     required ConnectivityService connectivity,
     required SyncStatusTracker statusTracker,
+    required SyncQueueDao syncQueueDao,
   })  : _pullStrategy = pullStrategy,
         _pushStrategy = pushStrategy,
         _bidirectionalStrategy = bidirectionalStrategy,
         _stockDeltaSync = stockDeltaSync,
         _connectivity = connectivity,
-        _statusTracker = statusTracker;
+        _statusTracker = statusTracker,
+        _syncQueueDao = syncQueueDao;
 
   /// تهيئة المحرك
   Future<void> initialize({
@@ -215,6 +219,12 @@ class SyncEngine {
     final overview = _statusTracker.currentOverview;
     final pendingCount = overview.totalPending;
 
+    // Get dead letter count
+    int deadLetterCount = 0;
+    try {
+      deadLetterCount = await _syncQueueDao.getDeadLetterCount();
+    } catch (_) {}
+
     return SyncHealthReport(
       isServerReachable: isReachable,
       lastSyncTime: _currentProgress.lastSyncAt,
@@ -222,6 +232,7 @@ class SyncEngine {
       consecutiveFailures: _consecutiveFailures,
       currentState: _currentProgress.state,
       errors: _currentProgress.errors,
+      deadLetterCount: deadLetterCount,
     );
   }
 
@@ -254,6 +265,18 @@ class SyncEngine {
 
     _isLocked = true;
     final allErrors = <String>[];
+
+    // استعادة العناصر العالقة من تعطل سابق (>60 ثانية في حالة syncing)
+    try {
+      final recovered = await _syncQueueDao.recoverStuckItems();
+      if (recovered > 0 && kDebugMode) {
+        debugPrint('SyncEngine: recovered $recovered stuck items before sync');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('SyncEngine: failed to recover stuck items: $e');
+      }
+    }
 
     // حساب إجمالي الجداول
     final totalTables = PullStrategy.pullTables.length +
@@ -494,6 +517,9 @@ class SyncHealthReport {
   /// قائمة الأخطاء من آخر محاولة مزامنة
   final List<String> errors;
 
+  /// عدد العناصر الميتة (فشلت نهائياً بعد استنفاد المحاولات)
+  final int deadLetterCount;
+
   const SyncHealthReport({
     required this.isServerReachable,
     this.lastSyncTime,
@@ -501,6 +527,7 @@ class SyncHealthReport {
     this.consecutiveFailures = 0,
     this.currentState = SyncEngineState.idle,
     this.errors = const [],
+    this.deadLetterCount = 0,
   });
 
   /// هل المزامنة في حالة صحية؟
@@ -531,11 +558,13 @@ class SyncHealthReport {
     if (isWarning) {
       return 'Warning: $consecutiveFailures failures, $pendingItemCount pending';
     }
-    return 'Healthy: $pendingItemCount pending items';
+    final dlSuffix = deadLetterCount > 0 ? ', $deadLetterCount dead letter' : '';
+    return 'Healthy: $pendingItemCount pending items$dlSuffix';
   }
 
   @override
   String toString() =>
       'SyncHealthReport(reachable=$isServerReachable, pending=$pendingItemCount, '
-      'failures=$consecutiveFailures, lastSync=$lastSyncTime, errors=${errors.length})';
+      'failures=$consecutiveFailures, deadLetter=$deadLetterCount, '
+      'lastSync=$lastSyncTime, errors=${errors.length})';
 }

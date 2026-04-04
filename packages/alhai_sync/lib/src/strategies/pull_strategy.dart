@@ -120,6 +120,9 @@ class PullStrategy {
   }) async {
     int totalPulled = 0;
     final errors = <String>[];
+    // Track the max updated_at from fetched records to use as the watermark,
+    // avoiding clock-skew issues from using the client's DateTime.now().
+    DateTime? maxUpdatedAt;
 
     try {
       // جلب آخر وقت سحب
@@ -141,6 +144,22 @@ class PullStrategy {
         if (records.isEmpty) {
           hasMore = false;
           break;
+        }
+
+        // Track the max updated_at from this page
+        for (final record in records) {
+          final updatedAtRaw = record['updated_at'];
+          if (updatedAtRaw != null) {
+            final parsed = updatedAtRaw is DateTime
+                ? updatedAtRaw
+                : DateTime.tryParse(updatedAtRaw.toString());
+            if (parsed != null) {
+              final utc = parsed.toUtc();
+              if (maxUpdatedAt == null || utc.isAfter(maxUpdatedAt!)) {
+                maxUpdatedAt = utc;
+              }
+            }
+          }
         }
 
         // إدراج/تحديث محلياً
@@ -169,10 +188,13 @@ class PullStrategy {
         }
       }
 
-      // تحديث آخر وقت سحب
+      // Use server-derived watermark (max updated_at from fetched records)
+      // to eliminate clock-skew risk. Fall back to client time only when
+      // no records were fetched or none had updated_at.
+      final watermark = maxUpdatedAt ?? DateTime.now().toUtc();
       await _metadataDao.updateLastPullAt(
         tableName,
-        DateTime.now().toUtc(),
+        watermark,
         syncCount: totalPulled,
       );
       await _metadataDao.clearError(tableName);
@@ -191,20 +213,62 @@ class PullStrategy {
     );
   }
 
-  /// تنفيذ السحب لجميع الجداول
+  /// تنفيذ السحب لجميع الجداول بالتوازي حيث أمكن
+  ///
+  /// المجموعات:
+  /// 1. جداول مستقلة (بدون تبعيات): categories, settings, roles, drivers,
+  ///    expense_categories, coupons, promotions, loyalty_rewards, stores, users, org_products
+  /// 2. تعتمد على categories: products
+  /// 3. تعتمد على products: discounts
   Future<List<PullResult>> pullAll({
     required String orgId,
     required String storeId,
   }) async {
     final results = <PullResult>[];
-    for (final tableName in pullTables) {
-      final result = await pullTable(
-        tableName: tableName,
-        orgId: orgId,
-        storeId: storeId,
-      );
-      results.add(result);
-    }
+
+    // المجموعة 1: جداول مستقلة - تُسحب بالتوازي
+    const group1 = [
+      'categories', 'stores', 'roles', 'settings', 'users',
+      'drivers', 'expense_categories', 'coupons', 'promotions',
+      'loyalty_rewards', 'org_products',
+    ];
+
+    final group1Futures = group1.map((tableName) async {
+      try {
+        return await pullTable(
+          tableName: tableName,
+          orgId: orgId,
+          storeId: storeId,
+        );
+      } catch (e) {
+        // إذا فشل جدول لا نوقف البقية
+        if (kDebugMode) {
+          debugPrint('[Pull] Parallel pull failed for $tableName: $e');
+        }
+        return PullResult(
+          tableName: tableName,
+          recordsPulled: 0,
+          errors: ['Pull $tableName: $e'],
+        );
+      }
+    }).toList();
+
+    results.addAll(await Future.wait(group1Futures));
+
+    // المجموعة 2: products (تعتمد على categories)
+    results.add(await pullTable(
+      tableName: 'products',
+      orgId: orgId,
+      storeId: storeId,
+    ));
+
+    // المجموعة 3: discounts (تعتمد على products)
+    results.add(await pullTable(
+      tableName: 'discounts',
+      orgId: orgId,
+      storeId: storeId,
+    ));
+
     return results;
   }
 

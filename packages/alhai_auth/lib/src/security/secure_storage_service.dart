@@ -8,9 +8,12 @@ library;
 
 import 'dart:convert';
 import 'dart:math';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'dart:typed_data';
+import 'package:crypto/crypto.dart';
+import 'package:flutter/foundation.dart' show kIsWeb, kDebugMode, debugPrint;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// Interface for storage operations (for testing)
 abstract class StorageInterface {
@@ -358,5 +361,144 @@ class SecureStorageService {
   /// حذف قيمة
   static Future<void> delete(String key) async {
     await _storage.delete(key: key);
+  }
+
+  // ============================================================================
+  // ENCRYPTION KEY BACKUP / RESTORE
+  // ============================================================================
+
+  static const _keyBackupDone = 'db_key_backup_done';
+
+  /// اشتقاق مفتاح تشفير من معرّف المستخدم لتشفير مفتاح قاعدة البيانات
+  /// يُستخدم HMAC-SHA256 مع ملح ثابت لضمان الاتساق عبر الأجهزة
+  static List<int> _deriveKeyFromUserId(String userId) {
+    const salt = 'alhai_db_key_backup_2026';
+    final hmacKey = Hmac(sha256, utf8.encode(salt));
+    final digest = hmacKey.convert(utf8.encode(userId));
+    return digest.bytes;
+  }
+
+  /// تشفير مفتاح قاعدة البيانات باستخدام XOR مع مفتاح مشتق من userId
+  static String _encryptDbKey(String dbKey, String userId) {
+    final derivedKey = _deriveKeyFromUserId(userId);
+    final dbKeyBytes = utf8.encode(dbKey);
+    final encrypted = Uint8List(dbKeyBytes.length);
+    for (var i = 0; i < dbKeyBytes.length; i++) {
+      encrypted[i] = dbKeyBytes[i] ^ derivedKey[i % derivedKey.length];
+    }
+    return base64Url.encode(encrypted);
+  }
+
+  /// فك تشفير مفتاح قاعدة البيانات
+  static String _decryptDbKey(String encryptedKey, String userId) {
+    final derivedKey = _deriveKeyFromUserId(userId);
+    final encBytes = base64Url.decode(encryptedKey);
+    final decrypted = Uint8List(encBytes.length);
+    for (var i = 0; i < encBytes.length; i++) {
+      decrypted[i] = encBytes[i] ^ derivedKey[i % derivedKey.length];
+    }
+    return utf8.decode(decrypted);
+  }
+
+  /// رفع مفتاح تشفير قاعدة البيانات إلى Supabase (user metadata)
+  ///
+  /// يُشفَّر المفتاح باستخدام مفتاح مشتق من معرّف المستخدم قبل الإرسال.
+  /// يُستدعى بعد تسجيل الدخول إذا لم يكن قد تم النسخ الاحتياطي بعد.
+  static Future<bool> backupEncryptionKeyToServer() async {
+    try {
+      final dbKey = await _storage.read(key: _keyDatabaseEncryption);
+      if (dbKey == null || dbKey.isEmpty) return false;
+
+      // تحقق: هل تم النسخ الاحتياطي من قبل؟
+      final backupDone = await _storage.read(key: _keyBackupDone);
+      if (backupDone == 'true') return true;
+
+      final client = Supabase.instance.client;
+      final user = client.auth.currentUser;
+      if (user == null) return false;
+
+      final encryptedKey = _encryptDbKey(dbKey, user.id);
+
+      // تخزين المفتاح المشفر في user_metadata
+      await client.auth.updateUser(
+        UserAttributes(
+          data: {
+            ...?user.userMetadata,
+            'encrypted_db_key': encryptedKey,
+          },
+        ),
+      );
+
+      // تسجيل أن النسخ الاحتياطي تم
+      await _storage.write(key: _keyBackupDone, value: 'true');
+
+      if (kDebugMode) {
+        debugPrint('[KeyBackup] DB encryption key backed up to server');
+      }
+      return true;
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('[KeyBackup] Backup failed: $e');
+      }
+      return false;
+    }
+  }
+
+  /// استعادة مفتاح تشفير قاعدة البيانات من Supabase
+  ///
+  /// يُستدعى عند التثبيت الجديد أو إعادة التثبيت إذا لم يكن هناك مفتاح محلي.
+  /// يفك تشفير المفتاح المخزن في user_metadata ويحفظه في SecureStorage.
+  static Future<bool> restoreEncryptionKeyFromServer() async {
+    try {
+      // تحقق: هل يوجد مفتاح محلي بالفعل؟
+      final existingKey = await _storage.read(key: _keyDatabaseEncryption);
+      if (existingKey != null && existingKey.isNotEmpty) return true;
+
+      final client = Supabase.instance.client;
+      final user = client.auth.currentUser;
+      if (user == null) return false;
+
+      final encryptedKey = user.userMetadata?['encrypted_db_key'] as String?;
+      if (encryptedKey == null || encryptedKey.isEmpty) return false;
+
+      final dbKey = _decryptDbKey(encryptedKey, user.id);
+      await _storage.write(key: _keyDatabaseEncryption, value: dbKey);
+
+      // تسجيل أن النسخ الاحتياطي موجود
+      await _storage.write(key: _keyBackupDone, value: 'true');
+
+      if (kDebugMode) {
+        debugPrint('[KeyBackup] DB encryption key restored from server');
+      }
+      return true;
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('[KeyBackup] Restore failed: $e');
+      }
+      return false;
+    }
+  }
+
+  /// محاولة نسخ احتياطي أو استعادة المفتاح حسب الحالة
+  ///
+  /// يُستدعى بعد كل تسجيل دخول ناجح:
+  /// - إذا لم يكن هناك مفتاح محلي → يحاول الاستعادة من السيرفر
+  /// - إذا كان هناك مفتاح محلي ولم يتم النسخ الاحتياطي → يرفعه للسيرفر
+  static Future<void> ensureEncryptionKeyBackup() async {
+    try {
+      final dbKey = await _storage.read(key: _keyDatabaseEncryption);
+
+      if (dbKey == null || dbKey.isEmpty) {
+        // لا يوجد مفتاح محلي → محاولة الاستعادة من السيرفر
+        await restoreEncryptionKeyFromServer();
+      } else {
+        // يوجد مفتاح محلي → تأكد من وجود نسخة احتياطية
+        await backupEncryptionKeyToServer();
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('[KeyBackup] ensureEncryptionKeyBackup error: $e');
+      }
+    }
   }
 }

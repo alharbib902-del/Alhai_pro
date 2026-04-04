@@ -323,7 +323,12 @@ class SyncService {
   Stream<int> watchPendingCount() {
     return _syncQueueDao.watchPendingCount();
   }
-  
+
+  /// مراقبة العناصر المعلقة مع وقت أقدم عنصر
+  Stream<({int count, DateTime? oldestAt})> watchPendingCountWithOldest() {
+    return _syncQueueDao.watchPendingCountWithOldest();
+  }
+
   /// تعيين كـ "جاري المزامنة"
   Future<void> markAsSyncing(String id) {
     return _syncQueueDao.markAsSyncing(id);
@@ -456,6 +461,28 @@ class SyncService {
   /// تنظيف جميع التعارضات المحلولة
   Future<int> cleanupResolvedConflicts({Duration olderThan = const Duration(days: 3)}) {
     return _syncQueueDao.cleanupResolvedConflicts(olderThan: olderThan);
+  }
+
+  // ==================== Dead Letter Queue ====================
+
+  /// الحصول على العناصر الميتة (فشلت نهائياً)
+  Future<List<SyncQueueTableData>> getDeadLetterItems() {
+    return _syncQueueDao.getDeadLetterItems();
+  }
+
+  /// عدد العناصر الميتة
+  Future<int> getDeadLetterCount() {
+    return _syncQueueDao.getDeadLetterCount();
+  }
+
+  /// مراقبة عدد العناصر الميتة
+  Stream<int> watchDeadLetterCount() {
+    return _syncQueueDao.watchDeadLetterCount();
+  }
+
+  /// إعادة محاولة جميع العناصر الميتة
+  Future<int> retryDeadLetterItems() {
+    return _syncQueueDao.retryDeadLetterItems();
   }
 
   int _priorityToInt(SyncPriority priority) {

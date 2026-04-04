@@ -280,6 +280,9 @@ class AuthNotifier extends StateNotifier<AuthState> {
           expiry: expiry,
         );
 
+        // نسخ احتياطي / استعادة مفتاح تشفير قاعدة البيانات
+        SecureStorageService.ensureEncryptionKeyBackup();
+
         if (!_initCompleter.isCompleted) {
           _initCompleter.complete();
         }
@@ -505,9 +508,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
         user: result.user,
         sessionExpiry: expiry,
       );
-      
+
       // بدء مراقبة الجلسة
       _startSessionMonitor();
+
+      // نسخ احتياطي / استعادة مفتاح تشفير قاعدة البيانات
+      SecureStorageService.ensureEncryptionKeyBackup();
     } catch (e) {
       state = state.copyWith(error: e.toString());
       rethrow;

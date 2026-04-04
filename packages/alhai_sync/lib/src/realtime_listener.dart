@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:drift/drift.dart' show Variable;
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -42,10 +43,24 @@ class RealtimeEvent {
 /// 3. عند DELETE: حذف ناعم محلياً
 /// 4. فلترة حسب org_id و store_id
 /// 5. إعادة الاتصال تلقائياً عند انقطاع الاتصال
+///
+/// للجداول ثنائية الاتجاه: يتم التحقق من وجود تغييرات محلية معلقة
+/// في sync_queue قبل تطبيق تحديث Realtime لمنع الكتابة فوق بيانات لم تُدفع بعد.
 class RealtimeListener {
   final SupabaseClient _client;
   final AppDatabase _db;
   final JsonColumnConverter _jsonConverter = JsonColumnConverter.instance;
+
+  /// الجداول ثنائية الاتجاه (من BidirectionalStrategy.tableConfigs)
+  /// هذه الجداول قد تحتوي على تغييرات محلية معلقة يجب عدم الكتابة فوقها
+  static const Set<String> _bidirectionalTables = {
+    'customers', 'expenses', 'returns', 'return_items',
+    'purchases', 'purchase_items', 'shifts', 'suppliers',
+    'notifications', 'loyalty_points', 'loyalty_transactions',
+    'customer_addresses', 'accounts', 'transactions',
+    'product_expiry', 'stock_takes', 'stock_transfers',
+    'whatsapp_templates',
+  };
 
   /// الجداول المراقبة بالـ Realtime
   /// ترتيب حسب الأولوية: stock_deltas أولاً (تعدد كاشير)
@@ -318,9 +333,37 @@ class RealtimeListener {
   }
 
   /// إدراج/تحديث سجل محلياً
+  ///
+  /// للجداول ثنائية الاتجاه: يتحقق أولاً من وجود تغييرات محلية معلقة
+  /// في sync_queue. إذا وُجدت، يتجاهل تحديث Realtime لحماية البيانات المحلية.
   Future<void> _upsertLocally(
       String tableName, Map<String, dynamic> record) async {
     validateTableName(tableName);
+
+    // للجداول ثنائية الاتجاه: تحقق من وجود تغييرات محلية معلقة
+    if (_bidirectionalTables.contains(tableName)) {
+      final recordId = record['id'] as String?;
+      if (recordId != null) {
+        final pending = await _db.customSelect(
+          "SELECT COUNT(*) as cnt FROM sync_queue "
+          "WHERE table_name = ? AND record_id = ? "
+          "AND status IN ('pending', 'syncing')",
+          variables: [
+            Variable.withString(tableName),
+            Variable.withString(recordId),
+          ],
+        ).getSingle();
+        final count = pending.data['cnt'] as int? ?? 0;
+        if (count > 0) {
+          if (kDebugMode) {
+            debugPrint(
+                '[Realtime] Skipping upsert for $tableName/$recordId - pending local changes');
+          }
+          return;
+        }
+      }
+    }
+
     final columns = record.keys.toList();
     final placeholders = columns.map((_) => '?').join(', ');
     final updates = columns

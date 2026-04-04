@@ -222,6 +222,7 @@ final syncEngineProvider = Provider<SyncEngine?>((ref) {
       ),
       connectivity: connectivity,
       statusTracker: statusTracker,
+      syncQueueDao: db.syncQueueDao,
     );
 
     ref.onDispose(() => engine.dispose());
@@ -400,6 +401,13 @@ final pendingSyncCountProvider = StreamProvider<int>((ref) {
   return syncService.watchPendingCount();
 });
 
+/// مزود معلومات المبيعات غير المُزامنة (العدد + وقت أقدم عنصر)
+/// يُستخدم لعرض بانر التحذير عند وجود عناصر معلقة لأكثر من 5 دقائق
+final unsyncedSalesInfoProvider = StreamProvider<({int count, DateTime? oldestAt})>((ref) {
+  final syncService = ref.watch(syncServiceProvider);
+  return syncService.watchPendingCountWithOldest();
+});
+
 /// مزود حالة المزامنة (القديم - للتوافق)
 final syncStatusProvider = StreamProvider<SyncStatus>((ref) {
   final manager = ref.watch(syncManagerProvider);
@@ -428,4 +436,10 @@ final conflictSyncItemsProvider = StreamProvider<List<SyncQueueTableData>>((ref)
 final conflictSyncCountProvider = StreamProvider<int>((ref) {
   final syncService = ref.watch(syncServiceProvider);
   return syncService.watchConflictCount();
+});
+
+/// مزود عدد العناصر الميتة (Dead Letter) - فشلت نهائياً بعد استنفاد المحاولات
+final deadLetterCountProvider = StreamProvider<int>((ref) {
+  final syncService = ref.watch(syncServiceProvider);
+  return syncService.watchDeadLetterCount();
 });

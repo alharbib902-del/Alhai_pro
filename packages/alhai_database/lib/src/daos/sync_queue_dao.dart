@@ -167,6 +167,26 @@ class SyncQueueDao extends DatabaseAccessor<AppDatabase> with _$SyncQueueDaoMixi
     ).map((row) => row.data['count'] as int? ?? 0).watchSingle();
   }
 
+  /// مراقبة عدد العناصر المعلقة مع وقت أقدم عنصر
+  /// يُستخدم لبانر التحذير عند وجود مبيعات غير مُزامنة
+  Stream<({int count, DateTime? oldestAt})> watchPendingCountWithOldest() {
+    return customSelect(
+      '''SELECT COUNT(*) as count, MIN(created_at) as oldest
+         FROM sync_queue
+         WHERE (status = 'pending' OR status = 'failed')
+         AND retry_count < max_retries''',
+      readsFrom: {syncQueueTable},
+    ).map((row) {
+      final count = row.data['count'] as int? ?? 0;
+      DateTime? oldestAt;
+      final oldestMs = row.data['oldest'];
+      if (oldestMs != null && oldestMs is int) {
+        oldestAt = DateTime.fromMillisecondsSinceEpoch(oldestMs);
+      }
+      return (count: count, oldestAt: oldestAt);
+    }).watchSingle();
+  }
+
   /// مراقبة قائمة العناصر المعلقة
   Stream<List<SyncQueueTableData>> watchPendingItems() {
     return (select(syncQueueTable)
@@ -425,6 +445,58 @@ class SyncQueueDao extends DatabaseAccessor<AppDatabase> with _$SyncQueueDaoMixi
       .go();
   }
 
+  // ==================== Dead Letter Queue ====================
+
+  /// الحصول على العناصر الميتة (فشلت نهائياً بعد استنفاد المحاولات)
+  /// تشمل العناصر بحالة 'conflict' أو 'failed' مع retry_count >= max_retries
+  Future<List<SyncQueueTableData>> getDeadLetterItems() {
+    return (select(syncQueueTable)
+      ..where((q) =>
+          (q.status.equals('conflict') | q.status.equals('failed')) &
+          q.retryCount.isBiggerOrEqual(q.maxRetries))
+      ..orderBy([
+        (q) => OrderingTerm.desc(q.priority),
+        (q) => OrderingTerm.asc(q.createdAt),
+      ]))
+      .get();
+  }
+
+  /// عدد العناصر الميتة
+  Future<int> getDeadLetterCount() async {
+    final result = await customSelect(
+      '''SELECT COUNT(*) as count FROM sync_queue
+         WHERE (status = 'conflict' OR status = 'failed')
+         AND retry_count >= max_retries''',
+      readsFrom: {syncQueueTable},
+    ).getSingle();
+    return result.data['count'] as int? ?? 0;
+  }
+
+  /// مراقبة عدد العناصر الميتة (Stream)
+  Stream<int> watchDeadLetterCount() {
+    return customSelect(
+      '''SELECT COUNT(*) as count FROM sync_queue
+         WHERE (status = 'conflict' OR status = 'failed')
+         AND retry_count >= max_retries''',
+      readsFrom: {syncQueueTable},
+    ).map((row) => row.data['count'] as int? ?? 0).watchSingle();
+  }
+
+  /// إعادة محاولة جميع العناصر الميتة (إعادة تعيين الحالة وعدد المحاولات)
+  Future<int> retryDeadLetterItems() async {
+    final recovered = await customUpdate(
+      '''UPDATE sync_queue SET status = 'pending', retry_count = 0, last_error = NULL
+         WHERE (status = 'conflict' OR status = 'failed')
+         AND retry_count >= max_retries''',
+      updates: {syncQueueTable},
+      updateKind: UpdateKind.update,
+    );
+    if (recovered > 0) {
+      debugPrint('[SyncQueue] Reset $recovered dead letter items for retry');
+    }
+    return recovered;
+  }
+
   // ==================== دمج العمليات (Dedup) ====================
 
   /// البحث عن عنصر معلق بالجدول والسجل والعملية
@@ -536,6 +608,23 @@ class SyncQueueDao extends DatabaseAccessor<AppDatabase> with _$SyncQueueDaoMixi
       updates: {syncQueueTable},
       updateKind: UpdateKind.update,
     );
+  }
+
+  /// استعادة تلقائية للعناصر العالقة في حالة 'syncing' لأكثر من 60 ثانية
+  /// تُستدعى في بداية كل دورة مزامنة لضمان عدم بقاء عناصر عالقة من تعطل سابق
+  Future<int> recoverStuckItems() async {
+    final cutoff = DateTime.now().subtract(const Duration(seconds: 60));
+    final recovered = await customUpdate(
+      '''UPDATE sync_queue SET status = 'pending'
+         WHERE status = 'syncing' AND last_attempt_at < ?''',
+      variables: [Variable.withDateTime(cutoff)],
+      updates: {syncQueueTable},
+      updateKind: UpdateKind.update,
+    );
+    if (recovered > 0) {
+      debugPrint('[SyncQueue] Recovered $recovered stuck items (>60s in syncing)');
+    }
+    return recovered;
   }
 
   // ==================== تسجيل عمليات المزامنة (Sync Audit) ====================

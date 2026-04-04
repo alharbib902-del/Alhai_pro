@@ -173,6 +173,9 @@ class StockDeltaSync {
       );
     }
 
+    // Track which deltas actually succeeded so failed ones stay pending
+    final succeededDeltaIds = <String>[];
+
     // إرسال كل دلتا كـ inventory_movement
     for (final delta in pendingDeltas) {
       try {
@@ -188,6 +191,7 @@ class StockDeltaSync {
           'reference_id': delta.referenceId,
           'created_at': delta.createdAt.toUtc().toIso8601String(),
         }, onConflict: 'id').timeout(_networkTimeout);
+        succeededDeltaIds.add(delta.id);
         deltasSent++;
       } catch (e) {
         if (kDebugMode) {
@@ -219,8 +223,10 @@ class StockDeltaSync {
       }
     }
 
-    // تعيين كـ تمت المزامنة
-    await _deltasDao.markSynced(pendingDeltas.map((d) => d.id).toList());
+    // Only mark succeeded deltas as synced; failed ones remain pending
+    if (succeededDeltaIds.isNotEmpty) {
+      await _deltasDao.markSynced(succeededDeltaIds);
+    }
 
     return StockDeltaResult(
       deltasSent: deltasSent,
