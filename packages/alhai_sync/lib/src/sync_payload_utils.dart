@@ -94,6 +94,21 @@ const Map<String, Map<String, String>> _localToRemoteColumnMap = {
   'shifts': {
     'difference': 'cash_difference',
   },
+  // M-COMPAT: returns.total_refund → Supabase refund_amount (v25 original name)
+  'returns': {
+    'total_refund': 'refund_amount',
+  },
+  // M-COMPAT: return_items.refund_amount → Supabase total (v25 original name)
+  'return_items': {
+    'refund_amount': 'total',
+  },
+  // M-COMPAT: daily_summaries count vs amount column name mismatch.
+  // Drift totalSales (INTEGER count) → Supabase total_sales_count (v29).
+  // Drift totalSalesAmount (REAL money) → Supabase total_sales (v25 original).
+  'daily_summaries': {
+    'total_sales': 'total_sales_count',
+    'total_sales_amount': 'total_sales',
+  },
   // M-COMPAT: loyalty_points column name mismatches
   'loyalty_points': {
     'current_points': 'points',
