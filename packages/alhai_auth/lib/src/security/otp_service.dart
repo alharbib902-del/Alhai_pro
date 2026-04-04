@@ -163,10 +163,61 @@ const String _kOtpStateKey = 'otp_state';
 const String _kAttemptHistoryKey = 'otp_attempt_history';
 
 /// خدمة OTP العامة - غير مستخدمة، استخدم WhatsAppOtpService
+///
+/// ⚠️ Security Limitation: Rate limiting is CLIENT-SIDE ONLY.
+/// It can be bypassed by reinstalling the app or clearing storage.
+/// Server-side rate limiting (Redis/DB-backed per-IP and per-phone
+/// throttling) must be implemented on the backend for production use.
+/// This client-side layer is a defense-in-depth measure with
+/// exponential backoff to slow down casual abuse.
 @Deprecated('Use WhatsAppOtpService instead')
 class OtpService {
   static OtpState? _currentOtpState;
   static final Map<String, List<DateTime>> _attemptHistory = {};
+
+  // ==========================================================================
+  // EXPONENTIAL BACKOFF COOLDOWN
+  // ==========================================================================
+
+  /// Cooldown durations that increase with each consecutive attempt.
+  /// Provides escalating delays to slow down brute-force attempts client-side.
+  static const List<Duration> _cooldownLevels = [
+    Duration(seconds: 30),   // After 1st attempt
+    Duration(minutes: 1),    // After 2nd
+    Duration(minutes: 2),    // After 3rd
+    Duration(minutes: 5),    // After 4th
+    Duration(minutes: 15),   // After 5th+ (max)
+  ];
+
+  /// Get cooldown duration based on attempt count (exponential backoff).
+  static Duration getCooldownDuration(int attemptCount) {
+    if (attemptCount <= 0) return Duration.zero;
+    final index = (attemptCount - 1).clamp(0, _cooldownLevels.length - 1);
+    return _cooldownLevels[index];
+  }
+
+  /// Check if user must wait before next OTP request for [phone].
+  static bool isInCooldown(String phone) {
+    _cleanupExpiredAttempts(phone);
+    final attempts = _attemptHistory[phone];
+    if (attempts == null || attempts.isEmpty) return false;
+    final lastAttempt = attempts.last;
+    final cooldown = getCooldownDuration(attempts.length);
+    return DateTime.now().difference(lastAttempt) < cooldown;
+  }
+
+  /// Get remaining cooldown time before next OTP request is allowed for [phone].
+  static Duration getRemainingCooldown(String phone) {
+    _cleanupExpiredAttempts(phone);
+    final attempts = _attemptHistory[phone];
+    if (attempts == null || attempts.isEmpty) return Duration.zero;
+    final lastAttempt = attempts.last;
+    final cooldown = getCooldownDuration(attempts.length);
+    final elapsed = DateTime.now().difference(lastAttempt);
+    final remaining = cooldown - elapsed;
+    return remaining.isNegative ? Duration.zero : remaining;
+  }
+
   static bool _isInitialized = false;
 
   // ============================================================================
@@ -267,6 +318,11 @@ class OtpService {
     if (_isRateLimited(phone)) {
       final blockedUntil = _getBlockedUntil(phone);
       return OtpSendResult.rateLimited(blockedUntil);
+    }
+
+    // التحقق من الانتظار التصاعدي (exponential backoff)
+    if (isInCooldown(phone)) {
+      return OtpSendResult.cooldown(getRemainingCooldown(phone));
     }
 
     try {

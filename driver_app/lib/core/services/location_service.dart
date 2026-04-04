@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 
 /// Location Service for Driver App
@@ -14,39 +15,50 @@ class LocationService {
   Position? get currentPosition => _currentPosition;
   bool get isInitialized => _isInitialized;
   
-  /// Initialize location service and request permissions
+  /// Initialize location service and request permissions.
+  ///
+  /// Throws a [LocationServiceException] if location services are disabled
+  /// or if permission is denied, so the caller can surface a message to the user.
   Future<void> initialize() async {
     try {
       // Check if location services are enabled
       final serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
-        // Location services are disabled
-        return;
+        throw LocationServiceException(
+          'خدمة الموقع معطلة. يرجى تفعيلها من إعدادات الجهاز.',
+        );
       }
-      
+
       // Check and request permissions
       var permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {
-          return;
+          throw LocationServiceException(
+            'تم رفض إذن الموقع. يرجى السماح للتطبيق بالوصول إلى موقعك.',
+          );
         }
       }
-      
+
       if (permission == LocationPermission.deniedForever) {
-        // Permissions are permanently denied
-        return;
+        throw LocationServiceException(
+          'إذن الموقع مرفوض بشكل دائم. يرجى تفعيله من إعدادات التطبيق.',
+        );
       }
-      
+
       // Get initial position
       _currentPosition = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
-      
+
       _isInitialized = true;
-    } catch (e) {
-      // Handle initialization error
+    } on LocationServiceException {
       _isInitialized = false;
+      rethrow;
+    } catch (e) {
+      // Handle unexpected initialization errors
+      _isInitialized = false;
+      debugPrint('LocationService initialization error: $e');
     }
   }
   
@@ -86,4 +98,18 @@ class LocationService {
       endLongitude,
     );
   }
+}
+
+/// Exception thrown by [LocationService] when location is unavailable
+/// due to disabled services or denied permissions.
+///
+/// The [message] is a user-readable Arabic string that callers can display
+/// directly in a SnackBar or dialog.
+class LocationServiceException implements Exception {
+  final String message;
+
+  const LocationServiceException(this.message);
+
+  @override
+  String toString() => message;
 }

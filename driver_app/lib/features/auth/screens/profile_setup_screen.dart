@@ -40,8 +40,13 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
 
     try {
       final datasource = GetIt.instance<DriverAuthDatasource>();
+      final rawName = _nameController.text.trim();
+      final sanitizedName = rawName
+          .replaceAll('&', '&amp;')
+          .replaceAll('<', '&lt;')
+          .replaceAll('>', '&gt;');
       await datasource.updateProfile(
-        name: _nameController.text.trim(),
+        name: sanitizedName,
         vehicleType: _vehicleType,
       );
 
@@ -53,7 +58,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('فشل الحفظ: $e')),
+          SnackBar(content: Text('فشل حفظ البيانات. حاول مرة أخرى')),
         );
       }
     } finally {
@@ -64,15 +69,19 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final avatarSize = MediaQuery.of(context).size.width * 0.25;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('إعداد الملف الشخصي'),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(AlhaiSpacing.lg),
-        child: Form(
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 600),
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(AlhaiSpacing.lg),
+            child: Form(
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -80,15 +89,15 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
               // Avatar
               Center(
                 child: Container(
-                  width: 100,
-                  height: 100,
+                  width: avatarSize,
+                  height: avatarSize,
                   decoration: BoxDecoration(
                     color: theme.colorScheme.primaryContainer,
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
                     Icons.person_rounded,
-                    size: 52,
+                    size: avatarSize * 0.52,
                     color: theme.colorScheme.primary,
                   ),
                 ),
@@ -99,6 +108,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
               TextFormField(
                 controller: _nameController,
                 textCapitalization: TextCapitalization.words,
+                textInputAction: TextInputAction.done,
                 validator: (v) =>
                     (v == null || v.trim().isEmpty) ? 'أدخل اسمك' : null,
                 decoration: InputDecoration(
@@ -160,6 +170,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                     : const Text('ابدأ العمل', style: TextStyle(fontSize: 16)),
               ),
             ],
+            ),
           ),
         ),
       ),

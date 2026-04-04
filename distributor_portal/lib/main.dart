@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'core/router/app_router.dart';
 import 'core/supabase/supabase_client.dart';
 import 'di/injection.dart';
+import 'providers/distributor_providers.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,16 +36,17 @@ class DistributorPortalApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(distributorRouterProvider);
-    final locale = ref.watch(localeProvider);
+    final localeState = ref.watch(localeProvider);
+    final themeMode = ref.watch(themeModeProvider);
 
     return MaterialApp.router(
       title: 'Alhai Distributor Portal',
       debugShowCheckedModeBanner: false,
       theme: AlhaiTheme.light,
       darkTheme: AlhaiTheme.dark,
-      themeMode: ThemeMode.system,
+      themeMode: themeMode,
       routerConfig: router,
-      locale: locale,
+      locale: localeState.locale,
       supportedLocales: SupportedLocales.all,
       localizationsDelegates: const [
         AppLocalizations.delegate,
@@ -56,7 +58,9 @@ class DistributorPortalApp extends ConsumerWidget {
         final isRtl = Directionality.of(context) == TextDirection.rtl;
         return Directionality(
           textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
-          child: child ?? const SizedBox.shrink(),
+          child: SessionTimeoutWrapper(
+            child: child ?? const SizedBox.shrink(),
+          ),
         );
       },
     );

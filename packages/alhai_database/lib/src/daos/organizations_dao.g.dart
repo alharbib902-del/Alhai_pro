@@ -8,6 +8,7 @@ mixin _$OrganizationsDaoMixin on DatabaseAccessor<AppDatabase> {
       attachedDatabase.organizationsTable;
   $SubscriptionsTableTable get subscriptionsTable =>
       attachedDatabase.subscriptionsTable;
+  $OrgMembersTableTable get orgMembersTable => attachedDatabase.orgMembersTable;
   OrganizationsDaoManager get managers => OrganizationsDaoManager(this);
 }
 
@@ -20,4 +21,7 @@ class OrganizationsDaoManager {
   $$SubscriptionsTableTableTableManager get subscriptionsTable =>
       $$SubscriptionsTableTableTableManager(
           _db.attachedDatabase, _db.subscriptionsTable);
+  $$OrgMembersTableTableTableManager get orgMembersTable =>
+      $$OrgMembersTableTableTableManager(
+          _db.attachedDatabase, _db.orgMembersTable);
 }

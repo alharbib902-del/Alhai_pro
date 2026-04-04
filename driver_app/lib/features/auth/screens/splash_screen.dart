@@ -53,6 +53,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final logoSize = MediaQuery.of(context).size.width * 0.3;
 
     return Scaffold(
       body: Center(
@@ -60,15 +61,15 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              width: 120,
-              height: 120,
+              width: logoSize,
+              height: logoSize,
               decoration: BoxDecoration(
                 color: theme.colorScheme.primaryContainer,
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 Icons.local_shipping_rounded,
-                size: 64,
+                size: logoSize * 0.53,
                 color: theme.colorScheme.primary,
               ),
             ),

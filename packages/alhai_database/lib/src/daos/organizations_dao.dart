@@ -1,11 +1,12 @@
 import 'package:drift/drift.dart';
 
 import '../app_database.dart';
+import '../tables/org_members_table.dart';
 import '../tables/organizations_table.dart';
 
 part 'organizations_dao.g.dart';
 
-@DriftAccessor(tables: [OrganizationsTable, SubscriptionsTable])
+@DriftAccessor(tables: [OrganizationsTable, SubscriptionsTable, OrgMembersTable])
 class OrganizationsDao extends DatabaseAccessor<AppDatabase>
     with _$OrganizationsDaoMixin {
   OrganizationsDao(super.db);
@@ -38,8 +39,14 @@ class OrganizationsDao extends DatabaseAccessor<AppDatabase>
       into(organizationsTable)
           .insert(org, mode: InsertMode.insertOrReplace);
 
-  Future<int> deleteOrganization(String id) =>
-      (delete(organizationsTable)..where((o) => o.id.equals(id))).go();
+  Future<int> deleteOrganization(String id) async {
+    return transaction(() async {
+      // Clean up related records first (cascade safety)
+      await (delete(orgMembersTable)..where((m) => m.orgId.equals(id))).go();
+      await (delete(subscriptionsTable)..where((s) => s.orgId.equals(id))).go();
+      return (delete(organizationsTable)..where((o) => o.id.equals(id))).go();
+    });
+  }
 
   Future<int> markOrgAsSynced(String id) {
     return (update(organizationsTable)..where((o) => o.id.equals(id)))

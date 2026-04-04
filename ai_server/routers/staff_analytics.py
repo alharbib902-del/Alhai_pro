@@ -1,6 +1,10 @@
 """تحليل الموظفين - Staff Analytics Router"""
 
+import logging
+
 from fastapi import APIRouter, Depends, HTTPException
+
+logger = logging.getLogger(__name__)
 from auth import AuthenticatedUser, verify_store_access
 from models.schemas import StaffRequest, StaffResponse
 from services.ml_service import analyze_staff
@@ -24,5 +28,6 @@ async def staff_analytics(
             store_id=request.store_id,
             language=request.language,
         )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"خطأ في تحليل الموظفين: {e}")
+    except Exception:
+        logger.exception("خطأ في تحليل الموظفين")
+        raise HTTPException(status_code=500, detail="حدث خطأ غير متوقع")

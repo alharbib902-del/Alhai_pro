@@ -33,17 +33,26 @@ final driverRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/',
         name: 'splash',
-        builder: (context, state) => const SplashScreen(),
+        pageBuilder: (context, state) => _fadeTransitionPage(
+          key: state.pageKey,
+          child: const SplashScreen(),
+        ),
       ),
       GoRoute(
         path: '/login',
         name: 'login',
-        builder: (context, state) => const LoginScreen(),
+        pageBuilder: (context, state) => _fadeTransitionPage(
+          key: state.pageKey,
+          child: const LoginScreen(),
+        ),
       ),
       GoRoute(
         path: '/profile-setup',
         name: 'profileSetup',
-        builder: (context, state) => const ProfileSetupScreen(),
+        pageBuilder: (context, state) => _slideTransitionPage(
+          key: state.pageKey,
+          child: const ProfileSetupScreen(),
+        ),
       ),
 
       // Main app with bottom navigation
@@ -52,13 +61,16 @@ final driverRouterProvider = Provider<GoRouter>((ref) {
           return DriverNavigationShell(navigationShell: navigationShell);
         },
         branches: [
-          // Tab 0: Home
+          // Tab 0: Home — use pageBuilder with fade for tab switches
           StatefulShellBranch(
             routes: [
               GoRoute(
                 path: '/home',
                 name: 'home',
-                builder: (context, state) => const HomeScreen(),
+                pageBuilder: (context, state) => _fadeTransitionPage(
+                  key: state.pageKey,
+                  child: const HomeScreen(),
+                ),
               ),
             ],
           ),
@@ -68,8 +80,10 @@ final driverRouterProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: '/deliveries',
                 name: 'activeDeliveries',
-                builder: (context, state) =>
-                    const DeliveriesListScreen(),
+                pageBuilder: (context, state) => _fadeTransitionPage(
+                  key: state.pageKey,
+                  child: const DeliveriesListScreen(),
+                ),
               ),
             ],
           ),
@@ -79,7 +93,10 @@ final driverRouterProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: '/earnings',
                 name: 'earnings',
-                builder: (context, state) => const EarningsScreen(),
+                pageBuilder: (context, state) => _fadeTransitionPage(
+                  key: state.pageKey,
+                  child: const EarningsScreen(),
+                ),
               ),
             ],
           ),
@@ -89,50 +106,115 @@ final driverRouterProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: '/profile',
                 name: 'profile',
-                builder: (context, state) => const ProfileScreen(),
+                pageBuilder: (context, state) => _fadeTransitionPage(
+                  key: state.pageKey,
+                  child: const ProfileScreen(),
+                ),
               ),
             ],
           ),
         ],
       ),
 
-      // Full-screen routes (outside bottom nav)
+      // Full-screen routes (outside bottom nav) — slide from bottom
       GoRoute(
         path: '/orders/:id',
         name: 'orderDetails',
-        builder: (context, state) => OrderDetailsScreen(
-          deliveryId: state.pathParameters['id']!,
+        pageBuilder: (context, state) => _slideTransitionPage(
+          key: state.pageKey,
+          child: OrderDetailsScreen(
+            deliveryId: state.pathParameters['id']!,
+          ),
         ),
       ),
       GoRoute(
         path: '/orders/:id/navigate',
         name: 'navigation',
-        builder: (context, state) => NavigationScreen(
-          deliveryId: state.pathParameters['id']!,
+        pageBuilder: (context, state) => _slideTransitionPage(
+          key: state.pageKey,
+          child: NavigationScreen(
+            deliveryId: state.pathParameters['id']!,
+          ),
         ),
       ),
       GoRoute(
         path: '/orders/:id/proof',
         name: 'deliveryProof',
-        builder: (context, state) => DeliveryProofScreen(
-          deliveryId: state.pathParameters['id']!,
+        pageBuilder: (context, state) => _slideTransitionPage(
+          key: state.pageKey,
+          child: DeliveryProofScreen(
+            deliveryId: state.pathParameters['id']!,
+          ),
         ),
       ),
       GoRoute(
         path: '/chat/:orderId',
         name: 'chat',
-        builder: (context, state) => ChatScreen(
-          orderId: state.pathParameters['orderId']!,
+        pageBuilder: (context, state) => _slideTransitionPage(
+          key: state.pageKey,
+          child: ChatScreen(
+            orderId: state.pathParameters['orderId']!,
+          ),
         ),
       ),
       GoRoute(
         path: '/orders/new',
         name: 'newOrder',
-        builder: (context, state) => const NewOrderScreen(),
+        pageBuilder: (context, state) => _slideTransitionPage(
+          key: state.pageKey,
+          child: const NewOrderScreen(),
+        ),
       ),
     ],
   );
 });
+
+// ─── Page transition helpers ───────────────────────────────────────────────
+
+/// Fade transition — used for tab-level screens so switching tabs feels instant
+/// yet polished.
+CustomTransitionPage<void> _fadeTransitionPage({
+  required LocalKey key,
+  required Widget child,
+}) {
+  return CustomTransitionPage<void>(
+    key: key,
+    child: child,
+    transitionDuration: const Duration(milliseconds: 200),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      return FadeTransition(
+        opacity: CurvedAnimation(parent: animation, curve: Curves.easeIn),
+        child: child,
+      );
+    },
+  );
+}
+
+/// Slide-from-bottom + fade — used for pushed detail screens (order details,
+/// navigation, proof capture, chat) to communicate hierarchy clearly.
+CustomTransitionPage<void> _slideTransitionPage({
+  required LocalKey key,
+  required Widget child,
+}) {
+  return CustomTransitionPage<void>(
+    key: key,
+    child: child,
+    transitionDuration: const Duration(milliseconds: 300),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      final slideTween = Tween<Offset>(
+        begin: const Offset(0, 0.08),
+        end: Offset.zero,
+      ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic));
+      return SlideTransition(
+        position: slideTween,
+        child: FadeTransition(
+          opacity: CurvedAnimation(parent: animation, curve: Curves.easeIn),
+          child: child,
+        ),
+      );
+    },
+  );
+}
 
 /// Auth guard redirect logic.
 String? _guardRedirect(Ref ref, GoRouterState state) {
@@ -207,22 +289,22 @@ class _PlaceholderScreen extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
                 decoration: BoxDecoration(
-                  color: Colors.amber.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(20),
+                  color: theme.colorScheme.tertiary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(AlhaiRadius.xl),
                   border: Border.all(
-                    color: Colors.amber.withValues(alpha: 0.3),
+                    color: theme.colorScheme.tertiary.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(Icons.construction_rounded,
-                        size: 18, color: Colors.amber.shade700),
+                        size: 18, color: theme.colorScheme.tertiary),
                     const SizedBox(width: AlhaiSpacing.xs),
                     Text(
                       'قريباً - قيد التطوير',
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: Colors.amber.shade700,
+                        color: theme.colorScheme.tertiary,
                         fontWeight: FontWeight.w600,
                       ),
                     ),

@@ -1,6 +1,10 @@
 """المساعد الذكي - Smart Assistant Router"""
 
+import logging
+
 from fastapi import APIRouter, Depends, HTTPException
+
+logger = logging.getLogger(__name__)
 from auth import AuthenticatedUser, verify_store_access
 from models.schemas import AssistantRequest, AssistantResponse, SuggestedAction
 from services.ml_service import get_assistant_response
@@ -45,5 +49,6 @@ async def smart_assistant(
             context=request.context,
             language=request.language,
         )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"خطأ في المساعد الذكي: {e}")
+    except Exception:
+        logger.exception("خطأ في المساعد الذكي")
+        raise HTTPException(status_code=500, detail="حدث خطأ غير متوقع")

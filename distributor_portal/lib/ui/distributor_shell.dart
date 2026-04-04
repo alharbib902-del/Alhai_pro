@@ -93,6 +93,32 @@ class _DistributorShellState extends ConsumerState<DistributorShell> {
   }
 
   Future<void> _logout() async {
+    final l10n = AppLocalizations.of(context);
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n?.distributorLogout ?? 'Sign out'),
+        content: const Text('Are you sure you want to sign out?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(l10n?.cancel ?? 'Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            style: FilledButton.styleFrom(
+              backgroundColor: AppColors.error,
+            ),
+            child: Text(l10n?.distributorLogout ?? 'Sign out',
+                style: const TextStyle(color: AppColors.textOnPrimary)),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    // Clear datasource cache on logout
+    ref.read(distributorDatasourceProvider).clearCache();
     await AppSupabase.client.auth.signOut();
     if (!mounted) return;
     context.go('/login');
@@ -252,14 +278,18 @@ class _DistributorShellState extends ConsumerState<DistributorShell> {
                   ],
                 ),
               ),
-              IconButton(
-                onPressed: _logout,
-                icon: Icon(
-                  Icons.logout_rounded,
-                  size: 20,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+              Semantics(
+                button: true,
+                label: l10n?.distributorLogout ?? 'Sign out',
+                child: IconButton(
+                  onPressed: _logout,
+                  icon: Icon(
+                    Icons.logout_rounded,
+                    size: 20,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                  tooltip: l10n?.distributorLogout ?? 'Sign out',
                 ),
-                tooltip: l10n?.distributorLogout ?? 'Sign out',
               ),
             ],
           ),
@@ -268,10 +298,106 @@ class _DistributorShellState extends ConsumerState<DistributorShell> {
     );
   }
 
+  /// Build a collapsed icon-only sidebar for tablet viewports.
+  Widget _buildCollapsedSidebar(
+      String selectedId, bool isDark, AppLocalizations? l10n) {
+    return Column(
+      children: [
+        // Brand icon
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.lg),
+          child: Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: AppColors.primary,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: const Icon(
+              Icons.store,
+              color: AppColors.textOnPrimary,
+              size: 22,
+            ),
+          ),
+        ),
+        const Divider(height: 1),
+        const SizedBox(height: AlhaiSpacing.xs),
+        // Nav items (icon only)
+        Expanded(
+          child: ListView(
+            padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs),
+            children: _navItems.map((item) {
+              final isSelected = item.id == selectedId;
+              return Padding(
+                padding: const EdgeInsets.only(bottom: AlhaiSpacing.xxs),
+                child: Tooltip(
+                  message: item.label(l10n),
+                  preferBelow: false,
+                  child: Semantics(
+                    button: true,
+                    label: item.label(l10n),
+                    selected: isSelected,
+                    child: Material(
+                      color: Colors.transparent,
+                      borderRadius: BorderRadius.circular(10),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(10),
+                        onTap: () => _onNavItemTapped(item.route),
+                        child: Container(
+                          padding: const EdgeInsets.all(AlhaiSpacing.sm),
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? AppColors.primary.withValues(alpha: 0.1)
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Icon(
+                            item.icon,
+                            size: 22,
+                            color: isSelected
+                                ? AppColors.primary
+                                : isDark
+                                    ? Theme.of(context)
+                                        .colorScheme
+                                        .onSurfaceVariant
+                                    : AppColors.textSecondary,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ),
+        // Bottom logout
+        const Divider(height: 1),
+        Padding(
+          padding: const EdgeInsets.all(AlhaiSpacing.sm),
+          child: Semantics(
+            button: true,
+            label: l10n?.distributorLogout ?? 'Sign out',
+            child: IconButton(
+              onPressed: _logout,
+              icon: Icon(
+                Icons.logout_rounded,
+                size: 20,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+              tooltip: l10n?.distributorLogout ?? 'Sign out',
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final isDesktop =
-        MediaQuery.sizeOf(context).width >= AlhaiBreakpoints.desktop;
+    final width = MediaQuery.sizeOf(context).width;
+    final isDesktop = width >= AlhaiBreakpoints.desktop;
+    final isTablet = width >= 600 && width < AlhaiBreakpoints.desktop;
     final selectedId = _getSelectedId(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
@@ -284,7 +410,7 @@ class _DistributorShellState extends ConsumerState<DistributorShell> {
             Theme.of(context).colorScheme.surfaceContainerLow,
         body: Row(
           children: [
-            // Sidebar
+            // Full sidebar
             Container(
               width: 240,
               decoration: BoxDecoration(
@@ -304,6 +430,35 @@ class _DistributorShellState extends ConsumerState<DistributorShell> {
               ),
             ),
             // Content
+            Expanded(child: widget.child),
+          ],
+        ),
+      );
+    } else if (isTablet) {
+      // Tablet: collapsed icon-only sidebar
+      return Scaffold(
+        backgroundColor:
+            Theme.of(context).colorScheme.surfaceContainerLow,
+        body: Row(
+          children: [
+            Container(
+              width: 72,
+              decoration: BoxDecoration(
+                color: sidebarBg,
+                border: BorderDirectional(
+                  start: BorderSide(
+                    color: isDark
+                        ? Theme.of(context).colorScheme.outlineVariant
+                        : Theme.of(context)
+                            .colorScheme
+                            .surfaceContainerLow,
+                  ),
+                ),
+              ),
+              child: SafeArea(
+                child: _buildCollapsedSidebar(selectedId, isDark, l10n),
+              ),
+            ),
             Expanded(child: widget.child),
           ],
         ),

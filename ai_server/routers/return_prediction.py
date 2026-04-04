@@ -1,6 +1,10 @@
 """التنبؤ بالمرتجعات - Return Prediction Router"""
 
+import logging
+
 from fastapi import APIRouter, Depends, HTTPException
+
+logger = logging.getLogger(__name__)
 from auth import AuthenticatedUser, verify_store_access
 from models.schemas import ReturnRequest, ReturnResponse
 from services.ml_service import predict_returns
@@ -25,5 +29,6 @@ async def predict_returns_endpoint(
             days_ahead=request.days_ahead,
             language=request.language,
         )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"خطأ في التنبؤ بالمرتجعات: {e}")
+    except Exception:
+        logger.exception("خطأ في التنبؤ بالمرتجعات")
+        raise HTTPException(status_code=500, detail="حدث خطأ غير متوقع")

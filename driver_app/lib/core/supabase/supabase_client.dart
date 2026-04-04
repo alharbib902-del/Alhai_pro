@@ -18,10 +18,15 @@ class AppSupabase {
       );
     }
 
+    // TODO(security): Add certificate pinning for production builds using the
+    // http_certificate_pinning package or a custom HttpClient with a pinned
+    // SecurityContext. This prevents MITM attacks even if a rogue CA is trusted
+    // by the OS. Pin the Supabase project certificate's SHA-256 fingerprint.
     await Supabase.initialize(
       url: SupabaseConfig.url,
       anonKey: SupabaseConfig.anonKey,
       debug: SupabaseConfig.enableDebugLogs,
+      headers: SupabaseConfig.secureHeaders,
     );
 
     _initialized = true;

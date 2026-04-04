@@ -166,11 +166,17 @@ class _DistributorLoginScreenState
                   // Email field
                   TextFormField(
                     controller: _emailController,
+                    autofocus: true,
                     keyboardType: TextInputType.emailAddress,
                     textInputAction: TextInputAction.next,
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
                         return l10n?.distributorEmailLabel ?? 'Email required';
+                      }
+                      // Email format validation
+                      final emailRegex = RegExp(r'^[\w\-\.+]+@([\w\-]+\.)+[\w\-]{2,}$');
+                      if (!emailRegex.hasMatch(value.trim())) {
+                        return 'Please enter a valid email address';
                       }
                       return null;
                     },
@@ -178,7 +184,7 @@ class _DistributorLoginScreenState
                       color: Theme.of(context).colorScheme.onSurface,
                     ),
                     decoration: InputDecoration(
-                      labelText: l10n?.distributorEmailLabel ?? 'Email',
+                      labelText: '${l10n?.distributorEmailLabel ?? 'Email'} *',
                       prefixIcon: Icon(Icons.email_outlined,
                           color: Theme.of(context).colorScheme.onSurfaceVariant),
                       filled: true,
@@ -215,7 +221,7 @@ class _DistributorLoginScreenState
                       color: Theme.of(context).colorScheme.onSurface,
                     ),
                     decoration: InputDecoration(
-                      labelText: l10n?.distributorPasswordLabel ?? 'Password',
+                      labelText: '${l10n?.distributorPasswordLabel ?? 'Password'} *',
                       prefixIcon: Icon(Icons.lock_outline,
                           color: Theme.of(context).colorScheme.onSurfaceVariant),
                       suffixIcon: IconButton(

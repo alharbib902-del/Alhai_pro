@@ -4,10 +4,19 @@ Alhai POS AI Server - خادم الذكاء الاصطناعي لنقاط الب
 FastAPI backend serving 15 AI features for the Alhai POS app.
 """
 
+import logging
+import time
+
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.util import get_remote_address
+
 from config import get_settings
+
+logger = logging.getLogger(__name__)
 
 from routers import (
     sales_forecast,
@@ -29,6 +38,8 @@ from routers import (
 
 settings = get_settings()
 
+limiter = Limiter(key_func=get_remote_address, default_limits=["60/minute"])
+
 app = FastAPI(
     title="Alhai POS AI Server",
     description="خادم الذكاء الاصطناعي لنظام نقاط البيع الحي - 15 خدمة ذكية",
@@ -37,12 +48,16 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
+# Rate limiting
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
 # CORS - only allow configured origins (no wildcard)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*", "Authorization"],
 )
 
@@ -57,6 +72,33 @@ async def global_exception_handler(request: Request, exc: Exception):
             "detail": str(exc) if settings.debug else "حدث خطأ غير متوقع",
         },
     )
+
+
+# Audit logging middleware
+@app.middleware("http")
+async def audit_log_middleware(request: Request, call_next):
+    start = time.time()
+    response = await call_next(request)
+    duration = (time.time() - start) * 1000
+    logger.info(
+        "method=%s path=%s status=%d duration=%.1fms",
+        request.method,
+        request.url.path,
+        response.status_code,
+        duration,
+    )
+    return response
+
+
+# Security headers middleware
+@app.middleware("http")
+async def security_headers_middleware(request: Request, call_next):
+    response = await call_next(request)
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["X-XSS-Protection"] = "1; mode=block"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    return response
 
 
 # Health check

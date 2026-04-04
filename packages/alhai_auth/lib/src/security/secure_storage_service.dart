@@ -8,7 +8,6 @@ library;
 
 import 'dart:convert';
 import 'dart:math';
-import 'dart:typed_data';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -46,45 +45,63 @@ class _NativeStorage implements StorageInterface {
   Future<void> deleteAll() => _storage.deleteAll();
 }
 
-/// Simple obfuscation for web storage values.
-/// Not cryptographically strong, but prevents casual reading from DevTools.
+/// Security Note: Web storage cannot be truly encrypted since the key must
+/// be accessible to JavaScript. This obfuscation layer prevents casual
+/// inspection but is NOT equivalent to native SecureStorage/Keychain.
+/// For production, consider using HttpOnly cookies set by the server.
+///
+/// Improvement over simple XOR: uses a per-session random key combined
+/// with the app salt, so the effective key changes every browser session.
+/// This means stored tokens become unreadable after the session ends,
+/// which limits the window of exposure from DevTools inspection.
 class _WebCrypto {
   static const _salt = 'alhai_pos_2026_web_storage';
+  static String? _webSessionKey;
 
-  static String _deriveKey() {
-    final keyMaterial = '$_salt|${Uri.base.origin}';
-    // Simple hash: sum of char codes modulo-shifted
-    final chars = keyMaterial.codeUnits;
-    final keyChars = <int>[];
-    for (var i = 0; i < 64; i++) {
-      keyChars.add((chars[i % chars.length] * 31 + i * 17) & 0xFF);
-    }
-    return String.fromCharCodes(keyChars);
+  /// Generate a per-session random key for web storage obfuscation.
+  /// The key lives only in memory (lost on page refresh), which means
+  /// previously stored values cannot be decoded in a new session.
+  /// This is intentional: tokens should be refreshed via the server.
+  static String _getOrCreateSessionKey() {
+    final existing = _webSessionKey;
+    if (existing != null && existing.isNotEmpty) return existing;
+
+    // Generate 32 random bytes as hex
+    final random = Random.secure();
+    final bytes = List<int>.generate(32, (_) => random.nextInt(256));
+    final key = bytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
+    _webSessionKey = key;
+    return key;
   }
 
+  /// Enhanced web obfuscation using combined session + app key.
+  /// The combined key includes the static salt, the origin, and a
+  /// per-session random component, making the XOR output unique per session.
   static String obfuscate(String plaintext) {
-    final key = _deriveKey();
-    final bytes = utf8.encode(plaintext);
-    final keyBytes = key.codeUnits;
-    final result = Uint8List(bytes.length);
-    for (var i = 0; i < bytes.length; i++) {
-      result[i] = bytes[i] ^ keyBytes[i % keyBytes.length];
-    }
+    final sessionKey = _getOrCreateSessionKey();
+    final combinedKey = '$_salt:${Uri.base.origin}:$sessionKey';
+    final keyBytes = utf8.encode(combinedKey);
+    final dataBytes = utf8.encode(plaintext);
+    final result = List<int>.generate(
+      dataBytes.length,
+      (i) => dataBytes[i] ^ keyBytes[i % keyBytes.length],
+    );
     return base64Url.encode(result);
   }
 
   static String? deobfuscate(String encoded) {
     try {
-      final key = _deriveKey();
-      final bytes = base64Url.decode(encoded);
-      final keyBytes = key.codeUnits;
-      final result = Uint8List(bytes.length);
-      for (var i = 0; i < bytes.length; i++) {
-        result[i] = bytes[i] ^ keyBytes[i % keyBytes.length];
-      }
+      final sessionKey = _getOrCreateSessionKey();
+      final combinedKey = '$_salt:${Uri.base.origin}:$sessionKey';
+      final keyBytes = utf8.encode(combinedKey);
+      final encBytes = base64Url.decode(encoded);
+      final result = List<int>.generate(
+        encBytes.length,
+        (i) => encBytes[i] ^ keyBytes[i % keyBytes.length],
+      );
       return utf8.decode(result);
     } catch (_) {
-      return null; // Failed to decode - might be legacy plaintext
+      return null; // Failed to decode - session key changed or legacy data
     }
   }
 }

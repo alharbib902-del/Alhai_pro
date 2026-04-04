@@ -20,7 +20,11 @@ class ActiveDeliveryCard extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Card(
+      elevation: 0,
       clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AlhaiRadius.md),
+      ),
       child: InkWell(
         onTap: onTap,
         child: Container(
@@ -40,6 +44,7 @@ class ActiveDeliveryCard extends StatelessWidget {
                 children: [
                   Icon(
                     Icons.local_shipping_rounded,
+                    size: 24,
                     color: theme.colorScheme.primary,
                   ),
                   const SizedBox(width: AlhaiSpacing.xs),

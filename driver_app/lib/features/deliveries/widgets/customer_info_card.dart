@@ -20,6 +20,10 @@ class CustomerInfoCard extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AlhaiRadius.md),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(AlhaiSpacing.md),
         child: Column(
@@ -32,7 +36,7 @@ class CustomerInfoCard extends StatelessWidget {
                 color: theme.colorScheme.outline,
               ),
             ),
-            const Divider(),
+            Divider(color: theme.colorScheme.outlineVariant),
             if (name != null && name!.isNotEmpty)
               ListTile(
                 contentPadding: EdgeInsets.zero,
@@ -44,17 +48,31 @@ class CustomerInfoCard extends StatelessWidget {
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 leading: const Icon(Icons.phone_outlined),
-                title: Text(phone!, textDirection: TextDirection.ltr),
+                title: Text(_maskPhone(phone!), textDirection: TextDirection.ltr),
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    IconButton(
-                      icon: const Icon(Icons.phone, color: Colors.green),
-                      onPressed: () => _launchPhone(phone!),
+                    Semantics(
+                      label: 'اتصال بالعميل',
+                      button: true,
+                      child: IconButton(
+                        icon: Icon(Icons.phone,
+                            size: 22,
+                            color: Theme.of(context).colorScheme.primary),
+                        tooltip: 'اتصال بالعميل',
+                        onPressed: () => _launchPhone(phone!),
+                      ),
                     ),
-                    IconButton(
-                      icon: const Icon(Icons.message, color: Colors.blue),
-                      onPressed: () => _launchWhatsApp(phone!),
+                    Semantics(
+                      label: 'مراسلة عبر واتساب',
+                      button: true,
+                      child: IconButton(
+                        icon: Icon(Icons.message,
+                            size: 22,
+                            color: Theme.of(context).colorScheme.tertiary),
+                        tooltip: 'مراسلة عبر واتساب',
+                        onPressed: () => _launchWhatsApp(phone!),
+                      ),
                     ),
                   ],
                 ),
@@ -72,6 +90,11 @@ class CustomerInfoCard extends StatelessWidget {
       ),
     );
   }
+
+  String _maskPhone(String phone) =>
+      phone.length > 4
+          ? '${'*' * (phone.length - 4)}${phone.substring(phone.length - 4)}'
+          : phone;
 
   Future<void> _launchPhone(String phone) async {
     final uri = Uri.parse('tel:$phone');

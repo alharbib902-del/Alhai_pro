@@ -1,6 +1,10 @@
 """تحليل سلة المشتريات - Basket Analysis Router"""
 
+import logging
+
 from fastapi import APIRouter, Depends, HTTPException
+
+logger = logging.getLogger(__name__)
 from auth import AuthenticatedUser, verify_store_access
 from models.schemas import BasketRequest, BasketResponse
 from services.ml_service import analyze_basket
@@ -26,5 +30,6 @@ async def basket_analysis(
             top_n=request.top_n,
             language=request.language,
         )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"خطأ في تحليل السلة: {e}")
+    except Exception:
+        logger.exception("خطأ في تحليل السلة")
+        raise HTTPException(status_code=500, detail="حدث خطأ غير متوقع")

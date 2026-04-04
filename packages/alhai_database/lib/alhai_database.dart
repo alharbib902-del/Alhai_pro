@@ -8,6 +8,9 @@ library alhai_database;
 export 'src/app_database.dart';
 export 'src/connection.dart';
 
+// Re-export commonly used Drift types
+export 'package:drift/drift.dart' show Value;
+
 // Tables (barrel)
 export 'src/tables/tables.dart';
 

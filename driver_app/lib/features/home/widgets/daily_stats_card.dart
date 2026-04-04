@@ -1,6 +1,8 @@
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:flutter/material.dart';
 
+import '../../../shared/widgets/stat_item.dart';
+
 class DailyStatsCard extends StatelessWidget {
   final Map<String, dynamic> stats;
 
@@ -13,6 +15,10 @@ class DailyStatsCard extends StatelessWidget {
     final earnings = (stats['today_earnings'] ?? 0).toDouble();
 
     return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AlhaiRadius.md),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(AlhaiSpacing.mdl),
         child: Column(
@@ -28,24 +34,32 @@ class DailyStatsCard extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: _StatItem(
+                  child: StatItem(
                     icon: Icons.local_shipping_rounded,
                     value: '$deliveries',
                     label: 'توصيلات',
-                    color: theme.colorScheme.primary,
+                    iconColor: theme.colorScheme.primary,
+                    valueStyle: theme.textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: theme.colorScheme.primary,
+                    ),
                   ),
                 ),
                 Container(
                   height: 40,
                   width: 1,
-                  color: theme.dividerColor,
+                  color: theme.colorScheme.outlineVariant,
                 ),
                 Expanded(
-                  child: _StatItem(
+                  child: StatItem(
                     icon: Icons.payments_rounded,
                     value: '${earnings.toStringAsFixed(0)} ر.س',
                     label: 'الأرباح',
-                    color: Colors.green,
+                    iconColor: theme.colorScheme.primary,
+                    valueStyle: theme.textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: theme.colorScheme.primary,
+                    ),
                   ),
                 ),
               ],
@@ -53,45 +67,6 @@ class DailyStatsCard extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class _StatItem extends StatelessWidget {
-  final IconData icon;
-  final String value;
-  final String label;
-  final Color color;
-
-  const _StatItem({
-    required this.icon,
-    required this.value,
-    required this.label,
-    required this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Column(
-      children: [
-        Icon(icon, color: color, size: 28),
-        const SizedBox(height: AlhaiSpacing.xs),
-        Text(
-          value,
-          style: theme.textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: color,
-          ),
-        ),
-        const SizedBox(height: AlhaiSpacing.xxs),
-        Text(
-          label,
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.outline,
-          ),
-        ),
-      ],
     );
   }
 }

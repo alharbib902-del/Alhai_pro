@@ -61,6 +61,7 @@ export 'src/components/feedback/alhai_dialog.dart';
 export 'src/components/feedback/alhai_state_view.dart';
 export 'src/components/feedback/alhai_inline_alert.dart';
 export 'src/components/feedback/alhai_skeleton.dart';
+export 'src/components/feedback/alhai_status_badge.dart';
 
 // ============================================
 // Components - Navigation

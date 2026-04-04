@@ -106,7 +106,10 @@ Future<String> _getOrCreateDbKey() async {
   const keyName = 'db_encryption_key';
 
   if (kIsWeb) {
-    // Web fallback: use SharedPreferences (no native keychain available)
+    // SECURITY NOTE: Web platform lacks secure key storage.
+    // Key stored in localStorage — acceptable for local cache encryption
+    // since web DB is sandboxed per origin. Server-side data remains
+    // protected by Supabase RLS policies.
     final prefs = await SharedPreferences.getInstance();
     var key = prefs.getString('secure_storage_$keyName');
     if (key == null) {

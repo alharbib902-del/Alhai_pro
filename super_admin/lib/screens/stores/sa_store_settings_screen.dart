@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import '../../providers/sa_providers.dart';
+import '../../core/services/undo_service.dart';
 
 /// Store settings: suspend, upgrade, downgrade plan -- real Supabase operations.
 class SAStoreSettingsScreen extends ConsumerStatefulWidget {
@@ -181,7 +182,7 @@ class _SAStoreSettingsScreenState
                                                     content: Text(
                                                         'Error: $e'),
                                                     backgroundColor:
-                                                        Colors.red,
+                                                        theme.colorScheme.error,
                                                   ),
                                                 );
                                               }
@@ -213,7 +214,7 @@ class _SAStoreSettingsScreenState
                         _SettingsCard(
                           title: 'Danger Zone',
                           icon: Icons.warning_rounded,
-                          borderColor: Colors.red.withValues(alpha: 0.3),
+                          borderColor: theme.colorScheme.error.withValues(alpha: 0.3),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -221,7 +222,7 @@ class _SAStoreSettingsScreenState
                                 l10n.suspendStore,
                                 style:
                                     theme.textTheme.bodyMedium?.copyWith(
-                                  color: Colors.red,
+                                  color: theme.colorScheme.error,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -238,23 +239,53 @@ class _SAStoreSettingsScreenState
                               OutlinedButton(
                                 onPressed: isActive
                                     ? () async {
-                                        setState(
-                                            () => _isActive = false);
-                                        final ds = ref.read(
-                                            saStoresDatasourceProvider);
-                                        await ds.updateStoreStatus(
-                                            widget.storeId, false);
-                                        ref.invalidate(
-                                            saStoreDetailProvider(
-                                                widget.storeId));
-                                        ref.invalidate(
-                                            saStoresListProvider);
+                                        final confirmed = await showDialog<bool>(
+                                          context: context,
+                                          builder: (ctx) => AlertDialog(
+                                            title: const Text('تأكيد الإيقاف'),
+                                            content: const Text(
+                                              'هل أنت متأكد من إيقاف هذا المتجر؟ سيتم تعطيل الوصول لجميع المستخدمين فوراً.',
+                                            ),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () => Navigator.pop(ctx, false),
+                                                child: Text(l10n.cancel),
+                                              ),
+                                              FilledButton(
+                                                style: FilledButton.styleFrom(
+                                                  backgroundColor: theme.colorScheme.error,
+                                                ),
+                                                onPressed: () => Navigator.pop(ctx, true),
+                                                child: Text(l10n.suspendStore),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                        if (confirmed != true || !context.mounted) return;
+
+                                        final ds = ref.read(saStoresDatasourceProvider);
+                                        await UndoService.executeWithUndo(
+                                          context: context,
+                                          description: 'تم تعليق المتجر',
+                                          action: () async {
+                                            await ds.softDeleteStore(widget.storeId);
+                                            setState(() => _isActive = false);
+                                            ref.invalidate(saStoreDetailProvider(widget.storeId));
+                                            ref.invalidate(saStoresListProvider);
+                                          },
+                                          undoAction: () async {
+                                            await ds.restoreStore(widget.storeId);
+                                            setState(() => _isActive = true);
+                                            ref.invalidate(saStoreDetailProvider(widget.storeId));
+                                            ref.invalidate(saStoresListProvider);
+                                          },
+                                        );
                                       }
                                     : null,
                                 style: OutlinedButton.styleFrom(
-                                  foregroundColor: Colors.red,
-                                  side: const BorderSide(
-                                      color: Colors.red),
+                                  foregroundColor: theme.colorScheme.error,
+                                  side: BorderSide(
+                                      color: theme.colorScheme.error),
                                 ),
                                 child: Text(l10n.suspendStore),
                               ),

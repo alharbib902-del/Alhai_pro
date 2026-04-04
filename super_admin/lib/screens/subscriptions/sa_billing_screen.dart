@@ -11,6 +11,7 @@ class SABillingScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
     final width = MediaQuery.sizeOf(context).width;
     final isWide = width >= AlhaiBreakpoints.desktop;
@@ -54,19 +55,19 @@ class SABillingScreen extends ConsumerWidget {
                       title: l10n.paid,
                       value: '${paid.toInt()} ${l10n.sar}',
                       icon: Icons.check_circle_rounded,
-                      color: Colors.green,
+                      color: isDark ? const Color(0xFF4ADE80) : const Color(0xFF16A34A),
                     ),
                     _BillingStat(
                       title: l10n.unpaid,
                       value: '${unpaid.toInt()} ${l10n.sar}',
                       icon: Icons.pending_rounded,
-                      color: Colors.amber,
+                      color: isDark ? const Color(0xFFFBBF24) : const Color(0xFFD97706),
                     ),
                     _BillingStat(
                       title: l10n.overdue,
                       value: '${overdue.toInt()} ${l10n.sar}',
                       icon: Icons.error_rounded,
-                      color: Colors.red,
+                      color: isDark ? const Color(0xFFF87171) : const Color(0xFFB91C1C),
                     ),
                   ],
                 );
@@ -246,11 +247,24 @@ class _InvoiceStatusChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final (color, bgColor) = switch (status) {
-      'paid' => (Colors.green.shade700, Colors.green.shade50),
-      'unpaid' => (Colors.amber.shade700, Colors.amber.shade50),
-      'overdue' => (Colors.red.shade700, Colors.red.shade50),
-      _ => (Colors.grey.shade700, Colors.grey.shade50),
+      'paid' => (
+        isDark ? const Color(0xFF4ADE80) : const Color(0xFF15803D),
+        isDark ? const Color(0xFF1B3A2A) : const Color(0xFFDCFCE7),
+      ),
+      'unpaid' => (
+        isDark ? const Color(0xFFFBBF24) : const Color(0xFFB45309),
+        isDark ? const Color(0xFF3A2F1B) : const Color(0xFFFEF3C7),
+      ),
+      'overdue' => (
+        isDark ? const Color(0xFFF87171) : const Color(0xFFB91C1C),
+        isDark ? const Color(0xFF3A1B1B) : const Color(0xFFFEE2E2),
+      ),
+      _ => (
+        isDark ? const Color(0xFF9CA3AF) : const Color(0xFF4B5563),
+        isDark ? const Color(0xFF2A2A2A) : const Color(0xFFF3F4F6),
+      ),
     };
 
     return Container(
@@ -264,9 +278,8 @@ class _InvoiceStatusChip extends StatelessWidget {
       ),
       child: Text(
         status.toUpperCase(),
-        style: TextStyle(
+        style: Theme.of(context).textTheme.labelSmall?.copyWith(
           color: color,
-          fontSize: 11,
           fontWeight: FontWeight.w600,
         ),
       ),

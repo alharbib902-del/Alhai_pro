@@ -1,6 +1,10 @@
 """تحليل المشاعر - Sentiment Analysis Router"""
 
+import logging
+
 from fastapi import APIRouter, Depends, HTTPException
+
+logger = logging.getLogger(__name__)
 from auth import AuthenticatedUser, verify_store_access
 from models.schemas import SentimentRequest, SentimentResponse
 from services.ml_service import analyze_sentiment
@@ -26,5 +30,6 @@ async def sentiment_analysis(
             text=request.text,
             language=request.language,
         )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"خطأ في تحليل المشاعر: {e}")
+    except Exception:
+        logger.exception("خطأ في تحليل المشاعر")
+        raise HTTPException(status_code=500, detail="حدث خطأ غير متوقع")

@@ -69,7 +69,11 @@ def _decode_token(token: str, settings: Settings) -> dict:
             secret,
             algorithms=_SUPABASE_JWT_ALGORITHMS,
             options={
-                "verify_aud": False,  # Supabase tokens may lack audience
+                # verify_aud is False because Supabase-issued JWTs do not
+                # include a dedicated audience claim for this service.  Once a
+                # custom audience is configured in Supabase, enable this check
+                # and pass the expected audience via the "audience" parameter.
+                "verify_aud": False,
                 "verify_exp": True,
             },
         )

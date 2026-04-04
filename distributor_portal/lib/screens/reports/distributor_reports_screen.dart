@@ -14,6 +14,7 @@ import 'package:intl/intl.dart' show NumberFormat;
 
 import '../../data/models.dart';
 import '../../providers/distributor_providers.dart';
+import '../../ui/skeleton_loading.dart';
 
 // ─── Period mapping ─────────────────────────────────────────────
 
@@ -62,17 +63,21 @@ class _DistributorReportsScreenState
         ),
         centerTitle: false,
         actions: [
-          IconButton(
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('تصدير التقرير - قريباً'),
-                  backgroundColor: AppColors.info,
-                ),
-              );
-            },
-            icon: const Icon(Icons.download_rounded),
-            tooltip: 'تصدير',
+          Semantics(
+            button: true,
+            label: 'تصدير التقرير',
+            child: IconButton(
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('تصدير التقرير - قريباً'),
+                    backgroundColor: AppColors.info,
+                  ),
+                );
+              },
+              icon: const Icon(Icons.download_rounded),
+              tooltip: 'تصدير',
+            ),
           ),
           const SizedBox(width: AlhaiSpacing.xs),
         ],
@@ -93,7 +98,7 @@ class _DistributorReportsScreenState
           // ── Content ──
           Expanded(
             child: reportAsync.when(
-              loading: () => const Center(child: CircularProgressIndicator()),
+              loading: () => const ReportSkeleton(),
               error: (e, _) => Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -243,7 +248,7 @@ class _DistributorReportsScreenState
       padding: const EdgeInsets.all(AlhaiSpacing.xxs),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AlhaiRadius.md),
         border: Border.all(color: AppColors.getBorder(isDark)),
       ),
       child: Row(
@@ -254,12 +259,12 @@ class _DistributorReportsScreenState
               onTap: () => setState(() => _selectedPeriod = period),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
-                padding: const EdgeInsets.symmetric(vertical: 10),
+                padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs + 2),
                 decoration: BoxDecoration(
                   color: isSelected
                       ? AppColors.primary
                       : Colors.transparent,
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(AlhaiRadius.sm + 2),
                 ),
                 child: Text(
                   period,
@@ -289,7 +294,7 @@ class _DistributorReportsScreenState
       padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AlhaiRadius.lg),
         border: Border.all(color: AppColors.getBorder(isDark)),
       ),
       child: Column(
@@ -300,8 +305,8 @@ class _DistributorReportsScreenState
               Container(
                 padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(10),
+                  color: color.withValues(alpha: isDark ? 0.2 : 0.1),
+                  borderRadius: BorderRadius.circular(AlhaiRadius.sm + 2),
                 ),
                 child: Icon(icon, color: color, size: 20),
               ),
@@ -311,8 +316,8 @@ class _DistributorReportsScreenState
                   padding:
                       const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 3),
                   decoration: BoxDecoration(
-                    color: AppColors.success.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(6),
+                    color: AppColors.success.withValues(alpha: isDark ? 0.2 : 0.1),
+                    borderRadius: BorderRadius.circular(AlhaiRadius.sm - 2),
                   ),
                   child: Text(
                     change,
@@ -356,16 +361,32 @@ class _DistributorReportsScreenState
         padding: EdgeInsets.all(isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md),
         decoration: BoxDecoration(
           color: AppColors.getSurface(isDark),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(AlhaiRadius.lg),
           border: Border.all(color: AppColors.getBorder(isDark)),
         ),
         child: Center(
-          child: Text(
-            'لا توجد بيانات للفترة المحددة',
-            style: TextStyle(
-              fontSize: 14,
-              color: AppColors.getTextMuted(isDark),
-            ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.bar_chart_rounded,
+                  size: 40, color: AppColors.getTextMuted(isDark)),
+              const SizedBox(height: AlhaiSpacing.sm),
+              Text(
+                'لا توجد بيانات للفترة المحددة',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: AppColors.getTextMuted(isDark),
+                ),
+              ),
+              const SizedBox(height: AlhaiSpacing.xs),
+              Text(
+                'جرب تغيير الفترة الزمنية',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: AppColors.getTextMuted(isDark),
+                ),
+              ),
+            ],
           ),
         ),
       );
@@ -380,7 +401,7 @@ class _DistributorReportsScreenState
       padding: EdgeInsets.all(isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AlhaiRadius.lg),
         border: Border.all(color: AppColors.getBorder(isDark)),
       ),
       child: Column(
@@ -391,8 +412,8 @@ class _DistributorReportsScreenState
               Container(
                 padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(10),
+                  color: AppColors.primary.withValues(alpha: isDark ? 0.2 : 0.1),
+                  borderRadius: BorderRadius.circular(AlhaiRadius.sm + 2),
                 ),
                 child: const Icon(Icons.bar_chart_rounded,
                     color: AppColors.primary, size: 20),
@@ -523,7 +544,7 @@ class _DistributorReportsScreenState
         padding: const EdgeInsets.all(AlhaiSpacing.mdl),
         decoration: BoxDecoration(
           color: AppColors.getSurface(isDark),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(AlhaiRadius.lg),
           border: Border.all(color: AppColors.getBorder(isDark)),
         ),
         child: Column(
@@ -533,8 +554,8 @@ class _DistributorReportsScreenState
                 Container(
                   padding: const EdgeInsets.all(AlhaiSpacing.xs),
                   decoration: BoxDecoration(
-                    color: AppColors.warning.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(10),
+                    color: AppColors.warning.withValues(alpha: isDark ? 0.2 : 0.1),
+                    borderRadius: BorderRadius.circular(AlhaiRadius.sm + 2),
                   ),
                   child: const Icon(Icons.emoji_events_rounded,
                       color: AppColors.warning, size: 20),
@@ -567,7 +588,7 @@ class _DistributorReportsScreenState
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AlhaiRadius.lg),
         border: Border.all(color: AppColors.getBorder(isDark)),
       ),
       child: Column(
@@ -578,8 +599,8 @@ class _DistributorReportsScreenState
               Container(
                 padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
-                  color: AppColors.warning.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(10),
+                  color: AppColors.warning.withValues(alpha: isDark ? 0.2 : 0.1),
+                  borderRadius: BorderRadius.circular(AlhaiRadius.sm + 2),
                 ),
                 child: const Icon(Icons.emoji_events_rounded,
                     color: AppColors.warning, size: 20),
@@ -599,7 +620,7 @@ class _DistributorReportsScreenState
           ...List.generate(topProducts.length, (index) {
             final product = topProducts[index];
             return Container(
-              padding: const EdgeInsets.symmetric(vertical: 10),
+              padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs + 2),
               decoration: BoxDecoration(
                 border: index < topProducts.length - 1
                     ? Border(
@@ -624,7 +645,7 @@ class _DistributorReportsScreenState
                             ][index]
                               .withValues(alpha: 0.12)
                           : AppColors.getSurfaceVariant(isDark),
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(AlhaiRadius.sm),
                     ),
                     alignment: Alignment.center,
                     child: Text(

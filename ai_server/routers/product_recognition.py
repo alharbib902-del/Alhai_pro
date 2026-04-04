@@ -1,6 +1,10 @@
 """التعرف على المنتجات - Product Recognition Router"""
 
+import logging
+
 from fastapi import APIRouter, Depends, HTTPException
+
+logger = logging.getLogger(__name__)
 from auth import AuthenticatedUser, verify_store_access
 from models.schemas import RecognitionRequest, RecognitionResponse
 from services.ml_service import recognize_product
@@ -28,5 +32,6 @@ async def recognize(
             description=request.description,
             language=request.language,
         )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"خطأ في التعرف على المنتج: {e}")
+    except Exception:
+        logger.exception("خطأ في التعرف على المنتج")
+        raise HTTPException(status_code=500, detail="حدث خطأ غير متوقع")

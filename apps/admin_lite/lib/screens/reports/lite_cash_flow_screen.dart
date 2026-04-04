@@ -112,7 +112,7 @@ class LiteCashFlowScreen extends ConsumerWidget {
           Text(l10n.balance, style: const TextStyle(fontSize: 14, color: Colors.white70)),
           const SizedBox(height: AlhaiSpacing.xs),
           Text(
-            '${data.netCash.toStringAsFixed(0)} SAR',
+            '${data.netCash.toStringAsFixed(0)} ${l10n.sar}',
             style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white),
           ),
           const SizedBox(height: AlhaiSpacing.xs),
@@ -142,7 +142,7 @@ class LiteCashFlowScreen extends ConsumerWidget {
                   children: [
                     const Icon(Icons.arrow_downward, size: 18, color: AlhaiColors.success),
                     const SizedBox(width: AlhaiSpacing.xxs),
-                    Text(l10n.sales, style: TextStyle(fontSize: 13, color: isDark ? Colors.white54 : Colors.black54)),
+                    Text(l10n.sales, style: TextStyle(fontSize: 13, color: Theme.of(context).colorScheme.onSurfaceVariant)),
                   ],
                 ),
                 const SizedBox(height: AlhaiSpacing.xs),
@@ -176,7 +176,7 @@ class LiteCashFlowScreen extends ConsumerWidget {
                   children: [
                     const Icon(Icons.arrow_upward, size: 18, color: AlhaiColors.error),
                     const SizedBox(width: AlhaiSpacing.xxs),
-                    Text(l10n.expenses, style: TextStyle(fontSize: 13, color: isDark ? Colors.white54 : Colors.black54)),
+                    Text(l10n.expenses, style: TextStyle(fontSize: 13, color: Theme.of(context).colorScheme.onSurfaceVariant)),
                   ],
                 ),
                 const SizedBox(height: AlhaiSpacing.xs),
@@ -208,7 +208,7 @@ class LiteCashFlowScreen extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.white,
+        color: isDark ? Colors.white.withValues(alpha: 0.06) : Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isDark ? Colors.white12 : Theme.of(context).colorScheme.outlineVariant,
@@ -237,9 +237,9 @@ class LiteCashFlowScreen extends ConsumerWidget {
                 child: Row(
                   children: [
                     Expanded(
-                      child: Text(item.label, style: TextStyle(fontSize: 14, color: isDark ? Colors.white : Colors.black87)),
+                      child: Text(item.label, style: TextStyle(fontSize: 14, color: Theme.of(context).colorScheme.onSurface)),
                     ),
-                    Text(item.amount, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: isDark ? Colors.white : Colors.black87)),
+                    Text(item.amount, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Theme.of(context).colorScheme.onSurface)),
                   ],
                 ),
               )),
@@ -254,7 +254,7 @@ class LiteCashFlowScreen extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.white,
+        color: isDark ? Colors.white.withValues(alpha: 0.06) : Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isDark ? Colors.white12 : Theme.of(context).colorScheme.outlineVariant,
@@ -293,7 +293,7 @@ class LiteCashFlowScreen extends ConsumerWidget {
                 child: Text(
                   d.dayName,
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 10, color: isDark ? Colors.white38 : Colors.black38),
+                  style: TextStyle(fontSize: 10, color: Theme.of(context).colorScheme.outline),
                 ),
               );
             }).toList(),

@@ -100,7 +100,7 @@ class LiteSettingsScreen extends ConsumerWidget {
               _ToggleTile(
                 icon: Icons.inventory_2_outlined,
                 title: l10n.lowStock,
-                subtitle: 'Get notified on low stock',
+                subtitle: l10n.lowStockNotifications,
                 isDark: isDark,
                 value: ref.watch(_lowStockAlertsProvider),
                 onChanged: (v) => ref.read(_lowStockAlertsProvider.notifier).state = v,
@@ -108,8 +108,8 @@ class LiteSettingsScreen extends ConsumerWidget {
               _SettingsDivider(isDark: isDark),
               _ToggleTile(
                 icon: Icons.calendar_today,
-                title: 'Expiry Alerts',
-                subtitle: 'Products nearing expiration',
+                title: l10n.expiryAlertLabel,
+                subtitle: l10n.expiryNotifications,
                 isDark: isDark,
                 value: ref.watch(_expiryAlertsProvider),
                 onChanged: (v) => ref.read(_expiryAlertsProvider.notifier).state = v,
@@ -118,6 +118,7 @@ class LiteSettingsScreen extends ConsumerWidget {
               _ToggleTile(
                 icon: Icons.access_time,
                 title: l10n.shiftsTitle,
+                // TODO(l10n): add key for "Shift open/close reminders"
                 subtitle: 'Shift open/close reminders',
                 isDark: isDark,
                 value: ref.watch(_shiftRemindersProvider),
@@ -127,7 +128,7 @@ class LiteSettingsScreen extends ConsumerWidget {
               _ToggleTile(
                 icon: Icons.receipt_long,
                 title: l10n.returns,
-                subtitle: 'New refund requests',
+                subtitle: l10n.refundRequestTitle,
                 isDark: isDark,
                 value: ref.watch(_refundNotificationsProvider),
                 onChanged: (v) => ref.read(_refundNotificationsProvider.notifier).state = v,
@@ -149,7 +150,7 @@ class LiteSettingsScreen extends ConsumerWidget {
                 icon: Icons.inventory_2_outlined,
                 title: l10n.lowStock,
                 value: ref.watch(_lowStockThresholdProvider),
-                unit: 'units',
+                unit: l10n.units,
                 isDark: isDark,
                 onDecrease: () {
                   final v = ref.read(_lowStockThresholdProvider);
@@ -163,7 +164,7 @@ class LiteSettingsScreen extends ConsumerWidget {
               _SettingsDivider(isDark: isDark),
               _ThresholdTile(
                 icon: Icons.calendar_today,
-                title: 'Expiry Warning',
+                title: l10n.expiryAlertLabel,
                 value: ref.watch(_expiryDaysThresholdProvider),
                 unit: l10n.days,
                 isDark: isDark,
@@ -192,7 +193,8 @@ class LiteSettingsScreen extends ConsumerWidget {
               _SettingsTile(
                 icon: Icons.lock_outline,
                 title: l10n.managerPinSetup,
-                subtitle: 'Set or change manager PIN',
+                // TODO(l10n): add key for "Set or change manager PIN"
+                subtitle: l10n.managerPinSetup,
                 isDark: isDark,
                 onTap: () {
                   Navigator.of(context).push(
@@ -208,7 +210,8 @@ class LiteSettingsScreen extends ConsumerWidget {
               _SettingsTile(
                 icon: Icons.sync,
                 title: l10n.syncStatusTitle,
-                subtitle: 'Data synchronization status',
+                // TODO(l10n): add key for "Data synchronization status"
+                subtitle: l10n.syncStatusTitle,
                 isDark: isDark,
                 onTap: () => context.go(AppRoutes.syncStatus),
               ),
@@ -340,7 +343,7 @@ class LiteSettingsScreen extends ConsumerWidget {
       case ThemeMode.light:
         return l10n.dayMode;
       case ThemeMode.system:
-        return 'System';
+        return l10n.systemMode;
     }
   }
 }
@@ -544,7 +547,7 @@ class _ToggleTile extends StatelessWidget {
             value: value,
             onChanged: onChanged,
             activeTrackColor: AlhaiColors.primary,
-            activeThumbColor: Colors.white,
+            activeThumbColor: isDark ? Colors.black : Colors.white,
           ),
         ],
       ),
@@ -611,6 +614,7 @@ class _ThresholdTile extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 IconButton(
+                  tooltip: 'Decrease',
                   onPressed: onDecrease,
                   icon: const Icon(Icons.remove, size: 16),
                   constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
@@ -629,6 +633,7 @@ class _ThresholdTile extends StatelessWidget {
                   ),
                 ),
                 IconButton(
+                  tooltip: 'Increase',
                   onPressed: onIncrease,
                   icon: const Icon(Icons.add, size: 16),
                   constraints: const BoxConstraints(minWidth: 36, minHeight: 36),

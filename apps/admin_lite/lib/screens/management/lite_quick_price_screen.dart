@@ -5,7 +5,10 @@
 /// Supports RTL, dark mode, and responsive layouts.
 library;
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
@@ -25,9 +28,18 @@ class LiteQuickPriceScreen extends ConsumerStatefulWidget {
 class _LiteQuickPriceScreenState extends ConsumerState<LiteQuickPriceScreen> {
   final _searchController = TextEditingController();
   String _searchQuery = '';
+  Timer? _debounce;
+
+  void _onSearchChanged(String value) {
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 300), () {
+      setState(() => _searchQuery = value);
+    });
+  }
 
   @override
   void dispose() {
+    _debounce?.cancel();
     _searchController.dispose();
     super.dispose();
   }
@@ -61,15 +73,18 @@ class _LiteQuickPriceScreenState extends ConsumerState<LiteQuickPriceScreen> {
             padding: EdgeInsets.all(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
             child: TextField(
               controller: _searchController,
-              onChanged: (v) => setState(() => _searchQuery = v),
+              onChanged: _onSearchChanged,
+              textInputAction: TextInputAction.search,
               decoration: InputDecoration(
                 hintText: l10n.searchHint,
                 prefixIcon: const Icon(Icons.search),
                 suffixIcon: _searchQuery.isNotEmpty
                     ? IconButton(
+                        tooltip: 'Clear search',
                         icon: const Icon(Icons.clear),
                         onPressed: () {
                           _searchController.clear();
+                          _debounce?.cancel();
                           setState(() => _searchQuery = '');
                         },
                       )
@@ -88,13 +103,11 @@ class _LiteQuickPriceScreenState extends ConsumerState<LiteQuickPriceScreen> {
                 if (filtered.isEmpty) {
                   return Center(child: Text(l10n.noResults, style: TextStyle(color: isDark ? Colors.white54 : Theme.of(context).colorScheme.onSurfaceVariant)));
                 }
-                return ListView.builder(
-                  padding: EdgeInsets.symmetric(horizontal: isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
-                  itemCount: filtered.length,
-                  itemBuilder: (context, index) {
-                    return _buildProductTile(context, filtered[index], isDark, l10n);
-                  },
-                );
+                final isWide = size.width > 900;
+                if (isWide) {
+                  return _buildDataTable(filtered, isDark, l10n);
+                }
+                return _buildCardList(filtered, isDark, isMobile, l10n);
               },
               loading: () => const Center(child: CircularProgressIndicator()),
               error: (_, __) => Center(
@@ -117,6 +130,55 @@ class _LiteQuickPriceScreenState extends ConsumerState<LiteQuickPriceScreen> {
     );
   }
 
+  Widget _buildCardList(List<ProductsTableData> products, bool isDark, bool isMobile, AppLocalizations l10n) {
+    return ListView.builder(
+      padding: EdgeInsets.symmetric(horizontal: isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
+      itemCount: products.length,
+      itemBuilder: (context, index) {
+        final product = products[index];
+        return KeyedSubtree(
+          key: ValueKey(product.id),
+          child: _buildProductTile(context, product, isDark, l10n),
+        );
+      },
+    );
+  }
+
+  Widget _buildDataTable(List<ProductsTableData> products, bool isDark, AppLocalizations l10n) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg),
+      child: SizedBox(
+        width: double.infinity,
+        child: DataTable(
+          headingRowColor: WidgetStateProperty.all(
+            isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade50,
+          ),
+          columns: [
+            DataColumn(label: Text(l10n.product)),
+            DataColumn(label: Text(l10n.price), numeric: true),
+            DataColumn(label: Text(l10n.categoryLabel)),
+            DataColumn(label: Text(l10n.actionsCol)),
+          ],
+          rows: products.map((product) => DataRow(
+            key: ValueKey(product.id),
+            cells: [
+              DataCell(Text(product.name)),
+              DataCell(Text('${product.price.toStringAsFixed(2)} ${l10n.sar}')),
+              DataCell(Text(product.categoryId ?? '-')),
+              DataCell(
+                IconButton(
+                  tooltip: l10n.edit,
+                  icon: const Icon(Icons.edit_outlined, size: 20),
+                  onPressed: () => _showPriceDialog(context, product, isDark, l10n),
+                ),
+              ),
+            ],
+          )).toList(),
+        ),
+      ),
+    );
+  }
+
   Widget _buildProductTile(BuildContext context, ProductsTableData product, bool isDark, AppLocalizations l10n) {
     return Container(
       margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
@@ -129,7 +191,7 @@ class _LiteQuickPriceScreenState extends ConsumerState<LiteQuickPriceScreen> {
       child: Row(
         children: [
           Container(
-            width: 44, height: 44,
+            width: AlhaiSpacing.listTileCompactMinHeight, height: AlhaiSpacing.listTileCompactMinHeight,
             decoration: BoxDecoration(color: AlhaiColors.primary.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(10)),
             child: const Icon(Icons.inventory_2_outlined, color: AlhaiColors.primary, size: 22),
           ),
@@ -146,6 +208,7 @@ class _LiteQuickPriceScreenState extends ConsumerState<LiteQuickPriceScreen> {
           Text('${product.price.toStringAsFixed(0)} SAR', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: isDark ? Colors.white : Colors.black87)),
           const SizedBox(width: AlhaiSpacing.xs),
           IconButton(
+            tooltip: 'Edit price',
             onPressed: () => _showPriceDialog(context, product, isDark, l10n),
             icon: const Icon(Icons.edit, size: 18),
             style: IconButton.styleFrom(backgroundColor: AlhaiColors.primary.withValues(alpha: 0.1), foregroundColor: AlhaiColors.primary),
@@ -157,40 +220,86 @@ class _LiteQuickPriceScreenState extends ConsumerState<LiteQuickPriceScreen> {
 
   void _showPriceDialog(BuildContext context, ProductsTableData product, bool isDark, AppLocalizations l10n) {
     final controller = TextEditingController(text: product.price.toStringAsFixed(2));
+    String? errorText;
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(product.name),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: controller,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                labelText: l10n.price,
-                suffixText: 'SAR',
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialogState) => AlertDialog(
+          title: Text(product.name),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: controller,
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                textInputAction: TextInputAction.done,
+                inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))],
+                onChanged: (value) {
+                  final parsed = double.tryParse(value);
+                  setDialogState(() {
+                    if (value.isEmpty) {
+                      errorText = null;
+                    } else if (parsed == null || parsed <= 0) {
+                      errorText = l10n.errorOccurred;
+                    } else {
+                      errorText = null;
+                    }
+                  });
+                },
+                decoration: InputDecoration(
+                  labelText: l10n.price,
+                  suffixText: 'SAR',
+                  errorText: errorText,
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                ),
               ),
+            ],
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l10n.cancel)),
+            FilledButton(
+              onPressed: () async {
+                final newPrice = double.tryParse(controller.text);
+                if (newPrice != null && newPrice > 0) {
+                  try {
+                    final db = GetIt.I<AppDatabase>();
+                    final updated = product.copyWith(price: newPrice, updatedAt: Value(DateTime.now()));
+                    await db.productsDao.updateProduct(updated);
+                    ref.invalidate(liteAllProductsProvider);
+                    if (ctx.mounted) Navigator.pop(ctx);
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(l10n.success),
+                          backgroundColor: AlhaiColors.success,
+                          behavior: SnackBarBehavior.floating,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        ),
+                      );
+                    }
+                  } catch (_) {
+                    if (ctx.mounted) Navigator.pop(ctx);
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(l10n.errorOccurred),
+                          backgroundColor: AlhaiColors.error,
+                          behavior: SnackBarBehavior.floating,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        ),
+                      );
+                    }
+                  }
+                } else {
+                  setDialogState(() {
+                    errorText = l10n.errorOccurred;
+                  });
+                }
+              },
+              child: Text(l10n.save),
             ),
           ],
         ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l10n.cancel)),
-          FilledButton(
-            onPressed: () async {
-              final newPrice = double.tryParse(controller.text);
-              if (newPrice != null && newPrice > 0) {
-                final db = GetIt.I<AppDatabase>();
-                final updated = product.copyWith(price: newPrice, updatedAt: DateTime.now());
-                await db.productsDao.updateProduct(updated);
-                ref.invalidate(liteAllProductsProvider);
-              }
-              if (ctx.mounted) Navigator.pop(ctx);
-            },
-            child: Text(l10n.save),
-          ),
-        ],
       ),
     );
   }

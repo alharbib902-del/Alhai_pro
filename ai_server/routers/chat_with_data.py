@@ -1,6 +1,10 @@
 """الدردشة مع البيانات - Chat with Data Router"""
 
+import logging
+
 from fastapi import APIRouter, Depends, HTTPException
+
+logger = logging.getLogger(__name__)
 from auth import AuthenticatedUser, verify_store_access
 from models.schemas import ChatRequest, ChatResponse
 from services.ml_service import chat_with_data
@@ -43,5 +47,6 @@ async def chat(
             conversation_id=request.conversation_id,
             language=request.language,
         )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"خطأ في الدردشة: {e}")
+    except Exception:
+        logger.exception("خطأ في الدردشة")
+        raise HTTPException(status_code=500, detail="حدث خطأ غير متوقع")

@@ -4,6 +4,7 @@ import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../providers/sa_providers.dart';
+import '../../ui/widgets/sa_skeleton.dart';
 
 /// Super Admin Dashboard -- Platform overview with real KPIs from Supabase.
 class SADashboardScreen extends ConsumerWidget {
@@ -12,6 +13,8 @@ class SADashboardScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final colorScheme = theme.colorScheme;
     final l10n = AppLocalizations.of(context);
     final width = MediaQuery.sizeOf(context).width;
     final crossAxisCount = width >= AlhaiBreakpoints.desktopLarge ? 4 : 2;
@@ -20,9 +23,17 @@ class SADashboardScreen extends ConsumerWidget {
     final monthlyRevenueAsync = ref.watch(saMonthlyRevenueProvider);
     final subsDistAsync = ref.watch(saSubscriptionDistributionProvider);
 
+    // Theme-aware colors
+    final greenColor = isDark ? const Color(0xFF4ADE80) : const Color(0xFF15803D);
+    final blueColor = isDark ? const Color(0xFF60A5FA) : const Color(0xFF2563EB);
+    final indigoColor = isDark ? const Color(0xFF818CF8) : const Color(0xFF4F46E5);
+    final tealColor = isDark ? const Color(0xFF2DD4BF) : const Color(0xFF0D9488);
+    final deepPurpleColor = isDark ? const Color(0xFFA78BFA) : const Color(0xFF7C3AED);
+    final amberColor = isDark ? const Color(0xFFFBBF24) : const Color(0xFFD97706);
+
     return Scaffold(
       body: kpisAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const SADashboardSkeleton(),
         error: (e, _) => Center(child: Text('Error: $e')),
         data: (kpis) {
           final activeStores = kpis['active_stores'] as int? ?? 0;
@@ -64,7 +75,7 @@ class SADashboardScreen extends ConsumerWidget {
                         value: _fmt(activeStores),
                         change: '',
                         icon: Icons.store_rounded,
-                        color: theme.colorScheme.primary,
+                        color: colorScheme.primary,
                         showArrow: false,
                       ),
                       _StatCard(
@@ -73,7 +84,7 @@ class SADashboardScreen extends ConsumerWidget {
                         suffix: l10n.sar,
                         change: '',
                         icon: Icons.payments_rounded,
-                        color: Colors.green,
+                        color: greenColor,
                         showArrow: false,
                       ),
                       _StatCard(
@@ -81,7 +92,7 @@ class SADashboardScreen extends ConsumerWidget {
                         value: _fmt(newSignups),
                         change: '',
                         icon: Icons.person_add_rounded,
-                        color: Colors.blue,
+                        color: blueColor,
                         showArrow: false,
                       ),
                       _StatCard(
@@ -89,7 +100,7 @@ class SADashboardScreen extends ConsumerWidget {
                         value: _fmt(activeSubs),
                         change: '',
                         icon: Icons.card_membership_rounded,
-                        color: Colors.indigo,
+                        color: indigoColor,
                         showArrow: false,
                       ),
                     ],
@@ -111,7 +122,7 @@ class SADashboardScreen extends ConsumerWidget {
                         suffix: l10n.sar,
                         change: '',
                         icon: Icons.repeat_rounded,
-                        color: Colors.teal,
+                        color: tealColor,
                         showArrow: false,
                       ),
                       _StatCard(
@@ -121,7 +132,7 @@ class SADashboardScreen extends ConsumerWidget {
                             : '0%',
                         change: '',
                         icon: Icons.swap_horiz_rounded,
-                        color: Colors.deepPurple,
+                        color: deepPurpleColor,
                         showArrow: false,
                       ),
                       _StatCard(
@@ -129,7 +140,7 @@ class SADashboardScreen extends ConsumerWidget {
                         value: '$trialSubs / $activeSubs',
                         change: l10n.trialSubscriptions,
                         icon: Icons.science_rounded,
-                        color: Colors.amber,
+                        color: amberColor,
                         showArrow: false,
                       ),
                       _StatCard(
@@ -138,7 +149,7 @@ class SADashboardScreen extends ConsumerWidget {
                         suffix: l10n.sar,
                         change: '',
                         icon: Icons.calendar_today_rounded,
-                        color: Colors.indigo,
+                        color: indigoColor,
                         showArrow: false,
                       ),
                     ],
@@ -149,8 +160,9 @@ class SADashboardScreen extends ConsumerWidget {
                   _SectionTitle(title: l10n.revenueByMonth),
                   const SizedBox(height: AlhaiSpacing.md),
                   monthlyRevenueAsync.when(
-                    loading: () =>
-                        const SizedBox(height: 280, child: Center(child: CircularProgressIndicator())),
+                    loading: () => const AlhaiShimmer(
+                      child: AlhaiSkeleton.rectangle(width: double.infinity, height: 280),
+                    ),
                     error: (e, _) => Text('$e'),
                     data: (data) => _RevenueChart(
                       theme: theme,
@@ -163,8 +175,9 @@ class SADashboardScreen extends ConsumerWidget {
                   _SectionTitle(title: l10n.revenueByPlan),
                   const SizedBox(height: AlhaiSpacing.md),
                   subsDistAsync.when(
-                    loading: () =>
-                        const SizedBox(height: 200, child: Center(child: CircularProgressIndicator())),
+                    loading: () => const AlhaiShimmer(
+                      child: AlhaiSkeleton.rectangle(width: double.infinity, height: 200),
+                    ),
                     error: (e, _) => Text('$e'),
                     data: (dist) => _SubscriptionDistribution(
                       theme: theme,
@@ -234,11 +247,13 @@ class _StatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final isPositive = change.startsWith('+');
+    final positiveColor = isDark ? const Color(0xFF4ADE80) : const Color(0xFF15803D);
     final changeColor = showArrow
         ? ((isPositive && !isNegativeGood) || (!isPositive && isNegativeGood)
-            ? Colors.green
-            : Colors.red)
+            ? positiveColor
+            : theme.colorScheme.error)
         : theme.colorScheme.outline;
 
     return Card(
@@ -460,6 +475,8 @@ class _SubscriptionDistribution extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
     final total = distribution.values.fold(0, (a, b) => a + b);
     if (total == 0) {
       return Card(
@@ -473,9 +490,9 @@ class _SubscriptionDistribution extends StatelessWidget {
     }
 
     final planColors = {
-      'basic': Colors.blue,
-      'advanced': Colors.deepPurple,
-      'professional': Colors.teal,
+      'basic': isDark ? const Color(0xFF60A5FA) : const Color(0xFF2563EB),
+      'advanced': isDark ? const Color(0xFFA78BFA) : const Color(0xFF7C3AED),
+      'professional': isDark ? const Color(0xFF2DD4BF) : const Color(0xFF0D9488),
     };
 
     final planNames = {
@@ -486,16 +503,15 @@ class _SubscriptionDistribution extends StatelessWidget {
 
     final sections = distribution.entries.map((e) {
       final pct = (e.value / total * 100);
-      final color = planColors[e.key] ?? Colors.grey;
+      final color = planColors[e.key] ?? colorScheme.outline;
       return PieChartSectionData(
         value: pct,
         title: '${pct.toStringAsFixed(0)}%',
         color: color,
         radius: 60,
-        titleStyle: const TextStyle(
-          color: Colors.white,
+        titleStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
+          color: colorScheme.onPrimary,
           fontWeight: FontWeight.bold,
-          fontSize: 12,
         ),
       );
     }).toList();
@@ -532,7 +548,7 @@ class _SubscriptionDistribution extends StatelessWidget {
                 return Padding(
                   padding: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
                   child: _LegendItem(
-                    color: planColors[e.key] ?? Colors.grey,
+                    color: planColors[e.key] ?? colorScheme.outline,
                     label: planNames[e.key] ?? e.key,
                     value: '${e.value}',
                   ),

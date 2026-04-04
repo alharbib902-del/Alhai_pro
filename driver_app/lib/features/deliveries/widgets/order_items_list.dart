@@ -13,6 +13,10 @@ class OrderItemsList extends StatelessWidget {
 
     if (items.isEmpty) {
       return Card(
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AlhaiRadius.md),
+        ),
         child: Padding(
           padding: const EdgeInsets.all(AlhaiSpacing.md),
           child: Text(
@@ -26,6 +30,10 @@ class OrderItemsList extends StatelessWidget {
     }
 
     return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AlhaiRadius.md),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(AlhaiSpacing.md),
         child: Column(
@@ -49,7 +57,7 @@ class OrderItemsList extends StatelessWidget {
                 ),
               ],
             ),
-            const Divider(),
+            Divider(color: theme.colorScheme.outlineVariant),
             for (final item in items) _buildItem(context, item),
           ],
         ),
@@ -65,7 +73,7 @@ class OrderItemsList extends StatelessWidget {
     final notes = data['notes'] as String?;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
+      padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -75,7 +83,7 @@ class OrderItemsList extends StatelessWidget {
             alignment: Alignment.center,
             decoration: BoxDecoration(
               color: theme.colorScheme.primaryContainer,
-              borderRadius: BorderRadius.circular(6),
+              borderRadius: BorderRadius.circular(AlhaiRadius.xs),
             ),
             child: Text(
               'x$qty',

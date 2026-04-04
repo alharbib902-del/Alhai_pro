@@ -1,6 +1,7 @@
 /// Data models for Distributor Portal.
 ///
 /// Maps to Supabase tables: orders, order_items, products, stores, organizations.
+/// All model classes implement == and hashCode for proper memoization.
 library;
 
 // ─── Distributor Order ──────────────────────────────────────────
@@ -34,15 +35,30 @@ class DistributorOrder {
 
     return DistributorOrder(
       id: json['id'] as String,
-      purchaseNumber: json['purchase_number'] as String? ?? 'PO-${(json['id'] as String).substring(0, 8)}',
+      purchaseNumber: json['purchase_number'] as String? ??
+          'PO-${(json['id'] as String).substring(0, 8)}',
       storeName: storeName,
       storeId: json['store_id'] as String? ?? '',
       total: (json['total'] as num?)?.toDouble() ?? 0,
       status: json['status'] as String? ?? 'draft',
-      createdAt: DateTime.tryParse(json['created_at'] as String? ?? '') ?? DateTime.now(),
+      createdAt: DateTime.tryParse(json['created_at'] as String? ?? '') ??
+          DateTime.now(),
       notes: json['notes'] as String?,
     );
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is DistributorOrder &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          status == other.status &&
+          total == other.total &&
+          notes == other.notes;
+
+  @override
+  int get hashCode => Object.hash(id, status, total, notes);
 }
 
 // ─── Order Item ─────────────────────────────────────────────────
@@ -91,6 +107,18 @@ class DistributorOrderItem {
       barcode: barcode,
     );
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is DistributorOrderItem &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          distributorPrice == other.distributorPrice &&
+          quantity == other.quantity;
+
+  @override
+  int get hashCode => Object.hash(id, distributorPrice, quantity);
 }
 
 // ─── Product ────────────────────────────────────────────────────
@@ -129,6 +157,18 @@ class DistributorProduct {
       updatedAt: DateTime.tryParse(json['updated_at'] as String? ?? ''),
     );
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is DistributorProduct &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          price == other.price &&
+          stock == other.stock;
+
+  @override
+  int get hashCode => Object.hash(id, price, stock);
 }
 
 // ─── Dashboard KPIs ─────────────────────────────────────────────
@@ -149,12 +189,34 @@ class DashboardKpis {
     required this.monthlySales,
     required this.recentOrders,
   });
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is DashboardKpis &&
+          runtimeType == other.runtimeType &&
+          totalOrders == other.totalOrders &&
+          pendingOrders == other.pendingOrders &&
+          totalRevenue == other.totalRevenue;
+
+  @override
+  int get hashCode => Object.hash(totalOrders, pendingOrders, totalRevenue);
 }
 
 class MonthlySales {
   final String month;
   final double amount;
   const MonthlySales(this.month, this.amount);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is MonthlySales &&
+          month == other.month &&
+          amount == other.amount;
+
+  @override
+  int get hashCode => Object.hash(month, amount);
 }
 
 // ─── Report Data ────────────────────────────────────────────────
@@ -177,12 +239,31 @@ class ReportData {
     required this.dailySales,
     required this.topProducts,
   });
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ReportData &&
+          runtimeType == other.runtimeType &&
+          totalSales == other.totalSales &&
+          orderCount == other.orderCount;
+
+  @override
+  int get hashCode => Object.hash(totalSales, orderCount);
 }
 
 class DailySales {
   final String day;
   final double amount;
   const DailySales(this.day, this.amount);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is DailySales && day == other.day && amount == other.amount;
+
+  @override
+  int get hashCode => Object.hash(day, amount);
 }
 
 class TopProduct {
@@ -190,6 +271,17 @@ class TopProduct {
   final int orderCount;
   final double revenue;
   const TopProduct(this.name, this.orderCount, this.revenue);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is TopProduct &&
+          name == other.name &&
+          orderCount == other.orderCount &&
+          revenue == other.revenue;
+
+  @override
+  int get hashCode => Object.hash(name, orderCount, revenue);
 }
 
 // ─── Organization Settings ──────────────────────────────────────
@@ -257,4 +349,15 @@ class OrgSettings {
         'push_notifications': pushNotifications,
         'sms_notifications': smsNotifications,
       };
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is OrgSettings &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          companyName == other.companyName;
+
+  @override
+  int get hashCode => Object.hash(id, companyName);
 }

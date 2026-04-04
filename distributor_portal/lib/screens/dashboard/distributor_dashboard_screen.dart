@@ -13,6 +13,8 @@ import 'package:intl/intl.dart' show NumberFormat;
 
 import '../../data/models.dart';
 import '../../providers/distributor_providers.dart';
+import '../../ui/skeleton_loading.dart';
+import '../../ui/shared_widgets.dart';
 
 class DistributorDashboardScreen extends ConsumerWidget {
   const DistributorDashboardScreen({super.key});
@@ -28,12 +30,12 @@ class DistributorDashboardScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: kpisAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => _ErrorView(
+        loading: () => const DashboardSkeleton(),
+        error: (e, _) => ErrorStateWidget(
           message: l10n?.distributorLoadError ?? 'Error loading data',
           onRetry: () => ref.invalidate(dashboardKpisProvider),
           isDark: isDark,
-          l10n: l10n,
+          retryLabel: l10n?.distributorRetry ?? 'Retry',
         ),
         data: (kpis) => RefreshIndicator(
           onRefresh: () async => ref.invalidate(dashboardKpisProvider),
@@ -82,21 +84,21 @@ class DistributorDashboardScreen extends ConsumerWidget {
                       title: l10n?.distributorPendingOrders ?? 'Pending',
                       value: '${kpis.pendingOrders}',
                       icon: Icons.pending_outlined,
-                      color: Colors.orange,
+                      color: AppColors.warning,
                       isDark: isDark,
                     ),
                     _SummaryCard(
                       title: l10n?.distributorApprovedOrders ?? 'Approved',
                       value: '${kpis.approvedOrders}',
                       icon: Icons.check_circle_outline,
-                      color: Colors.green,
+                      color: AppColors.success,
                       isDark: isDark,
                     ),
                     _SummaryCard(
                       title: l10n?.distributorRevenue ?? 'Revenue',
                       value: '${NumberFormat('#,##0').format(kpis.totalRevenue)} ${l10n?.distributorSar ?? 'SAR'}',
                       icon: Icons.payments_outlined,
-                      color: Colors.teal,
+                      color: AppColors.credit,
                       isDark: isDark,
                     ),
                   ],
@@ -131,49 +133,7 @@ class DistributorDashboardScreen extends ConsumerWidget {
   }
 }
 
-// ─── Shared Widgets ─────────────────────────────────────────────
-
-class _ErrorView extends StatelessWidget {
-  final String message;
-  final VoidCallback onRetry;
-  final bool isDark;
-  final AppLocalizations? l10n;
-
-  const _ErrorView({
-    required this.message,
-    required this.onRetry,
-    required this.isDark,
-    this.l10n,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.error_outline, size: 48,
-              color: Theme.of(context).colorScheme.onSurfaceVariant),
-          const SizedBox(height: AlhaiSpacing.md),
-          Text(message, style: TextStyle(
-            fontSize: 16,
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-          )),
-          const SizedBox(height: AlhaiSpacing.md),
-          FilledButton.icon(
-            onPressed: onRetry,
-            icon: const Icon(Icons.refresh, size: 18),
-            label: Text(l10n?.distributorRetry ?? 'Retry'),
-            style: FilledButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              foregroundColor: AppColors.textOnPrimary,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
+// ─── Private Widgets ────────────────────────────────────────────
 
 class _SummaryCard extends StatelessWidget {
   final String title;
@@ -195,27 +155,19 @@ class _SummaryCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: isDark
-            ? null
-            : [
-                BoxShadow(
-                  color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 2),
-                ),
-              ],
+        color: AppColors.getSurface(isDark),
+        borderRadius: BorderRadius.circular(AlhaiRadius.lg),
+        boxShadow: AppColors.getCardShadow(isDark),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(AlhaiSpacing.xs),
             decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(10),
+              color: color.withValues(alpha: isDark ? 0.2 : 0.1),
+              borderRadius: BorderRadius.circular(AlhaiRadius.sm + 2),
             ),
             child: Icon(icon, color: color, size: 22),
           ),
@@ -225,7 +177,7 @@ class _SummaryCard extends StatelessWidget {
             style: TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.onSurface,
+              color: AppColors.getTextPrimary(isDark),
             ),
           ),
           const SizedBox(height: AlhaiSpacing.xxs),
@@ -233,7 +185,7 @@ class _SummaryCard extends StatelessWidget {
             title,
             style: TextStyle(
               fontSize: 13,
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              color: AppColors.getTextSecondary(isDark),
             ),
           ),
         ],
@@ -262,17 +214,9 @@ class _ChartCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: isDark
-            ? null
-            : [
-                BoxShadow(
-                  color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 2),
-                ),
-              ],
+        color: AppColors.getSurface(isDark),
+        borderRadius: BorderRadius.circular(AlhaiRadius.lg),
+        boxShadow: AppColors.getCardShadow(isDark),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -282,7 +226,7 @@ class _ChartCard extends StatelessWidget {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.onSurface,
+              color: AppColors.getTextPrimary(isDark),
             ),
           ),
           const SizedBox(height: AlhaiSpacing.lg),
@@ -313,9 +257,7 @@ class _ChartCard extends StatelessWidget {
                               monthlySales[idx].month,
                               style: TextStyle(
                                 fontSize: 11,
-                                color: isDark
-                                    ? Theme.of(context).colorScheme.onSurfaceVariant
-                                    : AppColors.textSecondary,
+                                color: AppColors.getTextSecondary(isDark),
                               ),
                             ),
                           );
@@ -333,9 +275,7 @@ class _ChartCard extends StatelessWidget {
                           '${(value / 1000).toStringAsFixed(0)}K',
                           style: TextStyle(
                             fontSize: 11,
-                            color: isDark
-                                ? Colors.white54
-                                : AppColors.textSecondary,
+                            color: AppColors.getTextMuted(isDark),
                           ),
                         );
                       },
@@ -348,11 +288,7 @@ class _ChartCard extends StatelessWidget {
                   drawVerticalLine: false,
                   horizontalInterval: maxY > 0 ? maxY / 4 : 25,
                   getDrawingHorizontalLine: (value) => FlLine(
-                    color: isDark
-                        ? Theme.of(context).colorScheme.outlineVariant
-                        : Theme.of(context)
-                            .colorScheme
-                            .surfaceContainerLow,
+                    color: AppColors.getBorder(isDark),
                     strokeWidth: 1,
                   ),
                 ),
@@ -392,21 +328,6 @@ class _RecentOrdersCard extends StatelessWidget {
     this.l10n,
   });
 
-  Color _statusColor(String status) {
-    switch (status) {
-      case 'sent':
-        return Colors.blue;
-      case 'approved':
-        return Colors.green;
-      case 'received':
-        return Colors.teal;
-      case 'rejected':
-        return Colors.red;
-      default:
-        return AppColors.grey500;
-    }
-  }
-
   String _statusLabel(String status) {
     switch (status) {
       case 'sent':
@@ -428,17 +349,9 @@ class _RecentOrdersCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: isDark
-            ? null
-            : [
-                BoxShadow(
-                  color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 2),
-                ),
-              ],
+        color: AppColors.getSurface(isDark),
+        borderRadius: BorderRadius.circular(AlhaiRadius.lg),
+        boxShadow: AppColors.getCardShadow(isDark),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -448,14 +361,14 @@ class _RecentOrdersCard extends StatelessWidget {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.onSurface,
+              color: AppColors.getTextPrimary(isDark),
             ),
           ),
           const SizedBox(height: AlhaiSpacing.md),
           ...orders.map((order) => Padding(
                 padding: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
                 child: InkWell(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(AlhaiRadius.sm),
                   onTap: () => context.go('/orders/${order.id}'),
                   child: Row(
                     children: [
@@ -465,8 +378,7 @@ class _RecentOrdersCard extends StatelessWidget {
                           order.purchaseNumber,
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
-                            color:
-                                isDark ? Colors.white : AppColors.textPrimary,
+                            color: AppColors.getTextPrimary(isDark),
                           ),
                         ),
                       ),
@@ -475,9 +387,7 @@ class _RecentOrdersCard extends StatelessWidget {
                         child: Text(
                           order.storeName,
                           style: TextStyle(
-                            color: isDark
-                                ? Theme.of(context).colorScheme.onSurface
-                                : AppColors.textSecondary,
+                            color: AppColors.getTextSecondary(isDark),
                           ),
                         ),
                       ),
@@ -487,27 +397,14 @@ class _RecentOrdersCard extends StatelessWidget {
                           '${NumberFormat('#,##0').format(order.total)} ${l10n?.distributorSar ?? 'SAR'}',
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
-                            color:
-                                isDark ? Colors.white : AppColors.textPrimary,
+                            color: AppColors.getTextPrimary(isDark),
                           ),
                         ),
                       ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: _statusColor(order.status)
-                              .withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          _statusLabel(order.status),
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: _statusColor(order.status),
-                          ),
-                        ),
+                      StatusBadge(
+                        status: order.status,
+                        label: _statusLabel(order.status),
+                        isDark: isDark,
                       ),
                     ],
                   ),

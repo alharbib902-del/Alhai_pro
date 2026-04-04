@@ -91,11 +91,12 @@ class LiteEmployeeScheduleScreen extends ConsumerWidget {
   }
 
   Widget _buildWeekSelector(BuildContext context, bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
     final now = DateTime.now();
     final todayWeekday = now.weekday;
     final daysSinceSat = (todayWeekday + 1) % 7;
     final startOfWeek = DateTime(now.year, now.month, now.day).subtract(Duration(days: daysSinceSat));
-    final days = ['Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+    final days = [l10n.sat, l10n.sun, l10n.mon, l10n.tue, l10n.wed, l10n.thu, l10n.fri];
 
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.sm),
@@ -141,7 +142,8 @@ class LiteEmployeeScheduleScreen extends ConsumerWidget {
 
   Widget _buildScheduleCard(BuildContext context, ShiftWithCashier entry, bool isDark, bool isToday) {
     final shift = entry.shift;
-    final name = entry.cashierName ?? 'Unknown';
+    final l10n = AppLocalizations.of(context)!;
+    final name = entry.cashierName ?? l10n.unknownUser;
     final isOpen = shift.status == 'open';
     final startTime = '${shift.openedAt.hour.toString().padLeft(2, '0')}:${shift.openedAt.minute.toString().padLeft(2, '0')}';
     final endTime = shift.closedAt != null
@@ -193,7 +195,7 @@ class LiteEmployeeScheduleScreen extends ConsumerWidget {
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
-              isOpen ? 'Active' : 'Closed',
+              isOpen ? l10n.active : l10n.closed,
               style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: isOpen ? AlhaiColors.success : (isDark ? Colors.white54 : Colors.black54)),
             ),
           ),

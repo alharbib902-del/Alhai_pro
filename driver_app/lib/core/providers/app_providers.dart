@@ -16,8 +16,16 @@ final authStateChangesProvider = StreamProvider<AuthState>((ref) {
 });
 
 /// Current authenticated user (Supabase Auth user).
+///
+/// Uses .select() so downstream providers only rebuild when the user ID
+/// actually changes (sign-in / sign-out), not on every token refresh or
+/// other AuthState event that keeps the same user.
 final currentSupabaseUserProvider = Provider<User?>((ref) {
-  ref.watch(authStateChangesProvider);
+  ref.watch(
+    authStateChangesProvider.select(
+      (value) => value.asData?.value.session?.user.id,
+    ),
+  );
   return AppSupabase.client.auth.currentUser;
 });
 
@@ -36,8 +44,11 @@ final isProfileCompleteProvider = Provider<bool>((ref) {
 });
 
 /// Connectivity state stream.
+///
+/// connectivity_plus v5+ emits List<ConnectivityResult>; we're online if
+/// at least one result is not ConnectivityResult.none.
 final connectivityProvider = StreamProvider<bool>((ref) {
   return Connectivity()
       .onConnectivityChanged
-      .map((result) => result != ConnectivityResult.none);
+      .map((results) => results.any((r) => r != ConnectivityResult.none));
 });

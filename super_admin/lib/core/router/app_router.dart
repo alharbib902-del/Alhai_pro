@@ -11,13 +11,19 @@ import '../../screens/stores/sa_create_store_screen.dart';
 import '../../screens/stores/sa_store_settings_screen.dart';
 import '../../screens/subscriptions/sa_plans_screen.dart';
 import '../../screens/subscriptions/sa_subscriptions_list_screen.dart';
-import '../../screens/subscriptions/sa_billing_screen.dart';
 import '../../screens/users/sa_users_list_screen.dart';
 import '../../screens/users/sa_user_detail_screen.dart';
-import '../../screens/analytics/sa_revenue_analytics_screen.dart';
-import '../../screens/analytics/sa_usage_analytics_screen.dart';
 import '../../screens/settings/sa_platform_settings_screen.dart';
-import '../../screens/settings/sa_system_health_screen.dart';
+
+// Deferred imports for heavy screens (analytics, billing, system health)
+import '../../screens/analytics/sa_revenue_analytics_screen.dart'
+    deferred as revenue;
+import '../../screens/analytics/sa_usage_analytics_screen.dart'
+    deferred as usage;
+import '../../screens/subscriptions/sa_billing_screen.dart'
+    deferred as billing;
+import '../../screens/settings/sa_system_health_screen.dart'
+    deferred as health;
 
 /// Route paths
 class SuperAdminRoutes {
@@ -149,7 +155,10 @@ final List<RouteBase> _routes = [
       ),
       GoRoute(
         path: SuperAdminRoutes.billing,
-        builder: (c, s) => const SABillingScreen(),
+        builder: (c, s) => DeferredWidget(
+          libraryLoader: billing.loadLibrary,
+          builder: () => const billing.SABillingScreen(),
+        ),
       ),
       GoRoute(
         path: SuperAdminRoutes.subscriptions,
@@ -171,11 +180,17 @@ final List<RouteBase> _routes = [
       // Analytics
       GoRoute(
         path: SuperAdminRoutes.revenueAnalytics,
-        builder: (c, s) => const SARevenueAnalyticsScreen(),
+        builder: (c, s) => DeferredWidget(
+          libraryLoader: revenue.loadLibrary,
+          builder: () => const revenue.SARevenueAnalyticsScreen(),
+        ),
       ),
       GoRoute(
         path: SuperAdminRoutes.usageAnalytics,
-        builder: (c, s) => const SAUsageAnalyticsScreen(),
+        builder: (c, s) => DeferredWidget(
+          libraryLoader: usage.loadLibrary,
+          builder: () => const usage.SAUsageAnalyticsScreen(),
+        ),
       ),
 
       // Settings
@@ -185,7 +200,10 @@ final List<RouteBase> _routes = [
       ),
       GoRoute(
         path: SuperAdminRoutes.systemHealth,
-        builder: (c, s) => const SASystemHealthScreen(),
+        builder: (c, s) => DeferredWidget(
+          libraryLoader: health.loadLibrary,
+          builder: () => const health.SASystemHealthScreen(),
+        ),
       ),
     ],
   ),
@@ -214,6 +232,66 @@ final superAdminRouterProvider = Provider<GoRouter>((ref) {
   );
 });
 
+/// Widget that handles deferred import loading with a loading indicator
+/// and error state. Used for lazy-loaded route screens.
+class DeferredWidget extends StatefulWidget {
+  final Future<void> Function() libraryLoader;
+  final Widget Function() builder;
+
+  const DeferredWidget({
+    super.key,
+    required this.libraryLoader,
+    required this.builder,
+  });
+
+  @override
+  State<DeferredWidget> createState() => _DeferredWidgetState();
+}
+
+class _DeferredWidgetState extends State<DeferredWidget> {
+  bool _loaded = false;
+  Object? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    try {
+      await widget.libraryLoader();
+      if (mounted) setState(() => _loaded = true);
+    } catch (e) {
+      if (mounted) setState(() => _error = e);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_error != null) {
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.error_outline,
+                size: 48, color: Theme.of(context).colorScheme.error),
+            const SizedBox(height: 16),
+            Text(
+              '\u0641\u0634\u0644 \u062A\u062D\u0645\u064A\u0644 \u0627\u0644\u0635\u0641\u062D\u0629',
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+          ],
+        ),
+      );
+    }
+    if (!_loaded) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    return widget.builder();
+  }
+}
+
 /// L78: Placeholder screen for routes that haven't been implemented yet.
 /// Shows a branded "Coming Soon" UI with app icon, title, and status indicator.
 class _Placeholder extends StatelessWidget {
@@ -224,6 +302,7 @@ class _Placeholder extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final amberColor = isDark ? const Color(0xFFFBBF24) : const Color(0xFFD97706);
 
     return Scaffold(
       appBar: AppBar(title: Text(title)),
@@ -261,12 +340,10 @@ class _Placeholder extends StatelessWidget {
                   vertical: 8,
                 ),
                 decoration: BoxDecoration(
-                  color: isDark
-                      ? Colors.amber.withValues(alpha: 0.15)
-                      : Colors.amber.withValues(alpha: 0.1),
+                  color: amberColor.withValues(alpha: isDark ? 0.15 : 0.1),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: Colors.amber.withValues(alpha: 0.3),
+                    color: amberColor.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Row(
@@ -275,13 +352,13 @@ class _Placeholder extends StatelessWidget {
                     Icon(
                       Icons.construction_rounded,
                       size: 18,
-                      color: Colors.amber.shade700,
+                      color: amberColor,
                     ),
                     const SizedBox(width: 8),
                     Text(
                       'Coming Soon',
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: Colors.amber.shade700,
+                        color: amberColor,
                         fontWeight: FontWeight.w600,
                       ),
                     ),

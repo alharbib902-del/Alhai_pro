@@ -6,11 +6,13 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 
 import '../../data/models.dart';
 import '../../providers/distributor_providers.dart';
+import '../../ui/skeleton_loading.dart';
 
 // ─── Screen ──────────────────────────────────────────────────────
 
@@ -47,6 +49,7 @@ class _DistributorSettingsScreenState
   bool _freeDeliveryEnabled = true;
 
   bool _isSaving = false;
+  bool _hasChanges = false;
 
   /// The org ID loaded from Supabase, needed for saving back.
   String? _orgId;
@@ -100,7 +103,24 @@ class _DistributorSettingsScreenState
 
     final settingsAsync = ref.watch(orgSettingsProvider);
 
-    return Scaffold(
+    return PopScope(
+      canPop: !_hasChanges,
+      onPopInvokedWithResult: (didPop, _) async {
+        if (didPop) return;
+        final shouldPop = await _showUnsavedDialog();
+        if (shouldPop && context.mounted) {
+          Navigator.of(context).pop();
+        }
+      },
+      child: CallbackShortcuts(
+        bindings: <ShortcutActivator, VoidCallback>{
+          const SingleActivator(LogicalKeyboardKey.keyS, control: true): () {
+            if (!_isSaving) _saveSettings();
+          },
+        },
+        child: Focus(
+          autofocus: true,
+          child: Scaffold(
       backgroundColor: AppColors.getBackground(isDark),
       appBar: AppBar(
         title: Text(
@@ -110,7 +130,7 @@ class _DistributorSettingsScreenState
         centerTitle: false,
       ),
       body: settingsAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const TableSkeleton(rows: 6, columns: 2),
         error: (e, _) => Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -194,6 +214,8 @@ class _DistributorSettingsScreenState
                         flex: 2,
                         child: Column(
                           children: [
+                            _buildAppearanceSection(isDark, ref),
+                            const SizedBox(height: AlhaiSpacing.lg),
                             _buildNotificationsSection(isDark),
                             const SizedBox(height: AlhaiSpacing.lg),
                             _buildSaveButton(isDark),
@@ -205,6 +227,10 @@ class _DistributorSettingsScreenState
                 : Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
+                      _buildAppearanceSection(isDark, ref),
+                      SizedBox(
+                          height:
+                              isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md),
                       _buildCompanyInfoSection(isDark),
                       SizedBox(
                           height:
@@ -222,7 +248,36 @@ class _DistributorSettingsScreenState
           );
         },
       ),
+    ),
+        ),
+      ),
     );
+  }
+
+  Future<bool> _showUnsavedDialog() async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('تغييرات غير محفوظة'),
+        content: const Text(
+            'لديك تغييرات غير محفوظة. هل تريد المغادرة بدون حفظ؟'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('البقاء'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: FilledButton.styleFrom(
+              backgroundColor: AppColors.error,
+              foregroundColor: AppColors.textOnPrimary,
+            ),
+            child: const Text('مغادرة'),
+          ),
+        ],
+      ),
+    );
+    return result ?? false;
   }
 
   // ─── Company Info Section ──────────────────────────────────────
@@ -358,6 +413,7 @@ class _DistributorSettingsScreenState
           controller: _deliveryZonesController,
           icon: Icons.map_rounded,
           maxLines: 2,
+          maxLength: 200,
           hintText: 'أدخل المدن مفصولة بفاصلة',
           isDark: isDark,
         ),
@@ -407,6 +463,83 @@ class _DistributorSettingsScreenState
     );
   }
 
+  // ─── Appearance Section (Dark Mode Toggle) ─────────────────────
+
+  Widget _buildAppearanceSection(bool isDark, WidgetRef ref) {
+    final currentMode = ref.watch(themeModeProvider);
+
+    return _sectionCard(
+      icon: Icons.palette_rounded,
+      iconColor: AppColors.purple,
+      title: 'المظهر',
+      isDark: isDark,
+      children: [
+        _themeTile(
+          'تلقائي (حسب النظام)',
+          Icons.brightness_auto_rounded,
+          currentMode == ThemeMode.system,
+          () => ref.read(themeModeProvider.notifier).setThemeMode(ThemeMode.system),
+          isDark,
+        ),
+        _themeTile(
+          'الوضع الفاتح',
+          Icons.light_mode_rounded,
+          currentMode == ThemeMode.light,
+          () => ref.read(themeModeProvider.notifier).setThemeMode(ThemeMode.light),
+          isDark,
+        ),
+        _themeTile(
+          'الوضع الداكن',
+          Icons.dark_mode_rounded,
+          currentMode == ThemeMode.dark,
+          () => ref.read(themeModeProvider.notifier).setThemeMode(ThemeMode.dark),
+          isDark,
+        ),
+      ],
+    );
+  }
+
+  Widget _themeTile(String label, IconData icon, bool isSelected,
+      VoidCallback onTap, bool isDark) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxs),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(AlhaiRadius.sm),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+              vertical: AlhaiSpacing.xs, horizontal: AlhaiSpacing.xs),
+          child: Row(
+            children: [
+              Icon(icon,
+                  color: isSelected
+                      ? AppColors.primary
+                      : AppColors.getTextMuted(isDark),
+                  size: 20),
+              const SizedBox(width: AlhaiSpacing.sm),
+              Expanded(
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight:
+                        isSelected ? FontWeight.w600 : FontWeight.normal,
+                    color: isSelected
+                        ? AppColors.primary
+                        : AppColors.getTextPrimary(isDark),
+                  ),
+                ),
+              ),
+              if (isSelected)
+                const Icon(Icons.check_circle_rounded,
+                    color: AppColors.primary, size: 20),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   // ─── Save Button ───────────────────────────────────────────────
 
   Widget _buildSaveButton(bool isDark) {
@@ -429,7 +562,7 @@ class _DistributorSettingsScreenState
           foregroundColor: AppColors.textOnPrimary,
           padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
           shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12)),
+              borderRadius: BorderRadius.circular(AlhaiRadius.md)),
         ),
       ),
     );
@@ -448,7 +581,7 @@ class _DistributorSettingsScreenState
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AlhaiRadius.lg),
         border: Border.all(color: AppColors.getBorder(isDark)),
       ),
       child: Column(
@@ -459,8 +592,8 @@ class _DistributorSettingsScreenState
               Container(
                 padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
-                  color: iconColor.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(10),
+                  color: iconColor.withValues(alpha: isDark ? 0.2 : 0.1),
+                  borderRadius: BorderRadius.circular(AlhaiRadius.sm + 2),
                 ),
                 child: Icon(icon, color: iconColor, size: 20),
               ),
@@ -489,6 +622,7 @@ class _DistributorSettingsScreenState
     required bool isDark,
     TextInputType keyboardType = TextInputType.text,
     int maxLines = 1,
+    int? maxLength,
     String? hintText,
   }) {
     return Column(
@@ -507,6 +641,8 @@ class _DistributorSettingsScreenState
           controller: controller,
           keyboardType: keyboardType,
           maxLines: maxLines,
+          maxLength: maxLength,
+          onChanged: (_) => setState(() => _hasChanges = true),
           style: TextStyle(color: AppColors.getTextPrimary(isDark)),
           decoration: InputDecoration(
             hintText: hintText,
@@ -517,20 +653,20 @@ class _DistributorSettingsScreenState
             filled: true,
             fillColor: AppColors.getSurfaceVariant(isDark),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(AlhaiRadius.md),
               borderSide: BorderSide(color: AppColors.getBorder(isDark)),
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(AlhaiRadius.md),
               borderSide: BorderSide(color: AppColors.getBorder(isDark)),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(AlhaiRadius.md),
               borderSide:
                   const BorderSide(color: AppColors.primary, width: 2),
             ),
             contentPadding:
-                const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: 14),
+                const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
           ),
         ),
       ],
@@ -546,17 +682,21 @@ class _DistributorSettingsScreenState
           Icon(icon, color: AppColors.getTextMuted(isDark), size: 20),
           const SizedBox(width: AlhaiSpacing.sm),
           Expanded(
-            child: Text(
-              label,
-              style: TextStyle(
-                fontSize: 14,
-                color: AppColors.getTextPrimary(isDark),
+            child: Semantics(
+              toggled: value,
+              label: label,
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: AppColors.getTextPrimary(isDark),
+                ),
               ),
             ),
           ),
           Switch(
             value: value,
-            onChanged: onChanged,
+            onChanged: (v) { onChanged(v); _hasChanges = true; },
             activeColor: AppColors.primary,
           ),
         ],
@@ -566,6 +706,35 @@ class _DistributorSettingsScreenState
 
   Future<void> _saveSettings() async {
     if (_orgId == null) return;
+
+    // Client-side validation before saving
+    final emailText = _emailController.text.trim();
+    if (emailText.isNotEmpty) {
+      final emailRegex = RegExp(r'^[\w\-\.+]+@([\w\-]+\.)+[\w\-]{2,}$');
+      if (!emailRegex.hasMatch(emailText)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('يرجى إدخال بريد إلكتروني صحيح'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+        return;
+      }
+    }
+
+    final phoneText = _phoneController.text.trim();
+    if (phoneText.isNotEmpty) {
+      final phoneRegex = RegExp(r'^[\d\s\-\+\(\)]{7,20}$');
+      if (!phoneRegex.hasMatch(phoneText)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('يرجى إدخال رقم هاتف صحيح'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+        return;
+      }
+    }
 
     setState(() => _isSaving = true);
 
@@ -597,6 +766,7 @@ class _DistributorSettingsScreenState
     if (success) {
       // Refresh the provider so next build picks up the saved data
       ref.invalidate(orgSettingsProvider);
+      _hasChanges = false;
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(

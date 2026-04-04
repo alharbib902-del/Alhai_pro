@@ -33,17 +33,15 @@ final pendingRefundsProvider = FutureProvider.autoDispose<List<ReturnsTableData>
   final db = GetIt.I<AppDatabase>();
   final filter = ref.watch(approvalFilterProvider);
 
-  final allReturns = await db.returnsDao.getAllReturns(storeId);
-
   switch (filter) {
     case ApprovalFilter.all:
-      return allReturns;
+      return db.returnsDao.getAllReturns(storeId);
     case ApprovalFilter.pending:
-      return allReturns.where((r) => r.status == 'pending').toList();
+      return db.returnsDao.getReturnsByStatus(storeId, 'pending');
     case ApprovalFilter.approved:
-      return allReturns.where((r) => r.status == 'approved' || r.status == 'completed').toList();
+      return db.returnsDao.getReturnsByStatuses(storeId, ['approved', 'completed']);
     case ApprovalFilter.rejected:
-      return allReturns.where((r) => r.status == 'rejected').toList();
+      return db.returnsDao.getReturnsByStatus(storeId, 'rejected');
   }
 });
 

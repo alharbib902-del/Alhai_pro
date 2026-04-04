@@ -25,9 +25,12 @@ QueryExecutor openNativeConnection({String? dbName, String? encryptionKey}) {
       setup: (db) {
         // تطبيق مفتاح التشفير (SQLCipher)
         if (encryptionKey != null && encryptionKey.isNotEmpty) {
-          // Escape single quotes in key to prevent injection
-          final safeKey = encryptionKey.replaceAll("'", "''");
-          db.execute("PRAGMA key = '$safeKey'");
+          // Validate encryption key is hex-only (prevents SQL injection)
+          final hexPattern = RegExp(r'^[0-9a-fA-F]+$');
+          if (encryptionKey.length < 32 || !hexPattern.hasMatch(encryptionKey)) {
+            throw ArgumentError('Encryption key must be at least 32 hex characters');
+          }
+          db.execute("PRAGMA key = '$encryptionKey'");
         }
 
         // Enable WAL for better performance and crash safety

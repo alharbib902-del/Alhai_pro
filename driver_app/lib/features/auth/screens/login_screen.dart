@@ -27,10 +27,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     super.dispose();
   }
 
+  // Saudi mobile numbers: 9 digits starting with 5 (e.g. 5XXXXXXXX).
+  static final _saudiPhoneRegex = RegExp(r'^5\d{8}$');
+
   Future<void> _sendOtp() async {
     final phone = _phoneController.text.trim();
     if (phone.isEmpty) {
       setState(() => _error = 'أدخل رقم الجوال');
+      return;
+    }
+    if (!_saudiPhoneRegex.hasMatch(phone)) {
+      setState(() => _error = 'أدخل رقم جوال سعودي صحيح (5XXXXXXXX)');
       return;
     }
 
@@ -48,7 +55,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       });
     } catch (e) {
       setState(() {
-        _error = 'فشل إرسال الرمز: ${e.toString()}';
+        _error = 'فشل إرسال الرمز. حاول مرة أخرى';
         _isLoading = false;
       });
     }
@@ -95,28 +102,34 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final logoSize = MediaQuery.of(context).size.width * 0.25;
 
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(AlhaiSpacing.lg),
-          child: Column(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 600),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(AlhaiSpacing.lg),
+              child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 60),
               // Logo
-              Container(
-                width: 100,
-                height: 100,
-                margin: const EdgeInsets.only(bottom: AlhaiSpacing.xl),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.primaryContainer,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.local_shipping_rounded,
-                  size: 52,
-                  color: theme.colorScheme.primary,
+              Center(
+                child: Container(
+                  width: logoSize,
+                  height: logoSize,
+                  margin: const EdgeInsets.only(bottom: AlhaiSpacing.xl),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.primaryContainer,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.local_shipping_rounded,
+                    size: logoSize * 0.52,
+                    color: theme.colorScheme.primary,
+                  ),
                 ),
               ),
               Text(
@@ -136,21 +149,25 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               ),
               const SizedBox(height: AlhaiSpacing.xxl),
 
-              // Phone input
+              // Phone input – Saudi mobile: 9 digits starting with 5.
               TextField(
                 controller: _phoneController,
                 keyboardType: TextInputType.phone,
                 textDirection: TextDirection.ltr,
+                textInputAction: TextInputAction.done,
+                onSubmitted: (_) => _isLoading ? null : _sendOtp(),
                 enabled: !_otpSent,
+                maxLength: 9,
                 inputFormatters: [
                   FilteringTextInputFormatter.digitsOnly,
-                  LengthLimitingTextInputFormatter(15),
+                  LengthLimitingTextInputFormatter(9),
                 ],
                 decoration: InputDecoration(
                   labelText: 'رقم الجوال',
                   hintText: '5XXXXXXXX',
                   prefixText: '+966 ',
                   prefixIcon: const Icon(Icons.phone_outlined),
+                  counterText: '',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -164,6 +181,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   keyboardType: TextInputType.number,
                   textDirection: TextDirection.ltr,
                   textAlign: TextAlign.center,
+                  textInputAction: TextInputAction.done,
+                  onSubmitted: (_) => _isLoading ? null : _verifyOtp(),
                   inputFormatters: [
                     FilteringTextInputFormatter.digitsOnly,
                     LengthLimitingTextInputFormatter(6),
@@ -237,6 +256,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 ),
               ],
             ],
+              ),
+            ),
           ),
         ),
       ),

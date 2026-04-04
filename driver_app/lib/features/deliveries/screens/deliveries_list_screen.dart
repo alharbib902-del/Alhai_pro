@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../providers/delivery_providers.dart';
 import '../widgets/delivery_card.dart';
+import '../../../shared/widgets/shimmer_loading.dart';
 
 class DeliveriesListScreen extends ConsumerWidget {
   const DeliveriesListScreen({super.key});
@@ -47,10 +48,11 @@ class DeliveriesListScreen extends ConsumerWidget {
           ),
         ),
       ),
-      body: deliveries.when(
-        data: (list) {
-          if (list.isEmpty) {
-            return Center(
+      body: SafeArea(
+        child: deliveries.when(
+          data: (list) {
+            if (list.isEmpty) {
+              return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -66,33 +68,64 @@ class DeliveriesListScreen extends ConsumerWidget {
                           color: Theme.of(context).colorScheme.outline,
                         ),
                   ),
+                  const SizedBox(height: AlhaiSpacing.md),
+                  OutlinedButton.icon(
+                    onPressed: () => ref.invalidate(myDeliveriesStreamProvider),
+                    icon: const Icon(Icons.refresh),
+                    label: const Text('تحديث'),
+                  ),
                 ],
               ),
             );
           }
 
+          final isTablet = MediaQuery.of(context).size.width >= 600;
+
           return RefreshIndicator(
             onRefresh: () async {
               ref.invalidate(myDeliveriesStreamProvider);
             },
-            child: ListView.builder(
-              padding: const EdgeInsets.all(AlhaiSpacing.md),
-              itemCount: list.length,
-              itemBuilder: (context, index) {
-                final delivery = list[index];
-                return DeliveryCard(
-                  delivery: delivery,
-                  onTap: () {
-                    final id = delivery['id'] as String;
-                    context.push('/orders/$id');
-                  },
-                );
-              },
-            ),
+            child: isTablet
+                ? GridView.builder(
+                    padding: const EdgeInsets.all(AlhaiSpacing.md),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: AlhaiSpacing.md,
+                      mainAxisSpacing: AlhaiSpacing.md,
+                      childAspectRatio: 1.8,
+                    ),
+                    addAutomaticKeepAlives: false,
+                    itemCount: list.length,
+                    itemBuilder: (context, index) {
+                      final delivery = list[index];
+                      final id = delivery['id'] as String;
+                      return DeliveryCard(
+                        key: ValueKey(id),
+                        delivery: delivery,
+                        onTap: () => context.push('/orders/$id'),
+                      );
+                    },
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.all(AlhaiSpacing.md),
+                    itemCount: list.length,
+                    addAutomaticKeepAlives: false,
+                    itemBuilder: (context, index) {
+                      final delivery = list[index];
+                      final id = delivery['id'] as String;
+                      return DeliveryCard(
+                        key: ValueKey(id),
+                        delivery: delivery,
+                        onTap: () => context.push('/orders/$id'),
+                      );
+                    },
+                  ),
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('خطأ: $e')),
+          loading: () => const ShimmerList(count: 5),
+          error: (e, _) => const Center(child: Text('حدث خطأ في تحميل البيانات')),
+        ),
       ),
     );
   }

@@ -9,6 +9,7 @@
 /// Order Tracking (5), Quick Management (4), Settings (3).
 library;
 
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -77,11 +78,18 @@ class _AuthNotifier extends ChangeNotifier {
   @override
   void dispose() {
     for (final s in _subs) {
-      s.close();
+      try { s.close(); } catch (_) {}
     }
     super.dispose();
   }
 }
+
+/// Routes that require admin role (not just non-employee).
+const _sensitiveRoutes = {
+  '/settings',
+  '/more/settings',
+  '/approvals',
+};
 
 String? _guardRedirect(Ref ref, GoRouterState state) {
   final authState = ref.read(authStateProvider);
@@ -138,6 +146,15 @@ String? _guardRedirect(Ref ref, GoRouterState state) {
     return AppRoutes.login;
   }
 
+  // Sensitive routes require admin role specifically
+  if (_sensitiveRoutes.contains(path) &&
+      authState.status == AuthStatus.authenticated &&
+      storeId != null &&
+      role != null &&
+      role != UserRole.superAdmin && role != UserRole.storeOwner) {
+    return AppRoutes.dashboard;
+  }
+
   // Already logged in & has store, trying to access login/splash/onboarding
   if (isPublic &&
       authState.status == AuthStatus.authenticated &&
@@ -153,7 +170,7 @@ final liteRouterProvider = Provider<GoRouter>((ref) {
   final authNotifier = _AuthNotifier(ref);
   return GoRouter(
     initialLocation: AppRoutes.splash,
-    debugLogDiagnostics: true,
+    debugLogDiagnostics: kDebugMode,
     refreshListenable: authNotifier,
     redirect: (context, state) => _guardRedirect(ref, state),
     routes: _routes,
@@ -322,17 +339,39 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: '/lite/orders/:id',
         name: 'lite-order-detail',
-        builder: (context, state) {
+        pageBuilder: (context, state) {
           final id = state.pathId();
-          return LiteOrderDetailScreen(orderId: id);
+          return CustomTransitionPage(
+            child: LiteOrderDetailScreen(orderId: id),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              return SlideTransition(
+                position: Tween<Offset>(
+                  begin: const Offset(1, 0),
+                  end: Offset.zero,
+                ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic)),
+                child: child,
+              );
+            },
+          );
         },
       ),
       GoRoute(
         path: '/lite/orders/:id/status',
         name: 'lite-order-status',
-        builder: (context, state) {
+        pageBuilder: (context, state) {
           final id = state.pathId();
-          return LiteOrderStatusScreen(orderId: id);
+          return CustomTransitionPage(
+            child: LiteOrderStatusScreen(orderId: id),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              return SlideTransition(
+                position: Tween<Offset>(
+                  begin: const Offset(1, 0),
+                  end: Offset.zero,
+                ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic)),
+                child: child,
+              );
+            },
+          );
         },
       ),
       GoRoute(
@@ -376,12 +415,34 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: '/lite/profile',
         name: 'lite-profile',
-        builder: (context, state) => const LiteProfileScreen(),
+        pageBuilder: (context, state) => CustomTransitionPage(
+          child: const LiteProfileScreen(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(1, 0),
+                end: Offset.zero,
+              ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic)),
+              child: child,
+            );
+          },
+        ),
       ),
       GoRoute(
         path: '/lite/settings/notification-prefs',
         name: 'lite-notification-prefs',
-        builder: (context, state) => const LiteNotificationPrefsScreen(),
+        pageBuilder: (context, state) => CustomTransitionPage(
+          child: const LiteNotificationPrefsScreen(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(1, 0),
+                end: Offset.zero,
+              ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic)),
+              child: child,
+            );
+          },
+        ),
       ),
 
       // ======================================================================

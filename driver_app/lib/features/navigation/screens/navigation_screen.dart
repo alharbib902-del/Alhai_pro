@@ -19,6 +19,85 @@ class NavigationScreen extends ConsumerStatefulWidget {
 class _NavigationScreenState extends ConsumerState<NavigationScreen> {
   GoogleMapController? _mapController;
 
+  // Cached marker icons — created once, reused across rebuilds.
+  BitmapDescriptor? _pickupIcon;
+  BitmapDescriptor? _deliveryIcon;
+
+  // Cached marker set — rebuilt only when the delivery data changes.
+  Set<Marker>? _cachedMarkers;
+  String? _cachedDeliveryId;
+  double? _cachedPickupLat;
+  double? _cachedPickupLng;
+  double? _cachedDeliveryLat;
+  double? _cachedDeliveryLng;
+
+  @override
+  void initState() {
+    super.initState();
+    _initMarkerIcons();
+  }
+
+  Future<void> _initMarkerIcons() async {
+    _pickupIcon =
+        BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue);
+    _deliveryIcon =
+        BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed);
+    // Trigger a rebuild now that the icons are ready.
+    if (mounted) setState(() {});
+  }
+
+  /// Returns a cached marker set, rebuilding only when coordinates change.
+  Set<Marker> _buildMarkers({
+    required double? pickupLat,
+    required double? pickupLng,
+    required double? deliveryLat,
+    required double? deliveryLng,
+  }) {
+    final sameAsCached = _cachedDeliveryId == widget.deliveryId &&
+        _cachedPickupLat == pickupLat &&
+        _cachedPickupLng == pickupLng &&
+        _cachedDeliveryLat == deliveryLat &&
+        _cachedDeliveryLng == deliveryLng &&
+        _cachedMarkers != null;
+
+    if (sameAsCached) return _cachedMarkers!;
+
+    final markers = <Marker>{};
+
+    if (pickupLat != null && pickupLng != null) {
+      markers.add(Marker(
+        markerId: const MarkerId('pickup'),
+        position: LatLng(pickupLat, pickupLng),
+        icon: _pickupIcon ?? BitmapDescriptor.defaultMarker,
+        infoWindow: const InfoWindow(title: 'المتجر'),
+      ));
+    }
+
+    if (deliveryLat != null && deliveryLng != null) {
+      markers.add(Marker(
+        markerId: const MarkerId('delivery'),
+        position: LatLng(deliveryLat, deliveryLng),
+        icon: _deliveryIcon ?? BitmapDescriptor.defaultMarker,
+        infoWindow: const InfoWindow(title: 'العميل'),
+      ));
+    }
+
+    _cachedDeliveryId = widget.deliveryId;
+    _cachedPickupLat = pickupLat;
+    _cachedPickupLng = pickupLng;
+    _cachedDeliveryLat = deliveryLat;
+    _cachedDeliveryLng = deliveryLng;
+    _cachedMarkers = markers;
+
+    return markers;
+  }
+
+  @override
+  void dispose() {
+    _mapController?.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final delivery = ref.watch(deliveryByIdProvider(widget.deliveryId));
@@ -49,26 +128,14 @@ class _NavigationScreenState extends ConsumerState<NavigationScreen> {
         final destLabel = isHeadingToCustomer ? 'موقع العميل' : 'موقع المتجر';
         final address = data['delivery_address'] as String? ?? '';
 
-        // Build markers
-        final markers = <Marker>{};
-        if (pickupLat != null && pickupLng != null) {
-          markers.add(Marker(
-            markerId: const MarkerId('pickup'),
-            position: LatLng(pickupLat, pickupLng),
-            icon: BitmapDescriptor.defaultMarkerWithHue(
-                BitmapDescriptor.hueBlue),
-            infoWindow: const InfoWindow(title: 'المتجر'),
-          ));
-        }
-        if (deliveryLat != null && deliveryLng != null) {
-          markers.add(Marker(
-            markerId: const MarkerId('delivery'),
-            position: LatLng(deliveryLat, deliveryLng),
-            icon: BitmapDescriptor.defaultMarkerWithHue(
-                BitmapDescriptor.hueRed),
-            infoWindow: const InfoWindow(title: 'العميل'),
-          ));
-        }
+        // Build markers using the cache — no BitmapDescriptor allocation on
+        // every rebuild.
+        final markers = _buildMarkers(
+          pickupLat: pickupLat,
+          pickupLng: pickupLng,
+          deliveryLat: deliveryLat,
+          deliveryLng: deliveryLng,
+        );
 
         // Initial camera position
         final initialTarget = destLat != null && destLng != null
@@ -88,6 +155,11 @@ class _NavigationScreenState extends ConsumerState<NavigationScreen> {
                 myLocationEnabled: true,
                 myLocationButtonEnabled: true,
                 zoomControlsEnabled: false,
+                // Disable heavy rendering features that aren't needed for
+                // delivery navigation — reduces GPU load significantly.
+                buildingsEnabled: false,
+                indoorViewEnabled: false,
+                mapToolbarEnabled: false,
                 onMapCreated: (controller) {
                   _mapController = controller;
                   // Fit bounds to show all markers
@@ -126,11 +198,11 @@ class _NavigationScreenState extends ConsumerState<NavigationScreen> {
                   decoration: BoxDecoration(
                     color: theme.colorScheme.surface,
                     borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(20),
+                      top: Radius.circular(AlhaiRadius.bottomSheet),
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
+                        color: theme.colorScheme.shadow.withValues(alpha: 0.1),
                         blurRadius: 10,
                         offset: const Offset(0, -2),
                       ),
@@ -192,7 +264,7 @@ class _NavigationScreenState extends ConsumerState<NavigationScreen> {
                           style: FilledButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 14),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(AlhaiRadius.button),
                             ),
                           ),
                         ),
@@ -211,7 +283,7 @@ class _NavigationScreenState extends ConsumerState<NavigationScreen> {
       ),
       error: (e, _) => Scaffold(
         appBar: AppBar(title: const Text('الملاحة')),
-        body: Center(child: Text('خطأ: $e')),
+        body: const Center(child: Text('حدث خطأ في تحميل البيانات')),
       ),
     );
   }

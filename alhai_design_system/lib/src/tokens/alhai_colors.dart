@@ -121,4 +121,74 @@ abstract final class AlhaiColors {
 
   /// Disabled opacity (Material standard: 0.38)
   static const double disabledOpacity = 0.38;
+
+  // ============================================
+  // Status Badge Colors (Dark-mode aware)
+  // ============================================
+
+  static Color statusActiveBackground(bool isDark) =>
+      isDark ? const Color(0xFF1B3A2A) : const Color(0xFFDCFCE7);
+  static Color statusActiveForeground(bool isDark) =>
+      isDark ? const Color(0xFF4ADE80) : const Color(0xFF15803D);
+
+  static Color statusTrialBackground(bool isDark) =>
+      isDark ? const Color(0xFF3A2F1B) : const Color(0xFFFEF3C7);
+  static Color statusTrialForeground(bool isDark) =>
+      isDark ? const Color(0xFFFBBF24) : const Color(0xFFB45309);
+
+  static Color statusExpiredBackground(bool isDark) =>
+      isDark ? const Color(0xFF3A1B1B) : const Color(0xFFFEE2E2);
+  static Color statusExpiredForeground(bool isDark) =>
+      isDark ? const Color(0xFFF87171) : const Color(0xFFB91C1C);
+
+  static Color statusSuspendedBackground(bool isDark) =>
+      isDark ? const Color(0xFF3A1B1B) : const Color(0xFFFEE2E2);
+  static Color statusSuspendedForeground(bool isDark) =>
+      isDark ? const Color(0xFFF87171) : const Color(0xFFB91C1C);
+
+  static Color statusPendingBackground(bool isDark) =>
+      isDark ? const Color(0xFF2A2A3A) : const Color(0xFFEDE9FE);
+  static Color statusPendingForeground(bool isDark) =>
+      isDark ? const Color(0xFFA78BFA) : const Color(0xFF6D28D9);
+
+  static Color statusInfoBackground(bool isDark) =>
+      isDark ? const Color(0xFF1B2A3A) : const Color(0xFFDBEAFE);
+  static Color statusInfoForeground(bool isDark) =>
+      isDark ? const Color(0xFF60A5FA) : const Color(0xFF1D4ED8);
+
+  // ============================================
+  // Plan Colors (Dark-mode aware)
+  // ============================================
+
+  static Color planBasic(bool isDark) =>
+      isDark ? const Color(0xFF60A5FA) : const Color(0xFF2563EB);
+  static Color planAdvanced(bool isDark) =>
+      isDark ? const Color(0xFFA78BFA) : const Color(0xFF7C3AED);
+  static Color planProfessional(bool isDark) =>
+      isDark ? const Color(0xFF2DD4BF) : const Color(0xFF0D9488);
+
+  // ============================================
+  // Role Colors (Dark-mode aware)
+  // ============================================
+
+  static Color roleSuperAdmin(bool isDark) =>
+      isDark ? const Color(0xFFF87171) : const Color(0xFFDC2626);
+  static Color roleSupport(bool isDark) =>
+      isDark ? const Color(0xFF60A5FA) : const Color(0xFF2563EB);
+  static Color roleViewer(bool isDark) =>
+      isDark ? const Color(0xFF9CA3AF) : const Color(0xFF6B7280);
+
+  // ============================================
+  // Chart Colors (Dark-mode optimized)
+  // ============================================
+
+  static List<Color> chartColors(bool isDark) => isDark
+      ? const [
+          Color(0xFF60A5FA), Color(0xFFA78BFA), Color(0xFF2DD4BF),
+          Color(0xFFFBBF24), Color(0xFFF87171), Color(0xFF34D399),
+        ]
+      : const [
+          Color(0xFF2563EB), Color(0xFF7C3AED), Color(0xFF0D9488),
+          Color(0xFFD97706), Color(0xFFDC2626), Color(0xFF059669),
+        ];
 }

@@ -19,6 +19,7 @@ class _SARevenueAnalyticsScreenState
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
     final width = MediaQuery.sizeOf(context).width;
     final isWide = width >= AlhaiBreakpoints.desktop;
@@ -93,26 +94,26 @@ class _SARevenueAnalyticsScreenState
                       value: _fmtNum(mrr),
                       suffix: l10n.sar,
                       icon: Icons.repeat_rounded,
-                      color: Colors.teal,
+                      color: isDark ? const Color(0xFF2DD4BF) : const Color(0xFF0D9488),
                     ),
                     _KpiCard(
                       title: l10n.annualRecurringRevenue,
                       value: _fmtNum(arr),
                       suffix: l10n.sar,
                       icon: Icons.calendar_today_rounded,
-                      color: Colors.indigo,
+                      color: isDark ? const Color(0xFF818CF8) : const Color(0xFF4F46E5),
                     ),
                     _KpiCard(
                       title: l10n.activeSubscriptions,
                       value: '${kpis['active_subscriptions'] ?? 0}',
                       icon: Icons.card_membership_rounded,
-                      color: Colors.green,
+                      color: isDark ? const Color(0xFF4ADE80) : const Color(0xFF15803D),
                     ),
                     _KpiCard(
                       title: l10n.trialSubscriptions,
                       value: '${kpis['trial_subscriptions'] ?? 0}',
                       icon: Icons.science_rounded,
-                      color: Colors.orange,
+                      color: isDark ? const Color(0xFFFB923C) : const Color(0xFFEA580C),
                     ),
                   ],
                 );

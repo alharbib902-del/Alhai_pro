@@ -1,5 +1,6 @@
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../providers/delivery_providers.dart';
@@ -27,6 +28,7 @@ class _DeliveryActionButtonsState
   bool _isLoading = false;
 
   Future<void> _updateStatus(String newStatus, {String? notes}) async {
+    HapticFeedback.mediumImpact();
     setState(() => _isLoading = true);
     try {
       await ref.read(
@@ -37,7 +39,7 @@ class _DeliveryActionButtonsState
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('$e')),
+          const SnackBar(content: Text('حدث خطأ. حاول مرة أخرى')),
         );
       }
     } finally {
@@ -63,14 +65,18 @@ class _DeliveryActionButtonsState
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // Primary action
-          FilledButton.icon(
-            onPressed: () => actions.first.onPressed(),
-            icon: Icon(actions.first.icon),
-            label: Text(actions.first.label),
-            style: FilledButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+          Semantics(
+            label: actions.first.label,
+            button: true,
+            child: FilledButton.icon(
+              onPressed: actions.first.onPressed,
+              icon: Icon(actions.first.icon),
+              label: Text(actions.first.label),
+              style: FilledButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AlhaiRadius.button),
+                ),
               ),
             ),
           ),
@@ -80,15 +86,21 @@ class _DeliveryActionButtonsState
             for (final action in actions.skip(1))
               Padding(
                 padding: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
-                child: OutlinedButton.icon(
-                  onPressed: () => action.onPressed(),
-                  icon: Icon(action.icon),
-                  label: Text(action.label),
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    foregroundColor: action.isDestructive ? Colors.red : null,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                child: Semantics(
+                  label: action.label,
+                  button: true,
+                  child: OutlinedButton.icon(
+                    onPressed: action.onPressed,
+                    icon: Icon(action.icon),
+                    label: Text(action.label),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      foregroundColor: action.isDestructive
+                          ? Theme.of(context).colorScheme.error
+                          : null,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(AlhaiRadius.button),
+                      ),
                     ),
                   ),
                 ),
@@ -181,6 +193,7 @@ class _DeliveryActionButtonsState
   }
 
   void _showRejectDialog() {
+    HapticFeedback.heavyImpact();
     showDialog(
       context: context,
       builder: (ctx) {
@@ -189,11 +202,12 @@ class _DeliveryActionButtonsState
           title: const Text('رفض الطلب'),
           content: TextField(
             controller: controller,
+            maxLength: 200,
+            maxLines: 2,
             decoration: const InputDecoration(
               labelText: 'سبب الرفض (اختياري)',
               border: OutlineInputBorder(),
             ),
-            maxLines: 2,
           ),
           actions: [
             TextButton(
@@ -206,7 +220,7 @@ class _DeliveryActionButtonsState
                 _updateStatus('cancelled', notes: controller.text);
               },
               style: FilledButton.styleFrom(
-                backgroundColor: Colors.red,
+                backgroundColor: Theme.of(ctx).colorScheme.error,
               ),
               child: const Text('رفض'),
             ),
@@ -217,6 +231,7 @@ class _DeliveryActionButtonsState
   }
 
   void _showFailDialog() {
+    HapticFeedback.heavyImpact();
     showDialog(
       context: context,
       builder: (ctx) {
@@ -225,11 +240,12 @@ class _DeliveryActionButtonsState
           title: const Text('فشل التوصيل'),
           content: TextField(
             controller: controller,
+            maxLength: 200,
+            maxLines: 2,
             decoration: const InputDecoration(
               labelText: 'سبب الفشل',
               border: OutlineInputBorder(),
             ),
-            maxLines: 2,
           ),
           actions: [
             TextButton(
@@ -242,7 +258,7 @@ class _DeliveryActionButtonsState
                 _updateStatus('failed', notes: controller.text);
               },
               style: FilledButton.styleFrom(
-                backgroundColor: Colors.red,
+                backgroundColor: Theme.of(ctx).colorScheme.error,
               ),
               child: const Text('تأكيد الفشل'),
             ),

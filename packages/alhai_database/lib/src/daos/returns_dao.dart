@@ -14,6 +14,14 @@ class ReturnsDao extends DatabaseAccessor<AppDatabase> with _$ReturnsDaoMixin {
     return (select(returnsTable)..where((r) => r.storeId.equals(storeId))..orderBy([(r) => OrderingTerm.desc(r.createdAt)])..limit(limit)).get();
   }
 
+  Future<List<ReturnsTableData>> getReturnsByStatus(String storeId, String status, {int limit = 1000}) {
+    return (select(returnsTable)..where((r) => r.storeId.equals(storeId) & r.status.equals(status))..orderBy([(r) => OrderingTerm.desc(r.createdAt)])..limit(limit)).get();
+  }
+
+  Future<List<ReturnsTableData>> getReturnsByStatuses(String storeId, List<String> statuses, {int limit = 1000}) {
+    return (select(returnsTable)..where((r) => r.storeId.equals(storeId) & r.status.isIn(statuses))..orderBy([(r) => OrderingTerm.desc(r.createdAt)])..limit(limit)).get();
+  }
+
   Future<List<ReturnsTableData>> getReturnsByDateRange(String storeId, DateTime startDate, DateTime endDate, {int limit = 5000}) {
     return (select(returnsTable)..where((r) => r.storeId.equals(storeId) & r.createdAt.isBiggerOrEqualValue(startDate) & r.createdAt.isSmallerThanValue(endDate))..orderBy([(r) => OrderingTerm.desc(r.createdAt)])..limit(limit)).get();
   }

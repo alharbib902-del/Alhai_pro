@@ -134,7 +134,7 @@ class LiteOrderDetailScreen extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.white,
+        color: isDark ? Colors.white.withValues(alpha: 0.06) : Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: isDark ? Colors.white12 : Theme.of(context).colorScheme.outlineVariant),
       ),
@@ -145,7 +145,7 @@ class LiteOrderDetailScreen extends ConsumerWidget {
             children: [
               Text(l10n.products, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: isDark ? Colors.white : null)),
               const Spacer(),
-              Text('${items.length} items', style: TextStyle(fontSize: 13, color: isDark ? Colors.white54 : Colors.black54)),
+              Text(l10n.nItems(items.length), style: TextStyle(fontSize: 13, color: Theme.of(context).colorScheme.onSurfaceVariant)),
             ],
           ),
           const SizedBox(height: AlhaiSpacing.sm),
@@ -153,10 +153,10 @@ class LiteOrderDetailScreen extends ConsumerWidget {
                 padding: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
                 child: Row(
                   children: [
-                    Expanded(child: Text(item.productName, style: TextStyle(fontSize: 14, color: isDark ? Colors.white : Colors.black87))),
-                    Text('x${item.qty.toStringAsFixed(0)}', style: TextStyle(fontSize: 13, color: isDark ? Colors.white54 : Colors.black54)),
+                    Expanded(child: Text(item.productName, style: TextStyle(fontSize: 14, color: Theme.of(context).colorScheme.onSurface))),
+                    Text('x${item.qty.toStringAsFixed(0)}', style: TextStyle(fontSize: 13, color: Theme.of(context).colorScheme.onSurfaceVariant)),
                     const SizedBox(width: AlhaiSpacing.md),
-                    Text('${item.total.toStringAsFixed(0)} SAR', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: isDark ? Colors.white : Colors.black87)),
+                    Text('${item.total.toStringAsFixed(0)} ${l10n.sar}', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: Theme.of(context).colorScheme.onSurface)),
                   ],
                 ),
               )),
@@ -177,7 +177,7 @@ class LiteOrderDetailScreen extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.white,
+        color: isDark ? Colors.white.withValues(alpha: 0.06) : Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: isDark ? Colors.white12 : Theme.of(context).colorScheme.outlineVariant),
       ),
@@ -202,13 +202,13 @@ class LiteOrderDetailScreen extends ConsumerWidget {
                       width: 24,
                       height: 24,
                       decoration: BoxDecoration(
-                        color: completed ? AlhaiColors.success : (isDark ? Colors.white12 : Colors.grey.shade200),
+                        color: completed ? AlhaiColors.success : (isDark ? Colors.white12 : Theme.of(context).colorScheme.outlineVariant),
                         shape: BoxShape.circle,
                       ),
                       child: completed ? const Icon(Icons.check, size: 14, color: Colors.white) : null,
                     ),
                     if (!isLast)
-                      Container(width: 2, height: 24, color: completed ? AlhaiColors.success : (isDark ? Colors.white12 : Colors.grey.shade200)),
+                      Container(width: 2, height: 24, color: completed ? AlhaiColors.success : (isDark ? Colors.white12 : Theme.of(context).colorScheme.outlineVariant)),
                   ],
                 ),
                 const SizedBox(width: AlhaiSpacing.sm),
@@ -217,10 +217,10 @@ class LiteOrderDetailScreen extends ConsumerWidget {
                     padding: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
                     child: Row(
                       children: [
-                        Text(step.label, style: TextStyle(fontSize: 14, fontWeight: completed ? FontWeight.w600 : FontWeight.normal, color: completed ? (isDark ? Colors.white : Colors.black87) : (isDark ? Colors.white38 : Colors.black38))),
+                        Text(step.label, style: TextStyle(fontSize: 14, fontWeight: completed ? FontWeight.w600 : FontWeight.normal, color: completed ? Theme.of(context).colorScheme.onSurface : Theme.of(context).colorScheme.outline)),
                         if (timeStr.isNotEmpty) ...[
                           const Spacer(),
-                          Text(timeStr, style: TextStyle(fontSize: 12, color: isDark ? Colors.white38 : Colors.black45)),
+                          Text(timeStr, style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.outline)),
                         ],
                       ],
                     ),
@@ -241,16 +241,16 @@ class LiteOrderDetailScreen extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.white,
+        color: isDark ? Colors.white.withValues(alpha: 0.06) : Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: isDark ? Colors.white12 : Theme.of(context).colorScheme.outlineVariant),
       ),
       child: Column(
         children: [
-          _buildTotalRow(l10n.subtotal, '${subtotal.toStringAsFixed(0)} SAR', isDark, context),
-          _buildTotalRow(l10n.vat, '${vat.toStringAsFixed(0)} SAR', isDark, context),
+          _buildTotalRow(l10n.subtotal, '${subtotal.toStringAsFixed(0)} ${l10n.sar}', isDark, context),
+          _buildTotalRow(l10n.vat, '${vat.toStringAsFixed(0)} ${l10n.sar}', isDark, context),
           const Divider(height: AlhaiSpacing.lg),
-          _buildTotalRow(l10n.grandTotal, '${order.total.toStringAsFixed(0)} SAR', isDark, context, isBold: true),
+          _buildTotalRow(l10n.grandTotal, '${order.total.toStringAsFixed(0)} ${l10n.sar}', isDark, context, isBold: true),
         ],
       ),
     );
@@ -261,9 +261,9 @@ class LiteOrderDetailScreen extends ConsumerWidget {
       padding: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
       child: Row(
         children: [
-          Text(label, style: TextStyle(fontSize: isBold ? 16 : 14, fontWeight: isBold ? FontWeight.bold : FontWeight.normal, color: isDark ? (isBold ? Colors.white : Colors.white54) : (isBold ? Colors.black87 : Colors.black54))),
+          Text(label, style: TextStyle(fontSize: isBold ? 16 : 14, fontWeight: isBold ? FontWeight.bold : FontWeight.normal, color: isBold ? Theme.of(context).colorScheme.onSurface : Theme.of(context).colorScheme.onSurfaceVariant)),
           const Spacer(),
-          Text(value, style: TextStyle(fontSize: isBold ? 18 : 14, fontWeight: isBold ? FontWeight.bold : FontWeight.w600, color: isDark ? Colors.white : Colors.black87)),
+          Text(value, style: TextStyle(fontSize: isBold ? 18 : 14, fontWeight: isBold ? FontWeight.bold : FontWeight.w600, color: Theme.of(context).colorScheme.onSurface)),
         ],
       ),
     );
@@ -287,6 +287,7 @@ class LiteOrderDetailScreen extends ConsumerWidget {
           child: OutlinedButton.icon(
             onPressed: () async {
               final db = GetIt.I<AppDatabase>();
+              // TODO(l10n): add key for "Cancelled by admin"
               await db.ordersDao.cancelOrder(order.id, 'Cancelled by admin');
               if (context.mounted) {
                 ref.invalidate(liteOrderDetailProvider(orderId));

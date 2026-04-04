@@ -1,6 +1,10 @@
 """التقارير الذكية - Smart Reports Router"""
 
+import logging
+
 from fastapi import APIRouter, Depends, HTTPException
+
+logger = logging.getLogger(__name__)
 from auth import AuthenticatedUser, verify_store_access
 from models.schemas import ReportRequest, ReportResponse
 from services.ml_service import generate_report
@@ -25,5 +29,6 @@ async def smart_reports(
             report_type=request.report_type,
             language=request.language,
         )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"خطأ في إنشاء التقرير: {e}")
+    except Exception:
+        logger.exception("خطأ في إنشاء التقرير")
+        raise HTTPException(status_code=500, detail="حدث خطأ غير متوقع")

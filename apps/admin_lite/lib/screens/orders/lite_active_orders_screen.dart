@@ -64,7 +64,11 @@ class _LiteActiveOrdersScreenState extends ConsumerState<LiteActiveOrdersScreen>
                     padding: EdgeInsets.all(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
                     itemCount: filtered.length,
                     itemBuilder: (context, index) {
-                      return _buildOrderCard(context, filtered[index], isDark);
+                      final order = filtered[index];
+                      return KeyedSubtree(
+                        key: ValueKey(order.id),
+                        child: _buildOrderCard(context, order, isDark),
+                      );
                     },
                   ),
                 );
@@ -177,7 +181,7 @@ class _LiteActiveOrdersScreenState extends ConsumerState<LiteActiveOrdersScreen>
         margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
         padding: const EdgeInsets.all(AlhaiSpacing.md),
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.white,
+          color: isDark ? Colors.white.withValues(alpha: 0.06) : Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: isDark ? Colors.white12 : Theme.of(context).colorScheme.outlineVariant,
@@ -204,7 +208,7 @@ class _LiteActiveOrdersScreenState extends ConsumerState<LiteActiveOrdersScreen>
                     children: [
                       Text(
                         '#${order.orderNumber}',
-                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black87),
+                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface),
                       ),
                       Text(
                         order.customerName ?? '',
@@ -226,13 +230,13 @@ class _LiteActiveOrdersScreenState extends ConsumerState<LiteActiveOrdersScreen>
             const SizedBox(height: AlhaiSpacing.sm),
             Row(
               children: [
-                Icon(Icons.access_time, size: 14, color: isDark ? Colors.white24 : Colors.black38),
+                Icon(Icons.access_time, size: 14, color: Theme.of(context).colorScheme.outline),
                 const SizedBox(width: AlhaiSpacing.xxs),
-                Text(time, style: TextStyle(fontSize: 12, color: isDark ? Colors.white38 : Colors.black45)),
+                Text(time, style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.outline)),
                 const Spacer(),
                 Text(
                   '${order.total.toStringAsFixed(0)} SAR',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: isDark ? Colors.white : Colors.black87),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Theme.of(context).colorScheme.onSurface),
                 ),
               ],
             ),

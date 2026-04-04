@@ -1,6 +1,10 @@
 """تصميم العروض - Promotion Designer Router"""
 
+import logging
+
 from fastapi import APIRouter, Depends, HTTPException
+
+logger = logging.getLogger(__name__)
 from auth import AuthenticatedUser, verify_store_access
 from models.schemas import PromotionRequest, PromotionResponse
 from services.ml_service import design_promotions
@@ -27,5 +31,6 @@ async def design_promotions_endpoint(
             duration_days=request.duration_days,
             language=request.language,
         )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"خطأ في تصميم العروض: {e}")
+    except Exception:
+        logger.exception("خطأ في تصميم العروض")
+        raise HTTPException(status_code=500, detail="حدث خطأ غير متوقع")

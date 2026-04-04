@@ -8,6 +8,7 @@ import '../widgets/active_delivery_card.dart';
 import '../widgets/daily_stats_card.dart';
 import '../widgets/shift_toggle.dart';
 import '../../deliveries/providers/new_assignment_provider.dart';
+import '../../../shared/widgets/shimmer_loading.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -32,43 +33,48 @@ class HomeScreen extends ConsumerWidget {
         centerTitle: true,
         actions: const [ShiftToggle()],
       ),
-      body: RefreshIndicator(
-        onRefresh: () async {
-          ref.invalidate(dashboardStatsProvider);
-        },
-        child: ListView(
-          padding: const EdgeInsets.all(AlhaiSpacing.md),
-          children: [
+      body: SafeArea(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 800),
+            child: RefreshIndicator(
+          onRefresh: () async {
+            ref.invalidate(dashboardStatsProvider);
+          },
+          child: ListView(
+            padding: const EdgeInsets.all(AlhaiSpacing.md),
+            children: [
             // Daily stats
-            stats.when(
-              data: (data) => DailyStatsCard(stats: data),
-              loading: () => const DailyStatsCard(stats: {}),
-              error: (_, __) => const DailyStatsCard(stats: {}),
+            Semantics(
+              label: 'بطاقة إحصائيات اليوم',
+              child: stats.when(
+                data: (data) => DailyStatsCard(stats: data),
+                loading: () => const ShimmerStatsCard(),
+                error: (_, __) => const DailyStatsCard(stats: {}),
+              ),
             ),
             const SizedBox(height: AlhaiSpacing.md),
 
             // Active delivery card
-            stats.when(
-              data: (data) {
-                final activeId = data['active_delivery_id'] as String?;
-                final activeStatus =
-                    data['active_delivery_status'] as String?;
-                if (activeId != null) {
-                  return ActiveDeliveryCard(
-                    deliveryId: activeId,
-                    status: activeStatus ?? '',
-                    onTap: () => context.push('/orders/$activeId'),
-                  );
-                }
-                return _NoActiveDeliveryCard();
-              },
-              loading: () => const Card(
-                child: Padding(
-                  padding: EdgeInsets.all(AlhaiSpacing.lg),
-                  child: Center(child: CircularProgressIndicator()),
-                ),
+            Semantics(
+              label: 'بطاقة التوصيل النشط',
+              child: stats.when(
+                data: (data) {
+                  final activeId = data['active_delivery_id'] as String?;
+                  final activeStatus =
+                      data['active_delivery_status'] as String?;
+                  if (activeId != null) {
+                    return ActiveDeliveryCard(
+                      deliveryId: activeId,
+                      status: activeStatus ?? '',
+                      onTap: () => context.push('/orders/$activeId'),
+                    );
+                  }
+                  return _NoActiveDeliveryCard();
+                },
+                loading: () => const ShimmerCard(),
+                error: (_, __) => _NoActiveDeliveryCard(),
               ),
-              error: (_, __) => _NoActiveDeliveryCard(),
             ),
 
             const SizedBox(height: AlhaiSpacing.md),
@@ -78,16 +84,27 @@ class HomeScreen extends ConsumerWidget {
               data: (data) {
                 final pending = data['pending_count'] as int? ?? 0;
                 if (pending > 0) {
-                  return Card(
-                    color: Theme.of(context).colorScheme.tertiaryContainer,
-                    child: ListTile(
-                      leading: Badge(
-                        label: Text('$pending'),
-                        child: const Icon(Icons.notification_important_rounded),
+                  return Semantics(
+                    label: '$pending طلبات بانتظار القبول، اضغط للعرض',
+                    button: true,
+                    child: Card(
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(AlhaiRadius.md),
                       ),
-                      title: Text('$pending طلبات بانتظار القبول'),
-                      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                      onTap: () => context.go('/deliveries'),
+                      color: Theme.of(context).colorScheme.tertiaryContainer,
+                      child: ListTile(
+                        leading: Badge(
+                          label: Text('$pending'),
+                          child: const Icon(
+                            Icons.notification_important_rounded,
+                            size: 24,
+                          ),
+                        ),
+                        title: Text('$pending طلبات بانتظار القبول'),
+                        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                        onTap: () => context.go('/deliveries'),
+                      ),
                     ),
                   );
                 }
@@ -97,6 +114,9 @@ class HomeScreen extends ConsumerWidget {
               error: (_, __) => const SizedBox.shrink(),
             ),
           ],
+          ),
+            ),
+          ),
         ),
       ),
     );
@@ -108,14 +128,20 @@ class _NoActiveDeliveryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AlhaiRadius.md),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(AlhaiSpacing.xl),
         child: Column(
           children: [
-            Icon(
-              Icons.local_shipping_outlined,
-              size: 48,
-              color: theme.colorScheme.outline,
+            ExcludeSemantics(
+              child: Icon(
+                Icons.local_shipping_outlined,
+                size: 48,
+                color: theme.colorScheme.outline,
+              ),
             ),
             const SizedBox(height: AlhaiSpacing.sm),
             Text(
@@ -131,9 +157,20 @@ class _NoActiveDeliveryCard extends StatelessWidget {
                 color: theme.colorScheme.outline,
               ),
             ),
+            const SizedBox(height: AlhaiSpacing.sm),
+            Semantics(
+              label: 'عرض التوصيلات المتاحة',
+              button: true,
+              child: TextButton.icon(
+                onPressed: () => context.go('/deliveries'),
+                icon: const Icon(Icons.local_shipping_outlined, size: 18),
+                label: const Text('عرض التوصيلات المتاحة'),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 }
+

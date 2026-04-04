@@ -19,9 +19,17 @@ class ProfileScreen extends ConsumerWidget {
         title: const Text('حسابي'),
         centerTitle: true,
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(AlhaiSpacing.md),
-        children: [
+      body: SafeArea(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 800),
+            child: RefreshIndicator(
+              onRefresh: () async {
+                ref.invalidate(currentDriverProvider);
+              },
+              child: ListView(
+              padding: const EdgeInsets.all(AlhaiSpacing.md),
+              children: [
           // Profile header
           Card(
             child: Padding(
@@ -90,12 +98,15 @@ class ProfileScreen extends ConsumerWidget {
           const SizedBox(height: AlhaiSpacing.md),
 
           // Logout
-          Card(
-            child: ListTile(
-              leading: const Icon(Icons.logout, color: Colors.red),
-              title: const Text(
+          Semantics(
+            label: 'زر تسجيل الخروج',
+            button: true,
+            child: Card(
+              child: ListTile(
+              leading: Icon(Icons.logout, color: theme.colorScheme.error),
+              title: Text(
                 'تسجيل الخروج',
-                style: TextStyle(color: Colors.red),
+                style: TextStyle(color: theme.colorScheme.error),
               ),
               onTap: () async {
                 final confirm = await showDialog<bool>(
@@ -112,7 +123,7 @@ class ProfileScreen extends ConsumerWidget {
                       FilledButton(
                         onPressed: () => Navigator.pop(ctx, true),
                         style: FilledButton.styleFrom(
-                          backgroundColor: Colors.red,
+                          backgroundColor: Theme.of(ctx).colorScheme.error,
                         ),
                         child: const Text('خروج'),
                       ),
@@ -136,7 +147,11 @@ class ProfileScreen extends ConsumerWidget {
               ),
             ),
           ),
-        ],
+          ],
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

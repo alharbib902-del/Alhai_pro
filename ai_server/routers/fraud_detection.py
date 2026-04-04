@@ -1,6 +1,10 @@
 """كشف الاحتيال - Fraud Detection Router"""
 
+import logging
+
 from fastapi import APIRouter, Depends, HTTPException
+
+logger = logging.getLogger(__name__)
 from auth import AuthenticatedUser, verify_store_access
 from models.schemas import FraudRequest, FraudResponse
 from services.ml_service import detect_fraud
@@ -25,5 +29,6 @@ async def detect_fraud_endpoint(
             sale_id=request.sale_id,
             language=request.language,
         )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"خطأ في كشف الاحتيال: {e}")
+    except Exception:
+        logger.exception("خطأ في كشف الاحتيال")
+        raise HTTPException(status_code=500, detail="حدث خطأ غير متوقع")

@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -5,6 +8,8 @@ import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import '../../core/router/app_router.dart';
 import '../../providers/sa_providers.dart';
+import '../../ui/widgets/sa_skeleton.dart';
+import '../../ui/widgets/sa_empty_state.dart';
 
 /// Stores list with search, filter by status/plan -- real Supabase data.
 class SAStoresListScreen extends ConsumerStatefulWidget {
@@ -16,9 +21,12 @@ class SAStoresListScreen extends ConsumerStatefulWidget {
 
 class _SAStoresListScreenState extends ConsumerState<SAStoresListScreen> {
   final _searchController = TextEditingController();
+  Timer? _debounceTimer;
+  int _rowsPerPage = 10;
 
   @override
   void dispose() {
+    _debounceTimer?.cancel();
     _searchController.dispose();
     super.dispose();
   }
@@ -32,6 +40,8 @@ class _SAStoresListScreenState extends ConsumerState<SAStoresListScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final colorScheme = theme.colorScheme;
     final l10n = AppLocalizations.of(context);
     final filter = ref.watch(saStoresFilterProvider);
     final storesAsync = ref.watch(saStoresListProvider);
@@ -67,11 +77,16 @@ class _SAStoresListScreenState extends ConsumerState<SAStoresListScreen> {
               spacing: AlhaiSpacing.md,
               runSpacing: AlhaiSpacing.sm,
               children: [
-                SizedBox(
-                  width: 300,
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 300),
                   child: TextField(
                     controller: _searchController,
-                    onChanged: _applySearch,
+                    onChanged: (query) {
+                      _debounceTimer?.cancel();
+                      _debounceTimer = Timer(const Duration(milliseconds: 300), () {
+                        _applySearch(query);
+                      });
+                    },
                     decoration: InputDecoration(
                       hintText: l10n.searchStores,
                       prefixIcon: const Icon(Icons.search_rounded),
@@ -116,92 +131,46 @@ class _SAStoresListScreenState extends ConsumerState<SAStoresListScreen> {
             // Data table
             Expanded(
               child: storesAsync.when(
-                loading: () =>
-                    const Center(child: CircularProgressIndicator()),
+                loading: () => const SATableSkeleton(),
                 error: (e, _) => Center(child: Text('Error: $e')),
                 data: (stores) {
-                  if (stores.isEmpty) {
-                    return Center(
-                      child: Text(
-                        l10n.noStoresFound,
-                        style: theme.textTheme.bodyLarge?.copyWith(
-                          color: theme.colorScheme.outline,
-                        ),
-                      ),
-                    );
-                  }
-
                   return Card(
                     elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius:
                           BorderRadius.circular(AlhaiRadius.card),
                       side: BorderSide(
-                        color: theme.colorScheme.outlineVariant,
+                        color: colorScheme.outlineVariant,
                         width: AlhaiSpacing.strokeXs,
                       ),
                     ),
-                    child: SingleChildScrollView(
-                      child: DataTable(
-                        columnSpacing: AlhaiSpacing.lg,
-                        headingRowHeight: 48,
-                        dataRowMinHeight: 52,
-                        dataRowMaxHeight: 52,
-                        columns: [
-                          DataColumn(label: Text(l10n.storeName)),
-                          DataColumn(label: Text(l10n.storeStatus)),
-                          DataColumn(label: Text(l10n.storePlan)),
-                          DataColumn(label: Text(l10n.storeCreatedAt)),
-                          const DataColumn(label: SizedBox()),
-                        ],
-                        rows: stores.map((store) {
-                          final name =
-                              store['name'] as String? ?? 'Unnamed';
-                          final isActive =
-                              store['is_active'] as bool? ?? false;
-                          final createdAt =
-                              store['created_at'] as String? ?? '';
-                          final dateStr = createdAt.length >= 10
-                              ? createdAt.substring(0, 10)
-                              : createdAt;
-
-                          // Extract plan from nested subscription
-                          final subs =
-                              store['subscriptions'] as List<dynamic>?;
-                          String planName = '-';
-                          String status = isActive ? 'active' : 'suspended';
-                          if (subs != null && subs.isNotEmpty) {
-                            final sub =
-                                subs.first as Map<String, dynamic>;
-                            final plan =
-                                sub['plans'] as Map<String, dynamic>?;
-                            planName =
-                                plan?['name'] as String? ?? '-';
-                            final subStatus =
-                                sub['status'] as String? ?? '';
-                            if (subStatus == 'trial') status = 'trial';
-                          }
-
-                          return DataRow(cells: [
-                            DataCell(Text(name)),
-                            DataCell(_StatusBadge(status: status)),
-                            DataCell(_PlanBadge(
-                                plan: planName.toLowerCase())),
-                            DataCell(Text(dateStr)),
-                            DataCell(
-                              IconButton(
-                                icon: const Icon(
-                                  Icons.arrow_forward_rounded,
-                                  size: 18,
-                                ),
-                                onPressed: () => context.go(
-                                  '/stores/${store['id']}',
-                                ),
-                                tooltip: l10n.viewDetails,
-                              ),
-                            ),
-                          ]);
-                        }).toList(),
+                    child: PaginatedDataTable2(
+                      columnSpacing: 12,
+                      horizontalMargin: 12,
+                      minWidth: 800,
+                      rowsPerPage: _rowsPerPage,
+                      availableRowsPerPage: const [10, 25, 50],
+                      onRowsPerPageChanged: (value) {
+                        if (value != null) setState(() => _rowsPerPage = value);
+                      },
+                      headingRowHeight: 48,
+                      dataRowHeight: 52,
+                      empty: SAEmptyState.stores(
+                        onAdd: () => context.go(SuperAdminRoutes.createStore),
+                      ),
+                      columns: [
+                        DataColumn2(label: Text(l10n.storeName), size: ColumnSize.L),
+                        DataColumn2(label: Text(l10n.storeStatus), fixedWidth: 120),
+                        DataColumn2(label: Text(l10n.storePlan), fixedWidth: 140),
+                        DataColumn2(label: Text(l10n.storeCreatedAt), fixedWidth: 130),
+                        const DataColumn2(label: SizedBox(), fixedWidth: 56),
+                      ],
+                      source: _StoresDataSource(
+                        stores: stores,
+                        context: context,
+                        isDark: isDark,
+                        l10n: l10n,
+                        onViewStore: (storeId) => context.go('/stores/$storeId'),
                       ),
                     ),
                   );
@@ -213,6 +182,72 @@ class _SAStoresListScreenState extends ConsumerState<SAStoresListScreen> {
       ),
     );
   }
+}
+
+class _StoresDataSource extends DataTableSource {
+  final List<Map<String, dynamic>> stores;
+  final BuildContext context;
+  final bool isDark;
+  final AppLocalizations l10n;
+  final void Function(String storeId) onViewStore;
+
+  _StoresDataSource({
+    required this.stores,
+    required this.context,
+    required this.isDark,
+    required this.l10n,
+    required this.onViewStore,
+  });
+
+  @override
+  DataRow? getRow(int index) {
+    if (index >= stores.length) return null;
+    final store = stores[index];
+
+    final name = store['name'] as String? ?? 'Unnamed';
+    final isActive = store['is_active'] as bool? ?? false;
+    final createdAt = store['created_at'] as String? ?? '';
+    final dateStr = createdAt.length >= 10
+        ? createdAt.substring(0, 10)
+        : createdAt;
+
+    // Extract plan from nested subscription
+    final subs = store['subscriptions'] as List<dynamic>?;
+    String planName = '-';
+    String status = isActive ? 'active' : 'suspended';
+    if (subs != null && subs.isNotEmpty) {
+      final sub = subs.first as Map<String, dynamic>;
+      final plan = sub['plans'] as Map<String, dynamic>?;
+      planName = plan?['name'] as String? ?? '-';
+      final subStatus = sub['status'] as String? ?? '';
+      if (subStatus == 'trial') status = 'trial';
+    }
+
+    return DataRow2(
+      cells: [
+        DataCell(Text(name)),
+        DataCell(_StatusBadge(status: status)),
+        DataCell(_PlanBadge(plan: planName.toLowerCase())),
+        DataCell(Text(dateStr)),
+        DataCell(
+          IconButton(
+            icon: const Icon(Icons.arrow_forward_rounded, size: 18),
+            onPressed: () => onViewStore(store['id'] as String? ?? ''),
+            tooltip: l10n.viewDetails,
+          ),
+        ),
+      ],
+    );
+  }
+
+  @override
+  bool get isRowCountApproximate => false;
+
+  @override
+  int get rowCount => stores.length;
+
+  @override
+  int get selectedRowCount => 0;
 }
 
 class _FilterChip extends StatelessWidget {
@@ -251,11 +286,24 @@ class _StatusBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final (color, bgColor) = switch (status) {
-      'active' => (Colors.green.shade700, Colors.green.shade50),
-      'suspended' => (Colors.red.shade700, Colors.red.shade50),
-      'trial' => (Colors.amber.shade700, Colors.amber.shade50),
-      _ => (Colors.grey.shade700, Colors.grey.shade50),
+      'active' => (
+        isDark ? const Color(0xFF4ADE80) : const Color(0xFF15803D),
+        isDark ? const Color(0xFF1B3A2A) : const Color(0xFFDCFCE7),
+      ),
+      'suspended' => (
+        isDark ? const Color(0xFFF87171) : const Color(0xFFB91C1C),
+        isDark ? const Color(0xFF3A1B1B) : const Color(0xFFFEE2E2),
+      ),
+      'trial' => (
+        isDark ? const Color(0xFFFBBF24) : const Color(0xFFB45309),
+        isDark ? const Color(0xFF3A2F1B) : const Color(0xFFFEF3C7),
+      ),
+      _ => (
+        isDark ? const Color(0xFF9CA3AF) : const Color(0xFF4B5563),
+        isDark ? const Color(0xFF2A2A2A) : const Color(0xFFF3F4F6),
+      ),
     };
 
     return Container(
@@ -269,9 +317,8 @@ class _StatusBadge extends StatelessWidget {
       ),
       child: Text(
         status.toUpperCase(),
-        style: TextStyle(
+        style: Theme.of(context).textTheme.labelSmall?.copyWith(
           color: color,
-          fontSize: 11,
           fontWeight: FontWeight.w600,
         ),
       ),
@@ -285,11 +332,13 @@ class _PlanBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
     final color = switch (plan) {
-      'professional' => Colors.teal,
-      'advanced' => Colors.deepPurple,
-      'basic' => Colors.blue,
-      _ => Colors.grey,
+      'professional' => isDark ? const Color(0xFF2DD4BF) : Colors.teal,
+      'advanced' => isDark ? const Color(0xFFA78BFA) : Colors.deepPurple,
+      'basic' => isDark ? const Color(0xFF60A5FA) : Colors.blue,
+      _ => colorScheme.outline,
     };
 
     return Container(
@@ -304,9 +353,8 @@ class _PlanBadge extends StatelessWidget {
       ),
       child: Text(
         plan,
-        style: TextStyle(
+        style: Theme.of(context).textTheme.labelSmall?.copyWith(
           color: color,
-          fontSize: 11,
           fontWeight: FontWeight.w600,
         ),
       ),

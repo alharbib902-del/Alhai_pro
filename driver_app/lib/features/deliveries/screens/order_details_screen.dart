@@ -8,6 +8,7 @@ import '../widgets/delivery_status_badge.dart';
 import '../widgets/delivery_action_buttons.dart';
 import '../widgets/customer_info_card.dart';
 import '../widgets/order_items_list.dart';
+import '../../../shared/widgets/shimmer_loading.dart';
 
 class OrderDetailsScreen extends ConsumerWidget {
   final String deliveryId;
@@ -59,7 +60,11 @@ class OrderDetailsScreen extends ConsumerWidget {
                 ),
             ],
           ),
-          body: Column(
+          body: SafeArea(
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 800),
+                child: Column(
             children: [
               Expanded(
                 child: ListView(
@@ -78,7 +83,7 @@ class OrderDetailsScreen extends ConsumerWidget {
                                 '${(fee as num).toStringAsFixed(0)} ر.س',
                                 style: theme.textTheme.titleLarge?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.green,
+                                  color: theme.colorScheme.primary,
                                 ),
                               ),
                           ],
@@ -135,16 +140,30 @@ class OrderDetailsScreen extends ConsumerWidget {
                     context.push('/orders/$deliveryId/proof'),
               ),
             ],
+                ),
+              ),
+            ),
           ),
         );
       },
       loading: () => Scaffold(
         appBar: AppBar(title: const Text('تفاصيل الطلب')),
-        body: const Center(child: CircularProgressIndicator()),
+        body: ListView(
+          padding: const EdgeInsets.all(AlhaiSpacing.md),
+          children: const [
+            ShimmerCard(),
+            SizedBox(height: AlhaiSpacing.xs),
+            ShimmerCard(),
+            SizedBox(height: AlhaiSpacing.xs),
+            ShimmerCard(),
+            SizedBox(height: AlhaiSpacing.xs),
+            ShimmerCard(),
+          ],
+        ),
       ),
       error: (e, _) => Scaffold(
         appBar: AppBar(title: const Text('تفاصيل الطلب')),
-        body: Center(child: Text('خطأ: $e')),
+        body: const Center(child: Text('حدث خطأ في تحميل البيانات')),
       ),
     );
   }

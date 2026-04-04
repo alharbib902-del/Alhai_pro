@@ -12,6 +12,7 @@ class SAUsageAnalyticsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
     final width = MediaQuery.sizeOf(context).width;
     final isWide = width >= AlhaiBreakpoints.desktop;
@@ -39,6 +40,7 @@ class SAUsageAnalyticsScreen extends ConsumerWidget {
             // Summary KPIs
             _buildKpis(
               theme: theme,
+              isDark: isDark,
               l10n: l10n,
               isWide: isWide,
               kpisAsync: kpisAsync,
@@ -91,6 +93,7 @@ class SAUsageAnalyticsScreen extends ConsumerWidget {
 
   Widget _buildKpis({
     required ThemeData theme,
+    required bool isDark,
     required AppLocalizations l10n,
     required bool isWide,
     required AsyncValue<Map<String, dynamic>> kpisAsync,
@@ -124,19 +127,19 @@ class SAUsageAnalyticsScreen extends ConsumerWidget {
           title: l10n.activeStores,
           value: _fmtInt(activeStores ?? 0),
           icon: Icons.store_rounded,
-          color: Colors.blue,
+          color: isDark ? const Color(0xFF60A5FA) : const Color(0xFF2563EB),
         ),
         _UsageKpi(
           title: l10n.avgTransactionsPerDay,
           value: _fmtInt(avgTx?.round() ?? 0),
           icon: Icons.receipt_long_rounded,
-          color: Colors.teal,
+          color: isDark ? const Color(0xFF2DD4BF) : const Color(0xFF0D9488),
         ),
         _UsageKpi(
           title: l10n.platformUsers,
           value: _fmtInt(totalUsers ?? 0),
           icon: Icons.people_rounded,
-          color: Colors.deepPurple,
+          color: isDark ? const Color(0xFFA78BFA) : const Color(0xFF7C3AED),
         ),
       ],
     );
@@ -230,6 +233,7 @@ class _ActiveUsersChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     if (storeData.isEmpty) {
       return Card(
         elevation: 0,
@@ -254,15 +258,18 @@ class _ActiveUsersChart extends StatelessWidget {
       );
     }
 
+    final blueColor = isDark ? const Color(0xFF60A5FA) : const Color(0xFF2563EB);
+    final deepPurpleColor = isDark ? const Color(0xFFA78BFA) : const Color(0xFF7C3AED);
+    final tealColor = isDark ? const Color(0xFF2DD4BF) : const Color(0xFF0D9488);
     final colors = [
-      Colors.blue,
-      Colors.deepPurple,
-      Colors.teal,
-      Colors.blue,
-      Colors.deepPurple,
-      Colors.teal,
-      Colors.blue,
-      Colors.deepPurple,
+      blueColor,
+      deepPurpleColor,
+      tealColor,
+      blueColor,
+      deepPurpleColor,
+      tealColor,
+      blueColor,
+      deepPurpleColor,
     ];
 
     double maxY = 0;
@@ -341,9 +348,8 @@ class _ActiveUsersChart extends StatelessWidget {
                             top: AlhaiSpacing.xs),
                         child: Text(
                           label,
-                          style: theme.textTheme.bodySmall?.copyWith(
+                          style: theme.textTheme.labelSmall?.copyWith(
                             color: theme.colorScheme.outline,
-                            fontSize: 10,
                           ),
                         ),
                       );

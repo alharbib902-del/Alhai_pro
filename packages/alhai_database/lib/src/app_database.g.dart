@@ -39764,6 +39764,12 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       Index('idx_users_phone', 'CREATE INDEX idx_users_phone ON users (phone)');
   late final Index idxUsersIsActive = Index('idx_users_is_active',
       'CREATE INDEX idx_users_is_active ON users (is_active)');
+  late final Index idxUsersStoreRole = Index('idx_users_store_role',
+      'CREATE INDEX idx_users_store_role ON users (store_id, role)');
+  late final Index idxUsersStoreActive = Index('idx_users_store_active',
+      'CREATE INDEX idx_users_store_active ON users (store_id, is_active)');
+  late final Index idxUsersOrgId = Index(
+      'idx_users_org_id', 'CREATE INDEX idx_users_org_id ON users (org_id)');
   late final Index idxRolesStoreId = Index('idx_roles_store_id',
       'CREATE INDEX idx_roles_store_id ON roles (store_id)');
   late final Index idxCustomersStoreId = Index('idx_customers_store_id',
@@ -40186,6 +40192,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         idxUsersStoreId,
         idxUsersPhone,
         idxUsersIsActive,
+        idxUsersStoreRole,
+        idxUsersStoreActive,
+        idxUsersOrgId,
         idxRolesStoreId,
         idxCustomersStoreId,
         idxCustomersPhone,

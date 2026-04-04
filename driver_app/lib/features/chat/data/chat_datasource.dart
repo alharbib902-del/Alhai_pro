@@ -23,12 +23,17 @@ class ChatDatasource {
     required String text,
     String? deliveryId,
   }) async {
+    final sanitized = text.trim()
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;');
+    if (sanitized.isEmpty) return;
     await _client.from('chat_messages').insert({
       'order_id': orderId,
       'delivery_id': deliveryId,
       'sender_type': 'driver',
       'sender_id': _userId,
-      'text': text,
+      'text': sanitized,
       'language': 'ar',
     });
   }

@@ -20,7 +20,9 @@ class SAUsersDatasource {
         .order('created_at', ascending: false);
 
     if (search != null && search.isNotEmpty) {
-      query = query.or('name.ilike.%$search%,email.ilike.%$search%');
+      // Escape special PostgREST wildcard characters to prevent injection
+      final sanitized = search.replaceAll('%', r'\%').replaceAll('_', r'\_');
+      query = query.or('name.ilike.%$sanitized%,email.ilike.%$sanitized%');
     }
 
     final data = await query;
@@ -76,6 +78,22 @@ class SAUsersDatasource {
         .gte('created_at', thirtyDaysAgo)
         .count(CountOption.exact);
     return result.count;
+  }
+
+  /// Soft delete a user (set is_active = false).
+  Future<void> softDeleteUser(String userId) async {
+    await _client
+        .from('app_users')
+        .update({'is_active': false})
+        .eq('id', userId);
+  }
+
+  /// Restore a soft-deleted user.
+  Future<void> restoreUser(String userId) async {
+    await _client
+        .from('app_users')
+        .update({'is_active': true})
+        .eq('id', userId);
   }
 
   /// Check if a user is currently online (last_sign_in within 5 minutes).

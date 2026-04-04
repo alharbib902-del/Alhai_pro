@@ -1,6 +1,10 @@
 """المخزون الذكي - Smart Inventory Router"""
 
+import logging
+
 from fastapi import APIRouter, Depends, HTTPException
+
+logger = logging.getLogger(__name__)
 from auth import AuthenticatedUser, verify_store_access
 from models.schemas import InventoryRequest, InventoryResponse
 from services.ml_service import analyze_inventory
@@ -24,5 +28,6 @@ async def smart_inventory(
             store_id=request.store_id,
             language=request.language,
         )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"خطأ في تحليل المخزون: {e}")
+    except Exception:
+        logger.exception("خطأ في تحليل المخزون")
+        raise HTTPException(status_code=500, detail="حدث خطأ غير متوقع")

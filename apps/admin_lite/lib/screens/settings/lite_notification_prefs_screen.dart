@@ -226,7 +226,7 @@ class _LiteNotificationPrefsScreenState extends State<LiteNotificationPrefsScree
             value: value,
             onChanged: onChanged,
             activeTrackColor: AlhaiColors.primary,
-            activeThumbColor: Colors.white,
+            activeThumbColor: isDark ? Colors.black : Colors.white,
           ),
         ],
       ),

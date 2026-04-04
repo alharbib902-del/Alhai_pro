@@ -193,10 +193,10 @@ class _LiteSalesTrendScreenState extends State<LiteSalesTrendScreen> {
           const SizedBox(height: AlhaiSpacing.lg),
           // Placeholder chart using simple bars
           SizedBox(
-            height: 200,
+            height: MediaQuery.of(context).size.width < 600 ? 150 : 200,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.end,
-              children: _buildChartBars(isDark),
+              children: _buildChartBars(isDark, MediaQuery.of(context).size.width < 600 ? 150.0 : 200.0),
             ),
           ),
           const SizedBox(height: AlhaiSpacing.sm),
@@ -220,14 +220,14 @@ class _LiteSalesTrendScreenState extends State<LiteSalesTrendScreen> {
     );
   }
 
-  List<Widget> _buildChartBars(bool isDark) {
+  List<Widget> _buildChartBars(bool isDark, double chartHeight) {
     final values = [0.6, 0.8, 0.5, 0.9, 0.7, 1.0, 0.65];
     return values.asMap().entries.map((entry) {
       return Expanded(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xxxs),
           child: Container(
-            height: 200 * entry.value,
+            height: chartHeight * entry.value,
             decoration: BoxDecoration(
               color: AlhaiColors.primary.withValues(alpha: entry.key == 5 ? 1.0 : 0.5),
               borderRadius: const BorderRadius.vertical(top: Radius.circular(6)),
@@ -317,8 +317,7 @@ class _ComparisonRow extends StatelessWidget {
           flex: 2,
           child: Text(
             label,
-            style: TextStyle(
-              fontSize: 13,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
               color: isDark ? Colors.white54 : Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
@@ -339,8 +338,7 @@ class _ComparisonRow extends StatelessWidget {
           child: Text(
             previous,
             textAlign: TextAlign.end,
-            style: TextStyle(
-              fontSize: 13,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
               color: isDark ? Colors.white38 : Colors.black45,
             ),
           ),

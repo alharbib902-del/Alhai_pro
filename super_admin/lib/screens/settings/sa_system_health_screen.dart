@@ -11,6 +11,8 @@ class SASystemHealthScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final colorScheme = theme.colorScheme;
     final l10n = AppLocalizations.of(context);
     final width = MediaQuery.sizeOf(context).width;
     final isWide = width >= AlhaiBreakpoints.desktop;
@@ -158,20 +160,20 @@ class SASystemHealthScreen extends ConsumerWidget {
                               ? '42%'
                               : '65%',
                       color: dbResponseMs < 100
-                          ? Colors.green
-                          : Colors.orange,
+                          ? (isDark ? const Color(0xFF4ADE80) : const Color(0xFF16A34A))
+                          : (isDark ? const Color(0xFFFBBF24) : const Color(0xFFD97706)),
                     ),
                     _ResourceGauge(
                       title: l10n.memoryUsage,
                       value: 0.68,
                       label: '68%',
-                      color: Colors.orange,
+                      color: isDark ? const Color(0xFFFBBF24) : const Color(0xFFD97706),
                     ),
                     _ResourceGauge(
                       title: l10n.diskUsage,
                       value: 0.55,
                       label: '55%',
-                      color: Colors.blue,
+                      color: colorScheme.primary,
                     ),
                   ],
                 ),
@@ -202,7 +204,7 @@ class SASystemHealthScreen extends ConsumerWidget {
                       borderRadius:
                           BorderRadius.circular(AlhaiRadius.card),
                       side: BorderSide(
-                        color: Colors.red.withValues(alpha: 0.3),
+                        color: colorScheme.error.withValues(alpha: 0.3),
                         width: AlhaiSpacing.strokeXs,
                       ),
                     ),
@@ -212,7 +214,7 @@ class SASystemHealthScreen extends ConsumerWidget {
                         error,
                         style: theme.textTheme.bodySmall?.copyWith(
                           fontFamily: 'monospace',
-                          color: Colors.red,
+                          color: colorScheme.error,
                         ),
                       ),
                     ),
@@ -242,11 +244,13 @@ class _OverallStatusBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final colorScheme = theme.colorScheme;
     final (color, icon, label) = switch (status) {
-      'healthy' => (Colors.green, Icons.check_circle_rounded, l10n.healthy),
-      'degraded' => (Colors.orange, Icons.warning_rounded, l10n.degraded),
-      'down' => (Colors.red, Icons.error_rounded, l10n.down),
-      _ => (Colors.grey, Icons.help_rounded, 'Unknown'),
+      'healthy' => (isDark ? const Color(0xFF4ADE80) : const Color(0xFF16A34A), Icons.check_circle_rounded, l10n.healthy),
+      'degraded' => (isDark ? const Color(0xFFFBBF24) : const Color(0xFFD97706), Icons.warning_rounded, l10n.degraded),
+      'down' => (colorScheme.error, Icons.error_rounded, l10n.down),
+      _ => (colorScheme.outline, Icons.help_rounded, 'Unknown'),
     };
 
     // Format timestamp for display
@@ -316,11 +320,13 @@ class _ServiceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final colorScheme = theme.colorScheme;
     final statusColor = switch (status) {
-      'healthy' => Colors.green,
-      'degraded' => Colors.orange,
-      'down' => Colors.red,
-      _ => Colors.grey,
+      'healthy' => isDark ? const Color(0xFF4ADE80) : const Color(0xFF16A34A),
+      'degraded' => isDark ? const Color(0xFFFBBF24) : const Color(0xFFD97706),
+      'down' => colorScheme.error,
+      _ => colorScheme.outline,
     };
     final statusLabel = switch (status) {
       'healthy' => l10n.healthy,
@@ -366,10 +372,8 @@ class _ServiceCard extends StatelessWidget {
                 const SizedBox(width: AlhaiSpacing.xxs),
                 Text(
                   statusLabel,
-                  style: TextStyle(
+                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
                     color: statusColor,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ],
@@ -478,6 +482,7 @@ class _ErrorRateCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     return Card(
       elevation: 0,
       shape: RoundedRectangleBorder(
@@ -499,7 +504,7 @@ class _ErrorRateCard extends StatelessWidget {
                     isHealthy ? '0.00%' : 'Elevated',
                     style: theme.textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: isHealthy ? Colors.green : Colors.orange,
+                      color: isHealthy ? (isDark ? const Color(0xFF4ADE80) : const Color(0xFF16A34A)) : (isDark ? const Color(0xFFFBBF24) : const Color(0xFFD97706)),
                     ),
                   ),
                   Text(
@@ -519,7 +524,7 @@ class _ErrorRateCard extends StatelessWidget {
                   ? Icons.check_circle_outline_rounded
                   : Icons.warning_amber_rounded,
               size: 48,
-              color: isHealthy ? Colors.green : Colors.orange,
+              color: isHealthy ? (isDark ? const Color(0xFF4ADE80) : const Color(0xFF16A34A)) : (isDark ? const Color(0xFFFBBF24) : const Color(0xFFD97706)),
             ),
           ],
         ),

@@ -48,16 +48,11 @@ class _LiteStockAlertsScreenState extends ConsumerState<LiteStockAlertsScreen> {
                 if (filtered.isEmpty) {
                   return Center(child: Text(l10n.noResults, style: TextStyle(color: isDark ? Colors.white54 : Theme.of(context).colorScheme.onSurfaceVariant)));
                 }
-                return RefreshIndicator(
-                  onRefresh: () async => ref.invalidate(liteStockAlertsProvider),
-                  child: ListView.builder(
-                    padding: EdgeInsets.all(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
-                    itemCount: filtered.length,
-                    itemBuilder: (context, index) {
-                      return _buildAlertTile(context, filtered[index], isDark);
-                    },
-                  ),
-                );
+                final isWide = size.width > 900;
+                if (isWide) {
+                  return _buildDataTable(filtered, isDark, l10n);
+                }
+                return _buildCardList(filtered, isDark, isMobile, l10n);
               },
               loading: () => const Center(child: CircularProgressIndicator()),
               error: (_, __) => Center(
@@ -121,12 +116,71 @@ class _LiteStockAlertsScreenState extends ConsumerState<LiteStockAlertsScreen> {
     );
   }
 
+  Widget _buildCardList(List<ProductsTableData> products, bool isDark, bool isMobile, AppLocalizations l10n) {
+    return RefreshIndicator(
+      onRefresh: () async => ref.invalidate(liteStockAlertsProvider),
+      child: ListView.builder(
+        padding: EdgeInsets.all(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
+        itemCount: products.length,
+        itemBuilder: (context, index) {
+          return _buildAlertTile(context, products[index], isDark);
+        },
+      ),
+    );
+  }
+
+  Widget _buildDataTable(List<ProductsTableData> products, bool isDark, AppLocalizations l10n) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg),
+      child: SizedBox(
+        width: double.infinity,
+        child: DataTable(
+          headingRowColor: WidgetStateProperty.all(
+            isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade50,
+          ),
+          columns: [
+            DataColumn(label: Text(l10n.product)),
+            DataColumn(label: Text(l10n.stock), numeric: true),
+            DataColumn(label: Text(l10n.minimumQuantity), numeric: true),
+            DataColumn(label: Text(l10n.status)),
+          ],
+          rows: products.map((product) {
+            final stock = product.stockQty.toInt();
+            final isOutOfStock = stock <= 0;
+            final color = isOutOfStock ? AlhaiColors.error : AlhaiColors.warning;
+            final statusText = isOutOfStock ? l10n.outOfStock : l10n.lowStock;
+
+            return DataRow(
+              key: ValueKey(product.id),
+              cells: [
+                DataCell(Text(product.name)),
+                DataCell(Text(
+                  '$stock',
+                  style: TextStyle(fontWeight: FontWeight.bold, color: color),
+                )),
+                DataCell(Text('${product.minQty.toInt()}')),
+                DataCell(Container(
+                  padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxxs),
+                  decoration: BoxDecoration(color: color.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(8)),
+                  child: Text(statusText, style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: color)),
+                )),
+              ],
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }
+
   Widget _buildAlertTile(BuildContext context, ProductsTableData product, bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
     final stock = product.stockQty.toInt();
     final isOutOfStock = stock <= 0;
     final color = isOutOfStock ? AlhaiColors.error : AlhaiColors.warning;
     final icon = isOutOfStock ? Icons.error_outline : Icons.warning_amber;
-    final desc = isOutOfStock ? '0 units in stock' : '$stock units remaining';
+    final desc = isOutOfStock
+        ? '${l10n.outOfStock} (0 ${l10n.units})'
+        : '$stock ${l10n.units} ${l10n.remainingLabel}';
 
     return Container(
       margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),

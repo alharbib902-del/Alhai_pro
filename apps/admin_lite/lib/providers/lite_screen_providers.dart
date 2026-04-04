@@ -127,24 +127,24 @@ final liteWeeklyComparisonProvider = FutureProvider.autoDispose<WeeklyComparison
   final thisWeekStats = results[0] as SalesStats;
   final lastWeekStats = results[1] as SalesStats;
 
-  // Build daily breakdown
+  // Build daily breakdown — batch all 14 queries in parallel
   final dayNames = ['Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
-  final dailyBreakdown = <DaySalesData>[];
+  final dayFutures = <Future<SalesStats>>[];
   for (int i = 0; i < 7; i++) {
     final dayStart = startOfThisWeek.add(Duration(days: i));
     final dayEnd = dayStart.add(const Duration(days: 1));
     final prevDayStart = startOfLastWeek.add(Duration(days: i));
     final prevDayEnd = prevDayStart.add(const Duration(days: 1));
-
-    final pair = await Future.wait([
-      db.salesDao.getSalesStats(storeId, startDate: dayStart, endDate: dayEnd),
-      db.salesDao.getSalesStats(storeId, startDate: prevDayStart, endDate: prevDayEnd),
-    ]);
-
+    dayFutures.add(db.salesDao.getSalesStats(storeId, startDate: dayStart, endDate: dayEnd));
+    dayFutures.add(db.salesDao.getSalesStats(storeId, startDate: prevDayStart, endDate: prevDayEnd));
+  }
+  final dayResults = await Future.wait(dayFutures);
+  final dailyBreakdown = <DaySalesData>[];
+  for (int i = 0; i < 7; i++) {
     dailyBreakdown.add(DaySalesData(
       dayName: dayNames[i],
-      current: (pair[0] as SalesStats).total,
-      previous: (pair[1] as SalesStats).total,
+      current: dayResults[i * 2].total,
+      previous: dayResults[i * 2 + 1].total,
     ));
   }
 
@@ -364,14 +364,19 @@ final liteCashFlowProvider = FutureProvider.autoDispose<CashFlowData>((ref) asyn
   final daysSinceSat = (todayWeekday + 1) % 7;
   final startOfWeek = DateTime(now.year, now.month, now.day).subtract(Duration(days: daysSinceSat));
 
-  final weeklyTrend = <DaySalesData>[];
+  // Batch all 7 daily queries in parallel
+  final trendFutures = <Future<SalesStats>>[];
   for (int i = 0; i < 7; i++) {
     final dayStart = startOfWeek.add(Duration(days: i));
     final dayEnd = dayStart.add(const Duration(days: 1));
-    final dayStats = await db.salesDao.getSalesStats(storeId, startDate: dayStart, endDate: dayEnd);
+    trendFutures.add(db.salesDao.getSalesStats(storeId, startDate: dayStart, endDate: dayEnd));
+  }
+  final trendResults = await Future.wait(trendFutures);
+  final weeklyTrend = <DaySalesData>[];
+  for (int i = 0; i < 7; i++) {
     weeklyTrend.add(DaySalesData(
       dayName: dayNames[i],
-      current: dayStats.total,
+      current: trendResults[i].total,
       previous: 0,
     ));
   }
@@ -551,16 +556,20 @@ final litePendingApprovalsProvider = FutureProvider.autoDispose<List<PendingAppr
   final items = <PendingApprovalItem>[];
 
   try {
-    // Pending refunds
-    final returns = await db.customSelect(
-      '''SELECT r.id, r.total_amount, r.reason, r.created_at, u.name as user_name
-         FROM returns r
-         LEFT JOIN users u ON r.cashier_id = u.id
-         WHERE r.store_id = ? AND r.status = 'pending'
-         ORDER BY r.created_at DESC''',
-      variables: [Variable.withString(storeId)],
-    ).get();
+    // Batch both queries in parallel
+    final batchResults = await Future.wait([
+      db.customSelect(
+        '''SELECT r.id, r.total_amount, r.reason, r.created_at, u.name as user_name
+           FROM returns r
+           LEFT JOIN users u ON r.cashier_id = u.id
+           WHERE r.store_id = ? AND r.status = 'pending'
+           ORDER BY r.created_at DESC''',
+        variables: [Variable.withString(storeId)],
+      ).get(),
+      db.purchasesDao.getPurchasesByStatus(storeId, 'pending'),
+    ]);
 
+    final returns = batchResults[0] as List<QueryRow>;
     for (final row in returns) {
       items.add(PendingApprovalItem(
         id: row.data['id'] as String,
@@ -573,8 +582,7 @@ final litePendingApprovalsProvider = FutureProvider.autoDispose<List<PendingAppr
       ));
     }
 
-    // Pending purchases
-    final purchases = await db.purchasesDao.getPurchasesByStatus(storeId, 'pending');
+    final purchases = batchResults[1] as List<PurchasesTableData>;
     for (final p in purchases) {
       items.add(PendingApprovalItem(
         id: p.id,

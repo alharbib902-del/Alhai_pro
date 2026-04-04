@@ -17,6 +17,8 @@ import '../../providers/lite_screen_providers.dart';
 class LiteDailySalesScreen extends ConsumerWidget {
   const LiteDailySalesScreen({super.key});
 
+  static const _hourLabels = ['8AM', '10', '12PM', '2', '4', '6PM'];
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -107,13 +109,13 @@ class LiteDailySalesScreen extends ConsumerWidget {
 
   Widget _buildDateHeader(bool isDark, AppLocalizations l10n) {
     final now = DateTime.now();
-    return Text(
+    return Builder(builder: (context) => Text(
       '${l10n.today} \u2022 ${now.day}/${now.month}/${now.year}',
       style: TextStyle(
         fontSize: 14,
-        color: isDark ? Colors.white54 : Colors.black54,
+        color: Theme.of(context).colorScheme.onSurfaceVariant,
       ),
-    );
+    ));
   }
 
   Widget _buildTotalsRow(BuildContext context, bool isDark, bool isMobile, AppLocalizations l10n, DailySalesData data) {
@@ -133,7 +135,7 @@ class LiteDailySalesScreen extends ConsumerWidget {
             child: Container(
               padding: const EdgeInsets.all(AlhaiSpacing.md),
               decoration: BoxDecoration(
-                color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.white,
+                color: isDark ? Colors.white.withValues(alpha: 0.06) : Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
                   color: isDark ? Colors.white12 : Theme.of(context).colorScheme.outlineVariant,
@@ -149,7 +151,7 @@ class LiteDailySalesScreen extends ConsumerWidget {
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: isDark ? Colors.white : Colors.black87,
+                      color: isDark ? Colors.white : Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: AlhaiSpacing.xxxs),
@@ -183,7 +185,7 @@ class LiteDailySalesScreen extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.white,
+        color: isDark ? Colors.white.withValues(alpha: 0.06) : Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isDark ? Colors.white12 : Theme.of(context).colorScheme.outlineVariant,
@@ -225,7 +227,7 @@ class LiteDailySalesScreen extends ConsumerWidget {
                         row.label,
                         style: TextStyle(
                           fontSize: 14,
-                          color: isDark ? Colors.white : Colors.black87,
+                          color: isDark ? Colors.white : Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
                     ),
@@ -234,7 +236,7 @@ class LiteDailySalesScreen extends ConsumerWidget {
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 14,
-                        color: isDark ? Colors.white : Colors.black87,
+                        color: isDark ? Colors.white : Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                     if (row.extra.isNotEmpty) ...[
@@ -243,7 +245,7 @@ class LiteDailySalesScreen extends ConsumerWidget {
                         row.extra,
                         style: TextStyle(
                           fontSize: 12,
-                          color: isDark ? Colors.white38 : Colors.black45,
+                          color: Theme.of(context).colorScheme.outline,
                         ),
                       ),
                     ],
@@ -271,7 +273,7 @@ class LiteDailySalesScreen extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.white,
+        color: isDark ? Colors.white.withValues(alpha: 0.06) : Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isDark ? Colors.white12 : Theme.of(context).colorScheme.outlineVariant,
@@ -304,7 +306,7 @@ class LiteDailySalesScreen extends ConsumerWidget {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 1),
                     child: Container(
-                      height: 120 * v.clamp(0.0, 1.0),
+                      height: (120.0 * v.clamp(0.0, 1.0)).toDouble(),
                       decoration: BoxDecoration(
                         color: AlhaiColors.info.withValues(alpha: 0.6),
                         borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
@@ -318,10 +320,10 @@ class LiteDailySalesScreen extends ConsumerWidget {
           const SizedBox(height: AlhaiSpacing.xs),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: ['8AM', '10', '12PM', '2', '4', '6PM'].map((h) {
+            children: _hourLabels.map((h) {
               return Text(
                 h,
-                style: TextStyle(fontSize: 10, color: isDark ? Colors.white38 : Colors.black38),
+                style: TextStyle(fontSize: 10, color: Theme.of(context).colorScheme.outline),
               );
             }).toList(),
           ),

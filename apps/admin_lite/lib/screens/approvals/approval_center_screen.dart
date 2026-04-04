@@ -43,10 +43,10 @@ class ApprovalCenterScreen extends ConsumerWidget {
                         padding: const EdgeInsetsDirectional.only(end: AlhaiSpacing.md),
                         child: Center(
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: AlhaiSpacing.xxs),
+                            padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
                             decoration: BoxDecoration(
                               color: AlhaiColors.warning,
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(AlhaiSpacing.sm),
                             ),
                             child: Text(
                               '$count',
@@ -95,10 +95,13 @@ class ApprovalCenterScreen extends ConsumerWidget {
                     itemCount: refunds.length,
                     itemBuilder: (context, index) {
                       final refund = refunds[index];
-                      return _RefundCard(
-                        refund: refund,
-                        isDark: isDark,
-                        isMobile: isMobile,
+                      return KeyedSubtree(
+                        key: ValueKey(refund.id),
+                        child: _RefundCard(
+                          refund: refund,
+                          isDark: isDark,
+                          isMobile: isMobile,
+                        ),
                       );
                     },
                   ),

@@ -27,9 +27,6 @@ class LiteDashboardScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final size = MediaQuery.of(context).size;
-    final isWide = size.width > 900;
-    final isMedium = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
     final statsAsync = ref.watch(liteStatsProvider);
@@ -49,19 +46,20 @@ class LiteDashboardScreen extends ConsumerWidget {
       ),
       body: RefreshIndicator(
         onRefresh: () => _refresh(ref),
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          padding: EdgeInsets.all(isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md),
-          child: statsAsync.when(
-            data: (stats) => _buildContent(context, ref, stats, isWide, isMedium, isDark, l10n),
-            loading: () => const Center(
-              child: Padding(
-                padding: EdgeInsets.all(AlhaiSpacing.massive),
-                child: CircularProgressIndicator(),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final isWide = constraints.maxWidth > 900;
+            final isMedium = constraints.maxWidth > 600;
+            return SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: EdgeInsets.all(isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md),
+              child: statsAsync.when(
+                data: (stats) => _buildContent(context, ref, stats, isWide, isMedium, isDark, l10n),
+                loading: () => _buildSkeleton(isDark),
+                error: (error, _) => _buildError(context, ref, isDark, l10n),
               ),
-            ),
-            error: (error, _) => _buildError(context, ref, isDark, l10n),
-          ),
+            );
+          },
         ),
       ),
     );
@@ -193,7 +191,7 @@ class LiteDashboardScreen extends ConsumerWidget {
       child: Container(
         padding: const EdgeInsets.all(AlhaiSpacing.md),
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.white,
+          color: isDark ? Colors.white.withValues(alpha: 0.06) : Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isDark ? Colors.white12 : Theme.of(context).colorScheme.outlineVariant,
@@ -254,12 +252,16 @@ class LiteDashboardScreen extends ConsumerWidget {
               ],
             ),
             const SizedBox(height: AlhaiSpacing.sm),
-            Text(
-              data.value,
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: isDark ? Colors.white : Colors.black87,
+            Semantics(
+              label: data.title,
+              value: data.value,
+              child: Text(
+                data.value,
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
               ),
             ),
             const SizedBox(height: AlhaiSpacing.xxs),
@@ -317,7 +319,7 @@ class LiteDashboardScreen extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.white,
+        color: isDark ? Colors.white.withValues(alpha: 0.06) : Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isDark ? Colors.white12 : Theme.of(context).colorScheme.outlineVariant,
@@ -392,7 +394,7 @@ class LiteDashboardScreen extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.white,
+        color: isDark ? Colors.white.withValues(alpha: 0.06) : Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isDark ? Colors.white12 : Theme.of(context).colorScheme.outlineVariant,
@@ -442,8 +444,23 @@ class LiteDashboardScreen extends ConsumerWidget {
                 );
               }
               return Column(
-                children: activities.take(10).map((activity) {
-                  return _ActivityTile(activity: activity, isDark: isDark);
+                children: activities.take(10).toList().asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final activity = entry.value;
+                  return TweenAnimationBuilder<double>(
+                    tween: Tween(begin: 0.0, end: 1.0),
+                    duration: Duration(milliseconds: 300 + (index * 50)),
+                    builder: (context, value, child) {
+                      return Opacity(
+                        opacity: value,
+                        child: Transform.translate(
+                          offset: Offset(0, 20 * (1 - value)),
+                          child: child,
+                        ),
+                      );
+                    },
+                    child: _ActivityTile(activity: activity, isDark: isDark),
+                  );
                 }).toList(),
               );
             },
@@ -498,6 +515,32 @@ class LiteDashboardScreen extends ConsumerWidget {
   // ===========================================================================
   // HELPERS
   // ===========================================================================
+
+  Widget _buildSkeleton(bool isDark) {
+    final baseColor = isDark ? Colors.white10 : const Color(0xFFE0E0E0);
+    return Padding(
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
+      child: Column(
+        children: [
+          // Stats row skeleton
+          Row(
+            children: List.generate(3, (_) => Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs),
+                child: _SkeletonBox(height: 80, baseColor: baseColor),
+              ),
+            )),
+          ),
+          const SizedBox(height: AlhaiSpacing.lg),
+          // Activity list skeleton
+          ...List.generate(5, (_) => Padding(
+            padding: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
+            child: _SkeletonBox(height: 60, baseColor: baseColor),
+          )),
+        ],
+      ),
+    );
+  }
 
   String _getDateSubtitle(AppLocalizations l10n) {
     final now = DateTime.now();
@@ -577,7 +620,7 @@ class _QuickActionTile extends StatelessWidget {
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 14,
-                    color: isDark ? Colors.white : Colors.black87,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
               ),
@@ -695,7 +738,7 @@ class _ActivityTile extends StatelessWidget {
                   activity.description ?? activity.action,
                   style: TextStyle(
                     fontSize: 13,
-                    color: isDark ? Colors.white : Colors.black87,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -713,6 +756,64 @@ class _ActivityTile extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+// =============================================================================
+// SKELETON BOX (shimmer loading placeholder)
+// =============================================================================
+
+class _SkeletonBox extends StatefulWidget {
+  final double height;
+  final double? width;
+  final Color baseColor;
+  const _SkeletonBox({required this.height, this.width, required this.baseColor});
+
+  @override
+  State<_SkeletonBox> createState() => _SkeletonBoxState();
+}
+
+class _SkeletonBoxState extends State<_SkeletonBox> with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return Container(
+          height: widget.height,
+          width: widget.width ?? double.infinity,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            gradient: LinearGradient(
+              begin: Alignment(-1.0 + 2.0 * _controller.value, 0),
+              end: Alignment(-1.0 + 2.0 * _controller.value + 1, 0),
+              colors: [
+                widget.baseColor,
+                widget.baseColor.withValues(alpha: 0.5),
+                widget.baseColor,
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

@@ -24,8 +24,25 @@ class DeliveryCard extends StatelessWidget {
     final orderNumber = order?['order_number'] as String? ?? '';
     final customerName = order?['customer_name'] as String? ?? '';
 
-    return Card(
+    // Build a descriptive semantics label for screen readers
+    final (statusLabel, _) = _statusLabel(context, status);
+    final semanticsLabel = [
+      if (orderNumber.isNotEmpty) 'طلب رقم $orderNumber',
+      if (customerName.isNotEmpty) 'العميل: $customerName',
+      'العنوان: $address',
+      'الحالة: $statusLabel',
+      if (fee != null) 'الأجر: ${(fee as num).toStringAsFixed(0)} ريال',
+    ].join('، ');
+
+    return Semantics(
+      label: semanticsLabel,
+      button: true,
+      child: Card(
+      elevation: 0,
       clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AlhaiRadius.md),
+      ),
       margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
       child: InkWell(
         onTap: onTap,
@@ -71,7 +88,7 @@ class DeliveryCard extends StatelessWidget {
                 children: [
                   Icon(Icons.location_on_outlined,
                       size: 16, color: theme.colorScheme.outline),
-                  const SizedBox(width: 4),
+                  const SizedBox(width: AlhaiSpacing.xxs),
                   Expanded(
                     child: Text(
                       address,
@@ -88,7 +105,7 @@ class DeliveryCard extends StatelessWidget {
                       '${(fee as num).toStringAsFixed(0)} ر.س',
                       style: theme.textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: Colors.green,
+                        color: theme.colorScheme.primary,
                       ),
                     ),
                   ],
@@ -98,6 +115,36 @@ class DeliveryCard extends StatelessWidget {
           ),
         ),
       ),
+    ),
     );
+  }
+
+  /// Returns a human-readable status label (same mapping as DeliveryStatusBadge).
+  static (String, Color) _statusLabel(BuildContext context, String status) {
+    final cs = Theme.of(context).colorScheme;
+    switch (status) {
+      case 'assigned':
+        return ('تم التعيين', cs.tertiary);
+      case 'accepted':
+        return ('تم القبول', cs.primary);
+      case 'heading_to_pickup':
+        return ('في الطريق للمتجر', cs.secondary);
+      case 'arrived_at_pickup':
+        return ('وصل للمتجر', cs.tertiary);
+      case 'picked_up':
+        return ('تم الاستلام', cs.primary);
+      case 'heading_to_customer':
+        return ('في الطريق للعميل', cs.tertiary);
+      case 'arrived_at_customer':
+        return ('وصل للعميل', cs.tertiary);
+      case 'delivered':
+        return ('تم التوصيل', cs.primary);
+      case 'failed':
+        return ('فشل', cs.error);
+      case 'cancelled':
+        return ('ملغي', cs.outline);
+      default:
+        return (status, cs.outline);
+    }
   }
 }

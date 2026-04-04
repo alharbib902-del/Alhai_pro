@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../../../shared/widgets/status_badge.dart';
+
 /// Color-coded status badge for delivery status.
+/// Wraps the badge in [AnimatedSwitcher] so status changes animate smoothly.
 class DeliveryStatusBadge extends StatelessWidget {
   final String status;
 
@@ -8,50 +11,50 @@ class DeliveryStatusBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (label, color) = _statusInfo(status);
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withValues(alpha: 0.4)),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          color: color,
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
+    final (label, color) = _statusInfo(context, status);
+    return Semantics(
+      label: 'حالة الطلب: $label',
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 300),
+        transitionBuilder: (child, animation) => FadeTransition(
+          opacity: animation,
+          child: ScaleTransition(scale: animation, child: child),
+        ),
+        child: StatusBadge(
+          key: ValueKey(status),
+          label: label,
+          backgroundColor: color,
+          textColor: color,
         ),
       ),
     );
   }
 
-  static (String, Color) _statusInfo(String status) {
+  static (String, Color) _statusInfo(BuildContext context, String status) {
+    final cs = Theme.of(context).colorScheme;
     switch (status) {
       case 'assigned':
-        return ('تم التعيين', Colors.orange);
+        return ('تم التعيين', cs.tertiary);
       case 'accepted':
-        return ('تم القبول', Colors.blue);
+        return ('تم القبول', cs.primary);
       case 'heading_to_pickup':
-        return ('في الطريق للمتجر', Colors.indigo);
+        return ('في الطريق للمتجر', cs.secondary);
       case 'arrived_at_pickup':
-        return ('وصل للمتجر', Colors.purple);
+        return ('وصل للمتجر', cs.tertiary);
       case 'picked_up':
-        return ('تم الاستلام', Colors.teal);
+        return ('تم الاستلام', cs.primary);
       case 'heading_to_customer':
-        return ('في الطريق للعميل', Colors.deepOrange);
+        return ('في الطريق للعميل', cs.tertiary);
       case 'arrived_at_customer':
-        return ('وصل للعميل', Colors.amber.shade700);
+        return ('وصل للعميل', cs.tertiary);
       case 'delivered':
-        return ('تم التوصيل', Colors.green);
+        return ('تم التوصيل', cs.primary);
       case 'failed':
-        return ('فشل', Colors.red);
+        return ('فشل', cs.error);
       case 'cancelled':
-        return ('ملغي', Colors.grey);
+        return ('ملغي', cs.outline);
       default:
-        return (status, Colors.grey);
+        return (status, cs.outline);
     }
   }
 }

@@ -11,6 +11,7 @@ class SAPlansScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
     final width = MediaQuery.sizeOf(context).width;
     final isWide = width >= AlhaiBreakpoints.desktop;
@@ -51,9 +52,9 @@ class SAPlansScreen extends ConsumerWidget {
                 final subCounts = subCountsAsync.valueOrNull ?? {};
 
                 final planColors = {
-                  'basic': Colors.blue,
-                  'advanced': Colors.deepPurple,
-                  'professional': Colors.teal,
+                  'basic': isDark ? const Color(0xFF60A5FA) : const Color(0xFF2563EB),
+                  'advanced': isDark ? const Color(0xFFA78BFA) : const Color(0xFF7C3AED),
+                  'professional': isDark ? const Color(0xFF2DD4BF) : const Color(0xFF0D9488),
                 };
 
                 final planCards = plans.map((plan) {
@@ -73,7 +74,7 @@ class SAPlansScreen extends ConsumerWidget {
                           ?.cast<String>() ??
                       [];
                   final subscribers = subCounts[slug] ?? 0;
-                  final color = planColors[slug] ?? Colors.grey;
+                  final color = planColors[slug] ?? (isDark ? const Color(0xFF9CA3AF) : const Color(0xFF4B5563));
 
                   return _PlanCard(
                     name: name,
@@ -297,9 +298,8 @@ class _PlanCard extends StatelessWidget {
                     ),
                     child: Text(
                       'POPULAR',
-                      style: TextStyle(
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
                         color: color,
-                        fontSize: 10,
                         fontWeight: FontWeight.bold,
                       ),
                     ),

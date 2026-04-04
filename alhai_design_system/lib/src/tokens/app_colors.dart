@@ -563,4 +563,60 @@ class AppColors {
   /// الحصول على لون النص الخافت حسب الوضع
   static Color getTextMuted(bool isDark) =>
       isDark ? textMutedDark : textMuted;
+
+  // ==========================================================================
+  // DISTRIBUTOR STATUS COLORS - ألوان حالات الموزع
+  // ==========================================================================
+
+  /// Get theme-aware status foreground color
+  static Color getStatusColor(String status, bool isDark) {
+    switch (status) {
+      case 'sent':
+      case 'draft':
+      case 'pending':
+        return isDark ? const Color(0xFF60A5FA) : info;        // blue
+      case 'approved':
+        return isDark ? const Color(0xFF4ADE80) : success;     // green
+      case 'received':
+        return isDark ? const Color(0xFF2DD4BF) : credit;      // teal
+      case 'rejected':
+        return isDark ? const Color(0xFFF87171) : error;       // red
+      default:
+        return isDark ? textMutedDark : grey500;
+    }
+  }
+
+  /// Get theme-aware status background color
+  static Color getStatusBackground(String status, bool isDark) {
+    final fg = getStatusColor(status, isDark);
+    return fg.withValues(alpha: isDark ? 0.2 : 0.1);
+  }
+
+  // ==========================================================================
+  // SHADOW / ELEVATION TOKENS
+  // ==========================================================================
+
+  /// Card shadow for light mode (no shadow in dark mode)
+  static List<BoxShadow> getCardShadow(bool isDark) {
+    if (isDark) return const [];
+    return const [
+      BoxShadow(
+        color: Color(0x0D000000), // 5% black
+        blurRadius: 10,
+        offset: Offset(0, 2),
+      ),
+    ];
+  }
+
+  /// Elevated shadow for light mode (e.g. save bars)
+  static List<BoxShadow> getElevatedShadow(bool isDark) {
+    if (isDark) return const [];
+    return const [
+      BoxShadow(
+        color: Color(0x0D000000),
+        blurRadius: 8,
+        offset: Offset(0, -2),
+      ),
+    ];
+  }
 }

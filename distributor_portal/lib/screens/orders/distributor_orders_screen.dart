@@ -13,6 +13,8 @@ import 'package:intl/intl.dart' show NumberFormat;
 
 import '../../data/models.dart';
 import '../../providers/distributor_providers.dart';
+import '../../ui/shared_widgets.dart';
+import '../../ui/skeleton_loading.dart';
 
 class DistributorOrdersScreen extends ConsumerStatefulWidget {
   const DistributorOrdersScreen({super.key});
@@ -30,6 +32,10 @@ class _DistributorOrdersScreenState
   // Maps tab index to status filter value (null = all)
   static const _tabStatuses = <String?>[null, 'sent', 'approved', 'rejected'];
 
+  // Sorting state
+  int _sortColumnIndex = 2; // default sort by date
+  bool _sortAscending = false; // newest first
+
   @override
   void initState() {
     super.initState();
@@ -40,22 +46,6 @@ class _DistributorOrdersScreenState
   void dispose() {
     _tabController.dispose();
     super.dispose();
-  }
-
-  Color _statusColor(String status) {
-    switch (status) {
-      case 'sent':
-      case 'draft':
-        return Colors.blue;
-      case 'approved':
-        return Colors.green;
-      case 'received':
-        return Colors.teal;
-      case 'rejected':
-        return Colors.red;
-      default:
-        return AppColors.grey500;
-    }
   }
 
   String _statusLabel(String status, AppLocalizations? l10n) {
@@ -73,6 +63,25 @@ class _DistributorOrdersScreenState
       default:
         return status;
     }
+  }
+
+  List<DistributorOrder> _sortOrders(List<DistributorOrder> orders) {
+    final sorted = List<DistributorOrder>.from(orders);
+    sorted.sort((a, b) {
+      int result;
+      switch (_sortColumnIndex) {
+        case 2: // date
+          result = a.createdAt.compareTo(b.createdAt);
+        case 3: // amount
+          result = a.total.compareTo(b.total);
+        case 4: // status
+          result = a.status.compareTo(b.status);
+        default:
+          result = 0;
+      }
+      return _sortAscending ? result : -result;
+    });
+    return sorted;
   }
 
   @override
@@ -104,12 +113,12 @@ class _DistributorOrdersScreenState
           ),
           const SizedBox(height: AlhaiSpacing.md),
 
-          // Tabs
+          // Tabs with order count per tab
           Container(
             margin: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(AlhaiRadius.md),
             ),
             child: TabBar(
               controller: _tabController,
@@ -121,10 +130,34 @@ class _DistributorOrdersScreenState
               indicatorSize: TabBarIndicatorSize.label,
               dividerColor: Colors.transparent,
               tabs: [
-                Tab(text: l10n?.distributorAllOrders ?? 'All'),
-                Tab(text: l10n?.distributorPendingTab ?? 'Pending'),
-                Tab(text: l10n?.distributorApprovedTab ?? 'Approved'),
-                Tab(text: l10n?.distributorRejectedTab ?? 'Rejected'),
+                Tab(
+                  child: _buildTabWithCount(
+                    l10n?.distributorAllOrders ?? 'All',
+                    ordersAsync.valueOrNull?.length,
+                    0,
+                  ),
+                ),
+                Tab(
+                  child: _buildTabWithCount(
+                    l10n?.distributorPendingTab ?? 'Pending',
+                    null,
+                    1,
+                  ),
+                ),
+                Tab(
+                  child: _buildTabWithCount(
+                    l10n?.distributorApprovedTab ?? 'Approved',
+                    null,
+                    2,
+                  ),
+                ),
+                Tab(
+                  child: _buildTabWithCount(
+                    l10n?.distributorRejectedTab ?? 'Rejected',
+                    null,
+                    3,
+                  ),
+                ),
               ],
             ),
           ),
@@ -133,8 +166,7 @@ class _DistributorOrdersScreenState
           // Orders list
           Expanded(
             child: ordersAsync.when(
-              loading: () =>
-                  const Center(child: CircularProgressIndicator()),
+              loading: () => const TableSkeleton(rows: 8, columns: 5),
               error: (e, _) => Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -172,21 +204,59 @@ class _DistributorOrdersScreenState
                             color: Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                         ),
+                        const SizedBox(height: AlhaiSpacing.md),
+                        // Action button in empty state
+                        FilledButton.icon(
+                          onPressed: () =>
+                              ref.invalidate(ordersProvider(statusFilter)),
+                          icon: const Icon(Icons.refresh, size: 18),
+                          label: Text(l10n?.distributorRetry ?? 'Refresh'),
+                          style: FilledButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                            foregroundColor: AppColors.textOnPrimary,
+                          ),
+                        ),
                       ],
                     ),
                   );
                 }
 
+                final sortedOrders = _sortOrders(orders);
+
                 if (isWide) {
-                  return _buildDataTable(orders, isDark, l10n);
+                  return _buildDataTable(sortedOrders, isDark, l10n);
                 }
-                return _buildCardList(orders, isDark, l10n);
+                return _buildCardList(sortedOrders, isDark, l10n);
               },
             ),
           ),
         ],
       ),
     );
+  }
+
+  Widget _buildTabWithCount(String label, int? count, int tabIndex) {
+    if (count != null && tabIndex == _tabController.index) {
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(label),
+          const SizedBox(width: 4),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+            decoration: BoxDecoration(
+              color: AppColors.primary.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(AlhaiRadius.sm + 2),
+            ),
+            child: Text(
+              '$count',
+              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+            ),
+          ),
+        ],
+      );
+    }
+    return Text(label);
   }
 
   Widget _buildDataTable(
@@ -197,9 +267,11 @@ class _DistributorOrdersScreenState
         width: double.infinity,
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(AlhaiRadius.lg),
         ),
         child: DataTable(
+          sortColumnIndex: _sortColumnIndex,
+          sortAscending: _sortAscending,
           headingRowColor: WidgetStateProperty.all(
             Theme.of(context).colorScheme.surfaceContainerHighest,
           ),
@@ -207,20 +279,48 @@ class _DistributorOrdersScreenState
             DataColumn(
                 label: Text(l10n?.distributorOrderNumber ?? 'Order #')),
             DataColumn(label: Text(l10n?.distributorStore ?? 'Store')),
-            DataColumn(label: Text(l10n?.distributorDate ?? 'Date')),
-            DataColumn(label: Text(l10n?.distributorAmount ?? 'Amount')),
-            DataColumn(label: Text(l10n?.status ?? 'Status')),
+            DataColumn(
+              label: Text(l10n?.distributorDate ?? 'Date'),
+              onSort: (columnIndex, ascending) {
+                setState(() {
+                  _sortColumnIndex = columnIndex;
+                  _sortAscending = ascending;
+                });
+              },
+            ),
+            DataColumn(
+              label: Text(l10n?.distributorAmount ?? 'Amount'),
+              numeric: true,
+              onSort: (columnIndex, ascending) {
+                setState(() {
+                  _sortColumnIndex = columnIndex;
+                  _sortAscending = ascending;
+                });
+              },
+            ),
+            DataColumn(
+              label: Text(l10n?.status ?? 'Status'),
+              onSort: (columnIndex, ascending) {
+                setState(() {
+                  _sortColumnIndex = columnIndex;
+                  _sortAscending = ascending;
+                });
+              },
+            ),
           ],
           rows: orders.map((order) {
             return DataRow(
               onSelectChanged: (_) =>
                   context.go('/orders/${order.id}'),
               cells: [
-                DataCell(Text(
-                  order.purchaseNumber,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    color: Theme.of(context).colorScheme.onSurface,
+                DataCell(Semantics(
+                  label: '${l10n?.distributorOrderNumber ?? 'Order'} ${order.purchaseNumber}',
+                  child: Text(
+                    order.purchaseNumber,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
                   ),
                 )),
                 DataCell(Text(
@@ -243,23 +343,12 @@ class _DistributorOrdersScreenState
                   ),
                 )),
                 DataCell(
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: _statusColor(order.status)
-                          .withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      _statusLabel(order.status, l10n),
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: _statusColor(order.status),
-                      ),
+                  Semantics(
+                    label: '${l10n?.status ?? 'Status'}: ${_statusLabel(order.status, l10n)}',
+                    child: StatusBadge(
+                      status: order.status,
+                      label: _statusLabel(order.status, l10n),
+                      isDark: isDark,
                     ),
                   ),
                 ),
@@ -278,86 +367,74 @@ class _DistributorOrdersScreenState
       itemCount: orders.length,
       itemBuilder: (context, index) {
         final order = orders[index];
-        return Card(
-          margin: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
-          color: Theme.of(context).colorScheme.surface,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          elevation: isDark ? 0 : 1,
-          child: InkWell(
-            borderRadius: BorderRadius.circular(12),
-            onTap: () => context.go('/orders/${order.id}'),
-            child: Padding(
-              padding: const EdgeInsets.all(AlhaiSpacing.md),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        order.purchaseNumber,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                          color:
-                              Theme.of(context).colorScheme.onSurface,
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: _statusColor(order.status)
-                              .withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          _statusLabel(order.status, l10n),
+        return Semantics(
+          button: true,
+          label: '${order.purchaseNumber} - ${order.storeName} - ${_statusLabel(order.status, l10n)}',
+          child: Card(
+            margin: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
+            color: Theme.of(context).colorScheme.surface,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AlhaiRadius.md),
+            ),
+            elevation: isDark ? 0 : 1,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(AlhaiRadius.md),
+              onTap: () => context.go('/orders/${order.id}'),
+              child: Padding(
+                padding: const EdgeInsets.all(AlhaiSpacing.md),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          order.purchaseNumber,
                           style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: _statusColor(order.status),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color:
+                                Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: AlhaiSpacing.xs),
-                  Text(
-                    order.storeName,
-                    style: TextStyle(
-                      color:
-                          Theme.of(context).colorScheme.onSurfaceVariant,
+                        StatusBadge(
+                          status: order.status,
+                          label: _statusLabel(order.status, l10n),
+                          isDark: isDark,
+                        ),
+                      ],
                     ),
-                  ),
-                  const SizedBox(height: AlhaiSpacing.xs),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        '${order.createdAt.day}/${order.createdAt.month}/${order.createdAt.year}',
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: isDark
-                              ? Theme.of(context).colorScheme.onSurfaceVariant
-                              : AppColors.textSecondary,
-                        ),
+                    const SizedBox(height: AlhaiSpacing.xs),
+                    Text(
+                      order.storeName,
+                      style: TextStyle(
+                        color:
+                            Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
-                      Text(
-                        '${NumberFormat('#,##0').format(order.total)} ${l10n?.distributorSar ?? 'SAR'}',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color:
-                              Theme.of(context).colorScheme.onSurface,
+                    ),
+                    const SizedBox(height: AlhaiSpacing.xs),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '${order.createdAt.day}/${order.createdAt.month}/${order.createdAt.year}',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: AppColors.getTextSecondary(isDark),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                        Text(
+                          '${NumberFormat('#,##0').format(order.total)} ${l10n?.distributorSar ?? 'SAR'}',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color:
+                                Theme.of(context).colorScheme.onSurface,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

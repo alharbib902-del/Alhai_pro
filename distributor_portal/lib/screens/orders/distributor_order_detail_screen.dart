@@ -9,6 +9,7 @@ library;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
@@ -17,6 +18,7 @@ import 'package:intl/intl.dart' show NumberFormat, DateFormat;
 
 import '../../data/models.dart';
 import '../../providers/distributor_providers.dart';
+import '../../ui/skeleton_loading.dart';
 
 class DistributorOrderDetailScreen extends ConsumerStatefulWidget {
   final String orderId;
@@ -33,6 +35,8 @@ class _DistributorOrderDetailScreenState
   final _notesController = TextEditingController();
   final Map<String, TextEditingController> _priceControllers = {};
   bool _isProcessing = false;
+  /// Track the last known item IDs to detect changes and clean up stale controllers.
+  Set<String> _lastKnownItemIds = {};
 
   @override
   void dispose() {
@@ -40,12 +44,29 @@ class _DistributorOrderDetailScreenState
     for (final controller in _priceControllers.values) {
       controller.dispose();
     }
+    _priceControllers.clear();
     super.dispose();
   }
 
   TextEditingController _getController(String itemId) {
     return _priceControllers.putIfAbsent(
         itemId, () => TextEditingController());
+  }
+
+  /// Synchronize controllers with the current item list,
+  /// disposing controllers for removed items.
+  void _syncControllers(List<DistributorOrderItem> items) {
+    final currentIds = items.map((i) => i.id).toSet();
+    if (!_lastKnownItemIds.containsAll(currentIds) ||
+        !currentIds.containsAll(_lastKnownItemIds)) {
+      // Dispose controllers for items that no longer exist
+      final removed = _lastKnownItemIds.difference(currentIds);
+      for (final id in removed) {
+        _priceControllers[id]?.dispose();
+        _priceControllers.remove(id);
+      }
+      _lastKnownItemIds = currentIds;
+    }
   }
 
   double _calculatedTotal(List<DistributorOrderItem> items) {
@@ -72,18 +93,63 @@ class _DistributorOrderDetailScreenState
     }
   }
 
-  Color _getStatusColor(String status) {
-    switch (status) {
-      case 'pending':
-      case 'sent':
-        return AppColors.warning;
-      case 'approved':
-        return AppColors.success;
-      case 'rejected':
-        return AppColors.error;
-      default:
-        return AppColors.textMuted;
+  Color _getStatusColor(String status, bool isDark) {
+    return AppColors.getStatusColor(status, isDark);
+  }
+
+  /// Show a confirmation dialog before performing a destructive action.
+  Future<bool> _showConfirmationDialog({
+    required String title,
+    required String message,
+    required String confirmLabel,
+    required Color confirmColor,
+  }) async {
+    final l10n = AppLocalizations.of(context);
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(title),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(l10n?.cancel ?? 'Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            style: FilledButton.styleFrom(backgroundColor: confirmColor),
+            child: Text(confirmLabel,
+                style: const TextStyle(color: AppColors.textOnPrimary)),
+          ),
+        ],
+      ),
+    );
+    return result == true;
+  }
+
+  Future<void> _confirmAndUpdateStatus(String newStatus, double total) async {
+    final l10n = AppLocalizations.of(context);
+
+    if (newStatus == 'rejected') {
+      final confirmed = await _showConfirmationDialog(
+        title: l10n?.distributorRejectOrder ?? 'Reject Order',
+        message: 'Are you sure you want to reject this order? This action cannot be undone.',
+        confirmLabel: l10n?.distributorRejectOrder ?? 'Reject',
+        confirmColor: AppColors.error,
+      );
+      if (!confirmed) return;
+    } else if (newStatus == 'approved') {
+      final confirmed = await _showConfirmationDialog(
+        title: l10n?.distributorAcceptSendQuote ?? 'Accept & Send Quote',
+        message:
+            'Are you sure you want to approve this order with a total of ${NumberFormat('#,##0.00').format(total)} SAR?',
+        confirmLabel: l10n?.distributorAcceptSendQuote ?? 'Accept & Send',
+        confirmColor: AppColors.success,
+      );
+      if (!confirmed) return;
     }
+
+    await _updateStatus(newStatus, total);
   }
 
   Future<void> _updateStatus(String newStatus, double total) async {
@@ -113,11 +179,10 @@ class _DistributorOrderDetailScreenState
     final l10n = AppLocalizations.of(context);
 
     if (success) {
-      // Invalidate to refresh
+      // Only invalidate the specific providers for this order.
+      // Dashboard and order list will refresh when navigated to.
       ref.invalidate(orderDetailProvider(widget.orderId));
       ref.invalidate(orderItemsProvider(widget.orderId));
-      ref.invalidate(dashboardKpisProvider);
-      ref.invalidate(ordersProvider(null));
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -154,7 +219,19 @@ class _DistributorOrderDetailScreenState
     final orderAsync = ref.watch(orderDetailProvider(widget.orderId));
     final itemsAsync = ref.watch(orderItemsProvider(widget.orderId));
 
-    return Scaffold(
+    return CallbackShortcuts(
+      bindings: <ShortcutActivator, VoidCallback>{
+        const SingleActivator(LogicalKeyboardKey.escape): () {
+          if (context.canPop()) {
+            context.pop();
+          } else {
+            context.go('/orders');
+          }
+        },
+      },
+      child: Focus(
+        autofocus: true,
+        child: Scaffold(
       backgroundColor: AppColors.getBackground(isDark),
       appBar: AppBar(
         title: orderAsync.when(
@@ -169,21 +246,25 @@ class _DistributorOrderDetailScreenState
           error: (_, __) => const SizedBox.shrink(),
         ),
         centerTitle: false,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded),
-          onPressed: () => context.canPop() ? context.pop() : context.go('/orders'),
+        leading: Semantics(
+          button: true,
+          label: l10n?.distributorOrders ?? 'Back to orders',
+          child: IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () => context.canPop() ? context.pop() : context.go('/orders'),
+          ),
         ),
         actions: [
           if (orderAsync.hasValue && orderAsync.value != null)
             Container(
               margin: const EdgeInsets.symmetric(
-                  horizontal: AlhaiSpacing.sm, vertical: 10),
+                  horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xs),
               padding: const EdgeInsets.symmetric(
                   horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xxs),
               decoration: BoxDecoration(
-                color: _getStatusColor(orderAsync.value!.status)
-                    .withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(20),
+                color: _getStatusColor(orderAsync.value!.status, isDark)
+                    .withValues(alpha: isDark ? 0.2 : 0.12),
+                borderRadius: BorderRadius.circular(AlhaiRadius.xl),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -193,7 +274,7 @@ class _DistributorOrderDetailScreenState
                     height: 8,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: _getStatusColor(orderAsync.value!.status),
+                      color: _getStatusColor(orderAsync.value!.status, isDark),
                     ),
                   ),
                   const SizedBox(width: 6),
@@ -202,7 +283,7 @@ class _DistributorOrderDetailScreenState
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
-                      color: _getStatusColor(orderAsync.value!.status),
+                      color: _getStatusColor(orderAsync.value!.status, isDark),
                     ),
                   ),
                 ],
@@ -211,7 +292,7 @@ class _DistributorOrderDetailScreenState
         ],
       ),
       body: orderAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const TableSkeleton(rows: 6, columns: 4),
         error: (e, _) => Center(
           child: Text(l10n?.distributorLoadError ?? 'Error loading data'),
         ),
@@ -223,11 +304,13 @@ class _DistributorOrderDetailScreenState
           }
 
           return itemsAsync.when(
-            loading: () => const Center(child: CircularProgressIndicator()),
+            loading: () => const TableSkeleton(rows: 4, columns: 4),
             error: (e, _) => Center(
               child: Text(l10n?.distributorLoadError ?? 'Error'),
             ),
             data: (items) {
+              // Sync controllers: dispose stale ones, prepare for current items
+              _syncControllers(items);
               final total = _calculatedTotal(items);
 
               return SingleChildScrollView(
@@ -236,6 +319,43 @@ class _DistributorOrderDetailScreenState
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    // Breadcrumb navigation
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: AlhaiSpacing.md),
+                      child: Row(
+                        children: [
+                          InkWell(
+                            onTap: () => context.go('/orders'),
+                            borderRadius: BorderRadius.circular(AlhaiRadius.xs),
+                            child: Text(
+                              l10n?.distributorOrders ?? 'Orders',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: AppColors.primary,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            child: Icon(
+                              Icons.chevron_right,
+                              size: 18,
+                              color: AppColors.getTextMuted(isDark),
+                            ),
+                          ),
+                          Text(
+                            '${l10n?.distributorOrderNumber ?? 'Order'} #${order.purchaseNumber}',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: AppColors.getTextSecondary(isDark),
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
                     // Order Header
                     _buildOrderHeader(order, isDark, isMedium, l10n),
                     SizedBox(
@@ -284,6 +404,8 @@ class _DistributorOrderDetailScreenState
           );
         },
       ),
+    ),
+      ),
     );
   }
 
@@ -296,7 +418,7 @@ class _DistributorOrderDetailScreenState
       padding: EdgeInsets.all(isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AlhaiRadius.lg),
         border: Border.all(color: AppColors.getBorder(isDark)),
       ),
       child: Column(
@@ -304,15 +426,15 @@ class _DistributorOrderDetailScreenState
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
+                  color: AppColors.primary.withValues(alpha: isDark ? 0.2 : 0.1),
+                  borderRadius: BorderRadius.circular(AlhaiRadius.md),
                 ),
                 child: const Icon(Icons.store_rounded,
                     color: AppColors.primary, size: 24),
               ),
-              const SizedBox(width: 14),
+              const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -340,10 +462,10 @@ class _DistributorOrderDetailScreenState
           ),
           const SizedBox(height: AlhaiSpacing.md),
           Container(
-            padding: const EdgeInsets.all(14),
+            padding: const EdgeInsets.all(AlhaiSpacing.sm),
             decoration: BoxDecoration(
-              color: AppColors.info.withValues(alpha: isDark ? 0.1 : 0.05),
-              borderRadius: BorderRadius.circular(12),
+              color: AppColors.info.withValues(alpha: isDark ? 0.15 : 0.05),
+              borderRadius: BorderRadius.circular(AlhaiRadius.md),
               border:
                   Border.all(color: AppColors.info.withValues(alpha: 0.2)),
             ),
@@ -381,7 +503,7 @@ class _DistributorOrderDetailScreenState
     return Container(
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AlhaiRadius.lg),
         border: Border.all(color: AppColors.getBorder(isDark)),
       ),
       child: Column(
@@ -394,8 +516,8 @@ class _DistributorOrderDetailScreenState
                 Container(
                   padding: const EdgeInsets.all(AlhaiSpacing.xs),
                   decoration: BoxDecoration(
-                    color: AppColors.secondary.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(10),
+                    color: AppColors.secondary.withValues(alpha: isDark ? 0.2 : 0.1),
+                    borderRadius: BorderRadius.circular(AlhaiRadius.sm + 2),
                   ),
                   child: const Icon(Icons.list_alt_rounded,
                       color: AppColors.secondary, size: 20),
@@ -414,8 +536,8 @@ class _DistributorOrderDetailScreenState
                   padding: const EdgeInsets.symmetric(
                       horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(8),
+                    color: AppColors.primary.withValues(alpha: isDark ? 0.2 : 0.1),
+                    borderRadius: BorderRadius.circular(AlhaiRadius.sm),
                   ),
                   child: Text(
                     l10n?.distributorProductCount(items.length) ??
@@ -456,7 +578,7 @@ class _DistributorOrderDetailScreenState
 
             return Container(
               padding: const EdgeInsets.symmetric(
-                  horizontal: AlhaiSpacing.mdl, vertical: 14),
+                  horizontal: AlhaiSpacing.mdl, vertical: AlhaiSpacing.sm),
               decoration: BoxDecoration(
                 border: index < items.length - 1
                     ? Border(
@@ -532,17 +654,17 @@ class _DistributorOrderDetailScreenState
                           filled: true,
                           fillColor: AppColors.getSurfaceVariant(isDark),
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(AlhaiRadius.sm + 2),
                             borderSide: BorderSide(
                                 color: AppColors.getBorder(isDark)),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(AlhaiRadius.sm + 2),
                             borderSide: BorderSide(
                                 color: AppColors.getBorder(isDark)),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(AlhaiRadius.sm + 2),
                             borderSide: const BorderSide(
                                 color: AppColors.primary, width: 2),
                           ),
@@ -629,7 +751,7 @@ class _DistributorOrderDetailScreenState
             padding: const EdgeInsets.all(AlhaiSpacing.md),
             decoration: BoxDecoration(
               color: AppColors.getSurface(isDark),
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(AlhaiRadius.md + 2),
               border: Border.all(color: AppColors.getBorder(isDark)),
             ),
             child: Column(
@@ -671,7 +793,7 @@ class _DistributorOrderDetailScreenState
                           filled: true,
                           fillColor: AppColors.getSurfaceVariant(isDark),
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(AlhaiRadius.sm + 2),
                           ),
                         ),
                       ),
@@ -683,7 +805,7 @@ class _DistributorOrderDetailScreenState
                             horizontal: 12, vertical: 10),
                         decoration: BoxDecoration(
                           color: AppColors.primary.withValues(alpha: 0.08),
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(AlhaiRadius.sm + 2),
                         ),
                         child: Text(
                           '${NumberFormat('#,##0.00').format(rowTotal)} ${l10n?.distributorSar ?? 'SAR'}',
@@ -707,10 +829,10 @@ class _DistributorOrderDetailScreenState
 
   Widget _infoChip(String label, String value, Color color, bool isDark) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 6),
       decoration: BoxDecoration(
         color: color.withValues(alpha: isDark ? 0.12 : 0.06),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(AlhaiRadius.sm),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -742,7 +864,7 @@ class _DistributorOrderDetailScreenState
               )
             : null,
         color: total > 0 ? null : AppColors.getSurface(isDark),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AlhaiRadius.lg),
         border: Border.all(
           color: total > 0
               ? AppColors.primary.withValues(alpha: 0.3)
@@ -757,7 +879,7 @@ class _DistributorOrderDetailScreenState
                 padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.primary.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(AlhaiRadius.sm + 2),
                 ),
                 child: const Icon(Icons.calculate_rounded,
                     color: AppColors.primary, size: 20),
@@ -796,7 +918,7 @@ class _DistributorOrderDetailScreenState
                   decoration: BoxDecoration(
                     color: (isLower ? AppColors.success : AppColors.warning)
                         .withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(AlhaiRadius.sm),
                   ),
                   child: Text(
                     isLower
@@ -826,7 +948,7 @@ class _DistributorOrderDetailScreenState
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AlhaiRadius.lg),
         border: Border.all(color: AppColors.getBorder(isDark)),
       ),
       child: Column(
@@ -844,6 +966,7 @@ class _DistributorOrderDetailScreenState
           TextField(
             controller: _notesController,
             maxLines: 4,
+            maxLength: 500,
             style: TextStyle(color: AppColors.getTextPrimary(isDark)),
             decoration: InputDecoration(
               hintText: l10n?.distributorNotesHint ?? 'Add notes...',
@@ -851,15 +974,15 @@ class _DistributorOrderDetailScreenState
               filled: true,
               fillColor: AppColors.getSurfaceVariant(isDark),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(AlhaiRadius.md),
                 borderSide: BorderSide(color: AppColors.getBorder(isDark)),
               ),
               enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(AlhaiRadius.md),
                 borderSide: BorderSide(color: AppColors.getBorder(isDark)),
               ),
               focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(AlhaiRadius.md),
                 borderSide:
                     const BorderSide(color: AppColors.primary, width: 2),
               ),
@@ -877,7 +1000,7 @@ class _DistributorOrderDetailScreenState
       children: [
         Expanded(
           child: OutlinedButton.icon(
-            onPressed: _isProcessing ? null : () => _updateStatus('rejected', total),
+            onPressed: _isProcessing ? null : () => _confirmAndUpdateStatus('rejected', total),
             icon: _isProcessing
                 ? const SizedBox(
                     width: 18,
@@ -894,7 +1017,7 @@ class _DistributorOrderDetailScreenState
               padding:
                   EdgeInsets.symmetric(vertical: isMedium ? 16 : 14),
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
+                  borderRadius: BorderRadius.circular(AlhaiRadius.md)),
             ),
           ),
         ),
@@ -904,7 +1027,7 @@ class _DistributorOrderDetailScreenState
           child: FilledButton.icon(
             onPressed: _isProcessing || total <= 0
                 ? null
-                : () => _updateStatus('approved', total),
+                : () => _confirmAndUpdateStatus('approved', total),
             icon: _isProcessing
                 ? const SizedBox(
                     width: 18,
@@ -922,7 +1045,7 @@ class _DistributorOrderDetailScreenState
               padding:
                   EdgeInsets.symmetric(vertical: isMedium ? 16 : 14),
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
+                  borderRadius: BorderRadius.circular(AlhaiRadius.md)),
             ),
           ),
         ),

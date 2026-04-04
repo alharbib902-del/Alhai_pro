@@ -1,6 +1,10 @@
 """التنبؤ بالمبيعات - Sales Forecast Router"""
 
+import logging
+
 from fastapi import APIRouter, Depends, HTTPException
+
+logger = logging.getLogger(__name__)
 from auth import AuthenticatedUser, verify_store_access
 from models.schemas import ForecastRequest, ForecastResponse
 from services.ml_service import generate_forecast
@@ -27,5 +31,6 @@ async def forecast_sales(
             product_ids=request.product_ids,
             language=request.language,
         )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"خطأ في التنبؤ بالمبيعات: {e}")
+    except Exception:
+        logger.exception("خطأ في التنبؤ بالمبيعات")
+        raise HTTPException(status_code=500, detail="حدث خطأ غير متوقع")

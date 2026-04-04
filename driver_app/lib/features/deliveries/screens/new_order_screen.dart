@@ -1,5 +1,6 @@
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -18,6 +19,7 @@ class _NewOrderScreenState extends ConsumerState<NewOrderScreen>
   bool _isLoading = false;
 
   Future<void> _accept(String deliveryId) async {
+    HapticFeedback.heavyImpact();
     setState(() => _isLoading = true);
     try {
       await ref.read(
@@ -29,7 +31,7 @@ class _NewOrderScreenState extends ConsumerState<NewOrderScreen>
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('$e')),
+          const SnackBar(content: Text('حدث خطأ. حاول مرة أخرى')),
         );
         setState(() => _isLoading = false);
       }
@@ -37,6 +39,7 @@ class _NewOrderScreenState extends ConsumerState<NewOrderScreen>
   }
 
   Future<void> _reject(String deliveryId) async {
+    HapticFeedback.heavyImpact();
     setState(() => _isLoading = true);
     try {
       await ref.read(
@@ -48,7 +51,7 @@ class _NewOrderScreenState extends ConsumerState<NewOrderScreen>
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('$e')),
+          const SnackBar(content: Text('حدث خطأ. حاول مرة أخرى')),
         );
         setState(() => _isLoading = false);
       }
@@ -72,7 +75,7 @@ class _NewOrderScreenState extends ConsumerState<NewOrderScreen>
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.check_circle, size: 64, color: Colors.green),
+                  Icon(Icons.check_circle, size: 64, color: theme.colorScheme.primary),
                   const SizedBox(height: AlhaiSpacing.md),
                   const Text('لا توجد طلبات جديدة'),
                   const SizedBox(height: AlhaiSpacing.md),
@@ -163,9 +166,9 @@ class _NewOrderScreenState extends ConsumerState<NewOrderScreen>
                               leading: const Icon(Icons.payments),
                               title: Text(
                                 '${(fee as num).toStringAsFixed(0)} ر.س',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.green,
+                                  color: theme.colorScheme.primary,
                                   fontSize: 18,
                                 ),
                               ),
@@ -193,7 +196,7 @@ class _NewOrderScreenState extends ConsumerState<NewOrderScreen>
                         style: FilledButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(AlhaiRadius.button),
                           ),
                         ),
                       ),
@@ -206,10 +209,10 @@ class _NewOrderScreenState extends ConsumerState<NewOrderScreen>
                         icon: const Icon(Icons.cancel_outlined),
                         label: const Text('رفض', style: TextStyle(fontSize: 16)),
                         style: OutlinedButton.styleFrom(
-                          foregroundColor: Colors.red,
+                          foregroundColor: theme.colorScheme.error,
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(AlhaiRadius.button),
                           ),
                         ),
                       ),
@@ -222,7 +225,7 @@ class _NewOrderScreenState extends ConsumerState<NewOrderScreen>
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('خطأ: $e')),
+        error: (e, _) => const Center(child: Text('حدث خطأ. حاول مرة أخرى')),
       ),
     );
   }
