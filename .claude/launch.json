@@ -15,6 +15,12 @@
       "runtimeArgs": ["-m", "uvicorn", "main:app", "--host", "127.0.0.1", "--port", "8000"],
       "cwd": "ai_server",
       "port": 8000
+    },
+    {
+      "name": "report",
+      "runtimeExecutable": "cmd",
+      "runtimeArgs": ["/c", "npx", "http-server", ".", "-p", "3001", "-c-1"],
+      "port": 3001
     }
   ]
 }

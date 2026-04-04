@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alhai POS - المنظومة المتكاملة لإدارة التجزئة</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* ===== HERO ===== */
+    .hero {
+      padding: 140px 20px 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      min-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      width: 800px;
+      height: 800px;
+      background: radial-gradient(circle, rgba(108,99,255,0.12) 0%, transparent 65%);
+      top: -300px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(0,210,255,0.06) 0%, transparent 70%);
+      bottom: -200px;
+      right: -100px;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-block;
+      padding: 6px 20px;
+      border-radius: 24px;
+      font-size: 13px;
+      font-weight: 600;
+      background: rgba(108,99,255,0.12);
+      color: var(--primary);
+      border: 1px solid rgba(108,99,255,0.2);
+      margin-bottom: 24px;
+      animation: fadeDown 0.8s ease-out;
+    }
+    .hero h1 {
+      font-size: clamp(2.5rem, 7vw, 5rem);
+      font-weight: 900;
+      margin-bottom: 8px;
+      background: var(--gradient-1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: fadeDown 0.8s ease-out 0.1s both;
+      letter-spacing: -1px;
+    }
+    .hero-subtitle {
+      font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+      color: var(--text-muted);
+      max-width: 700px;
+      margin: 0 auto 48px;
+      animation: fadeDown 0.8s ease-out 0.2s both;
+      line-height: 1.8;
+    }
+
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    /* ===== ECOSYSTEM ===== */
+    .eco-center {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .eco-center-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: var(--gradient-1);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      margin-bottom: 12px;
+      box-shadow: 0 0 40px rgba(108,99,255,0.3);
+    }
+    .eco-center h3 {
+      font-size: 1.3rem;
+      margin-bottom: 4px;
+    }
+    .eco-center p {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .eco-flow {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      max-width: 900px;
+      margin: 32px auto 0;
+    }
+    .eco-flow-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 18px 22px;
+      transition: all 0.3s;
+    }
+    .eco-flow-item:hover {
+      border-color: rgba(108,99,255,0.3);
+      transform: translateX(6px);
+    }
+    .eco-flow-icon {
+      font-size: 28px;
+      flex-shrink: 0;
+    }
+    .eco-flow-text {
+      flex: 1;
+    }
+    .eco-flow-text h4 {
+      font-size: 0.95rem;
+      margin-bottom: 2px;
+    }
+    .eco-flow-text p {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .eco-flow-arrow {
+      font-size: 18px;
+      color: var(--primary);
+      flex-shrink: 0;
+    }
+
+    /* ===== JOURNEYS ===== */
+    .journey-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .journey-card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s, border-color 0.3s;
+    }
+    .journey-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(108,99,255,0.25);
+    }
+    .journey-card-top {
+      height: 3px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+    }
+    .journey-card .j-icon {
+      font-size: 36px;
+      margin-bottom: 14px;
+    }
+    .journey-card h3 {
+      font-size: 1.05rem;
+      margin-bottom: 16px;
+    }
+    .journey-steps {
+      list-style: none;
+      position: relative;
+      padding-right: 24px;
+    }
+    .journey-steps::before {
+      content: '';
+      position: absolute;
+      right: 6px;
+      top: 4px;
+      bottom: 4px;
+      width: 2px;
+      background: linear-gradient(180deg, var(--primary), var(--secondary));
+      border-radius: 2px;
+    }
+    .journey-steps li {
+      position: relative;
+      font-size: 13px;
+      color: var(--text-muted);
+      padding: 6px 0;
+      line-height: 1.5;
+    }
+    .journey-steps li::before {
+      content: '';
+      position: absolute;
+      right: -22px;
+      top: 12px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--primary);
+      border: 2px solid var(--dark);
+    }
+
+    /* ===== ARCHITECTURE ===== */
+    .arch-layers {
+      max-width: 800px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .arch-layer {
+      text-align: center;
+      padding: 24px;
+      border: 1px solid var(--card-border);
+      background: var(--card);
+      position: relative;
+      transition: all 0.3s;
+    }
+    .arch-layer:first-child {
+      border-radius: 16px 16px 0 0;
+    }
+    .arch-layer:last-child {
+      border-radius: 0 0 16px 16px;
+    }
+    .arch-layer:hover {
+      background: rgba(108,99,255,0.04);
+      border-color: rgba(108,99,255,0.2);
+      z-index: 1;
+    }
+    .arch-layer-num {
+      display: inline-block;
+      width: 32px;
+      height: 32px;
+      line-height: 32px;
+      border-radius: 50%;
+      font-size: 13px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .arch-layer h4 {
+      font-size: 1rem;
+      margin-bottom: 6px;
+    }
+    .arch-layer p {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .arch-layer .arch-pkgs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: center;
+      margin-top: 10px;
+    }
+    .arch-layer .arch-pkg {
+      font-size: 11px;
+      padding: 3px 12px;
+      border-radius: 12px;
+      background: rgba(108,99,255,0.1);
+      color: var(--primary);
+      border: 1px solid rgba(108,99,255,0.12);
+    }
+    .arch-arrow {
+      text-align: center;
+      font-size: 22px;
+      color: var(--primary);
+      padding: 4px 0;
+      opacity: 0.5;
+    }
+    .l0 .arch-layer-num { background: rgba(108,99,255,0.2); color: var(--primary); }
+    .l1 .arch-layer-num { background: rgba(0,210,255,0.2); color: var(--secondary); }
+    .l2 .arch-layer-num { background: rgba(0,196,140,0.2); color: var(--success); }
+    .l3 .arch-layer-num { background: rgba(255,184,0,0.2); color: var(--warning); }
+    .l4 .arch-layer-num { background: rgba(255,107,107,0.2); color: var(--accent); }
+
+    /* ===== VISION ===== */
+    .vision-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .vision-card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s, border-color 0.3s;
+    }
+    .vision-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(108,99,255,0.25);
+    }
+    .vision-card .v-icon {
+      font-size: 36px;
+      margin-bottom: 14px;
+    }
+    .vision-card h3 {
+      font-size: 1.1rem;
+      margin-bottom: 12px;
+    }
+    .vision-card ul {
+      list-style: none;
+      padding: 0;
+    }
+    .vision-card ul li {
+      font-size: 13px;
+      color: var(--text-muted);
+      padding: 5px 0;
+      padding-right: 18px;
+      position: relative;
+    }
+    .vision-card ul li::before {
+      content: '◂';
+      position: absolute;
+      right: 0;
+      color: var(--primary);
+      font-size: 11px;
+    }
+
+    /* ===== GLOW EFFECTS ===== */
+    .glow-purple { box-shadow: 0 0 30px rgba(108,99,255,0.08); }
+    .glow-blue { box-shadow: 0 0 30px rgba(0,210,255,0.08); }
+    .glow-green { box-shadow: 0 0 30px rgba(0,196,140,0.08); }
+
+    /* ===== MISC ===== */
+    .divider {
+      width: 60px;
+      height: 3px;
+      background: var(--gradient-1);
+      border-radius: 3px;
+      margin: 0 auto 20px;
+    }
+    .cta-row {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      margin-top: 32px;
+      flex-wrap: wrap;
+    }
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 32px;
+      border-radius: 14px;
+      font-size: 15px;
+      font-weight: 700;
+      transition: all 0.3s;
+      text-decoration: none;
+    }
+    .cta-primary {
+      background: var(--gradient-1);
+      color: #fff;
+    }
+    .cta-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(108,99,255,0.3);
+      color: #fff;
+    }
+    .cta-secondary {
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+      border: 1px solid var(--card-border);
+    }
+    .cta-secondary:hover {
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(108,99,255,0.3);
+      color: var(--text);
+    }
+    .highlight {
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    @media(max-width:768px) {
+      .hero { padding: 120px 16px 60px; min-height: auto; }
+      .eco-flow-item { flex-direction: column; text-align: center; }
+      .eco-flow-item:hover { transform: translateY(-3px); }
+      .arch-layer { padding: 18px 14px; }
+      .cta-row { flex-direction: column; align-items: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ============ NAVIGATION ============ -->
+<nav class="nav">
+  <div class="nav-logo">Alhai POS</div>
+  <div class="nav-links">
+    <a href="index.html" class="active">الرئيسية</a>
+    <a href="admin.html">لوحة التحكم</a>
+    <a href="cashier.html">الكاشير</a>
+    <a href="admin-lite.html">الإدارة المبسطة</a>
+    <a href="customer.html">تطبيق العملاء</a>
+    <a href="driver.html">تطبيق السائق</a>
+    <a href="super-admin.html">المشرف العام</a>
+    <a href="distributor.html">بوابة الموزعين</a>
+    <a href="database.html">قاعدة البيانات</a>
+    <a href="packages.html">الحزم المشتركة</a>
+  </div>
+  <button class="nav-toggle" onclick="document.querySelector('.nav-mobile').classList.toggle('open')" aria-label="القائمة">&#9776;</button>
+</nav>
+<div class="nav-mobile">
+  <a href="index.html" class="active">الرئيسية</a>
+  <a href="admin.html">لوحة التحكم</a>
+  <a href="cashier.html">الكاشير</a>
+  <a href="admin-lite.html">الإدارة المبسطة</a>
+  <a href="customer.html">تطبيق العملاء</a>
+  <a href="driver.html">تطبيق السائق</a>
+  <a href="super-admin.html">المشرف العام</a>
+  <a href="distributor.html">بوابة الموزعين</a>
+  <a href="database.html">قاعدة البيانات</a>
+  <a href="packages.html">الحزم المشتركة</a>
+</div>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="container">
+    <span class="hero-badge">منظومة متكاملة لإدارة التجزئة</span>
+    <h1>Alhai POS</h1>
+    <p class="hero-subtitle">
+      المنظومة الأكثر تكاملا لإدارة التجزئة في المنطقة العربية.
+      سبعة تطبيقات متصلة، تعمل بدون إنترنت، بسبع لغات، مع ذكاء اصطناعي مدمج ومتوافقة مع زاتكا.
+    </p>
+    <div class="stats-bar fade-in">
+      <div class="stat-item">
+        <div class="stat-number">7</div>
+        <div class="stat-label">تطبيقات</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">12</div>
+        <div class="stat-label">حزمة</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">437K+</div>
+        <div class="stat-label">سطر كود</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">39</div>
+        <div class="stat-label">جدول</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">15</div>
+        <div class="stat-label">ميزة ذكاء اصطناعي</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">7</div>
+        <div class="stat-label">لغات</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">185</div>
+        <div class="stat-label">شاشة</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">144</div>
+        <div class="stat-label">اختبار</div>
+      </div>
+    </div>
+    <div class="cta-row" style="animation: fadeDown 0.8s ease-out 0.4s both;">
+      <a href="admin.html" class="cta-btn cta-primary">استعرض التطبيقات &#8592;</a>
+      <a href="database.html" class="cta-btn cta-secondary">البنية التقنية</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ECOSYSTEM DIAGRAM ============ -->
+<section class="alt">
+  <div class="container">
+    <div class="section-header fade-in">
+      <span class="tag tag-blue">المنظومة</span>
+      <h2>كيف تتصل التطبيقات السبعة</h2>
+      <p>كل تطبيق يؤدي دورا محددا في منظومة متكاملة تربط صاحب المتجر بالعملاء والموظفين</p>
+    </div>
+
+    <div class="eco-center fade-in">
+      <div class="eco-center-icon">&#9881;</div>
+      <h3>محرك المنظومة</h3>
+      <p>تدفق البيانات بين جميع التطبيقات في الوقت الحقيقي</p>
+    </div>
+
+    <div class="eco-grid fade-in" style="margin-bottom:32px;">
+      <a href="admin.html" class="eco-card glow-purple">
+        <div class="eco-icon">&#128203;</div>
+        <h4>لوحة التحكم</h4>
+        <p>مركز القيادة الرئيسي</p>
+      </a>
+      <a href="cashier.html" class="eco-card glow-blue">
+        <div class="eco-icon">&#128179;</div>
+        <h4>الكاشير</h4>
+        <p>نقطة البيع</p>
+      </a>
+      <a href="admin-lite.html" class="eco-card glow-green">
+        <div class="eco-icon">&#128241;</div>
+        <h4>الإدارة المبسطة</h4>
+        <p>الإدارة أثناء التنقل</p>
+      </a>
+      <a href="customer.html" class="eco-card">
+        <div class="eco-icon">&#128722;</div>
+        <h4>تطبيق العملاء</h4>
+        <p>الطلب والتوصيل</p>
+      </a>
+      <a href="driver.html" class="eco-card">
+        <div class="eco-icon">&#128666;</div>
+        <h4>تطبيق السائق</h4>
+        <p>إدارة التوصيل</p>
+      </a>
+      <a href="super-admin.html" class="eco-card">
+        <div class="eco-icon">&#127959;</div>
+        <h4>المشرف العام</h4>
+        <p>إدارة المتاجر المتعددة</p>
+      </a>
+      <a href="distributor.html" class="eco-card">
+        <div class="eco-icon">&#128230;</div>
+        <h4>بوابة الموزعين</h4>
+        <p>إدارة الطلبات بالجملة</p>
+      </a>
+    </div>
+
+    <div class="eco-flow fade-in">
+      <div class="eco-flow-item">
+        <div class="eco-flow-icon">&#128203;</div>
+        <div class="eco-flow-text">
+          <h4>صاحب المتجر &#8594; لوحة التحكم</h4>
+          <p>صاحب المتجر يستخدم لوحة التحكم لإدارة كل شيء: المنتجات، الموظفين، التقارير، الإعدادات</p>
+        </div>
+        <a href="admin.html" class="eco-flow-arrow">&#8592;</a>
+      </div>
+      <div class="eco-flow-item">
+        <div class="eco-flow-icon">&#128179;</div>
+        <div class="eco-flow-text">
+          <h4>الكاشير &#8594; لوحة التحكم</h4>
+          <p>الكاشير يعالج المبيعات ويرسل البيانات للوحة التحكم في الوقت الحقيقي</p>
+        </div>
+        <a href="cashier.html" class="eco-flow-arrow">&#8592;</a>
+      </div>
+      <div class="eco-flow-item">
+        <div class="eco-flow-icon">&#128722;</div>
+        <div class="eco-flow-text">
+          <h4>العميل &#8594; لوحة التحكم &#8594; السائق</h4>
+          <p>العميل يطلب من تطبيق العملاء، الطلب يظهر في لوحة التحكم، ثم يُسند للسائق للتوصيل</p>
+        </div>
+        <a href="customer.html" class="eco-flow-arrow">&#8592;</a>
+      </div>
+      <div class="eco-flow-item">
+        <div class="eco-flow-icon">&#128666;</div>
+        <div class="eco-flow-text">
+          <h4>السائق &#8594; العميل</h4>
+          <p>السائق يستلم الطلب ويوصله للعميل مع تتبع مباشر وإثبات التسليم</p>
+        </div>
+        <a href="driver.html" class="eco-flow-arrow">&#8592;</a>
+      </div>
+      <div class="eco-flow-item">
+        <div class="eco-flow-icon">&#128241;</div>
+        <div class="eco-flow-text">
+          <h4>الإدارة المبسطة &#8594; لوحة التحكم</h4>
+          <p>الإدارة المبسطة للمتابعة السريعة أثناء التنقل بدون الحاجة للجلوس أمام الكمبيوتر</p>
+        </div>
+        <a href="admin-lite.html" class="eco-flow-arrow">&#8592;</a>
+      </div>
+      <div class="eco-flow-item">
+        <div class="eco-flow-icon">&#127959;</div>
+        <div class="eco-flow-text">
+          <h4>المشرف العام &#8594; جميع المتاجر</h4>
+          <p>المشرف العام يدير كل المتاجر والاشتراكات من مكان واحد</p>
+        </div>
+        <a href="super-admin.html" class="eco-flow-arrow">&#8592;</a>
+      </div>
+      <div class="eco-flow-item">
+        <div class="eco-flow-icon">&#128230;</div>
+        <div class="eco-flow-text">
+          <h4>الموزع &#8594; المتاجر</h4>
+          <p>الموزع يدير طلبات الجملة ويوزع المنتجات على المتاجر</p>
+        </div>
+        <a href="distributor.html" class="eco-flow-arrow">&#8592;</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ USER JOURNEYS ============ -->
+<section>
+  <div class="container">
+    <div class="section-header fade-in">
+      <span class="tag tag-green">رحلات المستخدمين</span>
+      <h2>أربع رحلات رئيسية</h2>
+      <p>كل مستخدم في المنظومة يمر برحلة مصممة بعناية من البداية إلى النهاية</p>
+    </div>
+
+    <div class="journey-cards">
+      <!-- صاحب البقالة -->
+      <div class="journey-card fade-in">
+        <div class="journey-card-top" style="background: var(--gradient-1);"></div>
+        <div class="j-icon">&#127978;</div>
+        <h3>رحلة صاحب البقالة</h3>
+        <ul class="journey-steps">
+          <li>فتح المتجر وإعداد البيانات الأساسية</li>
+          <li>إضافة المنتجات والأصناف والأسعار</li>
+          <li>إعداد أجهزة الكاشير والموظفين</li>
+          <li>استقبال الطلبات من العملاء</li>
+          <li>متابعة التقارير والأرباح والمخزون</li>
+        </ul>
+      </div>
+
+      <!-- العميل -->
+      <div class="journey-card fade-in">
+        <div class="journey-card-top" style="background: var(--gradient-3);"></div>
+        <div class="j-icon">&#128722;</div>
+        <h3>رحلة العميل</h3>
+        <ul class="journey-steps">
+          <li>فتح التطبيق وتسجيل الدخول</li>
+          <li>تصفح المنتجات والعروض</li>
+          <li>إضافة المنتجات للسلة</li>
+          <li>اختيار طريقة الدفع وتأكيد الطلب</li>
+          <li>تتبع الطلب مباشرة على الخريطة</li>
+          <li>استلام الطلب وتقييم الخدمة</li>
+        </ul>
+      </div>
+
+      <!-- السائق -->
+      <div class="journey-card fade-in">
+        <div class="journey-card-top" style="background: var(--gradient-2);"></div>
+        <div class="j-icon">&#128666;</div>
+        <h3>رحلة السائق</h3>
+        <ul class="journey-steps">
+          <li>تسجيل الدخول وبدء الوردية</li>
+          <li>استلام طلب التوصيل الجديد</li>
+          <li>تفعيل الملاحة والتوجه للعميل</li>
+          <li>توصيل الطلب وتأكيد التسليم</li>
+          <li>إثبات التسليم بالتوقيع أو الصورة</li>
+        </ul>
+      </div>
+
+      <!-- موظف المبيعات -->
+      <div class="journey-card fade-in">
+        <div class="journey-card-top" style="background: linear-gradient(135deg, #FFB800, #FF6B6B);"></div>
+        <div class="j-icon">&#128179;</div>
+        <h3>رحلة موظف المبيعات</h3>
+        <ul class="journey-steps">
+          <li>فتح الكاشير وبدء الوردية</li>
+          <li>تسجيل المبيعات ومسح الباركود</li>
+          <li>تطبيق الخصومات والضرائب</li>
+          <li>طباعة الإيصال المتوافق مع زاتكا</li>
+          <li>إغلاق الوردية ومراجعة الحصيلة</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TECHNICAL ARCHITECTURE ============ -->
+<section class="alt">
+  <div class="container">
+    <div class="section-header fade-in">
+      <span class="tag tag-yellow">البنية التقنية</span>
+      <h2>الطبقات المعمارية</h2>
+      <p>بنية من خمس طبقات تضمن فصل المسؤوليات وإعادة الاستخدام</p>
+    </div>
+
+    <div class="arch-layers fade-in">
+      <div class="arch-layer l4">
+        <div class="arch-layer-num">4</div>
+        <h4>طبقة التطبيقات</h4>
+        <p>التطبيقات النهائية التي يستخدمها المستخدمون</p>
+        <div class="arch-pkgs">
+          <span class="arch-pkg">نقطة البيع</span>
+          <span class="arch-pkg">التقارير</span>
+          <span class="arch-pkg">الذكاء الاصطناعي</span>
+        </div>
+      </div>
+      <div class="arch-arrow">&#9660;</div>
+      <div class="arch-layer l3">
+        <div class="arch-layer-num">3</div>
+        <h4>طبقة الواجهات المشتركة</h4>
+        <p>مكونات الواجهة المشتركة بين التطبيقات</p>
+        <div class="arch-pkgs">
+          <span class="arch-pkg">الواجهات المشتركة</span>
+        </div>
+      </div>
+      <div class="arch-arrow">&#9660;</div>
+      <div class="arch-layer l2">
+        <div class="arch-layer-num">2</div>
+        <h4>طبقة الخدمات</h4>
+        <p>خدمات المزامنة والمصادقة التي تعتمد على قاعدة البيانات</p>
+        <div class="arch-pkgs">
+          <span class="arch-pkg">المزامنة</span>
+          <span class="arch-pkg">المصادقة</span>
+        </div>
+      </div>
+      <div class="arch-arrow">&#9660;</div>
+      <div class="arch-layer l1">
+        <div class="arch-layer-num">1</div>
+        <h4>طبقة البيانات</h4>
+        <p>قاعدة البيانات المحلية والتوافق مع زاتكا</p>
+        <div class="arch-pkgs">
+          <span class="arch-pkg">قاعدة البيانات</span>
+          <span class="arch-pkg">زاتكا</span>
+        </div>
+      </div>
+      <div class="arch-arrow">&#9660;</div>
+      <div class="arch-layer l0">
+        <div class="arch-layer-num">0</div>
+        <h4>طبقة النواة</h4>
+        <p>الأساس الذي لا يعتمد على شيء: النواة، التصميم، الترجمة</p>
+        <div class="arch-pkgs">
+          <span class="arch-pkg">النواة</span>
+          <span class="arch-pkg">التصميم</span>
+          <span class="arch-pkg">الترجمة</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ KEY NUMBERS TABLE ============ -->
+<section>
+  <div class="container">
+    <div class="section-header fade-in">
+      <span class="tag tag-blue">الأرقام الرئيسية</span>
+      <h2>المنظومة بالأرقام</h2>
+      <p>تفصيل دقيق لحجم كل تطبيق وحزمة في المنظومة</p>
+    </div>
+
+    <div class="tbl-wrap fade-in">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>التطبيق</th>
+            <th>الملفات</th>
+            <th>سطور الكود</th>
+            <th>الشاشات</th>
+            <th>الاختبارات</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><a href="admin.html">&#128203; لوحة التحكم</a></td>
+            <td>71</td>
+            <td>36,808</td>
+            <td>62</td>
+            <td>68</td>
+          </tr>
+          <tr>
+            <td><a href="cashier.html">&#128179; الكاشير</a></td>
+            <td>76</td>
+            <td>37,271</td>
+            <td>46</td>
+            <td>55</td>
+          </tr>
+          <tr>
+            <td><a href="admin-lite.html">&#128241; الإدارة المبسطة</a></td>
+            <td>38</td>
+            <td>10,543</td>
+            <td>27</td>
+            <td>8</td>
+          </tr>
+          <tr>
+            <td><a href="customer.html">&#128722; تطبيق العملاء</a></td>
+            <td>51</td>
+            <td>6,210</td>
+            <td>16</td>
+            <td>4</td>
+          </tr>
+          <tr>
+            <td><a href="driver.html">&#128666; تطبيق السائق</a></td>
+            <td>46</td>
+            <td>6,712</td>
+            <td>12</td>
+            <td>3</td>
+          </tr>
+          <tr>
+            <td><a href="super-admin.html">&#127959; المشرف العام</a></td>
+            <td>37</td>
+            <td>9,014</td>
+            <td>14</td>
+            <td>4</td>
+          </tr>
+          <tr>
+            <td><a href="distributor.html">&#128230; بوابة الموزعين</a></td>
+            <td>35</td>
+            <td>8,948</td>
+            <td>8</td>
+            <td>2</td>
+          </tr>
+          <tr>
+            <td><a href="packages.html">&#128230; الحزم المشتركة</a></td>
+            <td>637</td>
+            <td>307,798</td>
+            <td>-</td>
+            <td>-</td>
+          </tr>
+          <tr>
+            <td>&#129302; خادم الذكاء الاصطناعي</td>
+            <td>31</td>
+            <td>3,831</td>
+            <td>-</td>
+            <td>-</td>
+          </tr>
+          <tr style="font-weight:700;">
+            <td style="color:var(--primary);">&#9989; المجموع</td>
+            <td style="color:var(--secondary);">1,022</td>
+            <td style="color:var(--secondary);">437,135</td>
+            <td style="color:var(--secondary);">185</td>
+            <td style="color:var(--secondary);">144</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============ VISION & COMPETITIVE ADVANTAGE ============ -->
+<section class="alt">
+  <div class="container">
+    <div class="section-header fade-in">
+      <span class="tag tag-red">الرؤية والمستقبل</span>
+      <h2>الميزة التنافسية وخطة النمو</h2>
+      <p>لماذا Alhai POS هو الاستثمار الأذكى في قطاع التجزئة العربي</p>
+    </div>
+
+    <div class="vision-grid">
+      <!-- حجم السوق -->
+      <div class="vision-card fade-in glow-purple">
+        <div class="v-icon">&#127466;&#127462;</div>
+        <h3>حجم السوق السعودي</h3>
+        <ul>
+          <li>أكثر من 1.2 مليون منشأة تجزئة في المملكة</li>
+          <li>رؤية 2030 تدفع الرقمنة بقوة</li>
+          <li>إلزامية الفوترة الإلكترونية عبر زاتكا</li>
+          <li>نمو التجارة الإلكترونية بنسبة 30% سنويا</li>
+          <li>طلب متزايد على حلول نقاط البيع المتكاملة</li>
+        </ul>
+      </div>
+
+      <!-- الميزة التنافسية -->
+      <div class="vision-card fade-in glow-blue">
+        <div class="v-icon">&#127942;</div>
+        <h3>الميزة التنافسية</h3>
+        <ul>
+          <li>عربي أولا: مصمم للسوق العربي من الأساس</li>
+          <li>يعمل بدون إنترنت مع مزامنة ذكية</li>
+          <li>7 لغات مدعومة بما فيها العبرية والتركية</li>
+          <li>متوافق بالكامل مع زاتكا وهيئة الزكاة</li>
+          <li>15 ميزة ذكاء اصطناعي مدمجة</li>
+          <li>منظومة متكاملة من 7 تطبيقات مترابطة</li>
+        </ul>
+      </div>
+
+      <!-- مصادر الإيرادات -->
+      <div class="vision-card fade-in glow-green">
+        <div class="v-icon">&#128176;</div>
+        <h3>مصادر الإيرادات</h3>
+        <ul>
+          <li>اشتراكات شهرية وسنوية متعددة الباقات</li>
+          <li>عمولات على عمليات الدفع الإلكتروني</li>
+          <li>خدمات الذكاء الاصطناعي المتقدمة</li>
+          <li>خدمات التكامل والتخصيص للمؤسسات</li>
+          <li>باقات التوصيل والخدمات اللوجستية</li>
+        </ul>
+      </div>
+
+      <!-- خطة النمو -->
+      <div class="vision-card fade-in">
+        <div class="v-icon">&#128640;</div>
+        <h3>خطة النمو</h3>
+        <ul>
+          <li>التوسع الخليجي: الإمارات، الكويت، البحرين</li>
+          <li>شراكات مع البنوك وشركات الدفع</li>
+          <li>إطلاق سوق إلكتروني متكامل (Marketplace)</li>
+          <li>خدمات تحليلات البيانات للمتاجر</li>
+          <li>منصة مفتوحة للمطورين والتكاملات</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="container">
+    <p style="font-size:16px;font-weight:700;margin-bottom:8px;background:var(--gradient-1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Alhai POS</p>
+    <p>تقرير المستثمر - أبريل 2026</p>
+  </div>
+</footer>
+
+<!-- ============ SCROLL ANIMATION ============ -->
+<script>
+  // Scroll reveal animation
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  // Close mobile nav on link click
+  document.querySelectorAll('.nav-mobile a').forEach(link => {
+    link.addEventListener('click', () => {
+      document.querySelector('.nav-mobile').classList.remove('open');
+    });
+  });
+
+  // Smooth scroll for anchor links
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+
+  // Add staggered animation delay to grid children
+  document.querySelectorAll('.eco-grid .eco-card, .journey-cards .journey-card, .vision-grid .vision-card').forEach((card, i) => {
+    card.style.transitionDelay = (i * 0.08) + 's';
+  });
+
+  // Stats counter animation
+  const countObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const el = entry.target;
+        const text = el.textContent;
+        const hasPlus = text.includes('+');
+        const hasK = text.includes('K');
+        const num = parseFloat(text.replace(/[^0-9.]/g, ''));
+
+        if (isNaN(num)) return;
+
+        const duration = 1200;
+        const startTime = performance.now();
+
+        function animate(currentTime) {
+          const elapsed = currentTime - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          const current = Math.round(num * eased);
+
+          if (hasK) {
+            el.textContent = current + 'K' + (hasPlus ? '+' : '');
+          } else {
+            el.textContent = current + (hasPlus ? '+' : '');
+          }
+
+          if (progress < 1) {
+            requestAnimationFrame(animate);
+          }
+        }
+
+        requestAnimationFrame(animate);
+        countObserver.unobserve(el);
+      }
+    });
+  }, { threshold: 0.5 });
+
+  document.querySelectorAll('.stat-number').forEach(el => countObserver.observe(el));
+</script>
+
+</body>
+</html>

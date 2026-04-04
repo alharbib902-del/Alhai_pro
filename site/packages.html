@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الحزم المشتركة | Alhai Packages</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>body{font-family:'Tajawal',sans-serif}</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <span class="nav-logo">Alhai</span>
+  <div class="nav-links">
+    <a href="super-admin.html">المشرف العام</a>
+    <a href="distributor.html">بوابة الموزعين</a>
+    <a href="database.html">قاعدة البيانات</a>
+    <a href="packages.html" class="active">الحزم المشتركة</a>
+  </div>
+  <button class="nav-toggle" onclick="document.querySelector('.nav-mobile').classList.toggle('open')">&#9776;</button>
+</nav>
+<div class="nav-mobile">
+  <a href="super-admin.html">المشرف العام</a>
+  <a href="distributor.html">بوابة الموزعين</a>
+  <a href="database.html">قاعدة البيانات</a>
+  <a href="packages.html" class="active">الحزم المشتركة</a>
+</div>
+
+<!-- HERO -->
+<div class="page-hero">
+  <div class="icon fade-in">&#128230;</div>
+  <h1 class="fade-in">الحزم المشتركة</h1>
+  <p class="fade-in">12 حزمة متخصصة - بنية نظيفة بـ 4 طبقات</p>
+  <div class="stats-bar fade-in">
+    <div class="stat-item"><div class="stat-number">882</div><div class="stat-label">ملف</div></div>
+    <div class="stat-item"><div class="stat-number">281,784</div><div class="stat-label">سطر</div></div>
+    <div class="stat-item"><div class="stat-number">249</div><div class="stat-label">اختبار</div></div>
+    <div class="stat-item"><div class="stat-number">4</div><div class="stat-label">طبقات</div></div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- LAYER DIAGRAM -->
+  <section class="fade-in">
+    <div class="section-header">
+      <span class="tag tag-blue">البنية</span>
+      <h2>مخطط الطبقات</h2>
+      <p>4 طبقات من الأساس إلى الواجهة - كل طبقة تعتمد على ما تحتها فقط</p>
+    </div>
+    <div class="layer-diagram">
+      <div class="layer-row fade-in">
+        <div class="layer-num l0">0</div>
+        <div class="layer-content">
+          <h4>طبقة النواة - Foundation</h4>
+          <p>alhai_core, alhai_l10n, alhai_design_system - النماذج، الترجمة، نظام التصميم</p>
+        </div>
+      </div>
+      <div class="layer-arrow fade-in">&#8595;</div>
+      <div class="layer-row fade-in">
+        <div class="layer-num l1">1</div>
+        <div class="layer-content">
+          <h4>طبقة البيانات - Data</h4>
+          <p>alhai_database, alhai_sync - قاعدة البيانات، المزامنة، وحدات الوصول</p>
+        </div>
+      </div>
+      <div class="layer-arrow fade-in">&#8595;</div>
+      <div class="layer-row fade-in">
+        <div class="layer-num l2">2</div>
+        <div class="layer-content">
+          <h4>طبقة الخدمات - Services</h4>
+          <p>alhai_auth, alhai_reports, alhai_zatca, alhai_notifications - المصادقة، التقارير، الفوترة</p>
+        </div>
+      </div>
+      <div class="layer-arrow fade-in">&#8595;</div>
+      <div class="layer-row fade-in">
+        <div class="layer-num l3">3</div>
+        <div class="layer-content">
+          <h4>طبقة الواجهة - UI</h4>
+          <p>alhai_shared_ui, alhai_pos, alhai_ai - الواجهات المشتركة، نقطة البيع، الذكاء الاصطناعي</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PACKAGE CARDS -->
+  <section class="alt fade-in">
+    <div class="section-header">
+      <span class="tag tag-green">الحزم</span>
+      <h2>بطاقات الحزم</h2>
+      <p>12 حزمة متخصصة - التفاصيل الكاملة لكل حزمة</p>
+    </div>
+    <div class="grid grid-2">
+
+      <!-- alhai_core -->
+      <div class="pkg-card fade-in">
+        <div class="card-top purple"></div>
+        <div class="pkg-name">alhai_core</div>
+        <div class="pkg-desc">النواة المركزية - النماذج، المستودعات، الخدمات الأساسية، الأدوات المساعدة</div>
+        <div class="pkg-stats">
+          <span class="pkg-stat"><strong>305</strong> ملف</span>
+          <span class="pkg-stat"><strong>43K</strong> سطر</span>
+          <span class="pkg-stat"><strong>30+</strong> نموذج</span>
+        </div>
+        <div class="pkg-exports">
+          <strong>الصادرات:</strong> 26 repository, 4 services, 30+ models (Product, Sale, Customer, Order, Invoice...)
+        </div>
+      </div>
+
+      <!-- alhai_database -->
+      <div class="pkg-card fade-in">
+        <div class="card-top purple"></div>
+        <div class="pkg-name">alhai_database</div>
+        <div class="pkg-desc">طبقة قاعدة البيانات - Drift ORM، وحدات الوصول، الترحيلات، الاستعلامات</div>
+        <div class="pkg-stats">
+          <span class="pkg-stat"><strong>122</strong> ملف</span>
+          <span class="pkg-stat"><strong>78K</strong> سطر</span>
+          <span class="pkg-stat"><strong>40</strong> جدول</span>
+        </div>
+        <div class="pkg-exports">
+          <strong>الصادرات:</strong> 28+ DAOs, 14 migrations, AppDatabase, sync adapters
+        </div>
+      </div>
+
+      <!-- alhai_shared_ui -->
+      <div class="pkg-card fade-in">
+        <div class="card-top green"></div>
+        <div class="pkg-name">alhai_shared_ui</div>
+        <div class="pkg-desc">واجهات مشتركة - ودجات قابلة لإعادة الاستخدام، مزودات البيانات، الشاشات المشتركة</div>
+        <div class="pkg-stats">
+          <span class="pkg-stat"><strong>127</strong> ملف</span>
+          <span class="pkg-stat"><strong>50K</strong> سطر</span>
+          <span class="pkg-stat"><strong>28</strong> ودجت</span>
+        </div>
+        <div class="pkg-exports">
+          <strong>الصادرات:</strong> 16 providers, 25 screens, 28 widgets (SearchBar, ProductCard, DatePicker...)
+        </div>
+      </div>
+
+      <!-- alhai_ai -->
+      <div class="pkg-card fade-in">
+        <div class="card-top green"></div>
+        <div class="pkg-name">alhai_ai</div>
+        <div class="pkg-desc">منظومة الذكاء الاصطناعي - 15 وحدة ذكية، واجهات تفاعلية، تحليلات متقدمة</div>
+        <div class="pkg-stats">
+          <span class="pkg-stat"><strong>88</strong> ملف</span>
+          <span class="pkg-stat"><strong>30K</strong> سطر</span>
+          <span class="pkg-stat"><strong>15</strong> وحدة AI</span>
+        </div>
+        <div class="pkg-exports">
+          <strong>الصادرات:</strong> 40 widgets, AI services, prompt builders, chart generators
+        </div>
+      </div>
+
+      <!-- alhai_pos -->
+      <div class="pkg-card fade-in">
+        <div class="card-top red"></div>
+        <div class="pkg-name">alhai_pos</div>
+        <div class="pkg-desc">نقطة البيع - شاشات الكاشير، عمليات البيع، الدفع المتعدد، الباركود</div>
+        <div class="pkg-stats">
+          <span class="pkg-stat"><strong>64</strong> ملف</span>
+          <span class="pkg-stat"><strong>26K</strong> سطر</span>
+          <span class="pkg-stat"><strong>14</strong> شاشة</span>
+        </div>
+        <div class="pkg-exports">
+          <strong>الصادرات:</strong> 9 services, POS screens, payment handlers, receipt builder
+        </div>
+      </div>
+
+      <!-- alhai_auth -->
+      <div class="pkg-card fade-in">
+        <div class="card-top red"></div>
+        <div class="pkg-name">alhai_auth</div>
+        <div class="pkg-desc">المصادقة والأمان - تسجيل الدخول، OTP، الجلسات، حماية المسارات</div>
+        <div class="pkg-stats">
+          <span class="pkg-stat"><strong>26</strong> ملف</span>
+          <span class="pkg-stat"><strong>12K</strong> سطر</span>
+          <span class="pkg-stat"><strong>4</strong> شاشات</span>
+        </div>
+        <div class="pkg-exports">
+          <strong>الصادرات:</strong> 6 security services, AuthGuard, SessionManager, OtpScreen
+        </div>
+      </div>
+
+      <!-- alhai_design_system -->
+      <div class="pkg-card fade-in">
+        <div class="card-top yellow"></div>
+        <div class="pkg-name">alhai_design_system</div>
+        <div class="pkg-desc">نظام التصميم - الألوان، الخطوط، المكونات الأساسية، الثيمات</div>
+        <div class="pkg-stats">
+          <span class="pkg-stat"><strong>56</strong> ملف</span>
+          <span class="pkg-stat"><strong>14K</strong> سطر</span>
+          <span class="pkg-stat"><strong>30+</strong> مكون</span>
+        </div>
+        <div class="pkg-exports">
+          <strong>الصادرات:</strong> 8 design tokens, AppTheme, AppColors, AppTypography, 30+ components
+        </div>
+      </div>
+
+      <!-- alhai_sync -->
+      <div class="pkg-card fade-in">
+        <div class="card-top yellow"></div>
+        <div class="pkg-name">alhai_sync</div>
+        <div class="pkg-desc">نظام المزامنة - مزامنة ثنائية الاتجاه، حل النزاعات، العمل بدون اتصال</div>
+        <div class="pkg-stats">
+          <span class="pkg-stat"><strong>23</strong> ملف</span>
+          <span class="pkg-stat"><strong>7K</strong> سطر</span>
+          <span class="pkg-stat"><strong>4</strong> استراتيجيات</span>
+        </div>
+        <div class="pkg-exports">
+          <strong>الصادرات:</strong> 4 sync strategies (full, delta, conflict-resolve, queue-based)
+        </div>
+      </div>
+
+      <!-- alhai_reports -->
+      <div class="pkg-card fade-in">
+        <div class="card-top purple"></div>
+        <div class="pkg-name">alhai_reports</div>
+        <div class="pkg-desc">التقارير - 19 نوع تقرير، رسوم بيانية، تصدير PDF/Excel</div>
+        <div class="pkg-stats">
+          <span class="pkg-stat"><strong>24</strong> ملف</span>
+          <span class="pkg-stat"><strong>11K</strong> سطر</span>
+          <span class="pkg-stat"><strong>19</strong> نوع تقرير</span>
+        </div>
+        <div class="pkg-exports">
+          <strong>الصادرات:</strong> SalesReport, InventoryReport, ProfitReport, TaxReport, ExportService...
+        </div>
+      </div>
+
+      <!-- alhai_zatca -->
+      <div class="pkg-card fade-in">
+        <div class="card-top green"></div>
+        <div class="pkg-name">alhai_zatca</div>
+        <div class="pkg-desc">الفوترة الإلكترونية - توافق كامل مع المرحلة الثانية من هيئة الزكاة والضريبة</div>
+        <div class="pkg-stats">
+          <span class="pkg-stat"><strong>37</strong> ملف</span>
+          <span class="pkg-stat"><strong>7.5K</strong> سطر</span>
+          <span class="pkg-stat"><strong>Phase 2</strong> كامل</span>
+        </div>
+        <div class="pkg-exports">
+          <strong>الصادرات:</strong> QR generator, XML builder, hash signing, ZATCA validator, e-invoice
+        </div>
+      </div>
+
+      <!-- alhai_l10n -->
+      <div class="pkg-card fade-in">
+        <div class="card-top red"></div>
+        <div class="pkg-name">alhai_l10n</div>
+        <div class="pkg-desc">الترجمة والتعريب - 7 لغات مدعومة، 4620 مفتاح ترجمة</div>
+        <div class="pkg-stats">
+          <span class="pkg-stat"><strong>10</strong> ملف</span>
+          <span class="pkg-stat"><strong>7</strong> لغات</span>
+          <span class="pkg-stat"><strong>4,620</strong> مفتاح</span>
+        </div>
+        <div class="pkg-exports">
+          <strong>الصادرات:</strong> ar, en, fr, tr, ur, id, ms - AppLocalizations, locale delegates
+        </div>
+      </div>
+
+      <!-- alhai_notifications -->
+      <div class="pkg-card fade-in">
+        <div class="card-top yellow"></div>
+        <div class="pkg-name">alhai_notifications</div>
+        <div class="pkg-desc">الإشعارات - مدمجة ضمن shared_ui - إشعارات محلية وبعيدة</div>
+        <div class="pkg-stats">
+          <span class="pkg-stat">ضمن <strong>shared_ui</strong></span>
+          <span class="pkg-stat"><strong>Push</strong> + Local</span>
+        </div>
+        <div class="pkg-exports">
+          <strong>الصادرات:</strong> NotificationService, FCM handler, local notifications, badge manager
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- DEPENDENCY MATRIX -->
+  <section class="fade-in">
+    <div class="section-header">
+      <span class="tag tag-red">التبعيات</span>
+      <h2>خريطة التبعيات</h2>
+      <p>من يعتمد على من - مصفوفة التبعيات بين الحزم</p>
+    </div>
+    <div class="dep-matrix">
+      <table>
+        <thead>
+          <tr>
+            <th>الحزمة</th>
+            <th>core</th>
+            <th>db</th>
+            <th>l10n</th>
+            <th>design</th>
+            <th>sync</th>
+            <th>auth</th>
+            <th>reports</th>
+            <th>zatca</th>
+            <th>shared_ui</th>
+            <th>pos</th>
+            <th>ai</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>alhai_core</td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+          </tr>
+          <tr>
+            <td>alhai_database</td>
+            <td><span class="dep-dot yes">&#10003;</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+          </tr>
+          <tr>
+            <td>alhai_l10n</td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+          </tr>
+          <tr>
+            <td>alhai_design_system</td>
+            <td><span class="dep-dot yes">&#10003;</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot yes">&#10003;</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+          </tr>
+          <tr>
+            <td>alhai_sync</td>
+            <td><span class="dep-dot yes">&#10003;</span></td>
+            <td><span class="dep-dot yes">&#10003;</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+          </tr>
+          <tr>
+            <td>alhai_auth</td>
+            <td><span class="dep-dot yes">&#10003;</span></td>
+            <td><span class="dep-dot yes">&#10003;</span></td>
+            <td><span class="dep-dot yes">&#10003;</span></td>
+            <td><span class="dep-dot yes">&#10003;</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+          </tr>
+          <tr>
+            <td>alhai_reports</td>
+            <td><span class="dep-dot yes">&#10003;</span></td>
+            <td><span class="dep-dot yes">&#10003;</span></td>
+            <td><span class="dep-dot yes">&#10003;</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+          </tr>
+          <tr>
+            <td>alhai_zatca</td>
+            <td><span class="dep-dot yes">&#10003;</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+          </tr>
+          <tr>
+            <td>alhai_shared_ui</td>
+            <td><span class="dep-dot yes">&#10003;</span></td>
+            <td><span class="dep-dot yes">&#10003;</span></td>
+            <td><span class="dep-dot yes">&#10003;</span></td>
+            <td><span class="dep-dot yes">&#10003;</span></td>
+            <td><span class="dep-dot yes">&#10003;</span></td>
+            <td><span class="dep-dot yes">&#10003;</span></td>
+            <td><span class="dep-dot yes">&#10003;</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+          </tr>
+          <tr>
+            <td>alhai_pos</td>
+            <td><span class="dep-dot yes">&#10003;</span></td>
+            <td><span class="dep-dot yes">&#10003;</span></td>
+            <td><span class="dep-dot yes">&#10003;</span></td>
+            <td><span class="dep-dot yes">&#10003;</span></td>
+            <td><span class="dep-dot yes">&#10003;</span></td>
+            <td><span class="dep-dot yes">&#10003;</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot yes">&#10003;</span></td>
+            <td><span class="dep-dot yes">&#10003;</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+          </tr>
+          <tr>
+            <td>alhai_ai</td>
+            <td><span class="dep-dot yes">&#10003;</span></td>
+            <td><span class="dep-dot yes">&#10003;</span></td>
+            <td><span class="dep-dot yes">&#10003;</span></td>
+            <td><span class="dep-dot yes">&#10003;</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot yes">&#10003;</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot yes">&#10003;</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- AI FEATURES -->
+  <section class="alt fade-in">
+    <div class="section-header">
+      <span class="tag tag-green">الذكاء الاصطناعي</span>
+      <h2>15 ميزة ذكاء اصطناعي</h2>
+      <p>خدمات AI متكاملة تعمل عبر جميع التطبيقات</p>
+    </div>
+    <div style="max-width:800px;margin:0 auto">
+      <div class="ai-feature fade-in">
+        <div class="ai-num">1</div>
+        <div class="ai-info">
+          <h4>المساعد الذكي (AI Chat)</h4>
+          <p>محادثة تفاعلية مع مساعد ذكي يفهم سياق المتجر ويجيب على الأسئلة التجارية</p>
+        </div>
+      </div>
+      <div class="ai-feature fade-in">
+        <div class="ai-num">2</div>
+        <div class="ai-info">
+          <h4>تحليل المبيعات الذكي</h4>
+          <p>تحليل أنماط المبيعات، التنبؤ بالطلب، اكتشاف الاتجاهات الموسمية</p>
+        </div>
+      </div>
+      <div class="ai-feature fade-in">
+        <div class="ai-num">3</div>
+        <div class="ai-info">
+          <h4>توصيات المنتجات</h4>
+          <p>اقتراحات ذكية للمنتجات الأكثر مبيعا معا، عروض مخصصة للعملاء</p>
+        </div>
+      </div>
+      <div class="ai-feature fade-in">
+        <div class="ai-num">4</div>
+        <div class="ai-info">
+          <h4>التنبؤ بالمخزون</h4>
+          <p>توقع نفاد المخزون، اقتراح كميات إعادة الطلب المثالية</p>
+        </div>
+      </div>
+      <div class="ai-feature fade-in">
+        <div class="ai-num">5</div>
+        <div class="ai-info">
+          <h4>تحليل العملاء</h4>
+          <p>تصنيف العملاء، تحليل السلوك الشرائي، كشف العملاء المعرضين للانسحاب</p>
+        </div>
+      </div>
+      <div class="ai-feature fade-in">
+        <div class="ai-num">6</div>
+        <div class="ai-info">
+          <h4>التسعير الذكي</h4>
+          <p>اقتراحات أسعار مبنية على المنافسة والطلب وهامش الربح المستهدف</p>
+        </div>
+      </div>
+      <div class="ai-feature fade-in">
+        <div class="ai-num">7</div>
+        <div class="ai-info">
+          <h4>كشف الاحتيال</h4>
+          <p>اكتشاف العمليات المشبوهة، التنبيه على أنماط غير طبيعية في المبيعات</p>
+        </div>
+      </div>
+      <div class="ai-feature fade-in">
+        <div class="ai-num">8</div>
+        <div class="ai-info">
+          <h4>تحسين العروض</h4>
+          <p>اقتراح توقيت وقيمة العروض الترويجية لتحقيق أقصى عائد</p>
+        </div>
+      </div>
+      <div class="ai-feature fade-in">
+        <div class="ai-num">9</div>
+        <div class="ai-info">
+          <h4>تقارير ذكية</h4>
+          <p>توليد ملخصات تنفيذية تلقائية، رؤى قابلة للتنفيذ من البيانات</p>
+        </div>
+      </div>
+      <div class="ai-feature fade-in">
+        <div class="ai-num">10</div>
+        <div class="ai-info">
+          <h4>التعرف على الباركود بالكاميرا</h4>
+          <p>مسح ذكي بالكاميرا مع التعرف التلقائي على نوع الباركود والمنتج</p>
+        </div>
+      </div>
+      <div class="ai-feature fade-in">
+        <div class="ai-num">11</div>
+        <div class="ai-info">
+          <h4>تحليل المصروفات</h4>
+          <p>تصنيف المصروفات تلقائيا، كشف الهدر، اقتراحات لتقليل التكاليف</p>
+        </div>
+      </div>
+      <div class="ai-feature fade-in">
+        <div class="ai-num">12</div>
+        <div class="ai-info">
+          <h4>جدولة الورديات الذكية</h4>
+          <p>اقتراح جداول الموظفين بناء على أنماط الازدحام وأداء الكاشير</p>
+        </div>
+      </div>
+      <div class="ai-feature fade-in">
+        <div class="ai-num">13</div>
+        <div class="ai-info">
+          <h4>تحليل صلاحية المنتجات</h4>
+          <p>تنبيهات ذكية للمنتجات القريبة من انتهاء الصلاحية مع اقتراحات تسعير</p>
+        </div>
+      </div>
+      <div class="ai-feature fade-in">
+        <div class="ai-num">14</div>
+        <div class="ai-info">
+          <h4>تحسين تجربة العميل</h4>
+          <p>تحليل رضا العملاء، اقتراحات لتحسين الخدمة، برامج ولاء ذكية</p>
+        </div>
+      </div>
+      <div class="ai-feature fade-in">
+        <div class="ai-num">15</div>
+        <div class="ai-info">
+          <h4>التلخيص اليومي</h4>
+          <p>ملخص ذكي نهاية اليوم: أبرز الأحداث، المشكلات، التوصيات للغد</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <div class="footer fade-in">
+    <p>نظام الحي لنقاط البيع - Alhai POS Platform</p>
+    <p style="margin-top:4px;font-size:12px;color:var(--text-muted)">وثائق الحزم المشتركة | أبريل 2026</p>
+  </div>
+
+</div>
+
+<script>
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => entry.target.classList.add('visible'), i * 80);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

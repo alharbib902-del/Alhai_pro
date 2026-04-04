@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تطبيق العملاء - منصة الحي</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="index.html" class="nav-logo">منصة الحي</a>
+  <div class="nav-links">
+    <a href="index.html">الرئيسية</a>
+    <a href="customer.html" class="active">العملاء</a>
+    <a href="driver.html">السائق</a>
+    <a href="admin-lite.html">الإدارة المبسطة</a>
+  </div>
+  <button class="nav-toggle" onclick="document.querySelector('.nav-mobile').classList.toggle('open')">&#9776;</button>
+</nav>
+<div class="nav-mobile">
+  <a href="index.html">الرئيسية</a>
+  <a href="customer.html" class="active">العملاء</a>
+  <a href="driver.html">السائق</a>
+  <a href="admin-lite.html">الإدارة المبسطة</a>
+</div>
+
+<!-- HERO -->
+<div class="page-hero">
+  <div class="icon">&#x1F6D2;</div>
+  <h1>تطبيق العملاء</h1>
+  <p>تطبيق طلب وشراء إلكتروني - تصفح، سلة، دفع، تتبع مباشر</p>
+  <div class="stats-bar">
+    <div class="stat-item"><div class="stat-number">51</div><div class="stat-label">ملف</div></div>
+    <div class="stat-item"><div class="stat-number">6,210</div><div class="stat-label">سطر</div></div>
+    <div class="stat-item"><div class="stat-number">16</div><div class="stat-label">شاشة</div></div>
+    <div class="stat-item"><div class="stat-number">4</div><div class="stat-label">اختبار</div></div>
+  </div>
+</div>
+
+<!-- الشاشات -->
+<section class="alt">
+  <div class="container">
+    <div class="section-header">
+      <span class="tag tag-blue">الشاشات</span>
+      <h2>16 شاشة</h2>
+      <p>جميع شاشات تطبيق العملاء من البداية إلى تتبع الطلب</p>
+    </div>
+    <div class="grid grid-4">
+      <div class="card fade-in">
+        <div class="card-top purple"></div>
+        <div class="card-icon">&#x1F4A5;</div>
+        <h4>Splash</h4>
+        <p>شاشة البداية والتحميل</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top purple"></div>
+        <div class="card-icon">&#x1F511;</div>
+        <h4>Login</h4>
+        <p>تسجيل الدخول برقم الهاتف</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top purple"></div>
+        <div class="card-icon">&#x1F522;</div>
+        <h4>OTP</h4>
+        <p>التحقق برمز OTP</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top green"></div>
+        <div class="card-icon">&#x1F3E0;</div>
+        <h4>Home</h4>
+        <p>الصفحة الرئيسية والمتاجر القريبة</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top green"></div>
+        <div class="card-icon">&#x1F4E6;</div>
+        <h4>Catalog</h4>
+        <p>عرض المنتجات حسب الأصناف</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top green"></div>
+        <div class="card-icon">&#x1F50D;</div>
+        <h4>ProductDetail</h4>
+        <p>تفاصيل المنتج والسعر</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top green"></div>
+        <div class="card-icon">&#x1F50E;</div>
+        <h4>Search</h4>
+        <p>البحث في المنتجات</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top yellow"></div>
+        <div class="card-icon">&#x1F6D2;</div>
+        <h4>Cart</h4>
+        <p>سلة المشتريات</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top yellow"></div>
+        <div class="card-icon">&#x1F4B3;</div>
+        <h4>Checkout</h4>
+        <p>إتمام الدفع والطلب</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top red"></div>
+        <div class="card-icon">&#x1F4CB;</div>
+        <h4>Orders</h4>
+        <p>قائمة الطلبات السابقة</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top red"></div>
+        <div class="card-icon">&#x1F4C4;</div>
+        <h4>OrderDetail</h4>
+        <p>تفاصيل الطلب والعناصر</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top red"></div>
+        <div class="card-icon">&#x1F4CD;</div>
+        <h4>OrderTracking</h4>
+        <p>تتبع حالة الطلب مباشرة</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top purple"></div>
+        <div class="card-icon">&#x1F464;</div>
+        <h4>Profile</h4>
+        <p>الملف الشخصي للعميل</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top purple"></div>
+        <div class="card-icon">&#x1F4CD;</div>
+        <h4>Addresses</h4>
+        <p>إدارة عناوين التوصيل</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top purple"></div>
+        <div class="card-icon">&#x2699;&#xFE0F;</div>
+        <h4>Settings</h4>
+        <p>إعدادات التطبيق</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top green"></div>
+        <div class="card-icon">&#x1F4CD;</div>
+        <h4>NearbyStores</h4>
+        <p>المتاجر القريبة على الخريطة</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- رحلة العميل -->
+<section>
+  <div class="container">
+    <div class="section-header">
+      <span class="tag tag-green">رحلة العميل</span>
+      <h2>رحلة العميل الكاملة</h2>
+      <p>من فتح التطبيق حتى استلام الطلب</p>
+    </div>
+    <div class="journey">
+      <div class="journey-step fade-in">
+        <h4>فتح التطبيق <span class="step-tag">Splash</span></h4>
+        <p>شاشة البداية مع تحميل البيانات الأساسية</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>تسجيل الدخول بالهاتف <span class="step-tag">Login</span></h4>
+        <p>إدخال رقم الهاتف للمصادقة</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>تصفح المتاجر القريبة <span class="step-tag">Home</span></h4>
+        <p>عرض المتاجر المتاحة حسب الموقع الجغرافي</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>اختيار متجر <span class="step-tag">NearbyStores</span></h4>
+        <p>اختيار المتجر المطلوب من القائمة أو الخريطة</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>تصفح المنتجات <span class="step-tag">Catalog</span></h4>
+        <p>عرض جميع المنتجات المتاحة في المتجر</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>تصفية بالأصناف <span class="step-tag">Catalog</span></h4>
+        <p>تضييق النتائج حسب الفئة أو الصنف</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>عرض تفاصيل المنتج <span class="step-tag">ProductDetail</span></h4>
+        <p>مشاهدة السعر والوصف والصور</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>إضافة للسلة <span class="step-tag">Cart</span></h4>
+        <p>إضافة المنتج إلى سلة المشتريات</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>عرض السلة <span class="step-tag">Cart</span></h4>
+        <p>مراجعة محتويات السلة والإجمالي</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>تعديل الكميات <span class="step-tag">Cart</span></h4>
+        <p>تعديل أو حذف العناصر من السلة</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>الدفع <span class="step-tag">Checkout</span></h4>
+        <p>الانتقال لإتمام عملية الشراء</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>اختيار العنوان <span class="step-tag">Addresses</span></h4>
+        <p>تحديد عنوان التوصيل أو إضافة عنوان جديد</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>اختيار طريقة الدفع <span class="step-tag">Checkout</span></h4>
+        <p>نقدي أو بطاقة أو محفظة إلكترونية</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>تأكيد الطلب <span class="step-tag">Checkout</span></h4>
+        <p>مراجعة نهائية وتأكيد الطلب</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>متابعة حالة الطلب <span class="step-tag">Orders</span></h4>
+        <p>عرض حالة الطلب (قيد التحضير، جاري التوصيل...)</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>تتبع السائق على الخريطة <span class="step-tag">OrderTracking</span></h4>
+        <p>تتبع مباشر لموقع السائق على Google Maps</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>استلام الطلب <span class="step-tag">OrderDetail</span></h4>
+        <p>تأكيد الاستلام وتقييم التجربة</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- الميزات -->
+<section class="alt">
+  <div class="container">
+    <div class="section-header">
+      <span class="tag tag-yellow">الميزات</span>
+      <h2>الميزات الرئيسية</h2>
+      <p>التقنيات والخصائص المميزة في تطبيق العملاء</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="card fade-in">
+        <div class="card-top purple"></div>
+        <h3>مصادقة OTP</h3>
+        <p>تسجيل دخول آمن برمز تحقق يُرسل عبر SMS إلى رقم الهاتف</p>
+        <div class="tags"><span class="ftag">Firebase Auth</span><span class="ftag">SMS</span></div>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top green"></div>
+        <h3>متاجر بالموقع GPS</h3>
+        <p>اكتشاف المتاجر القريبة تلقائيا بناء على الموقع الجغرافي الحالي</p>
+        <div class="tags"><span class="ftag green">Geolocation</span><span class="ftag green">GPS</span></div>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top yellow"></div>
+        <h3>تصفية بالأصناف</h3>
+        <p>فلترة المنتجات حسب الفئة والصنف لسهولة التصفح</p>
+        <div class="tags"><span class="ftag">Categories</span><span class="ftag">Filter</span></div>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top red"></div>
+        <h3>سلة متجر واحد</h3>
+        <p>السلة مرتبطة بمتجر واحد لضمان دقة الطلب والتوصيل</p>
+        <div class="tags"><span class="ftag">Single Store</span><span class="ftag">Cart Logic</span></div>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top purple"></div>
+        <h3>إدارة العناوين</h3>
+        <p>إضافة وتعديل وحذف عناوين التوصيل مع تحديد العنوان الافتراضي</p>
+        <div class="tags"><span class="ftag">CRUD</span><span class="ftag">Default Address</span></div>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top green"></div>
+        <h3>تتبع مباشر</h3>
+        <p>تتبع حالة الطلب لحظة بلحظة مع تحديث الموقع على الخريطة</p>
+        <div class="tags"><span class="ftag green">Real-time</span><span class="ftag green">WebSocket</span></div>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top yellow"></div>
+        <h3>خرائط Google Maps</h3>
+        <p>عرض موقع المتجر والسائق والعميل على خريطة تفاعلية</p>
+        <div class="tags"><span class="ftag">Google Maps SDK</span></div>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top red"></div>
+        <h3>دردشة مع السائق</h3>
+        <p>محادثة مباشرة مع السائق أثناء التوصيل للتنسيق</p>
+        <div class="tags"><span class="ftag">Chat</span><span class="ftag">Real-time</span></div>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top purple"></div>
+        <h3>وعي بدون إنترنت</h3>
+        <p>إشعار المستخدم عند انقطاع الاتصال مع حفظ البيانات محليا</p>
+        <div class="tags"><span class="ftag">Offline Aware</span><span class="ftag">Local Cache</span></div>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top green"></div>
+        <h3>تحميل مؤجل</h3>
+        <p>تحميل البيانات عند الحاجة فقط لتسريع الأداء وتقليل الاستهلاك</p>
+        <div class="tags"><span class="ftag green">Lazy Loading</span><span class="ftag green">Performance</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- الاختبارات المطلوبة -->
+<section>
+  <div class="container">
+    <div class="section-header">
+      <span class="tag tag-red">الاختبارات</span>
+      <h2>الاختبارات المطلوبة</h2>
+      <p>4 اختبارات أساسية مطلوبة لضمان جودة التطبيق</p>
+    </div>
+    <div class="grid grid-2">
+      <div class="card fade-in">
+        <div class="card-top red"></div>
+        <h3>اختبار تسجيل الدخول</h3>
+        <p>التحقق من تدفق OTP كاملا: إدخال الرقم، استلام الرمز، التحقق، الدخول للتطبيق</p>
+        <div class="tags"><span class="ftag">Auth Flow</span><span class="ftag">OTP</span></div>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top red"></div>
+        <h3>اختبار السلة والدفع</h3>
+        <p>إضافة منتجات، تعديل الكميات، الحذف، إتمام الدفع بنجاح</p>
+        <div class="tags"><span class="ftag">Cart</span><span class="ftag">Checkout</span></div>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top red"></div>
+        <h3>اختبار تتبع الطلب</h3>
+        <p>تأكيد تحديث حالة الطلب وعرض موقع السائق على الخريطة</p>
+        <div class="tags"><span class="ftag">Tracking</span><span class="ftag">Maps</span></div>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top red"></div>
+        <h3>اختبار المتاجر القريبة</h3>
+        <p>التحقق من اكتشاف المتاجر بالموقع وعرضها بالترتيب الصحيح</p>
+        <div class="tags"><span class="ftag">GPS</span><span class="ftag">Stores</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- التوافق مع قاعدة البيانات -->
+<section class="alt">
+  <div class="container">
+    <div class="section-header">
+      <span class="tag tag-green">قاعدة البيانات</span>
+      <h2>التوافق مع قاعدة البيانات</h2>
+      <p>الجداول الرئيسية التي يتعامل معها تطبيق العملاء</p>
+    </div>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>الجدول</th>
+            <th>الوصف</th>
+            <th>العمليات</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>orders</td>
+            <td>الطلبات - إنشاء وتتبع حالة الطلبات</td>
+            <td>إنشاء، قراءة، تتبع الحالة</td>
+          </tr>
+          <tr>
+            <td>order_items</td>
+            <td>عناصر الطلب - المنتجات داخل كل طلب</td>
+            <td>إنشاء، قراءة</td>
+          </tr>
+          <tr>
+            <td>customers</td>
+            <td>العملاء - بيانات الملف الشخصي والعناوين</td>
+            <td>قراءة، تعديل</td>
+          </tr>
+          <tr>
+            <td>products</td>
+            <td>المنتجات - التصفح والبحث والتفاصيل</td>
+            <td>قراءة، بحث</td>
+          </tr>
+          <tr>
+            <td>stores</td>
+            <td>المتاجر - العرض والبحث بالموقع</td>
+            <td>قراءة، بحث بالموقع</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <p>منصة الحي &mdash; تطبيق العملاء &copy; 2026</p>
+</footer>
+
+<script>
+// Scroll animations
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }});
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>

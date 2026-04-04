@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>المشرف العام | Alhai Super Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>body{font-family:'Tajawal',sans-serif}</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <span class="nav-logo">Alhai</span>
+  <div class="nav-links">
+    <a href="super-admin.html" class="active">المشرف العام</a>
+    <a href="distributor.html">بوابة الموزعين</a>
+    <a href="database.html">قاعدة البيانات</a>
+    <a href="packages.html">الحزم المشتركة</a>
+  </div>
+  <button class="nav-toggle" onclick="document.querySelector('.nav-mobile').classList.toggle('open')">&#9776;</button>
+</nav>
+<div class="nav-mobile">
+  <a href="super-admin.html" class="active">المشرف العام</a>
+  <a href="distributor.html">بوابة الموزعين</a>
+  <a href="database.html">قاعدة البيانات</a>
+  <a href="packages.html">الحزم المشتركة</a>
+</div>
+
+<!-- HERO -->
+<div class="page-hero">
+  <div class="icon fade-in">&#127760;</div>
+  <h1 class="fade-in">المشرف العام</h1>
+  <p class="fade-in">إدارة المنصة - المتاجر، الاشتراكات، المستخدمين، التحليلات</p>
+  <div class="stats-bar fade-in">
+    <div class="stat-item"><div class="stat-number">37</div><div class="stat-label">ملف</div></div>
+    <div class="stat-item"><div class="stat-number">9,014</div><div class="stat-label">سطر</div></div>
+    <div class="stat-item"><div class="stat-number">14</div><div class="stat-label">شاشة</div></div>
+    <div class="stat-item"><div class="stat-number">4</div><div class="stat-label">اختبار</div></div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- SCREENS LIST -->
+  <section class="fade-in">
+    <div class="section-header">
+      <span class="tag tag-blue">الشاشات</span>
+      <h2>شاشات المشرف العام</h2>
+      <p>14 شاشة لإدارة المنصة بالكامل</p>
+    </div>
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="card-top purple"></div>
+        <h4>&#128202; لوحة المعلومات الرئيسية</h4>
+        <p>إحصائيات المنصة الشاملة - عدد المتاجر، الاشتراكات النشطة، الإيرادات، المستخدمين الجدد</p>
+        <div class="tags"><span class="ftag">Dashboard</span><span class="ftag">KPIs</span><span class="ftag">Charts</span></div>
+      </div>
+      <div class="card">
+        <div class="card-top purple"></div>
+        <h4>&#127978; إدارة المتاجر</h4>
+        <p>عرض جميع المتاجر، تفعيل/تعطيل، البحث والتصفية، تفاصيل كل متجر</p>
+        <div class="tags"><span class="ftag">Stores</span><span class="ftag">CRUD</span><span class="ftag">Filter</span></div>
+      </div>
+      <div class="card">
+        <div class="card-top purple"></div>
+        <h4>&#128101; إدارة المستخدمين</h4>
+        <p>قائمة المستخدمين، الأدوار، الصلاحيات، تعطيل الحسابات، سجل النشاط</p>
+        <div class="tags"><span class="ftag">Users</span><span class="ftag">Roles</span><span class="ftag">Activity Log</span></div>
+      </div>
+      <div class="card">
+        <div class="card-top green"></div>
+        <h4>&#128179; إدارة الاشتراكات</h4>
+        <p>الخطط المتاحة، تتبع الاشتراكات، التجديد، الإلغاء، الفترات التجريبية</p>
+        <div class="tags"><span class="ftag">Subscriptions</span><span class="ftag">Plans</span><span class="ftag">Billing</span></div>
+      </div>
+      <div class="card">
+        <div class="card-top green"></div>
+        <h4>&#127968; إدارة المنظمات</h4>
+        <p>المنظمات المسجلة، الربط بالمتاجر، إعدادات كل منظمة</p>
+        <div class="tags"><span class="ftag">Organizations</span><span class="ftag">Multi-tenant</span></div>
+      </div>
+      <div class="card">
+        <div class="card-top red"></div>
+        <h4>&#128200; التحليلات والتقارير</h4>
+        <p>تقارير الأداء، رسوم بيانية تفاعلية، مقارنات شهرية، تحليل الإيرادات</p>
+        <div class="tags"><span class="ftag">Analytics</span><span class="ftag">Charts</span><span class="ftag">Export</span></div>
+      </div>
+      <div class="card">
+        <div class="card-top red"></div>
+        <h4>&#128276; الإشعارات المركزية</h4>
+        <p>إرسال إشعارات جماعية، قوالب الرسائل، سجل الإشعارات المرسلة</p>
+        <div class="tags"><span class="ftag">Push</span><span class="ftag">Templates</span><span class="ftag">Broadcast</span></div>
+      </div>
+      <div class="card">
+        <div class="card-top yellow"></div>
+        <h4>&#9881;&#65039; الإعدادات العامة</h4>
+        <p>إعدادات المنصة، تكوين الدفع، حدود الاستخدام، إعدادات ZATCA</p>
+        <div class="tags"><span class="ftag">Settings</span><span class="ftag">Config</span><span class="ftag">ZATCA</span></div>
+      </div>
+      <div class="card">
+        <div class="card-top yellow"></div>
+        <h4>&#128220; سجل التدقيق</h4>
+        <p>تتبع جميع العمليات الحساسة، من قام بماذا ومتى</p>
+        <div class="tags"><span class="ftag">Audit Log</span><span class="ftag">Security</span></div>
+      </div>
+      <div class="card">
+        <div class="card-top purple"></div>
+        <h4>&#128272; إدارة الصلاحيات</h4>
+        <p>تعريف الأدوار، منح/سحب الصلاحيات، سياسات الوصول</p>
+        <div class="tags"><span class="ftag">Permissions</span><span class="ftag">RBAC</span></div>
+      </div>
+      <div class="card">
+        <div class="card-top green"></div>
+        <h4>&#128176; إدارة المدفوعات</h4>
+        <p>تتبع المدفوعات، الفواتير، التحصيل، التقارير المالية</p>
+        <div class="tags"><span class="ftag">Payments</span><span class="ftag">Invoices</span></div>
+      </div>
+      <div class="card">
+        <div class="card-top green"></div>
+        <h4>&#128230; إدارة الحزم والتحديثات</h4>
+        <p>إصدارات التطبيقات، التحديثات القسرية، ملاحظات الإصدار</p>
+        <div class="tags"><span class="ftag">Releases</span><span class="ftag">Versions</span></div>
+      </div>
+      <div class="card">
+        <div class="card-top red"></div>
+        <h4>&#128736;&#65039; أدوات الدعم الفني</h4>
+        <p>تذاكر الدعم، الدردشة الحية، قاعدة المعرفة</p>
+        <div class="tags"><span class="ftag">Support</span><span class="ftag">Tickets</span></div>
+      </div>
+      <div class="card">
+        <div class="card-top yellow"></div>
+        <h4>&#128640; مراقبة الأداء</h4>
+        <p>حالة الخوادم، أوقات الاستجابة، مراقبة الأخطاء، التنبيهات</p>
+        <div class="tags"><span class="ftag">Monitoring</span><span class="ftag">Alerts</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PLATFORM ADMIN JOURNEY -->
+  <section class="alt fade-in">
+    <div class="section-header">
+      <span class="tag tag-green">رحلة المشرف</span>
+      <h2>رحلة إدارة المنصة</h2>
+      <p>المسار الكامل لمشرف المنصة من تسجيل الدخول حتى التقارير</p>
+    </div>
+    <div class="journey">
+      <div class="journey-step fade-in">
+        <h4>تسجيل الدخول الآمن <span class="step-tag">Auth</span></h4>
+        <p>مصادقة متعددة العوامل، التحقق من صلاحيات المشرف العام</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>لوحة المعلومات <span class="step-tag">Dashboard</span></h4>
+        <p>عرض فوري لإحصائيات المنصة: متاجر نشطة، اشتراكات، إيرادات اليوم</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>مراجعة المتاجر الجديدة <span class="step-tag">Review</span></h4>
+        <p>الموافقة على طلبات التسجيل الجديدة، التحقق من البيانات</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>إدارة الاشتراكات <span class="step-tag">Billing</span></h4>
+        <p>مراجعة الاشتراكات المنتهية، تفعيل الفترات التجريبية، تعديل الخطط</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>مراقبة الأداء <span class="step-tag">Monitor</span></h4>
+        <p>التحقق من حالة الخوادم، مراجعة التنبيهات، معالجة الأخطاء</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>التحليلات والتقارير <span class="step-tag">Analytics</span></h4>
+        <p>مراجعة تقارير الإيرادات الشهرية، تحليل النمو، تصدير التقارير</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>الدعم الفني <span class="step-tag">Support</span></h4>
+        <p>الرد على تذاكر الدعم، حل المشكلات التقنية، تصعيد الحالات الحرجة</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>سجل التدقيق <span class="step-tag">Audit</span></h4>
+        <p>مراجعة سجل العمليات الحساسة، التحقق من الأمان، كشف الأنشطة المشبوهة</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTS NEEDED -->
+  <section class="fade-in">
+    <div class="section-header">
+      <span class="tag tag-red">الاختبارات</span>
+      <h2>الاختبارات المطلوبة</h2>
+      <p>4 اختبارات موجودة - قائمة بالاختبارات الإضافية المطلوبة</p>
+    </div>
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="card-top green"></div>
+        <h4>&#9989; الاختبارات الموجودة</h4>
+        <div class="tags" style="margin-top:12px">
+          <span class="ftag green">تسجيل الدخول</span>
+          <span class="ftag green">عرض المتاجر</span>
+          <span class="ftag green">تفاصيل المتجر</span>
+          <span class="ftag green">لوحة المعلومات</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-top red"></div>
+        <h4>&#9888;&#65039; اختبارات مطلوبة</h4>
+        <div class="tags" style="margin-top:12px">
+          <span class="ftag">إدارة الاشتراكات</span>
+          <span class="ftag">إنشاء منظمة</span>
+          <span class="ftag">تعطيل مستخدم</span>
+          <span class="ftag">تعديل الصلاحيات</span>
+          <span class="ftag">سجل التدقيق</span>
+          <span class="ftag">إرسال إشعار جماعي</span>
+          <span class="ftag">تصدير التقارير</span>
+          <span class="ftag">إدارة الخطط</span>
+          <span class="ftag">مراقبة الأداء</span>
+          <span class="ftag">البحث والتصفية</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DATABASE TABLES USED -->
+  <section class="alt fade-in">
+    <div class="section-header">
+      <span class="tag tag-yellow">قاعدة البيانات</span>
+      <h2>جداول قاعدة البيانات المستخدمة</h2>
+      <p>الجداول التي يتعامل معها تطبيق المشرف العام</p>
+    </div>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>الجدول</th>
+            <th>الوصف</th>
+            <th>العمليات</th>
+            <th>الحالة</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>organizations</td><td>المنظمات المسجلة في المنصة</td><td>قراءة / كتابة / تعديل</td><td><span class="ftag green">نشط</span></td></tr>
+          <tr><td>stores</td><td>المتاجر التابعة للمنظمات</td><td>قراءة / كتابة / تعديل</td><td><span class="ftag green">نشط</span></td></tr>
+          <tr><td>users</td><td>جميع مستخدمي المنصة</td><td>قراءة / كتابة / تعديل</td><td><span class="ftag green">نشط</span></td></tr>
+          <tr><td>org_members</td><td>أعضاء المنظمات وأدوارهم</td><td>قراءة / كتابة</td><td><span class="ftag green">نشط</span></td></tr>
+          <tr><td>subscriptions</td><td>اشتراكات المنظمات في الخطط</td><td>قراءة / كتابة / تعديل</td><td><span class="ftag green">نشط</span></td></tr>
+          <tr><td>audit_log</td><td>سجل التدقيق للعمليات الحساسة</td><td>قراءة / كتابة</td><td><span class="ftag green">نشط</span></td></tr>
+          <tr><td>notifications</td><td>الإشعارات المركزية</td><td>قراءة / كتابة</td><td><span class="ftag green">نشط</span></td></tr>
+          <tr><td>settings</td><td>إعدادات المنصة العامة</td><td>قراءة / تعديل</td><td><span class="ftag green">نشط</span></td></tr>
+          <tr><td>sales</td><td>بيانات المبيعات للتحليلات</td><td>قراءة فقط</td><td><span class="ftag">قراءة</span></td></tr>
+          <tr><td>daily_summaries</td><td>الملخصات اليومية للتقارير</td><td>قراءة فقط</td><td><span class="ftag">قراءة</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <div class="footer fade-in">
+    <p>نظام الحي لنقاط البيع - Alhai POS Platform</p>
+    <p style="margin-top:4px;font-size:12px;color:var(--text-muted)">وثائق المشرف العام | أبريل 2026</p>
+  </div>
+
+</div>
+
+<script>
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => entry.target.classList.add('visible'), i * 80);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

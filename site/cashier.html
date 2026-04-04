@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>نقطة البيع (الكاشير) - Alhai POS</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-logo">Alhai POS</div>
+  <div class="nav-links">
+    <a href="index.html">الرئيسية</a>
+    <a href="cashier.html" class="active">الكاشير</a>
+    <a href="manager.html">المدير</a>
+    <a href="distributor.html">الموزع</a>
+    <a href="superadmin.html">المشرف العام</a>
+    <a href="packages.html">الحزم المشتركة</a>
+    <a href="database.html">قاعدة البيانات</a>
+    <a href="architecture.html">البنية التقنية</a>
+  </div>
+  <button class="nav-toggle" onclick="document.querySelector('.nav-mobile').classList.toggle('open')">&#9776;</button>
+</nav>
+<div class="nav-mobile">
+  <a href="index.html">الرئيسية</a>
+  <a href="cashier.html" class="active">الكاشير</a>
+  <a href="manager.html">المدير</a>
+  <a href="distributor.html">الموزع</a>
+  <a href="superadmin.html">المشرف العام</a>
+  <a href="packages.html">الحزم المشتركة</a>
+  <a href="database.html">قاعدة البيانات</a>
+  <a href="architecture.html">البنية التقنية</a>
+</div>
+
+<!-- HERO -->
+<div class="page-hero">
+  <div class="icon">💳</div>
+  <h1>نقطة البيع (الكاشير)</h1>
+  <p>نظام كاشير متقدم يعمل بدون إنترنت مع طباعة حرارية ودعم زاتكا</p>
+  <div class="stats-bar">
+    <div class="stat-item fade-in">
+      <div class="stat-number">76</div>
+      <div class="stat-label">ملف</div>
+    </div>
+    <div class="stat-item fade-in">
+      <div class="stat-number">37,271</div>
+      <div class="stat-label">سطر</div>
+    </div>
+    <div class="stat-item fade-in">
+      <div class="stat-number">46</div>
+      <div class="stat-label">شاشة</div>
+    </div>
+    <div class="stat-item fade-in">
+      <div class="stat-number">55</div>
+      <div class="stat-label">اختبار</div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION: الشاشات -->
+<section id="screens">
+  <div class="container">
+    <div class="section-header fade-in">
+      <span class="tag tag-blue">الشاشات</span>
+      <h2>46 شاشة متكاملة</h2>
+      <p>تغطي كل العمليات من نقطة البيع إلى التقارير والإعدادات</p>
+    </div>
+
+    <!-- 1. نقطة البيع -->
+    <h3 class="fade-in" style="color:var(--primary);margin-bottom:16px;font-size:1.1rem">1. نقطة البيع</h3>
+    <div class="grid grid-3 fade-in" style="margin-bottom:40px">
+      <div class="card">
+        <div class="card-top purple"></div>
+        <div class="card-icon">🖥️</div>
+        <h4>POS</h4>
+        <p>الشاشة الرئيسية لنقطة البيع - مسح الباركود، بحث المنتجات، إضافة للسلة، تطبيق الخصومات</p>
+        <div class="tags"><span class="ftag">شاشة رئيسية</span></div>
+      </div>
+      <div class="card">
+        <div class="card-top purple"></div>
+        <div class="card-icon">⚡</div>
+        <h4>QuickSale</h4>
+        <p>بيع سريع بدون اختيار منتج - إدخال المبلغ مباشرة للعمليات البسيطة</p>
+        <div class="tags"><span class="ftag">بيع سريع</span></div>
+      </div>
+      <div class="card">
+        <div class="card-top purple"></div>
+        <div class="card-icon">⭐</div>
+        <h4>Favorites</h4>
+        <p>المنتجات المفضلة للوصول السريع - يمكن للكاشير تخصيص قائمته</p>
+        <div class="tags"><span class="ftag">تخصيص</span></div>
+      </div>
+      <div class="card">
+        <div class="card-top purple"></div>
+        <div class="card-icon">⏸️</div>
+        <h4>HoldInvoices</h4>
+        <p>تعليق الفاتورة الحالية لخدمة عميل آخر ثم استئنافها لاحقا</p>
+        <div class="tags"><span class="ftag">تعليق/استئناف</span></div>
+      </div>
+      <div class="card">
+        <div class="card-top purple"></div>
+        <div class="card-icon">📷</div>
+        <h4>BarcodeScanner</h4>
+        <p>ماسح باركود متقدم بالكاميرا - يدعم أنواع متعددة من الباركود</p>
+        <div class="tags"><span class="ftag">كاميرا</span></div>
+      </div>
+      <div class="card">
+        <div class="card-top purple"></div>
+        <div class="card-icon">💰</div>
+        <h4>CashDrawer</h4>
+        <p>إدارة درج النقدية - الرصيد الحالي، إدخال/إخراج نقدي مع السبب</p>
+        <div class="tags"><span class="ftag">صندوق</span></div>
+      </div>
+    </div>
+
+    <!-- 2. المبيعات -->
+    <h3 class="fade-in" style="color:var(--primary);margin-bottom:16px;font-size:1.1rem">2. المبيعات</h3>
+    <div class="grid grid-4 fade-in" style="margin-bottom:40px">
+      <div class="card">
+        <div class="card-top green"></div>
+        <div class="card-icon">📋</div>
+        <h4>SalesHistory</h4>
+        <p>سجل كامل للمبيعات مع فلترة بالتاريخ والحالة والموظف</p>
+      </div>
+      <div class="card">
+        <div class="card-top green"></div>
+        <div class="card-icon">🔍</div>
+        <h4>SaleDetail</h4>
+        <p>تفاصيل عملية بيع محددة - المنتجات، المبالغ، طريقة الدفع</p>
+      </div>
+      <div class="card">
+        <div class="card-top green"></div>
+        <div class="card-icon">🖨️</div>
+        <h4>ReprintReceipt</h4>
+        <p>إعادة طباعة إيصال سابق - بحث بالرقم أو التاريخ</p>
+      </div>
+      <div class="card">
+        <div class="card-top green"></div>
+        <div class="card-icon">🔄</div>
+        <h4>Exchange</h4>
+        <p>تبادل - إرجاع منتج وشراء آخر في عملية واحدة مع حساب الفرق</p>
+      </div>
+    </div>
+
+    <!-- 3. المدفوعات -->
+    <h3 class="fade-in" style="color:var(--primary);margin-bottom:16px;font-size:1.1rem">3. المدفوعات</h3>
+    <div class="grid grid-3 fade-in" style="margin-bottom:40px">
+      <div class="card">
+        <div class="card-top yellow"></div>
+        <div class="card-icon">✂️</div>
+        <h4>SplitReceipt</h4>
+        <p>تقسيم الفاتورة بين عدة طرق دفع أو عدة أشخاص</p>
+      </div>
+      <div class="card">
+        <div class="card-top yellow"></div>
+        <div class="card-icon">📊</div>
+        <h4>PaymentHistory</h4>
+        <p>سجل المدفوعات - تتبع كل عملية دفع بالتاريخ والطريقة</p>
+      </div>
+      <div class="card">
+        <div class="card-top yellow"></div>
+        <div class="card-icon">💸</div>
+        <h4>SplitRefund</h4>
+        <p>استرجاع مبلغ مقسم - إرجاع المبلغ لكل طريقة دفع بشكل منفصل</p>
+      </div>
+    </div>
+
+    <!-- 4. المرتجعات -->
+    <h3 class="fade-in" style="color:var(--primary);margin-bottom:16px;font-size:1.1rem">4. المرتجعات</h3>
+    <div class="grid grid-3 fade-in" style="margin-bottom:40px">
+      <div class="card">
+        <div class="card-top red"></div>
+        <div class="card-icon">↩️</div>
+        <h4>Returns</h4>
+        <p>شاشة المرتجعات الرئيسية - البحث عن الفاتورة واختيار المنتجات المراد إرجاعها</p>
+      </div>
+      <div class="card">
+        <div class="card-top red"></div>
+        <div class="card-icon">📝</div>
+        <h4>RefundRequest</h4>
+        <p>طلب استرداد - تحديد المنتجات والكميات وطريقة الاسترداد</p>
+      </div>
+      <div class="card">
+        <div class="card-top red"></div>
+        <div class="card-icon">❓</div>
+        <h4>RefundReason</h4>
+        <p>اختيار سبب المرتجع من قائمة محددة أو إدخال سبب مخصص</p>
+      </div>
+      <div class="card">
+        <div class="card-top red"></div>
+        <div class="card-icon">🧾</div>
+        <h4>RefundReceipt</h4>
+        <p>إيصال المرتجع - طباعة تأكيد الاسترداد مع تفاصيل العملية</p>
+      </div>
+      <div class="card">
+        <div class="card-top red"></div>
+        <div class="card-icon">🚫</div>
+        <h4>VoidTransaction</h4>
+        <p>إلغاء عملية كاملة - يتطلب صلاحية وسبب الإلغاء</p>
+      </div>
+    </div>
+
+    <!-- 5. العملاء -->
+    <h3 class="fade-in" style="color:var(--primary);margin-bottom:16px;font-size:1.1rem">5. العملاء</h3>
+    <div class="grid grid-3 fade-in" style="margin-bottom:40px">
+      <div class="card">
+        <div class="card-top purple"></div>
+        <div class="card-icon">👥</div>
+        <h4>CustomerAccounts</h4>
+        <p>حسابات العملاء - عرض الأرصدة والمعاملات وتاريخ التعامل</p>
+      </div>
+      <div class="card">
+        <div class="card-top purple"></div>
+        <div class="card-icon">📒</div>
+        <h4>CustomerLedger</h4>
+        <p>دفتر حساب العميل - كشف حساب تفصيلي بكل الحركات المالية</p>
+      </div>
+      <div class="card">
+        <div class="card-top purple"></div>
+        <div class="card-icon">➕</div>
+        <h4>NewTransaction</h4>
+        <p>معاملة جديدة على حساب العميل - دفع أو تحصيل</p>
+      </div>
+      <div class="card">
+        <div class="card-top purple"></div>
+        <div class="card-icon">📈</div>
+        <h4>ApplyInterest</h4>
+        <p>تطبيق فائدة على الرصيد المتأخر حسب سياسة المتجر</p>
+      </div>
+      <div class="card">
+        <div class="card-top purple"></div>
+        <div class="card-icon">📄</div>
+        <h4>CreateInvoice</h4>
+        <p>إنشاء فاتورة آجلة على حساب العميل</p>
+      </div>
+    </div>
+
+    <!-- 6. المنتجات -->
+    <h3 class="fade-in" style="color:var(--primary);margin-bottom:16px;font-size:1.1rem">6. المنتجات</h3>
+    <div class="grid grid-3 fade-in" style="margin-bottom:40px">
+      <div class="card">
+        <div class="card-top green"></div>
+        <div class="card-icon">🏷️</div>
+        <h4>QuickAddProduct</h4>
+        <p>إضافة منتج سريعة - الاسم، السعر، الباركود، الفئة</p>
+      </div>
+      <div class="card">
+        <div class="card-top green"></div>
+        <div class="card-icon">✏️</div>
+        <h4>EditPrice</h4>
+        <p>تعديل سعر منتج مباشرة من الكاشير (يتطلب صلاحية)</p>
+      </div>
+      <div class="card">
+        <div class="card-top green"></div>
+        <div class="card-icon">📊</div>
+        <h4>PrintBarcode</h4>
+        <p>طباعة ملصقات باركود للمنتجات - دعم أحجام متعددة</p>
+      </div>
+      <div class="card">
+        <div class="card-top green"></div>
+        <div class="card-icon">📁</div>
+        <h4>Categories</h4>
+        <p>تصفح المنتجات حسب الفئات - عرض شجري متعدد المستويات</p>
+      </div>
+      <div class="card">
+        <div class="card-top green"></div>
+        <div class="card-icon">🏷️</div>
+        <h4>PriceLabels</h4>
+        <p>طباعة بطاقات الأسعار للعرض على الرفوف</p>
+      </div>
+    </div>
+
+    <!-- 7. المخزون -->
+    <h3 class="fade-in" style="color:var(--primary);margin-bottom:16px;font-size:1.1rem">7. المخزون</h3>
+    <div class="grid grid-3 fade-in" style="margin-bottom:40px">
+      <div class="card">
+        <div class="card-top yellow"></div>
+        <div class="card-icon">📦</div>
+        <h4>EditInventory</h4>
+        <p>تعديل كمية المخزون لمنتج محدد مع سبب التعديل</p>
+      </div>
+      <div class="card">
+        <div class="card-top yellow"></div>
+        <div class="card-icon">📥</div>
+        <h4>AddInventory</h4>
+        <p>إضافة مخزون وارد - تسجيل الكمية والمورد والتكلفة</p>
+      </div>
+      <div class="card">
+        <div class="card-top yellow"></div>
+        <div class="card-icon">📤</div>
+        <h4>RemoveInventory</h4>
+        <p>إخراج مخزون - تسجيل الكمية المخرجة مع السبب</p>
+      </div>
+      <div class="card">
+        <div class="card-top yellow"></div>
+        <div class="card-icon">🔀</div>
+        <h4>TransferInventory</h4>
+        <p>تحويل مخزون بين الفروع - تحديد الفرع المستلم والكمية</p>
+      </div>
+      <div class="card">
+        <div class="card-top yellow"></div>
+        <div class="card-icon">📋</div>
+        <h4>StockTake</h4>
+        <p>جرد المخزون - مسح المنتجات وتسجيل الكميات الفعلية ومقارنتها</p>
+      </div>
+      <div class="card">
+        <div class="card-top yellow"></div>
+        <div class="card-icon">🗑️</div>
+        <h4>Wastage</h4>
+        <p>تسجيل التالف والهالك مع السبب والكمية</p>
+      </div>
+    </div>
+
+    <!-- 8. العروض -->
+    <h3 class="fade-in" style="color:var(--primary);margin-bottom:16px;font-size:1.1rem">8. العروض</h3>
+    <div class="grid grid-3 fade-in" style="margin-bottom:40px">
+      <div class="card">
+        <div class="card-top green"></div>
+        <div class="card-icon">🎉</div>
+        <h4>ActiveOffers</h4>
+        <p>العروض النشطة حاليا - عرض التفاصيل والشروط وتاريخ الانتهاء</p>
+      </div>
+      <div class="card">
+        <div class="card-top green"></div>
+        <div class="card-icon">🎟️</div>
+        <h4>CouponCode</h4>
+        <p>إدخال كوبون خصم - التحقق من الصلاحية وتطبيق الخصم تلقائيا</p>
+      </div>
+      <div class="card">
+        <div class="card-top green"></div>
+        <div class="card-icon">🎁</div>
+        <h4>BundleDeals</h4>
+        <p>عروض الحزم - اشتري مجموعة بسعر مخفض</p>
+      </div>
+    </div>
+
+    <!-- 9. الورديات -->
+    <h3 class="fade-in" style="color:var(--primary);margin-bottom:16px;font-size:1.1rem">9. الورديات</h3>
+    <div class="grid grid-4 fade-in" style="margin-bottom:40px">
+      <div class="card">
+        <div class="card-top purple"></div>
+        <div class="card-icon">🔓</div>
+        <h4>ShiftOpen</h4>
+        <p>فتح وردية جديدة - إدخال المبلغ الافتتاحي في الصندوق</p>
+      </div>
+      <div class="card">
+        <div class="card-top purple"></div>
+        <div class="card-icon">🔒</div>
+        <h4>ShiftClose</h4>
+        <p>إغلاق الوردية - المبلغ الختامي وحساب الفرق والملخص</p>
+      </div>
+      <div class="card">
+        <div class="card-top purple"></div>
+        <div class="card-icon">📊</div>
+        <h4>DailySummary</h4>
+        <p>ملخص يومي شامل - المبيعات، المرتجعات، طرق الدفع، الصافي</p>
+      </div>
+      <div class="card">
+        <div class="card-top purple"></div>
+        <div class="card-icon">💵</div>
+        <h4>CashInOut</h4>
+        <p>إدخال أو إخراج نقدي من الصندوق مع تسجيل السبب</p>
+      </div>
+    </div>
+
+    <!-- 10. التقارير -->
+    <h3 class="fade-in" style="color:var(--primary);margin-bottom:16px;font-size:1.1rem">10. التقارير</h3>
+    <div class="grid grid-4 fade-in" style="margin-bottom:40px">
+      <div class="card">
+        <div class="card-top green"></div>
+        <div class="card-icon">💳</div>
+        <h4>PaymentReports</h4>
+        <p>تقارير المدفوعات - تفصيل حسب طريقة الدفع والفترة</p>
+      </div>
+      <div class="card">
+        <div class="card-top green"></div>
+        <div class="card-icon">🔧</div>
+        <h4>CustomReport</h4>
+        <p>تقرير مخصص - اختيار الحقول والفلاتر وتصدير البيانات</p>
+      </div>
+      <div class="card">
+        <div class="card-top green"></div>
+        <div class="card-icon">📈</div>
+        <h4>6 تقارير مشتركة</h4>
+        <p>تقارير المبيعات، المنتجات، الفئات، الموظفين، الضرائب، الأرباح (من الحزم المشتركة)</p>
+        <div class="tags"><span class="ftag green">shared-reports</span></div>
+      </div>
+    </div>
+
+    <!-- 11. الإعدادات -->
+    <h3 class="fade-in" style="color:var(--primary);margin-bottom:16px;font-size:1.1rem">11. الإعدادات</h3>
+    <div class="grid grid-4 fade-in" style="margin-bottom:40px">
+      <div class="card">
+        <div class="card-top yellow"></div>
+        <h4>اعدادات المتجر</h4>
+        <p>اسم المتجر، العنوان، الرقم الضريبي، الشعار</p>
+        <div class="tags"><span class="ftag">متجر</span></div>
+      </div>
+      <div class="card">
+        <div class="card-top yellow"></div>
+        <h4>اعدادات الإيصال</h4>
+        <p>تخصيص الإيصال - الرأس، التذييل، الشعار، حجم الخط</p>
+        <div class="tags"><span class="ftag">متجر</span></div>
+      </div>
+      <div class="card">
+        <div class="card-top yellow"></div>
+        <h4>اعدادات الضريبة</h4>
+        <p>نسبة الضريبة، شامل/غير شامل، رقم زاتكا</p>
+        <div class="tags"><span class="ftag">متجر</span></div>
+      </div>
+      <div class="card">
+        <div class="card-top yellow"></div>
+        <h4>اعدادات الطابعة</h4>
+        <p>نوع الطابعة، حجم الورق، الطباعة التلقائية</p>
+        <div class="tags"><span class="ftag">أجهزة</span></div>
+      </div>
+      <div class="card">
+        <div class="card-top yellow"></div>
+        <h4>اعدادات الباركود</h4>
+        <p>نوع الباركود، الكاميرا المفضلة، الصوت</p>
+        <div class="tags"><span class="ftag">أجهزة</span></div>
+      </div>
+      <div class="card">
+        <div class="card-top yellow"></div>
+        <h4>اعدادات الشاشة</h4>
+        <p>الوضع الداكن/الفاتح، حجم الخط، تخطيط الشبكة</p>
+        <div class="tags"><span class="ftag">أجهزة</span></div>
+      </div>
+      <div class="card">
+        <div class="card-top yellow"></div>
+        <h4>الملف الشخصي</h4>
+        <p>بيانات الموظف، تغيير كلمة المرور، اللغة</p>
+        <div class="tags"><span class="ftag">حساب</span></div>
+      </div>
+      <div class="card">
+        <div class="card-top yellow"></div>
+        <h4>الصلاحيات</h4>
+        <p>عرض الصلاحيات الممنوحة والقيود على العمليات</p>
+        <div class="tags"><span class="ftag">حساب</span></div>
+      </div>
+      <div class="card">
+        <div class="card-top yellow"></div>
+        <h4>الإشعارات</h4>
+        <p>إعدادات التنبيهات - المخزون المنخفض، نهاية الوردية</p>
+        <div class="tags"><span class="ftag">حساب</span></div>
+      </div>
+      <div class="card">
+        <div class="card-top yellow"></div>
+        <h4>المزامنة</h4>
+        <p>حالة المزامنة، المزامنة اليدوية، سجل العمليات</p>
+        <div class="tags"><span class="ftag">نظام</span></div>
+      </div>
+      <div class="card">
+        <div class="card-top yellow"></div>
+        <h4>النسخ الاحتياطي</h4>
+        <p>النسخ التلقائي والاسترجاع من نسخة سابقة</p>
+        <div class="tags"><span class="ftag">نظام</span></div>
+      </div>
+      <div class="card">
+        <div class="card-top yellow"></div>
+        <h4>حول التطبيق</h4>
+        <p>رقم الإصدار، التراخيص، الدعم الفني</p>
+        <div class="tags"><span class="ftag">نظام</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION: خدمات الطباعة -->
+<section class="alt" id="printing">
+  <div class="container">
+    <div class="section-header fade-in">
+      <span class="tag tag-green">الطباعة</span>
+      <h2>خدمات الطباعة</h2>
+      <p>دعم متقدم لثلاثة أنواع من الطابعات الحرارية مع طابور طباعة ذكي</p>
+    </div>
+
+    <div class="grid grid-3 fade-in">
+      <div class="card">
+        <div class="card-top purple"></div>
+        <div class="card-icon">📶</div>
+        <h3>بلوتوث</h3>
+        <p>طابعة حرارية عبر البلوتوث - مثالية للتنقل بين الأقسام. البحث التلقائي عن الأجهزة القريبة، إعادة الاتصال التلقائي عند الانقطاع.</p>
+        <div class="tags">
+          <span class="ftag">Bluetooth Thermal</span>
+          <span class="ftag">اقتران تلقائي</span>
+          <span class="ftag">محمول</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-top green"></div>
+        <div class="card-icon">🌐</div>
+        <h3>شبكة TCP</h3>
+        <p>طابعة حرارية عبر الشبكة المحلية - أداء عالي وموثوقية ممتازة. الاتصال عبر IP وPort، مناسبة للمتاجر الكبيرة.</p>
+        <div class="tags">
+          <span class="ftag">Network Thermal</span>
+          <span class="ftag">TCP/IP</span>
+          <span class="ftag">سرعة عالية</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-top yellow"></div>
+        <div class="card-icon">📱</div>
+        <h3>طابعة Sunmi المدمجة</h3>
+        <p>طابعة مدمجة في أجهزة Sunmi - لا تحتاج إعداد. تعمل مباشرة مع الجهاز بدون اقتران أو إعدادات شبكة.</p>
+        <div class="tags">
+          <span class="ftag">Sunmi Built-in</span>
+          <span class="ftag">بدون إعداد</span>
+          <span class="ftag">مدمج</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card fade-in" style="margin-top:28px;max-width:900px;margin-left:auto;margin-right:auto">
+      <h3 style="margin-bottom:16px">مميزات نظام الطباعة</h3>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>الميزة</th>
+              <th>التفاصيل</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>الطباعة التلقائية</td>
+              <td>طباعة الإيصال تلقائيا بعد إتمام عملية البيع بدون تدخل الكاشير</td>
+            </tr>
+            <tr>
+              <td>طابور الطباعة</td>
+              <td>Print Queue ذكي - تخزين الإيصالات في طابور عند انشغال الطابعة وطباعتها بالترتيب</td>
+            </tr>
+            <tr>
+              <td>إعادة المحاولة</td>
+              <td>3 محاولات تلقائية عند فشل الطباعة مع إشعار للكاشير في حالة الفشل النهائي</td>
+            </tr>
+            <tr>
+              <td>أحجام الورق</td>
+              <td>دعم حجمين: 58mm (للطابعات المحمولة) و 80mm (للطابعات المكتبية)</td>
+            </tr>
+            <tr>
+              <td>محتوى الإيصال</td>
+              <td>شعار المتجر، QR Code زاتكا، المنتجات، الضريبة، الإجمالي، طريقة الدفع</td>
+            </tr>
+            <tr>
+              <td>إعادة الطباعة</td>
+              <td>إعادة طباعة أي إيصال سابق من سجل المبيعات</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION: نظام العمل بدون إنترنت -->
+<section id="offline">
+  <div class="container">
+    <div class="section-header fade-in">
+      <span class="tag tag-red">بدون إنترنت</span>
+      <h2>نظام العمل بدون إنترنت</h2>
+      <p>استمرارية كاملة في العمل حتى عند انقطاع الاتصال بالسيرفر</p>
+    </div>
+
+    <div class="grid grid-2 fade-in">
+      <div class="card">
+        <div class="card-top purple"></div>
+        <div class="card-icon">🔐</div>
+        <h3>طابور عمليات مشفر</h3>
+        <p>كل العمليات التي تتم أثناء عدم الاتصال تُخزن في طابور مشفر محليا على الجهاز. التشفير يحمي البيانات المالية الحساسة. الطابور يحتفظ بترتيب العمليات الزمني لضمان التناسق عند المزامنة.</p>
+        <div class="meta">
+          <span>التشفير: <strong>AES-256</strong></span>
+          <span>التخزين: <strong>SQLite</strong></span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-top green"></div>
+        <div class="card-icon">📡</div>
+        <h3>مراقبة الاتصال</h3>
+        <p>نظام مراقبة مستمر لحالة الاتصال بالسيرفر. يكتشف الانقطاع فورا وينتقل للوضع غير المتصل بسلاسة بدون أي تأثير على تجربة الكاشير. مؤشر مرئي واضح لحالة الاتصال.</p>
+        <div class="meta">
+          <span>الفحص: <strong>كل 5 ثوان</strong></span>
+          <span>الانتقال: <strong>فوري</strong></span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-top yellow"></div>
+        <div class="card-icon">🔄</div>
+        <h3>مزامنة تلقائية عند العودة</h3>
+        <p>عند استعادة الاتصال بالسيرفر، تبدأ المزامنة التلقائية فورا. العمليات تُرسل بالترتيب الزمني الصحيح. شريط تقدم يوضح حالة المزامنة للكاشير. لا حاجة لأي تدخل يدوي.</p>
+        <div class="meta">
+          <span>البدء: <strong>تلقائي</strong></span>
+          <span>الترتيب: <strong>FIFO</strong></span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-top red"></div>
+        <div class="card-icon">⚠️</div>
+        <h3>كشف التعارضات</h3>
+        <p>نظام ذكي لكشف التعارضات عند المزامنة - مثلا لو تم تعديل نفس المنتج من جهازين مختلفين. التعارضات تُعرض للمدير لاتخاذ القرار المناسب مع معلومات كاملة عن كل نسخة.</p>
+        <div class="meta">
+          <span>الحل: <strong>يدوي + تلقائي</strong></span>
+          <span>الأولوية: <strong>الأحدث</strong></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION: رحلة موظف المبيعات -->
+<section class="alt" id="journey">
+  <div class="container">
+    <div class="section-header fade-in">
+      <span class="tag tag-blue">رحلة الكاشير</span>
+      <h2>رحلة موظف المبيعات (الكاشير)</h2>
+      <p>يوم كامل من فتح الوردية حتى إغلاقها</p>
+    </div>
+
+    <div class="journey fade-in">
+      <div class="journey-step">
+        <h4>1. فتح التطبيق وتسجيل الدخول <span class="step-tag">بداية اليوم</span></h4>
+        <p>يفتح الكاشير التطبيق ويسجل دخوله باسم المستخدم وكلمة المرور. النظام يتحقق من الصلاحيات ويحمل بيانات المتجر.</p>
+      </div>
+      <div class="journey-step">
+        <h4>2. اختيار المتجر <span class="step-tag">إعداد</span></h4>
+        <p>إذا كان الموظف مرتبطا بأكثر من فرع، يختار المتجر الذي سيعمل فيه اليوم.</p>
+      </div>
+      <div class="journey-step">
+        <h4>3. فتح الوردية وإدخال المبلغ الافتتاحي <span class="step-tag">وردية</span></h4>
+        <p>يفتح وردية جديدة ويدخل المبلغ النقدي الموجود في الصندوق كمبلغ افتتاحي. هذا المبلغ سيُستخدم لحساب الفرق عند الإغلاق.</p>
+      </div>
+      <div class="journey-step">
+        <h4>4. شاشة نقطة البيع - مسح الباركود وبحث المنتجات <span class="step-tag">بيع</span></h4>
+        <p>يبدأ البيع بمسح باركود المنتجات أو البحث بالاسم. المنتجات تُضاف تلقائيا للسلة مع الأسعار والضريبة.</p>
+      </div>
+      <div class="journey-step">
+        <h4>5. إضافة للسلة وتعديل الكميات <span class="step-tag">سلة</span></h4>
+        <p>تعديل الكميات، حذف منتج، تطبيق خصم على منتج أو الفاتورة كاملة. الإجمالي يتحدث تلقائيا.</p>
+      </div>
+      <div class="journey-step">
+        <h4>6. الدفع - نقدي / بطاقة / آجل / مقسم <span class="step-tag">دفع</span></h4>
+        <p>اختيار طريقة الدفع. للنقدي يُدخل المبلغ المدفوع ويحسب النظام الباقي. يمكن تقسيم الدفع بين عدة طرق.</p>
+      </div>
+      <div class="journey-step">
+        <h4>7. طباعة الإيصال تلقائيا <span class="step-tag">طباعة</span></h4>
+        <p>بعد إتمام الدفع، يُطبع الإيصال تلقائيا مع QR Code زاتكا والتفاصيل الكاملة.</p>
+      </div>
+      <div class="journey-step">
+        <h4>8. تعليق فاتورة - خدمة عميل آخر - استئناف <span class="step-tag">تعليق</span></h4>
+        <p>إذا احتاج العميل وقتا، يعلق الكاشير الفاتورة ويبدأ فاتورة جديدة. يمكنه العودة لأي فاتورة معلقة لاحقا.</p>
+      </div>
+      <div class="journey-step">
+        <h4>9. عمل مرتجع - اختيار السبب - طباعة إيصال المرتجع <span class="step-tag">مرتجع</span></h4>
+        <p>البحث عن الفاتورة الأصلية، اختيار المنتجات المراد إرجاعها، تحديد السبب، إتمام المرتجع وطباعة إيصال الاسترداد.</p>
+      </div>
+      <div class="journey-step">
+        <h4>10. تبادل - إرجاع + شراء جديد في عملية واحدة <span class="step-tag">تبادل</span></h4>
+        <p>إرجاع منتج واستبداله بآخر في عملية واحدة. النظام يحسب الفرق تلقائيا - يدفع العميل الفرق أو يسترد المبلغ الزائد.</p>
+      </div>
+      <div class="journey-step">
+        <h4>11. إدخال / إخراج نقدي من الصندوق <span class="step-tag">صندوق</span></h4>
+        <p>تسجيل أي إدخال أو إخراج نقدي مع السبب - مثل إيداع في البنك أو مصروفات المتجر.</p>
+      </div>
+      <div class="journey-step">
+        <h4>12. ملخص يومي <span class="step-tag">تقرير</span></h4>
+        <p>مراجعة ملخص اليوم - إجمالي المبيعات، عدد العمليات، المرتجعات، صافي المبيعات حسب طريقة الدفع.</p>
+      </div>
+      <div class="journey-step">
+        <h4>13. إغلاق الوردية - المبلغ الختامي - الفرق <span class="step-tag">نهاية اليوم</span></h4>
+        <p>يعد الكاشير النقدية ويدخل المبلغ الختامي. النظام يقارن مع المبلغ المتوقع ويحسب الفرق (عجز أو فائض). تُغلق الوردية ويُحفظ التقرير.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION: طرق الدفع المدعومة -->
+<section id="payments">
+  <div class="container">
+    <div class="section-header fade-in">
+      <span class="tag tag-yellow">المدفوعات</span>
+      <h2>طرق الدفع المدعومة</h2>
+      <p>دعم شامل لجميع طرق الدفع المستخدمة في السوق السعودي</p>
+    </div>
+
+    <div class="grid grid-3 fade-in">
+      <div class="card">
+        <div class="card-top green"></div>
+        <div class="card-icon">💵</div>
+        <h3>نقدي</h3>
+        <p>الدفع النقدي مع حساب تلقائي للباقي. إدخال المبلغ المدفوع ويظهر المبلغ المتبقي فورا. يُسجل في تقرير الصندوق.</p>
+      </div>
+      <div class="card">
+        <div class="card-top purple"></div>
+        <div class="card-icon">💳</div>
+        <h3>بطاقة (مدى / فيزا / ماستركارد)</h3>
+        <p>قبول بطاقات الدفع الإلكتروني - مدى، فيزا، ماستركارد. تسجيل آخر 4 أرقام ورقم المرجع للمطابقة.</p>
+      </div>
+      <div class="card">
+        <div class="card-top yellow"></div>
+        <div class="card-icon">📒</div>
+        <h3>آجل (على الحساب)</h3>
+        <p>البيع الآجل على حساب العميل. يُضاف المبلغ لرصيد العميل ويظهر في كشف حسابه. يتطلب اختيار عميل مسجل.</p>
+      </div>
+      <div class="card">
+        <div class="card-top red"></div>
+        <div class="card-icon">✂️</div>
+        <h3>مقسم (Split)</h3>
+        <p>تقسيم الفاتورة بين طريقتي دفع أو أكثر - مثلا جزء نقدي وجزء بطاقة. مرونة كاملة في توزيع المبلغ.</p>
+      </div>
+      <div class="card">
+        <div class="card-top green"></div>
+        <div class="card-icon">📱</div>
+        <h3>STC Pay</h3>
+        <p>الدفع عبر محفظة STC Pay. تسجيل رقم المرجع للمطابقة مع كشف الحساب.</p>
+      </div>
+      <div class="card">
+        <div class="card-top purple"></div>
+        <div class="card-icon">🎟️</div>
+        <h3>كوبون</h3>
+        <p>استخدام كوبون خصم كطريقة دفع جزئية أو كاملة. التحقق التلقائي من صلاحية الكوبون والرصيد المتبقي.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION: الاختبارات المطلوبة -->
+<section class="alt" id="tests">
+  <div class="container">
+    <div class="section-header fade-in">
+      <span class="tag tag-red">الاختبارات</span>
+      <h2>الاختبارات المطلوبة</h2>
+      <p>55 اختبار شامل يغطي كل العمليات الحرجة</p>
+    </div>
+
+    <div class="grid grid-2 fade-in">
+      <div class="card">
+        <div class="card-top purple"></div>
+        <h3>اختبارات نقطة البيع</h3>
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead><tr><th>الاختبار</th><th>النوع</th></tr></thead>
+            <tbody>
+              <tr><td>إضافة منتج للسلة بالباركود</td><td>Unit</td></tr>
+              <tr><td>إضافة منتج بالبحث</td><td>Unit</td></tr>
+              <tr><td>تعديل الكمية في السلة</td><td>Unit</td></tr>
+              <tr><td>حذف منتج من السلة</td><td>Unit</td></tr>
+              <tr><td>تطبيق خصم نسبة مئوية</td><td>Unit</td></tr>
+              <tr><td>تطبيق خصم مبلغ ثابت</td><td>Unit</td></tr>
+              <tr><td>حساب الضريبة (شامل)</td><td>Unit</td></tr>
+              <tr><td>حساب الضريبة (غير شامل)</td><td>Unit</td></tr>
+              <tr><td>البيع السريع QuickSale</td><td>Integration</td></tr>
+              <tr><td>تعليق واستئناف فاتورة</td><td>E2E</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-top green"></div>
+        <h3>اختبارات الدفع</h3>
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead><tr><th>الاختبار</th><th>النوع</th></tr></thead>
+            <tbody>
+              <tr><td>دفع نقدي مع حساب الباقي</td><td>Unit</td></tr>
+              <tr><td>دفع بطاقة مع رقم المرجع</td><td>Unit</td></tr>
+              <tr><td>بيع آجل على حساب عميل</td><td>Integration</td></tr>
+              <tr><td>تقسيم الدفع بين طريقتين</td><td>Integration</td></tr>
+              <tr><td>تقسيم الدفع بين 3 طرق</td><td>Integration</td></tr>
+              <tr><td>دفع STC Pay</td><td>Unit</td></tr>
+              <tr><td>تطبيق كوبون خصم</td><td>Integration</td></tr>
+              <tr><td>كوبون منتهي الصلاحية</td><td>Unit</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-top red"></div>
+        <h3>اختبارات المرتجعات</h3>
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead><tr><th>الاختبار</th><th>النوع</th></tr></thead>
+            <tbody>
+              <tr><td>مرتجع كامل</td><td>E2E</td></tr>
+              <tr><td>مرتجع جزئي (بعض المنتجات)</td><td>E2E</td></tr>
+              <tr><td>مرتجع مع سبب مخصص</td><td>Integration</td></tr>
+              <tr><td>إلغاء عملية VoidTransaction</td><td>E2E</td></tr>
+              <tr><td>تبادل (إرجاع + شراء)</td><td>E2E</td></tr>
+              <tr><td>استرداد مقسم SplitRefund</td><td>Integration</td></tr>
+              <tr><td>طباعة إيصال المرتجع</td><td>Integration</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-top yellow"></div>
+        <h3>اختبارات الورديات والمخزون</h3>
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead><tr><th>الاختبار</th><th>النوع</th></tr></thead>
+            <tbody>
+              <tr><td>فتح وردية بمبلغ افتتاحي</td><td>Integration</td></tr>
+              <tr><td>إغلاق وردية وحساب الفرق</td><td>E2E</td></tr>
+              <tr><td>إدخال نقدي CashIn</td><td>Unit</td></tr>
+              <tr><td>إخراج نقدي CashOut</td><td>Unit</td></tr>
+              <tr><td>الملخص اليومي DailySummary</td><td>Integration</td></tr>
+              <tr><td>إضافة مخزون AddInventory</td><td>Unit</td></tr>
+              <tr><td>تحويل مخزون TransferInventory</td><td>Integration</td></tr>
+              <tr><td>جرد المخزون StockTake</td><td>E2E</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-top purple"></div>
+        <h3>اختبارات الطباعة</h3>
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead><tr><th>الاختبار</th><th>النوع</th></tr></thead>
+            <tbody>
+              <tr><td>طباعة إيصال بلوتوث</td><td>Integration</td></tr>
+              <tr><td>طباعة إيصال شبكة TCP</td><td>Integration</td></tr>
+              <tr><td>طباعة Sunmi المدمجة</td><td>Integration</td></tr>
+              <tr><td>طابور الطباعة PrintQueue</td><td>Unit</td></tr>
+              <tr><td>إعادة المحاولة 3 مرات</td><td>Unit</td></tr>
+              <tr><td>إعادة طباعة إيصال سابق</td><td>Integration</td></tr>
+              <tr><td>طباعة باركود</td><td>Unit</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-top green"></div>
+        <h3>اختبارات الوضع غير المتصل</h3>
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead><tr><th>الاختبار</th><th>النوع</th></tr></thead>
+            <tbody>
+              <tr><td>بيع بدون إنترنت</td><td>E2E</td></tr>
+              <tr><td>تخزين العمليات في الطابور</td><td>Unit</td></tr>
+              <tr><td>مزامنة عند عودة الاتصال</td><td>E2E</td></tr>
+              <tr><td>كشف التعارضات</td><td>Integration</td></tr>
+              <tr><td>مراقبة حالة الاتصال</td><td>Unit</td></tr>
+              <tr><td>تشفير الطابور</td><td>Unit</td></tr>
+              <tr><td>ترتيب العمليات FIFO</td><td>Unit</td></tr>
+              <tr><td>حسابات العملاء بدون إنترنت</td><td>E2E</td></tr>
+              <tr><td>العروض والكوبونات بدون إنترنت</td><td>Integration</td></tr>
+              <tr><td>الملخص اليومي بدون إنترنت</td><td>Integration</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION: التوافق مع قاعدة البيانات -->
+<section id="database">
+  <div class="container">
+    <div class="section-header fade-in">
+      <span class="tag tag-green">قاعدة البيانات</span>
+      <h2>التوافق مع قاعدة البيانات</h2>
+      <p>الجداول التي يقرأ منها أو يكتب فيها تطبيق الكاشير</p>
+    </div>
+
+    <div class="card fade-in" style="max-width:1000px;margin:0 auto">
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>الجدول</th>
+              <th>العملية</th>
+              <th>الاستخدام</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>invoices</td>
+              <td>قراءة / كتابة</td>
+              <td>إنشاء الفواتير، عرض سجل المبيعات، إعادة طباعة الإيصالات</td>
+            </tr>
+            <tr>
+              <td>invoice_items</td>
+              <td>قراءة / كتابة</td>
+              <td>بنود الفاتورة - المنتجات والكميات والأسعار</td>
+            </tr>
+            <tr>
+              <td>payments</td>
+              <td>قراءة / كتابة</td>
+              <td>تسجيل المدفوعات بكل الطرق، سجل المدفوعات</td>
+            </tr>
+            <tr>
+              <td>products</td>
+              <td>قراءة / كتابة</td>
+              <td>عرض المنتجات، البحث، مسح الباركود، تعديل السعر، إضافة سريعة</td>
+            </tr>
+            <tr>
+              <td>categories</td>
+              <td>قراءة</td>
+              <td>تصفح المنتجات حسب الفئة</td>
+            </tr>
+            <tr>
+              <td>customers</td>
+              <td>قراءة / كتابة</td>
+              <td>حسابات العملاء، البيع الآجل، كشف الحساب</td>
+            </tr>
+            <tr>
+              <td>customer_transactions</td>
+              <td>قراءة / كتابة</td>
+              <td>معاملات العملاء - الدفع، التحصيل، الفائدة</td>
+            </tr>
+            <tr>
+              <td>shifts</td>
+              <td>قراءة / كتابة</td>
+              <td>فتح وإغلاق الورديات، المبلغ الافتتاحي والختامي</td>
+            </tr>
+            <tr>
+              <td>cash_movements</td>
+              <td>قراءة / كتابة</td>
+              <td>إدخال وإخراج نقدي من الصندوق</td>
+            </tr>
+            <tr>
+              <td>returns</td>
+              <td>قراءة / كتابة</td>
+              <td>تسجيل المرتجعات والاستبدالات</td>
+            </tr>
+            <tr>
+              <td>return_items</td>
+              <td>قراءة / كتابة</td>
+              <td>بنود المرتجع - المنتجات والكميات والأسباب</td>
+            </tr>
+            <tr>
+              <td>inventory</td>
+              <td>قراءة / كتابة</td>
+              <td>تعديل المخزون، الإضافة، الإخراج، الجرد</td>
+            </tr>
+            <tr>
+              <td>inventory_transfers</td>
+              <td>قراءة / كتابة</td>
+              <td>تحويل المخزون بين الفروع</td>
+            </tr>
+            <tr>
+              <td>offers</td>
+              <td>قراءة</td>
+              <td>عرض العروض النشطة وتطبيقها تلقائيا</td>
+            </tr>
+            <tr>
+              <td>coupons</td>
+              <td>قراءة / كتابة</td>
+              <td>التحقق من الكوبونات وتسجيل الاستخدام</td>
+            </tr>
+            <tr>
+              <td>sync_queue</td>
+              <td>قراءة / كتابة</td>
+              <td>طابور المزامنة للعمل بدون إنترنت</td>
+            </tr>
+            <tr>
+              <td>employees</td>
+              <td>قراءة</td>
+              <td>تسجيل الدخول، التحقق من الصلاحيات</td>
+            </tr>
+            <tr>
+              <td>stores</td>
+              <td>قراءة</td>
+              <td>بيانات المتجر، اختيار الفرع</td>
+            </tr>
+            <tr>
+              <td>settings</td>
+              <td>قراءة / كتابة</td>
+              <td>إعدادات التطبيق - الطابعة، الإيصال، الضريبة</td>
+            </tr>
+            <tr>
+              <td>daily_summaries</td>
+              <td>قراءة / كتابة</td>
+              <td>الملخص اليومي - إجمالي المبيعات والمرتجعات</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <p>Alhai POS &copy; 2024 - نظام نقاط البيع المتكامل</p>
+</footer>
+
+<!-- SCROLL ANIMATION -->
+<script>
+(function(){
+  const obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        e.target.classList.add('visible');
+      }
+    });
+  },{threshold:0.12});
+  document.querySelectorAll('.fade-in').forEach(function(el){obs.observe(el);});
+})();
+</script>
+
+</body>
+</html>

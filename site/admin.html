@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة التحكم الرئيسية - Alhai POS</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-logo">Alhai POS</div>
+  <div class="nav-links">
+    <a href="index.html">الرئيسية</a>
+    <a href="admin.html" class="active">لوحة التحكم</a>
+    <a href="cashier.html">الكاشير</a>
+    <a href="admin-lite.html">المراقبة السريعة</a>
+    <a href="database.html">قاعدة البيانات</a>
+    <a href="sync.html">المزامنة</a>
+    <a href="ai.html">الذكاء الاصطناعي</a>
+    <a href="pos.html">نقطة البيع</a>
+    <a href="auth.html">المصادقة</a>
+    <a href="reports.html">التقارير</a>
+    <a href="design.html">التصميم</a>
+    <a href="l10n.html">اللغات</a>
+    <a href="architecture.html">البنية</a>
+  </div>
+  <button class="nav-toggle" onclick="document.querySelector('.nav-mobile').classList.toggle('open')">&#9776;</button>
+</nav>
+<div class="nav-mobile">
+  <a href="index.html">الرئيسية</a>
+  <a href="admin.html" class="active">لوحة التحكم</a>
+  <a href="cashier.html">الكاشير</a>
+  <a href="admin-lite.html">المراقبة السريعة</a>
+  <a href="database.html">قاعدة البيانات</a>
+  <a href="sync.html">المزامنة</a>
+  <a href="ai.html">الذكاء الاصطناعي</a>
+  <a href="pos.html">نقطة البيع</a>
+  <a href="auth.html">المصادقة</a>
+  <a href="reports.html">التقارير</a>
+  <a href="design.html">التصميم</a>
+  <a href="l10n.html">اللغات</a>
+  <a href="architecture.html">البنية</a>
+</div>
+
+<!-- HERO -->
+<div class="page-hero">
+  <div class="icon">&#x1F4BB;</div>
+  <h1>لوحة التحكم الرئيسية</h1>
+  <p>إدارة شاملة للمتجر - 62 شاشة تغطي كل جوانب العمل</p>
+  <div class="stats-bar">
+    <div class="stat-item fade-in">
+      <div class="stat-number">71</div>
+      <div class="stat-label">ملف</div>
+    </div>
+    <div class="stat-item fade-in">
+      <div class="stat-number">36,808</div>
+      <div class="stat-label">سطر</div>
+    </div>
+    <div class="stat-item fade-in">
+      <div class="stat-number">62</div>
+      <div class="stat-label">شاشة</div>
+    </div>
+    <div class="stat-item fade-in">
+      <div class="stat-number">68</div>
+      <div class="stat-label">اختبار</div>
+    </div>
+    <div class="stat-item fade-in">
+      <div class="stat-number">123</div>
+      <div class="stat-label">مسار</div>
+    </div>
+    <div class="stat-item fade-in">
+      <div class="stat-number">20</div>
+      <div class="stat-label">إعداد</div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREENS BY CATEGORY -->
+<section>
+  <div class="section-header fade-in">
+    <span class="tag tag-blue">62 شاشة</span>
+    <h2>الشاشات حسب الفئة</h2>
+    <p>كل شاشة مصممة لتغطية جانب محدد من إدارة المتجر</p>
+  </div>
+  <div class="grid grid-2">
+
+    <!-- 1. المبيعات ونقطة البيع -->
+    <div class="card fade-in">
+      <div class="card-top purple"></div>
+      <div class="card-icon">&#x1F6D2;</div>
+      <h3>المبيعات ونقطة البيع</h3>
+      <p>الشاشات الأساسية لعمليات البيع اليومية وإدارة المدفوعات</p>
+      <div class="tags">
+        <span class="ftag">POS</span>
+        <span class="ftag">Payment</span>
+        <span class="ftag">Receipt</span>
+        <span class="ftag">QuickSale</span>
+        <span class="ftag">CashDrawer</span>
+        <span class="ftag">Kiosk</span>
+      </div>
+      <div class="meta">
+        <span><strong>6</strong> شاشات</span>
+        <span>الدفع نقدا / بطاقة / مختلط / آجل</span>
+      </div>
+    </div>
+
+    <!-- 2. المنتجات والمخزون -->
+    <div class="card fade-in">
+      <div class="card-top green"></div>
+      <div class="card-icon">&#x1F4E6;</div>
+      <h3>المنتجات والمخزون</h3>
+      <p>إدارة كاملة للمنتجات والأصناف وتتبع المخزون والصلاحيات</p>
+      <div class="tags">
+        <span class="ftag">Products</span>
+        <span class="ftag">Categories</span>
+        <span class="ftag">PriceLists</span>
+        <span class="ftag">Inventory</span>
+        <span class="ftag">ExpiryTracking</span>
+        <span class="ftag">DamagedGoods</span>
+      </div>
+      <div class="meta">
+        <span><strong>6</strong> شاشات</span>
+        <span>باركود / SKU / وحدات قياس</span>
+      </div>
+    </div>
+
+    <!-- 3. العملاء -->
+    <div class="card fade-in">
+      <div class="card-top purple"></div>
+      <div class="card-icon">&#x1F465;</div>
+      <h3>العملاء</h3>
+      <p>إدارة بيانات العملاء والحسابات والتحليلات والمجموعات</p>
+      <div class="tags">
+        <span class="ftag">Customers</span>
+        <span class="ftag">CustomerDetail</span>
+        <span class="ftag">CustomerLedger</span>
+        <span class="ftag">CustomerGroups</span>
+        <span class="ftag">CustomerAnalytics</span>
+      </div>
+      <div class="meta">
+        <span><strong>5</strong> شاشات</span>
+        <span>كشف حساب / رصيد / حد ائتماني</span>
+      </div>
+    </div>
+
+    <!-- 4. الموردين والمشتريات -->
+    <div class="card fade-in">
+      <div class="card-top red"></div>
+      <div class="card-icon">&#x1F69A;</div>
+      <h3>الموردين والمشتريات</h3>
+      <p>إدارة الموردين وأوامر الشراء مع استيراد الفواتير بالذكاء الاصطناعي</p>
+      <div class="tags">
+        <span class="ftag">Suppliers</span>
+        <span class="ftag">PurchaseOrders</span>
+        <span class="ftag">PurchaseReceive</span>
+        <span class="ftag">PurchaseReturn</span>
+        <span class="ftag">PurchaseHistory</span>
+        <span class="ftag">AIInvoiceImport</span>
+        <span class="ftag">PurchasePayments</span>
+        <span class="ftag green">SmartReorder</span>
+      </div>
+      <div class="meta">
+        <span><strong>9</strong> شاشات</span>
+        <span>7 شاشات مشتريات + استيراد ذكي</span>
+      </div>
+    </div>
+
+    <!-- 5. التسويق والولاء -->
+    <div class="card fade-in">
+      <div class="card-top yellow"></div>
+      <div class="card-icon">&#x1F381;</div>
+      <h3>التسويق والولاء</h3>
+      <p>برامج الخصومات والكوبونات وبطاقات الهدايا ونقاط الولاء</p>
+      <div class="tags">
+        <span class="ftag">Discounts</span>
+        <span class="ftag">Coupons</span>
+        <span class="ftag">SpecialOffers</span>
+        <span class="ftag green">SmartPromotions</span>
+        <span class="ftag">GiftCards</span>
+        <span class="ftag">LoyaltyProgram</span>
+      </div>
+      <div class="meta">
+        <span><strong>6</strong> شاشات</span>
+        <span>عروض ذكية مدعومة بالذكاء الاصطناعي</span>
+      </div>
+    </div>
+
+    <!-- 6. الموظفين -->
+    <div class="card fade-in">
+      <div class="card-top green"></div>
+      <div class="card-icon">&#x1F464;</div>
+      <h3>الموظفين</h3>
+      <p>إدارة الحضور والانصراف والعمولات وملفات الموظفين</p>
+      <div class="tags">
+        <span class="ftag">Attendance</span>
+        <span class="ftag">Commission</span>
+        <span class="ftag">EmployeeProfile</span>
+      </div>
+      <div class="meta">
+        <span><strong>3</strong> شاشات</span>
+        <span>صلاحيات / PIN / بصمة</span>
+      </div>
+    </div>
+
+    <!-- 7. التجارة الإلكترونية -->
+    <div class="card fade-in">
+      <div class="card-top purple"></div>
+      <div class="card-icon">&#x1F310;</div>
+      <h3>التجارة الإلكترونية</h3>
+      <p>إدارة المتجر الإلكتروني والطلبات ومناطق التوصيل</p>
+      <div class="tags">
+        <span class="ftag">Ecommerce</span>
+        <span class="ftag">OnlineOrders</span>
+        <span class="ftag">DeliveryZones</span>
+      </div>
+      <div class="meta">
+        <span><strong>3</strong> شاشات</span>
+        <span>حجز مخزون / تتبع طلبات</span>
+      </div>
+    </div>
+
+    <!-- 8. التقارير -->
+    <div class="card fade-in">
+      <div class="card-top red"></div>
+      <div class="card-icon">&#x1F4CA;</div>
+      <h3>التقارير</h3>
+      <p>مركز التقارير الشامل مع 19 نوع تقرير من حزمة alhai_reports</p>
+      <div class="tags">
+        <span class="ftag">ReportsHub</span>
+        <span class="ftag">DailySales</span>
+        <span class="ftag">MonthlySales</span>
+        <span class="ftag">ProductPerformance</span>
+        <span class="ftag">CategorySales</span>
+        <span class="ftag">PaymentMethods</span>
+        <span class="ftag">ProfitMargin</span>
+        <span class="ftag">StockValue</span>
+        <span class="ftag">LowStock</span>
+        <span class="ftag">ExpiringProducts</span>
+        <span class="ftag">CustomerPurchases</span>
+        <span class="ftag">EmployeeSales</span>
+        <span class="ftag">TaxReport</span>
+        <span class="ftag">ExpenseReport</span>
+        <span class="ftag">ReturnsReport</span>
+        <span class="ftag">DiscountUsage</span>
+        <span class="ftag">HourlySales</span>
+        <span class="ftag">ComparativeReport</span>
+        <span class="ftag">CustomReport</span>
+      </div>
+      <div class="meta">
+        <span><strong>20</strong> شاشة</span>
+        <span>تصدير PDF / CSV</span>
+      </div>
+    </div>
+
+    <!-- 9. الذكاء الاصطناعي -->
+    <div class="card fade-in">
+      <div class="card-top yellow"></div>
+      <div class="card-icon">&#x1F9E0;</div>
+      <h3>الذكاء الاصطناعي</h3>
+      <p>15 شاشة ذكاء اصطناعي مدعومة بخادم FastAPI مع نماذج متقدمة</p>
+      <div class="tags">
+        <span class="ftag green">FraudDetection</span>
+        <span class="ftag green">SalesForecasting</span>
+        <span class="ftag green">SmartRecommendations</span>
+        <span class="ftag green">PricingOptimization</span>
+        <span class="ftag green">CustomerSegmentation</span>
+        <span class="ftag green">DemandPrediction</span>
+        <span class="ftag green">SupplierScoring</span>
+        <span class="ftag green">ChurnPrediction</span>
+        <span class="ftag green">BasketAnalysis</span>
+        <span class="ftag green">StaffScheduling</span>
+        <span class="ftag green">AnomalyDetection</span>
+        <span class="ftag green">SentimentAnalysis</span>
+        <span class="ftag green">InvoiceOCR</span>
+        <span class="ftag green">AIInsights</span>
+        <span class="ftag green">AIAssistant</span>
+      </div>
+      <div class="meta">
+        <span><strong>15</strong> شاشة</span>
+        <span>FastAPI / Python / Render</span>
+      </div>
+    </div>
+
+    <!-- 10. الإعدادات -->
+    <div class="card fade-in">
+      <div class="card-top green"></div>
+      <div class="card-icon">&#x2699;&#xFE0F;</div>
+      <h3>الإعدادات</h3>
+      <p>20 فئة إعدادات تغطي كل جوانب تخصيص المتجر</p>
+      <div class="tags">
+        <span class="ftag">معلومات المتجر</span>
+        <span class="ftag">الفروع</span>
+        <span class="ftag">الضريبة وزاتكا</span>
+        <span class="ftag">طرق الدفع</span>
+        <span class="ftag">الطابعات</span>
+        <span class="ftag">الباركود</span>
+        <span class="ftag">الإيصالات</span>
+        <span class="ftag">العملات</span>
+        <span class="ftag">وحدات القياس</span>
+        <span class="ftag">الصلاحيات</span>
+        <span class="ftag">الإشعارات</span>
+        <span class="ftag">المزامنة</span>
+        <span class="ftag">النسخ الاحتياطي</span>
+        <span class="ftag">المظهر والثيم</span>
+        <span class="ftag">اللغة</span>
+        <span class="ftag">التجارة الإلكترونية</span>
+        <span class="ftag">التوصيل</span>
+        <span class="ftag">برنامج الولاء</span>
+        <span class="ftag">التكاملات</span>
+        <span class="ftag">حول التطبيق</span>
+      </div>
+      <div class="meta">
+        <span><strong>20</strong> فئة</span>
+        <span>تخصيص كامل</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- STORE OWNER JOURNEY -->
+<section class="alt">
+  <div class="section-header fade-in">
+    <span class="tag tag-green">رحلة المستخدم</span>
+    <h2>رحلة صاحب المتجر</h2>
+    <p>من فتح التطبيق لأول مرة حتى إدارة متجر متكامل</p>
+  </div>
+  <div class="journey fade-in">
+
+    <div class="journey-step">
+      <h4>فتح التطبيق <span class="step-tag">البداية</span></h4>
+      <p>شاشة البداية مع تحميل قاعدة البيانات المحلية وتهيئة البحث النصي الكامل FTS</p>
+    </div>
+
+    <div class="journey-step">
+      <h4>تسجيل الدخول بالهاتف <span class="step-tag">المصادقة</span></h4>
+      <p>إدخال رقم الهاتف واستلام رمز التحقق OTP عبر Supabase Auth</p>
+    </div>
+
+    <div class="journey-step">
+      <h4>اختيار المتجر / الفرع <span class="step-tag">التهيئة</span></h4>
+      <p>اختيار المتجر الحالي أو الفرع من قائمة المتاجر المرتبطة بالحساب</p>
+    </div>
+
+    <div class="journey-step">
+      <h4>لوحة المعلومات <span class="step-tag">نظرة عامة</span></h4>
+      <p>إحصائيات اليوم: المبيعات، عدد الفواتير، المنتجات الأكثر مبيعا، حالة المخزون</p>
+    </div>
+
+    <div class="journey-step">
+      <h4>إضافة المنتجات والأصناف <span class="step-tag">الإعداد</span></h4>
+      <p>إنشاء الأصناف وإضافة المنتجات مع الباركود والأسعار والصور ووحدات القياس</p>
+    </div>
+
+    <div class="journey-step">
+      <h4>إعداد الطابعة والباركود <span class="step-tag">الأجهزة</span></h4>
+      <p>ربط طابعة الإيصالات وطابعة الباركود وضبط قوالب الطباعة</p>
+    </div>
+
+    <div class="journey-step">
+      <h4>إعداد الضريبة وزاتكا <span class="step-tag">الامتثال</span></h4>
+      <p>تفعيل ضريبة القيمة المضافة وربط نظام الفوترة الإلكترونية ZATCA مع رمز QR</p>
+    </div>
+
+    <div class="journey-step">
+      <h4>فتح نقطة البيع وبيع المنتجات <span class="step-tag">التشغيل</span></h4>
+      <p>فتح الوردية، مسح الباركود، إضافة المنتجات للسلة، الدفع نقدا أو بطاقة أو آجل</p>
+    </div>
+
+    <div class="journey-step">
+      <h4>متابعة المخزون والطلبات <span class="step-tag">العمليات</span></h4>
+      <p>مراقبة المخزون المنخفض، تتبع الصلاحيات، إنشاء أوامر شراء ذكية</p>
+    </div>
+
+    <div class="journey-step">
+      <h4>مراجعة التقارير اليومية والأسبوعية <span class="step-tag">التحليل</span></h4>
+      <p>تقارير المبيعات والأرباح والضريبة والمنتجات الأكثر مبيعا مع تصدير PDF</p>
+    </div>
+
+    <div class="journey-step">
+      <h4>إدارة الموظفين والصلاحيات <span class="step-tag">الفريق</span></h4>
+      <p>إضافة الموظفين وتحديد الصلاحيات ومتابعة الحضور والعمولات</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- REQUIRED TESTS -->
+<section>
+  <div class="section-header fade-in">
+    <span class="tag tag-red">ضمان الجودة</span>
+    <h2>الاختبارات المطلوبة</h2>
+    <p>68 اختبار مطلوب لضمان جودة وموثوقية التطبيق</p>
+  </div>
+  <div class="tbl-wrap fade-in">
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>الفئة</th>
+          <th>الاختبارات</th>
+          <th>الأولوية</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>اختبارات المصادقة</td>
+          <td>تسجيل دخول بالهاتف و OTP، تسجيل خروج، انتهاء الجلسة وتجديد التوكن، تعدد الأجهزة</td>
+          <td><span class="ftag" style="background:rgba(255,107,107,0.15);color:var(--accent);border-color:rgba(255,107,107,0.15)">حرج</span></td>
+        </tr>
+        <tr>
+          <td>اختبارات نقطة البيع</td>
+          <td>إضافة منتج للسلة بالباركود، الدفع نقدا / بطاقة / مختلط / آجل، فاتورة معلقة واستعادتها، طباعة إيصال، فتح وإغلاق الوردية</td>
+          <td><span class="ftag" style="background:rgba(255,107,107,0.15);color:var(--accent);border-color:rgba(255,107,107,0.15)">حرج</span></td>
+        </tr>
+        <tr>
+          <td>اختبارات المخزون</td>
+          <td>إضافة كمية، خصم كمية، تحويل بين الفروع، تتبع الصلاحيات، البضائع التالفة، جرد المخزون</td>
+          <td><span class="ftag" style="background:rgba(255,184,0,0.15);color:var(--warning);border-color:rgba(255,184,0,0.15)">مرتفع</span></td>
+        </tr>
+        <tr>
+          <td>اختبارات التقارير</td>
+          <td>تقرير مبيعات يومية، تقرير الأرباح، تقرير الضريبة، تصدير PDF، تصدير CSV</td>
+          <td><span class="ftag" style="background:rgba(255,184,0,0.15);color:var(--warning);border-color:rgba(255,184,0,0.15)">مرتفع</span></td>
+        </tr>
+        <tr>
+          <td>اختبارات المزامنة</td>
+          <td>المزامنة عند العودة للاتصال (offline &rarr; online)، حل التعارضات (lastWriteWins / localWins / deltaMerge)، مزامنة المبيعات بأولوية عالية</td>
+          <td><span class="ftag" style="background:rgba(255,107,107,0.15);color:var(--accent);border-color:rgba(255,107,107,0.15)">حرج</span></td>
+        </tr>
+        <tr>
+          <td>اختبارات الأمان</td>
+          <td>صلاحيات المستخدمين والأدوار، تسجيل دخول بـ PIN، المصادقة بالبصمة، Row Level Security (RLS)</td>
+          <td><span class="ftag" style="background:rgba(255,184,0,0.15);color:var(--warning);border-color:rgba(255,184,0,0.15)">مرتفع</span></td>
+        </tr>
+        <tr>
+          <td>اختبارات الطباعة</td>
+          <td>طباعة إيصال حراري، طباعة باركود، قالب الفاتورة الإلكترونية مع ZATCA QR</td>
+          <td><span class="ftag" style="background:rgba(0,196,140,0.15);color:var(--success);border-color:rgba(0,196,140,0.15)">متوسط</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- DATABASE COMPATIBILITY -->
+<section class="alt">
+  <div class="section-header fade-in">
+    <span class="tag tag-yellow">قاعدة البيانات</span>
+    <h2>التوافق مع قاعدة البيانات</h2>
+    <p>تطبيق لوحة التحكم يستخدم معظم الجداول الـ 39 في قاعدة البيانات</p>
+  </div>
+  <div class="tbl-wrap fade-in">
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>الجدول</th>
+          <th>الاستخدام في لوحة التحكم</th>
+          <th>الحالة</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>products</td>
+          <td>إدارة المنتجات، التسعير، الباركود، SKU، الصور</td>
+          <td><span class="ftag green">قراءة + كتابة</span></td>
+        </tr>
+        <tr>
+          <td>categories</td>
+          <td>تصنيف المنتجات وإدارة الأصناف</td>
+          <td><span class="ftag green">قراءة + كتابة</span></td>
+        </tr>
+        <tr>
+          <td>org_products</td>
+          <td>كتالوج المنتجات المركزي للمنظمة</td>
+          <td><span class="ftag green">قراءة + كتابة</span></td>
+        </tr>
+        <tr>
+          <td>sales</td>
+          <td>عرض المبيعات والتقارير والإحصائيات</td>
+          <td><span class="ftag">قراءة فقط</span></td>
+        </tr>
+        <tr>
+          <td>sale_items</td>
+          <td>تفاصيل عناصر كل عملية بيع</td>
+          <td><span class="ftag">قراءة فقط</span></td>
+        </tr>
+        <tr>
+          <td>customers</td>
+          <td>إدارة بيانات العملاء والمجموعات</td>
+          <td><span class="ftag green">قراءة + كتابة</span></td>
+        </tr>
+        <tr>
+          <td>accounts</td>
+          <td>أرصدة العملاء وحدود الائتمان</td>
+          <td><span class="ftag green">قراءة + كتابة</span></td>
+        </tr>
+        <tr>
+          <td>invoices</td>
+          <td>الفواتير الإلكترونية وزاتكا QR</td>
+          <td><span class="ftag green">قراءة + كتابة</span></td>
+        </tr>
+        <tr>
+          <td>suppliers</td>
+          <td>إدارة بيانات الموردين</td>
+          <td><span class="ftag green">قراءة + كتابة</span></td>
+        </tr>
+        <tr>
+          <td>purchases</td>
+          <td>أوامر الشراء والاستلام والمرتجعات</td>
+          <td><span class="ftag green">قراءة + كتابة</span></td>
+        </tr>
+        <tr>
+          <td>stock_deltas</td>
+          <td>تغييرات المخزون الذرية بين الأجهزة</td>
+          <td><span class="ftag green">قراءة + كتابة</span></td>
+        </tr>
+        <tr>
+          <td>stock_transfers</td>
+          <td>تحويل المخزون بين الفروع</td>
+          <td><span class="ftag green">قراءة + كتابة</span></td>
+        </tr>
+        <tr>
+          <td>returns</td>
+          <td>إدارة المرتجعات واسترداد المبالغ</td>
+          <td><span class="ftag green">قراءة + كتابة</span></td>
+        </tr>
+        <tr>
+          <td>expenses</td>
+          <td>تسجيل المصروفات والتقارير المالية</td>
+          <td><span class="ftag green">قراءة + كتابة</span></td>
+        </tr>
+        <tr>
+          <td>shifts</td>
+          <td>ورديات الموظفين وفتح/إغلاق الصندوق</td>
+          <td><span class="ftag green">قراءة + كتابة</span></td>
+        </tr>
+        <tr>
+          <td>users</td>
+          <td>إدارة الموظفين والصلاحيات والأدوار</td>
+          <td><span class="ftag green">قراءة + كتابة</span></td>
+        </tr>
+        <tr>
+          <td>stores</td>
+          <td>إدارة بيانات المتاجر والفروع</td>
+          <td><span class="ftag green">قراءة + كتابة</span></td>
+        </tr>
+        <tr>
+          <td>sync_queue</td>
+          <td>مراقبة حالة المزامنة والعناصر المعلقة</td>
+          <td><span class="ftag">قراءة فقط</span></td>
+        </tr>
+        <tr>
+          <td>sync_metadata</td>
+          <td>حالة المزامنة لكل جدول</td>
+          <td><span class="ftag">قراءة فقط</span></td>
+        </tr>
+        <tr>
+          <td>products_fts</td>
+          <td>البحث النصي الكامل في المنتجات (Unicode61)</td>
+          <td><span class="ftag">قراءة فقط</span></td>
+        </tr>
+        <tr>
+          <td>discounts</td>
+          <td>إدارة الخصومات والعروض</td>
+          <td><span class="ftag green">قراءة + كتابة</span></td>
+        </tr>
+        <tr>
+          <td>coupons</td>
+          <td>إدارة الكوبونات والرموز الترويجية</td>
+          <td><span class="ftag green">قراءة + كتابة</span></td>
+        </tr>
+        <tr>
+          <td>gift_cards</td>
+          <td>بطاقات الهدايا والأرصدة</td>
+          <td><span class="ftag green">قراءة + كتابة</span></td>
+        </tr>
+        <tr>
+          <td>loyalty_points</td>
+          <td>نقاط الولاء والمكافآت</td>
+          <td><span class="ftag green">قراءة + كتابة</span></td>
+        </tr>
+        <tr>
+          <td>online_orders</td>
+          <td>طلبات المتجر الإلكتروني</td>
+          <td><span class="ftag green">قراءة + كتابة</span></td>
+        </tr>
+        <tr>
+          <td>delivery_zones</td>
+          <td>مناطق وتكاليف التوصيل</td>
+          <td><span class="ftag green">قراءة + كتابة</span></td>
+        </tr>
+        <tr>
+          <td>attendance</td>
+          <td>حضور وانصراف الموظفين</td>
+          <td><span class="ftag green">قراءة + كتابة</span></td>
+        </tr>
+        <tr>
+          <td>commissions</td>
+          <td>عمولات المبيعات للموظفين</td>
+          <td><span class="ftag green">قراءة + كتابة</span></td>
+        </tr>
+        <tr>
+          <td>price_lists</td>
+          <td>قوائم الأسعار المتعددة</td>
+          <td><span class="ftag green">قراءة + كتابة</span></td>
+        </tr>
+        <tr>
+          <td>damaged_goods</td>
+          <td>تسجيل البضائع التالفة</td>
+          <td><span class="ftag green">قراءة + كتابة</span></td>
+        </tr>
+        <tr>
+          <td>expiry_tracking</td>
+          <td>تتبع تواريخ صلاحية المنتجات</td>
+          <td><span class="ftag green">قراءة + كتابة</span></td>
+        </tr>
+        <tr>
+          <td>settings</td>
+          <td>جميع إعدادات المتجر والتطبيق</td>
+          <td><span class="ftag green">قراءة + كتابة</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="text-align:center;margin-top:24px" class="fade-in">
+    <div class="meta" style="justify-content:center">
+      <span><strong>32</strong> جدول مستخدم</span>
+      <span><strong>26</strong> قراءة + كتابة</span>
+      <span><strong>6</strong> قراءة فقط</span>
+      <span>Drift WASM + OPFS</span>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <p>Alhai POS - لوحة التحكم الرئيسية &copy; 2026</p>
+</footer>
+
+<!-- SCROLL ANIMATIONS -->
+<script>
+(function(){
+  var observer = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        entry.target.classList.add('visible');
+      }
+    });
+  },{threshold:0.1});
+  document.querySelectorAll('.fade-in').forEach(function(el){
+    observer.observe(el);
+  });
+})();
+</script>
+
+</body>
+</html>

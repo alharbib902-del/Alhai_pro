@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تطبيق السائق - منصة الحي</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="index.html" class="nav-logo">منصة الحي</a>
+  <div class="nav-links">
+    <a href="index.html">الرئيسية</a>
+    <a href="customer.html">العملاء</a>
+    <a href="driver.html" class="active">السائق</a>
+    <a href="admin-lite.html">الإدارة المبسطة</a>
+  </div>
+  <button class="nav-toggle" onclick="document.querySelector('.nav-mobile').classList.toggle('open')">&#9776;</button>
+</nav>
+<div class="nav-mobile">
+  <a href="index.html">الرئيسية</a>
+  <a href="customer.html">العملاء</a>
+  <a href="driver.html" class="active">السائق</a>
+  <a href="admin-lite.html">الإدارة المبسطة</a>
+</div>
+
+<!-- HERO -->
+<div class="page-hero">
+  <div class="icon">&#x1F69A;</div>
+  <h1>تطبيق السائق</h1>
+  <p>إدارة التوصيلات - استلام، ملاحة، توصيل، إثبات تسليم</p>
+  <div class="stats-bar">
+    <div class="stat-item"><div class="stat-number">46</div><div class="stat-label">ملف</div></div>
+    <div class="stat-item"><div class="stat-number">6,712</div><div class="stat-label">سطر</div></div>
+    <div class="stat-item"><div class="stat-number">12</div><div class="stat-label">شاشة</div></div>
+    <div class="stat-item"><div class="stat-number">3</div><div class="stat-label">اختبار</div></div>
+  </div>
+</div>
+
+<!-- الشاشات -->
+<section class="alt">
+  <div class="container">
+    <div class="section-header">
+      <span class="tag tag-blue">الشاشات</span>
+      <h2>12 شاشة</h2>
+      <p>جميع شاشات تطبيق السائق من تسجيل الدخول إلى متابعة الأرباح</p>
+    </div>
+    <div class="grid grid-4">
+      <div class="card fade-in">
+        <div class="card-top purple"></div>
+        <div class="card-icon">&#x1F4A5;</div>
+        <h4>Splash</h4>
+        <p>شاشة البداية والتحميل</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top purple"></div>
+        <div class="card-icon">&#x1F511;</div>
+        <h4>Login</h4>
+        <p>تسجيل دخول السائق</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top purple"></div>
+        <div class="card-icon">&#x1F4DD;</div>
+        <h4>ProfileSetup</h4>
+        <p>إعداد الملف الشخصي (أول مرة)</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top green"></div>
+        <div class="card-icon">&#x1F3E0;</div>
+        <h4>Home</h4>
+        <p>لوحة المعلومات الرئيسية</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top green"></div>
+        <div class="card-icon">&#x1F4CB;</div>
+        <h4>DeliveriesList</h4>
+        <p>قائمة التوصيلات الحالية</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top green"></div>
+        <div class="card-icon">&#x1F4C4;</div>
+        <h4>OrderDetails</h4>
+        <p>تفاصيل الطلب والعناصر</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top yellow"></div>
+        <div class="card-icon">&#x1F514;</div>
+        <h4>NewOrder</h4>
+        <p>إشعار طلب جديد وقبول/رفض</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top yellow"></div>
+        <div class="card-icon">&#x1F5FA;&#xFE0F;</div>
+        <h4>Navigation</h4>
+        <p>ملاحة GPS إلى العميل</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top red"></div>
+        <div class="card-icon">&#x1F4F8;</div>
+        <h4>DeliveryProof</h4>
+        <p>إثبات التسليم (صورة + توقيع + GPS)</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top red"></div>
+        <div class="card-icon">&#x1F4AC;</div>
+        <h4>Chat</h4>
+        <p>الدردشة مع العميل</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top green"></div>
+        <div class="card-icon">&#x1F4B0;</div>
+        <h4>Earnings</h4>
+        <p>متابعة الأرباح (يومي/أسبوعي/شهري)</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top purple"></div>
+        <div class="card-icon">&#x1F464;</div>
+        <h4>Profile</h4>
+        <p>الملف الشخصي والإعدادات</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- رحلة السائق -->
+<section>
+  <div class="container">
+    <div class="section-header">
+      <span class="tag tag-green">رحلة السائق</span>
+      <h2>رحلة السائق الكاملة</h2>
+      <p>من فتح التطبيق حتى إنهاء الوردية</p>
+    </div>
+    <div class="journey">
+      <div class="journey-step fade-in">
+        <h4>فتح التطبيق <span class="step-tag">Splash</span></h4>
+        <p>شاشة البداية وتحميل البيانات</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>تسجيل الدخول <span class="step-tag">Login</span></h4>
+        <p>المصادقة برقم الهاتف ورمز التحقق</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>إعداد الملف (أول مرة) <span class="step-tag">ProfileSetup</span></h4>
+        <p>إدخال بيانات السائق والمركبة والوثائق</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>لوحة المعلومات <span class="step-tag">Home</span></h4>
+        <p>عرض ملخص اليوم والإحصائيات</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>بدء الوردية <span class="step-tag">Home</span></h4>
+        <p>تفعيل حالة "متاح" لاستقبال الطلبات</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>انتظار الطلبات <span class="step-tag">Home</span></h4>
+        <p>الانتظار في وضع الاستعداد لاستقبال إشعارات</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>استلام إشعار طلب جديد <span class="step-tag">NewOrder</span></h4>
+        <p>إشعار فوري بطلب جديد مع تفاصيل الموقع والمسافة</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>قبول الطلب <span class="step-tag">NewOrder</span></h4>
+        <p>مراجعة التفاصيل وقبول أو رفض الطلب</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>عرض تفاصيل العميل والعناصر <span class="step-tag">OrderDetails</span></h4>
+        <p>مراجعة عنوان التوصيل وقائمة المنتجات</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>بدء الملاحة GPS <span class="step-tag">Navigation</span></h4>
+        <p>تشغيل الملاحة التفصيلية إلى موقع العميل</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>الوصول والتسليم <span class="step-tag">DeliveryProof</span></h4>
+        <p>الوصول إلى العميل وتسليم الطلب</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>التقاط صورة + توقيع رقمي + GPS <span class="step-tag">DeliveryProof</span></h4>
+        <p>توثيق التسليم بصورة وتوقيع العميل وإحداثيات الموقع</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>تأكيد التسليم <span class="step-tag">DeliveryProof</span></h4>
+        <p>إرسال إثبات التسليم وتحديث حالة الطلب</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>التواصل مع العميل بالدردشة <span class="step-tag">Chat</span></h4>
+        <p>محادثة مباشرة مع العميل للتنسيق عند الحاجة</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>متابعة الأرباح (يومي/أسبوعي/شهري) <span class="step-tag">Earnings</span></h4>
+        <p>عرض الأرباح المحققة وتفاصيل كل توصيلة</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>إنهاء الوردية <span class="step-tag">Home</span></h4>
+        <p>تعطيل حالة "متاح" وعرض ملخص الوردية</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- نظام العمل بدون إنترنت -->
+<section class="alt">
+  <div class="container">
+    <div class="section-header">
+      <span class="tag tag-yellow">بدون إنترنت</span>
+      <h2>نظام العمل بدون إنترنت</h2>
+      <p>آليات متقدمة لضمان استمرارية العمل عند انقطاع الاتصال</p>
+    </div>
+    <div class="grid grid-2">
+      <div class="card fade-in">
+        <div class="card-top yellow"></div>
+        <h3>قائمة انتظار مشفرة</h3>
+        <p>حفظ العمليات المعلقة في قائمة انتظار مشفرة محليا وإرسالها تلقائيا عند عودة الاتصال</p>
+        <div class="tags"><span class="ftag">Encrypted Queue</span><span class="ftag">SQLite</span></div>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top yellow"></div>
+        <h3>إعادة المحاولة التصاعدية</h3>
+        <p>نظام Exponential Backoff لإعادة إرسال البيانات مع فترات انتظار متزايدة لتجنب الحمل الزائد</p>
+        <div class="tags"><span class="ftag">Exponential Backoff</span><span class="ftag">Retry</span></div>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top green"></div>
+        <h3>ذاكرة مؤقتة 24 ساعة</h3>
+        <p>تخزين البيانات الأساسية محليا لمدة 24 ساعة لضمان العمل دون اتصال</p>
+        <div class="tags"><span class="ftag green">24h Cache</span><span class="ftag green">Local Storage</span></div>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top red"></div>
+        <h3>كشف التعارضات</h3>
+        <p>اكتشاف وحل التعارضات تلقائيا عند مزامنة البيانات بعد عودة الاتصال</p>
+        <div class="tags"><span class="ftag">Conflict Detection</span><span class="ftag">Resolution</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- الأمان -->
+<section>
+  <div class="container">
+    <div class="section-header">
+      <span class="tag tag-red">الأمان</span>
+      <h2>الأمان والحماية</h2>
+      <p>طبقات أمان متعددة لحماية بيانات السائق والعملاء</p>
+    </div>
+    <div class="grid grid-2">
+      <div class="card fade-in">
+        <div class="card-top red"></div>
+        <h3>تثبيت الشهادات</h3>
+        <p>Certificate Pinning لمنع هجمات Man-in-the-Middle وضمان الاتصال الآمن مع الخادم</p>
+        <div class="tags"><span class="ftag">Certificate Pinning</span><span class="ftag">SSL/TLS</span></div>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top red"></div>
+        <h3>تخزين مشفر</h3>
+        <p>تشفير جميع البيانات المخزنة محليا بما في ذلك التوكنات وبيانات الطلبات</p>
+        <div class="tags"><span class="ftag">Encrypted Storage</span><span class="ftag">AES-256</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- الاختبارات المطلوبة -->
+<section class="alt">
+  <div class="container">
+    <div class="section-header">
+      <span class="tag tag-red">الاختبارات</span>
+      <h2>الاختبارات المطلوبة</h2>
+      <p>3 اختبارات أساسية مطلوبة لضمان جودة تطبيق السائق</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="card fade-in">
+        <div class="card-top red"></div>
+        <h3>اختبار قبول الطلب</h3>
+        <p>استلام الإشعار، عرض التفاصيل، قبول الطلب، بدء الملاحة</p>
+        <div class="tags"><span class="ftag">Order Accept</span><span class="ftag">Notification</span></div>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top red"></div>
+        <h3>اختبار إثبات التسليم</h3>
+        <p>التقاط صورة، التوقيع الرقمي، تسجيل GPS، إرسال الإثبات</p>
+        <div class="tags"><span class="ftag">Proof</span><span class="ftag">Camera</span><span class="ftag">Signature</span></div>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top red"></div>
+        <h3>اختبار العمل بدون إنترنت</h3>
+        <p>تنفيذ العمليات بدون اتصال، حفظ محلي، مزامنة عند عودة الاتصال</p>
+        <div class="tags"><span class="ftag">Offline</span><span class="ftag">Sync</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <p>منصة الحي &mdash; تطبيق السائق &copy; 2026</p>
+</footer>
+
+<script>
+// Scroll animations
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }});
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>

@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الإدارة المبسطة - منصة الحي</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="index.html" class="nav-logo">منصة الحي</a>
+  <div class="nav-links">
+    <a href="index.html">الرئيسية</a>
+    <a href="customer.html">العملاء</a>
+    <a href="driver.html">السائق</a>
+    <a href="admin-lite.html" class="active">الإدارة المبسطة</a>
+  </div>
+  <button class="nav-toggle" onclick="document.querySelector('.nav-mobile').classList.toggle('open')">&#9776;</button>
+</nav>
+<div class="nav-mobile">
+  <a href="index.html">الرئيسية</a>
+  <a href="customer.html">العملاء</a>
+  <a href="driver.html">السائق</a>
+  <a href="admin-lite.html" class="active">الإدارة المبسطة</a>
+</div>
+
+<!-- HERO -->
+<div class="page-hero">
+  <div class="icon">&#x1F4F1;</div>
+  <h1>الإدارة المبسطة</h1>
+  <p>نسخة خفيفة للمديرين أثناء التنقل - تقارير، تنبيهات، موافقات</p>
+  <div class="stats-bar">
+    <div class="stat-item"><div class="stat-number">38</div><div class="stat-label">ملف</div></div>
+    <div class="stat-item"><div class="stat-number">10,543</div><div class="stat-label">سطر</div></div>
+    <div class="stat-item"><div class="stat-number">27</div><div class="stat-label">شاشة</div></div>
+    <div class="stat-item"><div class="stat-number">8</div><div class="stat-label">اختبار</div></div>
+  </div>
+</div>
+
+<!-- الشاشات - لوحة المعلومات -->
+<section class="alt">
+  <div class="container">
+    <div class="section-header">
+      <span class="tag tag-blue">الشاشات</span>
+      <h2>27 شاشة مقسمة حسب الفئة</h2>
+      <p>جميع شاشات الإدارة المبسطة منظمة في 8 فئات</p>
+    </div>
+
+    <!-- لوحة المعلومات -->
+    <h3 style="color:var(--primary);margin-bottom:16px;font-size:1.1rem;">لوحة المعلومات (3)</h3>
+    <div class="grid grid-3" style="margin-bottom:40px;">
+      <div class="card fade-in">
+        <div class="card-top purple"></div>
+        <div class="card-icon">&#x1F4CA;</div>
+        <h4>Dashboard</h4>
+        <p>لوحة المعلومات الرئيسية مع ملخص شامل</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top purple"></div>
+        <div class="card-icon">&#x1F4C8;</div>
+        <h4>SalesTrend</h4>
+        <p>رسم بياني لاتجاه المبيعات</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top purple"></div>
+        <div class="card-icon">&#x1F514;</div>
+        <h4>AlertsSummary</h4>
+        <p>ملخص التنبيهات والإشعارات العاجلة</p>
+      </div>
+    </div>
+
+    <!-- التقارير -->
+    <h3 style="color:var(--success);margin-bottom:16px;font-size:1.1rem;">التقارير (6)</h3>
+    <div class="grid grid-3" style="margin-bottom:40px;">
+      <div class="card fade-in">
+        <div class="card-top green"></div>
+        <div class="card-icon">&#x1F4B5;</div>
+        <h4>DailySales</h4>
+        <p>تقرير المبيعات اليومية</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top green"></div>
+        <div class="card-icon">&#x1F4CA;</div>
+        <h4>WeeklyComparison</h4>
+        <p>مقارنة أسبوعية للأداء</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top green"></div>
+        <div class="card-icon">&#x1F3C6;</div>
+        <h4>TopProducts</h4>
+        <p>المنتجات الأكثر مبيعا</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top green"></div>
+        <div class="card-icon">&#x1F4E6;</div>
+        <h4>LowStock</h4>
+        <p>تقرير المخزون المنخفض</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top green"></div>
+        <div class="card-icon">&#x1F465;</div>
+        <h4>EmployeePerformance</h4>
+        <p>أداء الموظفين وإنتاجيتهم</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top green"></div>
+        <div class="card-icon">&#x1F4B0;</div>
+        <h4>CashFlow</h4>
+        <p>تقرير التدفقات النقدية</p>
+      </div>
+    </div>
+
+    <!-- التنبيهات -->
+    <h3 style="color:var(--accent);margin-bottom:16px;font-size:1.1rem;">التنبيهات (4)</h3>
+    <div class="grid grid-4" style="margin-bottom:40px;">
+      <div class="card fade-in">
+        <div class="card-top red"></div>
+        <div class="card-icon">&#x1F514;</div>
+        <h4>Notifications</h4>
+        <p>مركز الإشعارات العام</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top red"></div>
+        <div class="card-icon">&#x1F4E6;</div>
+        <h4>StockAlerts</h4>
+        <p>تنبيهات المخزون المنخفض</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top red"></div>
+        <div class="card-icon">&#x1F6D2;</div>
+        <h4>OrderAlerts</h4>
+        <p>تنبيهات الطلبات المتأخرة</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top red"></div>
+        <div class="card-icon">&#x26A0;&#xFE0F;</div>
+        <h4>SystemAlerts</h4>
+        <p>تنبيهات النظام والأعطال</p>
+      </div>
+    </div>
+
+    <!-- الطلبات -->
+    <h3 style="color:var(--warning);margin-bottom:16px;font-size:1.1rem;">الطلبات (5)</h3>
+    <div class="grid grid-3" style="margin-bottom:40px;">
+      <div class="card fade-in">
+        <div class="card-top yellow"></div>
+        <div class="card-icon">&#x1F4CB;</div>
+        <h4>ActiveOrders</h4>
+        <p>الطلبات النشطة الحالية</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top yellow"></div>
+        <div class="card-icon">&#x1F4C4;</div>
+        <h4>OrderDetail</h4>
+        <p>تفاصيل الطلب والعناصر</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top yellow"></div>
+        <div class="card-icon">&#x1F504;</div>
+        <h4>OrderStatus</h4>
+        <p>تتبع حالة الطلب</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top yellow"></div>
+        <div class="card-icon">&#x1F69A;</div>
+        <h4>DeliveryTracking</h4>
+        <p>تتبع توصيل الطلب</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top yellow"></div>
+        <div class="card-icon">&#x1F4DA;</div>
+        <h4>OrderHistory</h4>
+        <p>سجل الطلبات السابقة</p>
+      </div>
+    </div>
+
+    <!-- الإدارة -->
+    <h3 style="color:var(--secondary);margin-bottom:16px;font-size:1.1rem;">الإدارة (4)</h3>
+    <div class="grid grid-4" style="margin-bottom:40px;">
+      <div class="card fade-in">
+        <div class="card-top purple"></div>
+        <div class="card-icon">&#x1F3F7;&#xFE0F;</div>
+        <h4>QuickPrice</h4>
+        <p>تعديل سريع للأسعار</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top purple"></div>
+        <div class="card-icon">&#x1F4E6;</div>
+        <h4>StockAdjustment</h4>
+        <p>تعديل كميات المخزون</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top purple"></div>
+        <div class="card-icon">&#x1F4C5;</div>
+        <h4>EmployeeSchedule</h4>
+        <p>جدولة مواعيد الموظفين</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top purple"></div>
+        <div class="card-icon">&#x2705;</div>
+        <h4>PendingApprovals</h4>
+        <p>الموافقات المعلقة</p>
+      </div>
+    </div>
+
+    <!-- الإعدادات -->
+    <h3 style="color:var(--text-muted);margin-bottom:16px;font-size:1.1rem;">الإعدادات (3)</h3>
+    <div class="grid grid-3" style="margin-bottom:40px;">
+      <div class="card fade-in">
+        <div class="card-top green"></div>
+        <div class="card-icon">&#x2699;&#xFE0F;</div>
+        <h4>Settings</h4>
+        <p>إعدادات التطبيق العامة</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top green"></div>
+        <div class="card-icon">&#x1F464;</div>
+        <h4>Profile</h4>
+        <p>الملف الشخصي للمدير</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top green"></div>
+        <div class="card-icon">&#x1F514;</div>
+        <h4>NotificationPrefs</h4>
+        <p>تفضيلات الإشعارات</p>
+      </div>
+    </div>
+
+    <!-- مركز الموافقات + الإعداد -->
+    <h3 style="color:var(--primary);margin-bottom:16px;font-size:1.1rem;">مركز الموافقات (1) + الإعداد (1)</h3>
+    <div class="grid grid-2" style="margin-bottom:0;">
+      <div class="card fade-in">
+        <div class="card-top red"></div>
+        <div class="card-icon">&#x1F4DC;</div>
+        <h4>ApprovalCenter</h4>
+        <p>مركز الموافقات المركزي - مراجعة وقبول ورفض الطلبات المعلقة</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top yellow"></div>
+        <div class="card-icon">&#x1F680;</div>
+        <h4>Onboarding</h4>
+        <p>شاشة الإعداد الأولي وتعريف المدير بالتطبيق</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- رحلة المدير -->
+<section>
+  <div class="container">
+    <div class="section-header">
+      <span class="tag tag-green">رحلة المدير</span>
+      <h2>رحلة المدير الكاملة</h2>
+      <p>من فتح التطبيق حتى اتخاذ القرارات السريعة</p>
+    </div>
+    <div class="journey">
+      <div class="journey-step fade-in">
+        <h4>فتح التطبيق <span class="step-tag">Onboarding</span></h4>
+        <p>الإعداد الأولي عند أول استخدام</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>لوحة المعلومات <span class="step-tag">Dashboard</span></h4>
+        <p>نظرة شاملة على أداء اليوم والتنبيهات العاجلة</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>مراجعة اتجاه المبيعات <span class="step-tag">SalesTrend</span></h4>
+        <p>تحليل اتجاه المبيعات والمقارنة بالفترات السابقة</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>مراجعة التنبيهات <span class="step-tag">AlertsSummary</span></h4>
+        <p>فرز التنبيهات حسب الأولوية والتعامل مع العاجل</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>متابعة الطلبات النشطة <span class="step-tag">ActiveOrders</span></h4>
+        <p>مراقبة الطلبات الجارية وحالة التوصيل</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>مراجعة تقارير المبيعات <span class="step-tag">DailySales</span></h4>
+        <p>تحليل المبيعات اليومية والمقارنة الأسبوعية</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>فحص المخزون المنخفض <span class="step-tag">LowStock</span></h4>
+        <p>التحقق من المنتجات التي تحتاج إعادة طلب</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>تعديل سريع للأسعار <span class="step-tag">QuickPrice</span></h4>
+        <p>تحديث أسعار المنتجات بسرعة من الهاتف</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>معالجة الموافقات المعلقة <span class="step-tag">ApprovalCenter</span></h4>
+        <p>مراجعة وقبول أو رفض الطلبات المعلقة</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>مراجعة أداء الموظفين <span class="step-tag">EmployeePerformance</span></h4>
+        <p>تقييم إنتاجية الفريق واتخاذ قرارات الجدولة</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>ضبط الإشعارات <span class="step-tag">NotificationPrefs</span></h4>
+        <p>تخصيص أنواع التنبيهات وأوقات الإرسال</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- الاختبارات المطلوبة -->
+<section class="alt">
+  <div class="container">
+    <div class="section-header">
+      <span class="tag tag-red">الاختبارات</span>
+      <h2>الاختبارات المطلوبة</h2>
+      <p>8 اختبارات أساسية مطلوبة لضمان جودة تطبيق الإدارة المبسطة</p>
+    </div>
+    <div class="grid grid-2">
+      <div class="card fade-in">
+        <div class="card-top red"></div>
+        <h3>اختبار لوحة المعلومات</h3>
+        <p>تحميل البيانات الإحصائية وعرض الرسوم البيانية بشكل صحيح</p>
+        <div class="tags"><span class="ftag">Dashboard</span><span class="ftag">Charts</span></div>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top red"></div>
+        <h3>اختبار التقارير</h3>
+        <p>توليد التقارير اليومية والأسبوعية مع بيانات دقيقة</p>
+        <div class="tags"><span class="ftag">Reports</span><span class="ftag">Data</span></div>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top red"></div>
+        <h3>اختبار التنبيهات</h3>
+        <p>استلام التنبيهات في الوقت الفعلي وعرضها حسب الأولوية</p>
+        <div class="tags"><span class="ftag">Alerts</span><span class="ftag">Real-time</span></div>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top red"></div>
+        <h3>اختبار تتبع الطلبات</h3>
+        <p>عرض حالة الطلبات النشطة وتتبع التوصيل على الخريطة</p>
+        <div class="tags"><span class="ftag">Orders</span><span class="ftag">Tracking</span></div>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top red"></div>
+        <h3>اختبار تعديل الأسعار</h3>
+        <p>تعديل سعر منتج والتحقق من تحديثه في جميع الأنظمة</p>
+        <div class="tags"><span class="ftag">QuickPrice</span><span class="ftag">Sync</span></div>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top red"></div>
+        <h3>اختبار تعديل المخزون</h3>
+        <p>تعديل كمية المخزون والتحقق من تنبيهات المخزون المنخفض</p>
+        <div class="tags"><span class="ftag">Stock</span><span class="ftag">Adjustment</span></div>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top red"></div>
+        <h3>اختبار مركز الموافقات</h3>
+        <p>مراجعة الطلبات المعلقة وتنفيذ القبول والرفض بنجاح</p>
+        <div class="tags"><span class="ftag">Approvals</span><span class="ftag">Workflow</span></div>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top red"></div>
+        <h3>اختبار الإشعارات</h3>
+        <p>تخصيص تفضيلات الإشعارات والتحقق من التسليم الصحيح</p>
+        <div class="tags"><span class="ftag">Notifications</span><span class="ftag">Preferences</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <p>منصة الحي &mdash; الإدارة المبسطة &copy; 2026</p>
+</footer>
+
+<script>
+// Scroll animations
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }});
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>

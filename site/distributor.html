@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>بوابة الموزعين | Alhai Distributor Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>body{font-family:'Tajawal',sans-serif}</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <span class="nav-logo">Alhai</span>
+  <div class="nav-links">
+    <a href="super-admin.html">المشرف العام</a>
+    <a href="distributor.html" class="active">بوابة الموزعين</a>
+    <a href="database.html">قاعدة البيانات</a>
+    <a href="packages.html">الحزم المشتركة</a>
+  </div>
+  <button class="nav-toggle" onclick="document.querySelector('.nav-mobile').classList.toggle('open')">&#9776;</button>
+</nav>
+<div class="nav-mobile">
+  <a href="super-admin.html">المشرف العام</a>
+  <a href="distributor.html" class="active">بوابة الموزعين</a>
+  <a href="database.html">قاعدة البيانات</a>
+  <a href="packages.html">الحزم المشتركة</a>
+</div>
+
+<!-- HERO -->
+<div class="page-hero">
+  <div class="icon fade-in">&#128230;</div>
+  <h1 class="fade-in">بوابة الموزعين</h1>
+  <p class="fade-in">بوابة B2B لإدارة الطلبات بالجملة والتوزيع</p>
+  <div class="stats-bar fade-in">
+    <div class="stat-item"><div class="stat-number">35</div><div class="stat-label">ملف</div></div>
+    <div class="stat-item"><div class="stat-number">8,948</div><div class="stat-label">سطر</div></div>
+    <div class="stat-item"><div class="stat-number">8</div><div class="stat-label">شاشة</div></div>
+    <div class="stat-item"><div class="stat-number">2</div><div class="stat-label">اختبار</div></div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- SCREENS LIST -->
+  <section class="fade-in">
+    <div class="section-header">
+      <span class="tag tag-blue">الشاشات</span>
+      <h2>شاشات بوابة الموزعين</h2>
+      <p>8 شاشات متخصصة لإدارة التوزيع بالجملة</p>
+    </div>
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="card-top purple"></div>
+        <h4>&#128202; لوحة معلومات الموزع</h4>
+        <p>إحصائيات الطلبات، المبيعات، المنتجات الأكثر طلبا، مؤشرات الأداء الرئيسية</p>
+        <div class="tags"><span class="ftag">Dashboard</span><span class="ftag">KPIs</span><span class="ftag">Charts</span></div>
+      </div>
+      <div class="card">
+        <div class="card-top purple"></div>
+        <h4>&#128220; إدارة الطلبات</h4>
+        <p>عرض الطلبات الواردة، تأكيد/رفض، تتبع الحالة، تاريخ الطلبات</p>
+        <div class="tags"><span class="ftag">Orders</span><span class="ftag">Status</span><span class="ftag">History</span></div>
+      </div>
+      <div class="card">
+        <div class="card-top green"></div>
+        <h4>&#128230; كتالوج المنتجات</h4>
+        <p>إدارة المنتجات المتاحة للتوزيع، الأسعار بالجملة، الكميات المتوفرة</p>
+        <div class="tags"><span class="ftag">Products</span><span class="ftag">Wholesale</span><span class="ftag">Pricing</span></div>
+      </div>
+      <div class="card">
+        <div class="card-top green"></div>
+        <h4>&#128101; إدارة العملاء</h4>
+        <p>قائمة المتاجر العميلة، سجل الطلبات لكل عميل، الائتمان المتاح</p>
+        <div class="tags"><span class="ftag">Clients</span><span class="ftag">Credit</span><span class="ftag">History</span></div>
+      </div>
+      <div class="card">
+        <div class="card-top red"></div>
+        <h4>&#128666; تتبع التوصيل</h4>
+        <p>حالة التوصيل، تعيين السائقين، تأكيد الاستلام، خريطة المسارات</p>
+        <div class="tags"><span class="ftag">Delivery</span><span class="ftag">Tracking</span><span class="ftag">Drivers</span></div>
+      </div>
+      <div class="card">
+        <div class="card-top red"></div>
+        <h4>&#128176; المدفوعات والحسابات</h4>
+        <p>تتبع المدفوعات، الأرصدة المستحقة، كشف الحساب، التحصيل</p>
+        <div class="tags"><span class="ftag">Payments</span><span class="ftag">Accounts</span><span class="ftag">Collection</span></div>
+      </div>
+      <div class="card">
+        <div class="card-top yellow"></div>
+        <h4>&#128200; التقارير</h4>
+        <p>تقارير المبيعات، أداء المنتجات، تحليل العملاء، تقارير التوصيل</p>
+        <div class="tags"><span class="ftag">Reports</span><span class="ftag">Analytics</span><span class="ftag">Export</span></div>
+      </div>
+      <div class="card">
+        <div class="card-top yellow"></div>
+        <h4>&#9881;&#65039; الإعدادات</h4>
+        <p>إعدادات الحساب، مناطق التوصيل، سياسات التسعير، الإشعارات</p>
+        <div class="tags"><span class="ftag">Settings</span><span class="ftag">Zones</span><span class="ftag">Policies</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TYPED MODELS -->
+  <section class="alt fade-in">
+    <div class="section-header">
+      <span class="tag tag-green">النماذج</span>
+      <h2>النماذج المكتوبة</h2>
+      <p>6 نماذج بيانات مكتوبة بدقة لبوابة الموزعين</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="card fade-in">
+        <div class="card-top purple"></div>
+        <h3 style="font-family:'Courier New',monospace;color:var(--secondary);font-size:1rem">DistributorOrder</h3>
+        <p>نموذج الطلب بالجملة - يحتوي على بنود الطلب، الحالة، العميل، التوصيل، المبلغ الإجمالي</p>
+        <div class="meta">
+          <span><strong>12</strong> حقل</span>
+          <span><strong>3</strong> حالات</span>
+        </div>
+        <div class="tags">
+          <span class="ftag">id</span><span class="ftag">items</span><span class="ftag">status</span>
+          <span class="ftag">total</span><span class="ftag">client</span><span class="ftag">delivery</span>
+        </div>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top purple"></div>
+        <h3 style="font-family:'Courier New',monospace;color:var(--secondary);font-size:1rem">DistributorProduct</h3>
+        <p>نموذج المنتج للتوزيع - السعر بالجملة، الحد الأدنى للطلب، الكميات المتوفرة</p>
+        <div class="meta">
+          <span><strong>10</strong> حقل</span>
+          <span><strong>2</strong> تصنيف</span>
+        </div>
+        <div class="tags">
+          <span class="ftag">sku</span><span class="ftag">wholesalePrice</span><span class="ftag">minQty</span>
+          <span class="ftag">stock</span><span class="ftag">category</span>
+        </div>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top green"></div>
+        <h3 style="font-family:'Courier New',monospace;color:var(--secondary);font-size:1rem">DashboardKpis</h3>
+        <p>مؤشرات الأداء الرئيسية - إجمالي المبيعات، عدد الطلبات، معدل التحويل، العملاء الجدد</p>
+        <div class="meta">
+          <span><strong>8</strong> مؤشر</span>
+          <span><strong>4</strong> رسم بياني</span>
+        </div>
+        <div class="tags">
+          <span class="ftag">totalSales</span><span class="ftag">orderCount</span>
+          <span class="ftag">conversionRate</span><span class="ftag">newClients</span>
+        </div>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top green"></div>
+        <h3 style="font-family:'Courier New',monospace;color:var(--secondary);font-size:1rem">DeliveryRoute</h3>
+        <p>نموذج مسار التوصيل - السائق، النقاط، الحالة، وقت التسليم المتوقع</p>
+        <div class="meta">
+          <span><strong>9</strong> حقل</span>
+          <span><strong>5</strong> حالات</span>
+        </div>
+        <div class="tags">
+          <span class="ftag">driver</span><span class="ftag">stops</span><span class="ftag">status</span>
+          <span class="ftag">ETA</span><span class="ftag">distance</span>
+        </div>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top red"></div>
+        <h3 style="font-family:'Courier New',monospace;color:var(--secondary);font-size:1rem">ClientAccount</h3>
+        <p>حساب العميل - الرصيد، حد الائتمان، سجل المعاملات، تصنيف العميل</p>
+        <div class="meta">
+          <span><strong>11</strong> حقل</span>
+          <span><strong>3</strong> مستوى</span>
+        </div>
+        <div class="tags">
+          <span class="ftag">balance</span><span class="ftag">creditLimit</span>
+          <span class="ftag">tier</span><span class="ftag">transactions</span>
+        </div>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top yellow"></div>
+        <h3 style="font-family:'Courier New',monospace;color:var(--secondary);font-size:1rem">SalesReport</h3>
+        <p>تقرير المبيعات - فترة التقرير، المنتجات الأكثر مبيعا، الإيرادات، المقارنات</p>
+        <div class="meta">
+          <span><strong>7</strong> حقل</span>
+          <span><strong>3</strong> فترة</span>
+        </div>
+        <div class="tags">
+          <span class="ftag">period</span><span class="ftag">topProducts</span>
+          <span class="ftag">revenue</span><span class="ftag">comparison</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DISTRIBUTOR JOURNEY -->
+  <section class="fade-in">
+    <div class="section-header">
+      <span class="tag tag-blue">رحلة الموزع</span>
+      <h2>رحلة الموزع</h2>
+      <p>المسار الكامل لعملية التوزيع بالجملة</p>
+    </div>
+    <div class="journey">
+      <div class="journey-step fade-in">
+        <h4>تسجيل الدخول <span class="step-tag">Auth</span></h4>
+        <p>مصادقة الموزع، التحقق من الهوية، تحميل بيانات الحساب</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>لوحة المعلومات <span class="step-tag">Dashboard</span></h4>
+        <p>عرض مؤشرات الأداء، الطلبات الجديدة المعلقة، التنبيهات العاجلة</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>استلام طلب جديد <span class="step-tag">Order</span></h4>
+        <p>إشعار بطلب جديد من متجر عميل، مراجعة البنود والكميات</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>تأكيد الطلب والتسعير <span class="step-tag">Confirm</span></h4>
+        <p>مراجعة الأسعار بالجملة، تأكيد التوفر، إصدار عرض السعر</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>تجهيز الشحنة <span class="step-tag">Prepare</span></h4>
+        <p>تحضير المنتجات، التغليف، إنشاء بوليصة الشحن</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>تعيين سائق التوصيل <span class="step-tag">Delivery</span></h4>
+        <p>اختيار السائق، تحديد المسار الأمثل، إرسال تفاصيل التوصيل</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>تتبع التوصيل <span class="step-tag">Track</span></h4>
+        <p>متابعة حالة التوصيل في الوقت الحقيقي، تأكيد الاستلام</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>التحصيل والفوترة <span class="step-tag">Payment</span></h4>
+        <p>إصدار الفاتورة، تسجيل الدفع، تحديث رصيد العميل</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTS NEEDED -->
+  <section class="alt fade-in">
+    <div class="section-header">
+      <span class="tag tag-red">الاختبارات</span>
+      <h2>الاختبارات المطلوبة</h2>
+      <p>2 اختبار موجود - قائمة بالاختبارات الإضافية المطلوبة</p>
+    </div>
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="card-top green"></div>
+        <h4>&#9989; الاختبارات الموجودة</h4>
+        <div class="tags" style="margin-top:12px">
+          <span class="ftag green">تسجيل دخول الموزع</span>
+          <span class="ftag green">عرض لوحة المعلومات</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-top red"></div>
+        <h4>&#9888;&#65039; اختبارات مطلوبة</h4>
+        <div class="tags" style="margin-top:12px">
+          <span class="ftag">إنشاء طلب جملة</span>
+          <span class="ftag">تأكيد/رفض طلب</span>
+          <span class="ftag">تعيين سائق</span>
+          <span class="ftag">تتبع التوصيل</span>
+          <span class="ftag">إدارة المنتجات</span>
+          <span class="ftag">كشف حساب العميل</span>
+          <span class="ftag">تصدير التقارير</span>
+          <span class="ftag">إدارة مناطق التوصيل</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <div class="footer fade-in">
+    <p>نظام الحي لنقاط البيع - Alhai POS Platform</p>
+    <p style="margin-top:4px;font-size:12px;color:var(--text-muted)">وثائق بوابة الموزعين | أبريل 2026</p>
+  </div>
+
+</div>
+
+<script>
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => entry.target.classList.add('visible'), i * 80);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

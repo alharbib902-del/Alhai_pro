@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>قاعدة البيانات | Alhai Database</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>body{font-family:'Tajawal',sans-serif}</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <span class="nav-logo">Alhai</span>
+  <div class="nav-links">
+    <a href="super-admin.html">المشرف العام</a>
+    <a href="distributor.html">بوابة الموزعين</a>
+    <a href="database.html" class="active">قاعدة البيانات</a>
+    <a href="packages.html">الحزم المشتركة</a>
+  </div>
+  <button class="nav-toggle" onclick="document.querySelector('.nav-mobile').classList.toggle('open')">&#9776;</button>
+</nav>
+<div class="nav-mobile">
+  <a href="super-admin.html">المشرف العام</a>
+  <a href="distributor.html">بوابة الموزعين</a>
+  <a href="database.html" class="active">قاعدة البيانات</a>
+  <a href="packages.html">الحزم المشتركة</a>
+</div>
+
+<!-- HERO -->
+<div class="page-hero">
+  <div class="icon fade-in">&#128452;&#65039;</div>
+  <h1 class="fade-in">قاعدة البيانات</h1>
+  <p class="fade-in">39 جدول + 31 وحدة وصول - بنية بيانات متكاملة</p>
+  <div class="stats-bar fade-in">
+    <div class="stat-item"><div class="stat-number">39</div><div class="stat-label">جدول</div></div>
+    <div class="stat-item"><div class="stat-number">31</div><div class="stat-label">DAO</div></div>
+    <div class="stat-item"><div class="stat-number">14</div><div class="stat-label">ترحيل</div></div>
+    <div class="stat-item"><div class="stat-number">4</div><div class="stat-label">وظائف سحابية</div></div>
+    <div class="stat-item"><div class="stat-number">11</div><div class="stat-label">إصدار مخطط</div></div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- GROUP 1: المنظمات والوصول -->
+  <section class="fade-in">
+    <div class="section-header">
+      <span class="group-badge g1">&#127968; المجموعة 1</span>
+      <h2>المنظمات والوصول</h2>
+      <p>الجداول الأساسية لإدارة المنظمات والمستخدمين والصلاحيات</p>
+    </div>
+    <div style="text-align:center;margin-bottom:24px">
+      <span class="table-mini">organizations</span>
+      <span class="table-mini">stores</span>
+      <span class="table-mini">users</span>
+      <span class="table-mini">org_members</span>
+      <span class="table-mini">subscriptions</span>
+    </div>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>الجدول</th><th>الوصف</th><th>الحقول الرئيسية</th><th>العلاقات</th></tr></thead>
+        <tbody>
+          <tr><td>organizations</td><td>المنظمات / الشركات المسجلة</td><td>id, name, logo, plan, status, created_at</td><td>has many stores, members</td></tr>
+          <tr><td>stores</td><td>المتاجر التابعة لكل منظمة</td><td>id, org_id, name, address, phone, lat, lng</td><td>belongs to organization</td></tr>
+          <tr><td>users</td><td>جميع مستخدمي النظام</td><td>id, email, phone, name, role, avatar</td><td>has many org_members</td></tr>
+          <tr><td>org_members</td><td>عضوية المستخدم في المنظمة</td><td>id, org_id, user_id, role, permissions</td><td>belongs to org + user</td></tr>
+          <tr><td>subscriptions</td><td>اشتراكات المنظمات في الخطط</td><td>id, org_id, plan, status, start, end</td><td>belongs to organization</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- GROUP 2: المنتجات والمخزون -->
+  <section class="alt fade-in">
+    <div class="section-header">
+      <span class="group-badge g2">&#128230; المجموعة 2</span>
+      <h2>المنتجات والمخزون</h2>
+      <p>إدارة المنتجات، التصنيفات، المخزون، وحركات المستودع</p>
+    </div>
+    <div style="text-align:center;margin-bottom:24px">
+      <span class="table-mini">products</span>
+      <span class="table-mini">categories</span>
+      <span class="table-mini">org_products</span>
+      <span class="table-mini">inventory_movements</span>
+      <span class="table-mini">stock_takes</span>
+      <span class="table-mini">stock_transfers</span>
+      <span class="table-mini">stock_deltas</span>
+      <span class="table-mini">product_expiry</span>
+      <span class="table-mini">favorites</span>
+    </div>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>الجدول</th><th>الوصف</th><th>الحقول الرئيسية</th><th>العلاقات</th></tr></thead>
+        <tbody>
+          <tr><td>products</td><td>كتالوج المنتجات العام</td><td>id, name, barcode, sku, image, unit</td><td>has many org_products</td></tr>
+          <tr><td>categories</td><td>تصنيفات المنتجات</td><td>id, name, parent_id, icon, sort_order</td><td>self-referencing tree</td></tr>
+          <tr><td>org_products</td><td>منتجات كل منظمة (أسعار مخصصة)</td><td>id, org_id, product_id, price, cost, qty</td><td>org + product</td></tr>
+          <tr><td>inventory_movements</td><td>حركات المخزون (إدخال/إخراج)</td><td>id, product_id, qty, type, reference</td><td>belongs to product</td></tr>
+          <tr><td>stock_takes</td><td>جرد المخزون الفعلي</td><td>id, store_id, date, status, items</td><td>belongs to store</td></tr>
+          <tr><td>stock_transfers</td><td>تحويلات بين المستودعات</td><td>id, from_store, to_store, items, status</td><td>between stores</td></tr>
+          <tr><td>stock_deltas</td><td>فروقات المخزون المحسوبة</td><td>id, product_id, expected, actual, diff</td><td>belongs to stock_take</td></tr>
+          <tr><td>product_expiry</td><td>تتبع صلاحية المنتجات</td><td>id, product_id, batch, expiry_date, qty</td><td>belongs to product</td></tr>
+          <tr><td>favorites</td><td>المنتجات المفضلة للمستخدم</td><td>id, user_id, product_id</td><td>user + product</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- GROUP 3: المبيعات والفواتير -->
+  <section class="fade-in">
+    <div class="section-header">
+      <span class="group-badge g3">&#128176; المجموعة 3</span>
+      <h2>المبيعات والفواتير</h2>
+      <p>عمليات البيع، بنود الفواتير، المرتجعات، الورديات</p>
+    </div>
+    <div style="text-align:center;margin-bottom:24px">
+      <span class="table-mini">sales</span>
+      <span class="table-mini">sale_items</span>
+      <span class="table-mini">invoices</span>
+      <span class="table-mini">returns</span>
+      <span class="table-mini">held_invoices</span>
+      <span class="table-mini">shifts</span>
+      <span class="table-mini">pos_terminals</span>
+      <span class="table-mini">discounts</span>
+    </div>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>الجدول</th><th>الوصف</th><th>الحقول الرئيسية</th><th>العلاقات</th></tr></thead>
+        <tbody>
+          <tr><td>sales</td><td>عمليات البيع الرئيسية</td><td>id, store_id, cashier_id, total, tax, payment_method</td><td>store + cashier</td></tr>
+          <tr><td>sale_items</td><td>بنود كل عملية بيع</td><td>id, sale_id, product_id, qty, price, discount</td><td>belongs to sale</td></tr>
+          <tr><td>invoices</td><td>الفواتير الضريبية (ZATCA)</td><td>id, sale_id, qr_code, xml_hash, status</td><td>belongs to sale</td></tr>
+          <tr><td>returns</td><td>عمليات المرتجعات</td><td>id, sale_id, items, reason, refund_amount</td><td>belongs to sale</td></tr>
+          <tr><td>held_invoices</td><td>الفواتير المعلقة مؤقتا</td><td>id, cashier_id, items, note, hold_time</td><td>belongs to cashier</td></tr>
+          <tr><td>shifts</td><td>ورديات الكاشير</td><td>id, cashier_id, store_id, open_at, close_at, cash</td><td>cashier + store</td></tr>
+          <tr><td>pos_terminals</td><td>أجهزة نقاط البيع</td><td>id, store_id, name, device_id, status</td><td>belongs to store</td></tr>
+          <tr><td>discounts</td><td>الخصومات والعروض</td><td>id, name, type, value, start_date, end_date</td><td>applies to products</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- GROUP 4: الطلبات والتوصيل -->
+  <section class="alt fade-in">
+    <div class="section-header">
+      <span class="group-badge g4">&#128666; المجموعة 4</span>
+      <h2>الطلبات والتوصيل</h2>
+      <p>إدارة الطلبات عبر الإنترنت والتوصيل والسائقين</p>
+    </div>
+    <div style="text-align:center;margin-bottom:24px">
+      <span class="table-mini">orders</span>
+      <span class="table-mini">order_items</span>
+      <span class="table-mini">order_status_history</span>
+      <span class="table-mini">drivers</span>
+    </div>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>الجدول</th><th>الوصف</th><th>الحقول الرئيسية</th><th>العلاقات</th></tr></thead>
+        <tbody>
+          <tr><td>orders</td><td>الطلبات عبر الإنترنت</td><td>id, customer_id, store_id, total, status, address</td><td>customer + store</td></tr>
+          <tr><td>order_items</td><td>بنود كل طلب</td><td>id, order_id, product_id, qty, price</td><td>belongs to order</td></tr>
+          <tr><td>order_status_history</td><td>سجل تغييرات حالة الطلب</td><td>id, order_id, status, changed_by, timestamp</td><td>belongs to order</td></tr>
+          <tr><td>drivers</td><td>سائقي التوصيل</td><td>id, name, phone, vehicle, status, location</td><td>has many orders</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- GROUP 5: العملاء والمحاسبة -->
+  <section class="fade-in">
+    <div class="section-header">
+      <span class="group-badge g5">&#128181; المجموعة 5</span>
+      <h2>العملاء والمحاسبة</h2>
+      <p>بيانات العملاء، الحسابات، المعاملات المالية، المصروفات</p>
+    </div>
+    <div style="text-align:center;margin-bottom:24px">
+      <span class="table-mini">customers</span>
+      <span class="table-mini">accounts</span>
+      <span class="table-mini">transactions</span>
+      <span class="table-mini">expenses</span>
+      <span class="table-mini">suppliers</span>
+      <span class="table-mini">purchases</span>
+      <span class="table-mini">loyalty_points</span>
+      <span class="table-mini">daily_summaries</span>
+    </div>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>الجدول</th><th>الوصف</th><th>الحقول الرئيسية</th><th>العلاقات</th></tr></thead>
+        <tbody>
+          <tr><td>customers</td><td>بيانات العملاء</td><td>id, name, phone, email, address, loyalty_tier</td><td>has many orders, sales</td></tr>
+          <tr><td>accounts</td><td>الحسابات المالية</td><td>id, name, type, balance, org_id</td><td>belongs to org</td></tr>
+          <tr><td>transactions</td><td>المعاملات المالية</td><td>id, account_id, amount, type, reference</td><td>belongs to account</td></tr>
+          <tr><td>expenses</td><td>المصروفات التشغيلية</td><td>id, store_id, category, amount, date, note</td><td>belongs to store</td></tr>
+          <tr><td>suppliers</td><td>الموردون</td><td>id, name, phone, email, address, balance</td><td>has many purchases</td></tr>
+          <tr><td>purchases</td><td>عمليات الشراء من الموردين</td><td>id, supplier_id, items, total, status</td><td>belongs to supplier</td></tr>
+          <tr><td>loyalty_points</td><td>نقاط الولاء للعملاء</td><td>id, customer_id, points, earned_from, date</td><td>belongs to customer</td></tr>
+          <tr><td>daily_summaries</td><td>الملخصات اليومية التجميعية</td><td>id, store_id, date, total_sales, total_orders</td><td>belongs to store</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- GROUP 6: المزامنة والتواصل -->
+  <section class="alt fade-in">
+    <div class="section-header">
+      <span class="group-badge g6">&#128260; المجموعة 6</span>
+      <h2>المزامنة والتواصل</h2>
+      <p>نظام المزامنة، رسائل واتساب، الإشعارات، سجل التدقيق</p>
+    </div>
+    <div style="text-align:center;margin-bottom:24px">
+      <span class="table-mini">sync_queue</span>
+      <span class="table-mini">sync_metadata</span>
+      <span class="table-mini">whatsapp_messages</span>
+      <span class="table-mini">whatsapp_templates</span>
+      <span class="table-mini">notifications</span>
+      <span class="table-mini">audit_log</span>
+      <span class="table-mini">settings</span>
+    </div>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>الجدول</th><th>الوصف</th><th>الحقول الرئيسية</th><th>العلاقات</th></tr></thead>
+        <tbody>
+          <tr><td>sync_queue</td><td>قائمة انتظار المزامنة</td><td>id, table_name, record_id, operation, status</td><td>polymorphic</td></tr>
+          <tr><td>sync_metadata</td><td>بيانات وصفية للمزامنة</td><td>id, device_id, last_sync, version</td><td>per device</td></tr>
+          <tr><td>whatsapp_messages</td><td>رسائل واتساب المرسلة</td><td>id, phone, template_id, status, sent_at</td><td>uses template</td></tr>
+          <tr><td>whatsapp_templates</td><td>قوالب رسائل واتساب</td><td>id, name, body, language, variables</td><td>has many messages</td></tr>
+          <tr><td>notifications</td><td>إشعارات النظام</td><td>id, user_id, title, body, read, type</td><td>belongs to user</td></tr>
+          <tr><td>audit_log</td><td>سجل التدقيق الأمني</td><td>id, user_id, action, table, record_id, details</td><td>belongs to user</td></tr>
+          <tr><td>settings</td><td>إعدادات النظام</td><td>id, key, value, org_id, store_id</td><td>org or store scope</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- RELATIONSHIP MAP -->
+  <section class="fade-in">
+    <div class="section-header">
+      <span class="tag tag-blue">العلاقات</span>
+      <h2>خريطة العلاقات</h2>
+      <p>العلاقات الرئيسية بين الجداول (Foreign Keys)</p>
+    </div>
+    <div class="grid grid-2">
+      <div class="rel-card fade-in">
+        <h4>&#127968; المنظمات</h4>
+        <div class="rel-arrow"><span class="fk">organizations</span> <span class="arrow">&#8592;</span> stores (org_id)</div>
+        <div class="rel-arrow"><span class="fk">organizations</span> <span class="arrow">&#8592;</span> org_members (org_id)</div>
+        <div class="rel-arrow"><span class="fk">organizations</span> <span class="arrow">&#8592;</span> subscriptions (org_id)</div>
+        <div class="rel-arrow"><span class="fk">organizations</span> <span class="arrow">&#8592;</span> org_products (org_id)</div>
+        <div class="rel-arrow"><span class="fk">organizations</span> <span class="arrow">&#8592;</span> accounts (org_id)</div>
+      </div>
+      <div class="rel-card fade-in">
+        <h4>&#127978; المتاجر</h4>
+        <div class="rel-arrow"><span class="fk">stores</span> <span class="arrow">&#8592;</span> sales (store_id)</div>
+        <div class="rel-arrow"><span class="fk">stores</span> <span class="arrow">&#8592;</span> shifts (store_id)</div>
+        <div class="rel-arrow"><span class="fk">stores</span> <span class="arrow">&#8592;</span> expenses (store_id)</div>
+        <div class="rel-arrow"><span class="fk">stores</span> <span class="arrow">&#8592;</span> pos_terminals (store_id)</div>
+        <div class="rel-arrow"><span class="fk">stores</span> <span class="arrow">&#8592;</span> daily_summaries (store_id)</div>
+      </div>
+      <div class="rel-card fade-in">
+        <h4>&#128101; المستخدمون</h4>
+        <div class="rel-arrow"><span class="fk">users</span> <span class="arrow">&#8592;</span> org_members (user_id)</div>
+        <div class="rel-arrow"><span class="fk">users</span> <span class="arrow">&#8592;</span> sales (cashier_id)</div>
+        <div class="rel-arrow"><span class="fk">users</span> <span class="arrow">&#8592;</span> notifications (user_id)</div>
+        <div class="rel-arrow"><span class="fk">users</span> <span class="arrow">&#8592;</span> audit_log (user_id)</div>
+        <div class="rel-arrow"><span class="fk">users</span> <span class="arrow">&#8592;</span> favorites (user_id)</div>
+      </div>
+      <div class="rel-card fade-in">
+        <h4>&#128179; المبيعات</h4>
+        <div class="rel-arrow"><span class="fk">sales</span> <span class="arrow">&#8592;</span> sale_items (sale_id)</div>
+        <div class="rel-arrow"><span class="fk">sales</span> <span class="arrow">&#8592;</span> invoices (sale_id)</div>
+        <div class="rel-arrow"><span class="fk">sales</span> <span class="arrow">&#8592;</span> returns (sale_id)</div>
+        <div class="rel-arrow"><span class="fk">products</span> <span class="arrow">&#8592;</span> sale_items (product_id)</div>
+      </div>
+      <div class="rel-card fade-in">
+        <h4>&#128230; الطلبات</h4>
+        <div class="rel-arrow"><span class="fk">orders</span> <span class="arrow">&#8592;</span> order_items (order_id)</div>
+        <div class="rel-arrow"><span class="fk">orders</span> <span class="arrow">&#8592;</span> order_status_history (order_id)</div>
+        <div class="rel-arrow"><span class="fk">customers</span> <span class="arrow">&#8592;</span> orders (customer_id)</div>
+        <div class="rel-arrow"><span class="fk">drivers</span> <span class="arrow">&#8592;</span> orders (driver_id)</div>
+      </div>
+      <div class="rel-card fade-in">
+        <h4>&#128181; المحاسبة</h4>
+        <div class="rel-arrow"><span class="fk">accounts</span> <span class="arrow">&#8592;</span> transactions (account_id)</div>
+        <div class="rel-arrow"><span class="fk">suppliers</span> <span class="arrow">&#8592;</span> purchases (supplier_id)</div>
+        <div class="rel-arrow"><span class="fk">customers</span> <span class="arrow">&#8592;</span> loyalty_points (customer_id)</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SUPABASE FEATURES -->
+  <section class="alt fade-in">
+    <div class="section-header">
+      <span class="tag tag-green">Supabase</span>
+      <h2>ميزات Supabase</h2>
+      <p>الخدمات السحابية المستخدمة من منصة Supabase</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="supa-card fade-in">
+        <div class="supa-icon">&#128272;</div>
+        <h4>Auth</h4>
+        <p>مصادقة المستخدمين - تسجيل الدخول بالهاتف، OTP، تسجيل جديد، إدارة الجلسات</p>
+      </div>
+      <div class="supa-card fade-in">
+        <div class="supa-icon">&#9889;</div>
+        <h4>Realtime</h4>
+        <p>المزامنة الفورية - تحديثات مباشرة للطلبات، المخزون، الإشعارات عبر WebSocket</p>
+      </div>
+      <div class="supa-card fade-in">
+        <div class="supa-icon">&#128193;</div>
+        <h4>Storage</h4>
+        <p>تخزين الملفات - صور المنتجات، الشعارات، مرفقات الفواتير، النسخ الاحتياطي</p>
+      </div>
+      <div class="supa-card fade-in">
+        <div class="supa-icon">&#9889;</div>
+        <h4>Edge Functions</h4>
+        <p>4 وظائف سحابية - معالجة الطلبات، رفع الصور، إشعارات السائق، webhook التوصيل</p>
+      </div>
+      <div class="supa-card fade-in">
+        <div class="supa-icon">&#128274;</div>
+        <h4>RLS</h4>
+        <p>Row Level Security - سياسات أمان على مستوى الصف لكل جدول حسب المنظمة والدور</p>
+      </div>
+      <div class="supa-card fade-in">
+        <div class="supa-icon">&#128295;</div>
+        <h4>RPC</h4>
+        <p>Remote Procedure Calls - دوال مخزنة للعمليات المعقدة مثل إغلاق الوردية والتقارير</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- EDGE FUNCTIONS -->
+  <section class="fade-in">
+    <div class="section-header">
+      <span class="tag tag-yellow">Edge Functions</span>
+      <h2>الوظائف السحابية</h2>
+      <p>4 وظائف Supabase Edge Functions</p>
+    </div>
+    <div class="grid grid-2">
+      <div class="edge-card fade-in">
+        <h4>public-products</h4>
+        <p>واجهة عامة لعرض المنتجات المتاحة - تستخدمها تطبيقات العملاء بدون مصادقة مع تخزين مؤقت</p>
+        <div class="tags"><span class="ftag">GET</span><span class="ftag">Public</span><span class="ftag">Cache</span></div>
+      </div>
+      <div class="edge-card fade-in">
+        <h4>upload-product-images</h4>
+        <p>رفع ومعالجة صور المنتجات - ضغط تلقائي، إنشاء أحجام متعددة، تخزين في Supabase Storage</p>
+        <div class="tags"><span class="ftag">POST</span><span class="ftag">Auth</span><span class="ftag">Storage</span></div>
+      </div>
+      <div class="edge-card fade-in">
+        <h4>notify-driver</h4>
+        <p>إرسال إشعارات فورية للسائقين عند تعيين طلب جديد أو تغيير في المسار</p>
+        <div class="tags"><span class="ftag">POST</span><span class="ftag">Push</span><span class="ftag">Realtime</span></div>
+      </div>
+      <div class="edge-card fade-in">
+        <h4>delivery-webhook</h4>
+        <p>استقبال تحديثات حالة التوصيل من خدمات التوصيل الخارجية وتحديث حالة الطلب</p>
+        <div class="tags"><span class="ftag">POST</span><span class="ftag">Webhook</span><span class="ftag">External</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <div class="footer fade-in">
+    <p>نظام الحي لنقاط البيع - Alhai POS Platform</p>
+    <p style="margin-top:4px;font-size:12px;color:var(--text-muted)">وثائق قاعدة البيانات | أبريل 2026</p>
+  </div>
+
+</div>
+
+<script>
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => entry.target.classList.add('visible'), i * 80);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
