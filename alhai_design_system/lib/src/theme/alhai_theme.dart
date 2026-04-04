@@ -81,7 +81,8 @@ abstract final class AlhaiTheme {
       scrollbarTheme: ScrollbarThemeData(
         thickness: const WidgetStatePropertyAll(6),
         radius: const Radius.circular(999),
-        thumbColor: WidgetStatePropertyAll(colorScheme.onSurface.withValues(alpha: 0.35)),
+        thumbColor: WidgetStatePropertyAll(colorScheme.onSurface.withValues(
+            alpha: brightness == Brightness.dark ? 0.45 : 0.35)),
       ),
       
       // pageTransitionsTheme: يُفرض في كل تطبيق حسب احتياجه

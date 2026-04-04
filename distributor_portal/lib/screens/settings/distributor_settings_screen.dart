@@ -96,8 +96,9 @@ class _DistributorSettingsScreenState
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final isWide = size.width > 900;
-    final isMedium = size.width > 600;
+    final isWide = size.width >= AlhaiBreakpoints.desktop;
+    final isMedium = size.width >= AlhaiBreakpoints.tablet;
+    final isMobile = size.width < AlhaiBreakpoints.tablet;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cs = Theme.of(context).colorScheme;
 
@@ -205,7 +206,7 @@ class _DistributorSettingsScreenState
                           children: [
                             _buildCompanyInfoSection(isDark),
                             const SizedBox(height: AlhaiSpacing.lg),
-                            _buildDeliverySection(isDark),
+                            _buildDeliverySection(isDark, isMobile: isMobile),
                           ],
                         ),
                       ),
@@ -239,7 +240,7 @@ class _DistributorSettingsScreenState
                       SizedBox(
                           height:
                               isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md),
-                      _buildDeliverySection(isDark),
+                      _buildDeliverySection(isDark, isMobile: isMobile),
                       const SizedBox(height: AlhaiSpacing.lg),
                       _buildSaveButton(isDark),
                       const SizedBox(height: AlhaiSpacing.xl),
@@ -401,15 +402,16 @@ class _DistributorSettingsScreenState
 
   // ─── Delivery Section ──────────────────────────────────────────
 
-  Widget _buildDeliverySection(bool isDark) {
+  Widget _buildDeliverySection(bool isDark, {bool isMobile = false}) {
     return _sectionCard(
       icon: Icons.local_shipping_rounded,
       iconColor: AppColors.secondary,
       title: 'إعدادات التسليم',
       isDark: isDark,
       children: [
-        _buildField(
+        _buildFieldWithHelp(
           label: 'مناطق التوصيل',
+          helpText: 'أدخل أسماء المدن أو المناطق مفصولة بفاصلة. مثال: الرياض، جدة، الدمام',
           controller: _deliveryZonesController,
           icon: Icons.map_rounded,
           maxLines: 2,
@@ -418,29 +420,52 @@ class _DistributorSettingsScreenState
           isDark: isDark,
         ),
         const SizedBox(height: AlhaiSpacing.md),
-        Row(
-          children: [
-            Expanded(
-              child: _buildField(
-                label: 'الحد الأدنى للطلب (ر.س)',
-                controller: _minOrderController,
-                icon: Icons.shopping_cart_rounded,
-                keyboardType: TextInputType.number,
-                isDark: isDark,
-              ),
+        if (isMobile)
+          ...[
+            _buildFieldWithHelp(
+              label: 'الحد الأدنى للطلب (ر.س)',
+              helpText: 'أقل مبلغ مطلوب لقبول الطلب. الطلبات الأقل من هذا المبلغ لن تُقبل تلقائياً',
+              controller: _minOrderController,
+              icon: Icons.shopping_cart_rounded,
+              keyboardType: TextInputType.number,
+              isDark: isDark,
             ),
-            const SizedBox(width: AlhaiSpacing.md),
-            Expanded(
-              child: _buildField(
-                label: 'رسوم التوصيل (ر.س)',
-                controller: _deliveryFeeController,
-                icon: Icons.delivery_dining_rounded,
-                keyboardType: TextInputType.number,
-                isDark: isDark,
-              ),
+            const SizedBox(height: AlhaiSpacing.md),
+            _buildFieldWithHelp(
+              label: 'رسوم التوصيل (ر.س)',
+              helpText: 'المبلغ الذي يُضاف على كل طلب كرسوم توصيل. يظهر للمتاجر عند تقديم الطلب',
+              controller: _deliveryFeeController,
+              icon: Icons.delivery_dining_rounded,
+              keyboardType: TextInputType.number,
+              isDark: isDark,
             ),
-          ],
-        ),
+          ]
+        else
+          Row(
+            children: [
+              Expanded(
+                child: _buildFieldWithHelp(
+                  label: 'الحد الأدنى للطلب (ر.س)',
+                  helpText: 'أقل مبلغ مطلوب لقبول الطلب. الطلبات الأقل من هذا المبلغ لن تُقبل تلقائياً',
+                  controller: _minOrderController,
+                  icon: Icons.shopping_cart_rounded,
+                  keyboardType: TextInputType.number,
+                  isDark: isDark,
+                ),
+              ),
+              const SizedBox(width: AlhaiSpacing.md),
+              Expanded(
+                child: _buildFieldWithHelp(
+                  label: 'رسوم التوصيل (ر.س)',
+                  helpText: 'المبلغ الذي يُضاف على كل طلب كرسوم توصيل. يظهر للمتاجر عند تقديم الطلب',
+                  controller: _deliveryFeeController,
+                  icon: Icons.delivery_dining_rounded,
+                  keyboardType: TextInputType.number,
+                  isDark: isDark,
+                ),
+              ),
+            ],
+          ),
         const SizedBox(height: AlhaiSpacing.md),
         _switchTile(
           'توصيل مجاني',
@@ -543,10 +568,13 @@ class _DistributorSettingsScreenState
   // ─── Save Button ───────────────────────────────────────────────
 
   Widget _buildSaveButton(bool isDark) {
-    return SizedBox(
-      width: double.infinity,
-      child: FilledButton.icon(
-        onPressed: _isSaving ? null : _saveSettings,
+    return Semantics(
+      button: true,
+      label: 'Save settings (Ctrl+S)',
+      child: SizedBox(
+        width: double.infinity,
+        child: FilledButton.icon(
+          onPressed: _isSaving ? null : _saveSettings,
         icon: _isSaving
             ? const SizedBox(
                 width: 20,
@@ -563,6 +591,7 @@ class _DistributorSettingsScreenState
           padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(AlhaiRadius.md)),
+          ),
         ),
       ),
     );
@@ -595,7 +624,9 @@ class _DistributorSettingsScreenState
                   color: iconColor.withValues(alpha: isDark ? 0.2 : 0.1),
                   borderRadius: BorderRadius.circular(AlhaiRadius.sm + 2),
                 ),
-                child: Icon(icon, color: iconColor, size: 20),
+                child: ExcludeSemantics(
+                  child: Icon(icon, color: iconColor, size: 20),
+                ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Text(
@@ -673,13 +704,91 @@ class _DistributorSettingsScreenState
     );
   }
 
+  Widget _buildFieldWithHelp({
+    required String label,
+    required String helpText,
+    required TextEditingController controller,
+    required IconData icon,
+    required bool isDark,
+    TextInputType keyboardType = TextInputType.text,
+    int maxLines = 1,
+    int? maxLength,
+    String? hintText,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: AppColors.getTextSecondary(isDark),
+              ),
+            ),
+            const SizedBox(width: AlhaiSpacing.xxs),
+            Tooltip(
+              message: helpText,
+              preferBelow: false,
+              child: Semantics(
+                label: 'Help: $helpText',
+                child: Icon(
+                  Icons.help_outline_rounded,
+                  size: 16,
+                  color: AppColors.getTextMuted(isDark),
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: AlhaiSpacing.xs),
+        TextField(
+          controller: controller,
+          keyboardType: keyboardType,
+          maxLines: maxLines,
+          maxLength: maxLength,
+          onChanged: (_) => setState(() => _hasChanges = true),
+          style: TextStyle(color: AppColors.getTextPrimary(isDark)),
+          decoration: InputDecoration(
+            hintText: hintText,
+            hintStyle: TextStyle(color: AppColors.getTextMuted(isDark)),
+            prefixIcon: maxLines == 1
+                ? Icon(icon, color: AppColors.getTextMuted(isDark))
+                : null,
+            filled: true,
+            fillColor: AppColors.getSurfaceVariant(isDark),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(AlhaiRadius.md),
+              borderSide: BorderSide(color: AppColors.getBorder(isDark)),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(AlhaiRadius.md),
+              borderSide: BorderSide(color: AppColors.getBorder(isDark)),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(AlhaiRadius.md),
+              borderSide:
+                  const BorderSide(color: AppColors.primary, width: 2),
+            ),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _switchTile(String label, IconData icon, bool value,
       ValueChanged<bool> onChanged, bool isDark) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxs),
       child: Row(
         children: [
-          Icon(icon, color: AppColors.getTextMuted(isDark), size: 20),
+          ExcludeSemantics(
+            child: Icon(icon, color: AppColors.getTextMuted(isDark), size: 20),
+          ),
           const SizedBox(width: AlhaiSpacing.sm),
           Expanded(
             child: Semantics(

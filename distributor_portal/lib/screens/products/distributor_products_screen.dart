@@ -89,8 +89,8 @@ class _DistributorProductsScreenState
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final isWide = size.width > 900;
-    final isMedium = size.width > 600;
+    final isWide = size.width >= AlhaiBreakpoints.desktop;
+    final isMedium = size.width >= AlhaiBreakpoints.tablet;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cs = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context);

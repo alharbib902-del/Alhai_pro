@@ -6,14 +6,23 @@
 /// Supports: RTL Arabic, dark/light theme, responsive layout.
 library;
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart' show NumberFormat;
 
+// Conditional import for web download
+import 'csv_export_stub.dart' if (dart.library.html) 'csv_export_web.dart'
+    as csv_export;
+// Conditional import for web print
+import 'print_stub.dart' if (dart.library.html) 'print_web.dart'
+    as js_interop;
+
 import '../../data/models.dart';
 import '../../providers/distributor_providers.dart';
+import '../../ui/shared_widgets.dart' show responsivePadding, kMaxContentWidth;
 import '../../ui/skeleton_loading.dart';
 
 // ─── Period mapping ─────────────────────────────────────────────
@@ -44,13 +53,89 @@ class _DistributorReportsScreenState
 
   String get _apiPeriod => _periodMap[_selectedPeriod] ?? 'week';
 
+  void _exportCsv(AsyncValue<ReportData> reportAsync) {
+    final report = reportAsync.valueOrNull;
+    if (report == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('لا توجد بيانات للتصدير'),
+          backgroundColor: AppColors.warning,
+        ),
+      );
+      return;
+    }
+
+    final buf = StringBuffer();
+
+    // Summary section
+    buf.writeln('Report Summary');
+    buf.writeln('Period,$_selectedPeriod');
+    buf.writeln('Total Sales,${report.totalSales}');
+    buf.writeln('Order Count,${report.orderCount}');
+    buf.writeln('Average Order Value,${report.avgOrderValue}');
+    buf.writeln('Top Product,${report.topProduct}');
+    buf.writeln('Top Product Orders,${report.topProductOrders}');
+    buf.writeln('');
+
+    // Daily sales section
+    buf.writeln('Daily Sales');
+    buf.writeln('Day,Amount (SAR)');
+    for (final ds in report.dailySales) {
+      buf.writeln('${ds.day},${ds.amount}');
+    }
+    buf.writeln('');
+
+    // Top products section
+    buf.writeln('Top Products');
+    buf.writeln('Product,Order Count,Revenue (SAR)');
+    for (final tp in report.topProducts) {
+      // Escape commas in product names
+      final name = tp.name.contains(',') ? '"${tp.name}"' : tp.name;
+      buf.writeln('$name,${tp.orderCount},${tp.revenue}');
+    }
+
+    final csvString = buf.toString();
+    final filename = 'report_${_apiPeriod}_${DateTime.now().millisecondsSinceEpoch}.csv';
+
+    if (kIsWeb) {
+      csv_export.downloadCsv(csvString, filename);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('تم تصدير التقرير بنجاح'),
+          backgroundColor: AppColors.success,
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('التصدير متاح فقط على الويب'),
+          backgroundColor: AppColors.warning,
+        ),
+      );
+    }
+  }
+
+  void _printReport() {
+    if (kIsWeb) {
+      js_interop.printPage();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('الطباعة متاحة فقط على الويب'),
+          backgroundColor: AppColors.warning,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final isWide = size.width > 900;
-    final isMedium = size.width > 600;
+    final isWide = size.width >= AlhaiBreakpoints.desktop;
+    final isMedium = size.width >= AlhaiBreakpoints.tablet;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cs = Theme.of(context).colorScheme;
+    final rPadding = responsivePadding(size.width);
 
     final reportAsync = ref.watch(reportDataProvider(_apiPeriod));
 
@@ -65,18 +150,20 @@ class _DistributorReportsScreenState
         actions: [
           Semantics(
             button: true,
-            label: 'تصدير التقرير',
+            label: 'طباعة التقرير',
             child: IconButton(
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('تصدير التقرير - قريباً'),
-                    backgroundColor: AppColors.info,
-                  ),
-                );
-              },
+              onPressed: _printReport,
+              icon: const Icon(Icons.print_rounded),
+              tooltip: 'طباعة',
+            ),
+          ),
+          Semantics(
+            button: true,
+            label: 'تصدير التقرير كملف CSV',
+            child: IconButton(
+              onPressed: () => _exportCsv(reportAsync),
               icon: const Icon(Icons.download_rounded),
-              tooltip: 'تصدير',
+              tooltip: 'تصدير CSV',
             ),
           ),
           const SizedBox(width: AlhaiSpacing.xs),
@@ -87,10 +174,7 @@ class _DistributorReportsScreenState
           // ── Period Filter (always visible) ──
           Padding(
             padding: EdgeInsetsDirectional.fromSTEB(
-              isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md,
-              isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md,
-              isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md,
-              0,
+              rPadding, rPadding, rPadding, 0,
             ),
             child: _buildPeriodFilter(isDark),
           ),
@@ -132,39 +216,49 @@ class _DistributorReportsScreenState
                     ref.invalidate(reportDataProvider(_apiPeriod)),
                 child: SingleChildScrollView(
                   physics: const AlwaysScrollableScrollPhysics(),
-                  padding: EdgeInsets.all(
-                      isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      // ── Summary Cards ──
-                      _buildSummaryCards(report, isDark, isWide, isMedium, size),
-                      SizedBox(
-                          height: isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md),
+                  padding: EdgeInsets.all(rPadding),
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: kMaxContentWidth),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          // ── Summary Cards ──
+                          _buildSummaryCards(report, isDark, isWide, isMedium, size),
+                          SizedBox(
+                              height: isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md),
 
-                      // ── Chart + Top Products ──
-                      if (isWide)
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                                flex: 3,
-                                child: _buildChart(
-                                    isDark, isMedium, report.dailySales)),
-                            const SizedBox(width: AlhaiSpacing.lg),
-                            Expanded(
-                                flex: 2,
-                                child: _buildTopProducts(
-                                    isDark, report.topProducts)),
+                          // ── Chart + Top Products ──
+                          if (isWide)
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                    flex: 3,
+                                    child: Semantics(
+                                      label: 'Daily sales bar chart showing sales amounts per day',
+                                      child: _buildChart(
+                                          isDark, isMedium, report.dailySales),
+                                    )),
+                                const SizedBox(width: AlhaiSpacing.lg),
+                                Expanded(
+                                    flex: 2,
+                                    child: _buildTopProducts(
+                                        isDark, report.topProducts)),
+                              ],
+                            )
+                          else ...[
+                            Semantics(
+                              label: 'Daily sales bar chart showing sales amounts per day',
+                              child: _buildChart(isDark, isMedium, report.dailySales),
+                            ),
+                            const SizedBox(height: AlhaiSpacing.md),
+                            _buildTopProducts(isDark, report.topProducts),
                           ],
-                        )
-                      else ...[
-                        _buildChart(isDark, isMedium, report.dailySales),
-                        const SizedBox(height: AlhaiSpacing.md),
-                        _buildTopProducts(isDark, report.topProducts),
-                      ],
-                      const SizedBox(height: AlhaiSpacing.xl),
-                    ],
+                          const SizedBox(height: AlhaiSpacing.xl),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -290,7 +384,10 @@ class _DistributorReportsScreenState
 
   Widget _statCard(IconData icon, String label, String value, String change,
       Color color, bool isDark) {
-    return Container(
+    return MergeSemantics(
+      child: Semantics(
+        label: '$label: $value${change.isNotEmpty ? ' ($change)' : ''}',
+        child: Container(
       padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
@@ -302,13 +399,15 @@ class _DistributorReportsScreenState
         children: [
           Row(
             children: [
-              Container(
-                padding: const EdgeInsets.all(AlhaiSpacing.xs),
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: isDark ? 0.2 : 0.1),
-                  borderRadius: BorderRadius.circular(AlhaiRadius.sm + 2),
+              ExcludeSemantics(
+                child: Container(
+                  padding: const EdgeInsets.all(AlhaiSpacing.xs),
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: isDark ? 0.2 : 0.1),
+                    borderRadius: BorderRadius.circular(AlhaiRadius.sm + 2),
+                  ),
+                  child: Icon(icon, color: color, size: 20),
                 ),
-                child: Icon(icon, color: color, size: 20),
               ),
               const Spacer(),
               if (change.isNotEmpty)
@@ -348,6 +447,8 @@ class _DistributorReportsScreenState
             ),
           ),
         ],
+      ),
+        ),
       ),
     );
   }
@@ -440,11 +541,16 @@ class _DistributorReportsScreenState
                   enabled: true,
                   touchTooltipData: BarTouchTooltipData(
                     tooltipRoundedRadius: 8,
+                    tooltipBgColor: isDark
+                        ? AppColors.getSurface(true)
+                        : AppColors.grey800,
                     getTooltipItem: (group, groupIndex, rod, rodIndex) {
                       return BarTooltipItem(
                         '${NumberFormat('#,##0').format(rod.toY)} ر.س',
-                        const TextStyle(
-                          color: AppColors.textOnPrimary,
+                        TextStyle(
+                          color: isDark
+                              ? AppColors.getTextPrimary(true)
+                              : AppColors.textOnPrimary,
                           fontWeight: FontWeight.bold,
                           fontSize: 12,
                         ),
@@ -515,14 +621,20 @@ class _DistributorReportsScreenState
                     barRods: [
                       BarChartRodData(
                         toY: dailySales[index].amount,
-                        color: AppColors.primary,
+                        gradient: LinearGradient(
+                          colors: isDark
+                              ? [AppColors.primaryLight, AppColors.primary]
+                              : [AppColors.primary, AppColors.primaryDark],
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                        ),
                         width: isMedium ? 20 : 14,
                         borderRadius: const BorderRadius.vertical(
                             top: Radius.circular(6)),
                         backDrawRodData: BackgroundBarChartRodData(
                           show: true,
                           toY: chartMaxY,
-                          color: AppColors.primary.withValues(alpha: 0.04),
+                          color: AppColors.primary.withValues(alpha: isDark ? 0.08 : 0.04),
                         ),
                       ),
                     ],
@@ -530,6 +642,29 @@ class _DistributorReportsScreenState
                 }),
               ),
             ),
+          ),
+          // Chart legend
+          const SizedBox(height: AlhaiSpacing.sm),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 12,
+                height: 12,
+                decoration: BoxDecoration(
+                  color: AppColors.primary,
+                  borderRadius: BorderRadius.circular(3),
+                ),
+              ),
+              const SizedBox(width: AlhaiSpacing.xs),
+              Text(
+                'Daily Sales (SAR)',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: AppColors.getTextSecondary(isDark),
+                ),
+              ),
+            ],
           ),
         ],
       ),

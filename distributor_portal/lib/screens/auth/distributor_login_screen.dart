@@ -68,7 +68,7 @@ class _DistributorLoginScreenState
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
     final size = MediaQuery.sizeOf(context);
-    final isWide = size.width > 600;
+    final isWide = size.width >= AlhaiBreakpoints.tablet;
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
@@ -81,6 +81,9 @@ class _DistributorLoginScreenState
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(20),
+              border: isDark
+                  ? Border.all(color: AppColors.getBorder(true))
+                  : null,
               boxShadow: isDark
                   ? null
                   : [
@@ -214,6 +217,9 @@ class _DistributorLoginScreenState
                       if (value == null || value.isEmpty) {
                         return l10n?.distributorPasswordLabel ??
                             'Password required';
+                      }
+                      if (value.length < 8) {
+                        return 'Password must be at least 8 characters';
                       }
                       return null;
                     },

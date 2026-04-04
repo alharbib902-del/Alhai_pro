@@ -45,6 +45,8 @@ class DistributorPortalApp extends ConsumerWidget {
       theme: AlhaiTheme.light,
       darkTheme: AlhaiTheme.dark,
       themeMode: themeMode,
+      themeAnimationDuration: const Duration(milliseconds: 300),
+      themeAnimationCurve: Curves.easeInOut,
       routerConfig: router,
       locale: localeState.locale,
       supportedLocales: SupportedLocales.all,

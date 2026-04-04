@@ -161,6 +161,8 @@ class _DistributorShellState extends ConsumerState<DistributorShell> {
                         fontWeight: FontWeight.bold,
                         color: Theme.of(context).colorScheme.onSurface,
                       ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
                     ),
                     Text(
                       'Alhai Platform',
@@ -209,23 +211,23 @@ class _DistributorShellState extends ConsumerState<DistributorShell> {
                             size: 22,
                             color: isSelected
                                 ? AppColors.primary
-                                : isDark
-                                    ? Theme.of(context).colorScheme.onSurfaceVariant
-                                    : AppColors.textSecondary,
+                                : AppColors.getTextSecondary(isDark),
                           ),
                           const SizedBox(width: AlhaiSpacing.sm),
-                          Text(
-                            item.label(l10n),
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: isSelected
-                                  ? FontWeight.w600
-                                  : FontWeight.w400,
-                              color: isSelected
-                                  ? AppColors.primary
-                                  : isDark
-                                      ? Theme.of(context).colorScheme.onSurface
-                                      : AppColors.textPrimary,
+                          Expanded(
+                            child: Text(
+                              item.label(l10n),
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: isSelected
+                                    ? FontWeight.w600
+                                    : FontWeight.w400,
+                                color: isSelected
+                                    ? AppColors.primary
+                                    : AppColors.getTextPrimary(isDark),
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
                             ),
                           ),
                         ],
@@ -246,7 +248,7 @@ class _DistributorShellState extends ConsumerState<DistributorShell> {
               CircleAvatar(
                 radius: 18,
                 backgroundColor: AppColors.primary.withValues(alpha: 0.1),
-                child: Icon(
+                child: const Icon(
                   Icons.person,
                   size: 20,
                   color: AppColors.primary,
@@ -356,11 +358,7 @@ class _DistributorShellState extends ConsumerState<DistributorShell> {
                             size: 22,
                             color: isSelected
                                 ? AppColors.primary
-                                : isDark
-                                    ? Theme.of(context)
-                                        .colorScheme
-                                        .onSurfaceVariant
-                                    : AppColors.textSecondary,
+                                : AppColors.getTextSecondary(isDark),
                           ),
                         ),
                       ),
@@ -401,6 +399,9 @@ class _DistributorShellState extends ConsumerState<DistributorShell> {
     final selectedId = _getSelectedId(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
+
+    // Prefetch dashboard data in parallel when shell loads
+    ref.watch(prefetchDashboardDataProvider);
 
     final sidebarBg = Theme.of(context).colorScheme.surface;
 
@@ -469,7 +470,11 @@ class _DistributorShellState extends ConsumerState<DistributorShell> {
         backgroundColor:
             Theme.of(context).colorScheme.surfaceContainerLow,
         appBar: AppBar(
-          title: Text(l10n?.distributorPortal ?? 'Distributor Portal'),
+          title: Text(
+            l10n?.distributorPortal ?? 'Distributor Portal',
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+          ),
           backgroundColor: sidebarBg,
           foregroundColor: Theme.of(context).colorScheme.onSurface,
           elevation: 0,
@@ -480,7 +485,21 @@ class _DistributorShellState extends ConsumerState<DistributorShell> {
             child: _buildSidebarContent(selectedId, isDark, l10n),
           ),
         ),
-        body: widget.child,
+        body: LayoutBuilder(
+          builder: (context, constraints) {
+            // Ensure minimum width to prevent overflow on Galaxy Fold
+            if (constraints.maxWidth < 280) {
+              return SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(minWidth: 280),
+                  child: widget.child,
+                ),
+              );
+            }
+            return widget.child;
+          },
+        ),
       );
     }
   }

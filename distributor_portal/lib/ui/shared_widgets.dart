@@ -1,11 +1,39 @@
 /// Shared Widgets for Distributor Portal
 ///
 /// Reusable UI components: StatusBadge, SectionCard, StatCard,
-/// EmptyStateWidget, ErrorStateWidget, LoadingWidget.
+/// EmptyStateWidget, ErrorStateWidget, LoadingWidget,
+/// and responsive helpers.
 library;
 
 import 'package:flutter/material.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
+
+// =============================================================================
+// Responsive Helpers
+// =============================================================================
+
+/// Returns responsive padding based on screen width.
+/// Mobile (<600): md (16), Tablet (600-904): lg (24), Desktop (>904): xl (32).
+double responsivePadding(double width) {
+  if (width < AlhaiBreakpoints.tablet) return AlhaiSpacing.md;
+  if (width < AlhaiBreakpoints.desktop) return AlhaiSpacing.lg;
+  return AlhaiSpacing.xl;
+}
+
+/// Returns responsive font size for screen headers.
+/// Desktop: 24, Mobile/Tablet: 20.
+double responsiveHeaderFontSize(double width) {
+  return width >= AlhaiBreakpoints.desktop ? 24.0 : 20.0;
+}
+
+/// Returns responsive font size for section headers.
+/// Desktop: 18, Mobile/Tablet: 16.
+double responsiveSectionFontSize(double width) {
+  return width >= AlhaiBreakpoints.desktop ? 18.0 : 16.0;
+}
+
+/// Max content width for ultra-wide monitors.
+const double kMaxContentWidth = 1400.0;
 
 // =============================================================================
 // StatusBadge - Theme-aware order status chip

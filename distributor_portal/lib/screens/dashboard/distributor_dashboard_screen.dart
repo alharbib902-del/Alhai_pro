@@ -23,9 +23,10 @@ class DistributorDashboardScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final width = MediaQuery.sizeOf(context).width;
-    final crossCount = width > 900 ? 4 : (width > 600 ? 2 : 1);
+    final crossCount = width >= AlhaiBreakpoints.desktop ? 4 : (width >= AlhaiBreakpoints.tablet ? 2 : 1);
     final l10n = AppLocalizations.of(context);
     final kpisAsync = ref.watch(dashboardKpisProvider);
+    final padding = responsivePadding(width);
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -39,9 +40,12 @@ class DistributorDashboardScreen extends ConsumerWidget {
         ),
         data: (kpis) => RefreshIndicator(
           onRefresh: () async => ref.invalidate(dashboardKpisProvider),
-          child: SingleChildScrollView(
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: kMaxContentWidth),
+              child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.all(AlhaiSpacing.lg),
+            padding: EdgeInsets.all(padding),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -49,7 +53,7 @@ class DistributorDashboardScreen extends ConsumerWidget {
                 Text(
                   l10n?.distributorDashboard ?? 'Dashboard',
                   style: TextStyle(
-                    fontSize: 24,
+                    fontSize: responsiveHeaderFontSize(width),
                     fontWeight: FontWeight.bold,
                     color: Theme.of(context).colorScheme.onSurface,
                   ),
@@ -63,6 +67,13 @@ class DistributorDashboardScreen extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: AlhaiSpacing.lg),
+
+                // Onboarding card for first-time users
+                if (kpis.totalOrders == 0)
+                  _OnboardingCard(isDark: isDark, l10n: l10n),
+
+                if (kpis.totalOrders == 0)
+                  const SizedBox(height: AlhaiSpacing.lg),
 
                 // Summary cards
                 GridView.count(
@@ -108,10 +119,13 @@ class DistributorDashboardScreen extends ConsumerWidget {
 
                 // Chart section
                 if (kpis.monthlySales.isNotEmpty)
-                  _ChartCard(
-                    title: l10n?.distributorMonthlySales ?? 'Monthly Sales',
-                    monthlySales: kpis.monthlySales,
-                    isDark: isDark,
+                  Semantics(
+                    label: 'Monthly sales bar chart showing sales amounts per month',
+                    child: _ChartCard(
+                      title: l10n?.distributorMonthlySales ?? 'Monthly Sales',
+                      monthlySales: kpis.monthlySales,
+                      isDark: isDark,
+                    ),
                   ),
 
                 const SizedBox(height: AlhaiSpacing.xl),
@@ -127,6 +141,8 @@ class DistributorDashboardScreen extends ConsumerWidget {
               ],
             ),
           ),
+            ),
+          ),
         ),
       ),
     );
@@ -134,6 +150,161 @@ class DistributorDashboardScreen extends ConsumerWidget {
 }
 
 // ─── Private Widgets ────────────────────────────────────────────
+
+class _OnboardingCard extends StatelessWidget {
+  final bool isDark;
+  final AppLocalizations? l10n;
+
+  const _OnboardingCard({required this.isDark, this.l10n});
+
+  @override
+  Widget build(BuildContext context) {
+    final steps = [
+      (
+        icon: Icons.receipt_long_rounded,
+        color: AppColors.primary,
+        title: l10n?.distributorOrders ?? 'Review Orders',
+        subtitle: 'Review and manage incoming purchase orders from stores',
+        route: '/orders',
+      ),
+      (
+        icon: Icons.price_change_rounded,
+        color: AppColors.secondary,
+        title: 'Manage Prices',
+        subtitle: 'Set and update product prices for your distribution',
+        route: '/pricing',
+      ),
+      (
+        icon: Icons.bar_chart_rounded,
+        color: AppColors.info,
+        title: 'View Reports',
+        subtitle: 'Track sales performance and view analytics',
+        route: '/reports',
+      ),
+      (
+        icon: Icons.settings_rounded,
+        color: AppColors.warning,
+        title: 'Update Settings',
+        subtitle: 'Configure company info, delivery zones, and notifications',
+        route: '/settings',
+      ),
+    ];
+
+    return Container(
+      padding: const EdgeInsets.all(AlhaiSpacing.lg),
+      decoration: BoxDecoration(
+        color: AppColors.getSurface(isDark),
+        borderRadius: BorderRadius.circular(AlhaiRadius.lg),
+        boxShadow: AppColors.getCardShadow(isDark),
+        border: Border.all(
+          color: AppColors.primary.withValues(alpha: 0.3),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(AlhaiSpacing.sm),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withValues(alpha: isDark ? 0.2 : 0.1),
+                  borderRadius: BorderRadius.circular(AlhaiRadius.md),
+                ),
+                child: ExcludeSemantics(
+                  child: const Icon(Icons.waving_hand_rounded,
+                      color: AppColors.primary, size: 28),
+                ),
+              ),
+              const SizedBox(width: AlhaiSpacing.md),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Welcome to the Distributor Portal!',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.getTextPrimary(isDark),
+                      ),
+                    ),
+                    const SizedBox(height: AlhaiSpacing.xxs),
+                    Text(
+                      'Get started by exploring these key features:',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: AppColors.getTextSecondary(isDark),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AlhaiSpacing.lg),
+          Wrap(
+            spacing: AlhaiSpacing.sm,
+            runSpacing: AlhaiSpacing.sm,
+            children: steps.map((step) {
+              final screenWidth = MediaQuery.sizeOf(context).width;
+              return SizedBox(
+                width: screenWidth >= AlhaiBreakpoints.desktop
+                    ? (screenWidth - 120) / 4
+                    : screenWidth >= AlhaiBreakpoints.tablet
+                        ? (screenWidth - 90) / 2
+                        : double.infinity,
+                child: Semantics(
+                  button: true,
+                  label: '${step.title}: ${step.subtitle}',
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(AlhaiRadius.md),
+                    onTap: () => GoRouter.of(context).go(step.route),
+                    child: Container(
+                      padding: const EdgeInsets.all(AlhaiSpacing.md),
+                      decoration: BoxDecoration(
+                        color: step.color.withValues(alpha: isDark ? 0.08 : 0.04),
+                        borderRadius: BorderRadius.circular(AlhaiRadius.md),
+                        border: Border.all(
+                          color: step.color.withValues(alpha: 0.2),
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ExcludeSemantics(
+                            child: Icon(step.icon, color: step.color, size: 24),
+                          ),
+                          const SizedBox(height: AlhaiSpacing.sm),
+                          Text(
+                            step.title,
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.getTextPrimary(isDark),
+                            ),
+                          ),
+                          const SizedBox(height: AlhaiSpacing.xxs),
+                          Text(
+                            step.subtitle,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: AppColors.getTextSecondary(isDark),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
 class _SummaryCard extends StatelessWidget {
   final String title;
@@ -152,43 +323,50 @@ class _SummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
-      decoration: BoxDecoration(
-        color: AppColors.getSurface(isDark),
-        borderRadius: BorderRadius.circular(AlhaiRadius.lg),
-        boxShadow: AppColors.getCardShadow(isDark),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(AlhaiSpacing.xs),
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: isDark ? 0.2 : 0.1),
-              borderRadius: BorderRadius.circular(AlhaiRadius.sm + 2),
-            ),
-            child: Icon(icon, color: color, size: 22),
+    return MergeSemantics(
+      child: Semantics(
+        label: '$title: $value',
+        child: Container(
+          padding: const EdgeInsets.all(AlhaiSpacing.mdl),
+          decoration: BoxDecoration(
+            color: AppColors.getSurface(isDark),
+            borderRadius: BorderRadius.circular(AlhaiRadius.lg),
+            boxShadow: AppColors.getCardShadow(isDark),
           ),
-          const Spacer(),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              color: AppColors.getTextPrimary(isDark),
-            ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              ExcludeSemantics(
+                child: Container(
+                  padding: const EdgeInsets.all(AlhaiSpacing.xs),
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: isDark ? 0.2 : 0.1),
+                    borderRadius: BorderRadius.circular(AlhaiRadius.sm + 2),
+                  ),
+                  child: Icon(icon, color: color, size: 22),
+                ),
+              ),
+              const Spacer(),
+              Text(
+                value,
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.getTextPrimary(isDark),
+                ),
+              ),
+              const SizedBox(height: AlhaiSpacing.xxs),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 13,
+                  color: AppColors.getTextSecondary(isDark),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: AlhaiSpacing.xxs),
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 13,
-              color: AppColors.getTextSecondary(isDark),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -207,6 +385,7 @@ class _ChartCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.sizeOf(context).width;
     final maxY = monthlySales.fold<double>(
             0, (max, s) => s.amount > max ? s.amount : max) *
         1.2;
@@ -224,7 +403,7 @@ class _ChartCard extends StatelessWidget {
           Text(
             title,
             style: TextStyle(
-              fontSize: 18,
+              fontSize: responsiveSectionFontSize(width),
               fontWeight: FontWeight.bold,
               color: AppColors.getTextPrimary(isDark),
             ),
@@ -236,7 +415,27 @@ class _ChartCard extends StatelessWidget {
               BarChartData(
                 alignment: BarChartAlignment.spaceAround,
                 maxY: maxY > 0 ? maxY : 100,
-                barTouchData: BarTouchData(enabled: true),
+                barTouchData: BarTouchData(
+                  enabled: true,
+                  touchTooltipData: BarTouchTooltipData(
+                    tooltipRoundedRadius: 8,
+                    tooltipBgColor: isDark
+                        ? AppColors.getSurface(true)
+                        : AppColors.grey800,
+                    getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                      return BarTooltipItem(
+                        '${(rod.toY / 1000).toStringAsFixed(0)}K',
+                        TextStyle(
+                          color: isDark
+                              ? AppColors.getTextPrimary(true)
+                              : AppColors.textOnPrimary,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
+                      );
+                    },
+                  ),
+                ),
                 titlesData: FlTitlesData(
                   show: true,
                   topTitles: const AxisTitles(
@@ -298,16 +497,51 @@ class _ChartCard extends StatelessWidget {
                     barRods: [
                       BarChartRodData(
                         toY: monthlySales[i].amount,
-                        color: AppColors.primary,
+                        gradient: LinearGradient(
+                          colors: isDark
+                              ? [AppColors.primaryLight, AppColors.primary]
+                              : [AppColors.primary, AppColors.primaryDark],
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                        ),
                         width: 20,
                         borderRadius: const BorderRadius.vertical(
                             top: Radius.circular(6)),
+                        backDrawRodData: BackgroundBarChartRodData(
+                          show: true,
+                          toY: maxY > 0 ? maxY : 100,
+                          color: AppColors.primary.withValues(
+                              alpha: isDark ? 0.08 : 0.04),
+                        ),
                       ),
                     ],
                   );
                 }),
               ),
             ),
+          ),
+          // Chart legend
+          const SizedBox(height: AlhaiSpacing.sm),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 12,
+                height: 12,
+                decoration: BoxDecoration(
+                  color: AppColors.primary,
+                  borderRadius: BorderRadius.circular(3),
+                ),
+              ),
+              const SizedBox(width: AlhaiSpacing.xs),
+              Text(
+                'Monthly Sales (SAR)',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: AppColors.getTextSecondary(isDark),
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -346,6 +580,7 @@ class _RecentOrdersCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.sizeOf(context).width;
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
@@ -359,7 +594,7 @@ class _RecentOrdersCard extends StatelessWidget {
           Text(
             title,
             style: TextStyle(
-              fontSize: 18,
+              fontSize: responsiveSectionFontSize(width),
               fontWeight: FontWeight.bold,
               color: AppColors.getTextPrimary(isDark),
             ),

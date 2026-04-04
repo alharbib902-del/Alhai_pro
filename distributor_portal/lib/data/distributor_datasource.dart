@@ -42,7 +42,7 @@ DatasourceError _categorizeError(Object error, String operation) {
   if (error is AuthException) {
     return DatasourceError(
       type: DatasourceErrorType.auth,
-      message: 'Authentication error during $operation: ${error.message}',
+      message: 'Authentication error during $operation',
       originalError: error,
     );
   }
@@ -59,13 +59,13 @@ DatasourceError _categorizeError(Object error, String operation) {
         error.code == '23502') {
       return DatasourceError(
         type: DatasourceErrorType.validation,
-        message: 'Validation error during $operation: ${error.message}',
+        message: 'Validation error during $operation',
         originalError: error,
       );
     }
     return DatasourceError(
       type: DatasourceErrorType.unknown,
-      message: 'Database error during $operation: ${error.message}',
+      message: 'Database error during $operation',
       originalError: error,
     );
   }
@@ -84,7 +84,7 @@ DatasourceError _categorizeError(Object error, String operation) {
   }
   return DatasourceError(
     type: DatasourceErrorType.unknown,
-    message: 'Unknown error during $operation: $error',
+    message: 'Unknown error during $operation',
     originalError: error,
   );
 }
@@ -141,6 +141,45 @@ bool isValidPhone(String phone) {
   return RegExp(r'^[\d\s\-\+\(\)]{7,20}$').hasMatch(phone);
 }
 
+// ─── Cache Entry ────────────────────────────────────────────────
+
+/// Simple in-memory cache entry with TTL-based expiry.
+class _CacheEntry<T> {
+  final T data;
+  final DateTime expiry;
+  _CacheEntry(this.data, this.expiry);
+  bool get isExpired => DateTime.now().isAfter(expiry);
+}
+
+// ─── Rate Limiter ────────────────────────────────────────────────
+
+/// Simple client-side rate limiter to prevent rapid-fire API mutations.
+class _RateLimiter {
+  _RateLimiter();
+
+  final Map<String, DateTime> _lastCalls = {};
+
+  /// Minimum interval between same operations.
+  static const Duration _minInterval = Duration(seconds: 2);
+
+  /// Check if the operation is allowed. Throws if rate limited.
+  void check(String operationKey) {
+    final now = DateTime.now();
+    final lastCall = _lastCalls[operationKey];
+    if (lastCall != null && now.difference(lastCall) < _minInterval) {
+      throw DatasourceError(
+        type: DatasourceErrorType.validation,
+        message:
+            'Too many requests. Please wait before retrying this operation.',
+      );
+    }
+    _lastCalls[operationKey] = now;
+  }
+
+  /// Clear rate limit state (e.g. on logout).
+  void clear() => _lastCalls.clear();
+}
+
 // ─── Datasource ───────────────────────────────────────────────────
 
 class DistributorDatasource {
@@ -148,11 +187,23 @@ class DistributorDatasource {
 
   SupabaseClient get _client => AppSupabase.client;
 
+  /// Rate limiter for mutation operations.
+  final _rateLimiter = _RateLimiter();
+
   /// Cached org_id for the current session.
   String? _cachedOrgId;
 
   /// Cache of store IDs belonging to the org.
   List<String>? _cachedStoreIds;
+
+  // ─── TTL Cache for read-heavy queries ─────────────────────────
+  _CacheEntry<List<String>>? _categoriesCache;
+  _CacheEntry<List<DistributorProduct>>? _productsCache;
+  _CacheEntry<OrgSettings?>? _orgSettingsCache;
+
+  static const Duration _categoriesTtl = Duration(minutes: 5);
+  static const Duration _productsTtl = Duration(minutes: 2);
+  static const Duration _orgSettingsTtl = Duration(minutes: 5);
 
   /// Get the current user's org_id from their profile.
   /// Caches the result for the session to avoid repeated queries.
@@ -179,10 +230,20 @@ class DistributorDatasource {
     }
   }
 
-  /// Clear cached org_id and store IDs (e.g. on logout).
+  /// Clear cached org_id, store IDs, TTL caches, and rate limiter (e.g. on logout).
   void clearCache() {
     _cachedOrgId = null;
     _cachedStoreIds = null;
+    _categoriesCache = null;
+    _productsCache = null;
+    _orgSettingsCache = null;
+    _rateLimiter.clear();
+  }
+
+  /// Invalidate product and category caches after mutations.
+  void invalidateProductCaches() {
+    _productsCache = null;
+    _categoriesCache = null;
   }
 
   /// Get store IDs that belong to the given organization.
@@ -318,6 +379,8 @@ class DistributorDatasource {
     Map<String, double>? itemPrices,
   }) async {
     try {
+      _rateLimiter.check('updateOrderStatus');
+
       // Validate notes length
       if (notes != null && notes.isNotEmpty) {
         final notesError = validateTextLength(notes, maxNotesLength, 'Notes');
@@ -359,21 +422,18 @@ class DistributorDatasource {
         );
       }
 
-      await _client.from('orders').update({
-        'status': newStatus,
-        if (notes != null) 'notes': notes,
-        'updated_at': DateTime.now().toIso8601String(),
-      }).eq('id', orderId);
+      // Use RPC for atomic transaction: order status + item prices
+      final pricesJsonb = itemPrices != null && itemPrices.isNotEmpty
+          ? Map<String, dynamic>.fromEntries(
+              itemPrices.entries.map((e) => MapEntry(e.key, e.value)))
+          : null;
 
-      // Update individual item prices in parallel if provided
-      if (itemPrices != null && itemPrices.isNotEmpty) {
-        await Future.wait(
-          itemPrices.entries.map((entry) =>
-              _client.from('order_items').update({
-                'distributor_price': entry.value,
-              }).eq('id', entry.key)),
-        );
-      }
+      await _client.rpc('update_order_with_items', params: {
+        'p_order_id': orderId,
+        'p_status': newStatus,
+        'p_notes': notes,
+        'p_item_prices': pricesJsonb,
+      });
 
       return true;
     } catch (e) {
@@ -390,11 +450,18 @@ class DistributorDatasource {
   // ─── Products ───────────────────────────────────────────────────
 
   /// Fetch products for this distributor's org with pagination.
+  /// Results are cached with a 2-minute TTL for default queries.
   Future<List<DistributorProduct>> getProducts({
     int limit = 50,
     int offset = 0,
   }) async {
     try {
+      // Return cached data for default pagination if available
+      if (offset == 0 && limit == 50 &&
+          _productsCache != null && !_productsCache!.isExpired) {
+        return _productsCache!.data;
+      }
+
       final orgId = await _requireOrgId('getProducts');
 
       final data = await _client
@@ -404,10 +471,20 @@ class DistributorDatasource {
           .order('name')
           .range(offset, offset + limit - 1);
 
-      return (data as List)
+      final results = (data as List)
           .map((json) =>
               DistributorProduct.fromJson(json as Map<String, dynamic>))
           .toList();
+
+      // Cache default pagination results
+      if (offset == 0 && limit == 50) {
+        _productsCache = _CacheEntry(
+          results,
+          DateTime.now().add(_productsTtl),
+        );
+      }
+
+      return results;
     } catch (e) {
       if (e is DatasourceError) rethrow;
       final error = _categorizeError(e, 'getProducts');
@@ -419,6 +496,8 @@ class DistributorDatasource {
   /// Update product price with bounds validation and org_id scoping.
   Future<bool> updateProductPrice(String productId, double newPrice) async {
     try {
+      _rateLimiter.check('updateProductPrice');
+
       final priceError = validatePrice(newPrice);
       if (priceError != null) {
         throw DatasourceError(
@@ -449,6 +528,8 @@ class DistributorDatasource {
   /// Batch update product prices with validation and org_id scoping.
   Future<bool> updateProductPrices(Map<String, double> prices) async {
     try {
+      _rateLimiter.check('updateProductPrices');
+
       // Validate all prices first
       for (final entry in prices.entries) {
         final priceError = validatePrice(entry.value);
@@ -461,15 +542,18 @@ class DistributorDatasource {
       }
 
       final orgId = await _requireOrgId('updateProductPrices');
-      final now = DateTime.now().toIso8601String();
 
-      await Future.wait(
-        prices.entries.map((entry) =>
-            _client.from('products').update({
-              'price': entry.value,
-              'updated_at': now,
-            }).eq('id', entry.key).eq('org_id', orgId)),
-      );
+      // Use RPC for atomic batch update in a single transaction
+      final pricesJsonb = Map<String, dynamic>.fromEntries(
+          prices.entries.map((e) => MapEntry(e.key, e.value)));
+
+      await _client.rpc('batch_update_product_prices', params: {
+        'p_org_id': orgId,
+        'p_prices': pricesJsonb,
+      });
+
+      // Invalidate product cache after mutation
+      invalidateProductCaches();
 
       return true;
     } catch (e) {
@@ -738,8 +822,13 @@ class DistributorDatasource {
   // ─── Settings ─────────────────────────────────────────────────
 
   /// Fetch organization settings for the current distributor.
+  /// Results are cached with a 5-minute TTL.
   Future<OrgSettings?> getOrgSettings() async {
     try {
+      if (_orgSettingsCache != null && !_orgSettingsCache!.isExpired) {
+        return _orgSettingsCache!.data;
+      }
+
       final orgId = await _requireOrgId('getOrgSettings');
 
       final orgData = await _client
@@ -749,7 +838,14 @@ class DistributorDatasource {
           .maybeSingle();
 
       if (orgData == null) return null;
-      return OrgSettings.fromJson(orgData);
+      final settings = OrgSettings.fromJson(orgData);
+
+      _orgSettingsCache = _CacheEntry(
+        settings,
+        DateTime.now().add(_orgSettingsTtl),
+      );
+
+      return settings;
     } catch (e) {
       if (e is DatasourceError) rethrow;
       final error = _categorizeError(e, 'getOrgSettings');
@@ -761,6 +857,8 @@ class DistributorDatasource {
   /// Update organization settings with validation.
   Future<bool> updateOrgSettings(OrgSettings settings) async {
     try {
+      _rateLimiter.check('updateOrgSettings');
+
       final orgId = await _requireOrgId('updateOrgSettings');
 
       // Ensure user can only update their own org
@@ -836,6 +934,10 @@ class DistributorDatasource {
           .from('organizations')
           .update(settings.toJson())
           .eq('id', orgId);
+
+      // Invalidate org settings cache after mutation
+      _orgSettingsCache = null;
+
       return true;
     } catch (e) {
       if (e is DatasourceError) {
@@ -851,8 +953,13 @@ class DistributorDatasource {
   // ─── Categories (for product filtering) ───────────────────────
 
   /// Fetch distinct product categories for this org.
+  /// Results are cached with a 5-minute TTL.
   Future<List<String>> getCategories({int limit = 100}) async {
     try {
+      if (_categoriesCache != null && !_categoriesCache!.isExpired) {
+        return _categoriesCache!.data;
+      }
+
       final orgId = await _requireOrgId('getCategories');
 
       final data = await _client
@@ -862,11 +969,18 @@ class DistributorDatasource {
           .order('name')
           .range(0, limit - 1);
 
-      return (data as List)
+      final results = (data as List)
           .map((json) =>
               (json as Map<String, dynamic>)['name'] as String? ?? '')
           .where((name) => name.isNotEmpty)
           .toList();
+
+      _categoriesCache = _CacheEntry(
+        results,
+        DateTime.now().add(_categoriesTtl),
+      );
+
+      return results;
     } catch (e) {
       if (e is DatasourceError) rethrow;
       final error = _categorizeError(e, 'getCategories');

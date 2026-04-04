@@ -18,6 +18,7 @@ import 'package:intl/intl.dart' show NumberFormat, DateFormat;
 
 import '../../data/models.dart';
 import '../../providers/distributor_providers.dart';
+import '../../ui/shared_widgets.dart' show responsivePadding, kMaxContentWidth;
 import '../../ui/skeleton_loading.dart';
 
 class DistributorOrderDetailScreen extends ConsumerStatefulWidget {
@@ -184,6 +185,9 @@ class _DistributorOrderDetailScreenState
       ref.invalidate(orderDetailProvider(widget.orderId));
       ref.invalidate(orderItemsProvider(widget.orderId));
 
+      // Show SnackBar with Undo action (revert within 5 seconds)
+      final previousStatus = 'sent'; // Orders are 'sent' before action
+      ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -195,6 +199,29 @@ class _DistributorOrderDetailScreenState
           ),
           backgroundColor:
               newStatus == 'rejected' ? AppColors.error : AppColors.success,
+          duration: const Duration(seconds: 5),
+          action: SnackBarAction(
+            label: l10n?.undo ?? 'Undo',
+            textColor: AppColors.textOnPrimary,
+            onPressed: () async {
+              // Revert the status back
+              final revertDs = ref.read(distributorDatasourceProvider);
+              final reverted = await revertDs.updateOrderStatus(
+                widget.orderId,
+                previousStatus,
+              );
+              if (reverted && mounted) {
+                ref.invalidate(orderDetailProvider(widget.orderId));
+                ref.invalidate(orderItemsProvider(widget.orderId));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: const Text('Action undone'),
+                    backgroundColor: AppColors.info,
+                  ),
+                );
+              }
+            },
+          ),
         ),
       );
     } else {
@@ -210,11 +237,12 @@ class _DistributorOrderDetailScreenState
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final isWide = size.width > 900;
-    final isMedium = size.width > 600;
+    final isWide = size.width >= AlhaiBreakpoints.desktop;
+    final isMedium = size.width >= AlhaiBreakpoints.tablet;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cs = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context);
+    final rPadding = responsivePadding(size.width);
 
     final orderAsync = ref.watch(orderDetailProvider(widget.orderId));
     final itemsAsync = ref.watch(orderItemsProvider(widget.orderId));
@@ -314,9 +342,11 @@ class _DistributorOrderDetailScreenState
               final total = _calculatedTotal(items);
 
               return SingleChildScrollView(
-                padding: EdgeInsets.all(
-                    isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md),
-                child: Column(
+                padding: EdgeInsets.all(rPadding),
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: kMaxContentWidth),
+                    child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     // Breadcrumb navigation
@@ -399,6 +429,8 @@ class _DistributorOrderDetailScreenState
                     const SizedBox(height: AlhaiSpacing.xl),
                   ],
                 ),
+                  ),
+                ),
               );
             },
           );
@@ -431,8 +463,10 @@ class _DistributorOrderDetailScreenState
                   color: AppColors.primary.withValues(alpha: isDark ? 0.2 : 0.1),
                   borderRadius: BorderRadius.circular(AlhaiRadius.md),
                 ),
-                child: const Icon(Icons.store_rounded,
-                    color: AppColors.primary, size: 24),
+                child: ExcludeSemantics(
+                  child: const Icon(Icons.store_rounded,
+                      color: AppColors.primary, size: 24),
+                ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
@@ -471,8 +505,10 @@ class _DistributorOrderDetailScreenState
             ),
             child: Row(
               children: [
-                const Icon(Icons.receipt_long_rounded,
-                    color: AppColors.info, size: 20),
+                ExcludeSemantics(
+                  child: const Icon(Icons.receipt_long_rounded,
+                      color: AppColors.info, size: 20),
+                ),
                 const SizedBox(width: 10),
                 Text(
                   l10n?.distributorProposedAmount ?? 'Proposed Amount:',
@@ -519,8 +555,10 @@ class _DistributorOrderDetailScreenState
                     color: AppColors.secondary.withValues(alpha: isDark ? 0.2 : 0.1),
                     borderRadius: BorderRadius.circular(AlhaiRadius.sm + 2),
                   ),
-                  child: const Icon(Icons.list_alt_rounded,
-                      color: AppColors.secondary, size: 20),
+                  child: ExcludeSemantics(
+                    child: const Icon(Icons.list_alt_rounded,
+                        color: AppColors.secondary, size: 20),
+                  ),
                 ),
                 const SizedBox(width: AlhaiSpacing.sm),
                 Text(
@@ -881,8 +919,10 @@ class _DistributorOrderDetailScreenState
                   color: AppColors.primary.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(AlhaiRadius.sm + 2),
                 ),
-                child: const Icon(Icons.calculate_rounded,
-                    color: AppColors.primary, size: 20),
+                child: ExcludeSemantics(
+                  child: const Icon(Icons.calculate_rounded,
+                      color: AppColors.primary, size: 20),
+                ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Text(
@@ -999,7 +1039,10 @@ class _DistributorOrderDetailScreenState
     return Row(
       children: [
         Expanded(
-          child: OutlinedButton.icon(
+          child: Semantics(
+            button: true,
+            label: l10n?.distributorRejectOrder ?? 'Reject this order',
+            child: OutlinedButton.icon(
             onPressed: _isProcessing ? null : () => _confirmAndUpdateStatus('rejected', total),
             icon: _isProcessing
                 ? const SizedBox(
@@ -1021,31 +1064,36 @@ class _DistributorOrderDetailScreenState
             ),
           ),
         ),
+        ),
         const SizedBox(width: AlhaiSpacing.md),
         Expanded(
           flex: 2,
-          child: FilledButton.icon(
-            onPressed: _isProcessing || total <= 0
-                ? null
-                : () => _confirmAndUpdateStatus('approved', total),
-            icon: _isProcessing
-                ? const SizedBox(
-                    width: 18,
-                    height: 18,
-                    child: CircularProgressIndicator(
-                        strokeWidth: 2, color: AppColors.textOnPrimary),
-                  )
-                : const Icon(Icons.check_circle_rounded, size: 20),
-            label: Text(l10n?.distributorAcceptSendQuote ?? 'Accept & Send',
-                style: const TextStyle(
-                    fontSize: 15, fontWeight: FontWeight.w600)),
-            style: FilledButton.styleFrom(
-              backgroundColor: AppColors.success,
-              foregroundColor: AppColors.textOnPrimary,
-              padding:
-                  EdgeInsets.symmetric(vertical: isMedium ? 16 : 14),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(AlhaiRadius.md)),
+          child: Semantics(
+            button: true,
+            label: l10n?.distributorAcceptSendQuote ?? 'Accept and send quote',
+            child: FilledButton.icon(
+              onPressed: _isProcessing || total <= 0
+                  ? null
+                  : () => _confirmAndUpdateStatus('approved', total),
+              icon: _isProcessing
+                  ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(
+                          strokeWidth: 2, color: AppColors.textOnPrimary),
+                    )
+                  : const Icon(Icons.check_circle_rounded, size: 20),
+              label: Text(l10n?.distributorAcceptSendQuote ?? 'Accept & Send',
+                  style: const TextStyle(
+                      fontSize: 15, fontWeight: FontWeight.w600)),
+              style: FilledButton.styleFrom(
+                backgroundColor: AppColors.success,
+                foregroundColor: AppColors.textOnPrimary,
+                padding:
+                    EdgeInsets.symmetric(vertical: isMedium ? 16 : 14),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AlhaiRadius.md)),
+              ),
             ),
           ),
         ),

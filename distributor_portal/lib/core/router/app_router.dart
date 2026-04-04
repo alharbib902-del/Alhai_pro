@@ -8,8 +8,8 @@ import '../../screens/dashboard/distributor_dashboard_screen.dart';
 import '../../screens/orders/distributor_orders_screen.dart';
 import '../../screens/orders/distributor_order_detail_screen.dart';
 import '../../screens/products/distributor_products_screen.dart';
-import '../../screens/pricing/distributor_pricing_screen.dart';
-import '../../screens/reports/distributor_reports_screen.dart';
+import '../../screens/pricing/distributor_pricing_screen.dart' deferred as pricing;
+import '../../screens/reports/distributor_reports_screen.dart' deferred as reports;
 import '../../screens/settings/distributor_settings_screen.dart';
 import '../supabase/supabase_client.dart';
 
@@ -87,7 +87,10 @@ final distributorRouterProvider = Provider<GoRouter>((ref) {
             name: 'distributor-pricing',
             pageBuilder: (context, state) => CustomTransitionPage(
               key: state.pageKey,
-              child: const DistributorPricingScreen(),
+              child: _DeferredScreen(
+                loader: pricing.loadLibrary,
+                builder: () => pricing.DistributorPricingScreen(),
+              ),
               transitionsBuilder: (c, a, sa, child) =>
                   FadeTransition(opacity: a, child: child),
             ),
@@ -97,7 +100,10 @@ final distributorRouterProvider = Provider<GoRouter>((ref) {
             name: 'distributor-reports',
             pageBuilder: (context, state) => CustomTransitionPage(
               key: state.pageKey,
-              child: const DistributorReportsScreen(),
+              child: _DeferredScreen(
+                loader: reports.loadLibrary,
+                builder: () => reports.DistributorReportsScreen(),
+              ),
               transitionsBuilder: (c, a, sa, child) =>
                   FadeTransition(opacity: a, child: child),
             ),
@@ -117,3 +123,33 @@ final distributorRouterProvider = Provider<GoRouter>((ref) {
     ],
   );
 });
+
+/// A helper widget that loads a deferred library and shows a spinner until ready.
+class _DeferredScreen extends StatelessWidget {
+  final Future<void> Function() loader;
+  final Widget Function() builder;
+
+  const _DeferredScreen({required this.loader, required this.builder});
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: loader(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasError) {
+            return Scaffold(
+              body: Center(
+                child: Text('Failed to load screen: ${snapshot.error}'),
+              ),
+            );
+          }
+          return builder();
+        }
+        return const Scaffold(
+          body: Center(child: CircularProgressIndicator()),
+        );
+      },
+    );
+  }
+}

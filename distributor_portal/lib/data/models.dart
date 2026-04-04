@@ -53,12 +53,16 @@ class DistributorOrder {
       other is DistributorOrder &&
           runtimeType == other.runtimeType &&
           id == other.id &&
+          purchaseNumber == other.purchaseNumber &&
+          storeName == other.storeName &&
+          storeId == other.storeId &&
           status == other.status &&
           total == other.total &&
           notes == other.notes;
 
   @override
-  int get hashCode => Object.hash(id, status, total, notes);
+  int get hashCode =>
+      Object.hash(id, purchaseNumber, storeName, storeId, status, total, notes);
 }
 
 // ─── Order Item ─────────────────────────────────────────────────
@@ -114,11 +118,17 @@ class DistributorOrderItem {
       other is DistributorOrderItem &&
           runtimeType == other.runtimeType &&
           id == other.id &&
-          distributorPrice == other.distributorPrice &&
-          quantity == other.quantity;
+          orderId == other.orderId &&
+          productId == other.productId &&
+          productName == other.productName &&
+          quantity == other.quantity &&
+          suggestedPrice == other.suggestedPrice &&
+          distributorPrice == other.distributorPrice;
 
   @override
-  int get hashCode => Object.hash(id, distributorPrice, quantity);
+  int get hashCode => Object.hash(
+      id, orderId, productId, productName, quantity, suggestedPrice,
+      distributorPrice);
 }
 
 // ─── Product ────────────────────────────────────────────────────
@@ -164,11 +174,14 @@ class DistributorProduct {
       other is DistributorProduct &&
           runtimeType == other.runtimeType &&
           id == other.id &&
+          name == other.name &&
+          barcode == other.barcode &&
+          category == other.category &&
           price == other.price &&
           stock == other.stock;
 
   @override
-  int get hashCode => Object.hash(id, price, stock);
+  int get hashCode => Object.hash(id, name, barcode, category, price, stock);
 }
 
 // ─── Dashboard KPIs ─────────────────────────────────────────────
@@ -197,10 +210,12 @@ class DashboardKpis {
           runtimeType == other.runtimeType &&
           totalOrders == other.totalOrders &&
           pendingOrders == other.pendingOrders &&
+          approvedOrders == other.approvedOrders &&
           totalRevenue == other.totalRevenue;
 
   @override
-  int get hashCode => Object.hash(totalOrders, pendingOrders, totalRevenue);
+  int get hashCode =>
+      Object.hash(totalOrders, pendingOrders, approvedOrders, totalRevenue);
 }
 
 class MonthlySales {
@@ -246,10 +261,14 @@ class ReportData {
       other is ReportData &&
           runtimeType == other.runtimeType &&
           totalSales == other.totalSales &&
-          orderCount == other.orderCount;
+          orderCount == other.orderCount &&
+          avgOrderValue == other.avgOrderValue &&
+          topProduct == other.topProduct &&
+          topProductOrders == other.topProductOrders;
 
   @override
-  int get hashCode => Object.hash(totalSales, orderCount);
+  int get hashCode => Object.hash(
+      totalSales, orderCount, avgOrderValue, topProduct, topProductOrders);
 }
 
 class DailySales {
@@ -356,8 +375,22 @@ class OrgSettings {
       other is OrgSettings &&
           runtimeType == other.runtimeType &&
           id == other.id &&
-          companyName == other.companyName;
+          companyName == other.companyName &&
+          phone == other.phone &&
+          email == other.email &&
+          address == other.address &&
+          deliveryZones == other.deliveryZones &&
+          minOrderAmount == other.minOrderAmount &&
+          deliveryFee == other.deliveryFee &&
+          freeDeliveryMin == other.freeDeliveryMin &&
+          freeDeliveryEnabled == other.freeDeliveryEnabled &&
+          emailNotifications == other.emailNotifications &&
+          pushNotifications == other.pushNotifications &&
+          smsNotifications == other.smsNotifications;
 
   @override
-  int get hashCode => Object.hash(id, companyName);
+  int get hashCode => Object.hash(
+      id, companyName, phone, email, address, deliveryZones,
+      minOrderAmount, deliveryFee, freeDeliveryMin, freeDeliveryEnabled,
+      emailNotifications, pushNotifications, smsNotifications);
 }

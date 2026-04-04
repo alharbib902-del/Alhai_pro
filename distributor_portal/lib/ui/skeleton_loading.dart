@@ -5,6 +5,7 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// A single skeleton block with animated opacity (shimmer effect).
 class SkeletonBox extends StatefulWidget {
@@ -126,7 +127,7 @@ class DashboardSkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.sizeOf(context).width;
-    final crossCount = width > 900 ? 4 : (width > 600 ? 2 : 1);
+    final crossCount = width >= AlhaiBreakpoints.desktop ? 4 : (width >= AlhaiBreakpoints.tablet ? 2 : 1);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
@@ -215,7 +216,7 @@ class ReportSkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.sizeOf(context).width;
-    final isMedium = width > 600;
+    final isMedium = width >= AlhaiBreakpoints.tablet;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),

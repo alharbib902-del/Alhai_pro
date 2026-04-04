@@ -3,6 +3,21 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:alhai_core/alhai_core.dart' show SupabaseConfig;
 
 /// Supabase client initialization and access for the distributor portal.
+///
+/// **Security note on token storage:**
+/// On web, Supabase Flutter stores auth tokens in localStorage by default.
+/// This is acceptable for web deployments but tokens are accessible to any JS
+/// running on the same origin. The CSP headers in index.html mitigate XSS risk.
+/// For mobile/desktop builds, consider providing a custom [LocalStorage]
+/// implementation backed by flutter_secure_storage for encrypted token storage:
+///
+/// ```dart
+/// // Example for mobile builds:
+/// // import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+/// // authOptions: FlutterAuthClientOptions(
+/// //   localStorage: SecureLocalStorage(),
+/// // ),
+/// ```
 class AppSupabase {
   AppSupabase._();
 

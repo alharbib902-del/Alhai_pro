@@ -119,8 +119,8 @@ class _DistributorPricingScreenState
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final isWide = size.width > 900;
-    final isMedium = size.width > 600;
+    final isWide = size.width >= AlhaiBreakpoints.desktop;
+    final isMedium = size.width >= AlhaiBreakpoints.tablet;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cs = Theme.of(context).colorScheme;
 
@@ -286,7 +286,7 @@ class _DistributorPricingScreenState
           ),
           child: Row(
             children: [
-              Icon(icon, color: color, size: 20),
+              ExcludeSemantics(child: Icon(icon, color: color, size: 20)),
               const SizedBox(width: 10),
               Expanded(
                 child: Column(
@@ -337,7 +337,8 @@ class _DistributorPricingScreenState
                   _tHeader('السعر الحالي', 2, isDark, sortIndex: 1),
                   _tHeader('السعر الجديد', 3, isDark),
                   _tHeader('آخر تحديث', 2, isDark),
-                  _tHeader('الفرق', 2, isDark),
+                  _tHeaderWithHelp('الفرق', 2, isDark,
+                      helpText: 'الفرق بين السعر الجديد والسعر الحالي. أخضر = انخفاض، أحمر = زيادة'),
                 ],
               ),
             ),
@@ -524,6 +525,36 @@ class _DistributorPricingScreenState
     );
   }
 
+  Widget _tHeaderWithHelp(String text, int flex, bool isDark,
+      {required String helpText}) {
+    return Expanded(
+      flex: flex,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(text,
+              style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.getTextSecondary(isDark))),
+          const SizedBox(width: 4),
+          Tooltip(
+            message: helpText,
+            preferBelow: false,
+            child: Semantics(
+              label: 'Help: $helpText',
+              child: Icon(
+                Icons.help_outline_rounded,
+                size: 14,
+                color: AppColors.getTextMuted(isDark),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildPricingCards(
       bool isDark, bool isMedium, List<DistributorProduct> products) {
     return ListView.separated(
@@ -584,8 +615,8 @@ class _DistributorPricingScreenState
                               color:
                                   AppColors.getTextSecondary(isDark))),
                     ])),
-                const Icon(Icons.arrow_forward_rounded,
-                    color: AppColors.textMuted, size: 18),
+                Icon(Icons.arrow_forward_rounded,
+                    color: AppColors.getTextMuted(isDark), size: 18),
                 const SizedBox(width: AlhaiSpacing.sm),
                 Expanded(
                   child: TextField(

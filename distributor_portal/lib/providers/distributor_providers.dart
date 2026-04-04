@@ -45,6 +45,19 @@ final dashboardKpisProvider = FutureProvider<DashboardKpis>((ref) async {
   return ds.getDashboardKpis();
 });
 
+// ─── Prefetching ───────────────────────────────────────────────
+
+/// Prefetch all dashboard data (KPIs + categories) in parallel.
+/// Call this once when the shell loads to warm the caches.
+final prefetchDashboardDataProvider = FutureProvider<void>((ref) async {
+  final ds = ref.watch(distributorDatasourceProvider);
+  await Future.wait([
+    ds.getDashboardKpis(),
+    ds.getCategories(),
+    ds.getOrgSettings(),
+  ]);
+});
+
 // ─── Orders ─────────────────────────────────────────────────────
 
 /// All orders — pass status filter via family.
