@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -21,15 +23,23 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   }
 
   Future<void> _checkAuth() async {
-    await Future.delayed(const Duration(milliseconds: 500));
-
     if (!mounted) return;
 
-    if (AppSupabase.isAuthenticated) {
-      // Load user profile
-      await ref.read(loadCurrentUserProvider.future);
-      if (mounted) context.go('/home');
-    } else {
+    try {
+      if (AppSupabase.isAuthenticated) {
+        // Load user profile with timeout
+        await ref
+            .read(loadCurrentUserProvider.future)
+            .timeout(const Duration(seconds: 10));
+        if (mounted) context.go('/home');
+      } else {
+        if (mounted) context.go('/auth/login');
+      }
+    } on TimeoutException {
+      // Auth check timed out — send to login
+      if (mounted) context.go('/auth/login');
+    } catch (_) {
+      // Any other error — send to login
       if (mounted) context.go('/auth/login');
     }
   }

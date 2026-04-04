@@ -246,6 +246,12 @@ class AppDatabase extends _$AppDatabase {
       // تنظيف تلقائي للبيانات القديمة (عند فتح القاعدة)
       await _autoCleanup();
 
+      // استعادة عناصر المزامنة المعلقة (من تعطل سابق)
+      final resetCount = await syncQueueDao.resetStuckItems();
+      if (resetCount > 0) {
+        debugPrint('[DB] Reset $resetCount stuck sync items back to pending');
+      }
+
       // بدء النسخ الاحتياطي الدوري التلقائي (كل ساعتين)
       backupService.startPeriodicBackup();
     },

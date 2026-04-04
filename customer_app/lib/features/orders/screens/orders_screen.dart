@@ -24,21 +24,24 @@ class OrdersScreen extends ConsumerWidget {
             ],
           ),
         ),
-        body: TabBarView(
-          children: [
-            _OrdersList(statuses: [
-              OrderStatus.created,
-              OrderStatus.confirmed,
-              OrderStatus.preparing,
-              OrderStatus.ready,
-              OrderStatus.outForDelivery,
-            ]),
-            _OrdersList(statuses: [
-              OrderStatus.delivered,
-              OrderStatus.completed,
-            ]),
-            _OrdersList(statuses: [OrderStatus.cancelled]),
-          ],
+        body: SafeArea(
+          top: false,
+          child: TabBarView(
+            children: [
+              _OrdersList(statuses: [
+                OrderStatus.created,
+                OrderStatus.confirmed,
+                OrderStatus.preparing,
+                OrderStatus.ready,
+                OrderStatus.outForDelivery,
+              ]),
+              _OrdersList(statuses: [
+                OrderStatus.delivered,
+                OrderStatus.completed,
+              ]),
+              _OrdersList(statuses: [OrderStatus.cancelled]),
+            ],
+          ),
         ),
       ),
     );
@@ -100,10 +103,14 @@ class _OrdersList extends ConsumerWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              order.displayNumber,
-                              style: theme.textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
+                            Flexible(
+                              child: Text(
+                                order.displayNumber,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: theme.textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                             _StatusChip(status: order.status),
@@ -113,6 +120,8 @@ class _OrdersList extends ConsumerWidget {
                         if (order.storeName != null)
                           Text(
                             order.storeName!,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                             style: theme.textTheme.bodyMedium,
                           ),
                         const SizedBox(height: AlhaiSpacing.xxs),
@@ -154,23 +163,25 @@ class _StatusChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final statusColors = theme.extension<AlhaiStatusColors>()!;
     Color color;
     switch (status) {
       case OrderStatus.created:
       case OrderStatus.confirmed:
-        color = Colors.orange;
+        color = statusColors.warning;
       case OrderStatus.preparing:
       case OrderStatus.ready:
-        color = Colors.blue;
+        color = statusColors.info;
       case OrderStatus.outForDelivery:
-        color = Colors.indigo;
+        color = theme.colorScheme.primary;
       case OrderStatus.delivered:
       case OrderStatus.completed:
       case OrderStatus.pickedUp:
-        color = Colors.green;
+        color = statusColors.success;
       case OrderStatus.cancelled:
       case OrderStatus.refunded:
-        color = Colors.red;
+        color = statusColors.error;
     }
 
     return Container(

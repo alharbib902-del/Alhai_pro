@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -19,14 +22,39 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   bool _loading = false;
   String? _error;
 
+  /// OTP cooldown
+  int _cooldownSeconds = 0;
+  Timer? _cooldownTimer;
+
   @override
   void dispose() {
     _phoneController.dispose();
+    _cooldownTimer?.cancel();
     super.dispose();
   }
 
+  void _startCooldown() {
+    _cooldownSeconds = 60;
+    _cooldownTimer?.cancel();
+    _cooldownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+      setState(() {
+        _cooldownSeconds--;
+        if (_cooldownSeconds <= 0) {
+          timer.cancel();
+        }
+      });
+    });
+  }
+
+  bool get _isCooldownActive => _cooldownSeconds > 0;
+
   Future<void> _sendOtp() async {
     if (!_formKey.currentState!.validate()) return;
+    if (_isCooldownActive) return;
 
     setState(() {
       _loading = true;
@@ -38,9 +66,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       final datasource = locator<AuthDatasource>();
       await datasource.sendOtp(phone);
 
+      _startCooldown();
+
       if (mounted) {
         context.push('/auth/otp', extra: phone);
       }
+    } on SocketException catch (_) {
+      setState(() => _error = 'لا يوجد اتصال بالإنترنت. تحقق من الشبكة وحاول مرة أخرى');
+    } on TimeoutException catch (_) {
+      setState(() => _error = 'انتهت مهلة الاتصال. حاول مرة أخرى');
     } catch (e) {
       setState(() => _error = 'فشل إرسال رمز التحقق. حاول مرة أخرى');
     } finally {
@@ -108,15 +142,21 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       prefixIcon: const Icon(Icons.phone_outlined),
                       counterText: '',
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: AlhaiRadius.borderMd,
                       ),
                     ),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
                         return 'أدخل رقم الجوال';
                       }
+                      if (!RegExp(r'^[0-9]+$').hasMatch(value.trim())) {
+                        return 'رقم الجوال يجب أن يحتوي على أرقام فقط';
+                      }
                       if (value.trim().length != 9) {
                         return 'رقم الجوال يجب أن يكون 9 أرقام';
+                      }
+                      if (!value.trim().startsWith('5')) {
+                        return 'رقم الجوال يجب أن يبدأ بالرقم 5';
                       }
                       return null;
                     },
@@ -132,25 +172,28 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 ],
                 const SizedBox(height: AlhaiSpacing.lg),
                 FilledButton(
-                  onPressed: _loading ? null : _sendOtp,
+                  onPressed:
+                    (_loading || _isCooldownActive) ? null : _sendOtp,
                   style: FilledButton.styleFrom(
                     minimumSize: const Size.fromHeight(52),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: AlhaiRadius.borderMd,
                     ),
                   ),
                   child: _loading
-                      ? const SizedBox(
+                      ? SizedBox(
                           height: 20,
                           width: 20,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            color: Colors.white,
+                            color: theme.colorScheme.onPrimary,
                           ),
                         )
-                      : const Text(
-                          'إرسال رمز التحقق',
-                          style: TextStyle(fontSize: 16),
+                      : Text(
+                          _isCooldownActive
+                              ? 'إعادة الإرسال بعد $_cooldownSeconds ثانية'
+                              : 'إرسال رمز التحقق',
+                          style: const TextStyle(fontSize: 16),
                         ),
                 ),
                 const Spacer(flex: 2),

@@ -23,18 +23,12 @@ final orderDetailProvider =
 /// Active orders (for home screen banner).
 final activeOrdersProvider = FutureProvider<List<Order>>((ref) async {
   final datasource = locator<OrdersDatasource>();
-  final result = await datasource.getOrders(status: OrderStatus.created);
-  final confirmed = await datasource.getOrders(status: OrderStatus.confirmed);
-  final preparing = await datasource.getOrders(status: OrderStatus.preparing);
-  final ready = await datasource.getOrders(status: OrderStatus.ready);
-  final delivering =
-      await datasource.getOrders(status: OrderStatus.outForDelivery);
-
-  return [
-    ...result.items,
-    ...confirmed.items,
-    ...preparing.items,
-    ...ready.items,
-    ...delivering.items,
-  ];
+  final results = await Future.wait([
+    datasource.getOrders(status: OrderStatus.created),
+    datasource.getOrders(status: OrderStatus.confirmed),
+    datasource.getOrders(status: OrderStatus.preparing),
+    datasource.getOrders(status: OrderStatus.ready),
+    datasource.getOrders(status: OrderStatus.outForDelivery),
+  ]);
+  return results.expand((p) => p.items).toList();
 });

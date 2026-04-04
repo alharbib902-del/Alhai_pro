@@ -38,7 +38,7 @@ class OrdersDatasource {
       'subtotal': subtotal,
       'total': subtotal,
       'payment_method': params.paymentMethod.name,
-      'created_at': DateTime.now().toIso8601String(),
+      'created_at': DateTime.now().toUtc().toIso8601String(),
     };
     if (params.addressId != null) {
       orderMap['address_id'] = params.addressId;
@@ -52,15 +52,21 @@ class OrdersDatasource {
     final orderId = orderData['id'] as String;
 
     // 4. Insert order items
-    for (final item in params.items) {
-      await _client.from('order_items').insert({
-        'order_id': orderId,
-        'product_id': item.productId,
-        'product_name': item.name,
-        'unit_price': item.unitPrice,
-        'qty': item.qty,
-        'total_price': item.lineTotal,
-      });
+    try {
+      for (final item in params.items) {
+        await _client.from('order_items').insert({
+          'order_id': orderId,
+          'product_id': item.productId,
+          'product_name': item.name,
+          'unit_price': item.unitPrice,
+          'qty': item.qty,
+          'total_price': item.lineTotal,
+        });
+      }
+    } catch (e) {
+      // Attempt to clean up the order if item insertion fails
+      await _client.from('orders').delete().eq('id', orderId);
+      rethrow;
     }
 
     return _orderFromRow(orderData, params.items);
@@ -83,7 +89,7 @@ class OrdersDatasource {
               productId: (row['product_id'] as String?) ?? '',
               name: (row['product_name'] as String?) ?? '',
               unitPrice: (row['unit_price'] as num).toDouble(),
-              qty: (row['qty'] as num).toInt(),
+              qty: (row['qty'] as num).toDouble(),
               lineTotal: (row['total_price'] as num).toDouble(),
             ))
         .toList();
@@ -126,7 +132,7 @@ class OrdersDatasource {
                 productId: (r['product_id'] as String?) ?? '',
                 name: (r['product_name'] as String?) ?? '',
                 unitPrice: (r['unit_price'] as num).toDouble(),
-                qty: (r['qty'] as num).toInt(),
+                qty: (r['qty'] as num).toDouble(),
                 lineTotal: (r['total_price'] as num).toDouble(),
               ))
           .toList();
@@ -153,7 +159,7 @@ class OrdersDatasource {
     await _client.from('orders').update({
       'status': 'cancelled',
       'cancellation_reason': reason,
-      'cancelled_at': DateTime.now().toIso8601String(),
+      'cancelled_at': DateTime.now().toUtc().toIso8601String(),
     }).eq('id', id);
   }
 

@@ -24,7 +24,17 @@ class ProductsDatasource {
     }
 
     if (searchQuery != null && searchQuery.isNotEmpty) {
-      query = query.or('name.ilike.%$searchQuery%,barcode.eq.$searchQuery,sku.ilike.%$searchQuery%');
+      // Sanitize special PostgREST characters to prevent filter injection
+      final sanitized = searchQuery
+          .replaceAll('%', '')
+          .replaceAll('_', r'\_')
+          .replaceAll('.', '')
+          .replaceAll(',', '')
+          .replaceAll('(', '')
+          .replaceAll(')', '');
+      if (sanitized.isNotEmpty) {
+        query = query.or('name.ilike.%$sanitized%,barcode.eq.$sanitized,sku.ilike.%$sanitized%');
+      }
     }
 
     final from = (page - 1) * limit;

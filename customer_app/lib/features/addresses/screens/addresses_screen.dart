@@ -6,6 +6,7 @@ import 'package:alhai_core/alhai_core.dart';
 
 import '../providers/address_providers.dart';
 import '../../../di/injection.dart';
+import '../../../core/services/location_service.dart';
 import '../data/addresses_datasource.dart';
 
 class AddressesScreen extends ConsumerWidget {
@@ -64,17 +65,23 @@ class AddressesScreen extends ConsumerWidget {
                   ),
                   title: Row(
                     children: [
-                      Text(address.label),
+                      Flexible(
+                        child: Text(
+                          address.label,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
                       if (address.isDefault) ...[
                         const SizedBox(width: AlhaiSpacing.xs),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 6,
+                            horizontal: AlhaiSpacing.xs,
                             vertical: AlhaiSpacing.xxxs,
                           ),
                           decoration: BoxDecoration(
                             color: theme.colorScheme.primaryContainer,
-                            borderRadius: BorderRadius.circular(4),
+                            borderRadius: AlhaiRadius.borderXs,
                           ),
                           child: Text(
                             'الافتراضي',
@@ -133,7 +140,7 @@ class AddressesScreen extends ConsumerWidget {
       context: context,
       isScrollControlled: true,
       builder: (context) => Padding(
-        padding: EdgeInsets.fromLTRB(
+        padding: EdgeInsetsDirectional.fromSTEB(
           AlhaiSpacing.md,
           AlhaiSpacing.md,
           AlhaiSpacing.md,
@@ -179,13 +186,26 @@ class AddressesScreen extends ConsumerWidget {
               onPressed: () async {
                 if (labelCtrl.text.isEmpty || addressCtrl.text.isEmpty) return;
 
+                // Get actual device location, fall back to Riyadh center
+                double lat = 24.7136;
+                double lng = 46.6753;
+                try {
+                  final position = await LocationService.getCurrentPosition();
+                  if (position != null) {
+                    lat = position.latitude;
+                    lng = position.longitude;
+                  }
+                } catch (e) {
+                  debugPrint('[AddressesScreen] Could not get location: $e');
+                }
+
                 final ds = locator<AddressesDatasource>();
                 await ds.createAddress(CreateAddressParams(
                   label: labelCtrl.text,
                   fullAddress: addressCtrl.text,
                   city: cityCtrl.text,
-                  lat: 24.7136, // Default Riyadh
-                  lng: 46.6753,
+                  lat: lat,
+                  lng: lng,
                 ));
 
                 ref.invalidate(addressesListProvider);

@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'stores_table.dart';
 
 /// جدول بيانات العملاء
 @TableIndex(name: 'idx_customers_store_id', columns: {#storeId})
@@ -6,13 +7,14 @@ import 'package:drift/drift.dart';
 @TableIndex(name: 'idx_customers_name', columns: {#name})
 @TableIndex(name: 'idx_customers_is_active', columns: {#isActive})
 @TableIndex(name: 'idx_customers_store_phone', columns: {#storeId, #phone})
+@TableIndex(name: 'idx_customers_store_active', columns: {#storeId, #isActive})
 class CustomersTable extends Table {
   @override
   String get tableName => 'customers';
 
   TextColumn get id => text()();
   TextColumn get orgId => text().nullable()();
-  TextColumn get storeId => text()();
+  TextColumn get storeId => text().references(StoresTable, #id)();
   TextColumn get name => text()();
   TextColumn get phone => text().nullable()();
   TextColumn get email => text().nullable()();

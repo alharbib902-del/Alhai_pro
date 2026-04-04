@@ -218,7 +218,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
               color: theme.colorScheme.surface,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
+                  color: theme.colorScheme.shadow,
                   blurRadius: 8,
                   offset: const Offset(0, -2),
                 ),
@@ -230,16 +230,16 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                 style: FilledButton.styleFrom(
                   minimumSize: const Size.fromHeight(52),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: AlhaiRadius.borderMd,
                   ),
                 ),
                 child: _loading
-                    ? const SizedBox(
+                    ? SizedBox(
                         height: 20,
                         width: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          color: Colors.white,
+                          color: theme.colorScheme.onPrimary,
                         ),
                       )
                     : Text(

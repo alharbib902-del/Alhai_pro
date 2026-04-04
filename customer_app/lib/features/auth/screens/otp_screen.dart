@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -22,16 +25,80 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
   bool _loading = false;
   String? _error;
 
+  /// OTP verification rate limiting
+  int _failedAttempts = 0;
+  int _lockoutSeconds = 0;
+  Timer? _lockoutTimer;
+
+  /// Resend cooldown
+  int _resendCooldownSeconds = 0;
+  Timer? _resendTimer;
+
+  static const int _maxAttempts = 5;
+  static const int _lockoutDuration = 60;
+  static const int _resendCooldown = 60;
+
+  @override
+  void initState() {
+    super.initState();
+    _startResendCooldown();
+  }
+
   @override
   void dispose() {
     _otpController.dispose();
+    _lockoutTimer?.cancel();
+    _resendTimer?.cancel();
     super.dispose();
+  }
+
+  bool get _isLockedOut => _lockoutSeconds > 0;
+
+  void _startLockout() {
+    _lockoutSeconds = _lockoutDuration;
+    _lockoutTimer?.cancel();
+    _lockoutTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+      setState(() {
+        _lockoutSeconds--;
+        if (_lockoutSeconds <= 0) {
+          timer.cancel();
+          _failedAttempts = 0;
+        }
+      });
+    });
+  }
+
+  void _startResendCooldown() {
+    _resendCooldownSeconds = _resendCooldown;
+    _resendTimer?.cancel();
+    _resendTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+      setState(() {
+        _resendCooldownSeconds--;
+        if (_resendCooldownSeconds <= 0) {
+          timer.cancel();
+        }
+      });
+    });
   }
 
   Future<void> _verifyOtp() async {
     final otp = _otpController.text.trim();
     if (otp.length != 6) {
       setState(() => _error = 'أدخل رمز التحقق المكون من 6 أرقام');
+      return;
+    }
+
+    if (_isLockedOut) {
+      setState(() => _error =
+          'تم تجاوز عدد المحاولات. انتظر $_lockoutSeconds ثانية');
       return;
     }
 
@@ -48,23 +115,52 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
       ref.read(currentUserProvider.notifier).state = result.user;
 
       if (mounted) context.go('/home');
+    } on SocketException catch (_) {
+      setState(() => _error = 'لا يوجد اتصال بالإنترنت. تحقق من الشبكة وحاول مرة أخرى');
+    } on TimeoutException catch (_) {
+      setState(() => _error = 'انتهت مهلة الاتصال. حاول مرة أخرى');
     } catch (e) {
-      setState(() => _error = 'رمز التحقق غير صحيح');
+      _failedAttempts++;
+      if (_failedAttempts >= _maxAttempts) {
+        _startLockout();
+        setState(() => _error =
+            'تم تجاوز عدد المحاولات. انتظر $_lockoutSeconds ثانية');
+      } else {
+        final remaining = _maxAttempts - _failedAttempts;
+        setState(() => _error =
+            'رمز التحقق غير صحيح ($remaining محاولات متبقية)');
+      }
     } finally {
       if (mounted) setState(() => _loading = false);
     }
   }
 
   Future<void> _resendOtp() async {
+    if (_resendCooldownSeconds > 0) return;
+
     try {
       final datasource = locator<AuthDatasource>();
       await datasource.sendOtp(widget.phone);
+      _startResendCooldown();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('تم إعادة إرسال رمز التحقق')),
         );
       }
-    } catch (_) {}
+    } on SocketException catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('لا يوجد اتصال بالإنترنت')),
+        );
+      }
+    } catch (e) {
+      debugPrint('[OtpScreen] Error resending OTP: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('فشل إعادة إرسال الرمز. حاول مرة أخرى')),
+        );
+      }
+    }
   }
 
   @override
@@ -114,6 +210,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                   keyboardType: TextInputType.number,
                   textAlign: TextAlign.center,
                   maxLength: 6,
+                  enabled: !_isLockedOut,
                   style: theme.textTheme.headlineSmall?.copyWith(
                     letterSpacing: 12,
                     fontWeight: FontWeight.bold,
@@ -123,7 +220,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                     counterText: '',
                     hintText: '------',
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: AlhaiRadius.borderMd,
                     ),
                   ),
                   onChanged: (value) {
@@ -141,28 +238,37 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
               ],
               const SizedBox(height: AlhaiSpacing.lg),
               FilledButton(
-                onPressed: _loading ? null : _verifyOtp,
+                onPressed: (_loading || _isLockedOut) ? null : _verifyOtp,
                 style: FilledButton.styleFrom(
                   minimumSize: const Size.fromHeight(52),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: AlhaiRadius.borderMd,
                   ),
                 ),
                 child: _loading
-                    ? const SizedBox(
+                    ? SizedBox(
                         height: 20,
                         width: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          color: Colors.white,
+                          color: theme.colorScheme.onPrimary,
                         ),
                       )
-                    : const Text('تأكيد', style: TextStyle(fontSize: 16)),
+                    : Text(
+                        _isLockedOut
+                            ? 'انتظر $_lockoutSeconds ثانية'
+                            : 'تأكيد',
+                        style: const TextStyle(fontSize: 16),
+                      ),
               ),
               const SizedBox(height: AlhaiSpacing.md),
               TextButton(
-                onPressed: _resendOtp,
-                child: const Text('إعادة إرسال الرمز'),
+                onPressed: _resendCooldownSeconds > 0 ? null : _resendOtp,
+                child: Text(
+                  _resendCooldownSeconds > 0
+                      ? 'إعادة الإرسال بعد $_resendCooldownSeconds ثانية'
+                      : 'إعادة إرسال الرمز',
+                ),
               ),
             ],
           ),

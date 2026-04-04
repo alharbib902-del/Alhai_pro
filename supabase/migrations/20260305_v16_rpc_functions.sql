@@ -27,13 +27,13 @@ CREATE OR REPLACE FUNCTION public.apply_stock_deltas(
 DECLARE
   delta_item JSONB;
   v_product_id TEXT;
-  v_qty_change INTEGER;
+  v_qty_change DOUBLE PRECISION;
   v_count INTEGER := 0;
 BEGIN
   FOR delta_item IN SELECT * FROM jsonb_array_elements(p_deltas)
   LOOP
     v_product_id := delta_item->>'product_id';
-    v_qty_change := (delta_item->>'qty_change')::INTEGER;
+    v_qty_change := (delta_item->>'qty_change')::DOUBLE PRECISION;
 
     -- Update stock with row-level lock to prevent race conditions
     UPDATE public.products

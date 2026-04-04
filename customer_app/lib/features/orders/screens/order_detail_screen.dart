@@ -157,23 +157,24 @@ class OrderDetailScreen extends ConsumerWidget {
   }
 
   Widget _buildStatusChip(ThemeData theme, OrderStatus status) {
+    final statusColors = theme.extension<AlhaiStatusColors>()!;
     Color color;
     switch (status) {
       case OrderStatus.created:
       case OrderStatus.confirmed:
-        color = Colors.orange;
+        color = statusColors.warning;
       case OrderStatus.preparing:
       case OrderStatus.ready:
-        color = Colors.blue;
+        color = statusColors.info;
       case OrderStatus.outForDelivery:
-        color = Colors.indigo;
+        color = theme.colorScheme.primary;
       case OrderStatus.delivered:
       case OrderStatus.completed:
       case OrderStatus.pickedUp:
-        color = Colors.green;
+        color = statusColors.success;
       case OrderStatus.cancelled:
       case OrderStatus.refunded:
-        color = Colors.red;
+        color = statusColors.error;
     }
 
     return Container(
@@ -266,7 +267,7 @@ class _OrderTimeline extends StatelessWidget {
                             : theme.colorScheme.surfaceContainerHighest,
                       ),
                       child: isComplete
-                          ? const Icon(Icons.check, size: 14, color: Colors.white)
+                          ? Icon(Icons.check, size: 14, color: theme.colorScheme.onPrimary)
                           : null,
                     ),
                     if (index < steps.length - 1)

@@ -23,6 +23,12 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
   GoogleMapController? _mapController;
 
   @override
+  void dispose() {
+    _mapController?.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final deliveryAsync = ref.watch(deliveryTrackingProvider(widget.orderId));
@@ -152,7 +158,7 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
                             ),
                             if (delivery.driverPhone != null)
                               Padding(
-                                padding: const EdgeInsets.fromLTRB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     AlhaiSpacing.md, 0, AlhaiSpacing.md, AlhaiSpacing.sm),
                                 child: Row(
                                   children: [

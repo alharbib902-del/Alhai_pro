@@ -66,7 +66,7 @@ class DeliveryTimeline extends StatelessWidget {
             Expanded(
               child: Container(
                 height: 2,
-                margin: const EdgeInsets.only(bottom: 18),
+                margin: const EdgeInsets.only(bottom: AlhaiSpacing.md),
                 color: stages[i + 1].completed
                     ? theme.colorScheme.primary
                     : theme.colorScheme.surfaceContainerHighest,

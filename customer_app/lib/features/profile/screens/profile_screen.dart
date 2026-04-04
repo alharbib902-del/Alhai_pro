@@ -16,7 +16,9 @@ class ProfileScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(title: const Text('حسابي')),
-      body: ListView(
+      body: SafeArea(
+        top: false,
+        child: ListView(
         padding: const EdgeInsets.all(AlhaiSpacing.md),
         children: [
           // User info card
@@ -43,6 +45,8 @@ class ProfileScreen extends ConsumerWidget {
                       children: [
                         Text(
                           user?.name ?? 'مستخدم',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style: theme.textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
@@ -122,6 +126,7 @@ class ProfileScreen extends ConsumerWidget {
             ),
           ),
         ],
+      ),
       ),
     );
   }

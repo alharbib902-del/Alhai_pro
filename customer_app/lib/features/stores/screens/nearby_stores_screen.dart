@@ -22,7 +22,9 @@ class NearbyStoresScreen extends ConsumerWidget {
           onPressed: () => context.pop(),
         ),
       ),
-      body: storesAsync.when(
+      body: SafeArea(
+        top: false,
+        child: storesAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (_, __) => const Center(child: Text('فشل تحميل المتاجر')),
         data: (stores) {
@@ -48,6 +50,7 @@ class NearbyStoresScreen extends ConsumerWidget {
             },
           );
         },
+      ),
       ),
     );
   }

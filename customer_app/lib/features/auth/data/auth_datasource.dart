@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' hide User;
 import 'package:alhai_core/alhai_core.dart';
 
@@ -83,7 +84,8 @@ class AuthDatasource {
           data['created_at'] as String? ?? DateTime.now().toIso8601String(),
         ),
       );
-    } catch (_) {
+    } catch (e) {
+      debugPrint('[AuthDatasource] Error fetching current user: $e');
       return null;
     }
   }

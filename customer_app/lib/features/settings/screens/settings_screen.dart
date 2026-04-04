@@ -16,14 +16,16 @@ class SettingsScreen extends ConsumerWidget {
           onPressed: () => context.pop(),
         ),
       ),
-      body: ListView(
+      body: SafeArea(
+        top: false,
+        child: ListView(
         padding: const EdgeInsets.all(AlhaiSpacing.md),
         children: [
           // Language
           Card(
             child: ListTile(
               leading: const Icon(Icons.language),
-              title: const Text('اللغة'),
+              title: const Text('اللغة', maxLines: 1, overflow: TextOverflow.ellipsis),
               subtitle: const Text('العربية'),
               trailing: const Icon(Icons.chevron_left),
               onTap: () {
@@ -35,7 +37,7 @@ class SettingsScreen extends ConsumerWidget {
           Card(
             child: SwitchListTile(
               secondary: const Icon(Icons.notifications_outlined),
-              title: const Text('الإشعارات'),
+              title: const Text('الإشعارات', maxLines: 1, overflow: TextOverflow.ellipsis),
               subtitle: const Text('تلقي إشعارات الطلبات'),
               value: true,
               onChanged: (value) {
@@ -47,7 +49,7 @@ class SettingsScreen extends ConsumerWidget {
           Card(
             child: ListTile(
               leading: const Icon(Icons.info_outline),
-              title: const Text('عن التطبيق'),
+              title: const Text('عن التطبيق', maxLines: 1, overflow: TextOverflow.ellipsis),
               subtitle: const Text('بقالة الحي - الإصدار 1.0.0'),
               trailing: const Icon(Icons.chevron_left),
               onTap: () {
@@ -61,6 +63,7 @@ class SettingsScreen extends ConsumerWidget {
             ),
           ),
         ],
+      ),
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:alhai_core/alhai_core.dart';
@@ -22,22 +23,28 @@ class CartNotifier extends StateNotifier<Cart> {
       if (json != null) {
         state = Cart.fromJson(jsonDecode(json) as Map<String, dynamic>);
       }
-    } catch (_) {}
+    } catch (e) {
+      debugPrint('[CartProvider] Error loading cart from disk: $e');
+    }
   }
 
   Future<void> _saveToDisk() async {
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_cartKey, jsonEncode(state.toJson()));
-    } catch (_) {}
+    } catch (e) {
+      debugPrint('[CartProvider] Error saving cart to disk: $e');
+    }
   }
 
-  /// Add a product to cart. If from different store, clears cart first.
-  void addItem(Product product, String storeId) {
-    // Single-store constraint
+  /// Add a product to cart.
+  /// Returns `true` if added, `false` if store mismatch (cart not cleared).
+  /// When `false`, the UI should show a confirmation dialog then call
+  /// [clearAndSwitchStore] before retrying.
+  bool addItem(Product product, String storeId) {
+    // Single-store constraint — don't silently clear
     if (state.storeId != null && state.storeId != storeId && state.isNotEmpty) {
-      // Clear cart for new store
-      state = Cart(storeId: storeId, items: []);
+      return false;
     }
 
     final existing = state.items
@@ -65,6 +72,14 @@ class CartNotifier extends StateNotifier<Cart> {
       items: updatedItems,
       storeId: storeId,
     );
+    _saveToDisk();
+    return true;
+  }
+
+  /// Clear the cart and switch to a new store.
+  /// Call this after the user confirms they want to discard the current cart.
+  void clearAndSwitchStore(String newStoreId) {
+    state = Cart(storeId: newStoreId, items: []);
     _saveToDisk();
   }
 

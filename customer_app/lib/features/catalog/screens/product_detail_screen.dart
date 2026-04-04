@@ -93,27 +93,30 @@ class ProductDetailScreen extends ConsumerWidget {
                             ),
                             const SizedBox(height: AlhaiSpacing.xs),
                             // Stock status
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: AlhaiSpacing.xxs),
-                              decoration: BoxDecoration(
-                                color: product.isOutOfStock
-                                    ? Colors.red.withValues(alpha: 0.1)
-                                    : Colors.green.withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                product.isOutOfStock
-                                    ? 'غير متوفر'
-                                    : 'متوفر',
-                                style: TextStyle(
+                            Builder(builder: (context) {
+                              final statusColors = theme.extension<AlhaiStatusColors>()!;
+                              return Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: AlhaiSpacing.xxs),
+                                decoration: BoxDecoration(
                                   color: product.isOutOfStock
-                                      ? Colors.red
-                                      : Colors.green,
-                                  fontWeight: FontWeight.w600,
+                                      ? statusColors.error.withValues(alpha: 0.1)
+                                      : statusColors.success.withValues(alpha: 0.1),
+                                  borderRadius: AlhaiRadius.borderSm,
                                 ),
-                              ),
-                            ),
+                                child: Text(
+                                  product.isOutOfStock
+                                      ? 'غير متوفر'
+                                      : 'متوفر',
+                                  style: TextStyle(
+                                    color: product.isOutOfStock
+                                        ? statusColors.error
+                                        : statusColors.success,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              );
+                            }),
                             if (product.description != null &&
                                 product.description!.isNotEmpty) ...[
                               const SizedBox(height: AlhaiSpacing.md),
@@ -154,7 +157,7 @@ class ProductDetailScreen extends ConsumerWidget {
                   color: theme.colorScheme.surface,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.05),
+                      color: theme.colorScheme.shadow,
                       blurRadius: 8,
                       offset: const Offset(0, -2),
                     ),
@@ -203,20 +206,67 @@ class ProductDetailScreen extends ConsumerWidget {
                           onPressed: product.isOutOfStock
                               ? null
                               : () {
-                                  ref.read(cartProvider.notifier)
-                                      .addItem(product, store?.id ?? '');
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content:
-                                          Text('تمت إضافة ${product.name}'),
-                                      duration: const Duration(seconds: 1),
-                                    ),
-                                  );
+                                  final storeId = store?.id ?? '';
+                                  final added = ref
+                                      .read(cartProvider.notifier)
+                                      .addItem(product, storeId);
+                                  if (added) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content:
+                                            Text('تمت إضافة ${product.name}'),
+                                        duration: const Duration(seconds: 1),
+                                      ),
+                                    );
+                                  } else {
+                                    showDialog(
+                                      context: context,
+                                      builder: (ctx) => AlertDialog(
+                                        title: const Text('تغيير المتجر'),
+                                        content: const Text(
+                                          'السلة تحتوي على منتجات من متجر آخر. '
+                                          'هل تريد مسح السلة والإضافة من هذا المتجر؟',
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.pop(ctx),
+                                            child: const Text('إلغاء'),
+                                          ),
+                                          FilledButton(
+                                            onPressed: () {
+                                              ref
+                                                  .read(
+                                                      cartProvider.notifier)
+                                                  .clearAndSwitchStore(
+                                                      storeId);
+                                              ref
+                                                  .read(
+                                                      cartProvider.notifier)
+                                                  .addItem(
+                                                      product, storeId);
+                                              Navigator.pop(ctx);
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                      'تمت إضافة ${product.name}'),
+                                                  duration: const Duration(
+                                                      seconds: 1),
+                                                ),
+                                              );
+                                            },
+                                            child: const Text('مسح وإضافة'),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }
                                 },
                           style: FilledButton.styleFrom(
                             minimumSize: const Size.fromHeight(52),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: AlhaiRadius.borderMd,
                             ),
                           ),
                           child: Text(

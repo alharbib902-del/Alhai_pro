@@ -121,7 +121,7 @@ class _CustomerChatScreenState extends ConsumerState<CustomerChatScreen> {
 
           // Input
           Container(
-            padding: const EdgeInsets.fromLTRB(AlhaiSpacing.md, AlhaiSpacing.xs, AlhaiSpacing.md, AlhaiSpacing.md),
+            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.md, AlhaiSpacing.xs, AlhaiSpacing.md, AlhaiSpacing.md),
             decoration: BoxDecoration(
               color: theme.colorScheme.surface,
               border: Border(top: BorderSide(color: theme.dividerColor)),
@@ -141,7 +141,7 @@ class _CustomerChatScreenState extends ConsumerState<CustomerChatScreen> {
                         ),
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: AlhaiSpacing.md,
-                          vertical: 10,
+                          vertical: AlhaiSpacing.xs,
                         ),
                         isDense: true,
                       ),
@@ -181,7 +181,7 @@ class _Bubble extends StatelessWidget {
       alignment: isMe ? Alignment.centerLeft : Alignment.centerRight,
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxs),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xs),
         constraints: BoxConstraints(
           maxWidth: MediaQuery.of(context).size.width * 0.75,
         ),

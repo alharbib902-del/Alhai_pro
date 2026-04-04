@@ -1,4 +1,5 @@
 import 'package:alhai_design_system/alhai_design_system.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:alhai_core/alhai_core.dart';
 
@@ -33,17 +34,21 @@ class StoreCard extends StatelessWidget {
                 height: 56,
                 decoration: BoxDecoration(
                   color: theme.colorScheme.primaryContainer,
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: AlhaiRadius.borderMd,
                 ),
                 child: store.logoUrl != null
                     ? ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: Image.network(
-                          store.logoUrl!,
+                        borderRadius: AlhaiRadius.borderMd,
+                        child: CachedNetworkImage(
+                          imageUrl: store.logoUrl!,
                           fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => Icon(
+                          errorWidget: (_, __, ___) => Icon(
                             Icons.storefront,
                             color: theme.colorScheme.primary,
+                          ),
+                          placeholder: (_, __) => Icon(
+                            Icons.image_outlined,
+                            color: theme.colorScheme.outline,
                           ),
                         ),
                       )
@@ -76,14 +81,14 @@ class StoreCard extends StatelessWidget {
                           ),
                           decoration: BoxDecoration(
                             color: isOpen
-                                ? Colors.green.withValues(alpha: 0.1)
-                                : Colors.red.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(8),
+                                ? theme.extension<AlhaiStatusColors>()!.success.withValues(alpha: 0.1)
+                                : theme.extension<AlhaiStatusColors>()!.error.withValues(alpha: 0.1),
+                            borderRadius: AlhaiRadius.borderSm,
                           ),
                           child: Text(
                             isOpen ? 'مفتوح' : 'مغلق',
                             style: theme.textTheme.labelSmall?.copyWith(
-                              color: isOpen ? Colors.green : Colors.red,
+                              color: isOpen ? theme.extension<AlhaiStatusColors>()!.success : theme.extension<AlhaiStatusColors>()!.error,
                               fontWeight: FontWeight.w600,
                             ),
                           ),

@@ -1,4 +1,5 @@
 import 'package:alhai_design_system/alhai_design_system.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -20,7 +21,27 @@ class CartScreen extends ConsumerWidget {
           if (cart.isNotEmpty)
             TextButton(
               onPressed: () {
-                ref.read(cartProvider.notifier).clear();
+                showDialog(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    title: const Text('مسح السلة'),
+                    content: const Text(
+                        'هل تريد حذف جميع المنتجات من السلة؟'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(ctx),
+                        child: const Text('إلغاء'),
+                      ),
+                      FilledButton(
+                        onPressed: () {
+                          ref.read(cartProvider.notifier).clear();
+                          Navigator.pop(ctx);
+                        },
+                        child: const Text('مسح'),
+                      ),
+                    ],
+                  ),
+                );
               },
               child: Text(
                 'مسح',
@@ -80,18 +101,22 @@ class CartScreen extends ConsumerWidget {
                                 decoration: BoxDecoration(
                                   color: theme
                                       .colorScheme.surfaceContainerHighest,
-                                  borderRadius: BorderRadius.circular(8),
+                                  borderRadius: AlhaiRadius.borderSm,
                                 ),
                                 child: item.imageUrl != null
                                     ? ClipRRect(
                                         borderRadius:
-                                            BorderRadius.circular(8),
-                                        child: Image.network(
-                                          item.imageUrl!,
+                                            AlhaiRadius.borderSm,
+                                        child: CachedNetworkImage(
+                                          imageUrl: item.imageUrl!,
                                           fit: BoxFit.cover,
-                                          errorBuilder: (_, __, ___) =>
+                                          errorWidget: (_, __, ___) =>
                                               const Icon(
                                                   Icons.image_outlined),
+                                          placeholder: (_, __) => Icon(
+                                              Icons.image_outlined,
+                                              color: theme
+                                                  .colorScheme.outline),
                                         ),
                                       )
                                     : const Icon(
@@ -173,7 +198,7 @@ class CartScreen extends ConsumerWidget {
                                             ),
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(6),
+                                                  AlhaiRadius.borderSm,
                                             ),
                                           ),
                                         ),
@@ -208,7 +233,7 @@ class CartScreen extends ConsumerWidget {
                                           style: IconButton.styleFrom(
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(6),
+                                                  AlhaiRadius.borderSm,
                                             ),
                                           ),
                                         ),
@@ -231,7 +256,7 @@ class CartScreen extends ConsumerWidget {
                     color: theme.colorScheme.surface,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.05),
+                        color: theme.colorScheme.shadow,
                         blurRadius: 8,
                         offset: const Offset(0, -2),
                       ),
@@ -266,7 +291,7 @@ class CartScreen extends ConsumerWidget {
                             style: FilledButton.styleFrom(
                               minimumSize: const Size.fromHeight(52),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: AlhaiRadius.borderMd,
                               ),
                             ),
                             child: Text(

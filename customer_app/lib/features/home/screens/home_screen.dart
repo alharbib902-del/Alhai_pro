@@ -31,6 +31,8 @@ class HomeScreen extends ConsumerWidget {
           children: [
             Text(
               'مرحباً${user != null ? " ${user.name}" : ""}',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -50,7 +52,9 @@ class HomeScreen extends ConsumerWidget {
           ),
         ],
       ),
-      body: RefreshIndicator(
+      body: SafeArea(
+        top: false,
+        child: RefreshIndicator(
         onRefresh: () async {
           ref.invalidate(_userLocationProvider);
           ref.invalidate(allStoresProvider);
@@ -60,6 +64,7 @@ class HomeScreen extends ConsumerWidget {
           error: (_, __) => _buildStoreList(ref, context, null),
           data: (location) => _buildStoreList(ref, context, location),
         ),
+      ),
       ),
     );
   }

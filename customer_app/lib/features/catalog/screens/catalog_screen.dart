@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -20,6 +21,7 @@ class CatalogScreen extends ConsumerStatefulWidget {
 class _CatalogScreenState extends ConsumerState<CatalogScreen> {
   final _scrollController = ScrollController();
   bool _loadingMore = false;
+  Timer? _categoryDebounce;
 
   @override
   void initState() {
@@ -30,6 +32,7 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
   @override
   void dispose() {
     _scrollController.dispose();
+    _categoryDebounce?.cancel();
     super.dispose();
   }
 
@@ -83,7 +86,9 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
           ),
         ],
       ),
-      body: Column(
+      body: SafeArea(
+        top: false,
+        child: Column(
         children: [
           // Categories
           categoriesAsync.when(
@@ -96,7 +101,13 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
               categories: categories,
               selectedId: selectedCategory,
               onSelected: (id) {
-                ref.read(selectedCategoryProvider.notifier).state = id;
+                _categoryDebounce?.cancel();
+                _categoryDebounce = Timer(
+                  const Duration(milliseconds: 500),
+                  () {
+                    ref.read(selectedCategoryProvider.notifier).state = id;
+                  },
+                );
               },
             ),
           ),
@@ -135,8 +146,8 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
                 return GridView.builder(
                   controller: _scrollController,
                   padding: const EdgeInsets.all(AlhaiSpacing.sm),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
+                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: 200,
                     childAspectRatio: 0.72,
                     crossAxisSpacing: 10,
                     mainAxisSpacing: 10,
@@ -145,20 +156,59 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
                   itemBuilder: (context, index) {
                     final product = products[index];
                     return _ProductCard(
+                      key: ValueKey(product.id),
                       product: product,
                       onTap: () =>
                           context.push('/products/${product.id}'),
                       onAdd: () {
-                        ref.read(cartProvider.notifier).addItem(
-                              product,
-                              store.id,
-                            );
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('تمت إضافة ${product.name}'),
-                            duration: const Duration(seconds: 1),
-                          ),
-                        );
+                        final added = ref
+                            .read(cartProvider.notifier)
+                            .addItem(product, store.id);
+                        if (added) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('تمت إضافة ${product.name}'),
+                              duration: const Duration(seconds: 1),
+                            ),
+                          );
+                        } else {
+                          showDialog(
+                            context: context,
+                            builder: (ctx) => AlertDialog(
+                              title: const Text('تغيير المتجر'),
+                              content: const Text(
+                                'السلة تحتوي على منتجات من متجر آخر. '
+                                'هل تريد مسح السلة والإضافة من هذا المتجر؟',
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(ctx),
+                                  child: const Text('إلغاء'),
+                                ),
+                                FilledButton(
+                                  onPressed: () {
+                                    ref
+                                        .read(cartProvider.notifier)
+                                        .clearAndSwitchStore(store.id);
+                                    ref
+                                        .read(cartProvider.notifier)
+                                        .addItem(product, store.id);
+                                    Navigator.pop(ctx);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                            'تمت إضافة ${product.name}'),
+                                        duration:
+                                            const Duration(seconds: 1),
+                                      ),
+                                    );
+                                  },
+                                  child: const Text('مسح وإضافة'),
+                                ),
+                              ],
+                            ),
+                          );
+                        }
                       },
                     );
                   },
@@ -167,6 +217,7 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
             ),
           ),
         ],
+      ),
       ),
     );
   }
@@ -178,6 +229,7 @@ class _ProductCard extends StatelessWidget {
   final VoidCallback onAdd;
 
   const _ProductCard({
+    super.key,
     required this.product,
     required this.onTap,
     required this.onAdd,
@@ -223,7 +275,7 @@ class _ProductCard extends StatelessWidget {
             ),
             // Info
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xs),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -255,7 +307,7 @@ class _ProductCard extends StatelessWidget {
                           padding: EdgeInsets.zero,
                           style: IconButton.styleFrom(
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: AlhaiRadius.borderSm,
                             ),
                           ),
                         ),

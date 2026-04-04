@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:alhai_design_system/alhai_design_system.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -65,7 +66,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
             ),
         ],
       ),
-      body: _query.isEmpty || store == null
+      body: SafeArea(
+        top: false,
+        child: _query.isEmpty || store == null
           ? Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -123,11 +126,14 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                             child: product.imageThumbnail != null
                                 ? ClipRRect(
                                     borderRadius: BorderRadius.circular(8),
-                                    child: Image.network(
-                                      product.imageThumbnail!,
+                                    child: CachedNetworkImage(
+                                      imageUrl: product.imageThumbnail!,
                                       fit: BoxFit.cover,
-                                      errorBuilder: (_, __, ___) =>
+                                      errorWidget: (_, __, ___) =>
                                           const Icon(Icons.image_outlined),
+                                      placeholder: (_, __) => Icon(
+                                          Icons.image_outlined,
+                                          color: theme.colorScheme.outline),
                                     ),
                                   )
                                 : const Icon(Icons.inventory_2_outlined),
@@ -144,15 +150,64 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                             onPressed: product.isOutOfStock
                                 ? null
                                 : () {
-                                    ref.read(cartProvider.notifier)
+                                    final added = ref
+                                        .read(cartProvider.notifier)
                                         .addItem(product, store.id);
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content:
-                                            Text('تمت إضافة ${product.name}'),
-                                        duration: const Duration(seconds: 1),
-                                      ),
-                                    );
+                                    if (added) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                              'تمت إضافة ${product.name}'),
+                                          duration:
+                                              const Duration(seconds: 1),
+                                        ),
+                                      );
+                                    } else {
+                                      showDialog(
+                                        context: context,
+                                        builder: (ctx) => AlertDialog(
+                                          title: const Text('تغيير المتجر'),
+                                          content: const Text(
+                                            'السلة تحتوي على منتجات من متجر آخر. '
+                                            'هل تريد مسح السلة والإضافة من هذا المتجر؟',
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(ctx),
+                                              child: const Text('إلغاء'),
+                                            ),
+                                            FilledButton(
+                                              onPressed: () {
+                                                ref
+                                                    .read(cartProvider
+                                                        .notifier)
+                                                    .clearAndSwitchStore(
+                                                        store.id);
+                                                ref
+                                                    .read(cartProvider
+                                                        .notifier)
+                                                    .addItem(
+                                                        product, store.id);
+                                                Navigator.pop(ctx);
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(
+                                                        'تمت إضافة ${product.name}'),
+                                                    duration: const Duration(
+                                                        seconds: 1),
+                                                  ),
+                                                );
+                                              },
+                                              child:
+                                                  const Text('مسح وإضافة'),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    }
                                   },
                             icon: const Icon(Icons.add, size: 18),
                           ),
@@ -165,6 +220,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                 );
               },
             ),
+      ),
     );
   }
 }
