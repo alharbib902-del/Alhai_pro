@@ -101,7 +101,7 @@ class _TransferInventoryScreenState
       reportError(e, stackTrace: stack, hint: 'Search products in transfer');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('$e'), backgroundColor: AppColors.error),
+          SnackBar(content: Text(AppLocalizations.of(context)?.errorOccurred ?? 'حدث خطأ'), backgroundColor: AppColors.error),
         );
       }
     }

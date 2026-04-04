@@ -13178,4 +13178,9 @@ class AppLocalizationsFil extends AppLocalizations {
   @override
   String get invoiceVoidedCannotRefund =>
       'Ang invoice na ito ay na-void at hindi na ma-refund';
+
+  @override
+  String deviceClockInaccurate(int minutes) {
+    return 'ساعة الجهاز غير دقيقة - يرجى ضبط الوقت (فرق: $minutes دقيقة)';
+  }
 }

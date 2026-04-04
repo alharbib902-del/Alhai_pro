@@ -279,7 +279,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
             children: [
               const Icon(Icons.error_outline, color: Colors.white, size: 20),
               const SizedBox(width: AlhaiSpacing.xs),
-              Expanded(child: Text('$e')),
+              Expanded(child: Text(AppLocalizations.of(context)?.errorOccurred ?? 'حدث خطأ')),
             ],
           ),
           backgroundColor: AppColors.error,

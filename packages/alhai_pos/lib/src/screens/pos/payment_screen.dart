@@ -24,6 +24,7 @@ import '../../providers/cart_providers.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import '../../services/sale_service.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
+import 'package:alhai_zatca/alhai_zatca.dart' show VatCalculator;
 import '../../widgets/pos/split_payment_dialog.dart' as split_dlg show SplitPaymentDialog, PaymentSplit;
 import 'payment_sub_widgets.dart';
 import 'payment_details_widgets.dart';
@@ -173,7 +174,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
     }
 
     final subtotal = cartState.subtotal;
-    final tax = subtotal * 0.15;
+    final tax = VatCalculator.vatFromNet(netAmount: subtotal);
     final discount = cartState.discount;
     final total = subtotal + tax - discount - loyaltyDiscount;
     final change = _cashReceived - total;
@@ -206,31 +207,44 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
       },
       child: Focus(
         autofocus: true,
-        child: Scaffold(
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          body: SafeArea(
-            child: _showSuccess
-              ? PaymentSuccessState(scaleAnimation: _scaleAnimation)
-              : _isProcessing
-                  ? const PaymentProcessingState()
-                  : Column(
-                      children: [
-                        const OfflineBanner(),
-                        Expanded(
-                          child: _buildPaymentContent(
-                            total,
-                            subtotal,
-                            tax,
-                            discount,
-                            change,
-                            settings,
-                            loyaltySettings,
-                            loyaltyAccount,
-                            loyaltyDiscount,
+        child: PopScope(
+          canPop: !_isProcessing,
+          onPopInvokedWithResult: (didPop, result) {
+            if (!didPop && _isProcessing) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(l10n.processingPayment),
+                  duration: const Duration(seconds: 2),
+                ),
+              );
+            }
+          },
+          child: Scaffold(
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            body: SafeArea(
+              child: _showSuccess
+                ? PaymentSuccessState(scaleAnimation: _scaleAnimation)
+                : _isProcessing
+                    ? const PaymentProcessingState()
+                    : Column(
+                        children: [
+                          const OfflineBanner(),
+                          Expanded(
+                            child: _buildPaymentContent(
+                              total,
+                              subtotal,
+                              tax,
+                              discount,
+                              change,
+                              settings,
+                              loyaltySettings,
+                              loyaltyAccount,
+                              loyaltyDiscount,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
+                        ],
+                      ),
+            ),
           ),
         ),
       ),
@@ -609,7 +623,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
                 : () async {
                     final cartState = ref.read(cartStateProvider);
                     final subtotal = cartState.subtotal;
-                    final tax = subtotal * 0.15;
+                    final tax = VatCalculator.vatFromNet(netAmount: subtotal);
                     final total = subtotal + tax - cartState.discount;
                     final splits = await split_dlg.SplitPaymentDialog.show(
                       context: context,
@@ -1005,7 +1019,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
 
       final saleService = GetIt.I<SaleService>();
       final subtotal = cartState.subtotal;
-      final tax = subtotal * 0.15;
+      final tax = VatCalculator.vatFromNet(netAmount: subtotal);
 
       // جلب معرف الوردية المفتوحة (nullable — لا يمنع البيع إذا لم توجد وردية)
       final openShift = await ref.read(openShiftProvider.future);

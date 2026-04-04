@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiSpacing;
+import 'package:alhai_l10n/alhai_l10n.dart';
 
 import '../core/services/clock_validation_service.dart';
 
@@ -60,7 +61,7 @@ class _ClockInvalidBannerState extends State<ClockInvalidBanner> {
           const SizedBox(width: AlhaiSpacing.xs),
           Flexible(
             child: Text(
-              'ساعة الجهاز غير دقيقة - يرجى ضبط الوقت (فرق: $offsetMinutes دقيقة)',
+              AppLocalizations.of(context).deviceClockInaccurate(offsetMinutes),
               style: const TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.w500,

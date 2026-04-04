@@ -474,7 +474,7 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
         context: context,
         builder: (ctx) => AlertDialog(
           title: Text(l10n.errorOpeningShift),
-          content: Text('$e'),
+          content: Text(l10n.errorOccurred),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx),

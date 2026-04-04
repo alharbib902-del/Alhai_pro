@@ -6262,5 +6262,13 @@
   "copyToClipboard": "Copy",
   "invoiceAlreadyRefunded": "This invoice has already been fully refunded",
   "invoicePartiallyRefunded": "Some items were previously refunded - showing remaining items only",
-  "invoiceVoidedCannotRefund": "This invoice is voided and cannot be refunded"
+  "invoiceVoidedCannotRefund": "This invoice is voided and cannot be refunded",
+  "deviceClockInaccurate": "Device clock is inaccurate - please adjust the time (offset: {minutes} min)",
+  "@deviceClockInaccurate": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  }
 }

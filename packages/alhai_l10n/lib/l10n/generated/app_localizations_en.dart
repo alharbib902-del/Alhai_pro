@@ -13181,4 +13181,9 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get invoiceVoidedCannotRefund =>
       'This invoice is voided and cannot be refunded';
+
+  @override
+  String deviceClockInaccurate(int minutes) {
+    return 'Device clock is inaccurate - please adjust the time (offset: $minutes min)';
+  }
 }

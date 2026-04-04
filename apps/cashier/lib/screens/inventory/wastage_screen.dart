@@ -66,7 +66,7 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
       reportError(e, stackTrace: stack, hint: 'Search products in wastage');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('$e'), backgroundColor: AppColors.error),
+          SnackBar(content: Text(AppLocalizations.of(context)?.errorOccurred ?? 'حدث خطأ'), backgroundColor: AppColors.error),
         );
       }
     }

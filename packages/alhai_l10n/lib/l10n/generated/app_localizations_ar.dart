@@ -13152,4 +13152,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get invoiceVoidedCannotRefund => 'هذه الفاتورة ملغاة ولا يمكن إرجاعها';
+
+  @override
+  String deviceClockInaccurate(int minutes) {
+    return 'ساعة الجهاز غير دقيقة - يرجى ضبط الوقت (فرق: $minutes دقيقة)';
+  }
 }

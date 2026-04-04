@@ -104,7 +104,7 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('$e'),
+            content: Text(AppLocalizations.of(context)?.errorOccurred ?? 'حدث خطأ'),
             backgroundColor: AppColors.error,
           ),
         );

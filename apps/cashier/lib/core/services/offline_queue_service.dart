@@ -200,13 +200,15 @@ class OfflineQueueService {
           .map((e) {
             try {
               return QueueItem.fromJson(e as Map<String, dynamic>);
-            } catch (_) {
+            } catch (e) {
+              debugPrint('[OfflineQueueService] item deserialization failed: $e');
               return null;
             }
           })
           .whereType<QueueItem>()
           .toList();
-    } catch (_) {
+    } catch (e) {
+      debugPrint('[OfflineQueueService] queue load failed: $e');
       _cache = [];
     }
 

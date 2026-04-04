@@ -34,12 +34,8 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
   String? _validationError;
   Map<String, dynamic>? _discountDetails;
 
-  // Simulated recent coupons
-  final List<Map<String, dynamic>> _recentCoupons = [
-    {'code': 'WELCOME10', 'discount': '10%', 'date': DateTime.now().subtract(const Duration(hours: 2))},
-    {'code': 'SUMMER25', 'discount': '25 SAR', 'date': DateTime.now().subtract(const Duration(days: 1))},
-    {'code': 'VIP50', 'discount': '50%', 'date': DateTime.now().subtract(const Duration(days: 3))},
-  ];
+  // Recent coupons loaded from validated history (empty by default)
+  final List<Map<String, dynamic>> _recentCoupons = [];
 
   @override
   void dispose() {
@@ -461,9 +457,6 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
     });
 
     try {
-      // Simulate validation delay
-      await Future.delayed(const Duration(milliseconds: 800));
-
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) throw Exception('No store');
 

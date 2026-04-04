@@ -745,7 +745,7 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
         context: context,
         builder: (ctx) => AlertDialog(
           title: Text(l10n.errorClosingShift),
-          content: Text('$e'),
+          content: Text(l10n.errorOccurred),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx),

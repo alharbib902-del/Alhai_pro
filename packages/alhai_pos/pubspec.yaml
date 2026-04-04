@@ -26,6 +26,8 @@ dependencies:
     path: ../alhai_auth
   alhai_shared_ui:
     path: ../alhai_shared_ui
+  alhai_zatca:
+    path: ../alhai_zatca
 
   # State Management
   flutter_riverpod: ^2.4.9

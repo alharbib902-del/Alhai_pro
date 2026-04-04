@@ -37,10 +37,10 @@ class ReceiptStoreInfo {
   });
 
   static const defaultStore = ReceiptStoreInfo(
-    name: 'Al-HAI Store',
-    address: 'الرياض - المملكة العربية السعودية',
-    phone: '0500000000',
-    vatNumber: '300000000000003',
+    name: '',
+    address: '',
+    phone: '',
+    vatNumber: '',
   );
 }
 
@@ -74,7 +74,7 @@ class ReceiptData {
   const ReceiptData({
     required this.receiptNumber,
     required this.dateTime,
-    this.cashierName = 'كاشير',
+    this.cashierName = '',
     this.customerName,
     this.customerId,
     required this.items,

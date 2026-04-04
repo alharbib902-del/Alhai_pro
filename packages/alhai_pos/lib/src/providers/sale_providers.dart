@@ -16,7 +16,8 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 /// مزود خدمة الفواتير
 final invoiceServiceProvider = Provider<InvoiceService>((ref) {
   final db = ref.watch(appDatabaseProvider);
-  return InvoiceService(db: db);
+  final clockOffset = ref.watch(clockOffsetProvider);
+  return InvoiceService(db: db, clockOffsetProvider: clockOffset);
 });
 
 /// Optional clock offset provider. Override this in the cashier app
@@ -48,20 +49,6 @@ final saleItemsSyncRepairProvider = FutureProvider.autoDispose<int>((ref) async 
   await saleService.repairFailedSalesSync();
   // إصلاح عناصر البيع المفقودة
   return saleService.repairMissingSaleItemsSync();
-});
-
-/// مزود إجمالي مبيعات اليوم
-final todaySalesTotalProvider = FutureProvider.autoDispose.family<double, (String, String)>((ref, params) async {
-  final saleService = ref.watch(saleServiceProvider);
-  final (storeId, cashierId) = params;
-  return saleService.getTodayTotal(storeId, cashierId);
-});
-
-/// مزود عدد مبيعات اليوم
-final todaySalesCountProvider = FutureProvider.autoDispose.family<int, (String, String)>((ref, params) async {
-  final saleService = ref.watch(saleServiceProvider);
-  final (storeId, cashierId) = params;
-  return saleService.getTodayCount(storeId, cashierId);
 });
 
 /// مزود رقم هاتف الإيصال - يُستخدم لتمرير رقم العميل من شاشة الدفع لشاشة الإيصال

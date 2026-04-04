@@ -49,14 +49,6 @@ final returnDetailProvider = FutureProvider.autoDispose
   return ReturnDetailData(returnData: returnData, items: items);
 });
 
-/// مرتجعات فاتورة محددة
-final returnsBySaleProvider = FutureProvider.autoDispose
-    .family<List<ReturnsTableData>, String>((ref, saleId) async {
-  final db = GetIt.I<AppDatabase>();
-  final storeId = ref.read(currentStoreIdProvider)!;
-  return db.returnsDao.getReturnsBySaleId(saleId, storeId);
-});
-
 // ============================================================================
 // ACTION HELPERS
 // ============================================================================

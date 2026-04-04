@@ -13153,4 +13153,9 @@ class AppLocalizationsBn extends AppLocalizations {
   @override
   String get invoiceVoidedCannotRefund =>
       'এই চালান বাতিল হয়েছে এবং ফেরত দেওয়া যাবে না';
+
+  @override
+  String deviceClockInaccurate(int minutes) {
+    return 'ساعة الجهاز غير دقيقة - يرجى ضبط الوقت (فرق: $minutes دقيقة)';
+  }
 }

@@ -262,7 +262,9 @@ class SaleService {
           try {
             final store = await _db.storesDao.getStoreById(storeId);
             orgId = store?.orgId;
-          } catch (_) {}
+          } catch (e) {
+            debugPrint('[SaleService] orgId fetch failed: $e');
+          }
 
           // 4. إضافة عناصر البيع وخصم المخزون
           insertedItemIds = <String>[];
@@ -530,11 +532,6 @@ class SaleService {
     final sequence = (todayCount + 1).toString().padLeft(4, '0');
 
     return '$prefix-$sequence';
-  }
-
-  /// الحصول على مبيعات اليوم
-  Future<List<SalesTableData>> getTodaySales(String storeId) {
-    return _db.salesDao.getSalesByDate(storeId, DateTime.now());
   }
 
   /// إجمالي مبيعات اليوم

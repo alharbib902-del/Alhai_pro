@@ -192,15 +192,4 @@ extension ManagerApprovalExtension on BuildContext {
     );
   }
 
-  /// طلب موافقة المدير بالاسم
-  ///
-  /// [expectedPin] مطلوب - يجب الحصول عليه من مصدر آمن
-  Future<bool> requestManagerApprovalFor(String actionCode, {required String expectedPin}) {
-    return ManagerApprovalService.requestApprovalWithLocalVerification(
-      context: this,
-      action: ManagerApprovalService.getActionName(actionCode),
-      description: ManagerApprovalService.getActionDescription(actionCode),
-      expectedPin: expectedPin,
-    );
-  }
 }

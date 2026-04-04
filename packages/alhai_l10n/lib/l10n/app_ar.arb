@@ -5647,5 +5647,13 @@
   "copyToClipboard": "نسخ",
   "invoiceAlreadyRefunded": "تم إرجاع هذه الفاتورة بالكامل مسبقاً",
   "invoicePartiallyRefunded": "تم إرجاع بعض المنتجات مسبقاً - يتم عرض المتبقي فقط",
-  "invoiceVoidedCannotRefund": "هذه الفاتورة ملغاة ولا يمكن إرجاعها"
+  "invoiceVoidedCannotRefund": "هذه الفاتورة ملغاة ولا يمكن إرجاعها",
+  "deviceClockInaccurate": "ساعة الجهاز غير دقيقة - يرجى ضبط الوقت (فرق: {minutes} دقيقة)",
+  "@deviceClockInaccurate": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  }
 }

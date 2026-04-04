@@ -346,7 +346,7 @@ class _RefundRequestScreenState extends ConsumerState<RefundRequestScreen> {
       if (mounted) {
         setState(() => _isSearching = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString())),
+          SnackBar(content: Text(AppLocalizations.of(context)?.errorOccurred ?? 'حدث خطأ')),
         );
       }
     }

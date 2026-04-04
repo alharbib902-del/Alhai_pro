@@ -24464,6 +24464,12 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'هذه الفاتورة ملغاة ولا يمكن إرجاعها'**
   String get invoiceVoidedCannotRefund;
+
+  /// No description provided for @deviceClockInaccurate.
+  ///
+  /// In ar, this message translates to:
+  /// **'ساعة الجهاز غير دقيقة - يرجى ضبط الوقت (فرق: {minutes} دقيقة)'**
+  String deviceClockInaccurate(int minutes);
 }
 
 class _AppLocalizationsDelegate

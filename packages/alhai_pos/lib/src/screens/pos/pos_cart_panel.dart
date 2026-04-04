@@ -12,6 +12,7 @@ import '../../widgets/pos/sale_note_dialog.dart';
 import '../../providers/held_invoices_providers.dart';
 import '../../services/manager_approval_service.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
+import 'package:alhai_zatca/alhai_zatca.dart' show VatCalculator;
 
 // M160: Locale-aware currency formatting helper for this file
 String _fmtCurrency(BuildContext context, double amount) =>
@@ -55,7 +56,7 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
     final cartState = ref.watch(cartStateProvider);
     final items = cartState.items;
     final subtotal = cartState.subtotal;
-    final tax = subtotal * 0.15;
+    final tax = VatCalculator.vatFromNet(netAmount: subtotal);
     final total = subtotal + tax - cartState.discount;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final colorScheme = Theme.of(context).colorScheme;
@@ -614,7 +615,9 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
                             try {
                               final store = await db.storesDao.getStoreById(storeId);
                               orgId = store?.orgId;
-                            } catch (_) {}
+                            } catch (e) {
+                              debugPrint('[PosCartPanel] orgId fetch failed: $e');
+                            }
                             await db.accountsDao.insertAccount(
                               AccountsTableCompanion.insert(
                                 id: accountId,
@@ -637,7 +640,9 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
                             try {
                               final store = await db.storesDao.getStoreById(storeId);
                               orgId = store?.orgId;
-                            } catch (_) {}
+                            } catch (e) {
+                              debugPrint('[PosCartPanel] orgId fetch failed: $e');
+                            }
                             final syncService = ref.read(syncServiceProvider);
                             await syncService.enqueueCreate(
                               tableName: 'customers',

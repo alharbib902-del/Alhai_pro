@@ -89,30 +89,6 @@ final favoritesListProvider =
   return results;
 });
 
-/// عدد المنتجات المفضلة
-final favoritesCountProvider = Provider.autoDispose<int>((ref) {
-  final favoritesAsync = ref.watch(favoritesListProvider);
-  return favoritesAsync.maybeWhen(
-    data: (favorites) => favorites.length,
-    orElse: () => 0,
-  );
-});
-
-/// التحقق من كون منتج مفضل
-final isFavoriteProvider =
-    FutureProvider.autoDispose.family<bool, String>((ref, productId) async {
-  final storeId = ref.watch(currentStoreIdProvider);
-  if (storeId == null) return false;
-
-  final db = GetIt.I<AppDatabase>();
-  final result = await (db.select(db.favoritesTable)
-        ..where(
-            (f) => f.storeId.equals(storeId) & f.productId.equals(productId)))
-      .getSingleOrNull();
-
-  return result != null;
-});
-
 // ============================================================================
 // عمليات المفضلة (إضافة / إزالة / إعادة ترتيب)
 // ============================================================================

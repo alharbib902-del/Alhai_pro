@@ -683,25 +683,6 @@ void main() {
       });
     });
 
-    group('getTodaySales', () {
-      test('should return list of today sales', () async {
-        // Arrange
-        final sales = [
-          createTestSalesTableData(id: 'sale-1'),
-          createTestSalesTableData(id: 'sale-2'),
-        ];
-
-        when(() => mockSalesDao.getSalesByDate(any(), any()))
-            .thenAnswer((_) async => sales);
-
-        // Act
-        final result = await saleService.getTodaySales('store-1');
-
-        // Assert
-        expect(result.length, equals(2));
-      });
-    });
-
     group('getTodayTotal', () {
       test('should return total for today', () async {
         // Arrange

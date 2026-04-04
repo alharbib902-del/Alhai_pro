@@ -197,7 +197,7 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${l10n.error}: $e'), backgroundColor: Theme.of(context).colorScheme.error),
+          SnackBar(content: Text(l10n.errorOccurred), backgroundColor: Theme.of(context).colorScheme.error),
         );
       }
     }

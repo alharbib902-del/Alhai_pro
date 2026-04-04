@@ -13183,4 +13183,9 @@ class AppLocalizationsUr extends AppLocalizations {
   @override
   String get invoiceVoidedCannotRefund =>
       'یہ انوائس منسوخ ہے اور واپسی نہیں ہو سکتی';
+
+  @override
+  String deviceClockInaccurate(int minutes) {
+    return 'ساعة الجهاز غير دقيقة - يرجى ضبط الوقت (فرق: $minutes دقيقة)';
+  }
 }

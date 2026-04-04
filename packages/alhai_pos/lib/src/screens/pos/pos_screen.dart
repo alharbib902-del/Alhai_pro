@@ -19,6 +19,7 @@ import '../../widgets/orders/orders_widgets.dart';
 import 'pos_cart_panel.dart';
 import 'pos_product_shortcuts.dart';
 import 'package:alhai_core/alhai_core.dart' show UserRole;
+import 'package:alhai_zatca/alhai_zatca.dart' show VatCalculator;
 import 'pos_products_panel.dart';
 
 /// شاشة نقطة البيع الرئيسية - التصميم الجديد
@@ -516,7 +517,7 @@ class _PosScreenState extends ConsumerState<PosScreen> {
           items: cartState.items,
           subtotal: cartState.subtotal,
           discount: cartState.discount,
-          tax: cartState.subtotal * 0.15,
+          tax: VatCalculator.vatFromNet(netAmount: cartState.subtotal),
           total: saleTotal,
           paymentMethod: result.method.name,
           customerId: result.customerId,
@@ -684,7 +685,7 @@ class _PosScreenState extends ConsumerState<PosScreen> {
         final cartState = ref.read(cartStateProvider);
         if (cartState.items.isNotEmpty) {
           final subtotal = cartState.subtotal;
-          final tax = subtotal * 0.15;
+          final tax = VatCalculator.vatFromNet(netAmount: subtotal);
           final total = subtotal + tax - cartState.discount;
           _showPaymentDialog(total);
         }

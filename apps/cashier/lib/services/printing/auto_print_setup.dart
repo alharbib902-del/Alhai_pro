@@ -47,12 +47,20 @@ Future<bool> _autoPrintReceipt(WidgetRef ref, String saleId) async {
 
     final items = await db.saleItemsDao.getItemsBySaleId(saleId);
 
+    // Resolve cashier name from user record, fall back to cashierId
+    final cashierUser = await db.usersDao.getUserById(sale.cashierId);
+    final cashierName = cashierUser?.name ?? sale.cashierId;
+
     // Fetch real store data for receipt header and ZATCA QR
     final store = await db.storesDao.getStoreById(sale.storeId);
-    final storeName = store?.name ?? 'Al-HAI Store';
-    final storeAddress = store?.address ?? 'الرياض - المملكة العربية السعودية';
-    final storePhone = store?.phone ?? '0500000000';
-    final vatNumber = store?.taxNumber ?? '300000000000003';
+    if (store == null) {
+      debugPrint('Cannot auto-print: store not found (storeId=${sale.storeId})');
+      return false;
+    }
+    final storeName = store.name;
+    final storeAddress = store.address ?? '';
+    final storePhone = store.phone ?? '';
+    final vatNumber = store.taxNumber ?? '';
 
     // Generate ZATCA QR data (base64-encoded TLV)
     final zatcaQr = ZatcaQrService.generateQrData(
@@ -66,7 +74,7 @@ Future<bool> _autoPrintReceipt(WidgetRef ref, String saleId) async {
     final receipt = ReceiptData(
       receiptNumber: sale.receiptNo,
       dateTime: sale.createdAt,
-      cashierName: 'كاشير',
+      cashierName: cashierName,
       customerName: sale.customerName,
       items: items
           .map((i) => ReceiptItem(

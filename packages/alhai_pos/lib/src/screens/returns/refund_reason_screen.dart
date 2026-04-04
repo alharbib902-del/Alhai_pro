@@ -8,6 +8,7 @@ import 'package:alhai_database/alhai_database.dart';
 import 'package:get_it/get_it.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import '../../providers/returns_providers.dart';
+import '../../providers/sale_providers.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import '../../services/manager_approval_service.dart';
 import 'refund_request_screen.dart';
@@ -27,6 +28,12 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
   String? _selectedReason;
   final _notesController = TextEditingController();
   bool _isProcessing = false;
+
+  /// Corrected timestamp accounting for device clock drift (ZATCA compliance).
+  DateTime _correctedNow() {
+    final offset = ref.read(clockOffsetProvider)();
+    return DateTime.now().subtract(offset);
+  }
 
   List<Map<String, dynamic>> _getReasons(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -228,7 +235,8 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
       final userId = user?.id ?? '';
 
       final returnId = _uuid.v4();
-      final returnNumber = 'RET-${DateTime.now().millisecondsSinceEpoch}';
+      final now = _correctedNow();
+      final returnNumber = 'RET-${now.millisecondsSinceEpoch}';
 
       // Wrap ALL DB writes in a single transaction to prevent partial data on crash
       await db.transaction(() async {
@@ -243,7 +251,7 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
           totalRefund: Value(pendingRefund.amount),
           status: const Value('completed'),
           createdBy: Value(userId),
-          createdAt: Value(DateTime.now()),
+          createdAt: Value(now),
         ));
 
         // Insert return items (refundAmount includes 15% VAT)
@@ -266,7 +274,9 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
         try {
           final store = await db.storesDao.getStoreById(storeId);
           orgId = store?.orgId;
-        } catch (_) {}
+        } catch (e) {
+          debugPrint('[RefundReasonScreen] orgId fetch failed: $e');
+        }
 
         // Restore inventory: update stock, record movements, and write stock deltas
         for (final item in pendingRefund.items) {
@@ -291,7 +301,7 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
             referenceId: Value(returnId),
             userId: Value(userId),
             reason: Value('return: $_selectedReason'),
-            createdAt: DateTime.now(),
+            createdAt: now,
           ));
 
           // تسجيل دلتا المخزون (موجب لاستعادة المخزون)

@@ -15,6 +15,7 @@ import 'package:get_it/get_it.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:uuid/uuid.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
+import 'package:alhai_zatca/alhai_zatca.dart' show VatCalculator;
 
 /// شاشة البيع السريع
 class QuickSaleScreen extends ConsumerStatefulWidget {
@@ -69,7 +70,7 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
   }
 
   double get _subtotal => _cartItems.fold(0.0, (sum, item) => sum + item.total);
-  double get _vat => _subtotal * 0.15;
+  double get _vat => VatCalculator.vatFromNet(netAmount: _subtotal);
   double get _total => _subtotal + _vat;
   int get _itemCount => _cartItems.fold(0, (sum, item) => sum + item.quantity);
 

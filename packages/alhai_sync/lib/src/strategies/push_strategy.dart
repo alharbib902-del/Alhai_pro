@@ -85,6 +85,8 @@ class PushStrategy {
     'order_status_history',
     'daily_summaries',
     'whatsapp_messages',
+    // فواتير - تُنشأ محلياً وتُدفع للسيرفر
+    'invoices',
   ];
 
   // _tablesNotInSupabase removed — both cash_movements and audit_log now

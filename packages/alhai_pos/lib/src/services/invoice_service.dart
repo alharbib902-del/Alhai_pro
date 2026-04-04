@@ -38,13 +38,28 @@ enum InvoiceType {
 class InvoiceService {
   final AppDatabase _db;
   final ImageUploadService? _uploadService;
+
+  /// Optional clock offset callback. When provided, returns the measured
+  /// difference (device - server). Used to generate ZATCA-compliant timestamps.
+  /// If null or returns Duration.zero, `DateTime.now()` is used as-is.
+  final Duration Function()? _clockOffsetProvider;
+
   static const _uuid = Uuid();
 
   InvoiceService({
     required AppDatabase db,
     ImageUploadService? uploadService,
+    Duration Function()? clockOffsetProvider,
   })  : _db = db,
-        _uploadService = uploadService;
+        _uploadService = uploadService,
+        _clockOffsetProvider = clockOffsetProvider;
+
+  /// Get a corrected timestamp that accounts for device clock drift.
+  /// ZATCA requires accurate timestamps; this uses the server-measured offset.
+  DateTime _correctedNow() {
+    final offset = _clockOffsetProvider?.call() ?? Duration.zero;
+    return DateTime.now().subtract(offset);
+  }
 
   /// إنشاء فاتورة تلقائية عند عملية بيع
   ///
@@ -64,7 +79,7 @@ class InvoiceService {
     for (int attempt = 0; attempt < maxRetries; attempt++) {
       try {
         final id = _uuid.v4();
-        final now = DateTime.now();
+        final now = _correctedNow();
         final invoiceNumber = await _generateInvoiceNumber(
           storeId: sale.storeId,
           type: type,
@@ -156,7 +171,7 @@ class InvoiceService {
   }) async {
     try {
       final id = _uuid.v4();
-      final now = DateTime.now();
+      final now = _correctedNow();
       final invoiceNumber = await _generateInvoiceNumber(
         storeId: storeId,
         type: InvoiceType.creditNote,
@@ -206,7 +221,7 @@ class InvoiceService {
   }) async {
     try {
       final id = _uuid.v4();
-      final now = DateTime.now();
+      final now = _correctedNow();
       final invoiceNumber = await _generateInvoiceNumber(
         storeId: storeId,
         type: InvoiceType.debitNote,
@@ -252,7 +267,7 @@ class InvoiceService {
     required String storeId,
     required InvoiceType type,
   }) async {
-    final year = DateTime.now().year;
+    final year = _correctedNow().year;
     final lastSeq = await _db.invoicesDao.getLastSequence(
       storeId,
       type.prefix,
@@ -302,26 +317,4 @@ class InvoiceService {
     }
   }
 
-  /// إعادة توليد PDF لفاتورة موجودة
-  Future<Uint8List?> regeneratePdf({
-    required String invoiceId,
-    required SalesTableData sale,
-    required List<SaleItemsTableData> items,
-    StoreInfo store = StoreInfo.defaultStore,
-    String cashierName = 'كاشير',
-  }) async {
-    try {
-      return await ReceiptPdfGenerator.generate(
-        sale: sale,
-        items: items,
-        store: store,
-        cashierName: cashierName,
-      );
-    } catch (e) {
-      if (kDebugMode) {
-        debugPrint('InvoiceService: regeneratePdf failed: $e');
-      }
-      return null;
-    }
-  }
 }

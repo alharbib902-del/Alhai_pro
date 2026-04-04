@@ -776,30 +776,9 @@ final cartItemsProvider = Provider<List<PosCartItem>>((ref) {
   return ref.watch(cartStateProvider).items;
 });
 
-/// مزود عدد العناصر
-final cartItemCountProvider = Provider<int>((ref) {
-  return ref.watch(cartStateProvider).itemCount;
-});
-
-/// مزود المجموع الفرعي
-final cartSubtotalProvider = Provider<double>((ref) {
-  return ref.watch(cartStateProvider).subtotal;
-});
-
-/// مزود الإجمالي
-final cartTotalProvider = Provider<double>((ref) {
-  return ref.watch(cartStateProvider).total;
-});
-
 /// مزود هل السلة فارغة
 final isCartEmptyProvider = Provider<bool>((ref) {
   return ref.watch(cartStateProvider).isEmpty;
-});
-
-/// مزود التحقق من وجود منتج في السلة
-final isProductInCartProvider = Provider.autoDispose.family<bool, String>((ref, productId) {
-  final items = ref.watch(cartItemsProvider);
-  return items.any((item) => item.product.id == productId);
 });
 
 /// مزود الحصول على عنصر سلة بـ ID المنتج
@@ -818,7 +797,3 @@ final heldInvoicesCountProvider = Provider<int>((ref) {
   return ref.watch(heldInvoicesProvider).length;
 });
 
-/// مزود التحقق من وجود مسودة محفوظة بانتظار التأكيد
-final hasPendingDraftProvider = Provider<bool>((ref) {
-  return ref.read(cartStateProvider.notifier).hasPendingDraft;
-});

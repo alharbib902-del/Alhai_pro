@@ -347,7 +347,3 @@ final hasNewOrdersProvider = Provider<bool>((ref) {
   return ref.watch(onlineOrdersProvider).hasNewOrders;
 });
 
-/// الطلب المحدد
-final selectedOrderProvider = Provider<OnlineOrder?>((ref) {
-  return ref.watch(onlineOrdersProvider).selectedOrder;
-});

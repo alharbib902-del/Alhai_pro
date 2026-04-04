@@ -13154,4 +13154,9 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get invoiceVoidedCannotRefund =>
       'Faktur ini telah di-void dan tidak dapat dikembalikan';
+
+  @override
+  String deviceClockInaccurate(int minutes) {
+    return 'ساعة الجهاز غير دقيقة - يرجى ضبط الوقت (فرق: $minutes دقيقة)';
+  }
 }

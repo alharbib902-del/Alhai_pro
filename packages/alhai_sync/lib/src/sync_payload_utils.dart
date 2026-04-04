@@ -48,6 +48,10 @@ const Map<String, Set<String>> _localOnlyColumns = {
   // cash_movements.org_id exists in Drift for local org filtering,
   // but the Supabase cash_movements table does not have this column.
   'cash_movements': {'org_id', 'orgId'},
+  // sales.shift_id exists in Drift for local shift tracking.
+  // Supabase will have it after v24 migration; until then, strip it to
+  // prevent "column does not exist" errors on push.
+  'sales': {'shift_id', 'shiftId'},
 };
 
 /// Converts map keys from camelCase to snake_case for Supabase compatibility.
