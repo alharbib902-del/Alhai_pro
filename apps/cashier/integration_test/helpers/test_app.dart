@@ -18,7 +18,8 @@ import 'package:mocktail/mocktail.dart';
 import 'package:alhai_core/alhai_core.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
-import 'package:alhai_auth/alhai_auth.dart' hide themeProvider, ThemeNotifier, ThemeState;
+import 'package:alhai_auth/alhai_auth.dart'
+    hide themeProvider, ThemeNotifier, ThemeState;
 import 'package:alhai_pos/alhai_pos.dart';
 import 'package:alhai_database/alhai_database.dart';
 

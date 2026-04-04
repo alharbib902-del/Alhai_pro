@@ -486,8 +486,8 @@ class _SubscriptionDistribution extends StatelessWidget {
         elevation: 0,
         child: Padding(
           padding: const EdgeInsets.all(AlhaiSpacing.lg),
-          child:
-              Text(l10n.saNoSubscriptionsYet, style: theme.textTheme.bodyMedium),
+          child: Text(l10n.saNoSubscriptionsYet,
+              style: theme.textTheme.bodyMedium),
         ),
       );
     }

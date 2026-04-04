@@ -194,10 +194,12 @@ void main() {
   group('getStore', () {
     test('returns a single store by ID', () async {
       // Arrange
-      mock.setResponse('stores', SAStoreFactory.json(
-        id: 's42',
-        name: 'My Store',
-      ));
+      mock.setResponse(
+          'stores',
+          SAStoreFactory.json(
+            id: 's42',
+            name: 'My Store',
+          ));
 
       // Act
       final store = await ds.getStore('s42');

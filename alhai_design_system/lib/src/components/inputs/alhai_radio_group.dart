@@ -143,9 +143,11 @@ class _RadioOptionWidget<T> extends StatelessWidget {
     final radio = Radio<T>(
       value: option.value,
       groupValue: groupValue,
-      onChanged: isDisabled ? null : (T? v) {
-        if (v != null) onTap?.call(v);
-      },
+      onChanged: isDisabled
+          ? null
+          : (T? v) {
+              if (v != null) onTap?.call(v);
+            },
       activeColor: colorScheme.primary,
       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
       visualDensity: VisualDensity.compact,

@@ -269,27 +269,27 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
           if (_enableZatca) ...[
             const Divider(indent: 16, endIndent: 16),
             Column(
-                children: [
-                  RadioListTile<String>(
-                    title: Text(l10n.phaseOne,
-                        style: TextStyle(
-                            color: Theme.of(context).colorScheme.onSurface)),
-                    subtitle: Text(l10n.phaseOneDesc),
-                    value: 'phase1',
-                    groupValue: _zatcaPhase,
-                    onChanged: (v) => setState(() => _zatcaPhase = v!),
-                  ),
-                  RadioListTile<String>(
-                    title: Text(l10n.phaseTwo,
-                        style: TextStyle(
-                            color: Theme.of(context).colorScheme.onSurface)),
-                    subtitle: Text(l10n.phaseTwoDesc),
-                    value: 'phase2',
-                    groupValue: _zatcaPhase,
-                    onChanged: (v) => setState(() => _zatcaPhase = v!),
-                  ),
-                ],
-              ),
+              children: [
+                RadioListTile<String>(
+                  title: Text(l10n.phaseOne,
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface)),
+                  subtitle: Text(l10n.phaseOneDesc),
+                  value: 'phase1',
+                  groupValue: _zatcaPhase,
+                  onChanged: (v) => setState(() => _zatcaPhase = v!),
+                ),
+                RadioListTile<String>(
+                  title: Text(l10n.phaseTwo,
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface)),
+                  subtitle: Text(l10n.phaseTwoDesc),
+                  value: 'phase2',
+                  groupValue: _zatcaPhase,
+                  onChanged: (v) => setState(() => _zatcaPhase = v!),
+                ),
+              ],
+            ),
           ],
           const SizedBox(height: AlhaiSpacing.xs),
         ]),

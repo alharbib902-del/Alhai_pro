@@ -203,7 +203,8 @@ void main() {
       );
       when(() => mockDao.findByIdempotencyKey(any()))
           .thenAnswer((_) async => existingItem);
-      when(() => mockDao.updatePayload(any(), any())).thenAnswer((_) async => 1);
+      when(() => mockDao.updatePayload(any(), any()))
+          .thenAnswer((_) async => 1);
 
       final id = await service.enqueue(
         tableName: 'products',

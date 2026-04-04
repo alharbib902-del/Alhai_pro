@@ -20,7 +20,8 @@ class _AlhaiDesignShowcaseState extends State<AlhaiDesignShowcase> {
 
   void _toggleTheme() {
     setState(() {
-      _themeMode = _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+      _themeMode =
+          _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
     });
   }
 
@@ -91,7 +92,9 @@ class _ShowcasePageState extends State<ShowcasePage> {
         title: const Text('نظام تصميم الهاي'),
         actions: [
           AlhaiIconButton(
-            icon: widget.isRtl ? Icons.format_textdirection_l_to_r : Icons.format_textdirection_r_to_l,
+            icon: widget.isRtl
+                ? Icons.format_textdirection_l_to_r
+                : Icons.format_textdirection_r_to_l,
             onPressed: widget.onToggleDirection,
             tooltip: widget.isRtl ? 'English (LTR)' : 'العربية (RTL)',
           ),
@@ -246,7 +249,8 @@ class _ShowcasePageState extends State<ShowcasePage> {
                   controller: _phoneController,
                   labelText: 'رقم الهاتف',
                   hintText: '+966 5XX XXX XXXX',
-                  onChanged: (value) => print('Phone: $value'), // ignore: avoid_print
+                  onChanged: (value) =>
+                      print('Phone: $value'), // ignore: avoid_print
                 ),
                 const SizedBox(height: AlhaiSpacing.inputSpacing),
                 AlhaiTextField.password(
@@ -268,7 +272,8 @@ class _ShowcasePageState extends State<ShowcasePage> {
                 AlhaiSearchField(
                   controller: _searchController,
                   hintText: 'ابحث هنا...',
-                  onChanged: (value) => print('Search: $value'), // ignore: avoid_print
+                  onChanged: (value) =>
+                      print('Search: $value'), // ignore: avoid_print
                 ),
               ],
             ),
@@ -314,7 +319,8 @@ class _ShowcasePageState extends State<ShowcasePage> {
                 AlhaiButton.outlined(
                   label: 'نجاح',
                   leadingIcon: Icons.check,
-                  onPressed: () => AlhaiSnackbar.success(context, 'تمت العملية بنجاح!'),
+                  onPressed: () =>
+                      AlhaiSnackbar.success(context, 'تمت العملية بنجاح!'),
                 ),
                 AlhaiButton.outlined(
                   label: 'خطأ',
@@ -346,12 +352,14 @@ class _ShowcasePageState extends State<ShowcasePage> {
               children: [
                 Expanded(
                   child: AlhaiCard(
-                    child: AlhaiEmptyState.noOrders(title: 'لا توجد طلبات', compact: true),
+                    child: AlhaiEmptyState.noOrders(
+                        title: 'لا توجد طلبات', compact: true),
                   ),
                 ),
                 Expanded(
                   child: AlhaiCard(
-                    child: AlhaiEmptyState.noResults(title: 'لا توجد نتائج', compact: true),
+                    child: AlhaiEmptyState.noResults(
+                        title: 'لا توجد نتائج', compact: true),
                   ),
                 ),
               ],
@@ -369,7 +377,8 @@ class _ShowcasePageState extends State<ShowcasePage> {
               children: [
                 Expanded(
                   child: AlhaiCard(
-                    onTap: () => AlhaiSnackbar.info(context, 'تم الضغط على البطاقة'),
+                    onTap: () =>
+                        AlhaiSnackbar.info(context, 'تم الضغط على البطاقة'),
                     child: const Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [

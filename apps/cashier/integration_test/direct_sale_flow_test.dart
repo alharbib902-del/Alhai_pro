@@ -166,7 +166,8 @@ void main() {
     // Step 3: Scan Barcode / Add Product to Cart
     // ========================================================================
     group('Step 3: Add Products to Cart', () {
-      testWidgets('POS screen shows product grid and cart panel', (tester) async {
+      testWidgets('POS screen shows product grid and cart panel',
+          (tester) async {
         // Arrange: Land on POS with authenticated state
         await tester.pumpWidget(buildTestApp(
           initialRoute: '/pos',

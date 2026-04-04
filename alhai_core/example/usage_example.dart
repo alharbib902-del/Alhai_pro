@@ -145,7 +145,6 @@ Future<void> exampleCreateOrder(OrdersRepository ordersRepo) async {
 
     // Cancel order (if needed)
     // await ordersRepo.cancelOrder(order.id, reason: 'Customer request');
-
   } on ValidationException catch (e) {
     print('Validation error: ${e.message}');
   } on NotFoundException catch (e) {

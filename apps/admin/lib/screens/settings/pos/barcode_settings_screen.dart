@@ -391,50 +391,50 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
       builder: (ctx) => AlertDialog(
         title: Text(l10n.barcodeFormats),
         content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              RadioListTile<String>(
-                title: Text(l10n.allFormats),
-                value: 'all',
-                groupValue: _barcodeFormat,
-                onChanged: (v) {
-                  setState(() => _barcodeFormat = v!);
-                  _saveAllSettings();
-                  Navigator.pop(ctx);
-                },
-              ),
-              RadioListTile<String>(
-                title: const Text('EAN-8, EAN-13'),
-                value: 'ean',
-                groupValue: _barcodeFormat,
-                onChanged: (v) {
-                  setState(() => _barcodeFormat = v!);
-                  _saveAllSettings();
-                  Navigator.pop(ctx);
-                },
-              ),
-              RadioListTile<String>(
-                title: const Text('UPC-A, UPC-E'),
-                value: 'upc',
-                groupValue: _barcodeFormat,
-                onChanged: (v) {
-                  setState(() => _barcodeFormat = v!);
-                  _saveAllSettings();
-                  Navigator.pop(ctx);
-                },
-              ),
-              RadioListTile<String>(
-                title: Text(l10n.qrCodeOnly),
-                value: 'qr',
-                groupValue: _barcodeFormat,
-                onChanged: (v) {
-                  setState(() => _barcodeFormat = v!);
-                  _saveAllSettings();
-                  Navigator.pop(ctx);
-                },
-              ),
-            ],
-          ),
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            RadioListTile<String>(
+              title: Text(l10n.allFormats),
+              value: 'all',
+              groupValue: _barcodeFormat,
+              onChanged: (v) {
+                setState(() => _barcodeFormat = v!);
+                _saveAllSettings();
+                Navigator.pop(ctx);
+              },
+            ),
+            RadioListTile<String>(
+              title: const Text('EAN-8, EAN-13'),
+              value: 'ean',
+              groupValue: _barcodeFormat,
+              onChanged: (v) {
+                setState(() => _barcodeFormat = v!);
+                _saveAllSettings();
+                Navigator.pop(ctx);
+              },
+            ),
+            RadioListTile<String>(
+              title: const Text('UPC-A, UPC-E'),
+              value: 'upc',
+              groupValue: _barcodeFormat,
+              onChanged: (v) {
+                setState(() => _barcodeFormat = v!);
+                _saveAllSettings();
+                Navigator.pop(ctx);
+              },
+            ),
+            RadioListTile<String>(
+              title: Text(l10n.qrCodeOnly),
+              value: 'qr',
+              groupValue: _barcodeFormat,
+              onChanged: (v) {
+                setState(() => _barcodeFormat = v!);
+                _saveAllSettings();
+                Navigator.pop(ctx);
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -50,7 +50,8 @@ void main() {
       final ops = mock.queryLog['users']!.first;
       final inFilterOp = ops.firstWhere((op) => op.method == 'inFilter');
       expect(inFilterOp.args[0], equals('role'));
-      expect(inFilterOp.args[1], containsAll(['super_admin', 'support', 'viewer']));
+      expect(inFilterOp.args[1],
+          containsAll(['super_admin', 'support', 'viewer']));
     });
 
     test('adds or filter when search is provided', () async {
@@ -140,11 +141,13 @@ void main() {
   group('getUser', () {
     test('returns a single user by ID', () async {
       // Arrange
-      mock.setResponse('users', SAUserFactory.json(
-        id: 'u42',
-        name: 'Fatima',
-        role: 'owner',
-      ));
+      mock.setResponse(
+          'users',
+          SAUserFactory.json(
+            id: 'u42',
+            name: 'Fatima',
+            role: 'owner',
+          ));
 
       // Act
       final user = await ds.getUser('u42');
