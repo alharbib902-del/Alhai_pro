@@ -420,7 +420,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
                   hintStyle: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 14),
                   prefixIcon: Icon(Icons.search, color: colorScheme.onSurfaceVariant),
                   filled: true,
-                  fillColor: isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
+                  fillColor: isDark ? AppColors.backgroundDark : AppColors.backgroundSecondary,
                   contentPadding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
                 ),
@@ -440,7 +440,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
             onPressed: () {},
             icon: Icon(
               isDark ? Icons.light_mode : Icons.dark_mode,
-              color: isDark ? const Color(0xFFFBBF24) : AppColors.textSecondary,
+              color: isDark ? AppColors.warning : AppColors.textSecondary,
             ),
           ),
         ],
@@ -468,7 +468,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
             height: isMediumScreen ? 56 : 40,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: isDark ? const Color(0xFF7F1D1D).withValues(alpha: 0.5) : const Color(0xFFFEE2E2),
+              color: isDark ? const Color(0xFF7F1D1D).withValues(alpha: 0.5) : AppColors.errorSurface,
             ),
             child: Icon(
               Icons.warning_amber_rounded,
@@ -660,7 +660,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
               )
             : null,
         filled: true,
-        fillColor: isDark ? const Color(0xFF0F172A) : AppColors.grey50,
+        fillColor: isDark ? AppColors.backgroundDark : AppColors.grey50,
         contentPadding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.mdl, vertical: 18),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
@@ -909,7 +909,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 3),
                     decoration: BoxDecoration(
-                      color: isDark ? AppColors.success.withValues(alpha: 0.15) : const Color(0xFFDCFCE7),
+                      color: isDark ? AppColors.success.withValues(alpha: 0.15) : AppColors.successSurface,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
@@ -1097,7 +1097,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.mdl, vertical: 14),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF0F172A).withValues(alpha: 0.3) : AppColors.grey50,
+              color: isDark ? AppColors.backgroundDark.withValues(alpha: 0.3) : AppColors.grey50,
               border: Border(bottom: BorderSide(color: isDark ? colorScheme.outlineVariant.withValues(alpha: 0.15) : AppColors.divider)),
             ),
             child: Row(
@@ -1121,7 +1121,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
             Container(
               padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF0F172A).withValues(alpha: 0.3) : AppColors.grey50,
+                color: isDark ? AppColors.backgroundDark.withValues(alpha: 0.3) : AppColors.grey50,
               ),
               child: Center(
                 child: Text(
@@ -1278,7 +1278,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
               hintText: _selectedReason == 'other' ? l10n.additionalDetailsRequired : l10n.additionalNotesVoid,
               hintStyle: TextStyle(fontSize: 13, color: colorScheme.onSurfaceVariant),
               filled: true,
-              fillColor: isDark ? const Color(0xFF0F172A) : AppColors.grey50,
+              fillColor: isDark ? AppColors.backgroundDark : AppColors.grey50,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(color: isDark ? colorScheme.outlineVariant.withValues(alpha: 0.2) : AppColors.border),

@@ -165,7 +165,7 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
                     ? user!.name[0].toUpperCase()
                     : '?',
                 style: const TextStyle(
-                    fontSize: 22, color: Colors.white, fontWeight: FontWeight.bold),
+                    fontSize: 22, color: AppColors.textOnPrimary, fontWeight: FontWeight.bold),
               ),
             ),
           ),
@@ -394,14 +394,14 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
                 width: 20,
                 height: 20,
                 child: CircularProgressIndicator(
-                    strokeWidth: 2, color: Colors.white),
+                    strokeWidth: 2, color: AppColors.textOnPrimary),
               )
             : const Icon(Icons.login_rounded, size: 20),
         label: Text(l10n.openShift,
             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.primary,
-          foregroundColor: Colors.white,
+          foregroundColor: AppColors.textOnPrimary,
           padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

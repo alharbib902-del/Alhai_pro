@@ -49,7 +49,7 @@ class DistributorDashboardScreen extends ConsumerWidget {
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: isDark ? Colors.white : AppColors.textPrimary,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
                 const SizedBox(height: AlhaiSpacing.xs),
@@ -57,7 +57,7 @@ class DistributorDashboardScreen extends ConsumerWidget {
                   l10n?.distributorDashboardSubtitle ?? 'Distribution performance overview',
                   style: TextStyle(
                     fontSize: 14,
-                    color: isDark ? Colors.white54 : AppColors.textSecondary,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
                 const SizedBox(height: AlhaiSpacing.lg),
@@ -153,11 +153,11 @@ class _ErrorView extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(Icons.error_outline, size: 48,
-              color: isDark ? Colors.white30 : AppColors.textMuted),
+              color: Theme.of(context).colorScheme.onSurfaceVariant),
           const SizedBox(height: AlhaiSpacing.md),
           Text(message, style: TextStyle(
             fontSize: 16,
-            color: isDark ? Colors.white54 : AppColors.textSecondary,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
           )),
           const SizedBox(height: AlhaiSpacing.md),
           FilledButton.icon(
@@ -166,7 +166,7 @@ class _ErrorView extends StatelessWidget {
             label: Text(l10n?.distributorRetry ?? 'Retry'),
             style: FilledButton.styleFrom(
               backgroundColor: AppColors.primary,
-              foregroundColor: Colors.white,
+              foregroundColor: AppColors.textOnPrimary,
             ),
           ),
         ],
@@ -195,13 +195,13 @@ class _SummaryCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: isDark
             ? null
             : [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
+                  color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.05),
                   blurRadius: 10,
                   offset: const Offset(0, 2),
                 ),
@@ -225,7 +225,7 @@ class _SummaryCard extends StatelessWidget {
             style: TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white : AppColors.textPrimary,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: AlhaiSpacing.xxs),
@@ -233,7 +233,7 @@ class _SummaryCard extends StatelessWidget {
             title,
             style: TextStyle(
               fontSize: 13,
-              color: isDark ? Colors.white54 : AppColors.textSecondary,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
         ],
@@ -262,13 +262,13 @@ class _ChartCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: isDark
             ? null
             : [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
+                  color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.05),
                   blurRadius: 10,
                   offset: const Offset(0, 2),
                 ),
@@ -282,7 +282,7 @@ class _ChartCard extends StatelessWidget {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white : AppColors.textPrimary,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: AlhaiSpacing.lg),
@@ -314,7 +314,7 @@ class _ChartCard extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 11,
                                 color: isDark
-                                    ? Colors.white54
+                                    ? Theme.of(context).colorScheme.onSurfaceVariant
                                     : AppColors.textSecondary,
                               ),
                             ),
@@ -349,7 +349,7 @@ class _ChartCard extends StatelessWidget {
                   horizontalInterval: maxY > 0 ? maxY / 4 : 25,
                   getDrawingHorizontalLine: (value) => FlLine(
                     color: isDark
-                        ? Colors.white10
+                        ? Theme.of(context).colorScheme.outlineVariant
                         : Theme.of(context)
                             .colorScheme
                             .surfaceContainerLow,
@@ -403,7 +403,7 @@ class _RecentOrdersCard extends StatelessWidget {
       case 'rejected':
         return Colors.red;
       default:
-        return Colors.grey;
+        return AppColors.grey500;
     }
   }
 
@@ -428,13 +428,13 @@ class _RecentOrdersCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: isDark
             ? null
             : [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
+                  color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.05),
                   blurRadius: 10,
                   offset: const Offset(0, 2),
                 ),
@@ -448,7 +448,7 @@ class _RecentOrdersCard extends StatelessWidget {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white : AppColors.textPrimary,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: AlhaiSpacing.md),
@@ -476,7 +476,7 @@ class _RecentOrdersCard extends StatelessWidget {
                           order.storeName,
                           style: TextStyle(
                             color: isDark
-                                ? Colors.white70
+                                ? Theme.of(context).colorScheme.onSurface
                                 : AppColors.textSecondary,
                           ),
                         ),

@@ -325,7 +325,7 @@ class _EditInventoryScreenState
                     color: activeColor, size: 20),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
-              Text('Adjust Quantity',
+              Text(l10n.adjustQuantity,
                   style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -583,7 +583,7 @@ class _EditInventoryScreenState
             maxLines: 3,
             style: TextStyle(color: AppColors.getTextPrimary(isDark)),
             decoration: InputDecoration(
-              hintText: 'Optional note...',
+              hintText: l10n.optionalNoteHint,
               hintStyle: TextStyle(color: AppColors.getTextMuted(isDark)),
               filled: true,
               fillColor: AppColors.getSurfaceVariant(isDark),
@@ -621,7 +621,7 @@ class _EditInventoryScreenState
                 width: 20,
                 height: 20,
                 child: CircularProgressIndicator(
-                    strokeWidth: 2, color: Colors.white),
+                    strokeWidth: 2, color: AppColors.textOnPrimary),
               )
             : const Icon(Icons.save_rounded, size: 20),
         label: Text(l10n.saveAdjustment,
@@ -629,7 +629,7 @@ class _EditInventoryScreenState
                 const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.primary,
-          foregroundColor: Colors.white,
+          foregroundColor: AppColors.textOnPrimary,
           padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12)),

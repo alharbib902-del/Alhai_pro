@@ -194,6 +194,7 @@ class _PaymentHistoryScreenState extends ConsumerState<PaymentHistoryScreen> {
                 onPressed: () => _searchController.clear(),
                 icon: Icon(Icons.clear_rounded,
                     color: AppColors.getTextMuted(isDark)),
+                tooltip: l10n.clearField,
               )
             : null,
         filled: true,
@@ -308,7 +309,7 @@ class _PaymentHistoryScreenState extends ConsumerState<PaymentHistoryScreen> {
           Expanded(
             child: Column(
               children: [
-                Text('Payments',
+                Text(l10n.payments,
                     style: TextStyle(
                         fontSize: 12,
                         color: AppColors.getTextSecondary(isDark))),
@@ -502,7 +503,7 @@ class _PaymentHistoryScreenState extends ConsumerState<PaymentHistoryScreen> {
       case 'credit':
         return AppColors.warning;
       case 'transfer':
-        return const Color(0xFF8B5CF6);
+        return AppColors.purple;
       default:
         return AppColors.primary;
     }

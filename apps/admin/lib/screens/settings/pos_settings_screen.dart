@@ -169,8 +169,16 @@ class _PosSettingsScreenState extends ConsumerState<PosSettingsScreen> {
 
   Widget _buildPageHeader(bool isDark, AppLocalizations l10n) {
     return Row(children: [
-      IconButton(onPressed: () => context.pop(),
-        icon: Icon(Icons.arrow_back_rounded, color: Theme.of(context).colorScheme.onSurface)),
+      IconButton(
+        onPressed: () => context.pop(),
+        icon: Icon(
+          Directionality.of(context) == TextDirection.rtl
+              ? Icons.arrow_forward_rounded
+              : Icons.arrow_back_rounded,
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
+        tooltip: l10n.back,
+      ),
       const SizedBox(width: AlhaiSpacing.xs),
       Container(padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(color: AppColors.info.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)),

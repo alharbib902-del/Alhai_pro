@@ -862,6 +862,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get undoComingSoon => 'Undo (coming soon)';
 
   @override
+  String undoneRemoved(String name) {
+    return 'Undone: removed $name';
+  }
+
+  @override
+  String undoneAdded(String name) {
+    return 'Undone: restored $name';
+  }
+
+  @override
+  String undoneQtyChanged(String name, int from, int to) {
+    return 'Undone: $name qty $from → $to';
+  }
+
+  @override
+  String get nothingToUndo => 'Nothing to undo';
+
+  @override
   String get employees => 'Employees';
 
   @override
@@ -12984,4 +13002,171 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get paymentDistribution => 'Payment Distribution';
+
+  @override
+  String get allAccountsSettled => 'All customer accounts are settled';
+
+  @override
+  String get confirmInterest => 'Confirm Interest';
+
+  @override
+  String confirmInterestMessage(
+      String rate, int count, String amount, String currency) {
+    return 'Apply $rate% interest to $count accounts?\nTotal interest: $amount $currency';
+  }
+
+  @override
+  String get selectCustomers => 'Select Customers';
+
+  @override
+  String get deselectAll => 'Deselect All';
+
+  @override
+  String get preview => 'Preview';
+
+  @override
+  String get totalDebt => 'Total Debt';
+
+  @override
+  String get totalInterest => 'Total Interest';
+
+  @override
+  String get finalizeInvoice => 'Finalize Invoice';
+
+  @override
+  String get saveAsDraft => 'Save as Draft';
+
+  @override
+  String get saveDraft => 'Save Draft';
+
+  @override
+  String get finalize => 'Finalize';
+
+  @override
+  String get adjustQuantity => 'Adjust Quantity';
+
+  @override
+  String get totalItems => 'Total Items';
+
+  @override
+  String get variance => 'Variance';
+
+  @override
+  String get orderNotFound => 'Order not found';
+
+  @override
+  String get share => 'Share';
+
+  @override
+  String get full => 'Full';
+
+  @override
+  String get processRefund => 'Process Refund';
+
+  @override
+  String get refundToCustomer => 'Refund to customer';
+
+  @override
+  String get breakdown => 'Breakdown';
+
+  @override
+  String nTransactions(int count) {
+    return '$count Transactions';
+  }
+
+  @override
+  String get customReport => 'Custom Report';
+
+  @override
+  String get reportBuilder => 'Report Builder';
+
+  @override
+  String get groupBy => 'Group By';
+
+  @override
+  String get dateRange => 'Date Range';
+
+  @override
+  String get fromLabel => 'From';
+
+  @override
+  String get toLabel => 'To';
+
+  @override
+  String get generateReport => 'Generate Report';
+
+  @override
+  String get lastMonth => 'Last Month';
+
+  @override
+  String get periods => 'Periods';
+
+  @override
+  String get valueLabel => 'Value';
+
+  @override
+  String get tryDifferentFilters => 'Try different filters';
+
+  @override
+  String get scan => 'Scan';
+
+  @override
+  String get selectProductFirst => 'Select a product first';
+
+  @override
+  String get selectProductsForLabels => 'Select products for labels';
+
+  @override
+  String printJobSentForLabels(int count) {
+    return 'Print job sent for $count labels';
+  }
+
+  @override
+  String get test => 'Test';
+
+  @override
+  String get paperSize58mm => '58mm';
+
+  @override
+  String get paperSize80mm => '80mm';
+
+  @override
+  String errorSavingSettings(String error) {
+    return 'Error saving settings: $error';
+  }
+
+  @override
+  String restoreFailed(String error) {
+    return 'Restore failed: $error';
+  }
+
+  @override
+  String get address => 'Address';
+
+  @override
+  String get email => 'Email';
+
+  @override
+  String get crNumber => 'CR Number';
+
+  @override
+  String get city => 'City';
+
+  @override
+  String get optional => 'Optional';
+
+  @override
+  String get optionalNoteHint => 'Optional note...';
+
+  @override
+  String get clearField => 'Clear';
+
+  @override
+  String get decreaseQuantity => 'Decrease quantity';
+
+  @override
+  String get increaseQuantity => 'Increase quantity';
+
+  @override
+  String get copyToClipboard => 'Copy';
 }

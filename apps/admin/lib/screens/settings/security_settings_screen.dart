@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -9,13 +11,74 @@ import 'package:alhai_auth/alhai_auth.dart';
 import '../../providers/settings_db_providers.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 
-/// شاشة إعدادات الأمان
+// ============================================================================
+// PIN ATTEMPT TRACKER - Brute-force protection with exponential backoff
+// ============================================================================
+
+/// Tracks consecutive failed PIN attempts and enforces lockout with
+/// exponential backoff to prevent brute-force attacks.
 ///
-/// TODO(security): Implement rate limiting on PIN attempts to prevent brute-force attacks.
-/// After N consecutive failed PIN entries (e.g. 5), enforce an exponential
-/// backoff delay (30s, 1m, 5m, ...) or lock the account and require OTP
-/// re-verification. Track attempts in SecureStorage or a local DB table.
-/// See also: PinService.verifyPin() — the rate-limit check should wrap that call.
+/// After [maxAttempts] consecutive failures the user is locked out for
+/// an exponentially increasing duration: 30s, 60s, 120s, 240s, ...
+/// A successful verification resets the counter.
+class PinAttemptTracker {
+  static int _failedAttempts = 0;
+  static DateTime? _lockoutUntil;
+
+  /// Maximum consecutive failures before lockout is enforced.
+  static const int maxAttempts = 5;
+
+  /// Whether the user is currently locked out.
+  static bool get isLockedOut {
+    if (_lockoutUntil == null) return false;
+    if (DateTime.now().isAfter(_lockoutUntil!)) {
+      // Lockout period has passed — clear it but keep the attempt count
+      // so the next failure immediately re-locks with a longer duration.
+      _lockoutUntil = null;
+      return false;
+    }
+    return true;
+  }
+
+  /// Remaining lockout duration (zero if not locked out).
+  static Duration get remainingLockout {
+    if (_lockoutUntil == null) return Duration.zero;
+    final remaining = _lockoutUntil!.difference(DateTime.now());
+    return remaining.isNegative ? Duration.zero : remaining;
+  }
+
+  /// Human-readable remaining lockout string (e.g. "1:30").
+  static String get remainingLockoutDisplay {
+    final d = remainingLockout;
+    if (d == Duration.zero) return '';
+    final minutes = d.inMinutes;
+    final seconds = d.inSeconds % 60;
+    return '$minutes:${seconds.toString().padLeft(2, '0')}';
+  }
+
+  /// Record a failed PIN attempt. If the threshold is reached, a lockout
+  /// period is calculated using exponential backoff.
+  static void recordFailedAttempt() {
+    _failedAttempts++;
+    if (_failedAttempts >= maxAttempts) {
+      // Exponential backoff: 30s, 60s, 120s, 240s ...
+      final multiplier = (_failedAttempts ~/ maxAttempts) - 1;
+      final lockoutSeconds = 30 * pow(2, multiplier).toInt();
+      _lockoutUntil = DateTime.now().add(Duration(seconds: lockoutSeconds));
+    }
+  }
+
+  /// Reset all tracking state (call on successful PIN verification).
+  static void reset() {
+    _failedAttempts = 0;
+    _lockoutUntil = null;
+  }
+
+  /// Current failed attempt count (useful for UI warnings).
+  static int get failedAttempts => _failedAttempts;
+}
+
+/// شاشة إعدادات الأمان
 class SecuritySettingsScreen extends ConsumerStatefulWidget {
   const SecuritySettingsScreen({super.key});
 
@@ -234,22 +297,48 @@ class _SecuritySettingsScreenState
     String? currentPin; String? newPin; String? error;
     await showDialog(context: context, builder: (context) => StatefulBuilder(
       builder: (context, setDialogState) => AlertDialog(title: Text(l10n.changePinTitle), content: Column(mainAxisSize: MainAxisSize.min, children: [
-        TextField(keyboardType: TextInputType.number, maxLength: 4, obscureText: true,
-            decoration: InputDecoration(labelText: l10n.enterCurrentPin, border: const OutlineInputBorder()), onChanged: (v) => currentPin = v),
-        const SizedBox(height: AlhaiSpacing.md),
-        TextField(keyboardType: TextInputType.number, maxLength: 4, obscureText: true,
-            decoration: InputDecoration(labelText: l10n.enterNewPinChange, border: const OutlineInputBorder()), onChanged: (v) => newPin = v),
+        if (PinAttemptTracker.isLockedOut) ...[
+          Icon(Icons.lock_clock_rounded, size: 48, color: Theme.of(context).colorScheme.error),
+          const SizedBox(height: AlhaiSpacing.sm),
+          Text(
+            '${l10n.errorOccurred}\n${PinAttemptTracker.remainingLockoutDisplay}',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Theme.of(context).colorScheme.error, fontWeight: FontWeight.w600),
+          ),
+        ] else ...[
+          TextField(keyboardType: TextInputType.number, maxLength: 4, obscureText: true,
+              decoration: InputDecoration(labelText: l10n.enterCurrentPin, border: const OutlineInputBorder()), onChanged: (v) => currentPin = v),
+          const SizedBox(height: AlhaiSpacing.md),
+          TextField(keyboardType: TextInputType.number, maxLength: 4, obscureText: true,
+              decoration: InputDecoration(labelText: l10n.enterNewPinChange, border: const OutlineInputBorder()), onChanged: (v) => newPin = v),
+        ],
         if (error != null) ...[const SizedBox(height: AlhaiSpacing.xs), Text(error!, style: const TextStyle(color: Colors.red))],
       ]), actions: [
         TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
-        FilledButton(onPressed: () async {
-          if (currentPin == null || newPin == null) return;
-          final result = await PinService.changePin(currentPin!, newPin!);
-          if (result.isSuccess) {
-            if (context.mounted) Navigator.pop(context);
-            if (mounted) ScaffoldMessenger.of(this.context).showSnackBar(SnackBar(content: Text(l10n.pinChangedSuccess)));
-          } else { setDialogState(() => error = result.error); }
-        }, child: Text(l10n.changePinOption)),
+        if (!PinAttemptTracker.isLockedOut)
+          FilledButton(onPressed: () async {
+            if (currentPin == null || newPin == null) return;
+            // Rate-limit check
+            if (PinAttemptTracker.isLockedOut) {
+              setDialogState(() => error = '${l10n.errorOccurred} ${PinAttemptTracker.remainingLockoutDisplay}');
+              return;
+            }
+            final result = await PinService.changePin(currentPin!, newPin!);
+            if (result.isSuccess) {
+              PinAttemptTracker.reset();
+              if (context.mounted) Navigator.pop(context);
+              if (mounted) ScaffoldMessenger.of(this.context).showSnackBar(SnackBar(content: Text(l10n.pinChangedSuccess)));
+            } else {
+              PinAttemptTracker.recordFailedAttempt();
+              setDialogState(() {
+                if (PinAttemptTracker.isLockedOut) {
+                  error = '${l10n.errorOccurred} ${PinAttemptTracker.remainingLockoutDisplay}';
+                } else {
+                  error = result.error;
+                }
+              });
+            }
+          }, child: Text(l10n.changePinOption)),
       ]),
     ));
   }

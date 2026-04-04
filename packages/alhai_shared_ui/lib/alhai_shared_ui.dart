@@ -34,6 +34,9 @@ export 'src/core/constants/breakpoints.dart';
 export 'src/core/accessibility/semantic_labels.dart';
 export 'src/core/utils/currency_formatter.dart';
 export 'src/utils/number_formatter.dart';
+export 'src/utils/debouncer.dart';
+export 'src/utils/responsive_text.dart';
+export 'src/utils/responsive_dialog.dart';
 
 // ─── Re-exports from alhai_design_system (DEPRECATED - import directly) ─
 export 'package:alhai_design_system/alhai_design_system.dart' show AppColors, AlhaiContextExtensions;
@@ -109,6 +112,7 @@ export 'src/screens/settings/theme_screen.dart';
 // ─── Widgets: Common ────────────────────────────────────────────
 export 'src/widgets/common/adaptive_icon.dart';
 export 'src/widgets/common/animated_counter.dart';
+export 'src/widgets/common/animated_switcher_wrapper.dart';
 export 'src/widgets/common/app_badge.dart';
 export 'src/widgets/common/app_button.dart';
 export 'src/widgets/common/app_card.dart';
@@ -127,6 +131,7 @@ export 'src/widgets/common/modern_card.dart';
 export 'src/widgets/common/offline_banner.dart';
 export 'src/widgets/common/performance_dashboard.dart';
 export 'src/widgets/common/shimmer_loading.dart';
+export 'src/widgets/common/skeleton_loader.dart';
 export 'src/widgets/common/smart_animations.dart';
 export 'src/widgets/common/smart_offline_banner.dart';
 export 'src/widgets/common/sync_status_indicator.dart';

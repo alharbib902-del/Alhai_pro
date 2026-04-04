@@ -162,6 +162,7 @@ class OrderCard extends StatelessWidget {
                 Icons.person_outline,
                 size: 16,
                 color: theme.colorScheme.outline,
+                semanticLabel: AppLocalizations.of(context)!.customer,
               ),
               const SizedBox(width: AlhaiSpacing.xxs),
               Flexible(
@@ -179,6 +180,7 @@ class OrderCard extends StatelessWidget {
                 Icons.phone_outlined,
                 size: 16,
                 color: theme.colorScheme.outline,
+                semanticLabel: AppLocalizations.of(context)!.phone,
               ),
               const SizedBox(width: AlhaiSpacing.xxs),
               Flexible(
@@ -204,6 +206,7 @@ class OrderCard extends StatelessWidget {
                   Icons.location_on_outlined,
                   size: 16,
                   color: theme.colorScheme.outline,
+                  semanticLabel: AppLocalizations.of(context)!.address,
                 ),
                 const SizedBox(width: AlhaiSpacing.xxs),
                 Expanded(
@@ -408,6 +411,7 @@ class OrderCard extends StatelessWidget {
             Icon(
               Icons.delivery_dining,
               color: Theme.of(context).colorScheme.tertiary,
+              semanticLabel: AppLocalizations.of(context)!.onTheWayStatus,
             ),
             const SizedBox(width: AlhaiSpacing.xs),
             Expanded(
@@ -441,6 +445,7 @@ class OrderCard extends StatelessWidget {
             Icon(
               Icons.check_circle,
               color: AppColors.success,
+              semanticLabel: AppLocalizations.of(context)!.deliveredStatus,
             ),
             const SizedBox(width: AlhaiSpacing.xs),
             Text(
@@ -459,6 +464,7 @@ class OrderCard extends StatelessWidget {
             Icon(
               Icons.cancel,
               color: AppColors.error,
+              semanticLabel: l10n.cancelled,
             ),
             const SizedBox(width: AlhaiSpacing.xs),
             Expanded(

@@ -4,6 +4,8 @@
 /// بدلاً من القيم المحفوظة مسبقاً (hardcoded)
 library;
 
+import 'dart:async';
+
 import 'package:drift/drift.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -75,7 +77,14 @@ class DailySalesData {
 
 /// مزود بيانات لوحة التحكم الرئيسي
 /// يجمع كل البيانات المطلوبة في استعلام واحد
+/// Keeps data alive for 5 minutes to avoid re-fetching on tab switches.
 final dashboardDataProvider = FutureProvider.autoDispose<DashboardData>((ref) async {
+  // Keep the provider alive for 5 minutes after last listener detaches,
+  // so navigating away and back doesn't trigger a re-fetch.
+  final link = ref.keepAlive();
+  final timer = Timer(const Duration(minutes: 5), link.close);
+  ref.onDispose(timer.cancel);
+
   final storeId = ref.watch(currentStoreIdProvider);
   if (storeId == null) return const DashboardData();
 

@@ -25,6 +25,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart'
         AppSidebar,
         SidebarGroup,
         DefaultSidebarItems;
+import '../core/providers/unsaved_changes_provider.dart';
 
 /// Admin Dashboard Shell with persistent sidebar
 class AdminDashboardShell extends ConsumerStatefulWidget {
@@ -117,8 +118,40 @@ class _AdminDashboardShellState extends ConsumerState<AdminDashboardShell> {
     return 'dashboard';
   }
 
+  /// Show unsaved changes dialog before navigating away
+  Future<bool> _confirmUnsavedChanges() async {
+    final l10n = AppLocalizations.of(context);
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.unsavedChanges),
+        content: Text(l10n.leaveWithoutSaving),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(l10n.cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(l10n.leave),
+          ),
+        ],
+      ),
+    );
+    return result == true;
+  }
+
   /// Handle navigation by nav item id
-  void _handleNavigation(String itemId) {
+  void _handleNavigation(String itemId) async {
+    // Guard against unsaved changes in form screens
+    final hasUnsaved = ref.read(unsavedChangesProvider);
+    if (hasUnsaved) {
+      final shouldLeave = await _confirmUnsavedChanges();
+      if (!shouldLeave || !mounted) return;
+      // Clear the flag since user chose to leave
+      ref.read(unsavedChangesProvider.notifier).state = false;
+    }
+    if (!mounted) return;
     switch (itemId) {
       case 'dashboard':
         context.go(AppRoutes.dashboard);

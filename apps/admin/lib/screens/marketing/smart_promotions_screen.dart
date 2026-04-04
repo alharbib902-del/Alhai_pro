@@ -253,7 +253,12 @@ class _SmartPromotionsScreenState extends ConsumerState<SmartPromotionsScreen>
               '${_getTypeName(p.type, l10n)} - ${l10n.validityDays(p.endDate.difference(DateTime.now()).inDays)}',
               style: TextStyle(color: subtextColor, fontSize: 12),
             ),
-            trailing: Icon(Icons.chevron_right, color: subtextColor),
+            trailing: Icon(
+              Directionality.of(context) == TextDirection.rtl
+                  ? Icons.chevron_left_rounded
+                  : Icons.chevron_right_rounded,
+              color: subtextColor,
+            ),
           ),
         )).toList(),
       ),

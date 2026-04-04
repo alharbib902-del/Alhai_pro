@@ -254,9 +254,9 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
     return Column(
       children: [
         AppHeader(
-          title: 'Custom Report',
+          title: l10n.customReport,
           subtitle:
-              'Report Builder \u2022 ${l10n.mainBranch}',
+              '${l10n.reportBuilder} \u2022 ${l10n.mainBranch}',
           showSearch: false,
           searchHint: l10n.searchPlaceholder,
           onMenuTap: isWideScreen
@@ -355,7 +355,7 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
           _buildReportTypeSelector(isDark, l10n),
           const SizedBox(height: AlhaiSpacing.mdl),
           // Group by
-          Text('Group By',
+          Text(l10n.groupBy,
               style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
@@ -379,13 +379,13 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
         key: 'inventory',
         label: l10n.inventory,
         icon: Icons.inventory_2_rounded,
-        color: const Color(0xFF8B5CF6),
+        color: AppColors.purple,
       ),
       _ReportTypeOption(
         key: 'customers',
         label: l10n.customers,
         icon: Icons.people_rounded,
-        color: const Color(0xFFF97316),
+        color: AppColors.secondary,
       ),
       _ReportTypeOption(
         key: 'payments',
@@ -481,7 +481,7 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
                     Icon(option.$3,
                         size: 16,
                         color: isSelected
-                            ? Colors.white
+                            ? AppColors.textOnPrimary
                             : AppColors.getTextSecondary(isDark)),
                     const SizedBox(width: 6),
                     Text(option.$2,
@@ -491,7 +491,7 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
                                 ? FontWeight.w600
                                 : FontWeight.w500,
                             color: isSelected
-                                ? Colors.white
+                                ? AppColors.textOnPrimary
                                 : AppColors.getTextSecondary(isDark))),
                   ],
                 ),
@@ -527,7 +527,7 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
                     color: AppColors.info, size: 20),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
-              Text('Date Range',
+              Text(l10n.dateRange,
                   style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -555,7 +555,7 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('From',
+                        Text(l10n.fromLabel,
                             style: TextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w500,
@@ -580,7 +580,7 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Text('To',
+                        Text(l10n.toLabel,
                             style: TextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w500,
@@ -634,7 +634,7 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
         start: DateTime(now.year, now.month, 1),
         end: now,
       )),
-      ('Last Month', DateTimeRange(
+      (l10n.lastMonth, DateTimeRange(
         start: DateTime(now.year, now.month - 1, 1),
         end: DateTime(now.year, now.month, 0),
       )),
@@ -690,7 +690,7 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
         onPressed: _isLoading ? null : _generateReport,
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
-          foregroundColor: Colors.white,
+          foregroundColor: AppColors.textOnPrimary,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
           ),
@@ -701,15 +701,15 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
                 width: 20,
                 height: 20,
                 child: CircularProgressIndicator(
-                    strokeWidth: 2, color: Colors.white),
+                    strokeWidth: 2, color: AppColors.textOnPrimary),
               )
-            : const Row(
+            : Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.analytics_rounded, size: 20),
-                  SizedBox(width: 10),
-                  Text('Generate Report',
-                      style: TextStyle(
+                  const Icon(Icons.analytics_rounded, size: 20),
+                  const SizedBox(width: 10),
+                  Text(l10n.generateReport,
+                      style: const TextStyle(
                           fontSize: 15, fontWeight: FontWeight.w600)),
                 ],
               ),
@@ -748,10 +748,10 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
               const SizedBox(width: AlhaiSpacing.md),
               Expanded(
                   child: _buildSummaryCard(
-                      'Periods',
+                      l10n.periods,
                       '${_results.length}',
                       Icons.calendar_view_day_rounded,
-                      const Color(0xFF8B5CF6),
+                      AppColors.purple,
                       isDark)),
             ],
           )
@@ -860,7 +860,7 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
               children: [
                 Expanded(
                     flex: 3,
-                    child: Text('Period',
+                    child: Text(l10n.periodLabel,
                         style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w700,
@@ -875,7 +875,7 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
                             color: AppColors.getTextSecondary(isDark)))),
                 Expanded(
                     flex: 3,
-                    child: Text('Value',
+                    child: Text(l10n.valueLabel,
                         textAlign: TextAlign.end,
                         style: TextStyle(
                             fontSize: 12,
@@ -1049,7 +1049,7 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
                     fontWeight: FontWeight.w500,
                     color: AppColors.getTextMuted(isDark))),
             const SizedBox(height: AlhaiSpacing.xs),
-            Text('Try different filters',
+            Text(l10n.tryDifferentFilters,
                 style: TextStyle(
                     fontSize: 13,
                     color: AppColors.getTextMuted(isDark))),

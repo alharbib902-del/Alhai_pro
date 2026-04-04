@@ -132,7 +132,7 @@ class _DistributorSettingsScreenState
                 label: const Text('إعادة المحاولة'),
                 style: FilledButton.styleFrom(
                   backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
+                  foregroundColor: AppColors.textOnPrimary,
                 ),
               ),
             ],
@@ -161,7 +161,7 @@ class _DistributorSettingsScreenState
                     label: const Text('إعادة المحاولة'),
                     style: FilledButton.styleFrom(
                       backgroundColor: AppColors.primary,
-                      foregroundColor: Colors.white,
+                      foregroundColor: AppColors.textOnPrimary,
                     ),
                   ),
                 ],
@@ -419,14 +419,14 @@ class _DistributorSettingsScreenState
                 width: 20,
                 height: 20,
                 child: CircularProgressIndicator(
-                    strokeWidth: 2, color: Colors.white),
+                    strokeWidth: 2, color: AppColors.textOnPrimary),
               )
             : const Icon(Icons.save_rounded, size: 20),
         label: const Text('حفظ الإعدادات',
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.primary,
-          foregroundColor: Colors.white,
+          foregroundColor: AppColors.textOnPrimary,
           padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12)),

@@ -29,6 +29,7 @@ class StoreInfoScreen extends ConsumerStatefulWidget {
 class _StoreInfoScreenState extends ConsumerState<StoreInfoScreen> {
   final _db = GetIt.I<AppDatabase>();
   bool _isLoading = true;
+  String? _error;
 
   String _storeName = '';
   String _storeAddress = '';
@@ -46,7 +47,10 @@ class _StoreInfoScreenState extends ConsumerState<StoreInfoScreen> {
   }
 
   Future<void> _loadStoreData() async {
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
     try {
       final user = ref.read(currentUserProvider);
       final storeId = user?.storeId ?? '';
@@ -67,6 +71,7 @@ class _StoreInfoScreenState extends ConsumerState<StoreInfoScreen> {
       }
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Load store info');
+      if (mounted) setState(() => _error = '$e');
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -92,6 +97,7 @@ class _StoreInfoScreenState extends ConsumerState<StoreInfoScreen> {
               color: AppColors.getTextPrimary(isDark),
             ),
             onPressed: () => context.pop(),
+            tooltip: l10n.back,
           ),
           onNotificationsTap: () => context.push(AppRoutes.notificationsCenter),
           userName:
@@ -101,7 +107,9 @@ class _StoreInfoScreenState extends ConsumerState<StoreInfoScreen> {
         ),
         Expanded(
           child: _isLoading
-              ? const Center(child: CircularProgressIndicator())
+              ? const AppLoadingState()
+              : _error != null
+                  ? AppErrorState.general(context, message: _error!, onRetry: _loadStoreData)
               : SingleChildScrollView(
                   padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
                   child: _buildContent(
@@ -181,14 +189,14 @@ class _StoreInfoScreenState extends ConsumerState<StoreInfoScreen> {
                       errorWidget: (_, __, ___) => const Icon(
                         Icons.store_rounded,
                         size: 44,
-                        color: Colors.white,
+                        color: AppColors.textOnPrimary,
                       ),
                     ),
                   )
                 : const Icon(
                     Icons.store_rounded,
                     size: 44,
-                    color: Colors.white,
+                    color: AppColors.textOnPrimary,
                   ),
           ),
           const SizedBox(height: AlhaiSpacing.mdl),
@@ -278,7 +286,7 @@ class _StoreInfoScreenState extends ConsumerState<StoreInfoScreen> {
           _divider(isDark),
           _InfoRow(
             icon: Icons.location_on_rounded,
-            label: 'Address',
+            label: l10n.address,
             value: _storeAddress,
             isDark: isDark,
           ),
@@ -292,14 +300,14 @@ class _StoreInfoScreenState extends ConsumerState<StoreInfoScreen> {
           _divider(isDark),
           _InfoRow(
             icon: Icons.email_rounded,
-            label: 'Email',
+            label: l10n.email,
             value: _storeEmail,
             isDark: isDark,
           ),
           _divider(isDark),
           _InfoRow(
             icon: Icons.business_rounded,
-            label: 'CR Number',
+            label: l10n.crNumber,
             value: _crNumber,
             isDark: isDark,
           ),
@@ -313,7 +321,7 @@ class _StoreInfoScreenState extends ConsumerState<StoreInfoScreen> {
           _divider(isDark),
           _InfoRow(
             icon: Icons.location_city_rounded,
-            label: 'City',
+            label: l10n.city,
             value: _storeCity,
             isDark: isDark,
           ),

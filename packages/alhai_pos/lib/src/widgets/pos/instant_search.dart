@@ -111,6 +111,7 @@ class _InstantSearchFieldState extends ConsumerState<InstantSearchField> {
                     ref.read(instantSearchQueryProvider.notifier).state = '';
                     setState(() => _showResults = false);
                   },
+                  tooltip: AppLocalizations.of(context)!.clearField,
                 )
               : null,
             border: OutlineInputBorder(
@@ -232,6 +233,7 @@ class _SearchResultItem extends StatelessWidget {
       trailing: IconButton(
         icon: const Icon(Icons.add_circle, color: AlhaiColors.success),
         onPressed: onTap,
+        tooltip: AppLocalizations.of(context)!.addToCart,
       ),
     );
   }

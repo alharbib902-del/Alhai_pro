@@ -13,38 +13,42 @@ class _DarkModeToggle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onToggle,
-        borderRadius: BorderRadius.circular(8),
-        child: Container(
-          padding: const EdgeInsets.all(AlhaiSpacing.xs),
-          decoration: BoxDecoration(
-            color: isDarkMode
-                ? AppColors.surfaceVariantDark
-                : AppColors.backgroundSecondary,
-            borderRadius: BorderRadius.circular(8),
-            border: isDarkMode
-                ? Border.all(color: Colors.white12)
-                : null,
-          ),
-          child: AnimatedSwitcher(
-            duration: AlhaiDurations.slow,
-            transitionBuilder: (child, animation) {
-              return RotationTransition(
-                turns: animation,
-                child: ScaleTransition(
-                  scale: animation,
-                  child: child,
-                ),
-              );
-            },
-            child: Icon(
-              isDarkMode ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
-              key: ValueKey(isDarkMode),
-              color: isDarkMode ? Colors.amber : AppColors.textSecondary,
-              size: 18,
+    final l10n = AppLocalizations.of(context);
+    return Tooltip(
+      message: isDarkMode ? l10n.lightMode : l10n.darkMode,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onToggle,
+          borderRadius: BorderRadius.circular(8),
+          child: Container(
+            padding: const EdgeInsets.all(AlhaiSpacing.xs),
+            decoration: BoxDecoration(
+              color: isDarkMode
+                  ? AppColors.surfaceVariantDark
+                  : AppColors.backgroundSecondary,
+              borderRadius: BorderRadius.circular(8),
+              border: isDarkMode
+                  ? Border.all(color: Colors.white12)
+                  : null,
+            ),
+            child: AnimatedSwitcher(
+              duration: AlhaiDurations.slow,
+              transitionBuilder: (child, animation) {
+                return RotationTransition(
+                  turns: animation,
+                  child: ScaleTransition(
+                    scale: animation,
+                    child: child,
+                  ),
+                );
+              },
+              child: Icon(
+                isDarkMode ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
+                key: ValueKey(isDarkMode),
+                color: isDarkMode ? Colors.amber : AppColors.textSecondary,
+                size: 18,
+              ),
             ),
           ),
         ),
@@ -153,6 +157,7 @@ class _SearchFieldState extends State<_SearchField> {
                       _controller.clear();
                       widget.onChanged?.call('');
                     },
+                    tooltip: AppLocalizations.of(context).clearSearch,
                     icon: const Icon(
                       Icons.close_rounded,
                       color: AppColors.textTertiary,
@@ -200,11 +205,13 @@ class _HeaderIconButton extends StatefulWidget {
   final IconData icon;
   final VoidCallback? onTap;
   final bool isDark;
+  final String? tooltip;
 
   const _HeaderIconButton({
     required this.icon,
     this.onTap,
     this.isDark = false,
+    this.tooltip,
   });
 
   @override
@@ -216,7 +223,7 @@ class _HeaderIconButtonState extends State<_HeaderIconButton> {
 
   @override
   Widget build(BuildContext context) {
-    return MouseRegion(
+    Widget button = MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
       child: Material(
@@ -242,6 +249,10 @@ class _HeaderIconButtonState extends State<_HeaderIconButton> {
         ),
       ),
     );
+    if (widget.tooltip != null) {
+      return Tooltip(message: widget.tooltip!, child: button);
+    }
+    return button;
   }
 }
 
@@ -266,7 +277,10 @@ class _NotificationButtonState extends State<_NotificationButton> {
 
   @override
   Widget build(BuildContext context) {
-    return MouseRegion(
+    final l10n = AppLocalizations.of(context);
+    return Tooltip(
+      message: l10n.notifications,
+      child: MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
       child: Material(
@@ -323,6 +337,7 @@ class _NotificationButtonState extends State<_NotificationButton> {
           ),
         ),
       ),
+    ),
     );
   }
 }

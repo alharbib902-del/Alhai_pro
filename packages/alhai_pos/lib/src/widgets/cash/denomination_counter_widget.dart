@@ -120,9 +120,7 @@ class _DenominationCounterWidgetState
           width: double.infinity,
           padding: const EdgeInsets.all(AlhaiSpacing.md),
           decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [Color(0xFF1A8FE3), Color(0xFF0EC9C9)],
-            ),
+            gradient: AppColors.denominationGradient,
             borderRadius: BorderRadius.circular(12),
           ),
           child: Column(
@@ -274,7 +272,7 @@ Future<double?> showDenominationCounterSheet(
           expand: false,
           builder: (_, scrollCtrl) => Container(
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF1E1E2E) : Colors.white,
+              color: isDark ? AppColors.backgroundDark : AppColors.surface,
               borderRadius:
                   const BorderRadius.vertical(top: Radius.circular(20)),
             ),
@@ -296,7 +294,7 @@ Future<double?> showDenominationCounterSheet(
                   child: Row(
                     children: [
                       const Icon(Icons.calculate_rounded,
-                          color: Color(0xFF1A8FE3)),
+                          color: AppColors.denominationAccent),
                       const SizedBox(width: AlhaiSpacing.xs),
                       Text(l10n.countCurrency,
                           style: const TextStyle(
@@ -305,6 +303,7 @@ Future<double?> showDenominationCounterSheet(
                       IconButton(
                         icon: const Icon(Icons.close),
                         onPressed: () => Navigator.pop(ctx),
+                        tooltip: l10n.close,
                       ),
                     ],
                   ),

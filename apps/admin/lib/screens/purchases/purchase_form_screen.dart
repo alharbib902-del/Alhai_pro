@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -9,6 +10,7 @@ import 'package:alhai_database/alhai_database.dart';
 import 'package:get_it/get_it.dart';
 import '../../providers/purchases_providers.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
+import '../../core/providers/unsaved_changes_provider.dart';
 
 /// Purchase Form Screen - شاشة إضافة فاتورة شراء
 class PurchaseFormScreen extends ConsumerStatefulWidget {
@@ -24,11 +26,20 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
   String _paymentStatus = 'paid';
   final _invoiceNoController = TextEditingController();
   bool _isSaving = false;
+  bool _isDirty = false;
 
   double get _subtotal => _items.fold(0, (sum, item) => sum + item.total);
 
+  void _setDirty(bool value) {
+    if (_isDirty != value) {
+      setState(() => _isDirty = value);
+      ref.read(unsavedChangesProvider.notifier).state = value;
+    }
+  }
+
   @override
   void dispose() {
+    ref.read(unsavedChangesProvider.notifier).state = false;
     _invoiceNoController.dispose();
     super.dispose();
   }
@@ -36,35 +47,65 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final isWideScreen = AlhaiBreakpoints.isDesktop(size.width);
+    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+    final isWideScreen = AlhaiBreakpoints.isDesktop(size.width) || (isLandscape && size.width >= 600);
     final isMediumScreen = size.width >= AlhaiBreakpoints.tablet;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
 
-    return Column(
-      children: [
-        AppHeader(
-          title: l10n.newPurchaseInvoice,
-          onMenuTap: isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
-          onNotificationsTap: () => context.push('/notifications'),
-          notificationsCount: 3,
-          userName: l10n.cashCustomer,
-          userRole: l10n.branchManager,
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.assignment_return_rounded),
-              tooltip: 'مرتجعات المورد',
-              onPressed: () => context.push(AppRoutes.supplierReturns),
-            ),
-          ],
-        ),
-        Expanded(
-          child: SingleChildScrollView(
-            padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-            child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
+    return Shortcuts(
+      shortcuts: {
+        LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyS):
+            const _SaveIntent(),
+        LogicalKeySet(LogicalKeyboardKey.escape): const _DismissFormIntent(),
+      },
+      child: Actions(
+        actions: {
+          _SaveIntent: CallbackAction<_SaveIntent>(
+            onInvoke: (_) {
+              if (_items.isNotEmpty && !_isSaving) _savePurchase();
+              return null;
+            },
+          ),
+          _DismissFormIntent: CallbackAction<_DismissFormIntent>(
+            onInvoke: (_) {
+              if (mounted) context.pop();
+              return null;
+            },
+          ),
+        },
+        child: Focus(
+          autofocus: true,
+          child: Column(
+            children: [
+              AppHeader(
+                title: l10n.newPurchaseInvoice,
+                onMenuTap: isWideScreen
+                    ? null
+                    : () => Scaffold.of(context).openDrawer(),
+                onNotificationsTap: () => context.push('/notifications'),
+                notificationsCount: 3,
+                userName: l10n.cashCustomer,
+                userRole: l10n.branchManager,
+                actions: [
+                  IconButton(
+                    icon: const Icon(Icons.assignment_return_rounded),
+                    tooltip: l10n.returns,
+                    onPressed: () => context.push(AppRoutes.supplierReturns),
+                  ),
+                ],
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                  child: _buildContent(
+                      isWideScreen, isMediumScreen, isDark, l10n),
+                ),
+              ),
+            ],
           ),
         ),
-      ],
+      ),
     );
   }
 
@@ -76,7 +117,13 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
           children: [
             IconButton(
               onPressed: () => context.pop(),
-              icon: Icon(Icons.arrow_back_rounded, color: Theme.of(context).colorScheme.onSurface),
+              icon: Icon(
+                Directionality.of(context) == TextDirection.rtl
+                    ? Icons.arrow_forward_rounded
+                    : Icons.arrow_back_rounded,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+              tooltip: l10n.back,
             ),
             const SizedBox(width: AlhaiSpacing.xs),
             Expanded(
@@ -220,7 +267,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text('${item.total.toStringAsFixed(2)} \u0631.\u0633', style: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
-                      IconButton(icon: const Icon(Icons.delete_outline, color: AppColors.error), onPressed: () => setState(() => _items.removeAt(index))),
+                      IconButton(icon: const Icon(Icons.delete_outline, color: AppColors.error), onPressed: () => setState(() => _items.removeAt(index)), tooltip: l10n.delete),
                     ],
                   ),
                 );
@@ -328,6 +375,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
                   setState(() {
                     _items.add(_PurchaseItem(productId: 'temp_${_items.length}', productName: name, qty: qty, cost: cost));
                   });
+                  _setDirty(true);
                 }
                 Navigator.pop(context);
               },
@@ -433,4 +481,12 @@ class _PurchaseItem {
   _PurchaseItem({required this.productId, required this.productName, required this.qty, required this.cost});
 
   double get total => qty * cost;
+}
+
+class _SaveIntent extends Intent {
+  const _SaveIntent();
+}
+
+class _DismissFormIntent extends Intent {
+  const _DismissFormIntent();
 }

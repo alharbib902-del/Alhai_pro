@@ -428,6 +428,42 @@ class AppColors {
   static const Color categoryCleaning = Color(0xFF14B8A6);
 
   // ==========================================================================
+  // EXTENDED SEMANTIC COLORS - ألوان دلالية إضافية
+  // ==========================================================================
+
+  /// بنفسجي - للمبالغ المختلطة والمرتجعات والتحويلات
+  static const Color purple = Color(0xFF8B5CF6);
+
+  /// وردي - للتصنيفات المتنوعة
+  static const Color pink = Color(0xFFEC4899);
+
+  /// سماوي - لون تمييزي بديل
+  static const Color cyan = Color(0xFF06B6D4);
+
+  // ==========================================================================
+  // DENOMINATION COUNTER GRADIENT
+  // ==========================================================================
+
+  /// تدرج عداد الفئات
+  static const LinearGradient denominationGradient = LinearGradient(
+    colors: [Color(0xFF1A8FE3), Color(0xFF0EC9C9)],
+  );
+
+  /// لون عداد الفئات الأساسي
+  static const Color denominationAccent = Color(0xFF1A8FE3);
+
+  // ==========================================================================
+  // AVATAR GRADIENT
+  // ==========================================================================
+
+  /// تدرج الأحرف الأولى للعميل
+  static const LinearGradient avatarGradient = LinearGradient(
+    colors: [Color(0xFF3B82F6), Color(0xFF2563EB)],
+    begin: AlignmentDirectional.topStart,
+    end: AlignmentDirectional.bottomEnd,
+  );
+
+  // ==========================================================================
   // HELPER METHODS
   // ==========================================================================
 

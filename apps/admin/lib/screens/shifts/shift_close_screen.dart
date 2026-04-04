@@ -131,7 +131,9 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
           const SizedBox(height: AlhaiSpacing.lg),
           FilledButton.icon(
             onPressed: () => context.pop(),
-            icon: const Icon(Icons.arrow_back_rounded),
+            icon: Icon(Directionality.of(context) == TextDirection.rtl
+                ? Icons.arrow_forward_rounded
+                : Icons.arrow_back_rounded),
             label: Text(l10n.goBack),
           ),
         ],

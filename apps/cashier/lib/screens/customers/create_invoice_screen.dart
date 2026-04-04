@@ -313,9 +313,7 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF3B82F6), Color(0xFF2563EB)],
-                ),
+                gradient: AppColors.avatarGradient,
                 borderRadius: BorderRadius.circular(10),
               ),
               alignment: Alignment.center,
@@ -623,8 +621,9 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                         iconSize: 22,
                         color: colorScheme.onSurfaceVariant,
                         constraints: const BoxConstraints(
-                            minWidth: 32, minHeight: 32),
+                            minWidth: 48, minHeight: 48),
                         padding: EdgeInsets.zero,
+                        tooltip: l10n.decreaseQuantity,
                       ),
                       SizedBox(
                         width: 28,
@@ -643,8 +642,9 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                         iconSize: 22,
                         color: AppColors.primary,
                         constraints: const BoxConstraints(
-                            minWidth: 32, minHeight: 32),
+                            minWidth: 48, minHeight: 48),
                         padding: EdgeInsets.zero,
+                        tooltip: l10n.increaseQuantity,
                       ),
                     ],
                   ),
@@ -659,8 +659,9 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                     icon: const Icon(Icons.close_rounded, size: 18),
                     color: AppColors.error,
                     constraints: const BoxConstraints(
-                        minWidth: 32, minHeight: 32),
+                        minWidth: 48, minHeight: 48),
                     padding: EdgeInsets.zero,
+                    tooltip: l10n.delete,
                   ),
                 ],
               ),
@@ -824,8 +825,8 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                         strokeWidth: 2, color: colorScheme.onPrimary),
                   )
                 : const Icon(Icons.check_circle_rounded, size: 20),
-            label: const Text('Finalize Invoice',
-                style: TextStyle(
+            label: Text(l10n.finalizeInvoice,
+                style: const TextStyle(
                     fontSize: 16, fontWeight: FontWeight.w600)),
             style: FilledButton.styleFrom(
               backgroundColor: AppColors.primary,
@@ -844,8 +845,8 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                 ? null
                 : () => _saveInvoice(true, l10n),
             icon: const Icon(Icons.save_outlined, size: 20),
-            label: const Text('Save as Draft',
-                style: TextStyle(
+            label: Text(l10n.saveAsDraft,
+                style: const TextStyle(
                     fontSize: 16, fontWeight: FontWeight.w600)),
             style: OutlinedButton.styleFrom(
               foregroundColor: colorScheme.onSurfaceVariant,

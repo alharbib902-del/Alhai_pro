@@ -81,7 +81,7 @@ class _SidebarHeader extends StatelessWidget {
                       )
                     : const Icon(
                         Icons.point_of_sale_rounded,
-                        color: Colors.white,
+                        color: AppColors.textOnPrimary,
                         size: 20,
                       ),
               ),

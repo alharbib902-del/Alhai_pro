@@ -350,6 +350,7 @@ class _CashierCategoriesScreenState
                       setState(() => _selectedCategory = null),
                   icon: Icon(Icons.arrow_back_rounded,
                       color: AppColors.getTextPrimary(isDark)),
+                  tooltip: l10n.back,
                   style: IconButton.styleFrom(
                     backgroundColor: AppColors.getSurfaceVariant(isDark),
                     shape: RoundedRectangleBorder(
@@ -542,10 +543,10 @@ class _CashierCategoriesScreenState
       AppColors.success,
       AppColors.info,
       AppColors.warning,
-      const Color(0xFF8B5CF6),
-      const Color(0xFFEC4899),
-      const Color(0xFFF97316),
-      const Color(0xFF06B6D4),
+      AppColors.purple,
+      AppColors.pink,
+      AppColors.secondary,
+      AppColors.cyan,
     ];
     return colors[name.hashCode.abs() % colors.length];
   }

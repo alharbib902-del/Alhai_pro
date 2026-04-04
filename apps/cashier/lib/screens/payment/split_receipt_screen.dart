@@ -119,7 +119,7 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
                     ? AppErrorState.general(
                         context, message: _error!, onRetry: _loadData)
                     : _order == null
-                        ? _buildNotFound(isDark)
+                        ? _buildNotFound(isDark, l10n)
                         : SingleChildScrollView(
                         padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
                         child: isWideScreen
@@ -150,6 +150,7 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
               onPressed: () => context.pop(),
               icon: Icon(Icons.arrow_back_rounded,
                   color: AppColors.getTextPrimary(isDark)),
+              tooltip: l10n.back,
               style: IconButton.styleFrom(
                 backgroundColor: AppColors.getSurfaceVariant(isDark),
                 shape: RoundedRectangleBorder(
@@ -185,7 +186,7 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
     );
   }
 
-  Widget _buildNotFound(bool isDark) {
+  Widget _buildNotFound(bool isDark, AppLocalizations l10n) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -194,7 +195,7 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
               size: 64,
               color: AppColors.getTextMuted(isDark).withValues(alpha: 0.4)),
           const SizedBox(height: AlhaiSpacing.md),
-          Text('Order not found',
+          Text(l10n.orderNotFound,
               style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
@@ -501,7 +502,7 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
                     width: 20,
                     height: 20,
                     child: CircularProgressIndicator(
-                        strokeWidth: 2, color: Colors.white),
+                        strokeWidth: 2, color: AppColors.textOnPrimary),
                   )
                 : const Icon(Icons.print_rounded, size: 20),
             label: Text(l10n.reprintReceipt,
@@ -509,7 +510,7 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
                     fontSize: 16, fontWeight: FontWeight.w600)),
             style: FilledButton.styleFrom(
               backgroundColor: AppColors.primary,
-              foregroundColor: Colors.white,
+              foregroundColor: AppColors.textOnPrimary,
               padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12)),
@@ -522,8 +523,8 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
           child: OutlinedButton.icon(
             onPressed: null,
             icon: const Icon(Icons.share_rounded, size: 20),
-            label: const Text('Share',
-                style: TextStyle(
+            label: Text(l10n.share,
+                style: const TextStyle(
                     fontSize: 16, fontWeight: FontWeight.w600)),
             style: OutlinedButton.styleFrom(
               foregroundColor: AppColors.primary,
@@ -589,7 +590,7 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
       case 'credit':
         return AppColors.warning;
       case 'transfer':
-        return const Color(0xFF8B5CF6);
+        return AppColors.purple;
       default:
         return AppColors.primary;
     }

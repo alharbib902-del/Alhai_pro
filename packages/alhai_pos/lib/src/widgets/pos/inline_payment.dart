@@ -7,10 +7,10 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart' show CurrencyFormatter;
 
 /// طرق الدفع المتاحة
 enum PaymentMethod {
-  cash(Icons.payments, Color(0xFF4CAF50)),
-  card(Icons.credit_card, Color(0xFF2196F3)),
-  mixed(Icons.call_split, Colors.purple),
-  credit(Icons.schedule, Color(0xFFFF9800));
+  cash(Icons.payments, AppColors.cash),
+  card(Icons.credit_card, AppColors.card),
+  mixed(Icons.call_split, AppColors.purple),
+  credit(Icons.schedule, AppColors.secondary);
 
   const PaymentMethod(this.icon, this.color);
   final IconData icon;
@@ -323,6 +323,7 @@ class _InlinePaymentState extends State<InlinePayment> {
                     icon: const Icon(Icons.close, size: 20),
                     onPressed: widget.onCancel,
                     visualDensity: VisualDensity.compact,
+                    tooltip: l10n.cancel,
                   ),
               ],
             ),

@@ -166,6 +166,7 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
                 IconButton(
                   onPressed: () => Navigator.pop(context),
                   icon: const Icon(Icons.close),
+                  tooltip: AppLocalizations.of(context)!.close,
                 ),
               ],
             ),
@@ -188,6 +189,7 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
                         onPressed: () {
                           _searchController.clear();
                         },
+                        tooltip: AppLocalizations.of(context)!.clearField,
                       )
                     : null,
                 filled: true,
@@ -284,17 +286,20 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
     final hasCredit = customer.balance > 0;
     final l10n = AppLocalizations.of(context)!;
 
-    return Card(
-      margin: const EdgeInsets.only(bottom: AppSizes.sm),
-      child: InkWell(
-        onTap: () {
-          HapticFeedback.selectionClick();
-          widget.onSelect(customer);
-        },
-        borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-        child: Padding(
-          padding: const EdgeInsets.all(AppSizes.md),
-          child: Row(
+    return Semantics(
+      label: '${customer.name}, ${customer.phone}',
+      button: true,
+      child: Card(
+        margin: const EdgeInsets.only(bottom: AppSizes.sm),
+        child: InkWell(
+          onTap: () {
+            HapticFeedback.selectionClick();
+            widget.onSelect(customer);
+          },
+          borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+          child: Padding(
+            padding: const EdgeInsets.all(AppSizes.md),
+            child: Row(
             children: [
               // Avatar
               CircleAvatar(
@@ -417,6 +422,7 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
             ],
           ),
         ),
+      ),
       ),
     );
   }

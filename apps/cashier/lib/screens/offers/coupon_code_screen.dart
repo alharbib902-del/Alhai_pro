@@ -253,7 +253,7 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
                   label: Text(l10n.apply),
                   style: FilledButton.styleFrom(
                     backgroundColor: AppColors.success,
-                    foregroundColor: Colors.white,
+                    foregroundColor: AppColors.textOnPrimary,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),

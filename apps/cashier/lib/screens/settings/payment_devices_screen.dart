@@ -30,6 +30,7 @@ class _PaymentDevicesScreenState
     extends ConsumerState<PaymentDevicesScreen> {
   final _db = GetIt.I<AppDatabase>();
   bool _isLoading = true;
+  String? _error;
   List<_PaymentDevice> _devices = [];
 
   @override
@@ -39,7 +40,10 @@ class _PaymentDevicesScreenState
   }
 
   Future<void> _loadDevices() async {
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
     try {
       final storeId = ref.read(currentStoreIdProvider)!;
       final settings = await (
@@ -89,6 +93,7 @@ class _PaymentDevicesScreenState
       }
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Load payment devices');
+      if (mounted) setState(() => _error = '$e');
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -141,6 +146,7 @@ class _PaymentDevicesScreenState
               color: AppColors.getTextPrimary(isDark),
             ),
             onPressed: () => context.pop(),
+            tooltip: l10n.back,
           ),
           actions: [
             FilledButton.icon(
@@ -149,7 +155,7 @@ class _PaymentDevicesScreenState
               label: Text(l10n.addDevice),
               style: FilledButton.styleFrom(
                 backgroundColor: AppColors.primary,
-                foregroundColor: Colors.white,
+                foregroundColor: AppColors.textOnPrimary,
                 padding:
                     const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
                 shape: RoundedRectangleBorder(
@@ -165,7 +171,9 @@ class _PaymentDevicesScreenState
         ),
         Expanded(
           child: _isLoading
-              ? const Center(child: CircularProgressIndicator())
+              ? const AppLoadingState()
+              : _error != null
+                  ? AppErrorState.general(context, message: _error!, onRetry: _loadDevices)
               : _devices.isEmpty
                   ? _buildEmptyState(isDark, l10n)
                   : SingleChildScrollView(
@@ -221,7 +229,7 @@ class _PaymentDevicesScreenState
             label: Text(l10n.addDevice),
             style: FilledButton.styleFrom(
               backgroundColor: AppColors.primary,
-              foregroundColor: Colors.white,
+              foregroundColor: AppColors.textOnPrimary,
               padding:
                   const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg, vertical: 14),
               shape: RoundedRectangleBorder(
@@ -439,7 +447,7 @@ class _PaymentDevicesScreenState
           OutlinedButton.icon(
             onPressed: () => _testConnection(index),
             icon: const Icon(Icons.sync_rounded, size: 16),
-            label: const Text('Test'),
+            label: Text(l10n.test),
             style: OutlinedButton.styleFrom(
               foregroundColor: AppColors.info,
               side: BorderSide(

@@ -564,7 +564,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
-      color: isDarkMode ? const Color(0xFF1E293B) : Colors.white,
+      color: Theme.of(context).colorScheme.surface,
       child: Center(
         child: SingleChildScrollView(
           padding: EdgeInsets.all(isMobile ? AlhaiSpacing.lg : AlhaiSpacing.xxxl),
@@ -1029,7 +1029,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           width: double.infinity,
           padding: const EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
-            color: isDarkMode ? const Color(0xFF0F172A) : const Color(0xFFF1F5F9),
+            color: Theme.of(context).colorScheme.surfaceContainerLow,
             border: isDarkMode
                 ? null
                 : Border(top: BorderSide(color: Theme.of(context).colorScheme.surfaceContainerLow)),

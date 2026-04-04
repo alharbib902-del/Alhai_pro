@@ -387,7 +387,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Restore failed: $e'),
+            content: Text(AppLocalizations.of(context).restoreFailed('$e')),
             backgroundColor: AppColors.error,
           ),
         );
@@ -426,6 +426,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
               color: AppColors.getTextPrimary(isDark),
             ),
             onPressed: () => context.pop(),
+            tooltip: l10n.back,
           ),
           onNotificationsTap: () => context.push(AppRoutes.notificationsCenter),
           userName:
@@ -730,7 +731,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                 ),
                 style: FilledButton.styleFrom(
                   backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
+                  foregroundColor: AppColors.textOnPrimary,
                   padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12)),

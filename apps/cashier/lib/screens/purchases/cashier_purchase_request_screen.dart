@@ -246,6 +246,7 @@ class _CashierPurchaseRequestScreenState
                         _searchController.clear();
                         setState(() => _searchResults = []);
                       },
+                      tooltip: l10n.clearField,
                     )
                   : null,
               filled: true,
@@ -525,6 +526,7 @@ class _CashierPurchaseRequestScreenState
                     icon: const Icon(Icons.delete_outline_rounded, size: 20),
                     color: AppColors.error,
                     visualDensity: VisualDensity.compact,
+                    tooltip: l10n.delete,
                   ),
                 ],
               ),
@@ -714,14 +716,14 @@ class _CashierPurchaseRequestScreenState
                 width: 20,
                 height: 20,
                 child: CircularProgressIndicator(
-                    strokeWidth: 2, color: Colors.white),
+                    strokeWidth: 2, color: AppColors.textOnPrimary),
               )
             : const Icon(Icons.send_rounded, size: 20),
         label: Text(l10n.sendRequestBtn,
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.primary,
-          foregroundColor: Colors.white,
+          foregroundColor: AppColors.textOnPrimary,
           padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12)),

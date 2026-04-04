@@ -209,7 +209,7 @@ class _OnlineOrdersScreenState extends ConsumerState<OnlineOrdersScreen> {
           ],
         ),
         actions: [
-          IconButton(icon: const Icon(Icons.refresh_rounded), onPressed: _loadOrders),
+          IconButton(icon: const Icon(Icons.refresh_rounded), onPressed: _loadOrders, tooltip: AppLocalizations.of(context).retry),
         ],
       ),
       body: Column(
@@ -323,7 +323,7 @@ class _OnlineOrdersScreenState extends ConsumerState<OnlineOrdersScreen> {
                                       padding: const EdgeInsets.only(bottom: 2),
                                       child: Row(
                                         children: [
-                                          Icon(Icons.circle, size: 6, color: Theme.of(context).hintColor),
+                                          ExcludeSemantics(child: Icon(Icons.circle, size: 6, color: Theme.of(context).hintColor)),
                                           const SizedBox(width: 6),
                                           Text(item, style: const TextStyle(fontSize: 13)),
                                         ],
@@ -335,8 +335,10 @@ class _OnlineOrdersScreenState extends ConsumerState<OnlineOrdersScreen> {
                                     // Footer
                                     Row(
                                       children: [
-                                        Icon(Icons.location_on_rounded,
-                                            size: 14, color: Theme.of(context).hintColor),
+                                        ExcludeSemantics(
+                                          child: Icon(Icons.location_on_rounded,
+                                              size: 14, color: Theme.of(context).hintColor),
+                                        ),
                                         const SizedBox(width: AlhaiSpacing.xxs),
                                         Expanded(
                                           child: Text(

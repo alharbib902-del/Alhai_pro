@@ -71,9 +71,7 @@ class _DistributorLoginScreenState
     final isWide = size.width > 600;
 
     return Scaffold(
-      backgroundColor: isDark
-          ? const Color(0xFF0F172A)
-          : AppColors.backgroundSecondary,
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
       body: Center(
         child: SingleChildScrollView(
           padding: EdgeInsets.all(isWide ? AlhaiSpacing.xl : AlhaiSpacing.lg),
@@ -81,13 +79,13 @@ class _DistributorLoginScreenState
             constraints: const BoxConstraints(maxWidth: 420),
             padding: EdgeInsets.all(isWide ? AlhaiSpacing.xl : AlhaiSpacing.lg),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF1E293B) : Colors.white,
+              color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(20),
               boxShadow: isDark
                   ? null
                   : [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.08),
+                        color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.08),
                         blurRadius: 24,
                         offset: const Offset(0, 8),
                       ),
@@ -108,7 +106,7 @@ class _DistributorLoginScreenState
                     ),
                     child: const Icon(
                       Icons.store,
-                      color: Colors.white,
+                      color: AppColors.textOnPrimary,
                       size: 28,
                     ),
                   ),
@@ -120,7 +118,7 @@ class _DistributorLoginScreenState
                     style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
-                      color: isDark ? Colors.white : AppColors.textPrimary,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: AlhaiSpacing.xs),
@@ -128,7 +126,7 @@ class _DistributorLoginScreenState
                     l10n?.distributorLoginSubtitle ?? 'Enter your email and password',
                     style: TextStyle(
                       fontSize: 14,
-                      color: isDark ? Colors.white54 : AppColors.textSecondary,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
                   const SizedBox(height: AlhaiSpacing.xl),
@@ -177,15 +175,15 @@ class _DistributorLoginScreenState
                       return null;
                     },
                     style: TextStyle(
-                      color: isDark ? Colors.white : AppColors.textPrimary,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                     decoration: InputDecoration(
                       labelText: l10n?.distributorEmailLabel ?? 'Email',
                       prefixIcon: Icon(Icons.email_outlined,
-                          color: isDark ? Colors.white38 : AppColors.textMuted),
+                          color: Theme.of(context).colorScheme.onSurfaceVariant),
                       filled: true,
                       fillColor: isDark
-                          ? const Color(0xFF334155)
+                          ? Theme.of(context).colorScheme.surfaceContainerHighest
                           : AppColors.backgroundSecondary,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -214,25 +212,25 @@ class _DistributorLoginScreenState
                       return null;
                     },
                     style: TextStyle(
-                      color: isDark ? Colors.white : AppColors.textPrimary,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                     decoration: InputDecoration(
                       labelText: l10n?.distributorPasswordLabel ?? 'Password',
                       prefixIcon: Icon(Icons.lock_outline,
-                          color: isDark ? Colors.white38 : AppColors.textMuted),
+                          color: Theme.of(context).colorScheme.onSurfaceVariant),
                       suffixIcon: IconButton(
                         icon: Icon(
                           _obscurePassword
                               ? Icons.visibility_outlined
                               : Icons.visibility_off_outlined,
-                          color: isDark ? Colors.white38 : AppColors.textMuted,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                         onPressed: () => setState(
                             () => _obscurePassword = !_obscurePassword),
                       ),
                       filled: true,
                       fillColor: isDark
-                          ? const Color(0xFF334155)
+                          ? Theme.of(context).colorScheme.surfaceContainerHighest
                           : AppColors.backgroundSecondary,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -254,7 +252,7 @@ class _DistributorLoginScreenState
                       onPressed: _isLoading ? null : _login,
                       style: FilledButton.styleFrom(
                         backgroundColor: AppColors.primary,
-                        foregroundColor: Colors.white,
+                        foregroundColor: AppColors.textOnPrimary,
                         padding:
                             const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
                         shape: RoundedRectangleBorder(
@@ -267,7 +265,7 @@ class _DistributorLoginScreenState
                               height: 22,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                color: Colors.white,
+                                color: AppColors.textOnPrimary,
                               ),
                             )
                           : Text(

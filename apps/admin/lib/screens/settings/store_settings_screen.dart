@@ -334,8 +334,13 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
       children: [
         IconButton(
           onPressed: () => context.pop(),
-          icon: Icon(Icons.arrow_back_rounded,
-              color: Theme.of(context).colorScheme.onSurface),
+          icon: Icon(
+            Directionality.of(context) == TextDirection.rtl
+                ? Icons.arrow_forward_rounded
+                : Icons.arrow_back_rounded,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
+          tooltip: l10n.back,
         ),
         const SizedBox(width: AlhaiSpacing.xs),
         Container(

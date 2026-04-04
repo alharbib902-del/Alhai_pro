@@ -55,7 +55,7 @@ class ReturnsDataTable extends StatelessWidget {
         constraints: BoxConstraints(minWidth: context.screenWidth - 340),
         child: DataTable(
           headingRowColor: WidgetStateProperty.all(
-            isDark ? const Color(0xFF0F172A).withValues(alpha: 0.5) : colorScheme.surfaceContainerLow,
+            isDark ? AppColors.grey900.withValues(alpha: 0.5) : colorScheme.surfaceContainerLow,
           ),
           dataRowColor: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.hovered)) {
@@ -94,6 +94,8 @@ class ReturnsDataTable extends StatelessWidget {
 
   DataRow _buildRow(BuildContext context, ReturnModel ret, bool isDark, ColorScheme colorScheme, AppLocalizations l10n) {
     return DataRow(
+      // Semantics: row describes return ID, customer, and status
+      key: ValueKey('return-${ret.id}'),
       cells: [
         // Return number
         DataCell(
@@ -110,10 +112,17 @@ class ReturnsDataTable extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 6),
-              InkWell(
-                onTap: () => onCopyId(ret.id),
-                borderRadius: BorderRadius.circular(4),
-                child: Icon(Icons.copy_outlined, size: 14, color: colorScheme.outlineVariant),
+              Tooltip(
+                message: l10n.copyToClipboard,
+                child: InkWell(
+                  onTap: () => onCopyId(ret.id),
+                  borderRadius: BorderRadius.circular(4),
+                  child: SizedBox(
+                    width: 32,
+                    height: 32,
+                    child: Icon(Icons.copy_outlined, size: 14, color: colorScheme.outlineVariant, semanticLabel: l10n.copyToClipboard),
+                  ),
+                ),
               ),
             ],
           ),
@@ -173,7 +182,7 @@ class ReturnsDataTable extends StatelessWidget {
     final initial = ret.customer.isNotEmpty ? ret.customer[0] : '?';
     return CircleAvatar(
       radius: 16,
-      backgroundColor: isDark ? const Color(0xFF374151) : colorScheme.surfaceContainer,
+      backgroundColor: isDark ? AppColors.surfaceVariantDark : colorScheme.surfaceContainer,
       child: Text(initial, style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: isDark ? AppColors.textMutedDark : colorScheme.onSurfaceVariant)),
     );
   }
@@ -187,8 +196,8 @@ class ReturnsDataTable extends StatelessWidget {
     switch (reason) {
       case 'defective':
         icon = Icons.broken_image_outlined;
-        bgColor = isDark ? AppColors.error.withValues(alpha: 0.15) : const Color(0xFFFEE2E2);
-        textColor = isDark ? const Color(0xFFF87171) : const Color(0xFFDC2626);
+        bgColor = isDark ? AppColors.error.withValues(alpha: 0.15) : AppColors.errorSurface;
+        textColor = isDark ? const Color(0xFFF87171) : AlhaiColors.errorDark;
         text = l10n.defectiveProduct;
       case 'wrong':
         icon = Icons.warning_amber_rounded;
@@ -197,8 +206,8 @@ class ReturnsDataTable extends StatelessWidget {
         text = l10n.wrongProduct;
       case 'customer_request':
         icon = Icons.assignment_return_outlined;
-        bgColor = isDark ? AppColors.info.withValues(alpha: 0.15) : const Color(0xFFDBEAFE);
-        textColor = isDark ? const Color(0xFF60A5FA) : const Color(0xFF2563EB);
+        bgColor = isDark ? AppColors.info.withValues(alpha: 0.15) : AppColors.infoSurface;
+        textColor = isDark ? const Color(0xFF60A5FA) : AlhaiColors.infoDark;
         text = l10n.customerRequest;
       default:
         icon = Icons.edit_note;
@@ -235,19 +244,19 @@ class ReturnsDataTable extends StatelessWidget {
 
     switch (status) {
       case 'pending':
-        bgColor = isDark ? AppColors.warning.withValues(alpha: 0.15) : const Color(0xFFFEF3C7);
+        bgColor = isDark ? AppColors.warning.withValues(alpha: 0.15) : AppColors.warningSurface;
         textColor = isDark ? const Color(0xFFFBBF24) : const Color(0xFFB45309);
         borderColor = isDark ? AppColors.warning.withValues(alpha: 0.3) : const Color(0xFFFDE68A);
         label = l10n.pending;
         animate = true;
       case 'refunded':
-        bgColor = isDark ? AppColors.success.withValues(alpha: 0.15) : const Color(0xFFDCFCE7);
-        textColor = isDark ? const Color(0xFF4ADE80) : const Color(0xFF15803D);
+        bgColor = isDark ? AppColors.success.withValues(alpha: 0.15) : AppColors.successSurface;
+        textColor = isDark ? const Color(0xFF4ADE80) : AlhaiColors.successDark;
         borderColor = isDark ? AppColors.success.withValues(alpha: 0.3) : const Color(0xFFBBF7D0);
         label = l10n.returnRefunded;
         icon = Icons.check_circle;
       case 'rejected':
-        bgColor = isDark ? AppColors.error.withValues(alpha: 0.15) : const Color(0xFFFEE2E2);
+        bgColor = isDark ? AppColors.error.withValues(alpha: 0.15) : AppColors.errorSurface;
         textColor = isDark ? const Color(0xFFF87171) : const Color(0xFFB91C1C);
         borderColor = isDark ? AppColors.error.withValues(alpha: 0.3) : const Color(0xFFFECACA);
         label = l10n.returnRejected;
@@ -301,7 +310,7 @@ class ReturnsDataTable extends StatelessWidget {
             },
             offset: const Offset(0, 36),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            color: isDark ? const Color(0xFF374151) : Colors.white,
+            color: isDark ? AppColors.surfaceVariantDark : AppColors.surface,
             itemBuilder: (context) => [
               PopupMenuItem(
                 value: 'approve',

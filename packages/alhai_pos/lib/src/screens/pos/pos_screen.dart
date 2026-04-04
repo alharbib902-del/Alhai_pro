@@ -686,7 +686,23 @@ class _PosScreenState extends ConsumerState<PosScreen> {
         }
       },
       onUndo: () {
-        _showSnackBar(context, l10n.undoComingSoon);
+        final action = ref.read(cartStateProvider.notifier).undo();
+        if (action == null) {
+          _showSnackBar(context, l10n.nothingToUndo);
+          return;
+        }
+        switch (action.type) {
+          case CartUndoType.add:
+            _showSnackBar(context, l10n.undoneRemoved(action.productName));
+          case CartUndoType.remove:
+            _showSnackBar(context, l10n.undoneAdded(action.productName));
+          case CartUndoType.quantityChange:
+            _showSnackBar(context, l10n.undoneQtyChanged(
+              action.productName,
+              action.newQuantity ?? 0,
+              action.previousQuantity ?? 0,
+            ));
+        }
       },
       onCancel: () => context.go(AppRoutes.home),
       onQuickAdd: _addQuickProduct,
@@ -939,7 +955,7 @@ class _PosShortcutsOverlay extends StatelessWidget {
       _ShortcutEntry('Enter', l10n.confirm),
       _ShortcutEntry('1-9', l10n.addedToCart),
       _ShortcutEntry('+/-', l10n.keyboardShortcuts),
-      _ShortcutEntry('Ctrl+Z', l10n.undoComingSoon),
+      _ShortcutEntry('Ctrl+Z', l10n.undo),
     ];
 
     return GestureDetector(

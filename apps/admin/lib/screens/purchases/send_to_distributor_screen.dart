@@ -102,7 +102,9 @@ class _SendToDistributorScreenState
           FilledButton.icon(
             onPressed: () =>
                 context.go(AppRoutes.purchaseDetailPath(widget.purchaseId)),
-            icon: const Icon(Icons.arrow_back),
+            icon: Icon(Directionality.of(context) == TextDirection.rtl
+                ? Icons.arrow_forward_rounded
+                : Icons.arrow_back_rounded),
             label: Text(AppLocalizations.of(context).goBack),
           ),
         ],
@@ -133,9 +135,12 @@ class _SendToDistributorScreenState
                 onPressed: () =>
                     context.go(AppRoutes.purchaseDetailPath(widget.purchaseId)),
                 icon: Icon(
-                  Icons.arrow_back_rounded,
+                  Directionality.of(context) == TextDirection.rtl
+                      ? Icons.arrow_forward_rounded
+                      : Icons.arrow_back_rounded,
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
+                tooltip: AppLocalizations.of(context).back,
               ),
               const SizedBox(width: AlhaiSpacing.xs),
               Expanded(

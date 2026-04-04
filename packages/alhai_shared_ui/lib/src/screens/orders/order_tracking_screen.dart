@@ -262,7 +262,7 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
   Widget _buildOrderCard(BuildContext context, OrdersTableData order, List<OrderItemsTableData> items, String customerName, String customerPhone, String address, bool isDark, Color subtleColor, AppLocalizations l10n) {
     return Card(
       margin: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
-      color: isDark ? const Color(0xFF1E293B) : null,
+      color: Theme.of(context).colorScheme.surface,
       child: InkWell(
         onTap: () => _showOrderDetails(order, items, customerName, customerPhone, address),
         borderRadius: BorderRadius.circular(12),

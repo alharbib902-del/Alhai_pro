@@ -131,7 +131,7 @@ class _CreateReturnDrawerState extends ConsumerState<CreateReturnDrawer> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.mdl, vertical: 14),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF0F172A).withValues(alpha: 0.5) : colorScheme.surfaceContainerLow,
+        color: isDark ? AppColors.grey900.withValues(alpha: 0.5) : colorScheme.surfaceContainerLow,
         borderRadius: isDesktop
             ? null
             : const BorderRadius.vertical(top: Radius.circular(24)),
@@ -193,7 +193,7 @@ class _CreateReturnDrawerState extends ConsumerState<CreateReturnDrawer> {
                           ? AppColors.primary
                           : isCompleted
                               ? AppColors.success
-                              : (isDark ? const Color(0xFF374151) : colorScheme.surfaceContainer),
+                              : (isDark ? AppColors.surfaceVariantDark : colorScheme.surfaceContainer),
                       border: Border.all(
                         color: isActive || isCompleted ? Colors.transparent : colorScheme.outlineVariant,
                         width: 2,
@@ -233,7 +233,7 @@ class _CreateReturnDrawerState extends ConsumerState<CreateReturnDrawer> {
                     margin: const EdgeInsetsDirectional.only(bottom: 18, start: AlhaiSpacing.xxs, end: AlhaiSpacing.xxs),
                     color: isCompleted
                         ? AppColors.success
-                        : (isDark ? const Color(0xFF374151) : colorScheme.surfaceContainer),
+                        : (isDark ? AppColors.surfaceVariantDark : colorScheme.surfaceContainer),
                   ),
                 ),
             ],
@@ -280,7 +280,7 @@ class _CreateReturnDrawerState extends ConsumerState<CreateReturnDrawer> {
                   hintStyle: TextStyle(color: colorScheme.onSurfaceVariant),
                   prefixIcon: Icon(Icons.receipt_long, color: colorScheme.onSurfaceVariant),
                   filled: true,
-                  fillColor: isDark ? const Color(0xFF0F172A) : colorScheme.surfaceContainerLow,
+                  fillColor: isDark ? AppColors.grey900 : colorScheme.surfaceContainerLow,
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: colorScheme.outlineVariant)),
                   enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: colorScheme.outlineVariant)),
                   focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.primary, width: 2)),
@@ -306,7 +306,7 @@ class _CreateReturnDrawerState extends ConsumerState<CreateReturnDrawer> {
           Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: isDark ? AppColors.success.withValues(alpha: 0.1) : const Color(0xFFDCFCE7),
+              color: isDark ? AppColors.success.withValues(alpha: 0.1) : AppColors.successSurface,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: isDark ? AppColors.success.withValues(alpha: 0.3) : const Color(0xFFBBF7D0)),
             ),
@@ -354,7 +354,7 @@ class _CreateReturnDrawerState extends ConsumerState<CreateReturnDrawer> {
         Container(
           padding: const EdgeInsets.all(AlhaiSpacing.sm),
           decoration: BoxDecoration(
-            color: isDark ? AppColors.info.withValues(alpha: 0.1) : const Color(0xFFDBEAFE),
+            color: isDark ? AppColors.info.withValues(alpha: 0.1) : AppColors.infoSurface,
             borderRadius: BorderRadius.circular(10),
           ),
           child: Row(
@@ -477,7 +477,7 @@ class _CreateReturnDrawerState extends ConsumerState<CreateReturnDrawer> {
       child: Container(
         width: 28, height: 28,
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF4B5563) : colorScheme.surfaceContainerLow,
+          color: isDark ? AppColors.borderDark : colorScheme.surfaceContainerLow,
           borderRadius: BorderRadius.circular(6),
         ),
         child: Icon(icon, size: 16, color: colorScheme.onSurface),
@@ -504,7 +504,7 @@ class _CreateReturnDrawerState extends ConsumerState<CreateReturnDrawer> {
             hintText: l10n.additionalDetails,
             hintStyle: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 13),
             filled: true,
-            fillColor: isDark ? const Color(0xFF0F172A) : colorScheme.surfaceContainerLow,
+            fillColor: isDark ? AppColors.grey900 : colorScheme.surfaceContainerLow,
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: colorScheme.outlineVariant)),
             enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: colorScheme.outlineVariant)),
             focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.primary, width: 2)),
@@ -584,7 +584,7 @@ class _CreateReturnDrawerState extends ConsumerState<CreateReturnDrawer> {
         Container(
           padding: const EdgeInsets.all(AlhaiSpacing.md),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF0F172A) : colorScheme.surfaceContainerLow,
+            color: isDark ? AppColors.grey900 : colorScheme.surfaceContainerLow,
             borderRadius: BorderRadius.circular(14),
           ),
           child: Column(
@@ -677,7 +677,7 @@ class _CreateReturnDrawerState extends ConsumerState<CreateReturnDrawer> {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF0F172A).withValues(alpha: 0.5) : colorScheme.surfaceContainerLow,
+        color: isDark ? AppColors.grey900.withValues(alpha: 0.5) : colorScheme.surfaceContainerLow,
         border: Border(top: BorderSide(color: colorScheme.outlineVariant)),
       ),
       child: Row(

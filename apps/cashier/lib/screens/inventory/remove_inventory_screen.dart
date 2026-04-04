@@ -339,6 +339,7 @@ class _RemoveInventoryScreenState
               _searchController.clear();
             }),
             icon: Icon(Icons.close_rounded, color: colorScheme.onSurfaceVariant),
+            tooltip: l10n.clearField,
           ),
         ],
       ),

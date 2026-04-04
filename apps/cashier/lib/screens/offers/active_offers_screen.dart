@@ -342,8 +342,8 @@ class _ActiveOffersScreenState extends ConsumerState<ActiveOffersScreen> {
     switch (type) {
       case 'percentage': return AppColors.success;
       case 'fixed': return AppColors.info;
-      case 'buy_x_get_y': return const Color(0xFF8B5CF6);
-      case 'bundle': return const Color(0xFFF97316);
+      case 'buy_x_get_y': return AppColors.purple;
+      case 'bundle': return AppColors.secondary;
       default: return AppColors.primary;
     }
   }

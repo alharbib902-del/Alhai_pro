@@ -268,9 +268,7 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF3B82F6), Color(0xFF2563EB)],
-                ),
+                gradient: AppColors.avatarGradient,
                 borderRadius: BorderRadius.circular(10),
               ),
               alignment: Alignment.center,

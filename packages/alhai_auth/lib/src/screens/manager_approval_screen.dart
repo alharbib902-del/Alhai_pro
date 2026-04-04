@@ -104,13 +104,11 @@ class _ManagerApprovalScreenState extends ConsumerState<ManagerApprovalScreen> {
         width: dialogWidth,
         constraints: const BoxConstraints(maxHeight: 640),
         decoration: BoxDecoration(
-          color: Theme.of(context).brightness == Brightness.dark
-              ? const Color(0xFF1E293B)
-              : Colors.white,
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.15),
+              color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.15),
               blurRadius: 20,
               offset: const Offset(0, 10),
             ),
@@ -146,13 +144,13 @@ class _ManagerApprovalScreenState extends ConsumerState<ManagerApprovalScreen> {
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: isDark ? Colors.white : null,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: AlhaiSpacing.xs),
         Text(
           _isSettingUp ? l10n.reenterPinToConfirm : l10n.enterFourDigitPin,
-          style: TextStyle(color: isDark ? Colors.white70 : Theme.of(context).colorScheme.onSurfaceVariant),
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
         ),
         const SizedBox(height: AlhaiSpacing.xl),
         _buildPinDots(
@@ -175,7 +173,7 @@ class _ManagerApprovalScreenState extends ConsumerState<ManagerApprovalScreen> {
             onPressed: _isLoading ? null : () => Navigator.of(context).pop(false),
             child: Text(
               l10n.cancel,
-              style: TextStyle(color: isDark ? Colors.white54 : Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 16),
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 16),
             ),
           ),
         ],
@@ -233,13 +231,13 @@ class _ManagerApprovalScreenState extends ConsumerState<ManagerApprovalScreen> {
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: isDark ? Colors.white : null,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: AlhaiSpacing.xs),
         Text(
           widget.action ?? l10n.operationRequiresApproval,
-          style: TextStyle(color: isDark ? Colors.white70 : Theme.of(context).colorScheme.onSurfaceVariant),
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: AlhaiSpacing.xl),
@@ -260,7 +258,7 @@ class _ManagerApprovalScreenState extends ConsumerState<ManagerApprovalScreen> {
             onPressed: _isLoading ? null : () => Navigator.of(context).pop(false),
             child: Text(
               l10n.cancel,
-              style: TextStyle(color: isDark ? Colors.white54 : Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 16),
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 16),
             ),
           ),
         ],
@@ -317,7 +315,7 @@ class _ManagerApprovalScreenState extends ConsumerState<ManagerApprovalScreen> {
           ),
           child: Center(
             child: index < currentPin.length
-                ? const Icon(Icons.circle, size: 16, color: Colors.white)
+                ? Icon(Icons.circle, size: 16, color: Theme.of(context).colorScheme.onPrimary)
                 : null,
           ),
         );

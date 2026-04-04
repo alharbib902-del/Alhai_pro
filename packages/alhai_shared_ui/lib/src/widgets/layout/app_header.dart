@@ -94,6 +94,7 @@ class AppHeader extends ConsumerWidget {
                   icon: Icons.menu_rounded,
                   onTap: onMenuTap,
                   isDark: isDarkMode,
+                  tooltip: AppLocalizations.of(context).menuLabel,
                 ),
 
               // العنوان
@@ -137,7 +138,7 @@ class AppHeader extends ConsumerWidget {
                         child: Container(
                           constraints: const BoxConstraints(maxWidth: 500),
                           child: _SearchField(
-                            hint: searchHint ?? AppLocalizations.of(context)!.searchPlaceholder,
+                            hint: searchHint ?? AppLocalizations.of(context).searchPlaceholder,
                             onChanged: onSearchChanged,
                             onTap: onSearchTap,
                           ),
@@ -160,6 +161,7 @@ class AppHeader extends ConsumerWidget {
                     _HeaderIconButton(
                       icon: Icons.fullscreen_rounded,
                       isDark: isDarkMode,
+                      tooltip: AppLocalizations.of(context).fullscreen,
                       onTap: () {
                         // يمكن تنفيذ ملء الشاشة لاحقاً
                       },

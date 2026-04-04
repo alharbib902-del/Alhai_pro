@@ -1,3 +1,5 @@
+import 'dart:math' show min;
+
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,6 +10,7 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_core/alhai_core.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
+import '../../core/providers/unsaved_changes_provider.dart';
 
 /// Admin Supplier Form Screen - Add/Edit supplier
 class SupplierFormScreen extends ConsumerStatefulWidget {
@@ -27,6 +30,13 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
   bool _isLoading = false;
   bool _isLoadingData = false;
   bool _isDirty = false; // M65: unsaved changes tracking
+
+  void _setDirty(bool value) {
+    if (_isDirty != value) {
+      setState(() => _isDirty = value);
+      ref.read(unsavedChangesProvider.notifier).state = value;
+    }
+  }
 
   // Controllers
   final _companyNameController = TextEditingController();
@@ -94,6 +104,7 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
 
   @override
   void dispose() {
+    ref.read(unsavedChangesProvider.notifier).state = false;
     _companyNameController.dispose();
     _contactNameController.dispose();
     _phoneController.dispose();
@@ -113,68 +124,117 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
     super.dispose();
   }
 
+  Future<bool> _showUnsavedDialog() async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: min(
+            MediaQuery.of(context).size.width * 0.9,
+            400,
+          ),
+        ),
+        child: AlertDialog(
+          title: Text(AppLocalizations.of(context).unsavedChanges),
+          content: Text(AppLocalizations.of(context).leaveWithoutSaving),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: Text(AppLocalizations.of(context).cancel),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: Text(AppLocalizations.of(context).leave),
+            ),
+          ],
+        ),
+      ),
+    );
+    return result == true;
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final isWideScreen = size.width > 900;
+    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+    final isWideScreen = size.width > 900 || (isLandscape && size.width >= 600);
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
 
-    return PopScope(
-      canPop: !_isDirty,
-      onPopInvokedWithResult: (didPop, result) async {
-        if (didPop) return;
-        final shouldPop = await showDialog<bool>(
-          context: context,
-          builder: (context) => ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width > 600 ? 400 : MediaQuery.of(context).size.width * 0.9),
-            child: AlertDialog(
-              title: Text(AppLocalizations.of(context).unsavedChanges),
-              content: Text(AppLocalizations.of(context).leaveWithoutSaving),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context, false),
-                  child: Text(AppLocalizations.of(context).cancel),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.pop(context, true),
-                  child: Text(AppLocalizations.of(context).leave),
-                ),
-              ],
-            ),
-          ),
-        );
-        if (shouldPop == true && context.mounted) Navigator.pop(context);
+    return Shortcuts(
+      shortcuts: {
+        LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyS):
+            const _SaveIntent(),
+        LogicalKeySet(LogicalKeyboardKey.escape): const _DismissFormIntent(),
       },
-      child: SafeArea(
-        child: Column(
-          children: [
-            AppHeader(
-              title: widget.isEditing ? l10n.editSupplier : l10n.addNewSupplier,
-            onMenuTap:
-                isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
-            onNotificationsTap: () => context.push('/notifications'),
-            notificationsCount: 0,
-            userName: l10n.defaultUserName,
-            userRole: l10n.branchManager,
+      child: Actions(
+        actions: {
+          _SaveIntent: CallbackAction<_SaveIntent>(
+            onInvoke: (_) {
+              _saveSupplier();
+              return null;
+            },
           ),
-            Expanded(
-              child: _isLoadingData
-                  ? const Center(child: CircularProgressIndicator())
-                  : Center(
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 1000),
-                        child: Form(
-                          key: _formKey,
-                          child: isWideScreen
-                              ? _buildWideLayout(isDark, isMediumScreen, l10n)
-                              : _buildNarrowLayout(isDark, l10n),
-                        ),
-                      ),
-                    ),
+          _DismissFormIntent: CallbackAction<_DismissFormIntent>(
+            onInvoke: (_) async {
+              if (_isDirty) {
+                final shouldLeave = await _showUnsavedDialog();
+                if (shouldLeave && mounted) context.pop();
+              } else {
+                if (mounted) context.pop();
+              }
+              return null;
+            },
+          ),
+        },
+        child: Focus(
+          autofocus: true,
+          child: PopScope(
+            canPop: !_isDirty,
+            onPopInvokedWithResult: (didPop, result) async {
+              if (didPop) return;
+              final shouldPop = await _showUnsavedDialog();
+              if (shouldPop && context.mounted) Navigator.pop(context);
+            },
+            child: SafeArea(
+              child: Column(
+                children: [
+                  AppHeader(
+                    title: widget.isEditing
+                        ? l10n.editSupplier
+                        : l10n.addNewSupplier,
+                    onMenuTap: isWideScreen
+                        ? null
+                        : () => Scaffold.of(context).openDrawer(),
+                    onNotificationsTap: () => context.push('/notifications'),
+                    notificationsCount: 0,
+                    userName: l10n.defaultUserName,
+                    userRole: l10n.branchManager,
+                  ),
+                  Expanded(
+                    child: _isLoadingData
+                        ? const Center(child: CircularProgressIndicator())
+                        : Center(
+                            child: ConstrainedBox(
+                              constraints:
+                                  const BoxConstraints(maxWidth: 1000),
+                              child: Form(
+                                key: _formKey,
+                                autovalidateMode:
+                                    AutovalidateMode.onUserInteraction,
+                                child: isWideScreen
+                                    ? _buildWideLayout(
+                                        isDark, isMediumScreen, l10n)
+                                    : _buildNarrowLayout(isDark, l10n),
+                              ),
+                            ),
+                          ),
+                  ),
+                ],
+              ),
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -235,9 +295,12 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
               IconButton(
                 onPressed: () => context.pop(),
                 icon: Icon(
-                  Icons.arrow_back_rounded,
+                  Directionality.of(context) == TextDirection.rtl
+                      ? Icons.arrow_forward_rounded
+                      : Icons.arrow_back_rounded,
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
+                tooltip: l10n.back,
               ),
               const SizedBox(width: AlhaiSpacing.xs),
               Expanded(
@@ -594,7 +657,7 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
       textInputAction: textInputAction,
       onFieldSubmitted: onFieldSubmitted,
       onChanged: (_) {
-        if (!_isDirty) setState(() => _isDirty = true);
+        if (!_isDirty) _setDirty(true);
       },
       style: TextStyle(
         color: Theme.of(context).colorScheme.onSurface,
@@ -841,10 +904,8 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
       }
 
       if (mounted) {
-        setState(() {
-          _isLoading = false;
-          _isDirty = false;
-        });
+        setState(() => _isLoading = false);
+        _setDirty(false);
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -971,4 +1032,12 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
       }
     }
   }
+}
+
+class _SaveIntent extends Intent {
+  const _SaveIntent();
+}
+
+class _DismissFormIntent extends Intent {
+  const _DismissFormIntent();
 }

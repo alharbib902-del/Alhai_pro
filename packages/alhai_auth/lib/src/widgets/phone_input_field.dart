@@ -172,15 +172,15 @@ class _PhoneInputFieldState extends State<PhoneInputField> {
         Container(
           decoration: BoxDecoration(
             color: widget.enabled
-                ? (isDarkMode ? const Color(0xFF2D3748) : Colors.white)
-                : (isDarkMode ? const Color(0xFF1E293B) : AppColors.backgroundSecondary),
+                ? Theme.of(context).colorScheme.surface
+                : Theme.of(context).colorScheme.surfaceContainerLow,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: hasError
                   ? AppColors.error
                   : _isFocused
                       ? AppColors.primary
-                      : (isDarkMode ? const Color(0xFF4A5568) : AppColors.border),
+                      : Theme.of(context).colorScheme.outline,
               width: hasError || _isFocused ? 2 : 1,
             ),
             boxShadow: _isFocused
@@ -208,7 +208,7 @@ class _PhoneInputFieldState extends State<PhoneInputField> {
                     vertical: AlhaiSpacing.md,
                   ),
                   decoration: BoxDecoration(
-                    color: isDarkMode ? const Color(0xFF374151) : AppColors.backgroundSecondary,
+                    color: Theme.of(context).colorScheme.surfaceContainerLow,
                     borderRadius: BorderRadiusDirectional.horizontal(
                       end: const Radius.circular(11),
                     ),
@@ -226,7 +226,7 @@ class _PhoneInputFieldState extends State<PhoneInputField> {
                       Text(
                         _selectedCountry.dialCode,
                         style: TextStyle(
-                          color: isDarkMode ? Colors.white : AppColors.textPrimary,
+                          color: Theme.of(context).colorScheme.onSurface,
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
@@ -235,7 +235,7 @@ class _PhoneInputFieldState extends State<PhoneInputField> {
                       // سهم
                       Icon(
                         Icons.keyboard_arrow_down_rounded,
-                        color: isDarkMode ? Colors.white70 : AppColors.textSecondary,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         size: 20,
                       ),
                     ],
@@ -247,7 +247,7 @@ class _PhoneInputFieldState extends State<PhoneInputField> {
               Container(
                 width: 1,
                 height: 30,
-                color: isDarkMode ? const Color(0xFF4A5568) : AppColors.border,
+                color: Theme.of(context).colorScheme.outline,
               ),
 
               // حقل الرقم
@@ -378,10 +378,11 @@ class _CountryPickerSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor = isDark ? const Color(0xFF1E293B) : Colors.white;
-    final handleColor = isDark ? Colors.white24 : AppColors.border;
-    final titleColor = isDark ? Colors.white : AppColors.textPrimary;
-    final subtitleColor = isDark ? Colors.white70 : AppColors.textSecondary;
+    final colorScheme = Theme.of(context).colorScheme;
+    final bgColor = colorScheme.surface;
+    final handleColor = colorScheme.outlineVariant;
+    final titleColor = colorScheme.onSurface;
+    final subtitleColor = colorScheme.onSurfaceVariant;
 
     return Container(
       decoration: BoxDecoration(

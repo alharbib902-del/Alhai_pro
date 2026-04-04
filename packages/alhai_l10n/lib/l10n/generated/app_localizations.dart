@@ -1692,6 +1692,30 @@ abstract class AppLocalizations {
   /// **'تراجع (قريباً)'**
   String get undoComingSoon;
 
+  /// No description provided for @undoneRemoved.
+  ///
+  /// In ar, this message translates to:
+  /// **'تراجع: حُذف {name}'**
+  String undoneRemoved(String name);
+
+  /// No description provided for @undoneAdded.
+  ///
+  /// In ar, this message translates to:
+  /// **'تراجع: أُعيد {name}'**
+  String undoneAdded(String name);
+
+  /// No description provided for @undoneQtyChanged.
+  ///
+  /// In ar, this message translates to:
+  /// **'تراجع: {name} الكمية {from} → {to}'**
+  String undoneQtyChanged(String name, int from, int to);
+
+  /// No description provided for @nothingToUndo.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا يوجد شيء للتراجع'**
+  String get nothingToUndo;
+
   /// No description provided for @employees.
   ///
   /// In ar, this message translates to:
@@ -10653,7 +10677,7 @@ abstract class AppLocalizations {
   /// No description provided for @selectedCustomers.
   ///
   /// In ar, this message translates to:
-  /// **'العملاء المختارين'**
+  /// **'العملاء المحددون'**
   String get selectedCustomers;
 
   /// No description provided for @expectedInterests.
@@ -24109,6 +24133,319 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'توزيع المدفوعات'**
   String get paymentDistribution;
+
+  /// No description provided for @allAccountsSettled.
+  ///
+  /// In ar, this message translates to:
+  /// **'جميع حسابات العملاء مسددة'**
+  String get allAccountsSettled;
+
+  /// No description provided for @confirmInterest.
+  ///
+  /// In ar, this message translates to:
+  /// **'تأكيد الفائدة'**
+  String get confirmInterest;
+
+  /// No description provided for @confirmInterestMessage.
+  ///
+  /// In ar, this message translates to:
+  /// **'تطبيق {rate}% فائدة على {count} حسابات؟\nإجمالي الفائدة: {amount} {currency}'**
+  String confirmInterestMessage(
+      String rate, int count, String amount, String currency);
+
+  /// No description provided for @selectCustomers.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختيار العملاء'**
+  String get selectCustomers;
+
+  /// No description provided for @deselectAll.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلغاء تحديد الكل'**
+  String get deselectAll;
+
+  /// No description provided for @preview.
+  ///
+  /// In ar, this message translates to:
+  /// **'معاينة'**
+  String get preview;
+
+  /// No description provided for @totalDebt.
+  ///
+  /// In ar, this message translates to:
+  /// **'إجمالي الديون'**
+  String get totalDebt;
+
+  /// No description provided for @totalInterest.
+  ///
+  /// In ar, this message translates to:
+  /// **'إجمالي الفائدة'**
+  String get totalInterest;
+
+  /// No description provided for @finalizeInvoice.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنهاء الفاتورة'**
+  String get finalizeInvoice;
+
+  /// No description provided for @saveAsDraft.
+  ///
+  /// In ar, this message translates to:
+  /// **'حفظ كمسودة'**
+  String get saveAsDraft;
+
+  /// No description provided for @saveDraft.
+  ///
+  /// In ar, this message translates to:
+  /// **'حفظ المسودة'**
+  String get saveDraft;
+
+  /// No description provided for @finalize.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنهاء'**
+  String get finalize;
+
+  /// No description provided for @adjustQuantity.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعديل الكمية'**
+  String get adjustQuantity;
+
+  /// No description provided for @totalItems.
+  ///
+  /// In ar, this message translates to:
+  /// **'إجمالي العناصر'**
+  String get totalItems;
+
+  /// No description provided for @variance.
+  ///
+  /// In ar, this message translates to:
+  /// **'الفرق'**
+  String get variance;
+
+  /// No description provided for @orderNotFound.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم يتم العثور على الطلب'**
+  String get orderNotFound;
+
+  /// No description provided for @share.
+  ///
+  /// In ar, this message translates to:
+  /// **'مشاركة'**
+  String get share;
+
+  /// No description provided for @full.
+  ///
+  /// In ar, this message translates to:
+  /// **'كامل'**
+  String get full;
+
+  /// No description provided for @processRefund.
+  ///
+  /// In ar, this message translates to:
+  /// **'معالجة الاسترداد'**
+  String get processRefund;
+
+  /// No description provided for @refundToCustomer.
+  ///
+  /// In ar, this message translates to:
+  /// **'استرداد للعميل'**
+  String get refundToCustomer;
+
+  /// No description provided for @breakdown.
+  ///
+  /// In ar, this message translates to:
+  /// **'التفاصيل'**
+  String get breakdown;
+
+  /// No description provided for @nTransactions.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} معاملات'**
+  String nTransactions(int count);
+
+  /// No description provided for @customReport.
+  ///
+  /// In ar, this message translates to:
+  /// **'تقرير مخصص'**
+  String get customReport;
+
+  /// No description provided for @reportBuilder.
+  ///
+  /// In ar, this message translates to:
+  /// **'منشئ التقارير'**
+  String get reportBuilder;
+
+  /// No description provided for @groupBy.
+  ///
+  /// In ar, this message translates to:
+  /// **'تجميع حسب'**
+  String get groupBy;
+
+  /// No description provided for @dateRange.
+  ///
+  /// In ar, this message translates to:
+  /// **'النطاق الزمني'**
+  String get dateRange;
+
+  /// No description provided for @fromLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'من'**
+  String get fromLabel;
+
+  /// No description provided for @toLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلى'**
+  String get toLabel;
+
+  /// No description provided for @generateReport.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنشاء التقرير'**
+  String get generateReport;
+
+  /// No description provided for @lastMonth.
+  ///
+  /// In ar, this message translates to:
+  /// **'الشهر الماضي'**
+  String get lastMonth;
+
+  /// No description provided for @periods.
+  ///
+  /// In ar, this message translates to:
+  /// **'الفترات'**
+  String get periods;
+
+  /// No description provided for @valueLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'القيمة'**
+  String get valueLabel;
+
+  /// No description provided for @tryDifferentFilters.
+  ///
+  /// In ar, this message translates to:
+  /// **'جرّب فلاتر مختلفة'**
+  String get tryDifferentFilters;
+
+  /// No description provided for @scan.
+  ///
+  /// In ar, this message translates to:
+  /// **'مسح'**
+  String get scan;
+
+  /// No description provided for @selectProductFirst.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر منتج أولاً'**
+  String get selectProductFirst;
+
+  /// No description provided for @selectProductsForLabels.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر منتجات للملصقات'**
+  String get selectProductsForLabels;
+
+  /// No description provided for @printJobSentForLabels.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إرسال طباعة {count} ملصق'**
+  String printJobSentForLabels(int count);
+
+  /// No description provided for @test.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختبار'**
+  String get test;
+
+  /// No description provided for @paperSize58mm.
+  ///
+  /// In ar, this message translates to:
+  /// **'58مم'**
+  String get paperSize58mm;
+
+  /// No description provided for @paperSize80mm.
+  ///
+  /// In ar, this message translates to:
+  /// **'80مم'**
+  String get paperSize80mm;
+
+  /// No description provided for @errorSavingSettings.
+  ///
+  /// In ar, this message translates to:
+  /// **'خطأ في حفظ الإعدادات: {error}'**
+  String errorSavingSettings(String error);
+
+  /// No description provided for @restoreFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'فشل الاستعادة: {error}'**
+  String restoreFailed(String error);
+
+  /// No description provided for @address.
+  ///
+  /// In ar, this message translates to:
+  /// **'العنوان'**
+  String get address;
+
+  /// No description provided for @email.
+  ///
+  /// In ar, this message translates to:
+  /// **'البريد الإلكتروني'**
+  String get email;
+
+  /// No description provided for @crNumber.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم السجل التجاري'**
+  String get crNumber;
+
+  /// No description provided for @city.
+  ///
+  /// In ar, this message translates to:
+  /// **'المدينة'**
+  String get city;
+
+  /// No description provided for @optional.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختياري'**
+  String get optional;
+
+  /// No description provided for @optionalNoteHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملاحظة اختيارية...'**
+  String get optionalNoteHint;
+
+  /// No description provided for @clearField.
+  ///
+  /// In ar, this message translates to:
+  /// **'مسح'**
+  String get clearField;
+
+  /// No description provided for @decreaseQuantity.
+  ///
+  /// In ar, this message translates to:
+  /// **'تقليل الكمية'**
+  String get decreaseQuantity;
+
+  /// No description provided for @increaseQuantity.
+  ///
+  /// In ar, this message translates to:
+  /// **'زيادة الكمية'**
+  String get increaseQuantity;
+
+  /// No description provided for @copyToClipboard.
+  ///
+  /// In ar, this message translates to:
+  /// **'نسخ'**
+  String get copyToClipboard;
 }
 
 class _AppLocalizationsDelegate

@@ -128,12 +128,12 @@ class _BundleDealsScreenState extends ConsumerState<BundleDealsScreen> {
     final savingsPercent = (savings / individualTotal * 100).toStringAsFixed(0);
 
     final colors = [
-      const Color(0xFF3B82F6),
-      const Color(0xFF8B5CF6),
-      const Color(0xFFF97316),
-      const Color(0xFF06B6D4),
+      AppColors.info,
+      AppColors.purple,
+      AppColors.secondary,
+      AppColors.cyan,
       AppColors.success,
-      const Color(0xFFEC4899),
+      AppColors.pink,
     ];
     final color = colors[index % colors.length];
 

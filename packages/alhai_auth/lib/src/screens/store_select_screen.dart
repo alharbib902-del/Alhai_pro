@@ -464,7 +464,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDarkMode ? const Color(0xFF0F172A) : Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: isWideScreen
           ? _buildWideLayout(isDarkMode)
           : _buildNarrowLayout(isDarkMode),
@@ -797,7 +797,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
   // ============================================================================
   Widget _buildContentPanel(bool isDarkMode, {required bool isMobile}) {
     return Container(
-      color: isDarkMode ? const Color(0xFF1E293B) : Colors.white,
+      color: Theme.of(context).colorScheme.surface,
       child: Column(
         children: [
           // Header
@@ -926,7 +926,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
     return PopupMenuButton<Locale>(
       offset: const Offset(0, 48),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      color: isDarkMode ? const Color(0xFF1E293B) : Colors.white,
+      color: Theme.of(context).colorScheme.surface,
       child: Container(
         padding: EdgeInsets.symmetric(
           horizontal: isMobile ? 8 : 12,

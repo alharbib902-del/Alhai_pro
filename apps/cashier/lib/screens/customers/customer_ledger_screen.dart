@@ -16,7 +16,7 @@ import 'package:alhai_database/alhai_database.dart';
 import 'package:uuid/uuid.dart';
 // alhai_design_system is re-exported via alhai_shared_ui
 import 'package:drift/drift.dart' show Value;
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiSpacing;
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
 import '../../core/services/sentry_service.dart';
 
 /// شاشة كشف حساب العميل
@@ -148,7 +148,9 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context);
-    final isMobile = context.isMobile;
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final isWideScreen = screenWidth >= AlhaiBreakpoints.desktop;
+    final isMobile = screenWidth < AlhaiBreakpoints.tablet;
 
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
@@ -157,7 +159,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
         foregroundColor: colorScheme.onPrimary,
         icon: _isAdjusting
             ? const SizedBox(width: 20, height: 20,
-                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.textOnPrimary))
             : const Icon(Icons.tune_rounded, size: 20),
         label: Text(l10n.manualAdjustment),
       ),
@@ -171,7 +173,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                 Expanded(
                   child: SingleChildScrollView(
                     padding: EdgeInsets.symmetric(
-                      horizontal: isMobile ? 16 : 32,
+                      horizontal: isWideScreen ? AlhaiSpacing.xxxl : (isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
                       vertical: AlhaiSpacing.md,
                     ),
                     child: Column(
@@ -214,6 +216,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
               onPressed: () => context.pop(),
               icon: Icon(Icons.arrow_back_rounded,
                   color: colorScheme.onSurface),
+              tooltip: l10n.back,
               style: IconButton.styleFrom(
                 backgroundColor: colorScheme.surfaceContainerHighest,
                 shape: RoundedRectangleBorder(
@@ -247,6 +250,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
               onPressed: _loadData,
               icon: Icon(Icons.refresh_rounded,
                   color: colorScheme.onSurfaceVariant),
+              tooltip: l10n.refresh,
             ),
           ],
         ),
@@ -273,11 +277,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
             width: isMobile ? 48 : 56,
             height: isMobile ? 48 : 56,
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFF3B82F6), Color(0xFF2563EB)],
-                begin: AlignmentDirectional.topStart,
-                end: AlignmentDirectional.bottomEnd,
-              ),
+              gradient: AppColors.avatarGradient,
               borderRadius: BorderRadius.circular(16),
             ),
             alignment: Alignment.center,
@@ -864,7 +864,8 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                       const Spacer(),
                       IconButton(
                           onPressed: () => Navigator.pop(dialogContext),
-                          icon: Icon(Icons.close_rounded, color: dialogColorScheme.onSurfaceVariant)),
+                          icon: Icon(Icons.close_rounded, color: dialogColorScheme.onSurfaceVariant),
+                          tooltip: l10n.close),
                     ],
                   ),
                   const SizedBox(height: AlhaiSpacing.lg),
@@ -1085,10 +1086,10 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
   Color _getTypeColor(String type) {
     switch (type) {
       case 'opening': return AppColors.info;
-      case 'invoice': return const Color(0xFFF97316);
+      case 'invoice': return AppColors.secondary;
       case 'payment': return AppColors.success;
       case 'adjustment': return AppColors.warning;
-      case 'return': return const Color(0xFF8B5CF6);
+      case 'return': return AppColors.purple;
       default: return Theme.of(context).colorScheme.outline;
     }
   }

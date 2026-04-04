@@ -170,6 +170,7 @@ class _AddPaymentDeviceScreenState
               color: AppColors.getTextPrimary(isDark),
             ),
             onPressed: () => context.pop(),
+            tooltip: l10n.back,
           ),
           onNotificationsTap: () => context.push(AppRoutes.notificationsCenter),
           userName:
@@ -547,13 +548,13 @@ class _AddPaymentDeviceScreenState
                         width: 18,
                         height: 18,
                         child: CircularProgressIndicator(
-                            strokeWidth: 2, color: Colors.white),
+                            strokeWidth: 2, color: AppColors.textOnPrimary),
                       )
                     : const Icon(Icons.save_rounded, size: 20),
                 label: Text(l10n.saveDevice),
                 style: FilledButton.styleFrom(
                   backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
+                  foregroundColor: AppColors.textOnPrimary,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12)),

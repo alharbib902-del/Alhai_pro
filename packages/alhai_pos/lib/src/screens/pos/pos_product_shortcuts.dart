@@ -318,7 +318,7 @@ class PosShortcutsBar extends ConsumerWidget {
           PosShortcutButton(
             icon: Icons.replay_rounded,
             label: l10n.refund,
-            color: const Color(0xFF8B5CF6), // purple
+            color: AppColors.purple,
             onTap: () {
               context.push(AppRoutes.refundRequest);
             },

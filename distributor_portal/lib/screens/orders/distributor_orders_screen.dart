@@ -54,7 +54,7 @@ class _DistributorOrdersScreenState
       case 'rejected':
         return Colors.red;
       default:
-        return Colors.grey;
+        return AppColors.grey500;
     }
   }
 
@@ -98,7 +98,7 @@ class _DistributorOrdersScreenState
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: isDark ? Colors.white : AppColors.textPrimary,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
           ),
@@ -108,7 +108,7 @@ class _DistributorOrdersScreenState
           Container(
             margin: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF1E293B) : Colors.white,
+              color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(12),
             ),
             child: TabBar(
@@ -116,7 +116,7 @@ class _DistributorOrdersScreenState
               onTap: (_) => setState(() {}),
               labelColor: AppColors.primary,
               unselectedLabelColor:
-                  isDark ? Colors.white54 : AppColors.textSecondary,
+                  Theme.of(context).colorScheme.onSurfaceVariant,
               indicatorColor: AppColors.primary,
               indicatorSize: TabBarIndicatorSize.label,
               dividerColor: Colors.transparent,
@@ -140,7 +140,7 @@ class _DistributorOrdersScreenState
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(Icons.error_outline, size: 48,
-                        color: isDark ? Colors.white30 : AppColors.textMuted),
+                        color: Theme.of(context).colorScheme.onSurfaceVariant),
                     const SizedBox(height: AlhaiSpacing.md),
                     Text(l10n?.distributorLoadError ?? 'Error loading data'),
                     const SizedBox(height: AlhaiSpacing.md),
@@ -162,20 +162,14 @@ class _DistributorOrdersScreenState
                         Icon(
                           Icons.inbox_outlined,
                           size: 64,
-                          color: isDark
-                              ? Colors.white30
-                              : Theme.of(context)
-                                  .colorScheme
-                                  .outlineVariant,
+                          color: Theme.of(context).colorScheme.outlineVariant,
                         ),
                         const SizedBox(height: AlhaiSpacing.md),
                         Text(
                           l10n?.distributorNoOrders ?? 'No orders found',
                           style: TextStyle(
                             fontSize: 16,
-                            color: isDark
-                                ? Colors.white54
-                                : AppColors.textSecondary,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                         ),
                       ],
@@ -202,14 +196,12 @@ class _DistributorOrdersScreenState
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1E293B) : Colors.white,
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
         ),
         child: DataTable(
           headingRowColor: WidgetStateProperty.all(
-            isDark
-                ? const Color(0xFF334155)
-                : Theme.of(context).colorScheme.surfaceContainerLowest,
+            Theme.of(context).colorScheme.surfaceContainerHighest,
           ),
           columns: [
             DataColumn(
@@ -228,26 +220,26 @@ class _DistributorOrdersScreenState
                   order.purchaseNumber,
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.white : AppColors.textPrimary,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 )),
                 DataCell(Text(
                   order.storeName,
                   style: TextStyle(
-                    color: isDark ? Colors.white70 : AppColors.textSecondary,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 )),
                 DataCell(Text(
                   '${order.createdAt.day}/${order.createdAt.month}/${order.createdAt.year}',
                   style: TextStyle(
-                    color: isDark ? Colors.white70 : AppColors.textSecondary,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 )),
                 DataCell(Text(
                   '${NumberFormat('#,##0').format(order.total)} ${l10n?.distributorSar ?? 'SAR'}',
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.white : AppColors.textPrimary,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 )),
                 DataCell(
@@ -288,7 +280,7 @@ class _DistributorOrdersScreenState
         final order = orders[index];
         return Card(
           margin: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
-          color: isDark ? const Color(0xFF1E293B) : Colors.white,
+          color: Theme.of(context).colorScheme.surface,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
@@ -310,7 +302,7 @@ class _DistributorOrdersScreenState
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                           color:
-                              isDark ? Colors.white : AppColors.textPrimary,
+                              Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
                       Container(
@@ -339,7 +331,7 @@ class _DistributorOrdersScreenState
                     order.storeName,
                     style: TextStyle(
                       color:
-                          isDark ? Colors.white70 : AppColors.textSecondary,
+                          Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
                   const SizedBox(height: AlhaiSpacing.xs),
@@ -351,7 +343,7 @@ class _DistributorOrdersScreenState
                         style: TextStyle(
                           fontSize: 13,
                           color: isDark
-                              ? Colors.white54
+                              ? Theme.of(context).colorScheme.onSurfaceVariant
                               : AppColors.textSecondary,
                         ),
                       ),
@@ -360,7 +352,7 @@ class _DistributorOrdersScreenState
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color:
-                              isDark ? Colors.white : AppColors.textPrimary,
+                              Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
                     ],

@@ -7,7 +7,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_core/alhai_core.dart';
-import 'package:alhai_auth/alhai_auth.dart' show isAdminProvider, currentUserProvider;
+import 'package:alhai_auth/alhai_auth.dart' show isAdminProvider, currentUserProvider, PinService;
 import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// شاشة إدارة المستخدمين
@@ -150,6 +150,73 @@ class _UsersManagementScreenState
     return true;
   }
 
+  /// Requires the admin to re-enter their PIN before a sensitive operation
+  /// (e.g. deleting or disabling a user). Returns `true` if the PIN was
+  /// verified successfully, `false` otherwise (including dismissal).
+  Future<bool> _requirePinConfirmation() async {
+    final pinEnabled = await PinService.isEnabled();
+    if (!pinEnabled) return true; // PIN not configured — allow
+
+    final l10n = AppLocalizations.of(context);
+    String? enteredPin;
+    String? error;
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: Text(l10n.enterCurrentPin),
+          content: Column(mainAxisSize: MainAxisSize.min, children: [
+            Text(
+              l10n.security,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                fontSize: 13,
+              ),
+            ),
+            const SizedBox(height: AlhaiSpacing.md),
+            TextField(
+              keyboardType: TextInputType.number,
+              maxLength: 4,
+              obscureText: true,
+              autofocus: true,
+              decoration: InputDecoration(
+                labelText: 'PIN',
+                border: const OutlineInputBorder(),
+                errorText: error,
+              ),
+              onChanged: (v) => enteredPin = v,
+            ),
+          ]),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: Text(l10n.cancel),
+            ),
+            FilledButton(
+              onPressed: () async {
+                if (enteredPin == null || enteredPin!.length < 4) {
+                  setDialogState(() => error = l10n.enterCurrentPin);
+                  return;
+                }
+                final result = await PinService.verifyPin(enteredPin!);
+                if (result.isSuccess) {
+                  if (context.mounted) Navigator.pop(context, true);
+                } else {
+                  setDialogState(() => error = result.error);
+                }
+              },
+              child: Text(l10n.confirm),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    return confirmed == true;
+  }
+
   Future<void> _handleUserAction(_User user, String action) async {
     switch (action) {
       case 'profile':
@@ -158,6 +225,7 @@ class _UsersManagementScreenState
       case 'edit': _editUser(user); break;
       case 'enable': case 'disable':
         if (!_checkAdminPermission()) return;
+        if (!await _requirePinConfirmation()) return;
         try {
           final db = getIt<AppDatabase>();
           final dbUser = await db.usersDao.getUserById(user.id);
@@ -173,6 +241,7 @@ class _UsersManagementScreenState
         await _loadUsers(); break;
       case 'delete':
         if (!_checkAdminPermission()) return;
+        if (!await _requirePinConfirmation()) return;
         try {
           final db = getIt<AppDatabase>();
           await db.usersDao.deleteUser(user.id);

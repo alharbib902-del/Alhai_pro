@@ -314,7 +314,7 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
                   hintStyle: TextStyle(color: isDark ? AppColors.textMutedDark : AppColors.textMuted, fontSize: 14),
                   prefixIcon: Icon(Icons.search, color: isDark ? AppColors.textMutedDark : AppColors.textMuted),
                   filled: true,
-                  fillColor: isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
+                  fillColor: Theme.of(context).colorScheme.surfaceContainerLow,
                   contentPadding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
                   focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: AppColors.primary.withValues(alpha: 0.5))),
@@ -324,7 +324,7 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
             ),
           SizedBox(width: AlhaiSpacing.xs),
           IconButton(onPressed: () {}, icon: Badge(smallSize: 8, backgroundColor: AppColors.secondary, child: Icon(Icons.notifications_outlined, color: isDark ? AppColors.textMutedDark : AppColors.textSecondary))),
-          IconButton(onPressed: () {}, icon: Icon(isDark ? Icons.light_mode : Icons.dark_mode, color: isDark ? const Color(0xFFFBBF24) : AppColors.textSecondary)),
+          IconButton(onPressed: () {}, icon: Icon(isDark ? Icons.light_mode : Icons.dark_mode, color: isDark ? AppColors.warning : AppColors.textSecondary)),
         ],
       ),
     );

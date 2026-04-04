@@ -36,6 +36,7 @@ class PrivacyPolicyScreen extends ConsumerWidget {
               color: AppColors.getTextPrimary(isDark),
             ),
             onPressed: () => context.pop(),
+            tooltip: l10n.back,
           ),
           onNotificationsTap: () =>
               context.push(AppRoutes.notificationsCenter),

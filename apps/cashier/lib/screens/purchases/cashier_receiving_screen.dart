@@ -33,6 +33,7 @@ class _CashierReceivingScreenState
 
   List<PurchasesTableData> _purchases = [];
   bool _isLoading = true;
+  String? _error;
   String? _receivingId; // purchase currently being received
 
   @override
@@ -42,7 +43,10 @@ class _CashierReceivingScreenState
   }
 
   Future<void> _loadPurchases() async {
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
     try {
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) return;
@@ -58,7 +62,12 @@ class _CashierReceivingScreenState
       }
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Load purchases for receiving');
-      if (mounted) setState(() => _isLoading = false);
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _error = '$e';
+        });
+      }
     }
   }
 
@@ -89,7 +98,9 @@ class _CashierReceivingScreenState
         ),
         Expanded(
           child: _isLoading
-              ? const Center(child: CircularProgressIndicator())
+              ? const AppLoadingState()
+              : _error != null
+                  ? AppErrorState.general(context, message: _error!, onRetry: _loadPurchases)
               : _purchases.isEmpty
                   ? _buildEmptyState(isDark, l10n)
                   : RefreshIndicator(
@@ -308,7 +319,7 @@ class _CashierReceivingScreenState
                           width: 18,
                           height: 18,
                           child: CircularProgressIndicator(
-                              strokeWidth: 2, color: Colors.white),
+                              strokeWidth: 2, color: AppColors.textOnPrimary),
                         )
                       : const Icon(Icons.check_circle_rounded, size: 18),
                   label: Text(
@@ -317,7 +328,7 @@ class _CashierReceivingScreenState
                   ),
                   style: FilledButton.styleFrom(
                     backgroundColor: AppColors.success,
-                    foregroundColor: Colors.white,
+                    foregroundColor: AppColors.textOnPrimary,
                     padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10)),
@@ -566,7 +577,7 @@ class _CashierReceivingScreenState
               onPressed: () => Navigator.pop(context, true),
               style: FilledButton.styleFrom(
                 backgroundColor: AppColors.success,
-                foregroundColor: Colors.white,
+                foregroundColor: AppColors.textOnPrimary,
               ),
               child: Text(l10n.confirmReceivingBtn),
             ),

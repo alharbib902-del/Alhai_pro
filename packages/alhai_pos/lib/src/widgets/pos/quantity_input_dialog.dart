@@ -126,6 +126,7 @@ class _QuantityInputDialogState extends State<QuantityInputDialog> {
                     Icons.close,
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
+                  tooltip: AppLocalizations.of(context)!.close,
                 ),
               ],
             ),
@@ -306,27 +307,33 @@ class _QuantityButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final enabled = onTap != null;
-    return Material(
-      color: enabled
-          ? (isPrimary
-              ? AppColors.primary
-              : (Theme.of(context).colorScheme.surfaceContainerHighest))
-          : (Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5)),
-      shape: const CircleBorder(),
-      child: InkWell(
-        onTap: onTap,
-        customBorder: const CircleBorder(),
-        child: SizedBox(
-          width: 48,
-          height: 48,
-          child: Icon(
-            icon,
-            color: enabled
-                ? (isPrimary
-                    ? Colors.white
-                    : (isDark ? Colors.white70 : AppColors.textPrimary))
-                : (isDark ? Colors.white24 : AppColors.grey300),
-            size: 24,
+    final l10n = AppLocalizations.of(context)!;
+    return Semantics(
+      label: icon == Icons.add ? l10n.increaseQuantity : l10n.decreaseQuantity,
+      button: true,
+      enabled: enabled,
+      child: Material(
+        color: enabled
+            ? (isPrimary
+                ? AppColors.primary
+                : (Theme.of(context).colorScheme.surfaceContainerHighest))
+            : (Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5)),
+        shape: const CircleBorder(),
+        child: InkWell(
+          onTap: onTap,
+          customBorder: const CircleBorder(),
+          child: SizedBox(
+            width: 48,
+            height: 48,
+            child: Icon(
+              icon,
+              color: enabled
+                  ? (isPrimary
+                      ? Colors.white
+                      : (isDark ? Colors.white70 : AppColors.textPrimary))
+                  : (isDark ? Colors.white24 : AppColors.grey300),
+              size: 24,
+            ),
           ),
         ),
       ),

@@ -74,7 +74,16 @@ class _AiInvoiceReviewScreenState extends ConsumerState<AiInvoiceReviewScreen> {
       children: [
         Row(
           children: [
-            IconButton(onPressed: () => context.pop(), icon: Icon(Icons.arrow_back_rounded, color: Theme.of(context).colorScheme.onSurface)),
+            IconButton(
+              onPressed: () => context.pop(),
+              icon: Icon(
+                Directionality.of(context) == TextDirection.rtl
+                    ? Icons.arrow_forward_rounded
+                    : Icons.arrow_back_rounded,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+              tooltip: l10n.back,
+            ),
             const SizedBox(width: AlhaiSpacing.xs),
             Expanded(child: Text(l10n.reviewInvoice, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface))),
             FilledButton.tonalIcon(onPressed: _confirmAll, icon: const Icon(Icons.done_all, size: 18), label: Text(l10n.confirmAllItems)),

@@ -323,6 +323,7 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
           IconButton(
             onPressed: () => setState(() { _selectedProduct = null; _searchController.clear(); }),
             icon: Icon(Icons.close_rounded, size: 18, color: colorScheme.onSurfaceVariant),
+            tooltip: l10n.clearField,
           ),
         ],
       ),

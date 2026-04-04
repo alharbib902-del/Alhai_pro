@@ -196,6 +196,25 @@ Widget _fadeTransition(
   );
 }
 
+/// Standard transition duration for all admin routes (200ms for snappy feel)
+const _kPageTransitionDuration = Duration(milliseconds: 200);
+
+/// Build a [CustomTransitionPage] with a consistent fade transition.
+///
+/// Use this instead of manually constructing [CustomTransitionPage]
+/// to ensure every route has the same 200ms fade animation.
+CustomTransitionPage<void> _buildFadePage({
+  required GoRouterState state,
+  required Widget child,
+}) {
+  return CustomTransitionPage<void>(
+    key: state.pageKey,
+    child: child,
+    transitionsBuilder: _fadeTransition,
+    transitionDuration: _kPageTransitionDuration,
+  );
+}
+
 /// Notifier that triggers GoRouter redirect on auth/store changes.
 ///
 /// NOTE [M144]: This pattern (_AuthNotifier + _guardRedirect) is duplicated
@@ -353,28 +372,25 @@ final List<RouteBase> _routes = [
   GoRoute(
     path: AppRoutes.splash,
     name: 'splash',
-    pageBuilder: (context, state) => CustomTransitionPage(
-      key: state.pageKey,
+    pageBuilder: (context, state) => _buildFadePage(
+      state: state,
       child: const SplashScreen(),
-      transitionsBuilder: _fadeTransition,
     ),
   ),
   GoRoute(
     path: AppRoutes.login,
     name: 'login',
-    pageBuilder: (context, state) => CustomTransitionPage(
-      key: state.pageKey,
+    pageBuilder: (context, state) => _buildFadePage(
+      state: state,
       child: const LoginScreen(),
-      transitionsBuilder: _fadeTransition,
     ),
   ),
   GoRoute(
     path: AppRoutes.storeSelect,
     name: 'store-select',
-    pageBuilder: (context, state) => CustomTransitionPage(
-      key: state.pageKey,
+    pageBuilder: (context, state) => _buildFadePage(
+      state: state,
       child: const StoreSelectScreen(),
-      transitionsBuilder: _fadeTransition,
     ),
   ),
 
@@ -384,10 +400,9 @@ final List<RouteBase> _routes = [
   GoRoute(
     path: AppRoutes.onboarding,
     name: 'onboarding',
-    pageBuilder: (context, state) => CustomTransitionPage(
-      key: state.pageKey,
+    pageBuilder: (context, state) => _buildFadePage(
+      state: state,
       child: const OnboardingScreen(),
-      transitionsBuilder: _fadeTransition,
     ),
   ),
 
@@ -397,19 +412,17 @@ final List<RouteBase> _routes = [
   GoRoute(
     path: AppRoutes.posPayment,
     name: 'pos-payment',
-    pageBuilder: (context, state) => CustomTransitionPage(
-      key: state.pageKey,
+    pageBuilder: (context, state) => _buildFadePage(
+      state: state,
       child: const PaymentScreen(),
-      transitionsBuilder: _fadeTransition,
     ),
   ),
   GoRoute(
     path: AppRoutes.posReceipt,
     name: 'pos-receipt',
-    pageBuilder: (context, state) => CustomTransitionPage(
-      key: state.pageKey,
+    pageBuilder: (context, state) => _buildFadePage(
+      state: state,
       child: const ReceiptScreen(),
-      transitionsBuilder: _fadeTransition,
     ),
   ),
 
@@ -425,19 +438,17 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.home,
         name: 'home',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const AdminHomeScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.dashboard,
         name: 'dashboard',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const DashboardScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
 
@@ -447,37 +458,33 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.pos,
         name: 'pos',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const PosScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.posSearch,
         name: 'pos-search',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const PosScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.posCart,
         name: 'pos-cart',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const PosScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.quickSale,
         name: 'quick-sale',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const QuickSaleScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
 
@@ -487,28 +494,25 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.products,
         name: 'products',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const ProductsScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.productsAdd,
         name: 'products-add',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const ProductFormScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.productsEdit,
         name: 'products-edit',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: ProductFormScreen(productId: state.pathId()),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
@@ -516,10 +520,9 @@ final List<RouteBase> _routes = [
         name: 'product-detail',
         pageBuilder: (context, state) {
           final id = state.pathId();
-          return CustomTransitionPage(
-            key: state.pageKey,
+          return _buildFadePage(
+            state: state,
             child: ProductDetailScreen(productId: id),
-            transitionsBuilder: _fadeTransition,
           );
         },
       ),
@@ -530,10 +533,9 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.categories,
         name: 'categories',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const CategoriesScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
 
@@ -543,19 +545,17 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.inventory,
         name: 'inventory',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const InventoryScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.expiryTracking,
         name: 'expiry-tracking',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const ExpiryTrackingScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
 
@@ -565,10 +565,9 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.customers,
         name: 'customers',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const CustomersScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
@@ -576,10 +575,9 @@ final List<RouteBase> _routes = [
         name: 'customer-detail',
         pageBuilder: (context, state) {
           final id = state.pathId();
-          return CustomTransitionPage(
-            key: state.pageKey,
+          return _buildFadePage(
+            state: state,
             child: CustomerDetailScreen(customerId: id),
-            transitionsBuilder: _fadeTransition,
           );
         },
       ),
@@ -588,10 +586,9 @@ final List<RouteBase> _routes = [
         name: 'customer-ledger',
         pageBuilder: (context, state) {
           final id = state.pathId();
-          return CustomTransitionPage(
-            key: state.pageKey,
+          return _buildFadePage(
+            state: state,
             child: CustomerLedgerScreen(customerId: id),
-            transitionsBuilder: _fadeTransition,
           );
         },
       ),
@@ -602,19 +599,17 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.suppliers,
         name: 'suppliers',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const SuppliersScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.supplierForm,
         name: 'supplier-form',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const SupplierFormScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
@@ -622,10 +617,9 @@ final List<RouteBase> _routes = [
         name: 'supplier-detail',
         pageBuilder: (context, state) {
           final id = state.pathId();
-          return CustomTransitionPage(
-            key: state.pageKey,
+          return _buildFadePage(
+            state: state,
             child: SupplierDetailScreen(supplierId: id),
-            transitionsBuilder: _fadeTransition,
           );
         },
       ),
@@ -636,28 +630,25 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.orders,
         name: 'orders',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const OrdersScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.orderTracking,
         name: 'order-tracking',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const OrderTrackingScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.orderHistory,
         name: 'order-history',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const OrderHistoryScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
 
@@ -667,10 +658,9 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.customerAnalytics,
         name: 'customer-analytics',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const CustomerAnalyticsScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
 
@@ -680,10 +670,9 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.sales,
         name: 'sales',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const InvoicesScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
 
@@ -693,10 +682,9 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.invoices,
         name: 'invoices',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const InvoicesScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
@@ -704,10 +692,9 @@ final List<RouteBase> _routes = [
         name: 'invoice-detail',
         pageBuilder: (context, state) {
           final id = state.pathId();
-          return CustomTransitionPage(
-            key: state.pageKey,
+          return _buildFadePage(
+            state: state,
             child: InvoiceDetailScreen(invoiceId: id),
-            transitionsBuilder: _fadeTransition,
           );
         },
       ),
@@ -718,10 +705,9 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.returns,
         name: 'returns',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const ReturnsScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
@@ -729,21 +715,19 @@ final List<RouteBase> _routes = [
         name: 'refund-request',
         pageBuilder: (context, state) {
           final orderId = state.queryParam('orderId');
-          return CustomTransitionPage(
-            key: state.pageKey,
+          return _buildFadePage(
+            state: state,
             child: RefundRequestScreen(
                 orderId: orderId.isEmpty ? null : orderId),
-            transitionsBuilder: _fadeTransition,
           );
         },
       ),
       GoRoute(
         path: AppRoutes.refundReason,
         name: 'refund-reason',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const RefundReasonScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
@@ -751,20 +735,18 @@ final List<RouteBase> _routes = [
         name: 'refund-receipt',
         pageBuilder: (context, state) {
           final id = state.pathId();
-          return CustomTransitionPage(
-            key: state.pageKey,
+          return _buildFadePage(
+            state: state,
             child: RefundReceiptScreen(refundId: id),
-            transitionsBuilder: _fadeTransition,
           );
         },
       ),
       GoRoute(
         path: AppRoutes.voidTransaction,
         name: 'void-transaction',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const VoidTransactionScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
 
@@ -774,19 +756,17 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.expenses,
         name: 'expenses',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const ExpensesScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.expenseCategories,
         name: 'expense-categories',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const ExpenseCategoriesScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
 
@@ -796,10 +776,9 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.cashDrawer,
         name: 'cash-drawer',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const CashDrawerScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
 
@@ -809,10 +788,9 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.monthlyClose,
         name: 'monthly-close',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const MonthlyCloseScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
 
@@ -822,37 +800,33 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.shifts,
         name: 'shifts',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const ShiftsScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.shiftOpen,
         name: 'shift-open',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const ShiftOpenScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.shiftClose,
         name: 'shift-close',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const ShiftCloseScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.shiftSummary,
         name: 'shift-summary',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const ShiftSummaryScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
 
@@ -862,28 +836,25 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.purchaseForm,
         name: 'purchase-form',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const PurchaseFormScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.smartReorder,
         name: 'smart-reorder',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const SmartReorderScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.aiInvoiceImport,
         name: 'ai-invoice-import',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const AiInvoiceImportScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
@@ -907,10 +878,9 @@ final List<RouteBase> _routes = [
                   ),
                 )
               : AiInvoiceReviewScreen(invoiceData: invoiceData);
-          return CustomTransitionPage(
-            key: state.pageKey,
+          return _buildFadePage(
+            state: state,
             child: child,
-            transitionsBuilder: _fadeTransition,
           );
         },
       ),
@@ -921,28 +891,25 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.discounts,
         name: 'discounts',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const DiscountsScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.coupons,
         name: 'coupons',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const CouponManagementScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.specialOffers,
         name: 'special-offers',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const SpecialOffersScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
 
@@ -952,10 +919,9 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.smartPromotions,
         name: 'smart-promotions',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const SmartPromotionsScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
 
@@ -965,10 +931,9 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.loyalty,
         name: 'loyalty',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const LoyaltyProgramScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
 
@@ -978,10 +943,9 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.notificationsCenter,
         name: 'notifications',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const NotificationsScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
 
@@ -991,10 +955,9 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.printQueue,
         name: 'print-queue',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const PrintQueueScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
 
@@ -1004,28 +967,25 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.syncStatus,
         name: 'sync-status',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const SyncStatusScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.pendingTransactions,
         name: 'pending-transactions',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const PendingTransactionsScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.conflictResolution,
         name: 'conflict-resolution',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const ConflictResolutionScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
 
@@ -1035,10 +995,9 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.drivers,
         name: 'drivers',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const DriverManagementScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
 
@@ -1048,10 +1007,9 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.branches,
         name: 'branches',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const BranchManagementScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
 
@@ -1061,10 +1019,9 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.employees,
         name: 'employees',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const UsersManagementScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
 
@@ -1074,10 +1031,9 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.profile,
         name: 'profile',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const ProfileScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
 
@@ -1087,19 +1043,17 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.reports,
         name: 'reports',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const ReportsScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.complaintsReport,
         name: 'complaints-report',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const ComplaintsReportScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
 
@@ -1109,190 +1063,169 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.settings,
         name: 'settings',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const SettingsScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.settingsPrinter,
         name: 'settings-printer',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const PrinterSettingsScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.settingsLanguage,
         name: 'settings-language',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const LanguageScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.settingsTheme,
         name: 'settings-theme',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const ThemeScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.settingsStore,
         name: 'settings-store',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const StoreSettingsScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.settingsPos,
         name: 'settings-pos',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const PosSettingsScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.settingsPaymentDevices,
         name: 'settings-payment-devices',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const PaymentDevicesSettingsScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.settingsBarcode,
         name: 'settings-barcode',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const BarcodeSettingsScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.settingsReceipt,
         name: 'settings-receipt',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const ReceiptTemplateScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.settingsTax,
         name: 'settings-tax',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const TaxSettingsScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.settingsDiscounts,
         name: 'settings-discounts',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const DiscountsSettingsScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.settingsInterest,
         name: 'settings-interest',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const InterestSettingsScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.settingsSecurity,
         name: 'settings-security',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const SecuritySettingsScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.settingsUsers,
         name: 'settings-users',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const UsersManagementScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.settingsRoles,
         name: 'settings-roles',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const RolesPermissionsScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.settingsActivityLog,
         name: 'settings-activity-log',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const ActivityLogScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.settingsBackup,
         name: 'settings-backup',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const BackupSettingsScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.settingsNotifications,
         name: 'settings-notifications',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const NotificationsSettingsScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.settingsZatca,
         name: 'settings-zatca',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const ZatcaComplianceScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.settingsHelp,
         name: 'settings-help',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const HelpSupportScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.settingsShipping,
         name: 'settings-shipping',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const ShippingGatewaysScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
 
@@ -1302,136 +1235,121 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.aiAssistant,
         name: 'ai-assistant',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const AiAssistantScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.aiSalesForecasting,
         name: 'ai-sales-forecasting',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const AiSalesForecastingScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.aiSmartPricing,
         name: 'ai-smart-pricing',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const AiSmartPricingScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.aiFraudDetection,
         name: 'ai-fraud-detection',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const AiFraudDetectionScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.aiBasketAnalysis,
         name: 'ai-basket-analysis',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const AiBasketAnalysisScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.aiCustomerRecommendations,
         name: 'ai-customer-recommendations',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const AiCustomerRecommendationsScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.aiSmartInventory,
         name: 'ai-smart-inventory',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const AiSmartInventoryScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.aiCompetitorAnalysis,
         name: 'ai-competitor-analysis',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const AiCompetitorAnalysisScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.aiSmartReports,
         name: 'ai-smart-reports',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const AiSmartReportsScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.aiStaffAnalytics,
         name: 'ai-staff-analytics',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const AiStaffAnalyticsScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.aiProductRecognition,
         name: 'ai-product-recognition',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const AiProductRecognitionScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.aiSentimentAnalysis,
         name: 'ai-sentiment-analysis',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const AiSentimentAnalysisScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.aiReturnPrediction,
         name: 'ai-return-prediction',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const AiReturnPredictionScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.aiPromotionDesigner,
         name: 'ai-promotion-designer',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const AiPromotionDesignerScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.aiChatWithData,
         name: 'ai-chat-with-data',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const AiChatWithDataScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
 
@@ -1441,10 +1359,9 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.ecommerce,
         name: 'ecommerce',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const EcommerceScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
 
@@ -1454,10 +1371,9 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.wallet,
         name: 'wallet',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const WalletScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
 
@@ -1467,10 +1383,9 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.subscription,
         name: 'subscription',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const SubscriptionScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
 
@@ -1480,10 +1395,9 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.mediaLibrary,
         name: 'media-library',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const MediaLibraryScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
 
@@ -1493,10 +1407,9 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.deviceLog,
         name: 'device-log',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const DeviceLogScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
 
@@ -1506,19 +1419,17 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.supplierReturns,
         name: 'supplier-returns',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const SupplierReturnScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.purchasesList,
         name: 'purchases-list',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const PurchasesListScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
@@ -1526,10 +1437,9 @@ final List<RouteBase> _routes = [
         name: 'purchase-detail',
         pageBuilder: (context, state) {
           final id = state.pathParameters['id'] ?? '';
-          return CustomTransitionPage(
-            key: state.pageKey,
+          return _buildFadePage(
+            state: state,
             child: PurchaseDetailScreen(purchaseId: id),
-            transitionsBuilder: _fadeTransition,
           );
         },
       ),
@@ -1538,10 +1448,9 @@ final List<RouteBase> _routes = [
         name: 'receiving-goods',
         pageBuilder: (context, state) {
           final id = state.pathParameters['id'] ?? '';
-          return CustomTransitionPage(
-            key: state.pageKey,
+          return _buildFadePage(
+            state: state,
             child: ReceivingGoodsScreen(purchaseId: id),
-            transitionsBuilder: _fadeTransition,
           );
         },
       ),
@@ -1550,74 +1459,66 @@ final List<RouteBase> _routes = [
         name: 'send-to-distributor',
         pageBuilder: (context, state) {
           final id = state.pathParameters['id'] ?? '';
-          return CustomTransitionPage(
-            key: state.pageKey,
+          return _buildFadePage(
+            state: state,
             child: SendToDistributorScreen(purchaseId: id),
-            transitionsBuilder: _fadeTransition,
           );
         },
       ),
       GoRoute(
         path: AppRoutes.giftCards,
         name: 'gift-cards',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const GiftCardsScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.employeeAttendance,
         name: 'employee-attendance',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const AttendanceScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.employeeCommissions,
         name: 'employee-commissions',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const CommissionScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.onlineOrders,
         name: 'online-orders',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const OnlineOrdersScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.damagedGoods,
         name: 'damaged-goods',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const DamagedGoodsScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.priceLists,
         name: 'price-lists',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const PriceListsScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
       GoRoute(
         path: AppRoutes.customerGroups,
         name: 'customer-groups',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const CustomerGroupsScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
 
@@ -1627,10 +1528,9 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.deliveryZones,
         name: 'delivery-zones',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const DeliveryZonesScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
 
@@ -1642,10 +1542,9 @@ final List<RouteBase> _routes = [
         name: 'employee-profile',
         pageBuilder: (context, state) {
           final userId = state.pathParameters['userId'] ?? '';
-          return CustomTransitionPage(
-            key: state.pageKey,
+          return _buildFadePage(
+            state: state,
             child: EmployeeProfileScreen(userId: userId),
-            transitionsBuilder: _fadeTransition,
           );
         },
       ),
@@ -1656,10 +1555,9 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.settingsWhatsApp,
         name: 'whatsapp-management',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const WhatsAppManagementScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
 
@@ -1669,10 +1567,9 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.kioskMode,
         name: 'kiosk',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
           child: const KioskScreen(),
-          transitionsBuilder: _fadeTransition,
         ),
       ),
     ],

@@ -48,6 +48,7 @@ class _KeyboardShortcutsScreenState
               color: AppColors.getTextPrimary(isDark),
             ),
             onPressed: () => context.pop(),
+            tooltip: l10n.back,
           ),
           onNotificationsTap: () => context.push(AppRoutes.notificationsCenter),
           userName:

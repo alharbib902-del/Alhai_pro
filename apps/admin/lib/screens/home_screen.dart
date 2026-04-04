@@ -28,12 +28,63 @@ class AdminHomeScreen extends ConsumerWidget {
       backgroundColor: colorScheme.surface,
       body: SafeArea(
         child: dashboardAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => SingleChildScrollView(
+          padding: const EdgeInsets.all(AlhaiSpacing.mdl),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header skeleton
+              const SkeletonLoader(width: 160, height: 24),
+              const SizedBox(height: AlhaiSpacing.xxs),
+              const SkeletonLoader(width: 100, height: 14),
+              const SizedBox(height: AlhaiSpacing.lg),
+              // Stat cards skeleton
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final crossAxisCount =
+                      constraints.maxWidth >= AlhaiBreakpoints.desktop
+                          ? 4
+                          : constraints.maxWidth >= AlhaiBreakpoints.tablet
+                              ? 2
+                              : 1;
+                  return GridView.count(
+                    crossAxisCount: crossAxisCount,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    crossAxisSpacing: AlhaiSpacing.md,
+                    mainAxisSpacing: AlhaiSpacing.md,
+                    childAspectRatio: 1.8,
+                    children: List.generate(4, (_) => const SkeletonCard()),
+                  );
+                },
+              ),
+              const SizedBox(height: AlhaiSpacing.lg),
+              // Quick actions skeleton
+              const SkeletonLoader(width: 120, height: 16),
+              const SizedBox(height: AlhaiSpacing.md),
+              Wrap(
+                spacing: AlhaiSpacing.sm,
+                runSpacing: AlhaiSpacing.sm,
+                children: List.generate(
+                  4,
+                  (_) => const SkeletonLoader(width: 120, height: 38, borderRadius: 12),
+                ),
+              ),
+              const SizedBox(height: AlhaiSpacing.lg),
+              // Recent sales skeleton
+              const SkeletonLoader(width: 140, height: 16),
+              const SizedBox(height: AlhaiSpacing.md),
+              ...List.generate(5, (_) => const SkeletonListItem(hasTrailing: true)),
+            ],
+          ),
+        ),
         error: (err, _) => Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.error_outline, size: 48, color: AppColors.error),
+              ExcludeSemantics(
+                child: Icon(Icons.error_outline, size: 48, color: AppColors.error),
+              ),
               const SizedBox(height: AlhaiSpacing.md),
               Text(
                 l10n.errorWithDetails('$err'),
@@ -49,7 +100,12 @@ class AdminHomeScreen extends ConsumerWidget {
             ],
           ),
         ),
-        data: (data) => RefreshIndicator(
+        data: (data) {
+          final screenWidth = MediaQuery.of(context).size.width;
+          final isTablet = screenWidth >= AlhaiBreakpoints.tablet &&
+              screenWidth < AlhaiBreakpoints.desktop;
+
+          return RefreshIndicator(
           onRefresh: () async => ref.invalidate(dashboardDataProvider),
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
@@ -168,8 +224,24 @@ class AdminHomeScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: AlhaiSpacing.lg),
 
-                // Recent sales
-                if (data.recentSales.isNotEmpty) ...[
+                // Recent sales -- tablet uses a 2-column side-by-side layout
+                if (isTablet && data.recentSales.isNotEmpty)
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        flex: 1,
+                        child: _RecentSalesColumn(
+                          sales: data.recentSales.take(5).toList(),
+                          title: l10n.recentTransactions,
+                          locale: locale,
+                          isDark: isDark,
+                          l10n: l10n,
+                        ),
+                      ),
+                    ],
+                  )
+                else if (data.recentSales.isNotEmpty) ...[
                   Text(
                     l10n.recentTransactions,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -178,7 +250,12 @@ class AdminHomeScreen extends ConsumerWidget {
                         ),
                   ),
                   const SizedBox(height: AlhaiSpacing.md),
-                  ...data.recentSales.take(5).map((sale) => Container(
+                  ...data.recentSales.take(5).map((sale) {
+                    final receiptLabel = sale.receiptNo.isNotEmpty ? sale.receiptNo : sale.id.substring(0, 8);
+                    final totalLabel = '${AppNumberFormatter.currency(sale.total, locale: locale)} ${l10n.sar}';
+                    return Semantics(
+                      label: '${l10n.recentTransactions}: $receiptLabel, $totalLabel',
+                      child: Container(
                         margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
                         padding: const EdgeInsets.all(AlhaiSpacing.md),
                         decoration: BoxDecoration(
@@ -194,13 +271,15 @@ class AdminHomeScreen extends ConsumerWidget {
                                 color: AppColors.primary.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(8),
                               ),
-                              child: const Icon(Icons.receipt_rounded,
-                                  color: AppColors.primary, size: 18),
+                              child: const ExcludeSemantics(
+                                child: Icon(Icons.receipt_rounded,
+                                    color: AppColors.primary, size: 18),
+                              ),
                             ),
                             const SizedBox(width: AlhaiSpacing.sm),
                             Expanded(
                               child: Text(
-                                sale.receiptNo.isNotEmpty ? sale.receiptNo : sale.id.substring(0, 8),
+                                receiptLabel,
                                 style: TextStyle(
                                   fontWeight: FontWeight.w500,
                                   color: AppColors.getTextPrimary(isDark),
@@ -208,7 +287,7 @@ class AdminHomeScreen extends ConsumerWidget {
                               ),
                             ),
                             Text(
-                              '${AppNumberFormatter.currency(sale.total, locale: locale)} ${l10n.sar}',
+                              totalLabel,
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.primary,
@@ -216,14 +295,99 @@ class AdminHomeScreen extends ConsumerWidget {
                             ),
                           ],
                         ),
-                      )),
+                      ),
+                    );
+                  }),
                 ],
               ],
             ),
           ),
+        );
+        },
+      ),
+      ),
+    );
+  }
+}
+
+/// Extracted recent sales column widget for tablet layout
+class _RecentSalesColumn extends StatelessWidget {
+  final List<dynamic> sales;
+  final String title;
+  final String locale;
+  final bool isDark;
+  final AppLocalizations l10n;
+
+  const _RecentSalesColumn({
+    required this.sales,
+    required this.title,
+    required this.locale,
+    required this.isDark,
+    required this.l10n,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
         ),
-      ),
-      ),
+        const SizedBox(height: AlhaiSpacing.md),
+        ...sales.map((sale) {
+          final receiptLabel = sale.receiptNo.isNotEmpty ? sale.receiptNo : sale.id.substring(0, 8);
+          final totalLabel = '${AppNumberFormatter.currency(sale.total, locale: locale)} ${l10n.sar}';
+          return Semantics(
+            label: '${l10n.recentTransactions}: $receiptLabel, $totalLabel',
+            child: Container(
+              margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
+              padding: const EdgeInsets.all(AlhaiSpacing.md),
+              decoration: BoxDecoration(
+                color: AppColors.getSurface(isDark),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppColors.getBorder(isDark)),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(AlhaiSpacing.xs),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const ExcludeSemantics(
+                      child: Icon(Icons.receipt_rounded,
+                          color: AppColors.primary, size: 18),
+                    ),
+                  ),
+                  const SizedBox(width: AlhaiSpacing.sm),
+                  Expanded(
+                    child: Text(
+                      receiptLabel,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.getTextPrimary(isDark),
+                      ),
+                    ),
+                  ),
+                  Text(
+                    totalLabel,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }),
+      ],
     );
   }
 }
@@ -247,69 +411,79 @@ class _StatTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(AlhaiSpacing.md),
-      decoration: BoxDecoration(
-        color: AppColors.getSurface(isDark),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.getBorder(isDark)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(AlhaiSpacing.xs),
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
+    final changeDesc = changePercent != null && changePercent != 0
+        ? ', ${changePercent! > 0 ? "increased" : "decreased"} by ${changePercent!.abs().toStringAsFixed(0)}%'
+        : '';
+    return Semantics(
+      label: '$label: $value$changeDesc',
+      child: Container(
+        padding: const EdgeInsets.all(AlhaiSpacing.md),
+        decoration: BoxDecoration(
+          color: AppColors.getSurface(isDark),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.getBorder(isDark)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(AlhaiSpacing.xs),
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: ExcludeSemantics(
+                    child: Icon(icon, color: color, size: 18),
+                  ),
                 ),
-                child: Icon(icon, color: color, size: 18),
+                const Spacer(),
+                if (changePercent != null && changePercent != 0)
+                  ExcludeSemantics(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          changePercent! >= 0
+                              ? Icons.arrow_upward_rounded
+                              : Icons.arrow_downward_rounded,
+                          size: 14,
+                          color: changePercent! >= 0 ? AppColors.success : AppColors.error,
+                        ),
+                        Text(
+                          '${changePercent!.abs().toStringAsFixed(0)}%',
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            color: changePercent! >= 0 ? AppColors.success : AppColors.error,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+            const Spacer(),
+            Text(
+              value,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: AppColors.getTextPrimary(isDark),
               ),
-              const Spacer(),
-              if (changePercent != null && changePercent != 0)
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      changePercent! >= 0
-                          ? Icons.arrow_upward_rounded
-                          : Icons.arrow_downward_rounded,
-                      size: 14,
-                      color: changePercent! >= 0 ? AppColors.success : AppColors.error,
-                    ),
-                    Text(
-                      '${changePercent!.abs().toStringAsFixed(0)}%',
-                      style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                        color: changePercent! >= 0 ? AppColors.success : AppColors.error,
-                      ),
-                    ),
-                  ],
-                ),
-            ],
-          ),
-          const Spacer(),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: AppColors.getTextPrimary(isDark),
             ),
-          ),
-          const SizedBox(height: AlhaiSpacing.xxxs),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 12,
-              color: AppColors.getTextMuted(isDark),
+            const SizedBox(height: AlhaiSpacing.xxxs),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                color: AppColors.getTextMuted(isDark),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -330,32 +504,38 @@ class _QuickAction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Container(
-          padding: const EdgeInsets.symmetric(
-              horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
-          decoration: BoxDecoration(
-            color: AppColors.getSurface(isDark),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.getBorder(isDark)),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(icon, size: 18, color: AppColors.primary),
-              const SizedBox(width: AlhaiSpacing.xs),
-              Text(
-                label,
-                style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.getTextPrimary(isDark),
+    return Semantics(
+      button: true,
+      label: label,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+                horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+            decoration: BoxDecoration(
+              color: AppColors.getSurface(isDark),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: AppColors.getBorder(isDark)),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ExcludeSemantics(
+                  child: Icon(icon, size: 18, color: AppColors.primary),
                 ),
-              ),
-            ],
+                const SizedBox(width: AlhaiSpacing.xs),
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.getTextPrimary(isDark),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

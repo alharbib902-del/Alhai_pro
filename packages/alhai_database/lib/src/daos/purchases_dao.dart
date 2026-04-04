@@ -49,4 +49,46 @@ class PurchasesDao extends DatabaseAccessor<AppDatabase> with _$PurchasesDaoMixi
   Future<int> deletePurchaseItems(String purchaseId) {
     return (delete(purchaseItemsTable)..where((i) => i.purchaseId.equals(purchaseId))).go();
   }
+
+  // ── Pagination ─────────────────────────────────────────────────
+
+  /// Paginated purchases (all statuses)
+  Future<List<PurchasesTableData>> getPurchasesPaginated(
+    String storeId, {
+    int offset = 0,
+    int limit = 20,
+  }) {
+    return (select(purchasesTable)
+      ..where((p) => p.storeId.equals(storeId))
+      ..orderBy([(p) => OrderingTerm.desc(p.createdAt)])
+      ..limit(limit, offset: offset))
+      .get();
+  }
+
+  /// Paginated purchases filtered by status
+  Future<List<PurchasesTableData>> getPurchasesByStatusPaginated(
+    String storeId,
+    String status, {
+    int offset = 0,
+    int limit = 20,
+  }) {
+    return (select(purchasesTable)
+      ..where((p) => p.storeId.equals(storeId) & p.status.equals(status))
+      ..orderBy([(p) => OrderingTerm.desc(p.createdAt)])
+      ..limit(limit, offset: offset))
+      .get();
+  }
+
+  /// Total count of purchases (for pagination controls)
+  Future<int> getPurchasesCount(String storeId, {String? status}) async {
+    final countExpr = purchasesTable.id.count();
+    var query = selectOnly(purchasesTable)
+      ..addColumns([countExpr])
+      ..where(purchasesTable.storeId.equals(storeId));
+    if (status != null) {
+      query.where(purchasesTable.status.equals(status));
+    }
+    final result = await query.getSingle();
+    return result.read(countExpr) ?? 0;
+  }
 }

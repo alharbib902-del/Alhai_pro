@@ -113,6 +113,7 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
                     IconButton(
                       onPressed: () => Navigator.pop(context),
                       icon: const Icon(Icons.close),
+                      tooltip: AppLocalizations.of(context)!.close,
                     ),
                   ],
                 ),
@@ -367,6 +368,7 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
                   IconButton(
                     icon: const Icon(Icons.close, color: AppColors.error, size: 20),
                     onPressed: () => _removeSplit(index),
+                    tooltip: AppLocalizations.of(context)!.delete,
                   ),
                 ],
               ),
@@ -451,14 +453,18 @@ class _PaymentMethodCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: AlhaiDurations.standard,
-      child: Material(
-        color: isSelected ? method.color.withValues(alpha: 0.1) : AppColors.grey100,
-        borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-        child: InkWell(
-          onTap: onTap,
+    return Semantics(
+      label: method.name,
+      button: true,
+      selected: isSelected,
+      child: AnimatedContainer(
+        duration: AlhaiDurations.standard,
+        child: Material(
+          color: isSelected ? method.color.withValues(alpha: 0.1) : AppColors.grey100,
           borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(AppSizes.radiusMd),
           child: Container(
             padding: const EdgeInsets.symmetric(
               vertical: AppSizes.md,
@@ -491,6 +497,7 @@ class _PaymentMethodCard extends StatelessWidget {
             ),
           ),
         ),
+      ),
       ),
     );
   }

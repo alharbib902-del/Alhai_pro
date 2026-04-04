@@ -260,6 +260,7 @@ class _PrinterSettingsScreenState
               color: AppColors.getTextPrimary(isDark),
             ),
             onPressed: () => context.pop(),
+            tooltip: l10n.back,
           ),
           onNotificationsTap: () =>
               context.push(AppRoutes.notificationsCenter),
@@ -540,7 +541,7 @@ class _PrinterSettingsScreenState
                         height: 18,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          color: Colors.white,
+                          color: AppColors.textOnPrimary,
                         ),
                       )
                     : const Icon(Icons.search_rounded, size: 18),
@@ -759,14 +760,14 @@ class _PrinterSettingsScreenState
             title: 'حجم الورق',
             subtitle: 'عرض ورق الطباعة الحرارية',
             trailing: SegmentedButton<PaperSize>(
-              segments: const [
+              segments: [
                 ButtonSegment(
                   value: PaperSize.mm58,
-                  label: Text('58mm'),
+                  label: Text(l10n.paperSize58mm),
                 ),
                 ButtonSegment(
                   value: PaperSize.mm80,
-                  label: Text('80mm'),
+                  label: Text(l10n.paperSize80mm),
                 ),
               ],
               selected: {service?.paperSize ?? PaperSize.mm80},

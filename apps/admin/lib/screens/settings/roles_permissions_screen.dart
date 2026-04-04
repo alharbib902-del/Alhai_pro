@@ -883,7 +883,7 @@ class _RoleFormDialogState extends State<_RoleFormDialog> {
     final l10n = AppLocalizations.of(context);
     return Dialog(
       child: Container(
-        width: 500,
+        width: ResponsiveDialog.maxWidth(context, maxDesktop: 500),
         constraints: BoxConstraints(
           maxHeight: context.screenHeight * 0.8,
         ),

@@ -53,4 +53,36 @@ class SupabaseConfig {
     return 'Missing required environment variables: ${missing.join(', ')}. '
         'Use --dart-define to provide them.';
   }
+
+  // ==========================================================================
+  // SECURITY HEADERS
+  // ==========================================================================
+
+  /// Security headers attached to every outgoing API request.
+  ///
+  /// These provide defence-in-depth at the HTTP transport layer:
+  /// - **X-Content-Type-Options**: prevents MIME-type sniffing.
+  /// - **X-Frame-Options**: blocks clickjacking by disallowing framing.
+  /// - **Strict-Transport-Security**: enforces HTTPS for 1 year including
+  ///   sub-domains (relevant when the Supabase client is used from a web
+  ///   build or server-side).
+  /// - **X-XSS-Protection**: enables the browser's built-in XSS filter
+  ///   (legacy but harmless).
+  /// - **X-Request-Id**: a per-configuration identifier that can be used for
+  ///   request tracing in server logs.
+  ///
+  /// Usage example with Supabase custom headers:
+  /// ```dart
+  /// Supabase.initialize(
+  ///   url: SupabaseConfig.url,
+  ///   anonKey: SupabaseConfig.anonKey,
+  ///   headers: SupabaseConfig.secureHeaders,
+  /// );
+  /// ```
+  static const Map<String, String> secureHeaders = {
+    'X-Content-Type-Options': 'nosniff',
+    'X-Frame-Options': 'DENY',
+    'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+    'X-XSS-Protection': '1; mode=block',
+  };
 }

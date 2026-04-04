@@ -7,7 +7,7 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiSpacing;
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiSpacing, AppColors;
 import 'package:alhai_l10n/alhai_l10n.dart';
 
 class _Denomination {
@@ -116,9 +116,7 @@ class _DenominationCounterWidgetState extends State<DenominationCounterWidget> {
           width: double.infinity,
           padding: const EdgeInsets.all(AlhaiSpacing.md),
           decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [Color(0xFF1A8FE3), Color(0xFF0EC9C9)],
-            ),
+            gradient: AppColors.denominationGradient,
             borderRadius: BorderRadius.circular(12),
           ),
           child: Column(
@@ -262,7 +260,7 @@ Future<double?> showDenominationCounterSheet(
           expand: false,
           builder: (_, scrollCtrl) => Container(
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF1E1E2E) : Colors.white,
+              color: isDark ? AppColors.backgroundDark : AppColors.surface,
               borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
             ),
             child: Column(
@@ -283,7 +281,7 @@ Future<double?> showDenominationCounterSheet(
                   padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md),
                   child: Row(
                     children: [
-                      const Icon(Icons.calculate_rounded, color: Color(0xFF1A8FE3)),
+                      const Icon(Icons.calculate_rounded, color: AppColors.denominationAccent),
                       const SizedBox(width: AlhaiSpacing.xs),
                       Text(AppLocalizations.of(ctx)!.countCurrencyBtn, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                       const Spacer(),

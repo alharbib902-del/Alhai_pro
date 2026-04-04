@@ -97,14 +97,17 @@ class ReturnsStatCard extends StatelessWidget {
                   ],
                 ),
               ),
-              Container(
-                width: compact ? 40 : 48,
-                height: compact ? 40 : 48,
-                decoration: BoxDecoration(
-                  color: isDark ? data.iconBgColor.withValues(alpha: 0.2) : data.iconBgColor,
-                  borderRadius: BorderRadius.circular(12),
+              Semantics(
+                label: data.title,
+                child: Container(
+                  width: compact ? 40 : 48,
+                  height: compact ? 40 : 48,
+                  decoration: BoxDecoration(
+                    color: isDark ? data.iconBgColor.withValues(alpha: 0.2) : data.iconBgColor,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(data.icon, size: compact ? 20 : 24, color: data.iconColor),
                 ),
-                child: Icon(data.icon, size: compact ? 20 : 24, color: data.iconColor),
               ),
             ],
           ),
@@ -168,7 +171,7 @@ class ReturnsStatCard extends StatelessWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.check, size: 12, color: data.badgeColor ?? AppColors.success),
+                      Icon(Icons.check, size: 12, color: data.badgeColor ?? AppColors.success, semanticLabel: data.badgeText),
                       const SizedBox(width: AlhaiSpacing.xxs),
                       Text(
                         data.badgeText!,

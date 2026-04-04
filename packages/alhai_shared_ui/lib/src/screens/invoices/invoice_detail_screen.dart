@@ -401,7 +401,7 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
               onPressed: () {},
               icon: Icon(isDark ? Icons.light_mode : Icons.dark_mode,
                   color: isDark
-                      ? const Color(0xFFFBBF24)
+                      ? AppColors.warning
                       : AppColors.textSecondary),
               style: IconButton.styleFrom(
                 shape: RoundedRectangleBorder(

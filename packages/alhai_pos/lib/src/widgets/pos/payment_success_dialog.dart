@@ -316,7 +316,7 @@ class _PaymentSuccessDialogState extends State<PaymentSuccessDialog>
                         ),
                   label: Text(_sent ? AppLocalizations.of(context)!.sentLabel : AppLocalizations.of(context)!.sendWhatsapp),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF25D366), // WhatsApp green
+                    backgroundColor: AppColors.whatsappGreen,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
                     shape: RoundedRectangleBorder(

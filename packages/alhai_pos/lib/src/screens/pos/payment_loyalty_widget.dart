@@ -112,18 +112,19 @@ class PaymentLoyaltyWidget extends StatelessWidget {
 
     final availablePoints = loyaltyAccount!.currentPoints;
     final maxSarEquivalent = availablePoints * loyaltySettings.pointValueSar;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 250),
       decoration: BoxDecoration(
         color: useLoyaltyPoints
-            ? const Color(0xFFF0FDF4) // green-50
-            : const Color(0xFFFFFBEB), // amber-50
+            ? (isDark ? AppColors.success.withValues(alpha: 0.1) : AppColors.successSurface)
+            : (isDark ? AppColors.warning.withValues(alpha: 0.1) : AppColors.warningSurface),
         borderRadius: BorderRadius.circular(AppRadius.lg),
         border: Border.all(
           color: useLoyaltyPoints
               ? AppColors.success.withValues(alpha: 0.5)
-              : const Color(0xFFFBBF24).withValues(alpha: 0.5),
+              : AppColors.warning.withValues(alpha: 0.5),
           width: 1.5,
         ),
       ),
@@ -136,7 +137,7 @@ class PaymentLoyaltyWidget extends StatelessWidget {
             children: [
               Icon(
                 Icons.stars_rounded,
-                color: useLoyaltyPoints ? AppColors.success : const Color(0xFFF59E0B),
+                color: useLoyaltyPoints ? AppColors.success : AppColors.warning,
                 size: 22,
               ),
               const SizedBox(width: AppSpacing.sm),

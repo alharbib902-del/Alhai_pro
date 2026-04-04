@@ -152,6 +152,88 @@ class AuthNotifier extends StateNotifier<AuthState> {
     _checkAuthStatus();
   }
 
+  // ==========================================================================
+  // SESSION VALIDATION ON APP RESUME
+  // ==========================================================================
+
+  /// Validates the current session and refreshes the token if needed.
+  ///
+  /// Call this from a [WidgetsBindingObserver.didChangeAppLifecycleState]
+  /// handler when [AppLifecycleState.resumed] is received to ensure the
+  /// session is still valid after the app returns from the background.
+  ///
+  /// Flow:
+  /// 1. If the Supabase session exists and is expired, attempt a refresh.
+  /// 2. If no Supabase session, fall back to SecureStorage expiry check.
+  /// 3. If the token is within the refresh buffer, proactively refresh.
+  /// 4. If all checks fail, mark the session as expired and clear storage.
+  Future<void> validateSession() async {
+    // Only validate if currently authenticated
+    if (state.status != AuthStatus.authenticated) return;
+
+    try {
+      // ── Check Supabase session first ──────────────────────────────
+      if (_supabaseClient != null) {
+        final session = _supabaseClient.auth.currentSession;
+        if (session != null) {
+          final expiry = session.expiresAt != null
+              ? DateTime.fromMillisecondsSinceEpoch(session.expiresAt! * 1000)
+              : state.sessionExpiry;
+
+          // Token expired → try refresh
+          if (expiry != null && DateTime.now().isAfter(expiry)) {
+            try {
+              await _supabaseClient.auth.refreshSession();
+              final refreshed = _supabaseClient.auth.currentSession;
+              if (refreshed != null) {
+                final newExpiry = refreshed.expiresAt != null
+                    ? DateTime.fromMillisecondsSinceEpoch(refreshed.expiresAt! * 1000)
+                    : DateTime.now().add(kSessionDuration);
+                await SecureStorageService.saveTokens(
+                  accessToken: refreshed.accessToken,
+                  refreshToken: refreshed.refreshToken ?? '',
+                  expiry: newExpiry,
+                );
+                state = state.copyWith(sessionExpiry: newExpiry);
+                return;
+              }
+            } catch (_) {
+              // Refresh failed — fall through to expiry handling
+            }
+            await _handleSessionExpired();
+            return;
+          }
+
+          // Within refresh buffer → proactive refresh
+          if (expiry != null) {
+            final refreshTime = expiry.subtract(kTokenRefreshBuffer);
+            if (DateTime.now().isAfter(refreshTime)) {
+              await _refreshToken();
+            }
+          }
+          return;
+        }
+      }
+
+      // ── Fallback: check SecureStorage expiry ──────────────────────
+      final isValid = await SecureStorageService.isSessionValid();
+      if (!isValid) {
+        await _handleSessionExpired();
+        return;
+      }
+
+      // Still valid but might need refresh
+      if (state.needsRefresh) {
+        await _refreshToken();
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('validateSession error: $e');
+      }
+      await _handleSessionExpired();
+    }
+  }
+
   /// SESSION-FIX: الاستماع لأحداث Supabase Auth لاستعادة الجلسة عند التحديث (F5)
   /// على الويب، Supabase قد تستعيد الجلسة بشكل غير متزامن بعد initialize().
   /// هذا الـ listener يلتقط الجلسة المستعادة ويحدّث الحالة.

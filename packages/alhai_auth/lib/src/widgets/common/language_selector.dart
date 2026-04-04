@@ -30,16 +30,10 @@ class LanguageSelectorButton extends ConsumerWidget {
     final currentLocale = localeState.locale;
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     
-    // ألوان متوافقة مع الوضع الداكن
-    final backgroundColor = isDarkMode 
-        ? const Color(0xFF374151) // Gray-700
-        : AppColors.backgroundSecondary;
-    final textColor = isDarkMode 
-        ? Colors.white 
-        : AppColors.textSecondary;
-    final iconColor = isDarkMode 
-        ? Colors.white70 
-        : AppColors.textTertiary;
+    final colorScheme = Theme.of(context).colorScheme;
+    final backgroundColor = colorScheme.surfaceContainerLow;
+    final textColor = colorScheme.onSurfaceVariant;
+    final iconColor = colorScheme.onSurfaceVariant;
 
     return InkWell(
       onTap: () => _showLanguageDialog(context, ref),
@@ -52,8 +46,8 @@ class LanguageSelectorButton extends ConsumerWidget {
         decoration: BoxDecoration(
           color: backgroundColor,
           borderRadius: BorderRadius.circular(8),
-          border: isDarkMode 
-              ? Border.all(color: Colors.white12) 
+          border: isDarkMode
+              ? Border.all(color: colorScheme.outlineVariant)
               : null,
         ),
         child: Row(
@@ -114,13 +108,9 @@ class LanguagePickerSheet extends ConsumerWidget {
     final currentLocale = localeState.locale;
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     
-    // ألوان متوافقة مع الوضع الفاتح والداكن
-    final backgroundColor = isDarkMode 
-        ? const Color(0xFF1E293B) // Slate-800
-        : Colors.white;
-    final handleColor = isDarkMode 
-        ? Colors.white24 
-        : AppColors.border;
+    final colorScheme = Theme.of(context).colorScheme;
+    final backgroundColor = colorScheme.surface;
+    final handleColor = colorScheme.outlineVariant;
 
     return Container(
       decoration: BoxDecoration(
@@ -147,7 +137,7 @@ class LanguagePickerSheet extends ConsumerWidget {
             child: Text(
               AppLocalizations.of(context)?.selectLanguage ?? 'Select Language',
               style: TextStyle(
-                color: isDarkMode ? Colors.white : AppColors.textPrimary,
+                color: colorScheme.onSurface,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -196,8 +186,8 @@ class _LanguageOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textColor = isDarkMode ? Colors.white : AppColors.textPrimary;
-    final subtitleColor = isDarkMode ? Colors.white70 : AppColors.textSecondary;
+    final textColor = Theme.of(context).colorScheme.onSurface;
+    final subtitleColor = Theme.of(context).colorScheme.onSurfaceVariant;
     
     return ListTile(
       onTap: onTap,

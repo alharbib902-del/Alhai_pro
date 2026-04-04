@@ -626,14 +626,14 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
                 width: 20,
                 height: 20,
                 child: CircularProgressIndicator(
-                    strokeWidth: 2, color: Colors.white),
+                    strokeWidth: 2, color: AppColors.textOnPrimary),
               )
             : const Icon(Icons.lock_rounded, size: 20),
         label: Text(l10n.closeShift,
             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.error,
-          foregroundColor: Colors.white,
+          foregroundColor: AppColors.textOnPrimary,
           padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

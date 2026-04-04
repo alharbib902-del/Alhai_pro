@@ -480,7 +480,7 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
             Center(
               child: Padding(
                 padding: const EdgeInsets.all(AlhaiSpacing.lg),
-                child: Text('Select products for labels',
+                child: Text(l10n.selectProductsForLabels,
                     style: TextStyle(
                         fontSize: 13,
                         color: AppColors.getTextMuted(isDark))),
@@ -608,7 +608,7 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
                 width: 20,
                 height: 20,
                 child: CircularProgressIndicator(
-                    strokeWidth: 2, color: Colors.white),
+                    strokeWidth: 2, color: AppColors.textOnPrimary),
               )
             : const Icon(Icons.print_rounded, size: 20),
         label: Text(
@@ -618,7 +618,7 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
         ),
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.primary,
-          foregroundColor: Colors.white,
+          foregroundColor: AppColors.textOnPrimary,
           padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12)),
@@ -639,7 +639,7 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content:
-              Text('Print job sent for ${_selectedIds.length} labels'),
+              Text(l10n.printJobSentForLabels(_selectedIds.length)),
           backgroundColor: AppColors.success,
         ),
       );

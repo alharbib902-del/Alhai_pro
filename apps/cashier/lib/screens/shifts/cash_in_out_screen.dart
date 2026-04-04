@@ -560,7 +560,7 @@ class _CashInOutScreenState extends ConsumerState<CashInOutScreen> {
                 width: 20,
                 height: 20,
                 child: CircularProgressIndicator(
-                    strokeWidth: 2, color: Colors.white),
+                    strokeWidth: 2, color: AppColors.textOnPrimary),
               )
             : Icon(
                 _isCashIn
@@ -574,7 +574,7 @@ class _CashInOutScreenState extends ConsumerState<CashInOutScreen> {
         ),
         style: FilledButton.styleFrom(
           backgroundColor: activeColor,
-          foregroundColor: Colors.white,
+          foregroundColor: AppColors.textOnPrimary,
           padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12)),

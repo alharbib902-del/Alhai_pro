@@ -833,7 +833,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
 
   Widget _buildWhatsAppPhoneInput() {
     final theme = Theme.of(context);
-    const whatsAppColor = Color(0xFF25D366);
+    const whatsAppColor = AppColors.whatsappGreen;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

@@ -390,7 +390,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
                   children: [
                     Text(
                       product.price.toStringAsFixed(2),
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
                         color: AppColors.primary,
@@ -426,7 +426,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
                         ),
                         child: Text(
                           l10n.inactive,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 11,
                             color: AppColors.warning,
                             fontWeight: FontWeight.w500,

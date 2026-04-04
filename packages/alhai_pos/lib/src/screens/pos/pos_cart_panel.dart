@@ -21,7 +21,7 @@ String _fmtCurrency(BuildContext context, double amount) =>
 // CART PANEL
 // =============================================================================
 
-class PosCartPanel extends ConsumerWidget {
+class PosCartPanel extends ConsumerStatefulWidget {
   final bool isBottomSheet;
   final String? orderNumber;
   final Function(double total)? onPayTap;
@@ -38,7 +38,15 @@ class PosCartPanel extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<PosCartPanel> createState() => _PosCartPanelState();
+}
+
+class _PosCartPanelState extends ConsumerState<PosCartPanel> {
+  final _listKey = GlobalKey<AnimatedListState>();
+  List<PosCartItem> _previousItems = [];
+
+  @override
+  Widget build(BuildContext context) {
     // M93: Watch the full cart state but use it efficiently.
     // The cart panel must react to all cart mutations (items, discount,
     // customer, notes) so a single watch is appropriate here.
@@ -53,10 +61,13 @@ class PosCartPanel extends ConsumerWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context)!;
 
+    // Sync the AnimatedList with the new items list
+    _syncAnimatedList(items);
+
     return Container(
       decoration: BoxDecoration(
         color: colorScheme.surface,
-        border: isBottomSheet
+        border: widget.isBottomSheet
             ? null
             : BorderDirectional(
                 start: BorderSide(
@@ -78,69 +89,20 @@ class PosCartPanel extends ConsumerWidget {
             color: colorScheme.outlineVariant,
           ),
 
-          // Cart items
+          // Cart items with AnimatedList
           Expanded(
             child: items.isEmpty
                 ? _buildEmptyCart(context, isDark, l10n)
-                : ListView.separated(
+                : AnimatedList(
+                    key: _listKey,
                     padding: const EdgeInsets.symmetric(
                         horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xs),
-                    itemCount: items.length,
-                    separatorBuilder: (_, __) => Divider(
-                      height: 16,
-                      color: colorScheme.surfaceContainerLow,
-                    ),
-                    itemBuilder: (context, index) {
+                    initialItemCount: items.length,
+                    itemBuilder: (context, index, animation) {
+                      if (index >= items.length) return const SizedBox.shrink();
                       final item = items[index];
-                      return Dismissible(
-                        key: ValueKey(item.product.id),
-                        direction: DismissDirection.endToStart,
-                        background: Container(
-                          alignment: AlignmentDirectional.centerEnd,
-                          padding: const EdgeInsetsDirectional.only(end: AlhaiSpacing.md),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.error,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: const Icon(Icons.delete_outline, color: Colors.white),
-                        ),
-                        // L32: Confirmation dialog before dismissing
-                        confirmDismiss: (_) async {
-                          final confirmed = await showDialog<bool>(
-                            context: context,
-                            builder: (ctx) => AlertDialog(
-                              title: Text(l10n.deleteConfirmTitle),
-                              content: Text(
-                                '${l10n.removeFromCart}: ${item.product.name}?',
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.pop(ctx, false),
-                                  child: Text(l10n.cancel),
-                                ),
-                                FilledButton(
-                                  onPressed: () => Navigator.pop(ctx, true),
-                                  style: FilledButton.styleFrom(
-                                    backgroundColor: Theme.of(ctx).colorScheme.error,
-                                  ),
-                                  child: Text(l10n.confirm),
-                                ),
-                              ],
-                            ),
-                          );
-                          return confirmed ?? false;
-                        },
-                        onDismissed: (_) {
-                          ref.read(cartStateProvider.notifier).removeProduct(item.product.id);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(l10n.itemDeletedMsg),
-                              behavior: SnackBarBehavior.floating,
-                              duration: const Duration(seconds: 2),
-                            ),
-                          );
-                        },
-                        child: PosCartItemTile(item: item),
+                      return _buildAnimatedCartItem(
+                        context, ref, item, animation, l10n,
                       );
                     },
                   ),
@@ -347,6 +309,115 @@ class PosCartPanel extends ConsumerWidget {
     );
   }
 
+  // --------------------------------------------------------------------------
+  // AnimatedList synchronisation
+  // --------------------------------------------------------------------------
+
+  /// Diff the old and new item lists, calling insertItem / removeItem as needed.
+  void _syncAnimatedList(List<PosCartItem> newItems) {
+    final oldIds = _previousItems.map((i) => i.product.id).toList();
+    final newIds = newItems.map((i) => i.product.id).toList();
+
+    // Items removed
+    for (var i = oldIds.length - 1; i >= 0; i--) {
+      if (!newIds.contains(oldIds[i])) {
+        final removedItem = _previousItems[i];
+        _listKey.currentState?.removeItem(
+          i,
+          (context, animation) => SizeTransition(
+            sizeFactor: animation,
+            child: SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(1, 0),
+                end: Offset.zero,
+              ).animate(animation),
+              child: PosCartItemTile(item: removedItem),
+            ),
+          ),
+          duration: const Duration(milliseconds: 300),
+        );
+      }
+    }
+
+    // Items added
+    for (var i = 0; i < newIds.length; i++) {
+      if (!oldIds.contains(newIds[i])) {
+        _listKey.currentState?.insertItem(
+          i,
+          duration: const Duration(milliseconds: 300),
+        );
+      }
+    }
+
+    _previousItems = List.of(newItems);
+  }
+
+  /// Build an animated cart item with slide-in and dismissible behaviour.
+  Widget _buildAnimatedCartItem(
+    BuildContext context,
+    WidgetRef ref,
+    PosCartItem item,
+    Animation<double> animation,
+    AppLocalizations l10n,
+  ) {
+    return SizeTransition(
+      sizeFactor: animation,
+      child: SlideTransition(
+        position: Tween<Offset>(
+          begin: const Offset(-1, 0),
+          end: Offset.zero,
+        ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic)),
+        child: Dismissible(
+          key: ValueKey(item.product.id),
+          direction: DismissDirection.endToStart,
+          background: Container(
+            alignment: AlignmentDirectional.centerEnd,
+            padding: const EdgeInsetsDirectional.only(end: AlhaiSpacing.md),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.error,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: const Icon(Icons.delete_outline, color: Colors.white),
+          ),
+          confirmDismiss: (_) async {
+            final confirmed = await showDialog<bool>(
+              context: context,
+              builder: (ctx) => AlertDialog(
+                title: Text(l10n.deleteConfirmTitle),
+                content: Text('${l10n.removeFromCart}: ${item.product.name}?'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(ctx, false),
+                    child: Text(l10n.cancel),
+                  ),
+                  FilledButton(
+                    onPressed: () => Navigator.pop(ctx, true),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: Theme.of(ctx).colorScheme.error,
+                    ),
+                    child: Text(l10n.confirm),
+                  ),
+                ],
+              ),
+            );
+            return confirmed ?? false;
+          },
+          onDismissed: (_) {
+            ref.read(cartStateProvider.notifier).removeProduct(item.product.id);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(l10n.itemDeletedMsg),
+                behavior: SnackBarBehavior.floating,
+                duration: const Duration(seconds: 2),
+              ),
+            );
+          },
+          child: PosCartItemTile(item: item),
+        ),
+      ),
+    );
+  }
+
   Widget _buildCartHeader(BuildContext context, WidgetRef ref,
       CartState cartState, bool isDark, AppLocalizations l10n) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -396,10 +467,10 @@ class PosCartPanel extends ConsumerWidget {
             ),
           ],
           const Spacer(),
-          if (orderNumber != null)
+          if (widget.orderNumber != null)
             Flexible(
               child: Text(
-                '#$orderNumber',
+                '#${widget.orderNumber}',
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontSize: 12,
@@ -750,8 +821,8 @@ class PosCartPanel extends ConsumerWidget {
                   hasItems: hasItems,
                   isDark: isDark,
                   label: l10n.draft,
-                  onTap: hasItems ? onHoldInvoice : null,
-                  onLongPress: onShowHeldInvoices,
+                  onTap: hasItems ? widget.onHoldInvoice : null,
+                  onLongPress: widget.onShowHeldInvoices,
                 ),
               ),
               const SizedBox(width: AlhaiSpacing.xs),
@@ -771,8 +842,8 @@ class PosCartPanel extends ConsumerWidget {
                     child: InkWell(
                       onTap: hasItems
                           ? () {
-                              if (onPayTap != null) {
-                                onPayTap!(total);
+                              if (widget.onPayTap != null) {
+                                widget.onPayTap!(total);
                               }
                             }
                           : null,

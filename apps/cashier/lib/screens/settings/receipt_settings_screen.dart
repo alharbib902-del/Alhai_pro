@@ -34,6 +34,7 @@ class _ReceiptSettingsScreenState
 
   bool _isLoading = true;
   bool _isSaving = false;
+  String? _error;
   bool _showLogo = true;
   bool _showCustomerName = true;
   bool _showCashierName = true;
@@ -54,7 +55,10 @@ class _ReceiptSettingsScreenState
   }
 
   Future<void> _loadSettings() async {
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
     try {
       final storeId = ref.read(currentStoreIdProvider)!;
       final settings = await (
@@ -81,6 +85,7 @@ class _ReceiptSettingsScreenState
       }
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Load receipt settings');
+      if (mounted) setState(() => _error = '$e');
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -129,7 +134,7 @@ class _ReceiptSettingsScreenState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error saving settings: $e'),
+            content: Text(AppLocalizations.of(context).errorSavingSettings('$e')),
             backgroundColor: AppColors.error,
           ),
         );
@@ -159,6 +164,7 @@ class _ReceiptSettingsScreenState
               color: AppColors.getTextPrimary(isDark),
             ),
             onPressed: () => context.pop(),
+            tooltip: l10n.back,
           ),
           onNotificationsTap: () => context.push(AppRoutes.notificationsCenter),
           userName:
@@ -168,7 +174,9 @@ class _ReceiptSettingsScreenState
         ),
         Expanded(
           child: _isLoading
-              ? const Center(child: CircularProgressIndicator())
+              ? const AppLoadingState()
+              : _error != null
+                  ? AppErrorState.general(context, message: _error!, onRetry: _loadSettings)
               : SingleChildScrollView(
                   padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
                   child: _buildContent(
@@ -448,7 +456,7 @@ class _ReceiptSettingsScreenState
             width: double.infinity,
             padding: const EdgeInsets.all(AlhaiSpacing.md),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF1A1A2E) : Colors.white,
+              color: isDark ? AppColors.backgroundDark : AppColors.surface,
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
                 color: AppColors.getBorder(isDark),
@@ -576,7 +584,7 @@ class _ReceiptSettingsScreenState
                 width: 20,
                 height: 20,
                 child: CircularProgressIndicator(
-                    strokeWidth: 2, color: Colors.white),
+                    strokeWidth: 2, color: AppColors.textOnPrimary),
               )
             : const Icon(Icons.save_rounded, size: 20),
         label: Text(
@@ -585,7 +593,7 @@ class _ReceiptSettingsScreenState
         ),
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.primary,
-          foregroundColor: Colors.white,
+          foregroundColor: AppColors.textOnPrimary,
           padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

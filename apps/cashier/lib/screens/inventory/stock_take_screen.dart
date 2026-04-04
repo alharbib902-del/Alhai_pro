@@ -198,7 +198,7 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
           Expanded(
             child: Column(
               children: [
-                Text('Total Items',
+                Text(l10n.totalItems,
                     style: TextStyle(fontSize: 11,
                         color: AppColors.getTextSecondary(isDark))),
                 const SizedBox(height: AlhaiSpacing.xxs),
@@ -394,7 +394,7 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
             width: 60,
             child: Column(
               children: [
-                Text('Variance',
+                Text(l10n.variance,
                     style: TextStyle(fontSize: 10,
                         color: AppColors.getTextMuted(isDark))),
                 const SizedBox(height: AlhaiSpacing.xxxs),
@@ -449,7 +449,7 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
               child: OutlinedButton.icon(
                 onPressed: _isSaving ? null : _saveCount,
                 icon: const Icon(Icons.save_outlined, size: 18),
-                label: const Text('Save Draft'),
+                label: Text(l10n.saveDraft),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.getTextSecondary(isDark),
                   side: BorderSide(color: AppColors.getBorder(isDark)),
@@ -465,12 +465,12 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
                 onPressed: _isSaving ? null : _finalizeCount,
                 icon: _isSaving
                     ? const SizedBox(width: 20, height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                        child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.textOnPrimary))
                     : const Icon(Icons.check_circle_rounded, size: 18),
-                label: const Text('Finalize'),
+                label: Text(l10n.finalize),
                 style: FilledButton.styleFrom(
                   backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
+                  foregroundColor: AppColors.textOnPrimary,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12)),

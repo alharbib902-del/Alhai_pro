@@ -116,7 +116,7 @@ class _DistributorReportsScreenState
                       label: const Text('إعادة المحاولة'),
                       style: FilledButton.styleFrom(
                         backgroundColor: AppColors.primary,
-                        foregroundColor: Colors.white,
+                        foregroundColor: AppColors.textOnPrimary,
                       ),
                     ),
                   ],
@@ -269,7 +269,7 @@ class _DistributorReportsScreenState
                     fontWeight:
                         isSelected ? FontWeight.w600 : FontWeight.normal,
                     color: isSelected
-                        ? Colors.white
+                        ? AppColors.textOnPrimary
                         : AppColors.getTextSecondary(isDark),
                   ),
                 ),
@@ -423,7 +423,7 @@ class _DistributorReportsScreenState
                       return BarTooltipItem(
                         '${NumberFormat('#,##0').format(rod.toY)} ر.س',
                         const TextStyle(
-                          color: Colors.white,
+                          color: AppColors.textOnPrimary,
                           fontWeight: FontWeight.bold,
                           fontSize: 12,
                         ),

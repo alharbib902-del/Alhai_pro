@@ -394,6 +394,27 @@
   "noProducts": "لا توجد منتجات",
   "addProductsToStart": "أضف منتجات للبدء",
   "undoComingSoon": "تراجع (قريباً)",
+  "undoneRemoved": "تراجع: حُذف {name}",
+  "@undoneRemoved": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "undoneAdded": "تراجع: أُعيد {name}",
+  "@undoneAdded": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "undoneQtyChanged": "تراجع: {name} الكمية {from} \u2192 {to}",
+  "@undoneQtyChanged": {
+    "placeholders": {
+      "name": {"type": "String"},
+      "from": {"type": "int"},
+      "to": {"type": "int"}
+    }
+  },
+  "nothingToUndo": "لا يوجد شيء للتراجع",
   "employees": "الموظفين",
   "loyaltyProgram": "برنامج الولاء",
   "newBadge": "جديد",
@@ -5535,5 +5556,93 @@
 
   "reportSettings": "إعدادات التقرير",
   "reportType": "نوع التقرير",
-  "paymentDistribution": "توزيع المدفوعات"
+  "paymentDistribution": "توزيع المدفوعات",
+
+  "allAccountsSettled": "جميع حسابات العملاء مسددة",
+  "confirmInterest": "تأكيد الفائدة",
+  "confirmInterestMessage": "تطبيق {rate}% فائدة على {count} حسابات؟\nإجمالي الفائدة: {amount} {currency}",
+  "@confirmInterestMessage": {
+    "placeholders": {
+      "rate": { "type": "String" },
+      "count": { "type": "int" },
+      "amount": { "type": "String" },
+      "currency": { "type": "String" }
+    }
+  },
+  "selectCustomers": "اختيار العملاء",
+  "deselectAll": "إلغاء تحديد الكل",
+  "preview": "معاينة",
+  "selectedCustomers": "العملاء المحددون",
+  "totalDebt": "إجمالي الديون",
+  "totalInterest": "إجمالي الفائدة",
+
+  "finalizeInvoice": "إنهاء الفاتورة",
+  "saveAsDraft": "حفظ كمسودة",
+  "saveDraft": "حفظ المسودة",
+  "finalize": "إنهاء",
+  "adjustQuantity": "تعديل الكمية",
+  "totalItems": "إجمالي العناصر",
+  "variance": "الفرق",
+
+  "orderNotFound": "لم يتم العثور على الطلب",
+  "share": "مشاركة",
+  "full": "كامل",
+  "processRefund": "معالجة الاسترداد",
+  "refundToCustomer": "استرداد للعميل",
+  "breakdown": "التفاصيل",
+  "nTransactions": "{count} معاملات",
+  "@nTransactions": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "customReport": "تقرير مخصص",
+  "reportBuilder": "منشئ التقارير",
+  "groupBy": "تجميع حسب",
+  "dateRange": "النطاق الزمني",
+  "fromLabel": "من",
+  "toLabel": "إلى",
+  "generateReport": "إنشاء التقرير",
+  "lastMonth": "الشهر الماضي",
+  "periods": "الفترات",
+  "periodLabel": "الفترة",
+  "valueLabel": "القيمة",
+  "tryDifferentFilters": "جرّب فلاتر مختلفة",
+
+  "scan": "مسح",
+  "selectProductFirst": "اختر منتج أولاً",
+  "selectProductsForLabels": "اختر منتجات للملصقات",
+  "printJobSentForLabels": "تم إرسال طباعة {count} ملصق",
+  "@printJobSentForLabels": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "test": "اختبار",
+  "paperSize58mm": "58مم",
+  "paperSize80mm": "80مم",
+  "errorSavingSettings": "خطأ في حفظ الإعدادات: {error}",
+  "@errorSavingSettings": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "restoreFailed": "فشل الاستعادة: {error}",
+  "@restoreFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "address": "العنوان",
+  "email": "البريد الإلكتروني",
+  "crNumber": "رقم السجل التجاري",
+  "city": "المدينة",
+  "optional": "اختياري",
+  "optionalNoteHint": "ملاحظة اختيارية...",
+  "clearField": "مسح",
+  "decreaseQuantity": "تقليل الكمية",
+  "increaseQuantity": "زيادة الكمية",
+  "copyToClipboard": "نسخ"
 }

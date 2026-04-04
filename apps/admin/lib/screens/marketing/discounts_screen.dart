@@ -8,11 +8,34 @@ import '../../providers/marketing_providers.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// Discounts Screen - شاشة الخصومات
-class DiscountsScreen extends ConsumerWidget {
+class DiscountsScreen extends ConsumerStatefulWidget {
   const DiscountsScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<DiscountsScreen> createState() => _DiscountsScreenState();
+}
+
+class _DiscountsScreenState extends ConsumerState<DiscountsScreen> {
+  final _searchController = TextEditingController();
+  String _searchQuery = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  List<DiscountsTableData> _filterDiscounts(List<DiscountsTableData> discounts) {
+    if (_searchQuery.isEmpty) return discounts;
+    final query = _searchQuery.toLowerCase();
+    return discounts.where((d) {
+      return d.name.toLowerCase().contains(query) ||
+          (d.nameEn?.toLowerCase().contains(query) ?? false);
+    }).toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
@@ -32,6 +55,48 @@ class DiscountsScreen extends ConsumerWidget {
           userName: l10n.cashCustomer,
           userRole: l10n.branchManager,
         ),
+        // Search bar
+        Padding(
+          padding: const EdgeInsets.symmetric(
+              horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+          child: TextField(
+            controller: _searchController,
+            onChanged: (value) => setState(() => _searchQuery = value.trim()),
+            decoration: InputDecoration(
+              hintText: l10n.search,
+              prefixIcon: const Icon(Icons.search, size: 20),
+              suffixIcon: _searchQuery.isNotEmpty
+                  ? IconButton(
+                      icon: const Icon(Icons.clear, size: 18),
+                      tooltip: l10n.clearSearch,
+                      onPressed: () {
+                        _searchController.clear();
+                        setState(() => _searchQuery = '');
+                      },
+                    )
+                  : null,
+              filled: true,
+              fillColor: isDark
+                  ? Colors.white.withValues(alpha: 0.05)
+                  : AppColors.border.withValues(alpha: 0.15),
+              contentPadding: const EdgeInsets.symmetric(
+                  horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Theme.of(context).dividerColor),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Theme.of(context).dividerColor),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide:
+                    const BorderSide(color: AppColors.primary, width: 2),
+              ),
+            ),
+          ),
+        ),
         Expanded(
           child: discountsAsync.when(
             loading: () => const Center(child: CircularProgressIndicator()),
@@ -40,16 +105,21 @@ class DiscountsScreen extends ConsumerWidget {
               message: error.toString(),
               onRetry: () => ref.invalidate(discountsListProvider),
             ),
-            data: (discounts) => SingleChildScrollView(
-              padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-              child: _DiscountsContent(
-                discounts: discounts,
-                isWideScreen: isWideScreen,
-                isMediumScreen: isMediumScreen,
-                isDark: isDark,
-                l10n: l10n,
-              ),
-            ),
+            data: (discounts) {
+              final filtered = _filterDiscounts(discounts);
+              return SingleChildScrollView(
+                padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                child: _DiscountsContent(
+                  discounts: discounts,
+                  filteredDiscounts: filtered,
+                  isWideScreen: isWideScreen,
+                  isMediumScreen: isMediumScreen,
+                  isDark: isDark,
+                  l10n: l10n,
+                  searchActive: _searchQuery.isNotEmpty,
+                ),
+              );
+            },
           ),
         ),
       ],
@@ -59,17 +129,21 @@ class DiscountsScreen extends ConsumerWidget {
 
 class _DiscountsContent extends ConsumerWidget {
   final List<DiscountsTableData> discounts;
+  final List<DiscountsTableData> filteredDiscounts;
   final bool isWideScreen;
   final bool isMediumScreen;
   final bool isDark;
   final AppLocalizations l10n;
+  final bool searchActive;
 
   const _DiscountsContent({
     required this.discounts,
+    required this.filteredDiscounts,
     required this.isWideScreen,
     required this.isMediumScreen,
     required this.isDark,
     required this.l10n,
+    this.searchActive = false,
   });
 
   @override
@@ -109,9 +183,11 @@ class _DiscountsContent extends ConsumerWidget {
         ),
         const SizedBox(height: AlhaiSpacing.mdl),
         if (discounts.isEmpty)
-          AppEmptyState.noOffers(context)
+          AppEmptyState.noOffers(context, onAdd: () => _showAddDialog(context, ref))
+        else if (searchActive && filteredDiscounts.isEmpty)
+          AppEmptyState.noSearchResults(context)
         else
-        ...discounts.map((discount) => Container(
+        ...filteredDiscounts.map((discount) => Container(
           margin: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
           decoration: BoxDecoration(
             color: !discount.isActive ? Theme.of(context).colorScheme.surfaceContainerLowest : cardColor,

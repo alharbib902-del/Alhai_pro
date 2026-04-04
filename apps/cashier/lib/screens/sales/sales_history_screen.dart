@@ -329,6 +329,7 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
                 },
                 icon: Icon(Icons.clear_rounded,
                     color: AppColors.getTextMuted(isDark)),
+                tooltip: l10n.clearField,
               )
             : null,
         filled: true,
@@ -929,7 +930,7 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
       case 'card':
         return AppColors.info;
       case 'mixed':
-        return const Color(0xFF8B5CF6);
+        return AppColors.purple;
       case 'credit':
         return AppColors.warning;
       default:
@@ -997,7 +998,7 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
       case 'cancelled':
         return AppColors.error;
       case 'refunded':
-        return const Color(0xFF8B5CF6);
+        return AppColors.purple;
       default:
         return AppColors.info;
     }

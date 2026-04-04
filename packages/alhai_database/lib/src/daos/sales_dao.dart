@@ -88,28 +88,48 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
   Future<int> voidSale(String id) {
     return transaction(() async {
       try {
+        // 0. جلب store_id من البيع لتحديد المتجر
+        final saleRow = await customSelect(
+          'SELECT store_id FROM sales WHERE id = ?',
+          variables: [Variable.withString(id)],
+        ).getSingleOrNull();
+        final storeId = saleRow?.data['store_id'] as String?;
+
         // 1. جلب عناصر البيع لاستعادة الكميات
         final items = await customSelect(
           'SELECT product_id, qty FROM sale_items WHERE sale_id = ?',
           variables: [Variable.withString(id)],
         ).get();
 
-        // 2. استعادة المخزون لكل منتج
+        // 2. استعادة المخزون لكل منتج مع store_id filter و updated_at
+        final now = DateTime.now();
         for (final item in items) {
-          final productId = item.data['product_id'] as String;
-          final qty = item.data['qty'];
-          final qtyDouble = (qty is int) ? qty.toDouble() : qty as double;
-          await customStatement(
-            'UPDATE products SET stock_qty = stock_qty + ? WHERE id = ?',
-            [Variable.withReal(qtyDouble), Variable.withString(productId)],
-          );
+          try {
+            final productId = item.data['product_id'] as String;
+            final qty = item.data['qty'];
+            final qtyDouble = (qty is int) ? qty.toDouble() : qty as double;
+            await customStatement(
+              'UPDATE products SET stock_qty = stock_qty + ?, updated_at = ? WHERE id = ?'
+              '${storeId != null ? ' AND store_id = ?' : ''}',
+              [
+                Variable.withReal(qtyDouble),
+                Variable.withDateTime(now),
+                Variable.withString(productId),
+                if (storeId != null) Variable.withString(storeId),
+              ],
+            );
+          } catch (e) {
+            debugPrint('[DB] voidSale: failed to restore stock for '
+                'product ${item.data['product_id']} in sale $id: $e');
+            rethrow;
+          }
         }
 
         // 3. تحديث حالة البيع إلى ملغي
         return (update(salesTable)..where((s) => s.id.equals(id)))
           .write(SalesTableCompanion(
             status: const Value('voided'),
-            updatedAt: Value(DateTime.now()),
+            updatedAt: Value(now),
           ));
       } catch (e) {
         debugPrint('[DB] voidSale transaction failed for $id: $e');

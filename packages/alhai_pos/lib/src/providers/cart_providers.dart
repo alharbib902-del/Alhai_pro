@@ -305,6 +305,34 @@ class CartPersistenceService {
 }
 
 // ============================================================================
+// UNDO STACK
+// ============================================================================
+
+/// نوع الإجراء القابل للتراجع
+enum CartUndoType { add, remove, quantityChange }
+
+/// إجراء واحد يمكن التراجع عنه
+class UndoAction {
+  final CartUndoType type;
+  final String productId;
+  final String productName;
+  final Product? product;       // needed to re-add after remove
+  final int? previousQuantity;  // for qty changes
+  final int? newQuantity;       // for qty changes
+  final double? customPrice;    // preserve custom price on re-add
+
+  const UndoAction({
+    required this.type,
+    required this.productId,
+    required this.productName,
+    this.product,
+    this.previousQuantity,
+    this.newQuantity,
+    this.customPrice,
+  });
+}
+
+// ============================================================================
 // CART NOTIFIER
 // ============================================================================
 
@@ -313,6 +341,10 @@ class CartNotifier extends StateNotifier<CartState> {
   final CartPersistenceService _persistence;
   bool _isInitialized = false;
   Timer? _debounceTimer;
+
+  /// Undo stack — max 10 actions
+  static const int _maxUndoActions = 10;
+  final List<UndoAction> _undoStack = [];
 
   /// سلة محفوظة بانتظار تأكيد المستخدم
   CartState? _pendingDraft;
@@ -375,6 +407,102 @@ class CartNotifier extends StateNotifier<CartState> {
     super.dispose();
   }
 
+  // --------------------------------------------------------------------------
+  // Undo helpers
+  // --------------------------------------------------------------------------
+
+  void _pushUndo(UndoAction action) {
+    _undoStack.add(action);
+    if (_undoStack.length > _maxUndoActions) {
+      _undoStack.removeAt(0);
+    }
+  }
+
+  /// Whether there are actions that can be undone.
+  bool get canUndo => _undoStack.isNotEmpty;
+
+  /// Pop the last action and reverse it. Returns the action for SnackBar display,
+  /// or null if the stack was empty.
+  UndoAction? undo() {
+    if (_undoStack.isEmpty) return null;
+    final action = _undoStack.removeLast();
+
+    switch (action.type) {
+      case CartUndoType.add:
+        // Undo an add → remove the product (or reduce qty if it was an increment)
+        final existingIndex = state.items.indexWhere(
+          (item) => item.product.id == action.productId,
+        );
+        if (existingIndex >= 0) {
+          final existing = state.items[existingIndex];
+          if (existing.quantity > 1 && action.previousQuantity != null) {
+            // Was an existing item that got its qty bumped
+            final updatedItems = [...state.items];
+            updatedItems[existingIndex] = existing.copyWith(
+              quantity: action.previousQuantity!,
+            );
+            state = state.copyWith(items: updatedItems);
+          } else {
+            // Was a brand new item → remove entirely
+            state = state.copyWith(
+              items: state.items.where(
+                (item) => item.product.id != action.productId,
+              ).toList(),
+            );
+          }
+        }
+
+      case CartUndoType.remove:
+        // Undo a remove → re-add the product
+        if (action.product != null) {
+          state = state.copyWith(
+            items: [
+              ...state.items,
+              PosCartItem(
+                product: action.product!,
+                quantity: action.previousQuantity ?? 1,
+                customPrice: action.customPrice,
+              ),
+            ],
+          );
+        }
+
+      case CartUndoType.quantityChange:
+        // Undo a quantity change → revert to previous quantity
+        if (action.previousQuantity != null) {
+          if (action.previousQuantity! <= 0) {
+            // Was removed due to qty going to 0 → re-add
+            if (action.product != null) {
+              state = state.copyWith(
+                items: [
+                  ...state.items,
+                  PosCartItem(
+                    product: action.product!,
+                    quantity: 1,
+                    customPrice: action.customPrice,
+                  ),
+                ],
+              );
+            }
+          } else {
+            final updatedItems = state.items.map((item) {
+              if (item.product.id == action.productId) {
+                return item.copyWith(quantity: action.previousQuantity!);
+              }
+              return item;
+            }).toList();
+            state = state.copyWith(items: updatedItems);
+          }
+        }
+    }
+
+    _saveCart();
+    return action;
+  }
+
+  /// Clear the undo stack (e.g. after payment or cart clear).
+  void clearUndoStack() => _undoStack.clear();
+
   /// إضافة منتج للسلة
   void addProduct(Product product, {int quantity = 1, double? customPrice}) {
     final existingIndex = state.items.indexWhere(
@@ -385,6 +513,13 @@ class CartNotifier extends StateNotifier<CartState> {
       // تحديث الكمية إذا كان موجود
       final updatedItems = [...state.items];
       final existingItem = updatedItems[existingIndex];
+      _pushUndo(UndoAction(
+        type: CartUndoType.add,
+        productId: product.id,
+        productName: product.name,
+        product: product,
+        previousQuantity: existingItem.quantity,
+      ));
       updatedItems[existingIndex] = existingItem.copyWith(
         quantity: existingItem.quantity + quantity,
         customPrice: customPrice ?? existingItem.customPrice,
@@ -392,6 +527,12 @@ class CartNotifier extends StateNotifier<CartState> {
       state = state.copyWith(items: updatedItems);
     } else {
       // إضافة عنصر جديد
+      _pushUndo(UndoAction(
+        type: CartUndoType.add,
+        productId: product.id,
+        productName: product.name,
+        product: product,
+      ));
       state = state.copyWith(
         items: [
           ...state.items,
@@ -408,6 +549,19 @@ class CartNotifier extends StateNotifier<CartState> {
 
   /// إزالة منتج من السلة
   void removeProduct(String productId) {
+    final removedItem = state.items.where(
+      (item) => item.product.id == productId,
+    ).firstOrNull;
+    if (removedItem != null) {
+      _pushUndo(UndoAction(
+        type: CartUndoType.remove,
+        productId: productId,
+        productName: removedItem.product.name,
+        product: removedItem.product,
+        previousQuantity: removedItem.quantity,
+        customPrice: removedItem.customPrice,
+      ));
+    }
     state = state.copyWith(
       items: state.items.where((item) => item.product.id != productId).toList(),
     );
@@ -419,6 +573,21 @@ class CartNotifier extends StateNotifier<CartState> {
     if (quantity <= 0) {
       removeProduct(productId);
       return;
+    }
+
+    final existing = state.items.where(
+      (item) => item.product.id == productId,
+    ).firstOrNull;
+    if (existing != null) {
+      _pushUndo(UndoAction(
+        type: CartUndoType.quantityChange,
+        productId: productId,
+        productName: existing.product.name,
+        product: existing.product,
+        previousQuantity: existing.quantity,
+        newQuantity: quantity,
+        customPrice: existing.customPrice,
+      ));
     }
 
     final updatedItems = state.items.map((item) {
@@ -497,6 +666,7 @@ class CartNotifier extends StateNotifier<CartState> {
   /// تفريغ السلة
   void clear() {
     state = const CartState();
+    _undoStack.clear();
     _persistence.clearCart();
   }
 

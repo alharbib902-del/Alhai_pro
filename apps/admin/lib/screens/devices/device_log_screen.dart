@@ -23,11 +23,18 @@ class _DeviceLogScreenState extends ConsumerState<DeviceLogScreen> {
   String? _error;
   DateTimeRange? _dateRange;
   String _searchQuery = '';
+  final Debouncer _searchDebouncer = Debouncer();
 
   @override
   void initState() {
     super.initState();
     _loadLogs();
+  }
+
+  @override
+  void dispose() {
+    _searchDebouncer.dispose();
+    super.dispose();
   }
 
   Future<void> _loadLogs() async {
@@ -273,7 +280,9 @@ class _DeviceLogScreenState extends ConsumerState<DeviceLogScreen> {
                   const EdgeInsets.symmetric(vertical: 10),
             ),
             onChanged: (value) {
-              setState(() => _searchQuery = value);
+              _searchDebouncer.run(() {
+                if (mounted) setState(() => _searchQuery = value);
+              });
             },
           ),
         ),

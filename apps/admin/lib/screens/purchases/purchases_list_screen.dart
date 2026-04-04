@@ -20,6 +20,9 @@ class PurchasesListScreen extends ConsumerStatefulWidget {
 class _PurchasesListScreenState extends ConsumerState<PurchasesListScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  final _searchController = TextEditingController();
+  String _searchQuery = '';
+  final Debouncer _searchDebouncer = Debouncer();
 
   static const _tabs = ['all', 'draft', 'sent', 'approved', 'received'];
 
@@ -32,7 +35,20 @@ class _PurchasesListScreenState extends ConsumerState<PurchasesListScreen>
   @override
   void dispose() {
     _tabController.dispose();
+    _searchController.dispose();
+    _searchDebouncer.dispose();
     super.dispose();
+  }
+
+  /// Filter purchases by search query (supplier name, purchase number, amount)
+  List<PurchasesTableData> _filterPurchases(List<PurchasesTableData> purchases) {
+    if (_searchQuery.isEmpty) return purchases;
+    final query = _searchQuery.toLowerCase();
+    return purchases.where((p) {
+      return p.purchaseNumber.toLowerCase().contains(query) ||
+          (p.supplierName?.toLowerCase().contains(query) ?? false) ||
+          p.total.toStringAsFixed(2).contains(query);
+    }).toList();
   }
 
   /// Returns the localized label for each tab
@@ -109,6 +125,52 @@ class _PurchasesListScreenState extends ConsumerState<PurchasesListScreen>
           userName: l10n.cashCustomer,
           userRole: l10n.branchManager,
         ),
+        // Search bar
+        Padding(
+          padding: const EdgeInsets.symmetric(
+              horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+          child: TextField(
+            controller: _searchController,
+            onChanged: (value) {
+              _searchDebouncer.run(() {
+                if (mounted) setState(() => _searchQuery = value.trim());
+              });
+            },
+            decoration: InputDecoration(
+              hintText: l10n.search,
+              prefixIcon: const Icon(Icons.search, size: 20),
+              suffixIcon: _searchQuery.isNotEmpty
+                  ? IconButton(
+                      icon: const Icon(Icons.clear, size: 18),
+                      tooltip: l10n.clearSearch,
+                      onPressed: () {
+                        _searchController.clear();
+                        setState(() => _searchQuery = '');
+                      },
+                    )
+                  : null,
+              filled: true,
+              fillColor: isDark
+                  ? Colors.white.withValues(alpha: 0.05)
+                  : AppColors.border.withValues(alpha: 0.15),
+              contentPadding: const EdgeInsets.symmetric(
+                  horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Theme.of(context).dividerColor),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Theme.of(context).dividerColor),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide:
+                    const BorderSide(color: AppColors.primary, width: 2),
+              ),
+            ),
+          ),
+        ),
         // Tab bar
         Container(
           color: Theme.of(context).colorScheme.surface,
@@ -132,12 +194,17 @@ class _PurchasesListScreenState extends ConsumerState<PurchasesListScreen>
             controller: _tabController,
             children: _tabs.map((tab) {
               if (tab == 'all') {
-                return _AllPurchasesTab(isWide: isWide, isDark: isDark);
+                return _AllPurchasesTab(
+                  isWide: isWide,
+                  isDark: isDark,
+                  filterPurchases: _filterPurchases,
+                );
               }
               return _FilteredPurchasesTab(
                 status: tab,
                 isWide: isWide,
                 isDark: isDark,
+                filterPurchases: _filterPurchases,
               );
             }).toList(),
           ),
@@ -148,32 +215,64 @@ class _PurchasesListScreenState extends ConsumerState<PurchasesListScreen>
 }
 
 // ---------------------------------------------------------------------------
-// ALL tab - uses purchasesListProvider
+// ALL tab - uses paginatedPurchasesProvider
 // ---------------------------------------------------------------------------
-class _AllPurchasesTab extends ConsumerWidget {
+class _AllPurchasesTab extends ConsumerStatefulWidget {
   final bool isWide;
   final bool isDark;
+  final List<PurchasesTableData> Function(List<PurchasesTableData>) filterPurchases;
 
-  const _AllPurchasesTab({required this.isWide, required this.isDark});
+  const _AllPurchasesTab({
+    required this.isWide,
+    required this.isDark,
+    required this.filterPurchases,
+  });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final asyncPurchases = ref.watch(purchasesListProvider);
-    return asyncPurchases.when(
+  ConsumerState<_AllPurchasesTab> createState() => _AllPurchasesTabState();
+}
+
+class _AllPurchasesTabState extends ConsumerState<_AllPurchasesTab> {
+  int _currentPage = 1;
+
+  @override
+  Widget build(BuildContext context) {
+    final params = PurchasesPageParams(page: _currentPage);
+    final asyncData = ref.watch(paginatedPurchasesProvider(params));
+    return asyncData.when(
       loading: () => const Padding(
         padding: EdgeInsets.all(AlhaiSpacing.md),
         child: ShimmerList(itemCount: 6, itemHeight: 72),
       ),
       error: (e, _) => _ErrorView(error: e.toString()),
-      data: (purchases) {
-        if (purchases.isEmpty) return const _EmptyView();
+      data: (paginated) {
+        final filtered = widget.filterPurchases(paginated.items);
+        if (paginated.items.isEmpty && _currentPage == 1) {
+          return const _EmptyView();
+        }
+        if (filtered.isEmpty) {
+          return AppEmptyState.noSearchResults(context);
+        }
         return RefreshIndicator(
-          onRefresh: () async => ref.invalidate(purchasesListProvider),
+          onRefresh: () async =>
+              ref.invalidate(paginatedPurchasesProvider(params)),
           color: AppColors.primary,
-          child: _PurchasesContent(
-            purchases: purchases,
-            isWide: isWide,
-            isDark: isDark,
+          child: Column(
+            children: [
+              Expanded(
+                child: _PurchasesContent(
+                  purchases: filtered,
+                  isWide: widget.isWide,
+                  isDark: widget.isDark,
+                ),
+              ),
+              if (paginated.totalPages > 1)
+                _PaginationControls(
+                  currentPage: paginated.currentPage,
+                  totalPages: paginated.totalPages,
+                  onPageChanged: (page) => setState(() => _currentPage = page),
+                ),
+            ],
           ),
         );
       },
@@ -182,37 +281,68 @@ class _AllPurchasesTab extends ConsumerWidget {
 }
 
 // ---------------------------------------------------------------------------
-// Filtered tab - uses purchasesByStatusProvider
+// Filtered tab - uses paginatedPurchasesProvider with status
 // ---------------------------------------------------------------------------
-class _FilteredPurchasesTab extends ConsumerWidget {
+class _FilteredPurchasesTab extends ConsumerStatefulWidget {
   final String status;
   final bool isWide;
   final bool isDark;
+  final List<PurchasesTableData> Function(List<PurchasesTableData>) filterPurchases;
 
   const _FilteredPurchasesTab({
     required this.status,
     required this.isWide,
     required this.isDark,
+    required this.filterPurchases,
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final asyncPurchases = ref.watch(purchasesByStatusProvider(status));
-    return asyncPurchases.when(
+  ConsumerState<_FilteredPurchasesTab> createState() =>
+      _FilteredPurchasesTabState();
+}
+
+class _FilteredPurchasesTabState extends ConsumerState<_FilteredPurchasesTab> {
+  int _currentPage = 1;
+
+  @override
+  Widget build(BuildContext context) {
+    final params = PurchasesPageParams(
+        page: _currentPage, status: widget.status);
+    final asyncData = ref.watch(paginatedPurchasesProvider(params));
+    return asyncData.when(
       loading: () => const Padding(
         padding: EdgeInsets.all(AlhaiSpacing.md),
         child: ShimmerList(itemCount: 6, itemHeight: 72),
       ),
       error: (e, _) => _ErrorView(error: e.toString()),
-      data: (purchases) {
-        if (purchases.isEmpty) return const _EmptyView();
+      data: (paginated) {
+        final filtered = widget.filterPurchases(paginated.items);
+        if (paginated.items.isEmpty && _currentPage == 1) {
+          return const _EmptyView();
+        }
+        if (filtered.isEmpty) {
+          return AppEmptyState.noSearchResults(context);
+        }
         return RefreshIndicator(
-          onRefresh: () async => ref.invalidate(purchasesByStatusProvider(status)),
+          onRefresh: () async =>
+              ref.invalidate(paginatedPurchasesProvider(params)),
           color: AppColors.primary,
-          child: _PurchasesContent(
-            purchases: purchases,
-            isWide: isWide,
-            isDark: isDark,
+          child: Column(
+            children: [
+              Expanded(
+                child: _PurchasesContent(
+                  purchases: filtered,
+                  isWide: widget.isWide,
+                  isDark: widget.isDark,
+                ),
+              ),
+              if (paginated.totalPages > 1)
+                _PaginationControls(
+                  currentPage: paginated.currentPage,
+                  totalPages: paginated.totalPages,
+                  onPageChanged: (page) => setState(() => _currentPage = page),
+                ),
+            ],
           ),
         );
       },
@@ -240,9 +370,9 @@ class _PurchasesContent extends StatelessWidget {
       children: [
         isWide ? _buildDataTable(context) : _buildCardList(context),
         // FAB
-        Positioned(
+        PositionedDirectional(
           bottom: 24,
-          left: 24,
+          start: 24,
           child: FloatingActionButton.extended(
             heroTag: 'purchases_fab',
             backgroundColor: AppColors.primary,
@@ -257,7 +387,7 @@ class _PurchasesContent extends StatelessWidget {
   }
 
   Widget _buildDataTable(BuildContext context) {
-    final dateFormat = DateFormat('yyyy/MM/dd', 'ar');
+    final dateFormat = DateFormat('yyyy/MM/dd', Localizations.localeOf(context).languageCode);
     return SingleChildScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
       padding: const EdgeInsets.all(AlhaiSpacing.lg),
@@ -335,7 +465,7 @@ class _PurchasesContent extends StatelessWidget {
   }
 
   Widget _buildCardList(BuildContext context) {
-    final dateFormat = DateFormat('yyyy/MM/dd', 'ar');
+    final dateFormat = DateFormat('yyyy/MM/dd', Localizations.localeOf(context).languageCode);
     return ListView.separated(
       physics: const AlwaysScrollableScrollPhysics(),
       padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 80),
@@ -382,10 +512,12 @@ class _PurchasesContent extends StatelessWidget {
                 // Supplier
                 Row(
                   children: [
-                    Icon(
-                      Icons.store_rounded,
-                      size: 16,
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ExcludeSemantics(
+                      child: Icon(
+                        Icons.store_rounded,
+                        size: 16,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                     ),
                     const SizedBox(width: 6),
                     Expanded(
@@ -442,6 +574,23 @@ class _StatusBadge extends StatelessWidget {
 
   const _StatusBadge({required this.status, required this.isDark});
 
+  static IconData _statusIcon(String status) {
+    switch (status) {
+      case 'draft':
+        return Icons.edit_note_rounded;
+      case 'sent':
+        return Icons.send_rounded;
+      case 'approved':
+        return Icons.check_circle_outline_rounded;
+      case 'received':
+        return Icons.inventory_2_rounded;
+      case 'completed':
+        return Icons.done_all_rounded;
+      default:
+        return Icons.info_outline_rounded;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final color = _PurchasesListScreenState.statusColor(status);
@@ -452,13 +601,67 @@ class _StatusBadge extends StatelessWidget {
         color: color.withValues(alpha: isDark ? 0.25 : 0.12),
         borderRadius: BorderRadius.circular(20),
       ),
-      child: Text(
-        label,
-        style: TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-          color: isDark ? color.withValues(alpha: 0.9) : color,
-        ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(_statusIcon(status), size: 14, color: isDark ? color.withValues(alpha: 0.9) : color),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: isDark ? color.withValues(alpha: 0.9) : color,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Pagination controls
+// ---------------------------------------------------------------------------
+class _PaginationControls extends StatelessWidget {
+  final int currentPage;
+  final int totalPages;
+  final ValueChanged<int> onPageChanged;
+
+  const _PaginationControls({
+    required this.currentPage,
+    required this.totalPages,
+    required this.onPageChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          IconButton(
+            onPressed: currentPage > 1
+                ? () => onPageChanged(currentPage - 1)
+                : null,
+            icon: const Icon(Icons.chevron_left_rounded),
+            tooltip: AppLocalizations.of(context).previous,
+          ),
+          const SizedBox(width: 8),
+          Text(
+            '$currentPage / $totalPages',
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+          const SizedBox(width: 8),
+          IconButton(
+            onPressed: currentPage < totalPages
+                ? () => onPageChanged(currentPage + 1)
+                : null,
+            icon: const Icon(Icons.chevron_right_rounded),
+            tooltip: AppLocalizations.of(context).next,
+          ),
+        ],
       ),
     );
   }
@@ -499,7 +702,9 @@ class _ErrorView extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.error_outline, size: 48, color: AppColors.error),
+            const ExcludeSemantics(
+              child: Icon(Icons.error_outline, size: 48, color: AppColors.error),
+            ),
             const SizedBox(height: AlhaiSpacing.md),
             Text(
               AppLocalizations.of(context).errorLoadingData,

@@ -119,7 +119,7 @@ class _DistributorShellState extends ConsumerState<DistributorShell> {
                 ),
                 child: const Icon(
                   Icons.store,
-                  color: Colors.white,
+                  color: AppColors.textOnPrimary,
                   size: 22,
                 ),
               ),
@@ -133,14 +133,14 @@ class _DistributorShellState extends ConsumerState<DistributorShell> {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: isDark ? Colors.white : AppColors.textPrimary,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                     Text(
                       'Alhai Platform',
                       style: TextStyle(
                         fontSize: 11,
-                        color: isDark ? Colors.white54 : AppColors.textSecondary,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -184,7 +184,7 @@ class _DistributorShellState extends ConsumerState<DistributorShell> {
                             color: isSelected
                                 ? AppColors.primary
                                 : isDark
-                                    ? Colors.white60
+                                    ? Theme.of(context).colorScheme.onSurfaceVariant
                                     : AppColors.textSecondary,
                           ),
                           const SizedBox(width: AlhaiSpacing.sm),
@@ -198,7 +198,7 @@ class _DistributorShellState extends ConsumerState<DistributorShell> {
                               color: isSelected
                                   ? AppColors.primary
                                   : isDark
-                                      ? Colors.white70
+                                      ? Theme.of(context).colorScheme.onSurface
                                       : AppColors.textPrimary,
                             ),
                           ),
@@ -236,7 +236,7 @@ class _DistributorShellState extends ConsumerState<DistributorShell> {
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
-                        color: isDark ? Colors.white : AppColors.textPrimary,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -245,7 +245,7 @@ class _DistributorShellState extends ConsumerState<DistributorShell> {
                       style: TextStyle(
                         fontSize: 11,
                         color:
-                            isDark ? Colors.white54 : AppColors.textSecondary,
+                            Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -257,7 +257,7 @@ class _DistributorShellState extends ConsumerState<DistributorShell> {
                 icon: Icon(
                   Icons.logout_rounded,
                   size: 20,
-                  color: isDark ? Colors.white54 : AppColors.textSecondary,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
                 tooltip: l10n?.distributorLogout ?? 'Sign out',
               ),
@@ -276,12 +276,12 @@ class _DistributorShellState extends ConsumerState<DistributorShell> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
 
-    final sidebarBg = isDark ? const Color(0xFF1E293B) : Colors.white;
+    final sidebarBg = Theme.of(context).colorScheme.surface;
 
     if (isDesktop) {
       return Scaffold(
         backgroundColor:
-            isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
+            Theme.of(context).colorScheme.surfaceContainerLow,
         body: Row(
           children: [
             // Sidebar
@@ -292,7 +292,7 @@ class _DistributorShellState extends ConsumerState<DistributorShell> {
                 border: BorderDirectional(
                   start: BorderSide(
                     color: isDark
-                        ? Colors.white10
+                        ? Theme.of(context).colorScheme.outlineVariant
                         : Theme.of(context)
                             .colorScheme
                             .surfaceContainerLow,
@@ -312,11 +312,11 @@ class _DistributorShellState extends ConsumerState<DistributorShell> {
       // Mobile: drawer
       return Scaffold(
         backgroundColor:
-            isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
+            Theme.of(context).colorScheme.surfaceContainerLow,
         appBar: AppBar(
           title: Text(l10n?.distributorPortal ?? 'Distributor Portal'),
           backgroundColor: sidebarBg,
-          foregroundColor: isDark ? Colors.white : AppColors.textPrimary,
+          foregroundColor: Theme.of(context).colorScheme.onSurface,
           elevation: 0,
         ),
         drawer: Drawer(

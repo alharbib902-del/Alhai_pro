@@ -1296,8 +1296,10 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF1E293B), Color(0xFF0F172A)],
+        gradient: LinearGradient(
+          colors: isDark
+              ? [AppColors.surfaceVariantDark, AppColors.surfaceDark]
+              : [AppColors.surfaceVariant, AppColors.surface],
           begin: AlignmentDirectional.topStart,
           end: AlignmentDirectional.bottomEnd,
         ),

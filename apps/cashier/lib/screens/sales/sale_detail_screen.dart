@@ -127,6 +127,7 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
               onPressed: () => context.pop(),
               icon: Icon(Icons.arrow_back_rounded,
                   color: AppColors.getTextPrimary(isDark)),
+              tooltip: l10n.back,
               style: IconButton.styleFrom(
                 backgroundColor: AppColors.getSurfaceVariant(isDark),
                 shape: RoundedRectangleBorder(
@@ -160,6 +161,7 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
               onPressed: _loadSaleData,
               icon: Icon(Icons.refresh_rounded,
                   color: AppColors.getTextSecondary(isDark)),
+              tooltip: l10n.refresh,
             ),
           ],
         ),
@@ -615,7 +617,7 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
                     width: 20,
                     height: 20,
                     child: CircularProgressIndicator(
-                        strokeWidth: 2, color: Colors.white),
+                        strokeWidth: 2, color: AppColors.textOnPrimary),
                   )
                 : const Icon(Icons.print_rounded, size: 20),
             label: Text(l10n.reprintReceipt,
@@ -623,7 +625,7 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
                     fontSize: 16, fontWeight: FontWeight.w600)),
             style: FilledButton.styleFrom(
               backgroundColor: AppColors.primary,
-              foregroundColor: Colors.white,
+              foregroundColor: AppColors.textOnPrimary,
               padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12)),
@@ -690,7 +692,7 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
       case 'cancelled':
         return AppColors.error;
       case 'refunded':
-        return const Color(0xFF8B5CF6);
+        return AppColors.purple;
       default:
         return AppColors.info;
     }

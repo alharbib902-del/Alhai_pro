@@ -206,6 +206,7 @@ class _CustomerAccountsScreenState
                 onPressed: () => _searchController.clear(),
                 icon: Icon(Icons.clear_rounded,
                     color: AppColors.getTextMuted(isDark)),
+                tooltip: l10n.clearField,
               )
             : null,
         filled: true,
@@ -282,7 +283,7 @@ class _CustomerAccountsScreenState
               Icon(icon,
                   size: 14,
                   color: isSelected
-                      ? Colors.white
+                      ? AppColors.textOnPrimary
                       : AppColors.getTextSecondary(isDark)),
               const SizedBox(width: 6),
             ],
@@ -422,11 +423,7 @@ class _CustomerAccountsScreenState
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF3B82F6), Color(0xFF2563EB)],
-                  begin: AlignmentDirectional.topStart,
-                  end: AlignmentDirectional.bottomEnd,
-                ),
+                gradient: AppColors.avatarGradient,
                 borderRadius: BorderRadius.circular(12),
               ),
               alignment: Alignment.center,
@@ -435,7 +432,7 @@ class _CustomerAccountsScreenState
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
-                  color: Colors.white,
+                  color: AppColors.textOnPrimary,
                 ),
               ),
             ),
@@ -485,7 +482,8 @@ class _CustomerAccountsScreenState
                       if (account.phone != null) ...[
                         Icon(Icons.phone_outlined,
                             size: 13,
-                            color: AppColors.getTextMuted(isDark)),
+                            color: AppColors.getTextMuted(isDark),
+                            semanticLabel: l10n.phone),
                         const SizedBox(width: AlhaiSpacing.xxs),
                         Text(
                           account.phone!,
@@ -532,7 +530,8 @@ class _CustomerAccountsScreenState
             ),
             const SizedBox(width: AlhaiSpacing.xs),
             Icon(Icons.chevron_right_rounded,
-                color: AppColors.getTextMuted(isDark), size: 20),
+                color: AppColors.getTextMuted(isDark), size: 20,
+                semanticLabel: l10n.details),
           ],
         ),
       ),

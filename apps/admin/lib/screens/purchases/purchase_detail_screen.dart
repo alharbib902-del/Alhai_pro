@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
+import 'package:intl/intl.dart' hide TextDirection;
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
@@ -119,7 +119,9 @@ class _PurchaseDetailScreenState extends ConsumerState<PurchaseDetailScreen> {
           const SizedBox(height: AlhaiSpacing.md),
           FilledButton.icon(
             onPressed: () => context.go(AppRoutes.purchasesList),
-            icon: const Icon(Icons.arrow_back),
+            icon: Icon(Directionality.of(context) == TextDirection.rtl
+                ? Icons.arrow_forward_rounded
+                : Icons.arrow_back_rounded),
             label: Text(AppLocalizations.of(context).backToList),
           ),
         ],
@@ -136,7 +138,7 @@ class _PurchaseDetailScreenState extends ConsumerState<PurchaseDetailScreen> {
   ) {
     final purchase = data.purchase;
     final items = data.items;
-    final dateFormat = DateFormat('yyyy/MM/dd - HH:mm', 'ar');
+    final dateFormat = DateFormat('yyyy/MM/dd - HH:mm', Localizations.localeOf(context).languageCode);
     final currentStatus = purchase.status;
 
     return SingleChildScrollView(
@@ -150,9 +152,12 @@ class _PurchaseDetailScreenState extends ConsumerState<PurchaseDetailScreen> {
               IconButton(
                 onPressed: () => context.go(AppRoutes.purchasesList),
                 icon: Icon(
-                  Icons.arrow_back_rounded,
+                  Directionality.of(context) == TextDirection.rtl
+                      ? Icons.arrow_forward_rounded
+                      : Icons.arrow_back_rounded,
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
+                tooltip: AppLocalizations.of(context).back,
               ),
               const SizedBox(width: AlhaiSpacing.xs),
               Expanded(

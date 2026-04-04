@@ -134,7 +134,11 @@ class _PosProductsPanelState extends ConsumerState<PosProductsPanel> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     if (state.isLoading && state.products.isEmpty) {
-      return const Center(child: CircularProgressIndicator());
+      return ShimmerGrid(
+        crossAxisCount: widget.columns,
+        itemCount: widget.columns * 3,
+        childAspectRatio: widget.columns <= 3 ? 0.9 : 1.0,
+      );
     }
 
     if (state.error != null && state.products.isEmpty) {

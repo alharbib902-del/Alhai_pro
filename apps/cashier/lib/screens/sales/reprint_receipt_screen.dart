@@ -205,6 +205,7 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
                 onPressed: () => _searchController.clear(),
                 icon: Icon(Icons.clear_rounded,
                     color: AppColors.getTextMuted(isDark)),
+                tooltip: l10n.clearField,
               )
             : null,
         filled: true,
@@ -505,7 +506,7 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
                       width: 20,
                       height: 20,
                       child: CircularProgressIndicator(
-                          strokeWidth: 2, color: Colors.white),
+                          strokeWidth: 2, color: AppColors.textOnPrimary),
                     )
                   : const Icon(Icons.print_rounded, size: 20),
               label: Text(l10n.reprintReceipt,
@@ -513,7 +514,7 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
                       fontSize: 16, fontWeight: FontWeight.w600)),
               style: FilledButton.styleFrom(
                 backgroundColor: AppColors.primary,
-                foregroundColor: Colors.white,
+                foregroundColor: AppColors.textOnPrimary,
                 padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12)),
@@ -578,7 +579,7 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
                     width: 20,
                     height: 20,
                     child: CircularProgressIndicator(
-                        strokeWidth: 2, color: Colors.white),
+                        strokeWidth: 2, color: AppColors.textOnPrimary),
                   )
                 : const Icon(Icons.print_rounded, size: 20),
             label: Text(l10n.reprintReceipt,
@@ -586,7 +587,7 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
                     fontSize: 16, fontWeight: FontWeight.w600)),
             style: FilledButton.styleFrom(
               backgroundColor: AppColors.primary,
-              foregroundColor: Colors.white,
+              foregroundColor: AppColors.textOnPrimary,
               padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12)),

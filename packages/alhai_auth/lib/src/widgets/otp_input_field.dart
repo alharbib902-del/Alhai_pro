@@ -256,13 +256,13 @@ class OtpInputFieldState extends State<OtpInputField>
       fillColor = AppColors.errorSurface;
     } else if (_focusNodes[index].hasFocus) {
       borderColor = AppColors.primary;
-      fillColor = isDark ? const Color(0xFF1E293B) : Colors.white;
+      fillColor = Theme.of(context).colorScheme.surface;
     } else if (_controllers[index].text.isNotEmpty) {
       borderColor = AppColors.primaryLight;
-      fillColor = isDark ? const Color(0xFF1E3A2F) : AppColors.primarySurface;
+      fillColor = isDark ? AppColors.primaryDark.withValues(alpha: 0.2) : AppColors.primarySurface;
     } else {
-      borderColor = isDark ? Colors.white.withValues(alpha: 0.2) : AppColors.border;
-      fillColor = isDark ? const Color(0xFF1E293B) : Colors.white;
+      borderColor = Theme.of(context).colorScheme.outline;
+      fillColor = Theme.of(context).colorScheme.surface;
     }
 
     return AnimatedContainer(

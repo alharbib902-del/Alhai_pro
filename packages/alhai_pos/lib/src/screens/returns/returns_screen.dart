@@ -322,7 +322,7 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
                   hintStyle: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 14),
                   prefixIcon: Icon(Icons.search, color: colorScheme.onSurfaceVariant),
                   filled: true,
-                  fillColor: isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
+                  fillColor: isDark ? AppColors.backgroundDark : AppColors.backgroundSecondary,
                   contentPadding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
                   focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: AppColors.primary.withValues(alpha: 0.5))),
@@ -345,7 +345,7 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
             onPressed: () {},
             icon: Icon(
               isDark ? Icons.light_mode : Icons.dark_mode,
-              color: isDark ? const Color(0xFFFBBF24) : AppColors.textSecondary,
+              color: isDark ? AppColors.warning : AppColors.textSecondary,
             ),
           ),
         ],
@@ -446,7 +446,7 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
                 hintText: l10n.quickSearch,
                 prefixIcon: const Icon(Icons.search),
                 filled: true,
-                fillColor: isDark ? const Color(0xFF374151) : AppColors.backgroundSecondary,
+                fillColor: isDark ? AppColors.surfaceVariantDark : AppColors.backgroundSecondary,
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
               ),
             ),
@@ -597,7 +597,7 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
                   hintStyle: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 13),
                   prefixIcon: Icon(Icons.search, size: 18, color: colorScheme.onSurfaceVariant),
                   filled: true,
-                  fillColor: isDark ? const Color(0xFF0F172A) : AppColors.grey50,
+                  fillColor: isDark ? AppColors.backgroundDark : AppColors.grey50,
                   contentPadding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm),
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Theme.of(context).dividerColor)),
                   enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Theme.of(context).dividerColor)),
@@ -869,19 +869,19 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
 
     switch (status) {
       case 'pending':
-        bgColor = isDark ? AppColors.warning.withValues(alpha: 0.15) : const Color(0xFFFEF3C7);
+        bgColor = isDark ? AppColors.warning.withValues(alpha: 0.15) : AppColors.warningSurface;
         textColor = isDark ? const Color(0xFFFBBF24) : const Color(0xFFB45309);
         borderColor = isDark ? AppColors.warning.withValues(alpha: 0.3) : const Color(0xFFFDE68A);
         label = l10n.pending;
         icon = Icons.access_time;
       case 'refunded':
-        bgColor = isDark ? AppColors.success.withValues(alpha: 0.15) : const Color(0xFFDCFCE7);
-        textColor = isDark ? const Color(0xFF4ADE80) : const Color(0xFF15803D);
+        bgColor = isDark ? AppColors.success.withValues(alpha: 0.15) : AppColors.successSurface;
+        textColor = isDark ? const Color(0xFF4ADE80) : AlhaiColors.successDark;
         borderColor = isDark ? AppColors.success.withValues(alpha: 0.3) : const Color(0xFFBBF7D0);
         label = l10n.returnRefunded;
         icon = Icons.check_circle;
       case 'rejected':
-        bgColor = isDark ? AppColors.error.withValues(alpha: 0.15) : const Color(0xFFFEE2E2);
+        bgColor = isDark ? AppColors.error.withValues(alpha: 0.15) : AppColors.errorSurface;
         textColor = isDark ? const Color(0xFFF87171) : const Color(0xFFB91C1C);
         borderColor = isDark ? AppColors.error.withValues(alpha: 0.3) : const Color(0xFFFECACA);
         label = l10n.returnRejected;
@@ -925,7 +925,7 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
     final initial = ret.customer.isNotEmpty ? ret.customer[0] : '?';
     return CircleAvatar(
       radius: 18,
-      backgroundColor: isDark ? const Color(0xFF374151) : AppColors.grey200,
+      backgroundColor: isDark ? AppColors.surfaceVariantDark : AppColors.grey200,
       child: Text(initial, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: isDark ? AppColors.textMutedDark : AppColors.textSecondary)),
     );
   }

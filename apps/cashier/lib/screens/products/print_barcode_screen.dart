@@ -224,6 +224,7 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
                             },
                             icon: Icon(Icons.clear_rounded,
                                 color: AppColors.getTextMuted(isDark)),
+                            tooltip: l10n.clearField,
                           )
                         : null,
                     filled: true,
@@ -261,10 +262,10 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
                     );
                   },
                   icon: const Icon(Icons.qr_code_scanner_rounded, size: 20),
-                  label: const Text('Scan'),
+                  label: Text(l10n.scan),
                   style: FilledButton.styleFrom(
                     backgroundColor: AppColors.info,
-                    foregroundColor: Colors.white,
+                    foregroundColor: AppColors.textOnPrimary,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12)),
                   ),
@@ -402,7 +403,7 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
                       color: AppColors.getTextMuted(isDark)
                           .withValues(alpha: 0.3)),
                   const SizedBox(height: AlhaiSpacing.sm),
-                  Text('Select a product first',
+                  Text(l10n.selectProductFirst,
                       style: TextStyle(
                           fontSize: 13,
                           color: AppColors.getTextMuted(isDark))),
@@ -626,7 +627,7 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
                 width: 20,
                 height: 20,
                 child: CircularProgressIndicator(
-                    strokeWidth: 2, color: Colors.white),
+                    strokeWidth: 2, color: AppColors.textOnPrimary),
               )
             : const Icon(Icons.print_rounded, size: 20),
         label: Text(l10n.printLabels,
@@ -634,7 +635,7 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
                 const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.primary,
-          foregroundColor: Colors.white,
+          foregroundColor: AppColors.textOnPrimary,
           padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12)),
@@ -657,7 +658,7 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Print job sent for $qty labels'),
+          content: Text(l10n.printJobSentForLabels(qty)),
           backgroundColor: AppColors.success,
         ),
       );

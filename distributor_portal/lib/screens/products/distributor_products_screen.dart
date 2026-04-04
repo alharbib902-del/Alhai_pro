@@ -82,7 +82,7 @@ class _DistributorProductsScreenState
             label: Text(l10n?.distributorAddProduct ?? 'Add Product'),
             style: FilledButton.styleFrom(
               backgroundColor: AppColors.primary,
-              foregroundColor: Colors.white,
+              foregroundColor: AppColors.textOnPrimary,
               padding: const EdgeInsets.symmetric(
                   horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
               shape: RoundedRectangleBorder(

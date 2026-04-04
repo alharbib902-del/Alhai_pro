@@ -363,6 +363,7 @@ class _TransferInventoryScreenState
               IconButton(
                 onPressed: () {},
                 icon: const Icon(Icons.qr_code_scanner_rounded, color: AppColors.info),
+                tooltip: l10n.scanLabel,
                 style: IconButton.styleFrom(
                   backgroundColor: AppColors.info.withValues(alpha: 0.1),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -441,6 +442,7 @@ class _TransferInventoryScreenState
           IconButton(
             onPressed: () => setState(() { _selectedProduct = null; _searchController.clear(); }),
             icon: Icon(Icons.close_rounded, size: 18, color: colorScheme.onSurfaceVariant),
+            tooltip: l10n.clearField,
           ),
         ],
       ),

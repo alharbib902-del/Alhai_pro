@@ -4,8 +4,8 @@ part of 'loyalty_dao.dart';
 
 // ignore_for_file: type=lint
 mixin _$LoyaltyDaoMixin on DatabaseAccessor<AppDatabase> {
-  $CustomersTableTable get customersTable => attachedDatabase.customersTable;
   $StoresTableTable get storesTable => attachedDatabase.storesTable;
+  $CustomersTableTable get customersTable => attachedDatabase.customersTable;
   $LoyaltyPointsTableTable get loyaltyPointsTable =>
       attachedDatabase.loyaltyPointsTable;
   $UsersTableTable get usersTable => attachedDatabase.usersTable;
@@ -20,11 +20,11 @@ mixin _$LoyaltyDaoMixin on DatabaseAccessor<AppDatabase> {
 class LoyaltyDaoManager {
   final _$LoyaltyDaoMixin _db;
   LoyaltyDaoManager(this._db);
+  $$StoresTableTableTableManager get storesTable =>
+      $$StoresTableTableTableManager(_db.attachedDatabase, _db.storesTable);
   $$CustomersTableTableTableManager get customersTable =>
       $$CustomersTableTableTableManager(
           _db.attachedDatabase, _db.customersTable);
-  $$StoresTableTableTableManager get storesTable =>
-      $$StoresTableTableTableManager(_db.attachedDatabase, _db.storesTable);
   $$LoyaltyPointsTableTableTableManager get loyaltyPointsTable =>
       $$LoyaltyPointsTableTableTableManager(
           _db.attachedDatabase, _db.loyaltyPointsTable);

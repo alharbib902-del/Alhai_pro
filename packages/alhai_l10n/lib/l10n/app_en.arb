@@ -394,6 +394,27 @@
   "noProducts": "No products",
   "addProductsToStart": "Add products to start",
   "undoComingSoon": "Undo (coming soon)",
+  "undoneRemoved": "Undone: removed {name}",
+  "@undoneRemoved": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "undoneAdded": "Undone: restored {name}",
+  "@undoneAdded": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "undoneQtyChanged": "Undone: {name} qty {from} \u2192 {to}",
+  "@undoneQtyChanged": {
+    "placeholders": {
+      "name": {"type": "String"},
+      "from": {"type": "int"},
+      "to": {"type": "int"}
+    }
+  },
+  "nothingToUndo": "Nothing to undo",
   "employees": "Employees",
   "loyaltyProgram": "Loyalty Program",
   "newBadge": "New",
@@ -6150,5 +6171,93 @@
 
   "reportSettings": "Report Settings",
   "reportType": "Report Type",
-  "paymentDistribution": "Payment Distribution"
+  "paymentDistribution": "Payment Distribution",
+
+  "allAccountsSettled": "All customer accounts are settled",
+  "confirmInterest": "Confirm Interest",
+  "confirmInterestMessage": "Apply {rate}% interest to {count} accounts?\nTotal interest: {amount} {currency}",
+  "@confirmInterestMessage": {
+    "placeholders": {
+      "rate": { "type": "String" },
+      "count": { "type": "int" },
+      "amount": { "type": "String" },
+      "currency": { "type": "String" }
+    }
+  },
+  "selectCustomers": "Select Customers",
+  "deselectAll": "Deselect All",
+  "preview": "Preview",
+  "selectedCustomers": "Selected Customers",
+  "totalDebt": "Total Debt",
+  "totalInterest": "Total Interest",
+
+  "finalizeInvoice": "Finalize Invoice",
+  "saveAsDraft": "Save as Draft",
+  "saveDraft": "Save Draft",
+  "finalize": "Finalize",
+  "adjustQuantity": "Adjust Quantity",
+  "totalItems": "Total Items",
+  "variance": "Variance",
+
+  "orderNotFound": "Order not found",
+  "share": "Share",
+  "full": "Full",
+  "processRefund": "Process Refund",
+  "refundToCustomer": "Refund to customer",
+  "breakdown": "Breakdown",
+  "nTransactions": "{count} Transactions",
+  "@nTransactions": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "customReport": "Custom Report",
+  "reportBuilder": "Report Builder",
+  "groupBy": "Group By",
+  "dateRange": "Date Range",
+  "fromLabel": "From",
+  "toLabel": "To",
+  "generateReport": "Generate Report",
+  "lastMonth": "Last Month",
+  "periods": "Periods",
+  "periodLabel": "Period",
+  "valueLabel": "Value",
+  "tryDifferentFilters": "Try different filters",
+
+  "scan": "Scan",
+  "selectProductFirst": "Select a product first",
+  "selectProductsForLabels": "Select products for labels",
+  "printJobSentForLabels": "Print job sent for {count} labels",
+  "@printJobSentForLabels": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "test": "Test",
+  "paperSize58mm": "58mm",
+  "paperSize80mm": "80mm",
+  "errorSavingSettings": "Error saving settings: {error}",
+  "@errorSavingSettings": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "restoreFailed": "Restore failed: {error}",
+  "@restoreFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "address": "Address",
+  "email": "Email",
+  "crNumber": "CR Number",
+  "city": "City",
+  "optional": "Optional",
+  "optionalNoteHint": "Optional note...",
+  "clearField": "Clear",
+  "decreaseQuantity": "Decrease quantity",
+  "increaseQuantity": "Increase quantity",
+  "copyToClipboard": "Copy"
 }

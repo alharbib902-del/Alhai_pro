@@ -464,8 +464,9 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
                 iconSize: 22,
                 color: AppColors.getTextSecondary(isDark),
                 constraints: const BoxConstraints(
-                    minWidth: 32, minHeight: 32),
+                    minWidth: 48, minHeight: 48),
                 padding: EdgeInsets.zero,
+                tooltip: l10n.decreaseQuantity,
               ),
               SizedBox(
                 width: 28,
@@ -486,8 +487,9 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
                 iconSize: 22,
                 color: AppColors.primary,
                 constraints: const BoxConstraints(
-                    minWidth: 32, minHeight: 32),
+                    minWidth: 48, minHeight: 48),
                 padding: EdgeInsets.zero,
+                tooltip: l10n.increaseQuantity,
               ),
             ],
           ),
@@ -504,8 +506,9 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
             onPressed: () => _removeItem(index, isReturn),
             icon: const Icon(Icons.close_rounded, size: 18),
             color: AppColors.error,
-            constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+            constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
             padding: EdgeInsets.zero,
+            tooltip: l10n.delete,
           ),
         ],
       ),
@@ -562,7 +565,7 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
                             fontSize: 11,
                             color: AppColors.getTextMuted(isDark)))
                   else if (diff < 0)
-                    Text('Refund to customer',
+                    Text(l10n.refundToCustomer,
                         style: TextStyle(
                             fontSize: 11,
                             color: AppColors.getTextMuted(isDark))),
@@ -580,7 +583,7 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
                         width: 20,
                         height: 20,
                         child: CircularProgressIndicator(
-                            strokeWidth: 2, color: Colors.white),
+                            strokeWidth: 2, color: AppColors.textOnPrimary),
                       )
                     : const Icon(Icons.swap_horiz_rounded, size: 20),
                 label: Text(l10n.submitExchange,
@@ -588,7 +591,7 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
                         fontSize: 15, fontWeight: FontWeight.w600)),
                 style: FilledButton.styleFrom(
                   backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
+                  foregroundColor: AppColors.textOnPrimary,
                   padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12)),

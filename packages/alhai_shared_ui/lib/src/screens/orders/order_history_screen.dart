@@ -862,7 +862,7 @@ class _OrderCard extends StatelessWidget {
     final subtleColor = Theme.of(context).colorScheme.onSurfaceVariant;
     return Card(
       margin: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
-      color: isDark ? const Color(0xFF1E293B) : null,
+      color: Theme.of(context).colorScheme.surface,
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),

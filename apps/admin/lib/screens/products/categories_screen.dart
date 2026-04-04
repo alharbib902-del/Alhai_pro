@@ -95,6 +95,9 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
   bool _isCreating = false;
   String _searchQuery = '';
 
+  // Debounce search to avoid rebuilding on every keystroke
+  final Debouncer _searchDebouncer = Debouncer();
+
   // Cached parsed colors/icons per category id to avoid re-parsing on every build
   final Map<String, Color> _colorCache = {};
   final Map<String, IconData> _iconCache = {};
@@ -110,6 +113,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
 
   @override
   void dispose() {
+    _searchDebouncer.dispose();
     _nameArController.dispose();
     _nameEnController.dispose();
     _sortOrderController.dispose();
@@ -361,7 +365,8 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                   _selectedCategoryId = null;
                   _isCreating = false;
                 }),
-                icon: const Icon(Icons.arrow_back_rounded, size: 18),
+                icon: Icon(Directionality.of(context) == TextDirection.rtl
+                    ? Icons.arrow_forward_rounded : Icons.arrow_back_rounded, size: 18),
                 label: Text(l10n.categories),
               ),
             ],
@@ -470,7 +475,9 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                   maxLength: 100,
                   onChanged: (value) {
                     final sanitized = InputSanitizer.sanitize(value);
-                    setState(() => _searchQuery = sanitized);
+                    _searchDebouncer.run(() {
+                      if (mounted) setState(() => _searchQuery = sanitized);
+                    });
                   },
                   decoration: InputDecoration(
                     counterText: '',

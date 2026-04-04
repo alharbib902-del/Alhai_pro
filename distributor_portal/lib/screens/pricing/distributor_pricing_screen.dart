@@ -133,7 +133,7 @@ class _DistributorPricingScreenState
                 label: const Text('إعادة المحاولة'),
                 style: FilledButton.styleFrom(
                   backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
+                  foregroundColor: AppColors.textOnPrimary,
                 ),
               ),
             ],
@@ -599,7 +599,7 @@ class _DistributorPricingScreenState
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, -2),
           ),
@@ -628,7 +628,7 @@ class _DistributorPricingScreenState
                         width: 18,
                         height: 18,
                         child: CircularProgressIndicator(
-                            strokeWidth: 2, color: Colors.white),
+                            strokeWidth: 2, color: AppColors.textOnPrimary),
                       )
                     : const Icon(Icons.save_rounded, size: 18),
                 label: const Text('حفظ التغييرات',
@@ -636,7 +636,7 @@ class _DistributorPricingScreenState
                         TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
                 style: FilledButton.styleFrom(
                   backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
+                  foregroundColor: AppColors.textOnPrimary,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12)),

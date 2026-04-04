@@ -218,7 +218,7 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
                   fontWeight: FontWeight.bold,
                   color: AppColors.getTextSecondary(isDark))),
           const SizedBox(height: AlhaiSpacing.xs),
-          Text('All customer accounts are settled',
+          Text(l10n.allAccountsSettled,
               style: TextStyle(
                   fontSize: 13,
                   color: AppColors.getTextMuted(isDark))),
@@ -251,7 +251,7 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Text(
-                'Interest Rate',
+                l10n.interestRate,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -370,7 +370,7 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
               const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 child: Text(
-                  'Select Customers',
+                  l10n.selectCustomers,
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -382,8 +382,8 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
                 onPressed: _selectAll,
                 child: Text(
                   _selectedIds.length == _accounts.length
-                      ? 'Deselect All'
-                      : 'Select All',
+                      ? l10n.deselectAll
+                      : l10n.selectAll,
                   style: const TextStyle(
                       fontSize: 13, fontWeight: FontWeight.w600),
                 ),
@@ -436,7 +436,7 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
                         ),
                         child: isSelected
                             ? const Icon(Icons.check_rounded,
-                                size: 16, color: Colors.white)
+                                size: 16, color: AppColors.textOnPrimary)
                             : null,
                       ),
                       const SizedBox(width: AlhaiSpacing.sm),
@@ -444,12 +444,7 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
                         width: 36,
                         height: 36,
                         decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [
-                              Color(0xFF3B82F6),
-                              Color(0xFF2563EB)
-                            ],
-                          ),
+                          gradient: AppColors.avatarGradient,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         alignment: Alignment.center,
@@ -457,7 +452,7 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
                             style: const TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w700,
-                                color: Colors.white)),
+                                color: AppColors.textOnPrimary)),
                       ),
                       const SizedBox(width: AlhaiSpacing.sm),
                       Expanded(
@@ -536,7 +531,7 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Text(
-                'Preview',
+                l10n.preview,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -547,19 +542,19 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
           ),
           const SizedBox(height: AlhaiSpacing.md),
           _buildPreviewRow(
-              'Selected Customers', '${_selectedIds.length}', isDark),
+              l10n.selectedCustomers, '${_selectedIds.length}', isDark),
           const SizedBox(height: AlhaiSpacing.xs),
           _buildPreviewRow(
-              'Interest Rate', '${_rate.toStringAsFixed(1)}%', isDark),
+              l10n.interestRate, '${_rate.toStringAsFixed(1)}%', isDark),
           const SizedBox(height: AlhaiSpacing.xs),
-          _buildPreviewRow('Total Debt',
+          _buildPreviewRow(l10n.totalDebt,
               '${_totalDebt.toStringAsFixed(2)} ${l10n.sar}', isDark),
           Divider(height: 24, color: AppColors.getBorder(isDark)),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Total Interest',
+                l10n.totalInterest,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 15,
@@ -610,7 +605,7 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
                 width: 20,
                 height: 20,
                 child: CircularProgressIndicator(
-                    strokeWidth: 2, color: Colors.white),
+                    strokeWidth: 2, color: AppColors.textOnPrimary),
               )
             : const Icon(Icons.percent_rounded, size: 20),
         label: Text(l10n.applyInterest,
@@ -618,7 +613,7 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
                 fontSize: 16, fontWeight: FontWeight.w600)),
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.warning,
-          foregroundColor: Colors.white,
+          foregroundColor: AppColors.textOnPrimary,
           padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12)),
@@ -631,10 +626,12 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Confirm Interest'),
-        content: Text(
-            'Apply ${_rate.toStringAsFixed(1)}% interest to ${_selectedIds.length} accounts?\n'
-            'Total interest: ${_totalInterest.toStringAsFixed(2)} ${l10n.sar}'),
+        title: Text(l10n.confirmInterest),
+        content: Text(l10n.confirmInterestMessage(
+            _rate.toStringAsFixed(1),
+            _selectedIds.length,
+            _totalInterest.toStringAsFixed(2),
+            l10n.sar)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),

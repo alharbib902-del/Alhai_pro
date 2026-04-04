@@ -37,58 +37,62 @@ void main() {
       return true;
     };
 
-  // Initialize Firebase (graceful fallback if not configured)
-  try {
-    await Firebase.initializeApp();
-    if (kDebugMode) {
-      debugPrint('Firebase initialized successfully');
-    }
-  } catch (e) {
-    if (kDebugMode) {
-      debugPrint('Firebase not configured: $e');
-    }
-    // App continues without Firebase - analytics/crashlytics won't work
-  }
-
-  // Initialize Supabase (required for admin - online-first)
-  try {
-    if (!SupabaseConfig.isConfigured) {
-      throw StateError(
-        'Supabase not configured. ${SupabaseConfig.configurationError}',
-      );
-    }
-    await Supabase.initialize(
-      url: SupabaseConfig.url,
-      anonKey: SupabaseConfig.anonKey,
-      debug: SupabaseConfig.enableDebugLogs,
-    );
-    if (kDebugMode) {
-      debugPrint('Supabase initialized successfully');
-    }
-  } catch (e) {
-    if (kDebugMode) {
-      debugPrint('Supabase initialization failed: $e');
-    }
-  }
-
-  // Initialize database encryption key before DI creates the database
-  final dbKey = await _getOrCreateDbKey();
-  setDatabaseEncryptionKey(dbKey);
+  // ── Parallel Phase 1: Firebase + Supabase + DB key ──────────────
+  // These are independent and can run concurrently to cut startup time.
+  await Future.wait([
+    // Firebase (graceful fallback if not configured)
+    Future<void>(() async {
+      try {
+        await Firebase.initializeApp();
+        if (kDebugMode) debugPrint('Firebase initialized successfully');
+      } catch (e) {
+        if (kDebugMode) debugPrint('Firebase not configured: $e');
+      }
+    }),
+    // Supabase (required for admin - online-first)
+    Future<void>(() async {
+      try {
+        if (!SupabaseConfig.isConfigured) {
+          throw StateError(
+            'Supabase not configured. ${SupabaseConfig.configurationError}',
+          );
+        }
+        await Supabase.initialize(
+          url: SupabaseConfig.url,
+          anonKey: SupabaseConfig.anonKey,
+          debug: SupabaseConfig.enableDebugLogs,
+        );
+        if (kDebugMode) debugPrint('Supabase initialized successfully');
+      } catch (e) {
+        if (kDebugMode) debugPrint('Supabase initialization failed: $e');
+      }
+    }),
+    // Database encryption key (independent of Firebase/Supabase)
+    Future<void>(() async {
+      final dbKey = await _getOrCreateDbKey();
+      setDatabaseEncryptionKey(dbKey);
+    }),
+  ]);
 
   // DI must run before runApp (Riverpod providers use getIt synchronously)
   await configureDependencies();
 
-  // Pre-load theme (fast ~50ms)
-  final prefs = await SharedPreferences.getInstance();
+  // ── Parallel Phase 2: Theme + Onboarding flag ──────────────────
+  // Both read from SharedPreferences independently.
+  final parallelResults = await Future.wait([
+    SharedPreferences.getInstance(),
+    hasSeenAdminOnboarding(),
+  ]);
+
+  final prefs = parallelResults[0] as SharedPreferences;
+  final hasSeenOnboardingFlag = parallelResults[1] as bool;
+
   final savedTheme = prefs.getString('app_theme_mode');
   final initialThemeMode = switch (savedTheme) {
     'dark' => ThemeMode.dark,
     'light' => ThemeMode.light,
     _ => ThemeMode.system,
   };
-
-  // Pre-load onboarding flag
-  final hasSeenOnboardingFlag = await hasSeenAdminOnboarding();
 
   runApp(
     ProviderScope(

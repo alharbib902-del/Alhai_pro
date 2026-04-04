@@ -37,11 +37,14 @@ class ZatcaQrWidget extends StatelessWidget {
       vatAmount: vatAmount,
     );
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          padding: const EdgeInsets.all(AlhaiSpacing.sm),
+    return Semantics(
+      label: 'ZATCA QR Code - $sellerName',
+      image: true,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(AlhaiSpacing.sm),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12),
@@ -81,7 +84,8 @@ class ZatcaQrWidget extends StatelessWidget {
               color: AppColors.getTextMuted(isDark),
             ),
           ),
-      ],
+        ],
+      ),
     );
   }
 }

@@ -376,6 +376,7 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
               });
             },
             icon: Icon(Icons.close_rounded, color: colorScheme.onSurfaceVariant),
+            tooltip: l10n.clearField,
           ),
         ],
       ),
@@ -508,7 +509,7 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
             controller: _supplierRefController,
             style: TextStyle(color: colorScheme.onSurface),
             decoration: InputDecoration(
-              hintText: 'Optional',
+              hintText: l10n.optional,
               hintStyle: TextStyle(color: colorScheme.onSurfaceVariant),
               prefixIcon: Icon(Icons.business_rounded, color: colorScheme.onSurfaceVariant),
               filled: true,

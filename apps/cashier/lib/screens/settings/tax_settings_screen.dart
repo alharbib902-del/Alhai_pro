@@ -33,6 +33,7 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
 
   bool _isLoading = true;
   bool _isSaving = false;
+  String? _error;
   bool _taxInclusive = true;
   bool _taxEnabled = true;
 
@@ -64,7 +65,10 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
   }
 
   Future<void> _loadSettings() async {
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
     try {
       final storeId = ref.read(currentStoreIdProvider)!;
       if (storeId.isNotEmpty) {
@@ -89,6 +93,7 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
       }
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Load tax settings');
+      if (mounted) setState(() => _error = '$e');
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -115,7 +120,7 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error saving settings: $e'),
+            content: Text(AppLocalizations.of(context).errorSavingSettings('$e')),
             backgroundColor: AppColors.error,
           ),
         );
@@ -145,6 +150,7 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
               color: AppColors.getTextPrimary(isDark),
             ),
             onPressed: () => context.pop(),
+            tooltip: l10n.back,
           ),
           onNotificationsTap: () => context.push(AppRoutes.notificationsCenter),
           userName:
@@ -154,7 +160,9 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
         ),
         Expanded(
           child: _isLoading
-              ? const Center(child: CircularProgressIndicator())
+              ? const AppLoadingState()
+              : _error != null
+                  ? AppErrorState.general(context, message: _error!, onRetry: _loadSettings)
               : SingleChildScrollView(
                   padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
                   child: _buildContent(
@@ -439,7 +447,7 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
                 width: 20,
                 height: 20,
                 child: CircularProgressIndicator(
-                    strokeWidth: 2, color: Colors.white),
+                    strokeWidth: 2, color: AppColors.textOnPrimary),
               )
             : const Icon(Icons.save_rounded, size: 20),
         label: Text(
@@ -448,7 +456,7 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
         ),
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.primary,
-          foregroundColor: Colors.white,
+          foregroundColor: AppColors.textOnPrimary,
           padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

@@ -863,6 +863,24 @@ class AppLocalizationsBn extends AppLocalizations {
   String get undoComingSoon => 'পূর্বাবস্থায় ফেরান (শীঘ্রই আসছে)';
 
   @override
+  String undoneRemoved(String name) {
+    return 'تراجع: حُذف $name';
+  }
+
+  @override
+  String undoneAdded(String name) {
+    return 'تراجع: أُعيد $name';
+  }
+
+  @override
+  String undoneQtyChanged(String name, int from, int to) {
+    return 'تراجع: $name الكمية $from → $to';
+  }
+
+  @override
+  String get nothingToUndo => 'لا يوجد شيء للتراجع';
+
+  @override
   String get employees => 'কর্মচারী';
 
   @override
@@ -12957,4 +12975,171 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get paymentDistribution => 'توزيع المدفوعات';
+
+  @override
+  String get allAccountsSettled => 'جميع حسابات العملاء مسددة';
+
+  @override
+  String get confirmInterest => 'تأكيد الفائدة';
+
+  @override
+  String confirmInterestMessage(
+      String rate, int count, String amount, String currency) {
+    return 'تطبيق $rate% فائدة على $count حسابات؟\nإجمالي الفائدة: $amount $currency';
+  }
+
+  @override
+  String get selectCustomers => 'اختيار العملاء';
+
+  @override
+  String get deselectAll => 'إلغاء تحديد الكل';
+
+  @override
+  String get preview => 'معاينة';
+
+  @override
+  String get totalDebt => 'إجمالي الديون';
+
+  @override
+  String get totalInterest => 'إجمالي الفائدة';
+
+  @override
+  String get finalizeInvoice => 'إنهاء الفاتورة';
+
+  @override
+  String get saveAsDraft => 'حفظ كمسودة';
+
+  @override
+  String get saveDraft => 'حفظ المسودة';
+
+  @override
+  String get finalize => 'إنهاء';
+
+  @override
+  String get adjustQuantity => 'تعديل الكمية';
+
+  @override
+  String get totalItems => 'إجمالي العناصر';
+
+  @override
+  String get variance => 'الفرق';
+
+  @override
+  String get orderNotFound => 'لم يتم العثور على الطلب';
+
+  @override
+  String get share => 'مشاركة';
+
+  @override
+  String get full => 'كامل';
+
+  @override
+  String get processRefund => 'معالجة الاسترداد';
+
+  @override
+  String get refundToCustomer => 'استرداد للعميل';
+
+  @override
+  String get breakdown => 'التفاصيل';
+
+  @override
+  String nTransactions(int count) {
+    return '$count معاملات';
+  }
+
+  @override
+  String get customReport => 'تقرير مخصص';
+
+  @override
+  String get reportBuilder => 'منشئ التقارير';
+
+  @override
+  String get groupBy => 'تجميع حسب';
+
+  @override
+  String get dateRange => 'النطاق الزمني';
+
+  @override
+  String get fromLabel => 'من';
+
+  @override
+  String get toLabel => 'إلى';
+
+  @override
+  String get generateReport => 'إنشاء التقرير';
+
+  @override
+  String get lastMonth => 'الشهر الماضي';
+
+  @override
+  String get periods => 'الفترات';
+
+  @override
+  String get valueLabel => 'القيمة';
+
+  @override
+  String get tryDifferentFilters => 'جرّب فلاتر مختلفة';
+
+  @override
+  String get scan => 'مسح';
+
+  @override
+  String get selectProductFirst => 'اختر منتج أولاً';
+
+  @override
+  String get selectProductsForLabels => 'اختر منتجات للملصقات';
+
+  @override
+  String printJobSentForLabels(int count) {
+    return 'تم إرسال طباعة $count ملصق';
+  }
+
+  @override
+  String get test => 'اختبار';
+
+  @override
+  String get paperSize58mm => '58مم';
+
+  @override
+  String get paperSize80mm => '80مم';
+
+  @override
+  String errorSavingSettings(String error) {
+    return 'خطأ في حفظ الإعدادات: $error';
+  }
+
+  @override
+  String restoreFailed(String error) {
+    return 'فشل الاستعادة: $error';
+  }
+
+  @override
+  String get address => 'العنوان';
+
+  @override
+  String get email => 'البريد الإلكتروني';
+
+  @override
+  String get crNumber => 'رقم السجل التجاري';
+
+  @override
+  String get city => 'المدينة';
+
+  @override
+  String get optional => 'اختياري';
+
+  @override
+  String get optionalNoteHint => 'ملاحظة اختيارية...';
+
+  @override
+  String get clearField => 'مسح';
+
+  @override
+  String get decreaseQuantity => 'تقليل الكمية';
+
+  @override
+  String get increaseQuantity => 'زيادة الكمية';
+
+  @override
+  String get copyToClipboard => 'نسخ';
 }

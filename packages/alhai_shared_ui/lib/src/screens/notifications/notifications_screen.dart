@@ -163,7 +163,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                                 decoration: BoxDecoration(
                                   color: notification.isRead
                                       ? (Theme.of(context).colorScheme.surface)
-                                      : (isDark ? const Color(0xFF1E293B) : AppColors.infoSurface),
+                                      : (isDark ? Theme.of(context).colorScheme.surfaceContainerHighest : AppColors.infoSurface),
                                   borderRadius: BorderRadius.circular(12),
                                   border: Border.all(
                                     color: notification.isRead

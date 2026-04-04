@@ -910,7 +910,7 @@ class _DistributorOrderDetailScreenState
                     width: 18,
                     height: 18,
                     child: CircularProgressIndicator(
-                        strokeWidth: 2, color: Colors.white),
+                        strokeWidth: 2, color: AppColors.textOnPrimary),
                   )
                 : const Icon(Icons.check_circle_rounded, size: 20),
             label: Text(l10n?.distributorAcceptSendQuote ?? 'Accept & Send',
@@ -918,7 +918,7 @@ class _DistributorOrderDetailScreenState
                     fontSize: 15, fontWeight: FontWeight.w600)),
             style: FilledButton.styleFrom(
               backgroundColor: AppColors.success,
-              foregroundColor: Colors.white,
+              foregroundColor: AppColors.textOnPrimary,
               padding:
                   EdgeInsets.symmetric(vertical: isMedium ? 16 : 14),
               shape: RoundedRectangleBorder(

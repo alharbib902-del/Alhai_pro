@@ -143,6 +143,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     final pages = _buildAdminPages(l10n);
     final isLastPage = _currentPage == pages.length - 1;
 
+    final horizontalPadding = MediaQuery.of(context).size.width > 600
+        ? AlhaiSpacing.xxxl
+        : AlhaiSpacing.lg;
+
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -151,7 +155,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             Align(
               alignment: AlignmentDirectional.topEnd,
               child: Padding(
-                padding: const EdgeInsets.all(AppSizes.lg),
+                padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: AppSizes.md),
                 child: TextButton(
                   onPressed: _skipOnboarding,
                   child: Text(
@@ -193,7 +197,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
             // Navigation buttons
             Padding(
-              padding: const EdgeInsets.all(AppSizes.xl),
+              padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: AppSizes.xl),
               child: Row(
                 children: [
                   if (_currentPage > 0)

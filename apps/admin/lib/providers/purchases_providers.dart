@@ -30,7 +30,7 @@ class PurchaseDetailData {
 // READ PROVIDERS
 // ============================================================================
 
-/// قائمة جميع المشتريات
+/// قائمة جميع المشتريات (legacy - kept for backward compat)
 final purchasesListProvider =
     FutureProvider.autoDispose<List<PurchasesTableData>>((ref) async {
   final storeId = ref.watch(currentStoreIdProvider);
@@ -39,13 +39,83 @@ final purchasesListProvider =
   return db.purchasesDao.getAllPurchases(storeId);
 });
 
-/// المشتريات حسب الحالة
+/// المشتريات حسب الحالة (legacy - kept for backward compat)
 final purchasesByStatusProvider = FutureProvider.autoDispose
     .family<List<PurchasesTableData>, String>((ref, status) async {
   final storeId = ref.watch(currentStoreIdProvider);
   if (storeId == null) return [];
   final db = GetIt.I<AppDatabase>();
   return db.purchasesDao.getPurchasesByStatus(storeId, status);
+});
+
+// ============================================================================
+// PAGINATED PROVIDERS
+// ============================================================================
+
+/// Parameter record for paginated queries
+class PurchasesPageParams {
+  final int page;
+  final int pageSize;
+  final String? status;
+
+  const PurchasesPageParams({this.page = 1, this.pageSize = 20, this.status});
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is PurchasesPageParams &&
+          page == other.page &&
+          pageSize == other.pageSize &&
+          status == other.status;
+
+  @override
+  int get hashCode => Object.hash(page, pageSize, status);
+}
+
+/// Result of a paginated purchases query
+class PaginatedPurchases {
+  final List<PurchasesTableData> items;
+  final int totalCount;
+  final int currentPage;
+  final int pageSize;
+
+  const PaginatedPurchases({
+    required this.items,
+    required this.totalCount,
+    required this.currentPage,
+    required this.pageSize,
+  });
+
+  int get totalPages => (totalCount / pageSize).ceil().clamp(1, 999);
+}
+
+/// Paginated purchases provider (all statuses or filtered)
+final paginatedPurchasesProvider = FutureProvider.autoDispose
+    .family<PaginatedPurchases, PurchasesPageParams>((ref, params) async {
+  final storeId = ref.watch(currentStoreIdProvider);
+  if (storeId == null) {
+    return const PaginatedPurchases(
+        items: [], totalCount: 0, currentPage: 1, pageSize: 20);
+  }
+  final db = GetIt.I<AppDatabase>();
+  final offset = (params.page - 1) * params.pageSize;
+
+  final results = await Future.wait([
+    params.status == null
+        ? db.purchasesDao.getPurchasesPaginated(storeId,
+            offset: offset, limit: params.pageSize)
+        : db.purchasesDao.getPurchasesByStatusPaginated(
+            storeId, params.status!,
+            offset: offset, limit: params.pageSize),
+    db.purchasesDao.getPurchasesCount(storeId, status: params.status),
+  ]);
+
+  return PaginatedPurchases(
+    items: results[0] as List<PurchasesTableData>,
+    totalCount: results[1] as int,
+    currentPage: params.page,
+    pageSize: params.pageSize,
+  );
 });
 
 /// تفاصيل مشتريات واحدة
