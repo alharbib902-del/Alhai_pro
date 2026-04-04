@@ -1,6 +1,7 @@
 /// Distributor Reports Screen
 ///
 /// Shows summary statistics, charts, and date filtering.
+/// Wired to real Supabase data via reportDataProvider.
 /// Uses fl_chart for bar chart visualization.
 /// Supports: RTL Arabic, dark/light theme, responsive layout.
 library;
@@ -11,23 +12,18 @@ import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart' show NumberFormat;
 
-// ─── Mock Data ───────────────────────────────────────────────────
+import '../../data/models.dart';
+import '../../providers/distributor_providers.dart';
 
-class _MockMonthlySales {
-  final String month;
-  final double amount;
-  const _MockMonthlySales(this.month, this.amount);
-}
+// ─── Period mapping ─────────────────────────────────────────────
 
-const _monthlySales = [
-  _MockMonthlySales('سبت', 12500),
-  _MockMonthlySales('أحد', 18200),
-  _MockMonthlySales('اثن', 15600),
-  _MockMonthlySales('ثلا', 22100),
-  _MockMonthlySales('أربع', 19800),
-  _MockMonthlySales('خمي', 24500),
-  _MockMonthlySales('جمع', 8900),
-];
+/// Arabic display label -> API period key used by reportDataProvider.
+const _periodMap = <String, String>{
+  'يوم': 'day',
+  'أسبوع': 'week',
+  'شهر': 'month',
+  'سنة': 'year',
+};
 
 // ─── Screen ──────────────────────────────────────────────────────
 
@@ -45,6 +41,8 @@ class _DistributorReportsScreenState
   String _selectedPeriod = 'أسبوع';
   final _periods = ['يوم', 'أسبوع', 'شهر', 'سنة'];
 
+  String get _apiPeriod => _periodMap[_selectedPeriod] ?? 'week';
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -53,166 +51,192 @@ class _DistributorReportsScreenState
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cs = Theme.of(context).colorScheme;
 
-    return Scaffold(
-        backgroundColor: AppColors.getBackground(isDark),
-        appBar: AppBar(
-          title: Text(
-            'التقارير',
-            style: TextStyle(fontWeight: FontWeight.bold, color: cs.onSurface),
-          ),
-          centerTitle: false,
-          actions: [
-            IconButton(
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('تصدير التقرير - قريباً'),
-                    backgroundColor: AppColors.info,
-                  ),
-                );
-              },
-              icon: const Icon(Icons.download_rounded),
-              tooltip: 'تصدير',
-            ),
-            const SizedBox(width: AlhaiSpacing.xs),
-          ],
-        ),
-        body: SingleChildScrollView(
-          padding: EdgeInsets.all(isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // ── Period Filter ──
-              _buildPeriodFilter(isDark),
-              SizedBox(height: isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md),
+    final reportAsync = ref.watch(reportDataProvider(_apiPeriod));
 
-              // ── Summary Cards ──
-              if (isWide)
-                Row(
+    return Scaffold(
+      backgroundColor: AppColors.getBackground(isDark),
+      appBar: AppBar(
+        title: Text(
+          'التقارير',
+          style: TextStyle(fontWeight: FontWeight.bold, color: cs.onSurface),
+        ),
+        centerTitle: false,
+        actions: [
+          IconButton(
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('تصدير التقرير - قريباً'),
+                  backgroundColor: AppColors.info,
+                ),
+              );
+            },
+            icon: const Icon(Icons.download_rounded),
+            tooltip: 'تصدير',
+          ),
+          const SizedBox(width: AlhaiSpacing.xs),
+        ],
+      ),
+      body: Column(
+        children: [
+          // ── Period Filter (always visible) ──
+          Padding(
+            padding: EdgeInsets.fromLTRB(
+              isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md,
+              isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md,
+              isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md,
+              0,
+            ),
+            child: _buildPeriodFilter(isDark),
+          ),
+
+          // ── Content ──
+          Expanded(
+            child: reportAsync.when(
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (e, _) => Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Expanded(
-                        child: _statCard(
-                      Icons.payments_rounded,
-                      'إجمالي المبيعات',
-                      '١٢١,٦٠٠ ر.س',
-                      '+١٢.٥%',
-                      AppColors.primary,
-                      isDark,
-                    )),
-                    const SizedBox(width: AlhaiSpacing.md),
-                    Expanded(
-                        child: _statCard(
-                      Icons.receipt_long_rounded,
-                      'عدد الطلبات',
-                      '٤٨',
-                      '+٨',
-                      AppColors.info,
-                      isDark,
-                    )),
-                    const SizedBox(width: AlhaiSpacing.md),
-                    Expanded(
-                        child: _statCard(
-                      Icons.trending_up_rounded,
-                      'متوسط قيمة الطلب',
-                      '٢,٥٣٣ ر.س',
-                      '+٣.٢%',
-                      AppColors.secondary,
-                      isDark,
-                    )),
-                    const SizedBox(width: AlhaiSpacing.md),
-                    Expanded(
-                        child: _statCard(
-                      Icons.star_rounded,
-                      'أفضل منتج',
-                      'أرز بسمتي',
-                      '٥٠ طلب',
-                      AppColors.warning,
-                      isDark,
-                    )),
-                  ],
-                )
-              else
-                Wrap(
-                  spacing: AlhaiSpacing.sm,
-                  runSpacing: AlhaiSpacing.sm,
-                  children: [
-                    SizedBox(
-                      width: isMedium
-                          ? (size.width - 60) / 2
-                          : double.infinity,
-                      child: _statCard(
-                        Icons.payments_rounded,
-                        'إجمالي المبيعات',
-                        '١٢١,٦٠٠ ر.س',
-                        '+١٢.٥%',
-                        AppColors.primary,
-                        isDark,
+                    Icon(Icons.error_outline,
+                        size: 48, color: AppColors.getTextMuted(isDark)),
+                    const SizedBox(height: AlhaiSpacing.md),
+                    Text(
+                      'حدث خطأ في تحميل التقارير',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: AppColors.getTextSecondary(isDark),
                       ),
                     ),
-                    SizedBox(
-                      width: isMedium
-                          ? (size.width - 60) / 2
-                          : double.infinity,
-                      child: _statCard(
-                        Icons.receipt_long_rounded,
-                        'عدد الطلبات',
-                        '٤٨',
-                        '+٨',
-                        AppColors.info,
-                        isDark,
-                      ),
-                    ),
-                    SizedBox(
-                      width: isMedium
-                          ? (size.width - 60) / 2
-                          : double.infinity,
-                      child: _statCard(
-                        Icons.trending_up_rounded,
-                        'متوسط قيمة الطلب',
-                        '٢,٥٣٣ ر.س',
-                        '+٣.٢%',
-                        AppColors.secondary,
-                        isDark,
-                      ),
-                    ),
-                    SizedBox(
-                      width: isMedium
-                          ? (size.width - 60) / 2
-                          : double.infinity,
-                      child: _statCard(
-                        Icons.star_rounded,
-                        'أفضل منتج',
-                        'أرز بسمتي',
-                        '٥٠ طلب',
-                        AppColors.warning,
-                        isDark,
+                    const SizedBox(height: AlhaiSpacing.md),
+                    FilledButton.icon(
+                      onPressed: () =>
+                          ref.invalidate(reportDataProvider(_apiPeriod)),
+                      icon: const Icon(Icons.refresh, size: 18),
+                      label: const Text('إعادة المحاولة'),
+                      style: FilledButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        foregroundColor: Colors.white,
                       ),
                     ),
                   ],
                 ),
-              SizedBox(height: isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md),
+              ),
+              data: (report) => RefreshIndicator(
+                onRefresh: () async =>
+                    ref.invalidate(reportDataProvider(_apiPeriod)),
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: EdgeInsets.all(
+                      isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // ── Summary Cards ──
+                      _buildSummaryCards(report, isDark, isWide, isMedium, size),
+                      SizedBox(
+                          height: isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md),
 
-              // ── Chart ──
-              if (isWide)
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(flex: 3, child: _buildChart(isDark, isMedium)),
-                    const SizedBox(width: AlhaiSpacing.lg),
-                    Expanded(flex: 2, child: _buildTopProducts(isDark)),
-                  ],
-                )
-              else ...[
-                _buildChart(isDark, isMedium),
-                const SizedBox(height: AlhaiSpacing.md),
-                _buildTopProducts(isDark),
-              ],
-              const SizedBox(height: AlhaiSpacing.xl),
-            ],
+                      // ── Chart + Top Products ──
+                      if (isWide)
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                                flex: 3,
+                                child: _buildChart(
+                                    isDark, isMedium, report.dailySales)),
+                            const SizedBox(width: AlhaiSpacing.lg),
+                            Expanded(
+                                flex: 2,
+                                child: _buildTopProducts(
+                                    isDark, report.topProducts)),
+                          ],
+                        )
+                      else ...[
+                        _buildChart(isDark, isMedium, report.dailySales),
+                        const SizedBox(height: AlhaiSpacing.md),
+                        _buildTopProducts(isDark, report.topProducts),
+                      ],
+                      const SizedBox(height: AlhaiSpacing.xl),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ),
-        ),
+        ],
+      ),
     );
   }
+
+  // ─── Summary Cards ────────────────────────────────────────────
+
+  Widget _buildSummaryCards(ReportData report, bool isDark, bool isWide,
+      bool isMedium, Size size) {
+    final fmt = NumberFormat('#,##0', 'ar');
+    final fmtDec = NumberFormat('#,##0.00', 'ar');
+
+    final cards = [
+      _statCard(
+        Icons.payments_rounded,
+        'إجمالي المبيعات',
+        '${fmt.format(report.totalSales)} ر.س',
+        '', // No comparison data yet
+        AppColors.primary,
+        isDark,
+      ),
+      _statCard(
+        Icons.receipt_long_rounded,
+        'عدد الطلبات',
+        '${report.orderCount}',
+        '',
+        AppColors.info,
+        isDark,
+      ),
+      _statCard(
+        Icons.trending_up_rounded,
+        'متوسط قيمة الطلب',
+        '${fmtDec.format(report.avgOrderValue)} ر.س',
+        '',
+        AppColors.secondary,
+        isDark,
+      ),
+      _statCard(
+        Icons.star_rounded,
+        'أفضل منتج',
+        report.topProduct,
+        '${report.topProductOrders} طلب',
+        AppColors.warning,
+        isDark,
+      ),
+    ];
+
+    if (isWide) {
+      return Row(
+        children: [
+          for (int i = 0; i < cards.length; i++) ...[
+            if (i > 0) const SizedBox(width: AlhaiSpacing.md),
+            Expanded(child: cards[i]),
+          ],
+        ],
+      );
+    }
+
+    return Wrap(
+      spacing: AlhaiSpacing.sm,
+      runSpacing: AlhaiSpacing.sm,
+      children: [
+        for (final card in cards)
+          SizedBox(
+            width: isMedium ? (size.width - 60) / 2 : double.infinity,
+            child: card,
+          ),
+      ],
+    );
+  }
+
+  // ─── Period Filter ─────────────────────────────────────────────
 
   Widget _buildPeriodFilter(bool isDark) {
     return Container(
@@ -257,6 +281,8 @@ class _DistributorReportsScreenState
     );
   }
 
+  // ─── Stat Card ─────────────────────────────────────────────────
+
   Widget _statCard(IconData icon, String label, String value, String change,
       Color color, bool isDark) {
     return Container(
@@ -280,22 +306,23 @@ class _DistributorReportsScreenState
                 child: Icon(icon, color: color, size: 20),
               ),
               const Spacer(),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 3),
-                decoration: BoxDecoration(
-                  color: AppColors.success.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text(
-                  change,
-                  style: const TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.success,
+              if (change.isNotEmpty)
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: AppColors.success.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    change,
+                    style: const TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.success,
+                    ),
                   ),
                 ),
-              ),
             ],
           ),
           const SizedBox(height: AlhaiSpacing.sm),
@@ -320,10 +347,34 @@ class _DistributorReportsScreenState
     );
   }
 
-  Widget _buildChart(bool isDark, bool isMedium) {
-    final maxValue = _monthlySales
+  // ─── Chart ─────────────────────────────────────────────────────
+
+  Widget _buildChart(bool isDark, bool isMedium, List<DailySales> dailySales) {
+    if (dailySales.isEmpty) {
+      return Container(
+        height: 280,
+        padding: EdgeInsets.all(isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md),
+        decoration: BoxDecoration(
+          color: AppColors.getSurface(isDark),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.getBorder(isDark)),
+        ),
+        child: Center(
+          child: Text(
+            'لا توجد بيانات للفترة المحددة',
+            style: TextStyle(
+              fontSize: 14,
+              color: AppColors.getTextMuted(isDark),
+            ),
+          ),
+        ),
+      );
+    }
+
+    final maxValue = dailySales
         .map((s) => s.amount)
         .reduce((a, b) => a > b ? a : b);
+    final chartMaxY = maxValue > 0 ? maxValue * 1.2 : 100.0;
 
     return Container(
       padding: EdgeInsets.all(isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md),
@@ -363,7 +414,7 @@ class _DistributorReportsScreenState
             child: BarChart(
               BarChartData(
                 alignment: BarChartAlignment.spaceAround,
-                maxY: maxValue * 1.2,
+                maxY: chartMaxY,
                 barTouchData: BarTouchData(
                   enabled: true,
                   touchTooltipData: BarTouchTooltipData(
@@ -371,7 +422,7 @@ class _DistributorReportsScreenState
                     getTooltipItem: (group, groupIndex, rod, rodIndex) {
                       return BarTooltipItem(
                         '${NumberFormat('#,##0').format(rod.toY)} ر.س',
-                        TextStyle(
+                        const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                           fontSize: 12,
@@ -407,13 +458,13 @@ class _DistributorReportsScreenState
                       showTitles: true,
                       getTitlesWidget: (value, meta) {
                         final idx = value.toInt();
-                        if (idx < 0 || idx >= _monthlySales.length) {
+                        if (idx < 0 || idx >= dailySales.length) {
                           return const SizedBox.shrink();
                         }
                         return Padding(
                           padding: const EdgeInsets.only(top: AlhaiSpacing.xs),
                           child: Text(
-                            _monthlySales[idx].month,
+                            dailySales[idx].day,
                             style: TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.w500,
@@ -428,7 +479,8 @@ class _DistributorReportsScreenState
                 gridData: FlGridData(
                   show: true,
                   drawVerticalLine: false,
-                  horizontalInterval: maxValue / 4,
+                  horizontalInterval:
+                      maxValue > 0 ? maxValue / 4 : 25,
                   getDrawingHorizontalLine: (value) => FlLine(
                     color: AppColors.getBorder(isDark),
                     strokeWidth: 1,
@@ -436,19 +488,19 @@ class _DistributorReportsScreenState
                   ),
                 ),
                 borderData: FlBorderData(show: false),
-                barGroups: List.generate(_monthlySales.length, (index) {
+                barGroups: List.generate(dailySales.length, (index) {
                   return BarChartGroupData(
                     x: index,
                     barRods: [
                       BarChartRodData(
-                        toY: _monthlySales[index].amount,
+                        toY: dailySales[index].amount,
                         color: AppColors.primary,
                         width: isMedium ? 20 : 14,
                         borderRadius: const BorderRadius.vertical(
                             top: Radius.circular(6)),
                         backDrawRodData: BackgroundBarChartRodData(
                           show: true,
-                          toY: maxValue * 1.2,
+                          toY: chartMaxY,
                           color: AppColors.primary.withValues(alpha: 0.04),
                         ),
                       ),
@@ -463,14 +515,53 @@ class _DistributorReportsScreenState
     );
   }
 
-  Widget _buildTopProducts(bool isDark) {
-    final topProducts = [
-      ('أرز بسمتي ١٠ كيلو', 50, 47500.0),
-      ('زيت زيتون بكر ١ لتر', 35, 49000.0),
-      ('قهوة عربية ٥٠٠ جرام', 28, 12600.0),
-      ('سكر أبيض ٥ كيلو', 25, 4500.0),
-      ('حليب بودرة ٢.٥ كيلو', 20, 11000.0),
-    ];
+  // ─── Top Products ──────────────────────────────────────────────
+
+  Widget _buildTopProducts(bool isDark, List<TopProduct> topProducts) {
+    if (topProducts.isEmpty) {
+      return Container(
+        padding: const EdgeInsets.all(AlhaiSpacing.mdl),
+        decoration: BoxDecoration(
+          color: AppColors.getSurface(isDark),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.getBorder(isDark)),
+        ),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(AlhaiSpacing.xs),
+                  decoration: BoxDecoration(
+                    color: AppColors.warning.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(Icons.emoji_events_rounded,
+                      color: AppColors.warning, size: 20),
+                ),
+                const SizedBox(width: AlhaiSpacing.sm),
+                Text(
+                  'أفضل المنتجات',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.getTextPrimary(isDark),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: AlhaiSpacing.lg),
+            Text(
+              'لا توجد بيانات',
+              style: TextStyle(
+                fontSize: 14,
+                color: AppColors.getTextMuted(isDark),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
 
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
@@ -506,7 +597,7 @@ class _DistributorReportsScreenState
           ),
           const SizedBox(height: AlhaiSpacing.md),
           ...List.generate(topProducts.length, (index) {
-            final (name, orders, revenue) = topProducts[index];
+            final product = topProducts[index];
             return Container(
               padding: const EdgeInsets.symmetric(vertical: 10),
               decoration: BoxDecoration(
@@ -557,7 +648,7 @@ class _DistributorReportsScreenState
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          name,
+                          product.name,
                           style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
@@ -565,7 +656,7 @@ class _DistributorReportsScreenState
                           ),
                         ),
                         Text(
-                          '$orders طلب',
+                          '${product.orderCount} طلب',
                           style: TextStyle(
                             fontSize: 11,
                             color: AppColors.getTextMuted(isDark),
@@ -575,7 +666,7 @@ class _DistributorReportsScreenState
                     ),
                   ),
                   Text(
-                    '${NumberFormat('#,##0').format(revenue)} ر.س',
+                    '${NumberFormat('#,##0').format(product.revenue)} ر.س',
                     style: const TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,

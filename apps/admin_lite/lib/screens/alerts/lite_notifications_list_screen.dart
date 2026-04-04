@@ -1,24 +1,31 @@
 /// Lite Push Notifications List Screen
 ///
-/// Shows all push notifications with read/unread state,
-/// grouped by date with swipe-to-dismiss support.
+/// Shows all push notifications queried from notificationsDao,
+/// with read/unread state and mark-as-read support.
 /// Supports RTL, dark mode, and responsive layouts.
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
+import 'package:alhai_database/alhai_database.dart';
+import 'package:alhai_auth/alhai_auth.dart';
+import 'package:get_it/get_it.dart';
+
+import '../../providers/lite_screen_providers.dart';
 
 /// Push notifications list for Admin Lite
-class LiteNotificationsListScreen extends StatelessWidget {
+class LiteNotificationsListScreen extends ConsumerWidget {
   const LiteNotificationsListScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final size = MediaQuery.of(context).size;
     final isMobile = size.width < 600;
     final l10n = AppLocalizations.of(context)!;
+    final dataAsync = ref.watch(liteNotificationsProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -26,27 +33,79 @@ class LiteNotificationsListScreen extends StatelessWidget {
         centerTitle: true,
         actions: [
           TextButton(
-            onPressed: () {},
+            onPressed: () async {
+              final storeId = ref.read(currentStoreIdProvider);
+              if (storeId != null) {
+                final db = GetIt.I<AppDatabase>();
+                await db.notificationsDao.markAllAsRead(storeId);
+                ref.invalidate(liteNotificationsProvider);
+              }
+            },
             child: Text(l10n.done),
           ),
           const SizedBox(width: AlhaiSpacing.xs),
         ],
       ),
-      body: ListView(
-        padding: EdgeInsets.all(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
-        children: [
-          // Today section
-          _buildDateHeader(l10n.today, isDark),
-          const SizedBox(height: AlhaiSpacing.xs),
-          ..._todayNotifications.map((n) => _buildNotificationTile(context, n, isDark)),
+      body: dataAsync.when(
+        data: (notifications) {
+          if (notifications.isEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.notifications_off_outlined, size: 64, color: isDark ? Colors.white24 : Theme.of(context).colorScheme.outlineVariant),
+                  const SizedBox(height: AlhaiSpacing.md),
+                  Text(l10n.noResults, style: TextStyle(fontSize: 16, color: isDark ? Colors.white54 : Theme.of(context).colorScheme.onSurfaceVariant)),
+                ],
+              ),
+            );
+          }
 
-          const SizedBox(height: AlhaiSpacing.lg),
+          // Group by date
+          final today = DateTime.now();
+          final todayStart = DateTime(today.year, today.month, today.day);
+          final yesterdayStart = todayStart.subtract(const Duration(days: 1));
 
-          // Yesterday section
-          _buildDateHeader(l10n.yesterday, isDark),
-          const SizedBox(height: AlhaiSpacing.xs),
-          ..._yesterdayNotifications.map((n) => _buildNotificationTile(context, n, isDark)),
-        ],
+          final todayItems = notifications.where((n) => n.createdAt.isAfter(todayStart)).toList();
+          final yesterdayItems = notifications.where((n) => n.createdAt.isAfter(yesterdayStart) && n.createdAt.isBefore(todayStart)).toList();
+          final olderItems = notifications.where((n) => n.createdAt.isBefore(yesterdayStart)).toList();
+
+          return RefreshIndicator(
+            onRefresh: () async => ref.invalidate(liteNotificationsProvider),
+            child: ListView(
+              padding: EdgeInsets.all(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
+              children: [
+                if (todayItems.isNotEmpty) ...[
+                  _buildDateHeader(l10n.today, isDark),
+                  const SizedBox(height: AlhaiSpacing.xs),
+                  ...todayItems.map((n) => _buildNotificationTile(context, n, isDark, ref)),
+                  const SizedBox(height: AlhaiSpacing.lg),
+                ],
+                if (yesterdayItems.isNotEmpty) ...[
+                  _buildDateHeader(l10n.yesterday, isDark),
+                  const SizedBox(height: AlhaiSpacing.xs),
+                  ...yesterdayItems.map((n) => _buildNotificationTile(context, n, isDark, ref)),
+                  const SizedBox(height: AlhaiSpacing.lg),
+                ],
+                if (olderItems.isNotEmpty) ...[
+                  _buildDateHeader('Older', isDark),
+                  const SizedBox(height: AlhaiSpacing.xs),
+                  ...olderItems.map((n) => _buildNotificationTile(context, n, isDark, ref)),
+                ],
+              ],
+            ),
+          );
+        },
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (_, __) => Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(l10n.errorOccurred),
+              TextButton.icon(onPressed: () => ref.invalidate(liteNotificationsProvider), icon: const Icon(Icons.refresh_rounded), label: Text(l10n.tryAgain)),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -54,160 +113,85 @@ class LiteNotificationsListScreen extends StatelessWidget {
   Widget _buildDateHeader(String label, bool isDark) {
     return Padding(
       padding: const EdgeInsets.only(bottom: AlhaiSpacing.xxs),
-      child: Text(
-        label,
-        style: TextStyle(
-          fontSize: 13,
-          fontWeight: FontWeight.bold,
-          color: isDark ? Colors.white54 : Colors.black54,
-        ),
-      ),
+      child: Text(label, style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: isDark ? Colors.white54 : Colors.black54)),
     );
   }
 
-  Widget _buildNotificationTile(BuildContext context, _NotificationData notification, bool isDark) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
-      padding: const EdgeInsets.all(AlhaiSpacing.sm),
-      decoration: BoxDecoration(
-        color: isDark
-            ? Colors.white.withValues(alpha: notification.isRead ? 0.04 : 0.08)
-            : (notification.isRead ? Colors.white : notification.color.withValues(alpha: 0.04)),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: isDark ? Colors.white12 : Theme.of(context).colorScheme.outlineVariant,
+  IconData _notificationIcon(String? type) {
+    return switch (type) {
+      'low_stock' => Icons.warning_amber_rounded,
+      'order' => Icons.receipt_long,
+      'shift' => Icons.play_circle_outline,
+      'refund' => Icons.undo,
+      'sync' => Icons.sync,
+      _ => Icons.notifications_outlined,
+    };
+  }
+
+  Color _notificationColor(String? type) {
+    return switch (type) {
+      'low_stock' => AlhaiColors.warning,
+      'order' => AlhaiColors.info,
+      'shift' => AlhaiColors.success,
+      'refund' => AlhaiColors.error,
+      'sync' => AlhaiColors.success,
+      _ => AlhaiColors.primary,
+    };
+  }
+
+  Widget _buildNotificationTile(BuildContext context, NotificationsTableData notification, bool isDark, WidgetRef ref) {
+    final color = _notificationColor(notification.type);
+    final icon = _notificationIcon(notification.type);
+    final time = '${notification.createdAt.hour.toString().padLeft(2, '0')}:${notification.createdAt.minute.toString().padLeft(2, '0')}';
+
+    return GestureDetector(
+      onTap: () async {
+        if (!notification.isRead) {
+          final db = GetIt.I<AppDatabase>();
+          await db.notificationsDao.markAsRead(notification.id);
+          ref.invalidate(liteNotificationsProvider);
+        }
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
+        padding: const EdgeInsets.all(AlhaiSpacing.sm),
+        decoration: BoxDecoration(
+          color: isDark
+              ? Colors.white.withValues(alpha: notification.isRead ? 0.04 : 0.08)
+              : (notification.isRead ? Colors.white : color.withValues(alpha: 0.04)),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: isDark ? Colors.white12 : Theme.of(context).colorScheme.outlineVariant),
         ),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: notification.color.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Icon(notification.icon, color: notification.color, size: 20),
-          ),
-          const SizedBox(width: AlhaiSpacing.sm),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  notification.title,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: notification.isRead ? FontWeight.normal : FontWeight.bold,
-                    color: isDark ? Colors.white : Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: AlhaiSpacing.xxxs),
-                Text(
-                  notification.body,
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: isDark ? Colors.white38 : Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: AlhaiSpacing.xxs),
-                Text(
-                  notification.time,
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: isDark ? Colors.white24 : Colors.black38,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          if (!notification.isRead)
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
             Container(
-              width: 8,
-              height: 8,
-              margin: const EdgeInsets.only(top: AlhaiSpacing.xxs),
-              decoration: BoxDecoration(
-                color: AlhaiColors.primary,
-                shape: BoxShape.circle,
+              width: 40, height: 40,
+              decoration: BoxDecoration(color: color.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(10)),
+              child: Icon(icon, color: color, size: 20),
+            ),
+            const SizedBox(width: AlhaiSpacing.sm),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(notification.title, style: TextStyle(fontSize: 14, fontWeight: notification.isRead ? FontWeight.normal : FontWeight.bold, color: isDark ? Colors.white : Colors.black87)),
+                  const SizedBox(height: AlhaiSpacing.xxxs),
+                  Text(notification.body ?? '', style: TextStyle(fontSize: 13, color: isDark ? Colors.white38 : Theme.of(context).colorScheme.onSurfaceVariant), maxLines: 2, overflow: TextOverflow.ellipsis),
+                  const SizedBox(height: AlhaiSpacing.xxs),
+                  Text(time, style: TextStyle(fontSize: 11, color: isDark ? Colors.white24 : Colors.black38)),
+                ],
               ),
             ),
-        ],
+            if (!notification.isRead)
+              Container(
+                width: 8, height: 8,
+                margin: const EdgeInsets.only(top: AlhaiSpacing.xxs),
+                decoration: BoxDecoration(color: AlhaiColors.primary, shape: BoxShape.circle),
+              ),
+          ],
+        ),
       ),
     );
   }
-
-  static const _todayNotifications = [
-    _NotificationData(
-      title: 'Low Stock Alert',
-      body: 'Rice 5kg is now out of stock. Consider reordering.',
-      time: '10 min ago',
-      icon: Icons.warning_amber_rounded,
-      color: AlhaiColors.warning,
-      isRead: false,
-    ),
-    _NotificationData(
-      title: 'New Order',
-      body: 'Order #1052 received from online store.',
-      time: '25 min ago',
-      icon: Icons.receipt_long,
-      color: AlhaiColors.info,
-      isRead: false,
-    ),
-    _NotificationData(
-      title: 'Shift Opened',
-      body: 'Ahmed Al-Salem opened shift at 08:00 AM.',
-      time: '2 hours ago',
-      icon: Icons.play_circle_outline,
-      color: AlhaiColors.success,
-      isRead: true,
-    ),
-  ];
-
-  static const _yesterdayNotifications = [
-    _NotificationData(
-      title: 'Refund Request',
-      body: 'Pending refund #R-2045 requires approval.',
-      time: '14:30',
-      icon: Icons.undo,
-      color: AlhaiColors.error,
-      isRead: true,
-    ),
-    _NotificationData(
-      title: 'Sync Complete',
-      body: 'All data synchronized successfully.',
-      time: '12:00',
-      icon: Icons.sync,
-      color: AlhaiColors.success,
-      isRead: true,
-    ),
-    _NotificationData(
-      title: 'Product Expiry',
-      body: '3 products expiring within 7 days.',
-      time: '09:15',
-      icon: Icons.calendar_today,
-      color: Colors.orange,
-      isRead: true,
-    ),
-  ];
-}
-
-class _NotificationData {
-  final String title;
-  final String body;
-  final String time;
-  final IconData icon;
-  final Color color;
-  final bool isRead;
-
-  const _NotificationData({
-    required this.title,
-    required this.body,
-    required this.time,
-    required this.icon,
-    required this.color,
-    required this.isRead,
-  });
 }

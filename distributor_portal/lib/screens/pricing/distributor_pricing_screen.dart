@@ -1,7 +1,7 @@
 /// Distributor Pricing Management Screen
 ///
 /// Manage product prices with editable fields, last updated dates,
-/// and a save button. Mock data for now.
+/// and a save button. Wired to real Supabase data via Riverpod.
 /// Supports: RTL Arabic, dark/light theme, responsive layout.
 library;
 
@@ -10,23 +10,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:intl/intl.dart' show NumberFormat, DateFormat;
 
-// ─── Mock Data ───────────────────────────────────────────────────
-
-class _MockPricingItem {
-  final String id;
-  final String productName;
-  final double currentPrice;
-  final DateTime lastUpdated;
-  String newPriceText;
-
-  _MockPricingItem({
-    required this.id,
-    required this.productName,
-    required this.currentPrice,
-    required this.lastUpdated,
-    this.newPriceText = '',
-  });
-}
+import '../../data/models.dart';
+import '../../providers/distributor_providers.dart';
 
 // ─── Screen ──────────────────────────────────────────────────────
 
@@ -41,35 +26,25 @@ class DistributorPricingScreen extends ConsumerStatefulWidget {
 
 class _DistributorPricingScreenState
     extends ConsumerState<DistributorPricingScreen> {
-  late List<_MockPricingItem> _items;
   final Map<String, TextEditingController> _controllers = {};
   bool _isSaving = false;
   bool _hasChanges = false;
 
-  @override
-  void initState() {
-    super.initState();
-    _loadMockData();
-  }
-
-  void _loadMockData() {
-    final now = DateTime.now();
-    _items = [
-      _MockPricingItem(id: '1', productName: 'أرز بسمتي ١٠ كيلو', currentPrice: 95, lastUpdated: now.subtract(const Duration(days: 2))),
-      _MockPricingItem(id: '2', productName: 'زيت زيتون بكر ١ لتر', currentPrice: 140, lastUpdated: now.subtract(const Duration(days: 5))),
-      _MockPricingItem(id: '3', productName: 'سكر أبيض ٥ كيلو', currentPrice: 18, lastUpdated: now.subtract(const Duration(days: 1))),
-      _MockPricingItem(id: '4', productName: 'دقيق أبيض ١٠ كيلو', currentPrice: 22, lastUpdated: now.subtract(const Duration(days: 7))),
-      _MockPricingItem(id: '5', productName: 'شاي أحمر ٢٠٠ جرام', currentPrice: 12, lastUpdated: now.subtract(const Duration(days: 3))),
-      _MockPricingItem(id: '6', productName: 'قهوة عربية ٥٠٠ جرام', currentPrice: 45, lastUpdated: now.subtract(const Duration(hours: 12))),
-      _MockPricingItem(id: '7', productName: 'حليب بودرة ٢.٥ كيلو', currentPrice: 55, lastUpdated: now.subtract(const Duration(days: 4))),
-      _MockPricingItem(id: '8', productName: 'معكرونة إسباغيتي ٥٠٠ جرام', currentPrice: 5, lastUpdated: now.subtract(const Duration(days: 10))),
-      _MockPricingItem(id: '9', productName: 'تونة خفيفة ١٧٠ جرام', currentPrice: 8, lastUpdated: now.subtract(const Duration(days: 6))),
-      _MockPricingItem(id: '10', productName: 'صابون غسيل ٣ كيلو', currentPrice: 25, lastUpdated: now.subtract(const Duration(days: 8))),
-    ];
-
-    for (final item in _items) {
-      _controllers[item.id] = TextEditingController();
+  /// Ensure a controller exists for every product. Called each build
+  /// so new data from a refresh is picked up without losing in-flight edits.
+  void _ensureControllers(List<DistributorProduct> products) {
+    for (final p in products) {
+      _controllers.putIfAbsent(p.id, () => TextEditingController());
     }
+    // Remove controllers for products that no longer exist.
+    final ids = products.map((p) => p.id).toSet();
+    _controllers.keys
+        .where((k) => !ids.contains(k))
+        .toList()
+        .forEach((k) {
+      _controllers[k]?.dispose();
+      _controllers.remove(k);
+    });
   }
 
   @override
@@ -80,10 +55,10 @@ class _DistributorPricingScreenState
     super.dispose();
   }
 
-  int get _changedCount {
+  int _changedCount(List<DistributorProduct> products) {
     int count = 0;
-    for (final item in _items) {
-      final text = _controllers[item.id]?.text ?? '';
+    for (final p in products) {
+      final text = _controllers[p.id]?.text ?? '';
       if (text.isNotEmpty && double.tryParse(text) != null) {
         count++;
       }
@@ -99,58 +74,101 @@ class _DistributorPricingScreenState
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cs = Theme.of(context).colorScheme;
 
+    final productsAsync = ref.watch(productsProvider);
+
     return Scaffold(
-        backgroundColor: AppColors.getBackground(isDark),
-        appBar: AppBar(
-          title: Text(
-            'إدارة الأسعار',
-            style: TextStyle(fontWeight: FontWeight.bold, color: cs.onSurface),
-          ),
-          centerTitle: false,
-          actions: [
-            if (_changedCount > 0)
-              Container(
-                margin: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-                decoration: BoxDecoration(
-                  color: AppColors.warning.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Center(
-                  child: Text(
-                    '$_changedCount تغيير',
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.warning,
-                    ),
+      backgroundColor: AppColors.getBackground(isDark),
+      appBar: AppBar(
+        title: Text(
+          'إدارة الأسعار',
+          style: TextStyle(fontWeight: FontWeight.bold, color: cs.onSurface),
+        ),
+        centerTitle: false,
+        actions: [
+          // Show changed-count badge only when there are pending changes
+          if (productsAsync.valueOrNull != null &&
+              _changedCount(productsAsync.valueOrNull!) > 0)
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+              decoration: BoxDecoration(
+                color: AppColors.warning.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Center(
+                child: Text(
+                  '${_changedCount(productsAsync.valueOrNull!)} تغيير',
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.warning,
                   ),
                 ),
               ),
-            const SizedBox(width: AlhaiSpacing.sm),
-          ],
-        ),
-        body: Column(
-          children: [
-            // ── Summary Header ──
-            _buildSummaryHeader(isDark, isMedium),
-
-            // ── Pricing List ──
-            Expanded(
-              child: isWide
-                  ? _buildPricingTable(isDark)
-                  : _buildPricingCards(isDark, isMedium),
             ),
-
-            // ── Save Button ──
-            _buildSaveBar(isDark, isMedium),
-          ],
+          const SizedBox(width: AlhaiSpacing.sm),
+        ],
+      ),
+      body: productsAsync.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, _) => Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.error_outline,
+                  size: 48, color: AppColors.getTextMuted(isDark)),
+              const SizedBox(height: AlhaiSpacing.md),
+              Text(
+                'حدث خطأ في تحميل البيانات',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: AppColors.getTextSecondary(isDark),
+                ),
+              ),
+              const SizedBox(height: AlhaiSpacing.md),
+              FilledButton.icon(
+                onPressed: () => ref.invalidate(productsProvider),
+                icon: const Icon(Icons.refresh, size: 18),
+                label: const Text('إعادة المحاولة'),
+                style: FilledButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white,
+                ),
+              ),
+            ],
+          ),
         ),
+        data: (products) {
+          _ensureControllers(products);
+          final changed = _changedCount(products);
+
+          return Column(
+            children: [
+              // ── Summary Header ──
+              _buildSummaryHeader(isDark, isMedium, products, changed),
+
+              // ── Pricing List ──
+              Expanded(
+                child: RefreshIndicator(
+                  onRefresh: () async => ref.invalidate(productsProvider),
+                  child: isWide
+                      ? _buildPricingTable(isDark, products)
+                      : _buildPricingCards(isDark, isMedium, products),
+                ),
+              ),
+
+              // ── Save Button ──
+              _buildSaveBar(isDark, isMedium, products, changed),
+            ],
+          );
+        },
+      ),
     );
   }
 
-  Widget _buildSummaryHeader(bool isDark, bool isMedium) {
+  Widget _buildSummaryHeader(
+      bool isDark, bool isMedium, List<DistributorProduct> products, int changed) {
     return Container(
       padding: EdgeInsets.all(isMedium ? AlhaiSpacing.mdl : AlhaiSpacing.md),
       decoration: BoxDecoration(
@@ -163,7 +181,7 @@ class _DistributorPricingScreenState
         children: [
           _summaryCard(
             Icons.inventory_2_rounded,
-            '${_items.length}',
+            '${products.length}',
             'إجمالي المنتجات',
             AppColors.primary,
             isDark,
@@ -171,7 +189,7 @@ class _DistributorPricingScreenState
           const SizedBox(width: AlhaiSpacing.sm),
           _summaryCard(
             Icons.edit_rounded,
-            '$_changedCount',
+            '$changed',
             'تغييرات معلقة',
             AppColors.warning,
             isDark,
@@ -235,7 +253,7 @@ class _DistributorPricingScreenState
 
   // ─── Wide Screen: Table ────────────────────────────────────────
 
-  Widget _buildPricingTable(bool isDark) {
+  Widget _buildPricingTable(bool isDark, List<DistributorProduct> products) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       child: Container(
@@ -266,12 +284,12 @@ class _DistributorPricingScreenState
               ),
             ),
             // Rows
-            ...List.generate(_items.length, (index) {
-              final item = _items[index];
-              final controller = _controllers[item.id]!;
+            ...List.generate(products.length, (index) {
+              final product = products[index];
+              final controller = _controllers[product.id]!;
               final newPrice = double.tryParse(controller.text);
-              final hasDiff = newPrice != null && newPrice != item.currentPrice;
-              final diff = hasDiff ? newPrice - item.currentPrice : 0.0;
+              final hasDiff = newPrice != null && newPrice != product.price;
+              final diff = hasDiff ? newPrice - product.price : 0.0;
 
               return Container(
                 padding: const EdgeInsets.symmetric(
@@ -280,7 +298,7 @@ class _DistributorPricingScreenState
                   color: hasDiff
                       ? AppColors.warning.withValues(alpha: isDark ? 0.05 : 0.02)
                       : null,
-                  border: index < _items.length - 1
+                  border: index < products.length - 1
                       ? Border(
                           bottom: BorderSide(
                             color: AppColors.getBorder(isDark)
@@ -294,7 +312,7 @@ class _DistributorPricingScreenState
                     Expanded(
                       flex: 4,
                       child: Text(
-                        item.productName,
+                        product.name,
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
@@ -305,7 +323,7 @@ class _DistributorPricingScreenState
                     Expanded(
                       flex: 2,
                       child: Text(
-                        '${NumberFormat('#,##0.00').format(item.currentPrice)} ر.س',
+                        '${NumberFormat('#,##0.00').format(product.price)} ر.س',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 14,
@@ -329,7 +347,7 @@ class _DistributorPricingScreenState
                             color: AppColors.getTextPrimary(isDark),
                           ),
                           decoration: InputDecoration(
-                            hintText: item.currentPrice.toStringAsFixed(2),
+                            hintText: product.price.toStringAsFixed(2),
                             hintStyle: TextStyle(
                                 color: AppColors.getTextMuted(isDark)),
                             suffixText: 'ر.س',
@@ -363,7 +381,9 @@ class _DistributorPricingScreenState
                     Expanded(
                       flex: 2,
                       child: Text(
-                        DateFormat('dd/MM/yyyy', 'ar').format(item.lastUpdated),
+                        product.updatedAt != null
+                            ? DateFormat('dd/MM/yyyy', 'ar').format(product.updatedAt!)
+                            : '-',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 12,
@@ -429,16 +449,17 @@ class _DistributorPricingScreenState
 
   // ─── Mobile: Card View ─────────────────────────────────────────
 
-  Widget _buildPricingCards(bool isDark, bool isMedium) {
+  Widget _buildPricingCards(
+      bool isDark, bool isMedium, List<DistributorProduct> products) {
     return ListView.separated(
       padding: EdgeInsets.all(isMedium ? AlhaiSpacing.mdl : AlhaiSpacing.md),
-      itemCount: _items.length,
+      itemCount: products.length,
       separatorBuilder: (_, __) => const SizedBox(height: 10),
       itemBuilder: (_, index) {
-        final item = _items[index];
-        final controller = _controllers[item.id]!;
+        final product = products[index];
+        final controller = _controllers[product.id]!;
         final newPrice = double.tryParse(controller.text);
-        final hasDiff = newPrice != null && newPrice != item.currentPrice;
+        final hasDiff = newPrice != null && newPrice != product.price;
 
         return Container(
           padding: const EdgeInsets.all(AlhaiSpacing.md),
@@ -458,7 +479,7 @@ class _DistributorPricingScreenState
                 children: [
                   Expanded(
                     child: Text(
-                      item.productName,
+                      product.name,
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
@@ -467,7 +488,9 @@ class _DistributorPricingScreenState
                     ),
                   ),
                   Text(
-                    DateFormat('dd/MM', 'ar').format(item.lastUpdated),
+                    product.updatedAt != null
+                        ? DateFormat('dd/MM', 'ar').format(product.updatedAt!)
+                        : '-',
                     style: TextStyle(
                       fontSize: 11,
                       color: AppColors.getTextMuted(isDark),
@@ -492,7 +515,7 @@ class _DistributorPricingScreenState
                         ),
                         const SizedBox(height: AlhaiSpacing.xxs),
                         Text(
-                          '${NumberFormat('#,##0.00').format(item.currentPrice)} ر.س',
+                          '${NumberFormat('#,##0.00').format(product.price)} ر.س',
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
@@ -522,7 +545,7 @@ class _DistributorPricingScreenState
                         labelStyle: TextStyle(
                             fontSize: 12,
                             color: AppColors.getTextMuted(isDark)),
-                        hintText: item.currentPrice.toStringAsFixed(2),
+                        hintText: product.price.toStringAsFixed(2),
                         hintStyle:
                             TextStyle(color: AppColors.getTextMuted(isDark)),
                         suffixText: 'ر.س',
@@ -563,8 +586,8 @@ class _DistributorPricingScreenState
 
   // ─── Save Bar ──────────────────────────────────────────────────
 
-  Widget _buildSaveBar(bool isDark, bool isMedium) {
-    final changed = _changedCount;
+  Widget _buildSaveBar(
+      bool isDark, bool isMedium, List<DistributorProduct> products, int changed) {
     if (changed == 0 && !_hasChanges) return const SizedBox.shrink();
 
     return Container(
@@ -599,7 +622,7 @@ class _DistributorPricingScreenState
               width: isMedium ? 200 : 160,
               child: FilledButton.icon(
                 onPressed:
-                    _isSaving || changed == 0 ? null : _savePrices,
+                    _isSaving || changed == 0 ? null : () => _savePrices(products),
                 icon: _isSaving
                     ? const SizedBox(
                         width: 18,
@@ -626,34 +649,52 @@ class _DistributorPricingScreenState
     );
   }
 
-  Future<void> _savePrices() async {
+  Future<void> _savePrices(List<DistributorProduct> products) async {
     setState(() => _isSaving = true);
 
-    // Simulate API call
-    await Future.delayed(const Duration(seconds: 1));
-
-    if (!mounted) return;
-
-    // Update prices in mock data
-    for (final item in _items) {
-      final controller = _controllers[item.id];
+    // Collect changed prices
+    final prices = <String, double>{};
+    for (final product in products) {
+      final controller = _controllers[product.id];
       final newPrice = double.tryParse(controller?.text ?? '');
-      if (newPrice != null) {
-        // In real implementation, update via API
-        controller?.clear();
+      if (newPrice != null && newPrice != product.price) {
+        prices[product.id] = newPrice;
       }
     }
 
+    if (prices.isNotEmpty) {
+      final ds = ref.read(distributorDatasourceProvider);
+      final success = await ds.updateProductPrices(prices);
+
+      if (!mounted) return;
+
+      if (success) {
+        // Clear all controllers and refresh
+        for (final c in _controllers.values) {
+          c.clear();
+        }
+        ref.invalidate(productsProvider);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('تم حفظ التغييرات بنجاح'),
+            backgroundColor: AppColors.success,
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('حدث خطأ أثناء حفظ الأسعار'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    }
+
+    if (!mounted) return;
     setState(() {
       _isSaving = false;
       _hasChanges = false;
     });
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('تم حفظ التغييرات بنجاح'),
-        backgroundColor: AppColors.success,
-      ),
-    );
   }
 }

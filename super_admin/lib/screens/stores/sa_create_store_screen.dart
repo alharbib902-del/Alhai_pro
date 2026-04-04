@@ -1,21 +1,79 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
+import '../../providers/sa_providers.dart';
 
-/// Create new store onboarding form.
-class SACreateStoreScreen extends StatefulWidget {
+/// Create new store form -- submits to Supabase.
+class SACreateStoreScreen extends ConsumerStatefulWidget {
   const SACreateStoreScreen({super.key});
 
   @override
-  State<SACreateStoreScreen> createState() => _SACreateStoreScreenState();
+  ConsumerState<SACreateStoreScreen> createState() =>
+      _SACreateStoreScreenState();
 }
 
-class _SACreateStoreScreenState extends State<SACreateStoreScreen> {
+class _SACreateStoreScreenState extends ConsumerState<SACreateStoreScreen> {
   final _formKey = GlobalKey<FormState>();
   int _currentStep = 0;
   String _selectedPlan = 'basic';
   String _selectedBusiness = 'grocery';
+  bool _submitting = false;
+
+  final _nameController = TextEditingController();
+  final _branchCountController = TextEditingController(text: '1');
+  final _ownerNameController = TextEditingController();
+  final _ownerPhoneController = TextEditingController();
+  final _ownerEmailController = TextEditingController();
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _branchCountController.dispose();
+    _ownerNameController.dispose();
+    _ownerPhoneController.dispose();
+    _ownerEmailController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit() async {
+    if (!(_formKey.currentState?.validate() ?? false)) return;
+
+    setState(() => _submitting = true);
+
+    try {
+      final ds = ref.read(saStoresDatasourceProvider);
+      await ds.createStore(
+        name: _nameController.text.trim(),
+        businessType: _selectedBusiness,
+        ownerName: _ownerNameController.text.trim(),
+        ownerPhone: _ownerPhoneController.text.trim(),
+        ownerEmail: _ownerEmailController.text.trim(),
+        planSlug: _selectedPlan,
+        branchCount: int.tryParse(_branchCountController.text) ?? 1,
+      );
+
+      // Invalidate stores list so it refreshes
+      ref.invalidate(saStoresListProvider);
+      ref.invalidate(saDashboardKPIsProvider);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context).storeCreatedSuccess)),
+        );
+        context.go('/stores');
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _submitting = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +88,6 @@ class _SACreateStoreScreenState extends State<SACreateStoreScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Back + title
             Row(
               children: [
                 IconButton(
@@ -48,7 +105,6 @@ class _SACreateStoreScreenState extends State<SACreateStoreScreen> {
             ),
             const SizedBox(height: AlhaiSpacing.lg),
 
-            // Form content
             Center(
               child: ConstrainedBox(
                 constraints: BoxConstraints(
@@ -76,21 +132,43 @@ class _SACreateStoreScreenState extends State<SACreateStoreScreen> {
                           if (_currentStep < 2) {
                             setState(() => _currentStep++);
                           } else {
-                            // Submit
-                            if (_formKey.currentState?.validate() ?? false) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(l10n.storeCreatedSuccess),
-                                ),
-                              );
-                              context.go('/stores');
-                            }
+                            _submit();
                           }
                         },
                         onStepCancel: () {
                           if (_currentStep > 0) {
                             setState(() => _currentStep--);
                           }
+                        },
+                        controlsBuilder: (context, details) {
+                          return Padding(
+                            padding: const EdgeInsets.only(top: AlhaiSpacing.md),
+                            child: Row(
+                              children: [
+                                if (_currentStep > 0)
+                                  TextButton(
+                                    onPressed: details.onStepCancel,
+                                    child: Text(l10n.cancel),
+                                  ),
+                                const Spacer(),
+                                FilledButton(
+                                  onPressed: _submitting
+                                      ? null
+                                      : details.onStepContinue,
+                                  child: _submitting
+                                      ? const SizedBox(
+                                          width: 20,
+                                          height: 20,
+                                          child: CircularProgressIndicator(
+                                              strokeWidth: 2),
+                                        )
+                                      : Text(_currentStep < 2
+                                          ? 'Next'
+                                          : l10n.createStore),
+                                ),
+                              ],
+                            ),
+                          );
                         },
                         steps: [
                           // Step 1: Store info
@@ -103,14 +181,16 @@ class _SACreateStoreScreenState extends State<SACreateStoreScreen> {
                             content: Column(
                               children: [
                                 TextFormField(
+                                  controller: _nameController,
                                   decoration: InputDecoration(
                                     labelText: l10n.storeName,
                                     prefixIcon:
                                         const Icon(Icons.store_rounded),
                                   ),
-                                  validator: (v) => (v == null || v.isEmpty)
-                                      ? l10n.storeName
-                                      : null,
+                                  validator: (v) =>
+                                      (v == null || v.isEmpty)
+                                          ? l10n.storeName
+                                          : null,
                                 ),
                                 const SizedBox(height: AlhaiSpacing.md),
                                 DropdownButtonFormField<String>(
@@ -139,6 +219,7 @@ class _SACreateStoreScreenState extends State<SACreateStoreScreen> {
                                 ),
                                 const SizedBox(height: AlhaiSpacing.md),
                                 TextFormField(
+                                  controller: _branchCountController,
                                   decoration: InputDecoration(
                                     labelText: l10n.branchCountLabel,
                                     prefixIcon: const Icon(
@@ -160,17 +241,20 @@ class _SACreateStoreScreenState extends State<SACreateStoreScreen> {
                             content: Column(
                               children: [
                                 TextFormField(
+                                  controller: _ownerNameController,
                                   decoration: InputDecoration(
                                     labelText: l10n.ownerName,
                                     prefixIcon:
                                         const Icon(Icons.person_rounded),
                                   ),
-                                  validator: (v) => (v == null || v.isEmpty)
-                                      ? l10n.ownerName
-                                      : null,
+                                  validator: (v) =>
+                                      (v == null || v.isEmpty)
+                                          ? l10n.ownerName
+                                          : null,
                                 ),
                                 const SizedBox(height: AlhaiSpacing.md),
                                 TextFormField(
+                                  controller: _ownerPhoneController,
                                   decoration: InputDecoration(
                                     labelText: l10n.ownerPhone,
                                     prefixIcon:
@@ -180,6 +264,7 @@ class _SACreateStoreScreenState extends State<SACreateStoreScreen> {
                                 ),
                                 const SizedBox(height: AlhaiSpacing.md),
                                 TextFormField(
+                                  controller: _ownerEmailController,
                                   decoration: InputDecoration(
                                     labelText: l10n.ownerEmail,
                                     prefixIcon:

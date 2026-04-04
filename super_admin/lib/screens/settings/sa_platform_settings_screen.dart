@@ -1,23 +1,49 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
+import '../../providers/sa_providers.dart';
 
-/// Platform settings: ZATCA config, payment gateways.
-class SAPlatformSettingsScreen extends StatefulWidget {
+/// Platform settings: ZATCA config, payment gateways -- real Supabase data.
+class SAPlatformSettingsScreen extends ConsumerStatefulWidget {
   const SAPlatformSettingsScreen({super.key});
 
   @override
-  State<SAPlatformSettingsScreen> createState() =>
+  ConsumerState<SAPlatformSettingsScreen> createState() =>
       _SAPlatformSettingsScreenState();
 }
 
 class _SAPlatformSettingsScreenState
-    extends State<SAPlatformSettingsScreen> {
+    extends ConsumerState<SAPlatformSettingsScreen> {
+  // Local state mirrors -- initialized from provider data
+  bool _initialized = false;
   bool _zatcaEnabled = true;
+  String _zatcaEnvironment = 'production';
+  String _vatRate = '15';
+  String _defaultLanguage = 'ar';
+  int _trialPeriodDays = 14;
   bool _moyasarEnabled = true;
   bool _hyperpayEnabled = false;
   bool _tabbyEnabled = true;
   bool _tamaraEnabled = false;
+
+  void _initFromData(Map<String, dynamic> data) {
+    if (_initialized) return;
+    _initialized = true;
+    _zatcaEnabled = data['zatca_enabled'] as bool? ?? true;
+    _zatcaEnvironment =
+        data['zatca_environment'] as String? ?? 'production';
+    final vat = data['vat_rate'];
+    _vatRate = vat != null ? '$vat' : '15';
+    _defaultLanguage =
+        data['default_language'] as String? ?? 'ar';
+    _trialPeriodDays =
+        (data['trial_period_days'] as num?)?.toInt() ?? 14;
+    _moyasarEnabled = data['moyasar_enabled'] as bool? ?? true;
+    _hyperpayEnabled = data['hyperpay_enabled'] as bool? ?? false;
+    _tabbyEnabled = data['tabby_enabled'] as bool? ?? true;
+    _tamaraEnabled = data['tamara_enabled'] as bool? ?? false;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,194 +51,225 @@ class _SAPlatformSettingsScreenState
     final l10n = AppLocalizations.of(context);
     final width = MediaQuery.sizeOf(context).width;
     final isWide = width >= AlhaiBreakpoints.desktop;
+    final settingsAsync = ref.watch(saPlatformSettingsProvider);
 
     return Scaffold(
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(AlhaiSpacing.lg),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              l10n.platformSettings,
-              style: theme.textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: AlhaiSpacing.lg),
+      body: settingsAsync.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, _) => Center(child: Text('Error: $e')),
+        data: (data) {
+          _initFromData(data);
 
-            Center(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxWidth: isWide ? 800 : double.infinity,
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(AlhaiSpacing.lg),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.platformSettings,
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                child: Column(
-                  children: [
-                    // ZATCA Configuration
-                    _SettingsSection(
-                      title: l10n.zatcaConfig,
-                      icon: Icons.receipt_long_rounded,
-                      child: Column(
-                        children: [
-                          SwitchListTile(
-                            title: const Text('ZATCA E-invoicing'),
-                            subtitle: const Text(
-                              'Enable electronic invoicing compliance for all stores',
-                            ),
-                            value: _zatcaEnabled,
-                            onChanged: (v) =>
-                                setState(() => _zatcaEnabled = v),
-                          ),
-                          const Divider(),
-                          ListTile(
-                            title: const Text('API Environment'),
-                            subtitle: const Text('Production'),
-                            trailing: DropdownButton<String>(
-                              value: 'production',
-                              underline: const SizedBox(),
-                              items: const [
-                                DropdownMenuItem(
-                                  value: 'sandbox',
-                                  child: Text('Sandbox'),
-                                ),
-                                DropdownMenuItem(
-                                  value: 'production',
-                                  child: Text('Production'),
-                                ),
-                              ],
-                              onChanged: (_) {},
-                            ),
-                          ),
-                          const Divider(),
-                          ListTile(
-                            title: const Text('Tax Rate (VAT)'),
-                            subtitle: const Text('15%'),
-                            trailing: SizedBox(
-                              width: 80,
-                              child: TextField(
-                                decoration: const InputDecoration(
-                                  suffixText: '%',
-                                  isDense: true,
-                                ),
-                                textAlign: TextAlign.center,
-                                controller:
-                                    TextEditingController(text: '15'),
-                              ),
-                            ),
-                          ),
-                          const Divider(),
-                          ListTile(
-                            title: const Text(
-                                'Certificate Expiry'),
-                            subtitle: const Text('2025-12-31'),
-                            trailing: FilledButton.tonal(
-                              onPressed: () {},
-                              child: const Text('Renew'),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: AlhaiSpacing.md),
+                const SizedBox(height: AlhaiSpacing.lg),
 
-                    // Payment Gateways
-                    _SettingsSection(
-                      title: l10n.paymentGateways,
-                      icon: Icons.payment_rounded,
-                      child: Column(
-                        children: [
-                          _GatewayTile(
-                            name: 'Moyasar',
-                            description:
-                                'Credit/debit card processing',
-                            enabled: _moyasarEnabled,
-                            onChanged: (v) => setState(
-                                () => _moyasarEnabled = v),
-                          ),
-                          const Divider(),
-                          _GatewayTile(
-                            name: 'HyperPay',
-                            description:
-                                'Multi-method payment gateway',
-                            enabled: _hyperpayEnabled,
-                            onChanged: (v) => setState(
-                                () => _hyperpayEnabled = v),
-                          ),
-                          const Divider(),
-                          _GatewayTile(
-                            name: 'Tabby',
-                            description: 'Buy now, pay later',
-                            enabled: _tabbyEnabled,
-                            onChanged: (v) =>
-                                setState(() => _tabbyEnabled = v),
-                          ),
-                          const Divider(),
-                          _GatewayTile(
-                            name: 'Tamara',
-                            description:
-                                'Installment payments',
-                            enabled: _tamaraEnabled,
-                            onChanged: (v) => setState(
-                                () => _tamaraEnabled = v),
-                          ),
-                        ],
-                      ),
+                Center(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxWidth: isWide ? 800 : double.infinity,
                     ),
-                    const SizedBox(height: AlhaiSpacing.md),
-
-                    // General platform settings
-                    _SettingsSection(
-                      title: 'General',
-                      icon: Icons.tune_rounded,
-                      child: Column(
-                        children: [
-                          ListTile(
-                            title: const Text('Default Language'),
-                            trailing: DropdownButton<String>(
-                              value: 'ar',
-                              underline: const SizedBox(),
-                              items: const [
-                                DropdownMenuItem(
-                                    value: 'ar',
-                                    child: Text('Arabic')),
-                                DropdownMenuItem(
-                                    value: 'en',
-                                    child: Text('English')),
-                              ],
-                              onChanged: (_) {},
-                            ),
-                          ),
-                          const Divider(),
-                          ListTile(
-                            title: const Text('Default Currency'),
-                            subtitle: Text(
-                                'SAR - ${l10n.sar}'),
-                            trailing: const Icon(
-                                Icons.chevron_right_rounded),
-                          ),
-                          const Divider(),
-                          ListTile(
-                            title: const Text('Trial Period (Days)'),
-                            trailing: SizedBox(
-                              width: 60,
-                              child: TextField(
-                                decoration: const InputDecoration(
-                                  isDense: true,
+                    child: Column(
+                      children: [
+                        // ZATCA Configuration
+                        _SettingsSection(
+                          title: l10n.zatcaConfig,
+                          icon: Icons.receipt_long_rounded,
+                          child: Column(
+                            children: [
+                              SwitchListTile(
+                                title:
+                                    const Text('ZATCA E-invoicing'),
+                                subtitle: const Text(
+                                  'Enable electronic invoicing compliance for all stores',
                                 ),
-                                textAlign: TextAlign.center,
-                                controller:
-                                    TextEditingController(text: '14'),
+                                value: _zatcaEnabled,
+                                onChanged: (v) => setState(
+                                    () => _zatcaEnabled = v),
                               ),
-                            ),
+                              const Divider(),
+                              ListTile(
+                                title:
+                                    const Text('API Environment'),
+                                subtitle: Text(
+                                    _zatcaEnvironment == 'production'
+                                        ? 'Production'
+                                        : 'Sandbox'),
+                                trailing: DropdownButton<String>(
+                                  value: _zatcaEnvironment,
+                                  underline: const SizedBox(),
+                                  items: const [
+                                    DropdownMenuItem(
+                                      value: 'sandbox',
+                                      child: Text('Sandbox'),
+                                    ),
+                                    DropdownMenuItem(
+                                      value: 'production',
+                                      child: Text('Production'),
+                                    ),
+                                  ],
+                                  onChanged: (v) {
+                                    if (v != null) {
+                                      setState(() =>
+                                          _zatcaEnvironment = v);
+                                    }
+                                  },
+                                ),
+                              ),
+                              const Divider(),
+                              ListTile(
+                                title: const Text('Tax Rate (VAT)'),
+                                subtitle: Text('$_vatRate%'),
+                                trailing: SizedBox(
+                                  width: 80,
+                                  child: TextField(
+                                    decoration: const InputDecoration(
+                                      suffixText: '%',
+                                      isDense: true,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                    controller:
+                                        TextEditingController(
+                                            text: _vatRate),
+                                    onChanged: (v) =>
+                                        _vatRate = v,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                        const SizedBox(height: AlhaiSpacing.md),
+
+                        // Payment Gateways
+                        _SettingsSection(
+                          title: l10n.paymentGateways,
+                          icon: Icons.payment_rounded,
+                          child: Column(
+                            children: [
+                              _GatewayTile(
+                                name: 'Moyasar',
+                                description:
+                                    'Credit/debit card processing',
+                                enabled: _moyasarEnabled,
+                                onChanged: (v) => setState(
+                                    () => _moyasarEnabled = v),
+                              ),
+                              const Divider(),
+                              _GatewayTile(
+                                name: 'HyperPay',
+                                description:
+                                    'Multi-method payment gateway',
+                                enabled: _hyperpayEnabled,
+                                onChanged: (v) => setState(
+                                    () => _hyperpayEnabled = v),
+                              ),
+                              const Divider(),
+                              _GatewayTile(
+                                name: 'Tabby',
+                                description: 'Buy now, pay later',
+                                enabled: _tabbyEnabled,
+                                onChanged: (v) => setState(
+                                    () => _tabbyEnabled = v),
+                              ),
+                              const Divider(),
+                              _GatewayTile(
+                                name: 'Tamara',
+                                description:
+                                    'Installment payments',
+                                enabled: _tamaraEnabled,
+                                onChanged: (v) => setState(
+                                    () => _tamaraEnabled = v),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: AlhaiSpacing.md),
+
+                        // General platform settings
+                        _SettingsSection(
+                          title: 'General',
+                          icon: Icons.tune_rounded,
+                          child: Column(
+                            children: [
+                              ListTile(
+                                title: const Text(
+                                    'Default Language'),
+                                trailing: DropdownButton<String>(
+                                  value: _defaultLanguage,
+                                  underline: const SizedBox(),
+                                  items: const [
+                                    DropdownMenuItem(
+                                        value: 'ar',
+                                        child: Text('Arabic')),
+                                    DropdownMenuItem(
+                                        value: 'en',
+                                        child: Text('English')),
+                                  ],
+                                  onChanged: (v) {
+                                    if (v != null) {
+                                      setState(() =>
+                                          _defaultLanguage = v);
+                                    }
+                                  },
+                                ),
+                              ),
+                              const Divider(),
+                              ListTile(
+                                title: const Text(
+                                    'Default Currency'),
+                                subtitle: Text(
+                                    'SAR - ${l10n.sar}'),
+                                trailing: const Icon(
+                                    Icons.chevron_right_rounded),
+                              ),
+                              const Divider(),
+                              ListTile(
+                                title: const Text(
+                                    'Trial Period (Days)'),
+                                trailing: SizedBox(
+                                  width: 60,
+                                  child: TextField(
+                                    decoration:
+                                        const InputDecoration(
+                                      isDense: true,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                    controller:
+                                        TextEditingController(
+                                      text:
+                                          '$_trialPeriodDays',
+                                    ),
+                                    onChanged: (v) {
+                                      final parsed =
+                                          int.tryParse(v);
+                                      if (parsed != null) {
+                                        _trialPeriodDays = parsed;
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

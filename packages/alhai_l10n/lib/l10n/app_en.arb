@@ -5894,5 +5894,157 @@
   "thisYear": "This Year",
   "growth": "Growth",
   "revenue": "Revenue",
-  "stores": "Stores"
+  "stores": "Stores",
+
+  "distributorPortal": "Distributor Portal",
+  "distributorDashboard": "Dashboard",
+  "distributorDashboardSubtitle": "Distribution performance overview",
+  "distributorOrders": "Incoming Orders",
+  "distributorProducts": "Product Catalog",
+  "distributorPricing": "Price Management",
+  "distributorReports": "Reports",
+  "distributorSettings": "Settings",
+  "distributorTotalOrders": "Total Orders",
+  "distributorPendingOrders": "Pending Orders",
+  "distributorApprovedOrders": "Approved",
+  "distributorRevenue": "Revenue",
+  "distributorMonthlySales": "Monthly Sales",
+  "distributorRecentOrders": "Recent Orders",
+  "distributorOrderNumber": "Order Number",
+  "distributorStore": "Store",
+  "distributorDate": "Date",
+  "distributorAmount": "Amount",
+  "distributorStatusPending": "Pending",
+  "distributorStatusApproved": "Approved",
+  "distributorStatusReceived": "Received",
+  "distributorStatusRejected": "Rejected",
+  "distributorStatusDraft": "Draft",
+  "distributorNoOrders": "No orders found",
+  "distributorAllOrders": "All",
+  "distributorPendingTab": "Pending",
+  "distributorApprovedTab": "Approved",
+  "distributorRejectedTab": "Rejected",
+  "distributorAddProduct": "Add Product",
+  "distributorSearchHint": "Search by name or barcode...",
+  "distributorNoProducts": "No products found",
+  "distributorChangeSearch": "Try changing your search criteria",
+  "distributorBarcode": "Barcode",
+  "distributorCategory": "Category",
+  "distributorStock": "Stock",
+  "distributorStockEmpty": "Out",
+  "distributorStockLow": "Low",
+  "distributorActions": "Actions",
+  "distributorEditProduct": "Edit {name}",
+  "@distributorEditProduct": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "distributorCurrentPrice": "Current Price",
+  "distributorNewPrice": "New Price",
+  "distributorLastUpdated": "Last Updated",
+  "distributorDifference": "Diff",
+  "distributorTotalProducts": "Total Products",
+  "distributorPendingChanges": "Pending Changes",
+  "distributorProductsWillUpdate": "{count} products will be updated",
+  "@distributorProductsWillUpdate": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "distributorSaveChanges": "Save Changes",
+  "distributorChangesSaved": "Changes saved successfully",
+  "distributorChangesCount": "{count} changes",
+  "@distributorChangesCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "distributorExport": "Export",
+  "distributorExportReport": "Export Report",
+  "distributorDailySales": "Daily Sales",
+  "distributorOrderCount": "Order Count",
+  "distributorAvgOrderValue": "Avg Order Value",
+  "distributorTopProduct": "Top Product",
+  "distributorTopProducts": "Top Products",
+  "distributorOrdersUnit": "orders",
+  "distributorPeriodDay": "Day",
+  "distributorPeriodWeek": "Week",
+  "distributorPeriodMonth": "Month",
+  "distributorPeriodYear": "Year",
+  "distributorCompanyInfo": "Company Info",
+  "distributorCompanyName": "Company Name",
+  "distributorPhone": "Phone",
+  "distributorEmail": "Email",
+  "distributorAddress": "Address",
+  "distributorNotificationSettings": "Notification Settings",
+  "distributorNotificationChannels": "Notification Channels",
+  "distributorEmailNotifications": "Email",
+  "distributorPushNotifications": "Push Notifications",
+  "distributorSmsNotifications": "SMS",
+  "distributorNotificationTypes": "Notification Types",
+  "distributorNewOrderNotification": "New Orders",
+  "distributorOrderStatusNotification": "Order Status Updates",
+  "distributorPaymentNotification": "Payment Notifications",
+  "distributorDeliverySettings": "Delivery Settings",
+  "distributorDeliveryZones": "Delivery Zones",
+  "distributorDeliveryZonesHint": "Enter cities separated by commas",
+  "distributorMinOrder": "Min Order Amount (SAR)",
+  "distributorDeliveryFee": "Delivery Fee (SAR)",
+  "distributorFreeDelivery": "Free Delivery",
+  "distributorFreeDeliveryMin": "Free Delivery Minimum (SAR)",
+  "distributorSaveSettings": "Save Settings",
+  "distributorSettingsSaved": "Settings saved successfully",
+  "distributorPurchaseOrder": "Purchase Order #{number}",
+  "@distributorPurchaseOrder": {
+    "placeholders": {
+      "number": { "type": "String" }
+    }
+  },
+  "distributorProposedAmount": "Proposed Amount:",
+  "distributorOrderItems": "Order Items",
+  "distributorProductCount": "{count} products",
+  "@distributorProductCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "distributorSuggestedPrice": "Suggested Price",
+  "distributorYourPrice": "Your Price",
+  "distributorYourTotal": "Your Total",
+  "distributorNotesForStore": "Notes for Store",
+  "distributorNotesHint": "Add notes about the offer (optional)...",
+  "distributorRejectOrder": "Reject Order",
+  "distributorAcceptSendQuote": "Accept & Send Quote",
+  "distributorOrderRejected": "Order rejected successfully",
+  "distributorOrderAccepted": "Order accepted and quote sent for {amount} SAR",
+  "@distributorOrderAccepted": {
+    "placeholders": {
+      "amount": { "type": "String" }
+    }
+  },
+  "distributorLowerThanProposed": "{percent}% lower than proposed",
+  "@distributorLowerThanProposed": {
+    "placeholders": {
+      "percent": { "type": "String" }
+    }
+  },
+  "distributorHigherThanProposed": "+{percent}% higher than proposed",
+  "@distributorHigherThanProposed": {
+    "placeholders": {
+      "percent": { "type": "String" }
+    }
+  },
+  "distributorComingSoon": "Coming soon",
+  "distributorLoadError": "Error loading data",
+  "distributorRetry": "Retry",
+  "distributorLogin": "Distributor Login",
+  "distributorLoginSubtitle": "Enter your email and password",
+  "distributorEmailLabel": "Email",
+  "distributorPasswordLabel": "Password",
+  "distributorLoginButton": "Sign In",
+  "distributorLoginError": "Login failed",
+  "distributorLogout": "Sign Out",
+  "distributorSar": "SAR",
+  "distributorRiyal": "SAR"
 }

@@ -1,18 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:fl_chart/fl_chart.dart';
+import '../../providers/sa_providers.dart';
 
-/// Usage analytics: active users, transactions per store.
-class SAUsageAnalyticsScreen extends StatelessWidget {
+/// Usage analytics: active users, transactions per store -- real Supabase data.
+class SAUsageAnalyticsScreen extends ConsumerWidget {
   const SAUsageAnalyticsScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
     final width = MediaQuery.sizeOf(context).width;
     final isWide = width >= AlhaiBreakpoints.desktop;
+
+    final kpisAsync = ref.watch(saDashboardKPIsProvider);
+    final avgTxAsync = ref.watch(saAvgDailyTransactionsProvider);
+    final totalUsersAsync = ref.watch(saTotalUserCountProvider);
+    final activeUsersAsync = ref.watch(saActiveUsersPerStoreProvider);
+    final topStoresAsync = ref.watch(saTopStoresByTransactionsProvider);
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -29,33 +37,13 @@ class SAUsageAnalyticsScreen extends StatelessWidget {
             const SizedBox(height: AlhaiSpacing.lg),
 
             // Summary KPIs
-            GridView.count(
-              crossAxisCount: isWide ? 3 : 1,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              mainAxisSpacing: AlhaiSpacing.md,
-              crossAxisSpacing: AlhaiSpacing.md,
-              childAspectRatio: isWide ? 2.5 : 3.0,
-              children: [
-                _UsageKpi(
-                  title: l10n.activeStores,
-                  value: '1,247',
-                  icon: Icons.store_rounded,
-                  color: Colors.blue,
-                ),
-                _UsageKpi(
-                  title: l10n.avgTransactionsPerDay,
-                  value: '8,430',
-                  icon: Icons.receipt_long_rounded,
-                  color: Colors.teal,
-                ),
-                _UsageKpi(
-                  title: l10n.platformUsers,
-                  value: '4,892',
-                  icon: Icons.people_rounded,
-                  color: Colors.deepPurple,
-                ),
-              ],
+            _buildKpis(
+              theme: theme,
+              l10n: l10n,
+              isWide: isWide,
+              kpisAsync: kpisAsync,
+              avgTxAsync: avgTxAsync,
+              totalUsersAsync: totalUsersAsync,
             ),
             const SizedBox(height: AlhaiSpacing.xl),
 
@@ -67,7 +55,15 @@ class SAUsageAnalyticsScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: AlhaiSpacing.md),
-            _ActiveUsersChart(theme: theme),
+            activeUsersAsync.when(
+              loading: () => const SizedBox(
+                height: 280,
+                child: Center(child: CircularProgressIndicator()),
+              ),
+              error: (e, _) => Text('Error: $e'),
+              data: (data) =>
+                  _ActiveUsersChart(theme: theme, storeData: data),
+            ),
             const SizedBox(height: AlhaiSpacing.xl),
 
             // Transactions per store ranking
@@ -78,11 +74,85 @@ class SAUsageAnalyticsScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: AlhaiSpacing.md),
-            _TransactionsTable(l10n: l10n),
+            topStoresAsync.when(
+              loading: () => const SizedBox(
+                height: 120,
+                child: Center(child: CircularProgressIndicator()),
+              ),
+              error: (e, _) => Text('Error: $e'),
+              data: (stores) =>
+                  _TransactionsTable(l10n: l10n, stores: stores),
+            ),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildKpis({
+    required ThemeData theme,
+    required AppLocalizations l10n,
+    required bool isWide,
+    required AsyncValue<Map<String, dynamic>> kpisAsync,
+    required AsyncValue<double> avgTxAsync,
+    required AsyncValue<int> totalUsersAsync,
+  }) {
+    // Show a loading state if any KPI is still loading
+    final activeStores = kpisAsync.valueOrNull?['active_stores'] as int?;
+    final avgTx = avgTxAsync.valueOrNull;
+    final totalUsers = totalUsersAsync.valueOrNull;
+
+    final isLoading =
+        kpisAsync.isLoading || avgTxAsync.isLoading || totalUsersAsync.isLoading;
+
+    if (isLoading && activeStores == null) {
+      return const SizedBox(
+        height: 80,
+        child: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    return GridView.count(
+      crossAxisCount: isWide ? 3 : 1,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      mainAxisSpacing: AlhaiSpacing.md,
+      crossAxisSpacing: AlhaiSpacing.md,
+      childAspectRatio: isWide ? 2.5 : 3.0,
+      children: [
+        _UsageKpi(
+          title: l10n.activeStores,
+          value: _fmtInt(activeStores ?? 0),
+          icon: Icons.store_rounded,
+          color: Colors.blue,
+        ),
+        _UsageKpi(
+          title: l10n.avgTransactionsPerDay,
+          value: _fmtInt(avgTx?.round() ?? 0),
+          icon: Icons.receipt_long_rounded,
+          color: Colors.teal,
+        ),
+        _UsageKpi(
+          title: l10n.platformUsers,
+          value: _fmtInt(totalUsers ?? 0),
+          icon: Icons.people_rounded,
+          color: Colors.deepPurple,
+        ),
+      ],
+    );
+  }
+
+  String _fmtInt(int n) {
+    if (n >= 1000) {
+      final s = n.toString();
+      final buffer = StringBuffer();
+      for (int i = 0; i < s.length; i++) {
+        if (i > 0 && (s.length - i) % 3 == 0) buffer.write(',');
+        buffer.write(s[i]);
+      }
+      return buffer.toString();
+    }
+    return n.toString();
   }
 }
 
@@ -155,10 +225,54 @@ class _UsageKpi extends StatelessWidget {
 
 class _ActiveUsersChart extends StatelessWidget {
   final ThemeData theme;
-  const _ActiveUsersChart({required this.theme});
+  final List<Map<String, dynamic>> storeData;
+  const _ActiveUsersChart({required this.theme, required this.storeData});
 
   @override
   Widget build(BuildContext context) {
+    if (storeData.isEmpty) {
+      return Card(
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AlhaiRadius.card),
+          side: BorderSide(
+            color: theme.colorScheme.outlineVariant,
+            width: AlhaiSpacing.strokeXs,
+          ),
+        ),
+        child: SizedBox(
+          height: 250,
+          child: Center(
+            child: Text(
+              'No active user data',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.outline,
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    final colors = [
+      Colors.blue,
+      Colors.deepPurple,
+      Colors.teal,
+      Colors.blue,
+      Colors.deepPurple,
+      Colors.teal,
+      Colors.blue,
+      Colors.deepPurple,
+    ];
+
+    double maxY = 0;
+    for (final s in storeData) {
+      final v = (s['active_users'] as num?)?.toDouble() ?? 0;
+      if (v > maxY) maxY = v;
+    }
+    maxY = maxY * 1.2;
+    if (maxY == 0) maxY = 10;
+
     return Card(
       elevation: 0,
       shape: RoundedRectangleBorder(
@@ -175,17 +289,26 @@ class _ActiveUsersChart extends StatelessWidget {
           child: BarChart(
             BarChartData(
               alignment: BarChartAlignment.spaceAround,
-              maxY: 600,
-              barGroups: [
-                _bar(0, 520, Colors.blue),
-                _bar(1, 380, Colors.deepPurple),
-                _bar(2, 290, Colors.teal),
-                _bar(3, 450, Colors.blue),
-                _bar(4, 340, Colors.deepPurple),
-                _bar(5, 560, Colors.teal),
-                _bar(6, 280, Colors.blue),
-                _bar(7, 410, Colors.deepPurple),
-              ],
+              maxY: maxY,
+              barGroups: List.generate(storeData.length, (i) {
+                final y =
+                    (storeData[i]['active_users'] as num?)?.toDouble() ??
+                        0;
+                return BarChartGroupData(
+                  x: i,
+                  barRods: [
+                    BarChartRodData(
+                      toY: y,
+                      color: colors[i % colors.length],
+                      width: 20,
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(AlhaiRadius.xs),
+                        topRight: Radius.circular(AlhaiRadius.xs),
+                      ),
+                    ),
+                  ],
+                );
+              }),
               titlesData: FlTitlesData(
                 leftTitles: AxisTitles(
                   sideTitles: SideTitles(
@@ -203,19 +326,21 @@ class _ActiveUsersChart extends StatelessWidget {
                   sideTitles: SideTitles(
                     showTitles: true,
                     getTitlesWidget: (value, _) {
-                      const stores = [
-                        'Grocery+', 'TechZ', 'Fashion', 'HomeE',
-                        'Beauty', 'AutoP', 'BookH', 'FreshM',
-                      ];
                       final idx = value.toInt();
-                      if (idx < 0 || idx >= stores.length) {
+                      if (idx < 0 || idx >= storeData.length) {
                         return const SizedBox();
                       }
+                      final name = storeData[idx]['store_name']
+                              as String? ??
+                          '';
+                      // Truncate long names
+                      final label =
+                          name.length > 8 ? name.substring(0, 8) : name;
                       return Padding(
-                        padding:
-                            const EdgeInsets.only(top: AlhaiSpacing.xs),
+                        padding: const EdgeInsets.only(
+                            top: AlhaiSpacing.xs),
                         child: Text(
-                          stores[idx],
+                          label,
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.outline,
                             fontSize: 10,
@@ -246,32 +371,32 @@ class _ActiveUsersChart extends StatelessWidget {
       ),
     );
   }
-
-  BarChartGroupData _bar(int x, double y, Color color) {
-    return BarChartGroupData(
-      x: x,
-      barRods: [
-        BarChartRodData(
-          toY: y,
-          color: color,
-          width: 20,
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(AlhaiRadius.xs),
-            topRight: Radius.circular(AlhaiRadius.xs),
-          ),
-        ),
-      ],
-    );
-  }
 }
 
 class _TransactionsTable extends StatelessWidget {
   final AppLocalizations l10n;
-  const _TransactionsTable({required this.l10n});
+  final List<Map<String, dynamic>> stores;
+  const _TransactionsTable({required this.l10n, required this.stores});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
+    if (stores.isEmpty) {
+      return Card(
+        elevation: 0,
+        child: Padding(
+          padding: const EdgeInsets.all(AlhaiSpacing.lg),
+          child: Text(
+            'No transaction data',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.outline,
+            ),
+          ),
+        ),
+      );
+    }
+
     return Card(
       elevation: 0,
       shape: RoundedRectangleBorder(
@@ -299,44 +424,35 @@ class _TransactionsTable extends StatelessWidget {
             numeric: true,
           ),
         ],
-        rows: const [
-          DataRow(cells: [
-            DataCell(Text('1')),
-            DataCell(Text('Auto Parts KSA')),
-            DataCell(Text('6,230')),
-            DataCell(Text('207')),
-            DataCell(Text('3,450')),
-          ]),
-          DataRow(cells: [
-            DataCell(Text('2')),
-            DataCell(Text('Fresh Market')),
-            DataCell(Text('5,640')),
-            DataCell(Text('188')),
-            DataCell(Text('2,100')),
-          ]),
-          DataRow(cells: [
-            DataCell(Text('3')),
-            DataCell(Text('Grocery Plus')),
-            DataCell(Text('4,520')),
-            DataCell(Text('150')),
-            DataCell(Text('1,832')),
-          ]),
-          DataRow(cells: [
-            DataCell(Text('4')),
-            DataCell(Text('Tech Zone')),
-            DataCell(Text('3,180')),
-            DataCell(Text('106')),
-            DataCell(Text('890')),
-          ]),
-          DataRow(cells: [
-            DataCell(Text('5')),
-            DataCell(Text('Home Essentials')),
-            DataCell(Text('1,870')),
-            DataCell(Text('62')),
-            DataCell(Text('1,200')),
-          ]),
-        ],
+        rows: List.generate(stores.length, (i) {
+          final store = stores[i];
+          final name = store['store_name'] as String? ?? 'Unknown';
+          final transactions = store['transactions'] as int? ?? 0;
+          final avgPerDay = store['avg_per_day'] as int? ?? 0;
+          final products = store['products'] as int? ?? 0;
+
+          return DataRow(cells: [
+            DataCell(Text('${i + 1}')),
+            DataCell(Text(name)),
+            DataCell(Text(_fmtInt(transactions))),
+            DataCell(Text('$avgPerDay')),
+            DataCell(Text(_fmtInt(products))),
+          ]);
+        }),
       ),
     );
+  }
+
+  String _fmtInt(int n) {
+    if (n >= 1000) {
+      final s = n.toString();
+      final buffer = StringBuffer();
+      for (int i = 0; i < s.length; i++) {
+        if (i > 0 && (s.length - i) % 3 == 0) buffer.write(',');
+        buffer.write(s[i]);
+      }
+      return buffer.toString();
+    }
+    return n.toString();
   }
 }

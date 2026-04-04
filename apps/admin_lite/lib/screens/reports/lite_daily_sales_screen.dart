@@ -1,25 +1,29 @@
 /// Lite Daily Sales Summary Screen
 ///
 /// Shows today's sales breakdown with totals, payment methods,
-/// top items, and hourly distribution. Lightweight version
-/// for the Admin Lite app.
+/// top items, and hourly distribution. Queries real data from
+/// salesDao via Riverpod providers.
 /// Supports RTL, dark mode, and responsive layouts.
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 
+import '../../providers/lite_screen_providers.dart';
+
 /// Daily sales summary for Admin Lite
-class LiteDailySalesScreen extends StatelessWidget {
+class LiteDailySalesScreen extends ConsumerWidget {
   const LiteDailySalesScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final size = MediaQuery.of(context).size;
     final isMobile = size.width < 600;
     final l10n = AppLocalizations.of(context)!;
+    final dataAsync = ref.watch(liteDailySalesProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -27,7 +31,7 @@ class LiteDailySalesScreen extends StatelessWidget {
         centerTitle: true,
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () => ref.invalidate(liteDailySalesProvider),
             icon: const Icon(Icons.calendar_today),
             tooltip: l10n.today,
           ),
@@ -35,45 +39,67 @@ class LiteDailySalesScreen extends StatelessWidget {
         ],
       ),
       body: RefreshIndicator(
-        onRefresh: () async {},
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          padding: EdgeInsets.all(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Date header
-              _buildDateHeader(isDark, l10n),
-              const SizedBox(height: AlhaiSpacing.md),
-
-              // Totals row
-              _buildTotalsRow(context, isDark, isMobile, l10n),
-              const SizedBox(height: AlhaiSpacing.lg),
-
-              // Payment methods breakdown
-              _buildSection(context, l10n.paymentMethod, Icons.payment, isDark, [
-                _BreakdownRow(l10n.cash, '8,420', '68%', AlhaiColors.success),
-                _BreakdownRow(l10n.card, '2,850', '23%', AlhaiColors.info),
-                _BreakdownRow(l10n.credit, '1,180', '9%', AlhaiColors.warning),
-              ]),
-              const SizedBox(height: AlhaiSpacing.lg),
-
-              // Top selling items
-              _buildSection(context, l10n.products, Icons.star_rounded, isDark, [
-                _BreakdownRow('Rice 10kg', '45', '', AlhaiColors.primary),
-                _BreakdownRow('Sugar 5kg', '38', '', AlhaiColors.primary),
-                _BreakdownRow('Cooking Oil 2L', '32', '', AlhaiColors.primary),
-                _BreakdownRow('Milk 1L', '28', '', AlhaiColors.primary),
-                _BreakdownRow('Bread', '25', '', AlhaiColors.primary),
-              ]),
-              const SizedBox(height: AlhaiSpacing.lg),
-
-              // Hourly distribution placeholder
-              _buildHourlyChart(context, isDark, l10n),
-
-              const SizedBox(height: AlhaiSpacing.lg),
-            ],
+        onRefresh: () async => ref.invalidate(liteDailySalesProvider),
+        child: dataAsync.when(
+          data: (data) => SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: EdgeInsets.all(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildDateHeader(isDark, l10n),
+                const SizedBox(height: AlhaiSpacing.md),
+                _buildTotalsRow(context, isDark, isMobile, l10n, data),
+                const SizedBox(height: AlhaiSpacing.lg),
+                _buildSection(context, l10n.paymentMethod, Icons.payment, isDark,
+                  data.paymentMethods.map((pm) {
+                    final pct = data.todayStats.total > 0
+                        ? '${(pm.total / data.todayStats.total * 100).toStringAsFixed(0)}%'
+                        : '';
+                    return _BreakdownRow(pm.method, pm.total.toStringAsFixed(0), pct, AlhaiColors.info);
+                  }).toList(),
+                ),
+                const SizedBox(height: AlhaiSpacing.lg),
+                _buildSection(context, l10n.products, Icons.star_rounded, isDark,
+                  data.topProducts.map((p) {
+                    return _BreakdownRow(p.name, p.price.toStringAsFixed(0), '', AlhaiColors.primary);
+                  }).toList(),
+                ),
+                const SizedBox(height: AlhaiSpacing.lg),
+                _buildHourlyChart(context, isDark, l10n, data.hourlySales),
+                const SizedBox(height: AlhaiSpacing.lg),
+              ],
+            ),
           ),
+          loading: () => const Center(
+            child: Padding(
+              padding: EdgeInsets.all(AlhaiSpacing.massive),
+              child: CircularProgressIndicator(),
+            ),
+          ),
+          error: (_, __) => _buildError(context, ref, isDark, l10n),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildError(BuildContext context, WidgetRef ref, bool isDark, AppLocalizations l10n) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(AlhaiSpacing.massive),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.error_outline_rounded, size: 48, color: isDark ? Colors.white30 : Theme.of(context).colorScheme.outlineVariant),
+            const SizedBox(height: AlhaiSpacing.md),
+            Text(l10n.errorOccurred, style: TextStyle(color: isDark ? Colors.white54 : Theme.of(context).colorScheme.onSurfaceVariant)),
+            const SizedBox(height: AlhaiSpacing.sm),
+            TextButton.icon(
+              onPressed: () => ref.invalidate(liteDailySalesProvider),
+              icon: const Icon(Icons.refresh_rounded),
+              label: Text(l10n.tryAgain),
+            ),
+          ],
         ),
       ),
     );
@@ -90,11 +116,11 @@ class LiteDailySalesScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTotalsRow(BuildContext context, bool isDark, bool isMobile, AppLocalizations l10n) {
+  Widget _buildTotalsRow(BuildContext context, bool isDark, bool isMobile, AppLocalizations l10n, DailySalesData data) {
     final items = [
-      _TotalItem(l10n.totalSales, '12,450', AlhaiColors.success, Icons.trending_up),
-      _TotalItem(l10n.orders, '186', AlhaiColors.info, Icons.receipt),
-      _TotalItem(l10n.refund, '320', AlhaiColors.error, Icons.undo),
+      _TotalItem(l10n.totalSales, data.todayStats.total.toStringAsFixed(0), AlhaiColors.success, Icons.trending_up),
+      _TotalItem(l10n.orders, '${data.todayStats.count}', AlhaiColors.info, Icons.receipt),
+      _TotalItem(l10n.refund, data.refundStats.total.toStringAsFixed(0), AlhaiColors.error, Icons.undo),
     ];
 
     return Row(
@@ -152,6 +178,8 @@ class LiteDailySalesScreen extends StatelessWidget {
     bool isDark,
     List<_BreakdownRow> rows,
   ) {
+    if (rows.isEmpty) return const SizedBox.shrink();
+
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
@@ -227,7 +255,19 @@ class LiteDailySalesScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildHourlyChart(BuildContext context, bool isDark, AppLocalizations l10n) {
+  Widget _buildHourlyChart(BuildContext context, bool isDark, AppLocalizations l10n, List<dynamic> hourlySales) {
+    // Build normalized bars from hourly sales data
+    final maxTotal = hourlySales.isEmpty ? 1.0 :
+        hourlySales.fold<double>(0, (max, h) => h.total > max ? h.total : max);
+    final bars = hourlySales.isEmpty
+        ? List.filled(12, 0.0)
+        : List.generate(12, (i) {
+            final hour = 8 + i;
+            final match = hourlySales.where((h) => h.hour == hour);
+            if (match.isEmpty) return 0.0;
+            return maxTotal > 0 ? match.first.total / maxTotal : 0.0;
+          });
+
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
@@ -259,12 +299,12 @@ class LiteDailySalesScreen extends StatelessWidget {
             height: 120,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.end,
-              children: [0.2, 0.3, 0.5, 0.8, 0.6, 0.9, 1.0, 0.7, 0.4, 0.3, 0.2, 0.1].map((v) {
+              children: bars.map((v) {
                 return Expanded(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 1),
                     child: Container(
-                      height: 120 * v,
+                      height: 120 * v.clamp(0.0, 1.0),
                       decoration: BoxDecoration(
                         color: AlhaiColors.info.withValues(alpha: 0.6),
                         borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),

@@ -12393,4 +12393,353 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get stores => 'المتاجر';
+
+  @override
+  String get distributorPortal => 'بوابة الموزع';
+
+  @override
+  String get distributorDashboard => 'لوحة التحكم';
+
+  @override
+  String get distributorDashboardSubtitle => 'نظرة عامة على أداء التوزيع';
+
+  @override
+  String get distributorOrders => 'الطلبات الواردة';
+
+  @override
+  String get distributorProducts => 'كتالوج المنتجات';
+
+  @override
+  String get distributorPricing => 'إدارة الأسعار';
+
+  @override
+  String get distributorReports => 'التقارير';
+
+  @override
+  String get distributorSettings => 'الإعدادات';
+
+  @override
+  String get distributorTotalOrders => 'إجمالي الطلبات';
+
+  @override
+  String get distributorPendingOrders => 'طلبات منتظرة';
+
+  @override
+  String get distributorApprovedOrders => 'تمت الموافقة';
+
+  @override
+  String get distributorRevenue => 'الإيرادات';
+
+  @override
+  String get distributorMonthlySales => 'المبيعات الشهرية';
+
+  @override
+  String get distributorRecentOrders => 'آخر الطلبات';
+
+  @override
+  String get distributorOrderNumber => 'رقم الطلب';
+
+  @override
+  String get distributorStore => 'المتجر';
+
+  @override
+  String get distributorDate => 'التاريخ';
+
+  @override
+  String get distributorAmount => 'المبلغ';
+
+  @override
+  String get distributorStatusPending => 'منتظر';
+
+  @override
+  String get distributorStatusApproved => 'موافق';
+
+  @override
+  String get distributorStatusReceived => 'مستلم';
+
+  @override
+  String get distributorStatusRejected => 'مرفوض';
+
+  @override
+  String get distributorStatusDraft => 'مسودة';
+
+  @override
+  String get distributorNoOrders => 'لا توجد طلبات';
+
+  @override
+  String get distributorAllOrders => 'الكل';
+
+  @override
+  String get distributorPendingTab => 'منتظرة';
+
+  @override
+  String get distributorApprovedTab => 'موافق عليها';
+
+  @override
+  String get distributorRejectedTab => 'مرفوضة';
+
+  @override
+  String get distributorAddProduct => 'إضافة منتج';
+
+  @override
+  String get distributorSearchHint => 'ابحث بالاسم أو الباركود...';
+
+  @override
+  String get distributorNoProducts => 'لا توجد منتجات';
+
+  @override
+  String get distributorChangeSearch => 'جرب تغيير معايير البحث';
+
+  @override
+  String get distributorBarcode => 'الباركود';
+
+  @override
+  String get distributorCategory => 'التصنيف';
+
+  @override
+  String get distributorStock => 'المخزون';
+
+  @override
+  String get distributorStockEmpty => 'نفذ';
+
+  @override
+  String get distributorStockLow => 'منخفض';
+
+  @override
+  String get distributorActions => 'إجراءات';
+
+  @override
+  String distributorEditProduct(String name) {
+    return 'تعديل $name';
+  }
+
+  @override
+  String get distributorCurrentPrice => 'السعر الحالي';
+
+  @override
+  String get distributorNewPrice => 'السعر الجديد';
+
+  @override
+  String get distributorLastUpdated => 'آخر تحديث';
+
+  @override
+  String get distributorDifference => 'الفرق';
+
+  @override
+  String get distributorTotalProducts => 'إجمالي المنتجات';
+
+  @override
+  String get distributorPendingChanges => 'تغييرات معلقة';
+
+  @override
+  String distributorProductsWillUpdate(int count) {
+    return '$count منتج سيتم تحديث سعره';
+  }
+
+  @override
+  String get distributorSaveChanges => 'حفظ التغييرات';
+
+  @override
+  String get distributorChangesSaved => 'تم حفظ التغييرات بنجاح';
+
+  @override
+  String distributorChangesCount(int count) {
+    return '$count تغيير';
+  }
+
+  @override
+  String get distributorExport => 'تصدير';
+
+  @override
+  String get distributorExportReport => 'تصدير التقرير';
+
+  @override
+  String get distributorDailySales => 'المبيعات اليومية';
+
+  @override
+  String get distributorOrderCount => 'عدد الطلبات';
+
+  @override
+  String get distributorAvgOrderValue => 'متوسط قيمة الطلب';
+
+  @override
+  String get distributorTopProduct => 'أفضل منتج';
+
+  @override
+  String get distributorTopProducts => 'أفضل المنتجات';
+
+  @override
+  String get distributorOrdersUnit => 'طلب';
+
+  @override
+  String get distributorPeriodDay => 'يوم';
+
+  @override
+  String get distributorPeriodWeek => 'أسبوع';
+
+  @override
+  String get distributorPeriodMonth => 'شهر';
+
+  @override
+  String get distributorPeriodYear => 'سنة';
+
+  @override
+  String get distributorCompanyInfo => 'معلومات الشركة';
+
+  @override
+  String get distributorCompanyName => 'اسم الشركة';
+
+  @override
+  String get distributorPhone => 'رقم الهاتف';
+
+  @override
+  String get distributorEmail => 'البريد الإلكتروني';
+
+  @override
+  String get distributorAddress => 'العنوان';
+
+  @override
+  String get distributorNotificationSettings => 'إعدادات الإشعارات';
+
+  @override
+  String get distributorNotificationChannels => 'قنوات الإشعارات';
+
+  @override
+  String get distributorEmailNotifications => 'البريد الإلكتروني';
+
+  @override
+  String get distributorPushNotifications => 'إشعارات الجوال';
+
+  @override
+  String get distributorSmsNotifications => 'رسائل SMS';
+
+  @override
+  String get distributorNotificationTypes => 'أنواع الإشعارات';
+
+  @override
+  String get distributorNewOrderNotification => 'طلبات جديدة';
+
+  @override
+  String get distributorOrderStatusNotification => 'تحديث حالة الطلب';
+
+  @override
+  String get distributorPaymentNotification => 'إشعارات الدفع';
+
+  @override
+  String get distributorDeliverySettings => 'إعدادات التسليم';
+
+  @override
+  String get distributorDeliveryZones => 'مناطق التوصيل';
+
+  @override
+  String get distributorDeliveryZonesHint => 'أدخل المدن مفصولة بفاصلة';
+
+  @override
+  String get distributorMinOrder => 'الحد الأدنى للطلب (ر.س)';
+
+  @override
+  String get distributorDeliveryFee => 'رسوم التوصيل (ر.س)';
+
+  @override
+  String get distributorFreeDelivery => 'توصيل مجاني';
+
+  @override
+  String get distributorFreeDeliveryMin => 'الحد الأدنى للتوصيل المجاني (ر.س)';
+
+  @override
+  String get distributorSaveSettings => 'حفظ الإعدادات';
+
+  @override
+  String get distributorSettingsSaved => 'تم حفظ الإعدادات بنجاح';
+
+  @override
+  String distributorPurchaseOrder(String number) {
+    return 'طلب شراء #$number';
+  }
+
+  @override
+  String get distributorProposedAmount => 'المبلغ المقترح:';
+
+  @override
+  String get distributorOrderItems => 'بنود الطلب';
+
+  @override
+  String distributorProductCount(int count) {
+    return '$count منتجات';
+  }
+
+  @override
+  String get distributorSuggestedPrice => 'السعر المقترح';
+
+  @override
+  String get distributorYourPrice => 'سعرك';
+
+  @override
+  String get distributorYourTotal => 'إجمالي سعرك';
+
+  @override
+  String get distributorNotesForStore => 'ملاحظات للمتجر';
+
+  @override
+  String get distributorNotesHint => 'أضف ملاحظات حول العرض (اختياري)...';
+
+  @override
+  String get distributorRejectOrder => 'رفض الطلب';
+
+  @override
+  String get distributorAcceptSendQuote => 'قبول وإرسال العرض';
+
+  @override
+  String get distributorOrderRejected => 'تم رفض الطلب بنجاح';
+
+  @override
+  String distributorOrderAccepted(String amount) {
+    return 'تم قبول الطلب وإرسال العرض بمبلغ $amount ريال';
+  }
+
+  @override
+  String distributorLowerThanProposed(String percent) {
+    return '$percent% أقل من المقترح';
+  }
+
+  @override
+  String distributorHigherThanProposed(String percent) {
+    return '+$percent% أعلى من المقترح';
+  }
+
+  @override
+  String get distributorComingSoon => 'قريباً';
+
+  @override
+  String get distributorLoadError => 'حدث خطأ في تحميل البيانات';
+
+  @override
+  String get distributorRetry => 'إعادة المحاولة';
+
+  @override
+  String get distributorLogin => 'تسجيل دخول الموزع';
+
+  @override
+  String get distributorLoginSubtitle => 'أدخل بريدك الإلكتروني وكلمة المرور';
+
+  @override
+  String get distributorEmailLabel => 'البريد الإلكتروني';
+
+  @override
+  String get distributorPasswordLabel => 'كلمة المرور';
+
+  @override
+  String get distributorLoginButton => 'تسجيل الدخول';
+
+  @override
+  String get distributorLoginError => 'فشل تسجيل الدخول';
+
+  @override
+  String get distributorLogout => 'تسجيل الخروج';
+
+  @override
+  String get distributorSar => 'ر.س';
+
+  @override
+  String get distributorRiyal => 'ريال';
 }

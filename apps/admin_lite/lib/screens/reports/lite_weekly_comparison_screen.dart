@@ -2,90 +2,90 @@
 ///
 /// Compares current week vs previous week metrics:
 /// sales, orders, customers, and average ticket.
+/// Queries real data from salesDao via Riverpod providers.
 /// Supports RTL, dark mode, and responsive layouts.
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 
+import '../../providers/lite_screen_providers.dart';
+
 /// Weekly comparison report for Admin Lite
-class LiteWeeklyComparisonScreen extends StatelessWidget {
+class LiteWeeklyComparisonScreen extends ConsumerWidget {
   const LiteWeeklyComparisonScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final size = MediaQuery.of(context).size;
     final isMobile = size.width < 600;
     final l10n = AppLocalizations.of(context)!;
+    final dataAsync = ref.watch(liteWeeklyComparisonProvider);
 
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.weekly),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Week selector
-            _buildWeekSelector(context, isDark),
-            const SizedBox(height: AlhaiSpacing.lg),
-
-            // Comparison cards
-            _buildComparisonCards(context, isDark, isMobile, l10n),
-            const SizedBox(height: AlhaiSpacing.lg),
-
-            // Day-by-day breakdown
-            _buildDayBreakdown(context, isDark, l10n),
-            const SizedBox(height: AlhaiSpacing.lg),
-
-            // Category performance
-            _buildCategoryPerformance(context, isDark, l10n),
-
-            const SizedBox(height: AlhaiSpacing.lg),
-          ],
+      body: dataAsync.when(
+        data: (data) => SingleChildScrollView(
+          padding: EdgeInsets.all(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildComparisonCards(context, isDark, isMobile, l10n, data),
+              const SizedBox(height: AlhaiSpacing.lg),
+              _buildDayBreakdown(context, isDark, l10n, data),
+              const SizedBox(height: AlhaiSpacing.lg),
+            ],
+          ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildWeekSelector(BuildContext context, bool isDark) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
-      decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: isDark ? Colors.white12 : Theme.of(context).colorScheme.outlineVariant,
+        loading: () => const Center(
+          child: Padding(
+            padding: EdgeInsets.all(AlhaiSpacing.massive),
+            child: CircularProgressIndicator(),
+          ),
         ),
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.chevron_left, color: isDark ? Colors.white54 : Colors.black54),
-          const Spacer(),
-          Text(
-            'Mar 24 - Mar 30, 2026',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white : Colors.black87,
+        error: (_, __) => Center(
+          child: Padding(
+            padding: const EdgeInsets.all(AlhaiSpacing.massive),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.error_outline_rounded, size: 48, color: isDark ? Colors.white30 : Theme.of(context).colorScheme.outlineVariant),
+                const SizedBox(height: AlhaiSpacing.md),
+                Text(l10n.errorOccurred),
+                const SizedBox(height: AlhaiSpacing.sm),
+                TextButton.icon(
+                  onPressed: () => ref.invalidate(liteWeeklyComparisonProvider),
+                  icon: const Icon(Icons.refresh_rounded),
+                  label: Text(l10n.tryAgain),
+                ),
+              ],
             ),
           ),
-          const Spacer(),
-          Icon(Icons.chevron_right, color: isDark ? Colors.white54 : Colors.black54),
-        ],
+        ),
       ),
     );
   }
 
-  Widget _buildComparisonCards(BuildContext context, bool isDark, bool isMobile, AppLocalizations l10n) {
+  double _changePercent(double current, double previous) {
+    if (previous <= 0) return current > 0 ? 100 : 0;
+    return ((current - previous) / previous) * 100;
+  }
+
+  Widget _buildComparisonCards(BuildContext context, bool isDark, bool isMobile, AppLocalizations l10n, WeeklyComparisonData data) {
+    final avgThis = data.thisWeek.count > 0 ? data.thisWeek.total / data.thisWeek.count : 0.0;
+    final avgLast = data.lastWeek.count > 0 ? data.lastWeek.total / data.lastWeek.count : 0.0;
+
     final items = [
-      _ComparisonItem(l10n.totalSales, '87,200', '80,150', 8.8, Icons.trending_up),
-      _ComparisonItem(l10n.orders, '1,240', '1,105', 12.2, Icons.receipt),
-      _ComparisonItem(l10n.customers, '342', '310', 10.3, Icons.people),
-      _ComparisonItem(l10n.averageSale, '70.3', '72.5', -3.0, Icons.analytics),
+      _ComparisonItem(l10n.totalSales, data.thisWeek.total.toStringAsFixed(0), _changePercent(data.thisWeek.total, data.lastWeek.total), Icons.trending_up),
+      _ComparisonItem(l10n.orders, '${data.thisWeek.count}', _changePercent(data.thisWeek.count.toDouble(), data.lastWeek.count.toDouble()), Icons.receipt),
+      _ComparisonItem(l10n.customers, '${data.thisWeekCustomers}', _changePercent(data.thisWeekCustomers.toDouble(), data.lastWeekCustomers.toDouble()), Icons.people),
+      _ComparisonItem(l10n.averageSale, avgThis.toStringAsFixed(1), _changePercent(avgThis, avgLast), Icons.analytics),
     ];
 
     if (isMobile) {
@@ -181,16 +181,11 @@ class LiteWeeklyComparisonScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDayBreakdown(BuildContext context, bool isDark, AppLocalizations l10n) {
-    final days = [
-      _DayData('Sat', 11200, 10800),
-      _DayData('Sun', 14500, 12100),
-      _DayData('Mon', 10800, 11500),
-      _DayData('Tue', 13200, 10900),
-      _DayData('Wed', 12400, 12800),
-      _DayData('Thu', 15100, 13050),
-      _DayData('Fri', 10000, 9000),
-    ];
+  Widget _buildDayBreakdown(BuildContext context, bool isDark, AppLocalizations l10n, WeeklyComparisonData data) {
+    final maxVal = data.dailyBreakdown.fold<double>(1.0, (max, d) {
+      final m = d.current > d.previous ? d.current : d.previous;
+      return m > max ? m : max;
+    });
 
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.md),
@@ -213,7 +208,6 @@ class LiteWeeklyComparisonScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: AlhaiSpacing.sm),
-          // Legend
           Row(
             children: [
               _LegendDot(color: AlhaiColors.primary, label: l10n.thisWeek),
@@ -222,8 +216,7 @@ class LiteWeeklyComparisonScreen extends StatelessWidget {
             ],
           ),
           const SizedBox(height: AlhaiSpacing.md),
-          ...days.map((day) {
-            final maxVal = 16000.0;
+          ...data.dailyBreakdown.map((day) {
             return Padding(
               padding: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
               child: Row(
@@ -231,7 +224,7 @@ class LiteWeeklyComparisonScreen extends StatelessWidget {
                   SizedBox(
                     width: 32,
                     child: Text(
-                      day.name,
+                      day.dayName,
                       style: TextStyle(
                         fontSize: 12,
                         color: isDark ? Colors.white54 : Colors.black54,
@@ -242,94 +235,9 @@ class LiteWeeklyComparisonScreen extends StatelessWidget {
                   Expanded(
                     child: Column(
                       children: [
-                        _BarRow(value: day.current / maxVal, color: AlhaiColors.primary),
+                        _BarRow(value: maxVal > 0 ? day.current / maxVal : 0, color: AlhaiColors.primary),
                         const SizedBox(height: AlhaiSpacing.xxxs),
-                        _BarRow(value: day.previous / maxVal, color: Colors.grey.shade400),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCategoryPerformance(BuildContext context, bool isDark, AppLocalizations l10n) {
-    final categories = [
-      _CategoryPerf(l10n.products, '32,400', 12.5),
-      _CategoryPerf(l10n.categories, '18,600', 5.2),
-      _CategoryPerf(l10n.inventory, '15,200', -2.1),
-      _CategoryPerf(l10n.customers, '12,000', 8.7),
-      _CategoryPerf(l10n.expenses, '9,000', -4.3),
-    ];
-
-    return Container(
-      padding: const EdgeInsets.all(AlhaiSpacing.md),
-      decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: isDark ? Colors.white12 : Theme.of(context).colorScheme.outlineVariant,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            l10n.categories,
-            style: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white : null,
-            ),
-          ),
-          const SizedBox(height: AlhaiSpacing.md),
-          ...categories.map((cat) {
-            final isPositive = cat.change >= 0;
-            return Padding(
-              padding: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
-              child: Row(
-                children: [
-                  Expanded(
-                    flex: 2,
-                    child: Text(
-                      cat.name,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: isDark ? Colors.white : Colors.black87,
-                      ),
-                    ),
-                  ),
-                  Text(
-                    cat.value,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                      color: isDark ? Colors.white : Colors.black87,
-                    ),
-                  ),
-                  const SizedBox(width: AlhaiSpacing.sm),
-                  SizedBox(
-                    width: 60,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Icon(
-                          isPositive ? Icons.arrow_upward : Icons.arrow_downward,
-                          size: 12,
-                          color: isPositive ? AlhaiColors.success : AlhaiColors.error,
-                        ),
-                        Text(
-                          '${cat.change.abs().toStringAsFixed(1)}%',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: isPositive ? AlhaiColors.success : AlhaiColors.error,
-                          ),
-                        ),
+                        _BarRow(value: maxVal > 0 ? day.previous / maxVal : 0, color: Colors.grey.shade400),
                       ],
                     ),
                   ),
@@ -346,17 +254,9 @@ class LiteWeeklyComparisonScreen extends StatelessWidget {
 class _ComparisonItem {
   final String label;
   final String current;
-  final String previous;
   final double changePercent;
   final IconData icon;
-  const _ComparisonItem(this.label, this.current, this.previous, this.changePercent, this.icon);
-}
-
-class _DayData {
-  final String name;
-  final double current;
-  final double previous;
-  const _DayData(this.name, this.current, this.previous);
+  const _ComparisonItem(this.label, this.current, this.changePercent, this.icon);
 }
 
 class _LegendDot extends StatelessWidget {
@@ -396,11 +296,4 @@ class _BarRow extends StatelessWidget {
       ),
     );
   }
-}
-
-class _CategoryPerf {
-  final String name;
-  final String value;
-  final double change;
-  const _CategoryPerf(this.name, this.value, this.change);
 }

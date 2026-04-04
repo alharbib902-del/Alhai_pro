@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
+import '../../providers/sa_providers.dart';
 
-/// Billing & invoices screen.
-class SABillingScreen extends StatelessWidget {
+/// Billing & invoices screen -- real Supabase data.
+class SABillingScreen extends ConsumerWidget {
   const SABillingScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
     final width = MediaQuery.sizeOf(context).width;
     final isWide = width >= AlhaiBreakpoints.desktop;
+
+    final summaryAsync = ref.watch(saBillingSummaryProvider);
+    final invoicesAsync = ref.watch(saBillingInvoicesProvider);
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -28,33 +33,44 @@ class SABillingScreen extends StatelessWidget {
             const SizedBox(height: AlhaiSpacing.lg),
 
             // Summary cards
-            GridView.count(
-              crossAxisCount: isWide ? 3 : 1,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              mainAxisSpacing: AlhaiSpacing.md,
-              crossAxisSpacing: AlhaiSpacing.md,
-              childAspectRatio: isWide ? 2.5 : 3.0,
-              children: [
-                _BillingStat(
-                  title: l10n.paid,
-                  value: '234,500 ${l10n.sar}',
-                  icon: Icons.check_circle_rounded,
-                  color: Colors.green,
-                ),
-                _BillingStat(
-                  title: l10n.unpaid,
-                  value: '12,300 ${l10n.sar}',
-                  icon: Icons.pending_rounded,
-                  color: Colors.amber,
-                ),
-                _BillingStat(
-                  title: l10n.overdue,
-                  value: '3,200 ${l10n.sar}',
-                  icon: Icons.error_rounded,
-                  color: Colors.red,
-                ),
-              ],
+            summaryAsync.when(
+              loading: () =>
+                  const Center(child: CircularProgressIndicator()),
+              error: (e, _) => Text('Error: $e'),
+              data: (summary) {
+                final paid = summary['paid'] ?? 0.0;
+                final unpaid = summary['unpaid'] ?? 0.0;
+                final overdue = summary['overdue'] ?? 0.0;
+
+                return GridView.count(
+                  crossAxisCount: isWide ? 3 : 1,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  mainAxisSpacing: AlhaiSpacing.md,
+                  crossAxisSpacing: AlhaiSpacing.md,
+                  childAspectRatio: isWide ? 2.5 : 3.0,
+                  children: [
+                    _BillingStat(
+                      title: l10n.paid,
+                      value: '${paid.toInt()} ${l10n.sar}',
+                      icon: Icons.check_circle_rounded,
+                      color: Colors.green,
+                    ),
+                    _BillingStat(
+                      title: l10n.unpaid,
+                      value: '${unpaid.toInt()} ${l10n.sar}',
+                      icon: Icons.pending_rounded,
+                      color: Colors.amber,
+                    ),
+                    _BillingStat(
+                      title: l10n.overdue,
+                      value: '${overdue.toInt()} ${l10n.sar}',
+                      icon: Icons.error_rounded,
+                      color: Colors.red,
+                    ),
+                  ],
+                );
+              },
             ),
             const SizedBox(height: AlhaiSpacing.xl),
 
@@ -66,61 +82,96 @@ class SABillingScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: AlhaiSpacing.md),
-            Card(
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AlhaiRadius.card),
-                side: BorderSide(
-                  color: theme.colorScheme.outlineVariant,
-                  width: AlhaiSpacing.strokeXs,
-                ),
-              ),
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: DataTable(
-                  columnSpacing: AlhaiSpacing.xl,
-                  headingRowHeight: 48,
-                  dataRowMinHeight: 52,
-                  dataRowMaxHeight: 52,
-                  columns: [
-                    DataColumn(label: Text(l10n.invoiceNumber)),
-                    DataColumn(label: Text(l10n.storeName)),
-                    DataColumn(label: Text(l10n.storePlan)),
-                    DataColumn(label: Text(l10n.invoiceDate)),
-                    DataColumn(
-                      label: Text(l10n.invoiceAmount),
-                      numeric: true,
+            invoicesAsync.when(
+              loading: () =>
+                  const Center(child: CircularProgressIndicator()),
+              error: (e, _) => Text('Error loading invoices: $e'),
+              data: (invoices) {
+                if (invoices.isEmpty) {
+                  return Card(
+                    elevation: 0,
+                    child: Padding(
+                      padding: const EdgeInsets.all(AlhaiSpacing.xl),
+                      child: Center(
+                        child: Text(
+                          'No invoices found',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.colorScheme.outline,
+                          ),
+                        ),
+                      ),
                     ),
-                    DataColumn(label: Text(l10n.invoiceStatus)),
-                  ],
-                  rows: _invoices.map((inv) {
-                    return DataRow(cells: [
-                      DataCell(Text(inv.number)),
-                      DataCell(Text(inv.store)),
-                      DataCell(Text(inv.plan)),
-                      DataCell(Text(inv.date)),
-                      DataCell(Text('${inv.amount} ${l10n.sar}')),
-                      DataCell(_InvoiceStatusChip(status: inv.status)),
-                    ]);
-                  }).toList(),
-                ),
-              ),
+                  );
+                }
+
+                return Card(
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.circular(AlhaiRadius.card),
+                    side: BorderSide(
+                      color: theme.colorScheme.outlineVariant,
+                      width: AlhaiSpacing.strokeXs,
+                    ),
+                  ),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: DataTable(
+                      columnSpacing: AlhaiSpacing.xl,
+                      headingRowHeight: 48,
+                      dataRowMinHeight: 52,
+                      dataRowMaxHeight: 52,
+                      columns: [
+                        DataColumn(label: Text(l10n.invoiceNumber)),
+                        DataColumn(label: Text(l10n.storeName)),
+                        DataColumn(label: Text(l10n.storePlan)),
+                        DataColumn(label: Text(l10n.invoiceDate)),
+                        DataColumn(
+                          label: Text(l10n.invoiceAmount),
+                          numeric: true,
+                        ),
+                        DataColumn(
+                            label: Text(l10n.invoiceStatus)),
+                      ],
+                      rows: invoices.map((inv) {
+                        final store =
+                            inv['stores'] as Map<String, dynamic>?;
+                        final plan =
+                            inv['plans'] as Map<String, dynamic>?;
+
+                        return DataRow(cells: [
+                          DataCell(Text(
+                              inv['invoice_number'] as String? ??
+                                  '-')),
+                          DataCell(Text(
+                              store?['name'] as String? ?? '-')),
+                          DataCell(Text(
+                              plan?['name'] as String? ?? '-')),
+                          DataCell(Text(_fmtDate(
+                              inv['issued_at'] as String?))),
+                          DataCell(Text(
+                              '${(inv['amount'] as num?)?.toInt() ?? 0} ${l10n.sar}')),
+                          DataCell(_InvoiceStatusChip(
+                              status: inv['status'] as String? ??
+                                  'unknown')),
+                        ]);
+                      }).toList(),
+                    ),
+                  ),
+                );
+              },
             ),
           ],
         ),
       ),
     );
   }
-}
 
-final _invoices = [
-  _InvoiceRow('INV-2024-001', 'Grocery Plus', 'Professional', '2024-12-01', 499, 'paid'),
-  _InvoiceRow('INV-2024-002', 'Tech Zone', 'Advanced', '2024-12-01', 249, 'paid'),
-  _InvoiceRow('INV-2024-003', 'Home Essentials', 'Basic', '2024-12-01', 99, 'paid'),
-  _InvoiceRow('INV-2024-004', 'Auto Parts KSA', 'Professional', '2024-12-01', 499, 'paid'),
-  _InvoiceRow('INV-2024-005', 'Fresh Market', 'Advanced', '2024-12-01', 249, 'unpaid'),
-  _InvoiceRow('INV-2024-006', 'Beauty Corner', 'Advanced', '2024-10-01', 249, 'overdue'),
-];
+  String _fmtDate(String? date) {
+    if (date == null) return '-';
+    return date.length >= 10 ? date.substring(0, 10) : date;
+  }
+}
 
 class _BillingStat extends StatelessWidget {
   final String title;
@@ -221,22 +272,4 @@ class _InvoiceStatusChip extends StatelessWidget {
       ),
     );
   }
-}
-
-class _InvoiceRow {
-  final String number;
-  final String store;
-  final String plan;
-  final String date;
-  final int amount;
-  final String status;
-
-  const _InvoiceRow(
-    this.number,
-    this.store,
-    this.plan,
-    this.date,
-    this.amount,
-    this.status,
-  );
 }

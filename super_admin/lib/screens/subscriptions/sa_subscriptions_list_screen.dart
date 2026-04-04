@@ -1,40 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
+import '../../providers/sa_providers.dart';
 
-/// All active subscriptions list with filtering.
-class SASubscriptionsListScreen extends StatefulWidget {
+/// All active subscriptions list with real Supabase data.
+class SASubscriptionsListScreen extends ConsumerWidget {
   const SASubscriptionsListScreen({super.key});
 
   @override
-  State<SASubscriptionsListScreen> createState() =>
-      _SASubscriptionsListScreenState();
-}
-
-class _SASubscriptionsListScreenState
-    extends State<SASubscriptionsListScreen> {
-  String _statusFilter = 'all';
-
-  final List<_SubRow> _subscriptions = [
-    _SubRow('Grocery Plus', 'Professional', 'active', '2024-01-15', '2025-01-15', 499),
-    _SubRow('Tech Zone', 'Advanced', 'active', '2024-02-20', '2025-02-20', 249),
-    _SubRow('Fashion Hub', 'Basic', 'trial', '2024-11-01', '2024-12-01', 0),
-    _SubRow('Home Essentials', 'Basic', 'active', '2024-03-10', '2025-03-10', 99),
-    _SubRow('Beauty Corner', 'Advanced', 'expired', '2024-04-05', '2024-10-05', 249),
-    _SubRow('Auto Parts KSA', 'Professional', 'active', '2024-05-18', '2025-05-18', 499),
-    _SubRow('Book Haven', 'Basic', 'trial', '2024-12-01', '2025-01-01', 0),
-    _SubRow('Fresh Market', 'Advanced', 'active', '2024-06-22', '2025-06-22', 249),
-  ];
-
-  List<_SubRow> get _filtered {
-    if (_statusFilter == 'all') return _subscriptions;
-    return _subscriptions.where((s) => s.status == _statusFilter).toList();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
+    final filter = ref.watch(saSubsFilterProvider);
+    final subsAsync = ref.watch(saSubscriptionsListProvider);
+    final countsAsync = ref.watch(saSubscriptionCountsProvider);
 
     return Scaffold(
       body: Padding(
@@ -51,80 +31,108 @@ class _SASubscriptionsListScreenState
             const SizedBox(height: AlhaiSpacing.lg),
 
             // Summary chips
-            Wrap(
-              spacing: AlhaiSpacing.sm,
-              runSpacing: AlhaiSpacing.sm,
-              children: [
-                _SummaryChip(
-                  label: l10n.activeSubscriptions,
-                  count: '5',
-                  color: Colors.green,
-                  isSelected: _statusFilter == 'active',
-                  onTap: () => setState(() => _statusFilter =
-                      _statusFilter == 'active' ? 'all' : 'active'),
-                ),
-                _SummaryChip(
-                  label: l10n.trialSubscriptions,
-                  count: '2',
-                  color: Colors.amber,
-                  isSelected: _statusFilter == 'trial',
-                  onTap: () => setState(() => _statusFilter =
-                      _statusFilter == 'trial' ? 'all' : 'trial'),
-                ),
-                _SummaryChip(
-                  label: l10n.expiredSubscriptions,
-                  count: '1',
-                  color: Colors.red,
-                  isSelected: _statusFilter == 'expired',
-                  onTap: () => setState(() => _statusFilter =
-                      _statusFilter == 'expired' ? 'all' : 'expired'),
-                ),
-              ],
+            countsAsync.when(
+              loading: () => const SizedBox.shrink(),
+              error: (_, __) => const SizedBox.shrink(),
+              data: (counts) => Wrap(
+                spacing: AlhaiSpacing.sm,
+                runSpacing: AlhaiSpacing.sm,
+                children: [
+                  _SummaryChip(
+                    label: l10n.activeSubscriptions,
+                    count: '${counts['active'] ?? 0}',
+                    color: Colors.green,
+                    isSelected: filter == 'active',
+                    onTap: () => ref.read(saSubsFilterProvider.notifier).state =
+                        filter == 'active' ? 'all' : 'active',
+                  ),
+                  _SummaryChip(
+                    label: l10n.trialSubscriptions,
+                    count: '${counts['trial'] ?? 0}',
+                    color: Colors.amber,
+                    isSelected: filter == 'trial',
+                    onTap: () => ref.read(saSubsFilterProvider.notifier).state =
+                        filter == 'trial' ? 'all' : 'trial',
+                  ),
+                  _SummaryChip(
+                    label: l10n.expiredSubscriptions,
+                    count: '${counts['expired'] ?? 0}',
+                    color: Colors.red,
+                    isSelected: filter == 'expired',
+                    onTap: () => ref.read(saSubsFilterProvider.notifier).state =
+                        filter == 'expired' ? 'all' : 'expired',
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: AlhaiSpacing.md),
 
             // Table
             Expanded(
-              child: Card(
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(AlhaiRadius.card),
-                  side: BorderSide(
-                    color: theme.colorScheme.outlineVariant,
-                    width: AlhaiSpacing.strokeXs,
+              child: subsAsync.when(
+                loading: () =>
+                    const Center(child: CircularProgressIndicator()),
+                error: (e, _) => Center(child: Text('Error: $e')),
+                data: (subs) => Card(
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AlhaiRadius.card),
+                    side: BorderSide(
+                      color: theme.colorScheme.outlineVariant,
+                      width: AlhaiSpacing.strokeXs,
+                    ),
                   ),
-                ),
-                child: SingleChildScrollView(
-                  child: DataTable(
-                    columnSpacing: AlhaiSpacing.lg,
-                    headingRowHeight: 48,
-                    dataRowMinHeight: 52,
-                    dataRowMaxHeight: 52,
-                    columns: [
-                      DataColumn(label: Text(l10n.storeName)),
-                      DataColumn(label: Text(l10n.storePlan)),
-                      DataColumn(label: Text(l10n.storeStatus)),
-                      const DataColumn(label: Text('Start')),
-                      const DataColumn(label: Text('End')),
-                      DataColumn(
-                        label: Text(l10n.planPrice),
-                        numeric: true,
-                      ),
-                    ],
-                    rows: _filtered.map((sub) {
-                      return DataRow(cells: [
-                        DataCell(Text(sub.storeName)),
-                        DataCell(Text(sub.plan)),
-                        DataCell(_StatusChip(status: sub.status)),
-                        DataCell(Text(sub.startDate)),
-                        DataCell(Text(sub.endDate)),
-                        DataCell(Text(
-                          sub.price > 0
-                              ? '${sub.price} ${l10n.sar}'
-                              : l10n.trial,
-                        )),
-                      ]);
-                    }).toList(),
+                  child: SingleChildScrollView(
+                    child: DataTable(
+                      columnSpacing: AlhaiSpacing.lg,
+                      headingRowHeight: 48,
+                      dataRowMinHeight: 52,
+                      dataRowMaxHeight: 52,
+                      columns: [
+                        DataColumn(label: Text(l10n.storeName)),
+                        DataColumn(label: Text(l10n.storePlan)),
+                        DataColumn(label: Text(l10n.storeStatus)),
+                        const DataColumn(label: Text('Start')),
+                        const DataColumn(label: Text('End')),
+                        DataColumn(
+                          label: Text(l10n.planPrice),
+                          numeric: true,
+                        ),
+                      ],
+                      rows: subs.map((sub) {
+                        final store =
+                            sub['stores'] as Map<String, dynamic>?;
+                        final plan =
+                            sub['plans'] as Map<String, dynamic>?;
+                        final storeName =
+                            store?['name'] as String? ?? '-';
+                        final planName =
+                            plan?['name'] as String? ?? '-';
+                        final status =
+                            sub['status'] as String? ?? 'unknown';
+                        final startDate = _fmtDate(
+                            sub['start_date'] as String?);
+                        final endDate = _fmtDate(
+                            sub['end_date'] as String?);
+                        final price =
+                            (plan?['monthly_price'] as num?)
+                                    ?.toInt() ??
+                                0;
+
+                        return DataRow(cells: [
+                          DataCell(Text(storeName)),
+                          DataCell(Text(planName)),
+                          DataCell(_StatusChip(status: status)),
+                          DataCell(Text(startDate)),
+                          DataCell(Text(endDate)),
+                          DataCell(Text(
+                            price > 0
+                                ? '$price ${l10n.sar}'
+                                : l10n.trial,
+                          )),
+                        ]);
+                      }).toList(),
+                    ),
                   ),
                 ),
               ),
@@ -133,6 +141,11 @@ class _SASubscriptionsListScreenState
         ),
       ),
     );
+  }
+
+  String _fmtDate(String? date) {
+    if (date == null) return '-';
+    return date.length >= 10 ? date.substring(0, 10) : date;
   }
 }
 
@@ -198,22 +211,4 @@ class _StatusChip extends StatelessWidget {
       ),
     );
   }
-}
-
-class _SubRow {
-  final String storeName;
-  final String plan;
-  final String status;
-  final String startDate;
-  final String endDate;
-  final int price;
-
-  const _SubRow(
-    this.storeName,
-    this.plan,
-    this.status,
-    this.startDate,
-    this.endDate,
-    this.price,
-  );
 }

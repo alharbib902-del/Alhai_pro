@@ -5279,5 +5279,157 @@
   "thisYear": "هذا العام",
   "growth": "النمو",
   "revenue": "الإيرادات",
-  "stores": "المتاجر"
+  "stores": "المتاجر",
+
+  "distributorPortal": "بوابة الموزع",
+  "distributorDashboard": "لوحة التحكم",
+  "distributorDashboardSubtitle": "نظرة عامة على أداء التوزيع",
+  "distributorOrders": "الطلبات الواردة",
+  "distributorProducts": "كتالوج المنتجات",
+  "distributorPricing": "إدارة الأسعار",
+  "distributorReports": "التقارير",
+  "distributorSettings": "الإعدادات",
+  "distributorTotalOrders": "إجمالي الطلبات",
+  "distributorPendingOrders": "طلبات منتظرة",
+  "distributorApprovedOrders": "تمت الموافقة",
+  "distributorRevenue": "الإيرادات",
+  "distributorMonthlySales": "المبيعات الشهرية",
+  "distributorRecentOrders": "آخر الطلبات",
+  "distributorOrderNumber": "رقم الطلب",
+  "distributorStore": "المتجر",
+  "distributorDate": "التاريخ",
+  "distributorAmount": "المبلغ",
+  "distributorStatusPending": "منتظر",
+  "distributorStatusApproved": "موافق",
+  "distributorStatusReceived": "مستلم",
+  "distributorStatusRejected": "مرفوض",
+  "distributorStatusDraft": "مسودة",
+  "distributorNoOrders": "لا توجد طلبات",
+  "distributorAllOrders": "الكل",
+  "distributorPendingTab": "منتظرة",
+  "distributorApprovedTab": "موافق عليها",
+  "distributorRejectedTab": "مرفوضة",
+  "distributorAddProduct": "إضافة منتج",
+  "distributorSearchHint": "ابحث بالاسم أو الباركود...",
+  "distributorNoProducts": "لا توجد منتجات",
+  "distributorChangeSearch": "جرب تغيير معايير البحث",
+  "distributorBarcode": "الباركود",
+  "distributorCategory": "التصنيف",
+  "distributorStock": "المخزون",
+  "distributorStockEmpty": "نفذ",
+  "distributorStockLow": "منخفض",
+  "distributorActions": "إجراءات",
+  "distributorEditProduct": "تعديل {name}",
+  "@distributorEditProduct": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "distributorCurrentPrice": "السعر الحالي",
+  "distributorNewPrice": "السعر الجديد",
+  "distributorLastUpdated": "آخر تحديث",
+  "distributorDifference": "الفرق",
+  "distributorTotalProducts": "إجمالي المنتجات",
+  "distributorPendingChanges": "تغييرات معلقة",
+  "distributorProductsWillUpdate": "{count} منتج سيتم تحديث سعره",
+  "@distributorProductsWillUpdate": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "distributorSaveChanges": "حفظ التغييرات",
+  "distributorChangesSaved": "تم حفظ التغييرات بنجاح",
+  "distributorChangesCount": "{count} تغيير",
+  "@distributorChangesCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "distributorExport": "تصدير",
+  "distributorExportReport": "تصدير التقرير",
+  "distributorDailySales": "المبيعات اليومية",
+  "distributorOrderCount": "عدد الطلبات",
+  "distributorAvgOrderValue": "متوسط قيمة الطلب",
+  "distributorTopProduct": "أفضل منتج",
+  "distributorTopProducts": "أفضل المنتجات",
+  "distributorOrdersUnit": "طلب",
+  "distributorPeriodDay": "يوم",
+  "distributorPeriodWeek": "أسبوع",
+  "distributorPeriodMonth": "شهر",
+  "distributorPeriodYear": "سنة",
+  "distributorCompanyInfo": "معلومات الشركة",
+  "distributorCompanyName": "اسم الشركة",
+  "distributorPhone": "رقم الهاتف",
+  "distributorEmail": "البريد الإلكتروني",
+  "distributorAddress": "العنوان",
+  "distributorNotificationSettings": "إعدادات الإشعارات",
+  "distributorNotificationChannels": "قنوات الإشعارات",
+  "distributorEmailNotifications": "البريد الإلكتروني",
+  "distributorPushNotifications": "إشعارات الجوال",
+  "distributorSmsNotifications": "رسائل SMS",
+  "distributorNotificationTypes": "أنواع الإشعارات",
+  "distributorNewOrderNotification": "طلبات جديدة",
+  "distributorOrderStatusNotification": "تحديث حالة الطلب",
+  "distributorPaymentNotification": "إشعارات الدفع",
+  "distributorDeliverySettings": "إعدادات التسليم",
+  "distributorDeliveryZones": "مناطق التوصيل",
+  "distributorDeliveryZonesHint": "أدخل المدن مفصولة بفاصلة",
+  "distributorMinOrder": "الحد الأدنى للطلب (ر.س)",
+  "distributorDeliveryFee": "رسوم التوصيل (ر.س)",
+  "distributorFreeDelivery": "توصيل مجاني",
+  "distributorFreeDeliveryMin": "الحد الأدنى للتوصيل المجاني (ر.س)",
+  "distributorSaveSettings": "حفظ الإعدادات",
+  "distributorSettingsSaved": "تم حفظ الإعدادات بنجاح",
+  "distributorPurchaseOrder": "طلب شراء #{number}",
+  "@distributorPurchaseOrder": {
+    "placeholders": {
+      "number": { "type": "String" }
+    }
+  },
+  "distributorProposedAmount": "المبلغ المقترح:",
+  "distributorOrderItems": "بنود الطلب",
+  "distributorProductCount": "{count} منتجات",
+  "@distributorProductCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "distributorSuggestedPrice": "السعر المقترح",
+  "distributorYourPrice": "سعرك",
+  "distributorYourTotal": "إجمالي سعرك",
+  "distributorNotesForStore": "ملاحظات للمتجر",
+  "distributorNotesHint": "أضف ملاحظات حول العرض (اختياري)...",
+  "distributorRejectOrder": "رفض الطلب",
+  "distributorAcceptSendQuote": "قبول وإرسال العرض",
+  "distributorOrderRejected": "تم رفض الطلب بنجاح",
+  "distributorOrderAccepted": "تم قبول الطلب وإرسال العرض بمبلغ {amount} ريال",
+  "@distributorOrderAccepted": {
+    "placeholders": {
+      "amount": { "type": "String" }
+    }
+  },
+  "distributorLowerThanProposed": "{percent}% أقل من المقترح",
+  "@distributorLowerThanProposed": {
+    "placeholders": {
+      "percent": { "type": "String" }
+    }
+  },
+  "distributorHigherThanProposed": "+{percent}% أعلى من المقترح",
+  "@distributorHigherThanProposed": {
+    "placeholders": {
+      "percent": { "type": "String" }
+    }
+  },
+  "distributorComingSoon": "قريباً",
+  "distributorLoadError": "حدث خطأ في تحميل البيانات",
+  "distributorRetry": "إعادة المحاولة",
+  "distributorLogin": "تسجيل دخول الموزع",
+  "distributorLoginSubtitle": "أدخل بريدك الإلكتروني وكلمة المرور",
+  "distributorEmailLabel": "البريد الإلكتروني",
+  "distributorPasswordLabel": "كلمة المرور",
+  "distributorLoginButton": "تسجيل الدخول",
+  "distributorLoginError": "فشل تسجيل الدخول",
+  "distributorLogout": "تسجيل الخروج",
+  "distributorSar": "ر.س",
+  "distributorRiyal": "ريال"
 }

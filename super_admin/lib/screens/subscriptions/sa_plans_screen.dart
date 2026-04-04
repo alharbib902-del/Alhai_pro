@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
+import '../../providers/sa_providers.dart';
 
-/// Plans management -- create/edit the 3 tiers: Basic, Advanced, Professional.
-class SAPlansScreen extends StatelessWidget {
+/// Plans management -- real plan data from Supabase.
+class SAPlansScreen extends ConsumerWidget {
   const SAPlansScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
     final width = MediaQuery.sizeOf(context).width;
     final isWide = width >= AlhaiBreakpoints.desktop;
+
+    final plansAsync = ref.watch(saPlansListProvider);
+    final subCountsAsync = ref.watch(saSubscriberCountByPlanProvider);
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -30,7 +35,7 @@ class SAPlansScreen extends StatelessWidget {
                   ),
                 ),
                 FilledButton.icon(
-                  onPressed: () => _showPlanDialog(context),
+                  onPressed: () => _showPlanDialog(context, ref),
                   icon: const Icon(Icons.add_rounded),
                   label: Text(l10n.createPlan),
                 ),
@@ -38,142 +43,108 @@ class SAPlansScreen extends StatelessWidget {
             ),
             const SizedBox(height: AlhaiSpacing.lg),
 
-            // Plan cards
-            if (isWide)
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: _PlanCard(
-                      name: l10n.basicPlan,
-                      monthlyPrice: '99',
-                      yearlyPrice: '990',
-                      maxBranches: '1',
-                      maxProducts: '500',
-                      maxUsers: '3',
-                      color: Colors.blue,
-                      subscribers: 531,
-                      features: const [
-                        'POS System',
-                        'Basic Reports',
-                        'Email Support',
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: AlhaiSpacing.md),
-                  Expanded(
-                    child: _PlanCard(
-                      name: l10n.advancedPlan,
-                      monthlyPrice: '249',
-                      yearlyPrice: '2,490',
-                      maxBranches: '3',
-                      maxProducts: '2,000',
-                      maxUsers: '10',
-                      color: Colors.deepPurple,
-                      subscribers: 413,
-                      isPopular: true,
-                      features: const [
-                        'POS System',
-                        'Advanced Reports',
-                        'Multi-branch',
-                        'Inventory Management',
-                        'WhatsApp Integration',
-                        'Priority Support',
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: AlhaiSpacing.md),
-                  Expanded(
-                    child: _PlanCard(
-                      name: l10n.professionalPlan,
-                      monthlyPrice: '499',
-                      yearlyPrice: '4,990',
-                      maxBranches: 'Unlimited',
-                      maxProducts: 'Unlimited',
-                      maxUsers: 'Unlimited',
-                      color: Colors.teal,
-                      subscribers: 236,
-                      features: const [
-                        'POS System',
-                        'AI Analytics',
-                        'Unlimited Branches',
-                        'E-commerce Integration',
-                        'API Access',
-                        'ZATCA Compliance',
-                        'Dedicated Support',
-                      ],
-                    ),
-                  ),
-                ],
-              )
-            else
-              Column(
-                children: [
-                  _PlanCard(
-                    name: l10n.basicPlan,
-                    monthlyPrice: '99',
-                    yearlyPrice: '990',
-                    maxBranches: '1',
-                    maxProducts: '500',
-                    maxUsers: '3',
-                    color: Colors.blue,
-                    subscribers: 531,
-                    features: const [
-                      'POS System',
-                      'Basic Reports',
-                      'Email Support',
-                    ],
-                  ),
-                  const SizedBox(height: AlhaiSpacing.md),
-                  _PlanCard(
-                    name: l10n.advancedPlan,
-                    monthlyPrice: '249',
-                    yearlyPrice: '2,490',
-                    maxBranches: '3',
-                    maxProducts: '2,000',
-                    maxUsers: '10',
-                    color: Colors.deepPurple,
-                    subscribers: 413,
-                    isPopular: true,
-                    features: const [
-                      'POS System',
-                      'Advanced Reports',
-                      'Multi-branch',
-                      'Inventory Management',
-                      'WhatsApp Integration',
-                      'Priority Support',
-                    ],
-                  ),
-                  const SizedBox(height: AlhaiSpacing.md),
-                  _PlanCard(
-                    name: l10n.professionalPlan,
-                    monthlyPrice: '499',
-                    yearlyPrice: '4,990',
-                    maxBranches: 'Unlimited',
-                    maxProducts: 'Unlimited',
-                    maxUsers: 'Unlimited',
-                    color: Colors.teal,
-                    subscribers: 236,
-                    features: const [
-                      'POS System',
-                      'AI Analytics',
-                      'Unlimited Branches',
-                      'E-commerce Integration',
-                      'API Access',
-                      'ZATCA Compliance',
-                      'Dedicated Support',
-                    ],
-                  ),
-                ],
-              ),
+            plansAsync.when(
+              loading: () =>
+                  const Center(child: CircularProgressIndicator()),
+              error: (e, _) => Center(child: Text('Error: $e')),
+              data: (plans) {
+                final subCounts = subCountsAsync.valueOrNull ?? {};
+
+                final planColors = {
+                  'basic': Colors.blue,
+                  'advanced': Colors.deepPurple,
+                  'professional': Colors.teal,
+                };
+
+                final planCards = plans.map((plan) {
+                  final slug = plan['slug'] as String? ?? '';
+                  final name = plan['name'] as String? ?? slug;
+                  final monthlyPrice =
+                      (plan['monthly_price'] as num?)?.toInt() ?? 0;
+                  final yearlyPrice =
+                      (plan['yearly_price'] as num?)?.toInt() ??
+                          (monthlyPrice * 10);
+                  final maxBranches =
+                      plan['max_branches'] as int? ?? 0;
+                  final maxProducts =
+                      plan['max_products'] as int? ?? 0;
+                  final maxUsers = plan['max_users'] as int? ?? 0;
+                  final features = (plan['features'] as List<dynamic>?)
+                          ?.cast<String>() ??
+                      [];
+                  final subscribers = subCounts[slug] ?? 0;
+                  final color = planColors[slug] ?? Colors.grey;
+
+                  return _PlanCard(
+                    name: name,
+                    monthlyPrice: '$monthlyPrice',
+                    yearlyPrice: _fmt(yearlyPrice),
+                    maxBranches:
+                        maxBranches == 0 ? 'Unlimited' : '$maxBranches',
+                    maxProducts:
+                        maxProducts == 0 ? 'Unlimited' : _fmt(maxProducts),
+                    maxUsers:
+                        maxUsers == 0 ? 'Unlimited' : '$maxUsers',
+                    color: color,
+                    subscribers: subscribers,
+                    isPopular: slug == 'advanced',
+                    features: features,
+                  );
+                }).toList();
+
+                if (isWide && planCards.length >= 2) {
+                  return Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: planCards.map((card) {
+                      return Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              right: AlhaiSpacing.md),
+                          child: card,
+                        ),
+                      );
+                    }).toList(),
+                  );
+                }
+
+                return Column(
+                  children: planCards.map((card) {
+                    return Padding(
+                      padding: const EdgeInsets.only(
+                          bottom: AlhaiSpacing.md),
+                      child: card,
+                    );
+                  }).toList(),
+                );
+              },
+            ),
           ],
         ),
       ),
     );
   }
 
-  void _showPlanDialog(BuildContext context) {
+  String _fmt(int n) {
+    if (n >= 1000) {
+      final s = n.toString();
+      final buffer = StringBuffer();
+      for (int i = 0; i < s.length; i++) {
+        if (i > 0 && (s.length - i) % 3 == 0) buffer.write(',');
+        buffer.write(s[i]);
+      }
+      return buffer.toString();
+    }
+    return n.toString();
+  }
+
+  void _showPlanDialog(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
+    final nameCtrl = TextEditingController();
+    final priceCtrl = TextEditingController();
+    final branchCtrl = TextEditingController();
+    final productCtrl = TextEditingController();
+    final userCtrl = TextEditingController();
+
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -184,25 +155,33 @@ class SAPlansScreen extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
+                controller: nameCtrl,
                 decoration: InputDecoration(labelText: l10n.planName),
               ),
               const SizedBox(height: AlhaiSpacing.md),
               TextField(
-                decoration: InputDecoration(labelText: l10n.monthlyPrice),
+                controller: priceCtrl,
+                decoration:
+                    InputDecoration(labelText: l10n.monthlyPrice),
                 keyboardType: TextInputType.number,
               ),
               const SizedBox(height: AlhaiSpacing.md),
               TextField(
-                decoration: InputDecoration(labelText: l10n.maxBranches),
+                controller: branchCtrl,
+                decoration:
+                    InputDecoration(labelText: l10n.maxBranches),
                 keyboardType: TextInputType.number,
               ),
               const SizedBox(height: AlhaiSpacing.md),
               TextField(
-                decoration: InputDecoration(labelText: l10n.maxProducts),
+                controller: productCtrl,
+                decoration:
+                    InputDecoration(labelText: l10n.maxProducts),
                 keyboardType: TextInputType.number,
               ),
               const SizedBox(height: AlhaiSpacing.md),
               TextField(
+                controller: userCtrl,
                 decoration: InputDecoration(labelText: l10n.maxUsers),
                 keyboardType: TextInputType.number,
               ),
@@ -215,7 +194,26 @@ class SAPlansScreen extends StatelessWidget {
             child: Text(l10n.cancel),
           ),
           FilledButton(
-            onPressed: () => Navigator.pop(ctx),
+            onPressed: () async {
+              final ds = ref.read(saSubscriptionsDatasourceProvider);
+              final name = nameCtrl.text.trim();
+              final slug = name.toLowerCase().replaceAll(' ', '_');
+              final price =
+                  double.tryParse(priceCtrl.text) ?? 0;
+              await ds.createPlan(
+                name: name,
+                slug: slug,
+                monthlyPrice: price,
+                yearlyPrice: price * 10,
+                maxBranches:
+                    int.tryParse(branchCtrl.text) ?? 0,
+                maxProducts:
+                    int.tryParse(productCtrl.text) ?? 0,
+                maxUsers: int.tryParse(userCtrl.text) ?? 0,
+              );
+              ref.invalidate(saPlansListProvider);
+              if (ctx.mounted) Navigator.pop(ctx);
+            },
             child: Text(l10n.createPlan),
           ),
         ],
@@ -268,7 +266,6 @@ class _PlanCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header
             Row(
               children: [
                 Container(
@@ -312,7 +309,6 @@ class _PlanCard extends StatelessWidget {
             ),
             const SizedBox(height: AlhaiSpacing.md),
 
-            // Price
             Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
@@ -342,7 +338,6 @@ class _PlanCard extends StatelessWidget {
             ),
             const SizedBox(height: AlhaiSpacing.md),
 
-            // Subscribers count
             Container(
               padding: const EdgeInsets.symmetric(
                 horizontal: AlhaiSpacing.sm,
@@ -362,45 +357,37 @@ class _PlanCard extends StatelessWidget {
             ),
             const Divider(height: AlhaiSpacing.xl),
 
-            // Limits
-            _LimitRow(
-              label: l10n.maxBranches,
-              value: maxBranches,
-            ),
-            _LimitRow(
-              label: l10n.maxProducts,
-              value: maxProducts,
-            ),
+            _LimitRow(label: l10n.maxBranches, value: maxBranches),
+            _LimitRow(label: l10n.maxProducts, value: maxProducts),
             _LimitRow(label: l10n.maxUsers, value: maxUsers),
-            const Divider(height: AlhaiSpacing.xl),
 
-            // Features
-            Text(
-              l10n.planFeatures,
-              style: theme.textTheme.bodySmall?.copyWith(
-                fontWeight: FontWeight.w600,
+            if (features.isNotEmpty) ...[
+              const Divider(height: AlhaiSpacing.xl),
+              Text(
+                l10n.planFeatures,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-            ),
-            const SizedBox(height: AlhaiSpacing.xs),
-            ...features.map((f) => Padding(
-                  padding: const EdgeInsets.only(bottom: AlhaiSpacing.xxs),
-                  child: Row(
-                    children: [
-                      Icon(Icons.check_circle_rounded,
-                          size: 16, color: color),
-                      const SizedBox(width: AlhaiSpacing.xs),
-                      Expanded(
-                        child: Text(
-                          f,
-                          style: theme.textTheme.bodySmall,
+              const SizedBox(height: AlhaiSpacing.xs),
+              ...features.map((f) => Padding(
+                    padding:
+                        const EdgeInsets.only(bottom: AlhaiSpacing.xxs),
+                    child: Row(
+                      children: [
+                        Icon(Icons.check_circle_rounded,
+                            size: 16, color: color),
+                        const SizedBox(width: AlhaiSpacing.xs),
+                        Expanded(
+                          child: Text(f,
+                              style: theme.textTheme.bodySmall),
                         ),
-                      ),
-                    ],
-                  ),
-                )),
+                      ],
+                    ),
+                  )),
+            ],
             const SizedBox(height: AlhaiSpacing.md),
 
-            // Edit button
             SizedBox(
               width: double.infinity,
               child: OutlinedButton.icon(

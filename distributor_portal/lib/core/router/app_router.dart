@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../ui/distributor_shell.dart';
+import '../../screens/auth/distributor_login_screen.dart';
 import '../../screens/dashboard/distributor_dashboard_screen.dart';
 import '../../screens/orders/distributor_orders_screen.dart';
 import '../../screens/orders/distributor_order_detail_screen.dart';
@@ -9,13 +11,31 @@ import '../../screens/products/distributor_products_screen.dart';
 import '../../screens/pricing/distributor_pricing_screen.dart';
 import '../../screens/reports/distributor_reports_screen.dart';
 import '../../screens/settings/distributor_settings_screen.dart';
+import '../supabase/supabase_client.dart';
 
-class AppRouter {
-  AppRouter._();
-
-  static final router = GoRouter(
+/// Router provider that rebuilds when auth state changes.
+final distributorRouterProvider = Provider<GoRouter>((ref) {
+  return GoRouter(
     initialLocation: '/dashboard',
+    redirect: (context, state) {
+      final isLoggedIn = AppSupabase.isAuthenticated;
+      final isLoginRoute = state.matchedLocation == '/login';
+
+      if (!isLoggedIn && !isLoginRoute) return '/login';
+      if (isLoggedIn && isLoginRoute) return '/dashboard';
+      return null;
+    },
     routes: [
+      GoRoute(
+        path: '/login',
+        name: 'distributor-login',
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const DistributorLoginScreen(),
+          transitionsBuilder: (c, a, sa, child) =>
+              FadeTransition(opacity: a, child: child),
+        ),
+      ),
       ShellRoute(
         builder: (context, state, child) => DistributorShell(child: child),
         routes: [
@@ -96,4 +116,4 @@ class AppRouter {
       ),
     ],
   );
-}
+});

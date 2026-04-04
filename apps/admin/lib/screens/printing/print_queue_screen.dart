@@ -6,7 +6,14 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// Print Queue Screen - Admin version
-/// Displays pending print jobs with status indicators and reprint/cancel actions
+///
+/// Intentionally not DB-connected: the print queue is an ephemeral, in-memory
+/// list managed by [printQueueProvider] (Riverpod StateNotifier). Jobs are
+/// added when a receipt/report is printed and removed once completed or
+/// cleared. No persistent storage is needed because print jobs are transient
+/// and do not survive app restarts.
+///
+/// Displays pending print jobs with status indicators and reprint/cancel actions.
 class PrintQueueScreen extends ConsumerStatefulWidget {
   const PrintQueueScreen({super.key});
 

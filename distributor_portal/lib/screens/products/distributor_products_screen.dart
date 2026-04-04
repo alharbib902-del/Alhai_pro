@@ -1,51 +1,17 @@
 /// Distributor Products Catalog Screen
 ///
-/// Displays distributor's product catalog with search, filtering,
-/// and add/edit buttons (UI only, non-functional for now).
-/// Supports: RTL Arabic, dark/light theme, responsive layout.
+/// Displays real product catalog from Supabase with search and category filtering.
 library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
+import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:intl/intl.dart' show NumberFormat;
 
-// ─── Mock Data ───────────────────────────────────────────────────
+import '../../data/models.dart';
+import '../../providers/distributor_providers.dart';
 
-class _MockProduct {
-  final String id;
-  final String name;
-  final String barcode;
-  final String category;
-  final double price;
-  final int stock;
-
-  const _MockProduct({
-    required this.id,
-    required this.name,
-    required this.barcode,
-    required this.category,
-    required this.price,
-    required this.stock,
-  });
-}
-
-const _mockProducts = <_MockProduct>[
-  _MockProduct(id: '1', name: 'أرز بسمتي ١٠ كيلو', barcode: '6281001100015', category: 'حبوب', price: 95, stock: 500),
-  _MockProduct(id: '2', name: 'زيت زيتون بكر ١ لتر', barcode: '6281001100022', category: 'زيوت', price: 140, stock: 200),
-  _MockProduct(id: '3', name: 'سكر أبيض ٥ كيلو', barcode: '6281001100039', category: 'حبوب', price: 18, stock: 800),
-  _MockProduct(id: '4', name: 'دقيق أبيض ١٠ كيلو', barcode: '6281001100046', category: 'حبوب', price: 22, stock: 600),
-  _MockProduct(id: '5', name: 'شاي أحمر ٢٠٠ جرام', barcode: '6281001100053', category: 'مشروبات', price: 12, stock: 1000),
-  _MockProduct(id: '6', name: 'قهوة عربية ٥٠٠ جرام', barcode: '6281001100060', category: 'مشروبات', price: 45, stock: 300),
-  _MockProduct(id: '7', name: 'حليب بودرة ٢.٥ كيلو', barcode: '6281001100077', category: 'ألبان', price: 55, stock: 250),
-  _MockProduct(id: '8', name: 'معكرونة إسباغيتي ٥٠٠ جرام', barcode: '6281001100084', category: 'حبوب', price: 5, stock: 1500),
-  _MockProduct(id: '9', name: 'تونة خفيفة ١٧٠ جرام', barcode: '6281001100091', category: 'معلبات', price: 8, stock: 900),
-  _MockProduct(id: '10', name: 'صابون غسيل ٣ كيلو', barcode: '6281001100108', category: 'تنظيف', price: 25, stock: 400),
-];
-
-// ─── Screen ──────────────────────────────────────────────────────
-
-/// شاشة كتالوج المنتجات للموزع
 class DistributorProductsScreen extends ConsumerStatefulWidget {
   const DistributorProductsScreen({super.key});
 
@@ -58,25 +24,22 @@ class _DistributorProductsScreenState
     extends ConsumerState<DistributorProductsScreen> {
   final _searchController = TextEditingController();
   String _searchQuery = '';
-  String _selectedCategory = 'الكل';
+  String _selectedCategory = '';
 
-  final _categories = ['الكل', 'حبوب', 'زيوت', 'مشروبات', 'ألبان', 'معلبات', 'تنظيف'];
-
-  List<_MockProduct> get _filteredProducts {
-    var products = _mockProducts.toList();
+  List<DistributorProduct> _filter(List<DistributorProduct> products) {
+    var filtered = products;
     if (_searchQuery.isNotEmpty) {
-      products = products
+      filtered = filtered
           .where((p) =>
               p.name.contains(_searchQuery) ||
-              p.barcode.contains(_searchQuery))
+              (p.barcode?.contains(_searchQuery) ?? false))
           .toList();
     }
-    if (_selectedCategory != 'الكل') {
-      products = products
-          .where((p) => p.category == _selectedCategory)
-          .toList();
+    if (_selectedCategory.isNotEmpty) {
+      filtered =
+          filtered.where((p) => p.category == _selectedCategory).toList();
     }
-    return products;
+    return filtered;
   }
 
   @override
@@ -92,57 +55,87 @@ class _DistributorProductsScreenState
     final isMedium = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cs = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context);
+
+    final productsAsync = ref.watch(productsProvider);
+    final categoriesAsync = ref.watch(categoriesProvider);
 
     return Scaffold(
-        backgroundColor: AppColors.getBackground(isDark),
-        appBar: AppBar(
-          title: Text(
-            'كتالوج المنتجات',
-            style: TextStyle(fontWeight: FontWeight.bold, color: cs.onSurface),
+      backgroundColor: AppColors.getBackground(isDark),
+      appBar: AppBar(
+        title: Text(
+          l10n?.distributorProducts ?? 'Product Catalog',
+          style: TextStyle(fontWeight: FontWeight.bold, color: cs.onSurface),
+        ),
+        centerTitle: false,
+        actions: [
+          FilledButton.icon(
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(l10n?.distributorComingSoon ?? 'Coming soon'),
+                  backgroundColor: AppColors.info,
+                ),
+              );
+            },
+            icon: const Icon(Icons.add_rounded, size: 18),
+            label: Text(l10n?.distributorAddProduct ?? 'Add Product'),
+            style: FilledButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+            ),
           ),
-          centerTitle: false,
-          actions: [
-            FilledButton.icon(
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('إضافة منتج جديد - قريباً'),
-                    backgroundColor: AppColors.info,
-                  ),
-                );
-              },
-              icon: const Icon(Icons.add_rounded, size: 18),
-              label: const Text('إضافة منتج'),
-              style: FilledButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
+          const SizedBox(width: AlhaiSpacing.sm),
+        ],
+      ),
+      body: productsAsync.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, _) => Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(l10n?.distributorLoadError ?? 'Error loading data'),
+              const SizedBox(height: AlhaiSpacing.md),
+              FilledButton.icon(
+                onPressed: () => ref.invalidate(productsProvider),
+                icon: const Icon(Icons.refresh, size: 18),
+                label: Text(l10n?.distributorRetry ?? 'Retry'),
               ),
-            ),
-            const SizedBox(width: AlhaiSpacing.sm),
-          ],
+            ],
+          ),
         ),
-        body: Column(
-          children: [
-            // ── Search & Filter Bar ──
-            _buildSearchBar(isDark, isMedium),
+        data: (allProducts) {
+          final products = _filter(allProducts);
+          final categories = categoriesAsync.valueOrNull ?? [];
 
-            // ── Products List ──
-            Expanded(
-              child: _filteredProducts.isEmpty
-                  ? _buildEmptyState(isDark)
-                  : isWide
-                      ? _buildDataTable(isDark)
-                      : _buildProductCards(isDark, isMedium),
-            ),
-          ],
-        ),
+          return Column(
+            children: [
+              // Search & Filter Bar
+              _buildSearchBar(isDark, isMedium, categories, l10n),
+
+              // Products List
+              Expanded(
+                child: products.isEmpty
+                    ? _buildEmptyState(isDark, l10n)
+                    : isWide
+                        ? _buildDataTable(products, isDark, l10n)
+                        : _buildProductCards(products, isDark, isMedium, l10n),
+              ),
+            ],
+          );
+        },
+      ),
     );
   }
 
-  Widget _buildSearchBar(bool isDark, bool isMedium) {
+  Widget _buildSearchBar(bool isDark, bool isMedium, List<String> categories,
+      AppLocalizations? l10n) {
+    final allCategories = ['', ...categories];
+
     return Container(
       padding: EdgeInsets.all(isMedium ? AlhaiSpacing.mdl : AlhaiSpacing.md),
       decoration: BoxDecoration(
@@ -158,7 +151,7 @@ class _DistributorProductsScreenState
             onChanged: (v) => setState(() => _searchQuery = v),
             style: TextStyle(color: AppColors.getTextPrimary(isDark)),
             decoration: InputDecoration(
-              hintText: 'ابحث بالاسم أو الباركود...',
+              hintText: l10n?.distributorSearchHint ?? 'Search by name or barcode...',
               hintStyle: TextStyle(color: AppColors.getTextMuted(isDark)),
               prefixIcon: Icon(Icons.search_rounded,
                   color: AppColors.getTextMuted(isDark)),
@@ -178,8 +171,8 @@ class _DistributorProductsScreenState
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide.none,
               ),
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: 14),
+              contentPadding: const EdgeInsets.symmetric(
+                  horizontal: AlhaiSpacing.md, vertical: 14),
             ),
           ),
           const SizedBox(height: AlhaiSpacing.sm),
@@ -187,13 +180,17 @@ class _DistributorProductsScreenState
             height: 36,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
-              itemCount: _categories.length,
-              separatorBuilder: (_, __) => const SizedBox(width: AlhaiSpacing.xs),
+              itemCount: allCategories.length,
+              separatorBuilder: (_, __) =>
+                  const SizedBox(width: AlhaiSpacing.xs),
               itemBuilder: (_, index) {
-                final cat = _categories[index];
+                final cat = allCategories[index];
+                final label = cat.isEmpty
+                    ? (l10n?.distributorAllOrders ?? 'All')
+                    : cat;
                 final isSelected = cat == _selectedCategory;
                 return FilterChip(
-                  label: Text(cat),
+                  label: Text(label),
                   selected: isSelected,
                   onSelected: (_) =>
                       setState(() => _selectedCategory = cat),
@@ -224,10 +221,8 @@ class _DistributorProductsScreenState
     );
   }
 
-  // ─── Wide Screen: Data Table ───────────────────────────────────
-
-  Widget _buildDataTable(bool isDark) {
-    final products = _filteredProducts;
+  Widget _buildDataTable(List<DistributorProduct> products, bool isDark,
+      AppLocalizations? l10n) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       child: Container(
@@ -238,10 +233,9 @@ class _DistributorProductsScreenState
         ),
         child: Column(
           children: [
-            // Header row
             Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: AlhaiSpacing.mdl, vertical: 14),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AlhaiSpacing.mdl, vertical: 14),
               decoration: BoxDecoration(
                 color: AppColors.getSurfaceVariant(isDark),
                 borderRadius:
@@ -249,16 +243,14 @@ class _DistributorProductsScreenState
               ),
               child: Row(
                 children: [
-                  _tableHeader('المنتج', 4, isDark),
-                  _tableHeader('الباركود', 2, isDark),
-                  _tableHeader('التصنيف', 2, isDark),
-                  _tableHeader('السعر', 2, isDark),
-                  _tableHeader('المخزون', 2, isDark),
-                  _tableHeader('إجراءات', 1, isDark),
+                  _tableHeader(l10n?.products ?? 'Product', 4, isDark),
+                  _tableHeader(l10n?.distributorBarcode ?? 'Barcode', 2, isDark),
+                  _tableHeader(l10n?.distributorCategory ?? 'Category', 2, isDark),
+                  _tableHeader(l10n?.price ?? 'Price', 2, isDark),
+                  _tableHeader(l10n?.distributorStock ?? 'Stock', 2, isDark),
                 ],
               ),
             ),
-            // Data rows
             ...List.generate(products.length, (index) {
               final product = products[index];
               return Container(
@@ -309,7 +301,7 @@ class _DistributorProductsScreenState
                     Expanded(
                       flex: 2,
                       child: Text(
-                        product.barcode,
+                        product.barcode ?? '-',
                         style: TextStyle(
                           fontSize: 12,
                           fontFamily: 'monospace',
@@ -340,7 +332,7 @@ class _DistributorProductsScreenState
                     Expanded(
                       flex: 2,
                       child: Text(
-                        '${NumberFormat('#,##0.00').format(product.price)} ر.س',
+                        '${NumberFormat('#,##0.00').format(product.price)} ${l10n?.distributorSar ?? 'SAR'}',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 14,
@@ -351,23 +343,7 @@ class _DistributorProductsScreenState
                     ),
                     Expanded(
                       flex: 2,
-                      child: _stockBadge(product.stock, isDark),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: IconButton(
-                        onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('تعديل ${product.name} - قريباً'),
-                              backgroundColor: AppColors.info,
-                            ),
-                          );
-                        },
-                        icon: const Icon(Icons.edit_rounded, size: 18),
-                        color: AppColors.primary,
-                        visualDensity: VisualDensity.compact,
-                      ),
+                      child: _stockBadge(product.stock, isDark, l10n),
                     ),
                   ],
                 ),
@@ -393,10 +369,8 @@ class _DistributorProductsScreenState
     );
   }
 
-  // ─── Mobile: Product Cards ─────────────────────────────────────
-
-  Widget _buildProductCards(bool isDark, bool isMedium) {
-    final products = _filteredProducts;
+  Widget _buildProductCards(List<DistributorProduct> products, bool isDark,
+      bool isMedium, AppLocalizations? l10n) {
     return ListView.separated(
       padding: EdgeInsets.all(isMedium ? AlhaiSpacing.mdl : AlhaiSpacing.md),
       itemCount: products.length,
@@ -439,15 +413,17 @@ class _DistributorProductsScreenState
                     const SizedBox(height: AlhaiSpacing.xxs),
                     Row(
                       children: [
-                        Text(
-                          product.barcode,
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontFamily: 'monospace',
-                            color: AppColors.getTextMuted(isDark),
+                        if (product.barcode != null)
+                          Text(
+                            product.barcode!,
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontFamily: 'monospace',
+                              color: AppColors.getTextMuted(isDark),
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: AlhaiSpacing.xs),
+                        if (product.barcode != null)
+                          const SizedBox(width: AlhaiSpacing.xs),
                         Container(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 6, vertical: 2),
@@ -470,7 +446,7 @@ class _DistributorProductsScreenState
                     Row(
                       children: [
                         Text(
-                          '${NumberFormat('#,##0.00').format(product.price)} ر.س',
+                          '${NumberFormat('#,##0.00').format(product.price)} ${l10n?.distributorSar ?? 'SAR'}',
                           style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
@@ -478,24 +454,11 @@ class _DistributorProductsScreenState
                           ),
                         ),
                         const Spacer(),
-                        _stockBadge(product.stock, isDark),
+                        _stockBadge(product.stock, isDark, l10n),
                       ],
                     ),
                   ],
                 ),
-              ),
-              const SizedBox(width: AlhaiSpacing.xs),
-              IconButton(
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('تعديل ${product.name} - قريباً'),
-                      backgroundColor: AppColors.info,
-                    ),
-                  );
-                },
-                icon: const Icon(Icons.edit_rounded, size: 18),
-                color: AppColors.primary,
               ),
             ],
           ),
@@ -504,22 +467,23 @@ class _DistributorProductsScreenState
     );
   }
 
-  Widget _stockBadge(int stock, bool isDark) {
+  Widget _stockBadge(int stock, bool isDark, AppLocalizations? l10n) {
     final Color color;
     final String label;
     if (stock <= 0) {
       color = AppColors.error;
-      label = 'نفذ';
+      label = l10n?.distributorStockEmpty ?? 'Out';
     } else if (stock < 100) {
       color = AppColors.warning;
-      label = 'منخفض ($stock)';
+      label = '${l10n?.distributorStockLow ?? 'Low'} ($stock)';
     } else {
       color = AppColors.success;
       label = '$stock';
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 3),
+      padding:
+          const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 3),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(6),
@@ -536,7 +500,7 @@ class _DistributorProductsScreenState
     );
   }
 
-  Widget _buildEmptyState(bool isDark) {
+  Widget _buildEmptyState(bool isDark, AppLocalizations? l10n) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -545,7 +509,7 @@ class _DistributorProductsScreenState
               size: 64, color: AppColors.getTextMuted(isDark)),
           const SizedBox(height: AlhaiSpacing.md),
           Text(
-            'لا توجد منتجات',
+            l10n?.distributorNoProducts ?? 'No products found',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -554,7 +518,7 @@ class _DistributorProductsScreenState
           ),
           const SizedBox(height: AlhaiSpacing.xs),
           Text(
-            'جرب تغيير معايير البحث',
+            l10n?.distributorChangeSearch ?? 'Try changing your search criteria',
             style: TextStyle(
               fontSize: 14,
               color: AppColors.getTextMuted(isDark),

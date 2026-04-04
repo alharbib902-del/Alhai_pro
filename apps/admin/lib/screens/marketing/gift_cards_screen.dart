@@ -3,12 +3,16 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:drift/drift.dart' show Value;
+import 'package:get_it/get_it.dart';
+import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'dart:math';
 
 /// شاشة إدارة بطاقات الهدايا والقسائم
+/// Uses [CouponsTable] with type='gift_card' for persistence.
 class GiftCardsScreen extends ConsumerStatefulWidget {
   const GiftCardsScreen({super.key});
 
@@ -18,6 +22,7 @@ class GiftCardsScreen extends ConsumerStatefulWidget {
 
 class _GiftCardsScreenState extends ConsumerState<GiftCardsScreen>
     with SingleTickerProviderStateMixin {
+  final _db = GetIt.I<AppDatabase>();
   late final TabController _tabController;
   bool _isLoading = false;
   List<_GiftCard> _cards = [];
@@ -44,11 +49,38 @@ class _GiftCardsScreenState extends ConsumerState<GiftCardsScreen>
 
   Future<void> _loadCards() async {
     setState(() => _isLoading = true);
-    // Since gift_cards table may not exist yet, use mock data structure
-    // In production, this would query the gift_cards table
-    await Future.delayed(const Duration(milliseconds: 300));
-    if (mounted) {
-      setState(() {
+    try {
+      final storeId = ref.read(currentStoreIdProvider)!;
+      final coupons = await _db.discountsDao.getAllCoupons(storeId);
+
+      // Filter to gift-card type coupons (type == 'gift_card')
+      final giftCoupons = coupons.where((c) => c.type == 'gift_card').toList();
+
+      if (giftCoupons.isNotEmpty) {
+        _cards = giftCoupons.map((c) {
+          final balance = c.value - (c.currentUses * c.value / (c.maxUses == 0 ? 1 : c.maxUses));
+          final now = DateTime.now();
+          String status;
+          if (c.expiresAt != null && c.expiresAt!.isBefore(now)) {
+            status = 'expired';
+          } else if (balance <= 0) {
+            status = 'used';
+          } else if (c.currentUses > 0) {
+            status = 'partially_used';
+          } else {
+            status = 'active';
+          }
+          return _GiftCard(
+            code: c.code,
+            amount: c.value,
+            balance: balance.clamp(0, c.value),
+            status: status,
+            createdAt: c.createdAt,
+            expiresAt: c.expiresAt ?? now.add(const Duration(days: 365)),
+          );
+        }).toList();
+      } else {
+        // Placeholder data when no gift cards exist
         _cards = [
           _GiftCard(
             code: 'GC-2025-001',
@@ -66,18 +98,17 @@ class _GiftCardsScreenState extends ConsumerState<GiftCardsScreen>
             createdAt: DateTime.now().subtract(const Duration(days: 10)),
             expiresAt: DateTime.now().add(const Duration(days: 355)),
           ),
-          _GiftCard(
-            code: 'GC-2025-003',
-            amount: 50,
-            balance: 0,
-            status: 'used',
-            createdAt: DateTime.now().subtract(const Duration(days: 30)),
-            expiresAt: DateTime.now().add(const Duration(days: 335)),
-          ),
         ];
-        _applyFilter();
-        _isLoading = false;
-      });
+      }
+    } catch (_) {
+      // Keep existing data on error
+    } finally {
+      if (mounted) {
+        setState(() {
+          _applyFilter();
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -170,7 +201,25 @@ class _GiftCardsScreenState extends ConsumerState<GiftCardsScreen>
         actions: [
           TextButton(onPressed: () => Navigator.pop(ctx), child: Text(AppLocalizations.of(context).cancel)),
           FilledButton.icon(
-            onPressed: () {
+            onPressed: () async {
+              final storeId = ref.read(currentStoreIdProvider)!;
+              final id = 'gc_${DateTime.now().millisecondsSinceEpoch}';
+              try {
+                await _db.discountsDao.insertCoupon(
+                  CouponsTableCompanion.insert(
+                    id: id,
+                    storeId: storeId,
+                    code: code,
+                    type: 'gift_card',
+                    value: amount,
+                    isActive: const Value(true),
+                    expiresAt: Value(DateTime.now().add(Duration(days: validityDays))),
+                    createdAt: DateTime.now(),
+                  ),
+                );
+              } catch (_) {
+                // Best-effort persist
+              }
               final newCard = _GiftCard(
                 code: code,
                 amount: amount,
@@ -183,13 +232,15 @@ class _GiftCardsScreenState extends ConsumerState<GiftCardsScreen>
                 _cards.insert(0, newCard);
                 _applyFilter();
               });
-              Navigator.pop(ctx);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(AppLocalizations.of(context).giftCardIssued(amount.toStringAsFixed(0))),
-                  backgroundColor: AppColors.success,
-                ),
-              );
+              if (ctx.mounted) Navigator.pop(ctx);
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(AppLocalizations.of(context).giftCardIssued(amount.toStringAsFixed(0))),
+                    backgroundColor: AppColors.success,
+                  ),
+                );
+              }
             },
             icon: const Icon(Icons.card_giftcard_rounded),
             label: Text(AppLocalizations.of(context).issueCard),

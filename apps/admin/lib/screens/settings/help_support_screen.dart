@@ -6,6 +6,10 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// شاشة المساعدة والدعم
+///
+/// Intentionally UI-only: this screen displays static help content (FAQ,
+/// contact info, documentation links, app version). No database queries
+/// needed -- all content is derived from l10n strings and app constants.
 class HelpSupportScreen extends ConsumerStatefulWidget {
   const HelpSupportScreen({super.key});
 

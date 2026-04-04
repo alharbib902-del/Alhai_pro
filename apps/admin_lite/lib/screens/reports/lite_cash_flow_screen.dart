@@ -1,24 +1,28 @@
 /// Lite Cash Flow Summary Screen
 ///
 /// Shows cash inflows, outflows, and net cash position
-/// with a simple breakdown by category.
+/// queried from salesDao, expensesDao, and returnsDao.
 /// Supports RTL, dark mode, and responsive layouts.
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 
+import '../../providers/lite_screen_providers.dart';
+
 /// Cash flow summary for Admin Lite
-class LiteCashFlowScreen extends StatelessWidget {
+class LiteCashFlowScreen extends ConsumerWidget {
   const LiteCashFlowScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final size = MediaQuery.of(context).size;
     final isMobile = size.width < 600;
     final l10n = AppLocalizations.of(context)!;
+    final dataAsync = ref.watch(liteCashFlowProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -26,65 +30,71 @@ class LiteCashFlowScreen extends StatelessWidget {
         centerTitle: true,
         actions: [
           IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.calendar_today),
+            onPressed: () => ref.invalidate(liteCashFlowProvider),
+            icon: const Icon(Icons.refresh),
             tooltip: l10n.today,
           ),
           const SizedBox(width: AlhaiSpacing.xs),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Net cash card
-            _buildNetCashCard(context, isDark, l10n),
-            const SizedBox(height: AlhaiSpacing.lg),
-
-            // Inflow / Outflow row
-            _buildFlowCards(context, isDark, isMobile, l10n),
-            const SizedBox(height: AlhaiSpacing.lg),
-
-            // Inflows breakdown
-            _buildBreakdownSection(
-              context, isDark, l10n,
-              title: l10n.sales,
-              icon: Icons.arrow_downward,
-              iconColor: AlhaiColors.success,
-              items: [
-                _FlowItem(l10n.cash, '8,420'),
-                _FlowItem(l10n.card, '2,850'),
-                _FlowItem(l10n.transfer, '1,180'),
-              ],
-            ),
-            const SizedBox(height: AlhaiSpacing.lg),
-
-            // Outflows breakdown
-            _buildBreakdownSection(
-              context, isDark, l10n,
-              title: l10n.expenses,
-              icon: Icons.arrow_upward,
-              iconColor: AlhaiColors.error,
-              items: [
-                _FlowItem(l10n.refund, '320'),
-                _FlowItem(l10n.expenses, '1,200'),
-                _FlowItem(l10n.suppliers, '2,500'),
-              ],
-            ),
-            const SizedBox(height: AlhaiSpacing.lg),
-
-            // Daily trend
-            _buildDailyTrend(context, isDark, l10n),
-
-            const SizedBox(height: AlhaiSpacing.lg),
-          ],
+      body: dataAsync.when(
+        data: (data) => SingleChildScrollView(
+          padding: EdgeInsets.all(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildNetCashCard(context, isDark, l10n, data),
+              const SizedBox(height: AlhaiSpacing.lg),
+              _buildFlowCards(context, isDark, isMobile, l10n, data),
+              const SizedBox(height: AlhaiSpacing.lg),
+              _buildBreakdownSection(
+                context, isDark, l10n,
+                title: l10n.sales,
+                icon: Icons.arrow_downward,
+                iconColor: AlhaiColors.success,
+                items: data.inflowBreakdown.map((pm) => _FlowItem(pm.method, pm.total.toStringAsFixed(0))).toList(),
+              ),
+              const SizedBox(height: AlhaiSpacing.lg),
+              _buildBreakdownSection(
+                context, isDark, l10n,
+                title: l10n.expenses,
+                icon: Icons.arrow_upward,
+                iconColor: AlhaiColors.error,
+                items: [
+                  _FlowItem(l10n.refund, data.refundTotal.toStringAsFixed(0)),
+                  _FlowItem(l10n.expenses, data.expenseTotal.toStringAsFixed(0)),
+                ],
+              ),
+              const SizedBox(height: AlhaiSpacing.lg),
+              _buildDailyTrend(context, isDark, l10n, data.weeklyTrend),
+              const SizedBox(height: AlhaiSpacing.lg),
+            ],
+          ),
+        ),
+        loading: () => const Center(
+          child: Padding(
+            padding: EdgeInsets.all(AlhaiSpacing.massive),
+            child: CircularProgressIndicator(),
+          ),
+        ),
+        error: (_, __) => Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(l10n.errorOccurred),
+              TextButton.icon(
+                onPressed: () => ref.invalidate(liteCashFlowProvider),
+                icon: const Icon(Icons.refresh_rounded),
+                label: Text(l10n.tryAgain),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildNetCashCard(BuildContext context, bool isDark, AppLocalizations l10n) {
+  Widget _buildNetCashCard(BuildContext context, bool isDark, AppLocalizations l10n, CashFlowData data) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AlhaiSpacing.lg),
@@ -99,35 +109,20 @@ class LiteCashFlowScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Text(l10n.balance, style: const TextStyle(fontSize: 14, color: Colors.white70)),
+          const SizedBox(height: AlhaiSpacing.xs),
           Text(
-            l10n.balance,
-            style: const TextStyle(fontSize: 14, color: Colors.white70),
+            '${data.netCash.toStringAsFixed(0)} SAR',
+            style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white),
           ),
           const SizedBox(height: AlhaiSpacing.xs),
-          const Text(
-            '8,430 SAR',
-            style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white),
-          ),
-          const SizedBox(height: AlhaiSpacing.xs),
-          Row(
-            children: [
-              const Icon(Icons.arrow_upward, size: 14, color: Colors.white70),
-              const Text(
-                '+12.3% ',
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.white70),
-              ),
-              Text(
-                l10n.thisWeek,
-                style: const TextStyle(fontSize: 13, color: Colors.white54),
-              ),
-            ],
-          ),
+          Text(l10n.today, style: const TextStyle(fontSize: 13, color: Colors.white54)),
         ],
       ),
     );
   }
 
-  Widget _buildFlowCards(BuildContext context, bool isDark, bool isMobile, AppLocalizations l10n) {
+  Widget _buildFlowCards(BuildContext context, bool isDark, bool isMobile, AppLocalizations l10n, CashFlowData data) {
     return Row(
       children: [
         Expanded(
@@ -147,18 +142,12 @@ class LiteCashFlowScreen extends StatelessWidget {
                   children: [
                     const Icon(Icons.arrow_downward, size: 18, color: AlhaiColors.success),
                     const SizedBox(width: AlhaiSpacing.xxs),
-                    Text(
-                      l10n.sales,
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: isDark ? Colors.white54 : Colors.black54,
-                      ),
-                    ),
+                    Text(l10n.sales, style: TextStyle(fontSize: 13, color: isDark ? Colors.white54 : Colors.black54)),
                   ],
                 ),
                 const SizedBox(height: AlhaiSpacing.xs),
                 Text(
-                  '12,450',
+                  data.totalInflow.toStringAsFixed(0),
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
@@ -187,18 +176,12 @@ class LiteCashFlowScreen extends StatelessWidget {
                   children: [
                     const Icon(Icons.arrow_upward, size: 18, color: AlhaiColors.error),
                     const SizedBox(width: AlhaiSpacing.xxs),
-                    Text(
-                      l10n.expenses,
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: isDark ? Colors.white54 : Colors.black54,
-                      ),
-                    ),
+                    Text(l10n.expenses, style: TextStyle(fontSize: 13, color: isDark ? Colors.white54 : Colors.black54)),
                   ],
                 ),
                 const SizedBox(height: AlhaiSpacing.xs),
                 Text(
-                  '4,020',
+                  data.totalOutflow.toStringAsFixed(0),
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
@@ -254,22 +237,9 @@ class LiteCashFlowScreen extends StatelessWidget {
                 child: Row(
                   children: [
                     Expanded(
-                      child: Text(
-                        item.label,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: isDark ? Colors.white : Colors.black87,
-                        ),
-                      ),
+                      child: Text(item.label, style: TextStyle(fontSize: 14, color: isDark ? Colors.white : Colors.black87)),
                     ),
-                    Text(
-                      item.amount,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                        color: isDark ? Colors.white : Colors.black87,
-                      ),
-                    ),
+                    Text(item.amount, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: isDark ? Colors.white : Colors.black87)),
                   ],
                 ),
               )),
@@ -278,7 +248,9 @@ class LiteCashFlowScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDailyTrend(BuildContext context, bool isDark, AppLocalizations l10n) {
+  Widget _buildDailyTrend(BuildContext context, bool isDark, AppLocalizations l10n, List<DaySalesData> trend) {
+    final maxVal = trend.fold<double>(1.0, (max, d) => d.current > max ? d.current : max);
+
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
@@ -291,27 +263,21 @@ class LiteCashFlowScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            l10n.thisWeek,
-            style: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white : null,
-            ),
-          ),
+          Text(l10n.thisWeek, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: isDark ? Colors.white : null)),
           const SizedBox(height: AlhaiSpacing.md),
           SizedBox(
             height: 100,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.end,
-              children: [0.5, 0.7, 0.4, 0.8, 0.6, 0.9, 0.55].asMap().entries.map((entry) {
+              children: trend.map((d) {
+                final h = maxVal > 0 ? d.current / maxVal : 0.0;
                 return Expanded(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xxxs),
                     child: Container(
-                      height: 100 * entry.value,
+                      height: 100 * h.clamp(0.0, 1.0),
                       decoration: BoxDecoration(
-                        color: AlhaiColors.success.withValues(alpha: entry.key == 5 ? 1.0 : 0.5),
+                        color: AlhaiColors.success.withValues(alpha: 0.6),
                         borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
                       ),
                     ),
@@ -322,10 +288,10 @@ class LiteCashFlowScreen extends StatelessWidget {
           ),
           const SizedBox(height: AlhaiSpacing.xs),
           Row(
-            children: ['Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri'].map((d) {
+            children: trend.map((d) {
               return Expanded(
                 child: Text(
-                  d,
+                  d.dayName,
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 10, color: isDark ? Colors.white38 : Colors.black38),
                 ),

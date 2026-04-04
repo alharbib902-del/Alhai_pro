@@ -1,11 +1,17 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:drift/drift.dart' hide Column;
+import 'package:get_it/get_it.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
+import 'package:alhai_database/alhai_database.dart';
 import 'package:uuid/uuid.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 
 /// شاشة إدارة مناطق التوصيل وأسعارها
+/// Persists zones to [SettingsTable] as JSON under key `delivery_zones`.
 class DeliveryZonesScreen extends ConsumerStatefulWidget {
   const DeliveryZonesScreen({super.key});
 
@@ -14,12 +20,59 @@ class DeliveryZonesScreen extends ConsumerStatefulWidget {
 }
 
 class _DeliveryZonesScreenState extends ConsumerState<DeliveryZonesScreen> {
-  final List<_DeliveryZone> _zones = [
-    _DeliveryZone(id: '1', name: 'داخل المدينة', minKm: 0, maxKm: 5, fee: 10, minOrder: 50, estimatedMinutes: 30),
-    _DeliveryZone(id: '2', name: 'ضواحي المدينة', minKm: 5, maxKm: 15, fee: 20, minOrder: 80, estimatedMinutes: 45),
-    _DeliveryZone(id: '3', name: 'خارج المدينة', minKm: 15, maxKm: 30, fee: 35, minOrder: 120, estimatedMinutes: 60),
-    _DeliveryZone(id: '4', name: 'مناطق بعيدة', minKm: 30, maxKm: 100, fee: 60, minOrder: 200, estimatedMinutes: 90),
-  ];
+  final _db = GetIt.I<AppDatabase>();
+  List<_DeliveryZone> _zones = [];
+  bool _isLoading = true;
+
+  static const _settingsKey = 'delivery_zones';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadZones();
+  }
+
+  Future<void> _loadZones() async {
+    setState(() => _isLoading = true);
+    try {
+      final storeId = ref.read(currentStoreIdProvider)!;
+      final rows = await (_db.select(_db.settingsTable)
+            ..where((s) => s.storeId.equals(storeId) & s.key.equals(_settingsKey)))
+          .get();
+      if (rows.isNotEmpty) {
+        final List<dynamic> jsonList = jsonDecode(rows.first.value) as List<dynamic>;
+        _zones = jsonList.map((j) => _DeliveryZone.fromJson(j as Map<String, dynamic>)).toList();
+      } else {
+        // Default zones on first load
+        _zones = [
+          _DeliveryZone(id: '1', name: '\u062F\u0627\u062E\u0644 \u0627\u0644\u0645\u062F\u064A\u0646\u0629', minKm: 0, maxKm: 5, fee: 10, minOrder: 50, estimatedMinutes: 30),
+          _DeliveryZone(id: '2', name: '\u0636\u0648\u0627\u062D\u064A \u0627\u0644\u0645\u062F\u064A\u0646\u0629', minKm: 5, maxKm: 15, fee: 20, minOrder: 80, estimatedMinutes: 45),
+          _DeliveryZone(id: '3', name: '\u062E\u0627\u0631\u062C \u0627\u0644\u0645\u062F\u064A\u0646\u0629', minKm: 15, maxKm: 30, fee: 35, minOrder: 120, estimatedMinutes: 60),
+          _DeliveryZone(id: '4', name: '\u0645\u0646\u0627\u0637\u0642 \u0628\u0639\u064A\u062F\u0629', minKm: 30, maxKm: 100, fee: 60, minOrder: 200, estimatedMinutes: 90),
+        ];
+        await _persistZones();
+      }
+    } catch (_) {
+      // Fallback to empty on error
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _persistZones() async {
+    final storeId = ref.read(currentStoreIdProvider)!;
+    final id = 'setting_${storeId}_$_settingsKey';
+    final jsonStr = jsonEncode(_zones.map((z) => z.toJson()).toList());
+    await _db.into(_db.settingsTable).insertOnConflictUpdate(
+      SettingsTableCompanion.insert(
+        id: id,
+        storeId: storeId,
+        key: _settingsKey,
+        value: jsonStr,
+        updatedAt: DateTime.now(),
+      ),
+    );
+  }
 
   void _showAddZoneDialog({_DeliveryZone? existing}) {
     final isEdit = existing != null;
@@ -149,6 +202,7 @@ class _DeliveryZonesScreenState extends ConsumerState<DeliveryZonesScreen> {
                   _zones.add(zone);
                 }
               });
+              _persistZones();
 
               Navigator.pop(ctx);
               ScaffoldMessenger.of(context).showSnackBar(
@@ -177,6 +231,7 @@ class _DeliveryZonesScreenState extends ConsumerState<DeliveryZonesScreen> {
             style: FilledButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
             onPressed: () {
               setState(() => _zones.removeWhere((z) => z.id == id));
+              _persistZones();
               Navigator.pop(ctx);
             },
             child: Text(AppLocalizations.of(context).delete),
@@ -188,6 +243,10 @@ class _DeliveryZonesScreenState extends ConsumerState<DeliveryZonesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     // Sort zones by minKm
     final sorted = List.of(_zones)..sort((a, b) => a.minKm.compareTo(b.minKm));
 
@@ -301,6 +360,7 @@ class _DeliveryZonesScreenState extends ConsumerState<DeliveryZonesScreen> {
                                           _zones[idx] = _zones[idx].copyWith(isActive: v);
                                         }
                                       });
+                                      _persistZones();
                                     },
                                   ),
                                 ],
@@ -460,6 +520,28 @@ class _DeliveryZone {
     required this.estimatedMinutes,
     this.isActive = true,
   });
+
+  factory _DeliveryZone.fromJson(Map<String, dynamic> j) => _DeliveryZone(
+    id: j['id'] as String? ?? '',
+    name: j['name'] as String? ?? '',
+    minKm: (j['minKm'] as num?)?.toDouble() ?? 0,
+    maxKm: (j['maxKm'] as num?)?.toDouble() ?? 0,
+    fee: (j['fee'] as num?)?.toDouble() ?? 0,
+    minOrder: (j['minOrder'] as num?)?.toDouble() ?? 0,
+    estimatedMinutes: (j['estimatedMinutes'] as num?)?.toInt() ?? 30,
+    isActive: j['isActive'] as bool? ?? true,
+  );
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'name': name,
+    'minKm': minKm,
+    'maxKm': maxKm,
+    'fee': fee,
+    'minOrder': minOrder,
+    'estimatedMinutes': estimatedMinutes,
+    'isActive': isActive,
+  };
 
   _DeliveryZone copyWith({bool? isActive}) => _DeliveryZone(
     id: id,

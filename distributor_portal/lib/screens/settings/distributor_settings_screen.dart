@@ -1,13 +1,16 @@
 /// Distributor Settings Screen
 ///
 /// Company info, notification settings, and delivery settings.
-/// All fields editable but non-functional (UI only for now).
+/// Wired to real Supabase data via orgSettingsProvider.
 /// Supports: RTL Arabic, dark/light theme, responsive layout.
 library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
+
+import '../../data/models.dart';
+import '../../providers/distributor_providers.dart';
 
 // ─── Screen ──────────────────────────────────────────────────────
 
@@ -23,13 +26,10 @@ class DistributorSettingsScreen extends ConsumerStatefulWidget {
 class _DistributorSettingsScreenState
     extends ConsumerState<DistributorSettingsScreen> {
   // Company info controllers
-  final _companyNameController =
-      TextEditingController(text: 'شركة المورد المتحد');
-  final _phoneController = TextEditingController(text: '+966 55 123 4567');
-  final _emailController =
-      TextEditingController(text: 'info@united-distributor.sa');
-  final _addressController =
-      TextEditingController(text: 'الرياض، حي العليا، شارع التحلية');
+  final _companyNameController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _addressController = TextEditingController();
 
   // Notification settings
   bool _emailNotifications = true;
@@ -40,14 +40,42 @@ class _DistributorSettingsScreenState
   bool _paymentNotification = true;
 
   // Delivery settings
-  final _deliveryZonesController =
-      TextEditingController(text: 'الرياض، جدة، الدمام');
-  final _minOrderController = TextEditingController(text: '500');
-  final _deliveryFeeController = TextEditingController(text: '50');
-  final _freeDeliveryMinController = TextEditingController(text: '2000');
+  final _deliveryZonesController = TextEditingController();
+  final _minOrderController = TextEditingController();
+  final _deliveryFeeController = TextEditingController();
+  final _freeDeliveryMinController = TextEditingController();
   bool _freeDeliveryEnabled = true;
 
   bool _isSaving = false;
+
+  /// The org ID loaded from Supabase, needed for saving back.
+  String? _orgId;
+
+  /// Whether we have already populated controllers from fetched data.
+  bool _didPopulate = false;
+
+  void _populateFromSettings(OrgSettings settings) {
+    if (_didPopulate) return;
+    _didPopulate = true;
+
+    _orgId = settings.id;
+    _companyNameController.text = settings.companyName;
+    _phoneController.text = settings.phone ?? '';
+    _emailController.text = settings.email ?? '';
+    _addressController.text = settings.address ?? '';
+    _deliveryZonesController.text = settings.deliveryZones ?? '';
+    _minOrderController.text =
+        settings.minOrderAmount?.toStringAsFixed(0) ?? '';
+    _deliveryFeeController.text =
+        settings.deliveryFee?.toStringAsFixed(0) ?? '';
+    _freeDeliveryMinController.text =
+        settings.freeDeliveryMin?.toStringAsFixed(0) ?? '';
+
+    _emailNotifications = settings.emailNotifications;
+    _pushNotifications = settings.pushNotifications;
+    _smsNotifications = settings.smsNotifications;
+    _freeDeliveryEnabled = settings.freeDeliveryEnabled;
+  }
 
   @override
   void dispose() {
@@ -70,58 +98,130 @@ class _DistributorSettingsScreenState
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cs = Theme.of(context).colorScheme;
 
+    final settingsAsync = ref.watch(orgSettingsProvider);
+
     return Scaffold(
-        backgroundColor: AppColors.getBackground(isDark),
-        appBar: AppBar(
-          title: Text(
-            'الإعدادات',
-            style: TextStyle(fontWeight: FontWeight.bold, color: cs.onSurface),
-          ),
-          centerTitle: false,
+      backgroundColor: AppColors.getBackground(isDark),
+      appBar: AppBar(
+        title: Text(
+          'الإعدادات',
+          style: TextStyle(fontWeight: FontWeight.bold, color: cs.onSurface),
         ),
-        body: SingleChildScrollView(
-          padding: EdgeInsets.all(isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md),
-          child: isWide
-              ? Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      flex: 3,
-                      child: Column(
-                        children: [
-                          _buildCompanyInfoSection(isDark),
-                          const SizedBox(height: AlhaiSpacing.lg),
-                          _buildDeliverySection(isDark),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: AlhaiSpacing.lg),
-                    Expanded(
-                      flex: 2,
-                      child: Column(
-                        children: [
-                          _buildNotificationsSection(isDark),
-                          const SizedBox(height: AlhaiSpacing.lg),
-                          _buildSaveButton(isDark),
-                        ],
-                      ),
-                    ),
-                  ],
-                )
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _buildCompanyInfoSection(isDark),
-                    SizedBox(height: isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md),
-                    _buildNotificationsSection(isDark),
-                    SizedBox(height: isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md),
-                    _buildDeliverySection(isDark),
-                    const SizedBox(height: AlhaiSpacing.lg),
-                    _buildSaveButton(isDark),
-                    const SizedBox(height: AlhaiSpacing.xl),
-                  ],
+        centerTitle: false,
+      ),
+      body: settingsAsync.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, _) => Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.error_outline,
+                  size: 48, color: AppColors.getTextMuted(isDark)),
+              const SizedBox(height: AlhaiSpacing.md),
+              Text(
+                'حدث خطأ في تحميل الإعدادات',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: AppColors.getTextSecondary(isDark),
                 ),
+              ),
+              const SizedBox(height: AlhaiSpacing.md),
+              FilledButton.icon(
+                onPressed: () => ref.invalidate(orgSettingsProvider),
+                icon: const Icon(Icons.refresh, size: 18),
+                label: const Text('إعادة المحاولة'),
+                style: FilledButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white,
+                ),
+              ),
+            ],
+          ),
         ),
+        data: (settings) {
+          if (settings == null) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.business_rounded,
+                      size: 48, color: AppColors.getTextMuted(isDark)),
+                  const SizedBox(height: AlhaiSpacing.md),
+                  Text(
+                    'لم يتم العثور على بيانات المنشأة',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: AppColors.getTextSecondary(isDark),
+                    ),
+                  ),
+                  const SizedBox(height: AlhaiSpacing.md),
+                  FilledButton.icon(
+                    onPressed: () => ref.invalidate(orgSettingsProvider),
+                    icon: const Icon(Icons.refresh, size: 18),
+                    label: const Text('إعادة المحاولة'),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          // Populate controllers once from fetched data
+          _populateFromSettings(settings);
+
+          return SingleChildScrollView(
+            padding:
+                EdgeInsets.all(isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md),
+            child: isWide
+                ? Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        flex: 3,
+                        child: Column(
+                          children: [
+                            _buildCompanyInfoSection(isDark),
+                            const SizedBox(height: AlhaiSpacing.lg),
+                            _buildDeliverySection(isDark),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: AlhaiSpacing.lg),
+                      Expanded(
+                        flex: 2,
+                        child: Column(
+                          children: [
+                            _buildNotificationsSection(isDark),
+                            const SizedBox(height: AlhaiSpacing.lg),
+                            _buildSaveButton(isDark),
+                          ],
+                        ),
+                      ),
+                    ],
+                  )
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      _buildCompanyInfoSection(isDark),
+                      SizedBox(
+                          height:
+                              isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md),
+                      _buildNotificationsSection(isDark),
+                      SizedBox(
+                          height:
+                              isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md),
+                      _buildDeliverySection(isDark),
+                      const SizedBox(height: AlhaiSpacing.lg),
+                      _buildSaveButton(isDark),
+                      const SizedBox(height: AlhaiSpacing.xl),
+                    ],
+                  ),
+          );
+        },
+      ),
     );
   }
 
@@ -465,20 +565,52 @@ class _DistributorSettingsScreenState
   }
 
   Future<void> _saveSettings() async {
+    if (_orgId == null) return;
+
     setState(() => _isSaving = true);
 
-    // Simulate API call
-    await Future.delayed(const Duration(seconds: 1));
+    final updated = OrgSettings(
+      id: _orgId!,
+      companyName: _companyNameController.text,
+      phone: _phoneController.text.isNotEmpty ? _phoneController.text : null,
+      email: _emailController.text.isNotEmpty ? _emailController.text : null,
+      address:
+          _addressController.text.isNotEmpty ? _addressController.text : null,
+      deliveryZones: _deliveryZonesController.text.isNotEmpty
+          ? _deliveryZonesController.text
+          : null,
+      minOrderAmount: double.tryParse(_minOrderController.text),
+      deliveryFee: double.tryParse(_deliveryFeeController.text),
+      freeDeliveryMin: double.tryParse(_freeDeliveryMinController.text),
+      freeDeliveryEnabled: _freeDeliveryEnabled,
+      emailNotifications: _emailNotifications,
+      pushNotifications: _pushNotifications,
+      smsNotifications: _smsNotifications,
+    );
+
+    final ds = ref.read(distributorDatasourceProvider);
+    final success = await ds.updateOrgSettings(updated);
 
     if (!mounted) return;
-
     setState(() => _isSaving = false);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('تم حفظ الإعدادات بنجاح'),
-        backgroundColor: AppColors.success,
-      ),
-    );
+    if (success) {
+      // Refresh the provider so next build picks up the saved data
+      ref.invalidate(orgSettingsProvider);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('تم حفظ الإعدادات بنجاح'),
+          backgroundColor: AppColors.success,
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('حدث خطأ أثناء حفظ الإعدادات'),
+          backgroundColor: AppColors.error,
+        ),
+      );
+    }
   }
 }

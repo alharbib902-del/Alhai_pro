@@ -1,24 +1,28 @@
 /// Lite Active Orders Screen
 ///
 /// Shows currently active orders with status indicators,
-/// filtering by status, and quick actions.
+/// filtering by status, queried from ordersDao.
 /// Supports RTL, dark mode, and responsive layouts.
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
+import 'package:alhai_database/alhai_database.dart';
+
+import '../../providers/lite_screen_providers.dart';
 
 /// Active orders list for Admin Lite
-class LiteActiveOrdersScreen extends StatefulWidget {
+class LiteActiveOrdersScreen extends ConsumerStatefulWidget {
   const LiteActiveOrdersScreen({super.key});
 
   @override
-  State<LiteActiveOrdersScreen> createState() => _LiteActiveOrdersScreenState();
+  ConsumerState<LiteActiveOrdersScreen> createState() => _LiteActiveOrdersScreenState();
 }
 
-class _LiteActiveOrdersScreenState extends State<LiteActiveOrdersScreen> {
+class _LiteActiveOrdersScreenState extends ConsumerState<LiteActiveOrdersScreen> {
   int _filterIndex = 0;
 
   @override
@@ -27,6 +31,7 @@ class _LiteActiveOrdersScreenState extends State<LiteActiveOrdersScreen> {
     final size = MediaQuery.of(context).size;
     final isMobile = size.width < 600;
     final l10n = AppLocalizations.of(context)!;
+    final dataAsync = ref.watch(liteActiveOrdersProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -34,7 +39,7 @@ class _LiteActiveOrdersScreenState extends State<LiteActiveOrdersScreen> {
         centerTitle: true,
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () => ref.invalidate(liteActiveOrdersProvider),
             icon: const Icon(Icons.refresh),
             tooltip: l10n.sync,
           ),
@@ -43,19 +48,40 @@ class _LiteActiveOrdersScreenState extends State<LiteActiveOrdersScreen> {
       ),
       body: Column(
         children: [
-          // Filter tabs
           _buildFilterTabs(isDark, l10n),
-
-          // Orders list
           Expanded(
-            child: RefreshIndicator(
-              onRefresh: () async {},
-              child: ListView.builder(
-                padding: EdgeInsets.all(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
-                itemCount: _getFilteredOrders().length,
-                itemBuilder: (context, index) {
-                  return _buildOrderCard(context, _getFilteredOrders()[index], isDark);
-                },
+            child: dataAsync.when(
+              data: (orders) {
+                final filtered = _filterOrders(orders);
+                if (filtered.isEmpty) {
+                  return Center(
+                    child: Text(l10n.noResults, style: TextStyle(color: isDark ? Colors.white54 : Theme.of(context).colorScheme.onSurfaceVariant)),
+                  );
+                }
+                return RefreshIndicator(
+                  onRefresh: () async => ref.invalidate(liteActiveOrdersProvider),
+                  child: ListView.builder(
+                    padding: EdgeInsets.all(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
+                    itemCount: filtered.length,
+                    itemBuilder: (context, index) {
+                      return _buildOrderCard(context, filtered[index], isDark);
+                    },
+                  ),
+                );
+              },
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (_, __) => Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(l10n.errorOccurred),
+                    TextButton.icon(
+                      onPressed: () => ref.invalidate(liteActiveOrdersProvider),
+                      icon: const Icon(Icons.refresh_rounded),
+                      label: Text(l10n.tryAgain),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -64,10 +90,10 @@ class _LiteActiveOrdersScreenState extends State<LiteActiveOrdersScreen> {
     );
   }
 
-  List<_OrderData> _getFilteredOrders() {
-    if (_filterIndex == 0) return _orders;
-    final status = [_OrderStatus.confirmed, _OrderStatus.preparing, _OrderStatus.ready, _OrderStatus.delivering][_filterIndex - 1];
-    return _orders.where((o) => o.status == status).toList();
+  List<OrderWithCustomer> _filterOrders(List<OrderWithCustomer> orders) {
+    if (_filterIndex == 0) return orders;
+    final statusFilter = ['confirmed', 'preparing', 'ready', 'out_for_delivery'][_filterIndex - 1];
+    return orders.where((o) => o.status == statusFilter).toList();
   }
 
   Widget _buildFilterTabs(bool isDark, AppLocalizations l10n) {
@@ -103,9 +129,7 @@ class _LiteActiveOrdersScreenState extends State<LiteActiveOrdersScreen> {
                 selectedColor: AlhaiColors.primary.withValues(alpha: 0.15),
                 checkmarkColor: AlhaiColors.primary,
                 labelStyle: TextStyle(
-                  color: isSelected
-                      ? AlhaiColors.primary
-                      : (isDark ? Colors.white70 : Theme.of(context).colorScheme.onSurface),
+                  color: isSelected ? AlhaiColors.primary : (isDark ? Colors.white70 : Theme.of(context).colorScheme.onSurface),
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                   fontSize: 13,
                 ),
@@ -121,19 +145,30 @@ class _LiteActiveOrdersScreenState extends State<LiteActiveOrdersScreen> {
     );
   }
 
-  Widget _buildOrderCard(BuildContext context, _OrderData order, bool isDark) {
-    final statusColor = switch (order.status) {
-      _OrderStatus.confirmed => AlhaiColors.info,
-      _OrderStatus.preparing => AlhaiColors.warning,
-      _OrderStatus.ready => AlhaiColors.success,
-      _OrderStatus.delivering => AlhaiColors.primary,
+  Color _statusColor(String status) {
+    return switch (status) {
+      'confirmed' => AlhaiColors.info,
+      'preparing' => AlhaiColors.warning,
+      'ready' => AlhaiColors.success,
+      'out_for_delivery' => AlhaiColors.primary,
+      _ => AlhaiColors.info,
     };
-    final statusLabel = switch (order.status) {
-      _OrderStatus.confirmed => 'Confirmed',
-      _OrderStatus.preparing => 'Preparing',
-      _OrderStatus.ready => 'Ready',
-      _OrderStatus.delivering => 'Delivering',
+  }
+
+  String _statusLabel(String status) {
+    return switch (status) {
+      'confirmed' => 'Confirmed',
+      'preparing' => 'Preparing',
+      'ready' => 'Ready',
+      'out_for_delivery' => 'Delivering',
+      _ => status,
     };
+  }
+
+  Widget _buildOrderCard(BuildContext context, OrderWithCustomer order, bool isDark) {
+    final statusColor = _statusColor(order.status);
+    final statusLabel = _statusLabel(order.status);
+    final time = '${order.orderDate.hour.toString().padLeft(2, '0')}:${order.orderDate.minute.toString().padLeft(2, '0')}';
 
     return InkWell(
       onTap: () => context.go('/lite/orders/${order.id}'),
@@ -168,19 +203,12 @@ class _LiteActiveOrdersScreenState extends State<LiteActiveOrdersScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '#${order.number}',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: isDark ? Colors.white : Colors.black87,
-                        ),
+                        '#${order.orderNumber}',
+                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black87),
                       ),
                       Text(
-                        order.customerName,
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: isDark ? Colors.white54 : Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
+                        order.customerName ?? '',
+                        style: TextStyle(fontSize: 13, color: isDark ? Colors.white54 : Theme.of(context).colorScheme.onSurfaceVariant),
                       ),
                     ],
                   ),
@@ -191,14 +219,7 @@ class _LiteActiveOrdersScreenState extends State<LiteActiveOrdersScreen> {
                     color: statusColor.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Text(
-                    statusLabel,
-                    style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.bold,
-                      color: statusColor,
-                    ),
-                  ),
+                  child: Text(statusLabel, style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: statusColor)),
                 ),
               ],
             ),
@@ -207,31 +228,11 @@ class _LiteActiveOrdersScreenState extends State<LiteActiveOrdersScreen> {
               children: [
                 Icon(Icons.access_time, size: 14, color: isDark ? Colors.white24 : Colors.black38),
                 const SizedBox(width: AlhaiSpacing.xxs),
-                Text(
-                  order.time,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: isDark ? Colors.white38 : Colors.black45,
-                  ),
-                ),
-                const SizedBox(width: AlhaiSpacing.md),
-                Icon(Icons.shopping_bag_outlined, size: 14, color: isDark ? Colors.white24 : Colors.black38),
-                const SizedBox(width: AlhaiSpacing.xxs),
-                Text(
-                  '${order.itemCount} items',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: isDark ? Colors.white38 : Colors.black45,
-                  ),
-                ),
+                Text(time, style: TextStyle(fontSize: 12, color: isDark ? Colors.white38 : Colors.black45)),
                 const Spacer(),
                 Text(
-                  '${order.total} SAR',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15,
-                    color: isDark ? Colors.white : Colors.black87,
-                  ),
+                  '${order.total.toStringAsFixed(0)} SAR',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: isDark ? Colors.white : Colors.black87),
                 ),
               ],
             ),
@@ -240,26 +241,4 @@ class _LiteActiveOrdersScreenState extends State<LiteActiveOrdersScreen> {
       ),
     );
   }
-
-  static const _orders = [
-    _OrderData('1', 'ORD-1052', 'Ahmed Ali', _OrderStatus.confirmed, '10:30 AM', 5, '245'),
-    _OrderData('2', 'ORD-1051', 'Sara Hassan', _OrderStatus.preparing, '10:15 AM', 3, '180'),
-    _OrderData('3', 'ORD-1050', 'Mohammed Omar', _OrderStatus.ready, '09:45 AM', 8, '420'),
-    _OrderData('4', 'ORD-1049', 'Fatima Nasser', _OrderStatus.delivering, '09:30 AM', 2, '95'),
-    _OrderData('5', 'ORD-1048', 'Khalid Ibrahim', _OrderStatus.delivering, '09:00 AM', 6, '310'),
-    _OrderData('6', 'ORD-1047', 'Noura Salem', _OrderStatus.confirmed, '08:45 AM', 4, '215'),
-  ];
-}
-
-enum _OrderStatus { confirmed, preparing, ready, delivering }
-
-class _OrderData {
-  final String id;
-  final String number;
-  final String customerName;
-  final _OrderStatus status;
-  final String time;
-  final int itemCount;
-  final String total;
-  const _OrderData(this.id, this.number, this.customerName, this.status, this.time, this.itemCount, this.total);
 }

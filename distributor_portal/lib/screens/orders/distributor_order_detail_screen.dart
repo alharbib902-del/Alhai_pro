@@ -1,63 +1,23 @@
 /// Distributor Order Detail Screen
 ///
-/// Shows purchase order details sent by a store. Distributor can:
+/// Shows purchase order details. Distributor can:
 /// - View order items and suggested prices
 /// - Set their own prices for each item
 /// - Accept and send quote or reject the order
-/// Supports: RTL Arabic, dark/light theme, responsive layout.
+/// Data from Supabase via Riverpod providers.
 library;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
+import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:intl/intl.dart' show NumberFormat, DateFormat;
 
-// ─── Mock Data Models ────────────────────────────────────────────
+import '../../data/models.dart';
+import '../../providers/distributor_providers.dart';
 
-class _MockOrderItem {
-  final String id;
-  final String productName;
-  final int quantity;
-  final double suggestedPrice;
-  double? distributorPrice;
-
-  _MockOrderItem({
-    required this.id,
-    required this.productName,
-    required this.quantity,
-    required this.suggestedPrice,
-    this.distributorPrice,
-  });
-
-  double get suggestedTotal => quantity * suggestedPrice;
-  double get distributorTotal =>
-      distributorPrice != null ? quantity * distributorPrice! : 0;
-}
-
-class _MockOrder {
-  final String id;
-  final String purchaseNumber;
-  final String storeName;
-  final String status;
-  final DateTime createdAt;
-  final double proposedTotal;
-  final List<_MockOrderItem> items;
-
-  _MockOrder({
-    required this.id,
-    required this.purchaseNumber,
-    required this.storeName,
-    required this.status,
-    required this.createdAt,
-    required this.proposedTotal,
-    required this.items,
-  });
-}
-
-// ─── Screen ──────────────────────────────────────────────────────
-
-/// شاشة تفاصيل طلب الشراء للموزع
 class DistributorOrderDetailScreen extends ConsumerStatefulWidget {
   final String orderId;
 
@@ -70,59 +30,9 @@ class DistributorOrderDetailScreen extends ConsumerStatefulWidget {
 
 class _DistributorOrderDetailScreenState
     extends ConsumerState<DistributorOrderDetailScreen> {
-  late _MockOrder _order;
   final _notesController = TextEditingController();
   final Map<String, TextEditingController> _priceControllers = {};
   bool _isProcessing = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadMockOrder();
-  }
-
-  void _loadMockOrder() {
-    final items = [
-      _MockOrderItem(
-        id: 'item-1',
-        productName: 'أرز بسمتي ١٠ كيلو',
-        quantity: 50,
-        suggestedPrice: 100,
-      ),
-      _MockOrderItem(
-        id: 'item-2',
-        productName: 'زيت زيتون بكر ١ لتر',
-        quantity: 30,
-        suggestedPrice: 150,
-      ),
-      _MockOrderItem(
-        id: 'item-3',
-        productName: 'سكر أبيض ٥ كيلو',
-        quantity: 100,
-        suggestedPrice: 20,
-      ),
-      _MockOrderItem(
-        id: 'item-4',
-        productName: 'شاي أحمر ٢٠٠ جرام',
-        quantity: 80,
-        suggestedPrice: 15,
-      ),
-    ];
-
-    _order = _MockOrder(
-      id: widget.orderId,
-      purchaseNumber: 'PO-${widget.orderId.substring(0, 10)}',
-      storeName: 'متجر الرياض - الفرع الرئيسي',
-      status: 'pending',
-      createdAt: DateTime.now().subtract(const Duration(hours: 3)),
-      proposedTotal: items.fold(0, (sum, item) => sum + item.suggestedTotal),
-      items: items,
-    );
-
-    for (final item in _order.items) {
-      _priceControllers[item.id] = TextEditingController();
-    }
-  }
 
   @override
   void dispose() {
@@ -133,9 +43,14 @@ class _DistributorOrderDetailScreenState
     super.dispose();
   }
 
-  double get _calculatedTotal {
+  TextEditingController _getController(String itemId) {
+    return _priceControllers.putIfAbsent(
+        itemId, () => TextEditingController());
+  }
+
+  double _calculatedTotal(List<DistributorOrderItem> items) {
     double total = 0;
-    for (final item in _order.items) {
+    for (final item in items) {
       final controller = _priceControllers[item.id];
       final price = double.tryParse(controller?.text ?? '') ?? 0;
       total += price * item.quantity;
@@ -143,14 +58,15 @@ class _DistributorOrderDetailScreenState
     return total;
   }
 
-  String _getStatusLabel(String status) {
+  String _getStatusLabel(String status, AppLocalizations? l10n) {
     switch (status) {
       case 'pending':
-        return 'منتظر';
+      case 'sent':
+        return l10n?.distributorStatusPending ?? 'Pending';
       case 'approved':
-        return 'مقبول';
+        return l10n?.distributorStatusApproved ?? 'Approved';
       case 'rejected':
-        return 'مرفوض';
+        return l10n?.distributorStatusRejected ?? 'Rejected';
       default:
         return status;
     }
@@ -159,6 +75,7 @@ class _DistributorOrderDetailScreenState
   Color _getStatusColor(String status) {
     switch (status) {
       case 'pending':
+      case 'sent':
         return AppColors.warning;
       case 'approved':
         return AppColors.success;
@@ -169,6 +86,62 @@ class _DistributorOrderDetailScreenState
     }
   }
 
+  Future<void> _updateStatus(String newStatus, double total) async {
+    setState(() => _isProcessing = true);
+
+    final ds = ref.read(distributorDatasourceProvider);
+    final itemPrices = <String, double>{};
+
+    for (final entry in _priceControllers.entries) {
+      final price = double.tryParse(entry.value.text);
+      if (price != null && price > 0) {
+        itemPrices[entry.key] = price;
+      }
+    }
+
+    final success = await ds.updateOrderStatus(
+      widget.orderId,
+      newStatus,
+      notes: _notesController.text.isNotEmpty ? _notesController.text : null,
+      itemPrices: itemPrices.isNotEmpty ? itemPrices : null,
+    );
+
+    if (!mounted) return;
+
+    setState(() => _isProcessing = false);
+
+    final l10n = AppLocalizations.of(context);
+
+    if (success) {
+      // Invalidate to refresh
+      ref.invalidate(orderDetailProvider(widget.orderId));
+      ref.invalidate(orderItemsProvider(widget.orderId));
+      ref.invalidate(dashboardKpisProvider);
+      ref.invalidate(ordersProvider(null));
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            newStatus == 'rejected'
+                ? (l10n?.distributorOrderRejected ?? 'Order rejected')
+                : (l10n?.distributorOrderAccepted(
+                        NumberFormat('#,##0.00').format(total)) ??
+                    'Order accepted'),
+          ),
+          backgroundColor:
+              newStatus == 'rejected' ? AppColors.error : AppColors.success,
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n?.distributorLoadError ?? 'Error'),
+          backgroundColor: AppColors.error,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -176,28 +149,40 @@ class _DistributorOrderDetailScreenState
     final isMedium = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cs = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context);
+
+    final orderAsync = ref.watch(orderDetailProvider(widget.orderId));
+    final itemsAsync = ref.watch(orderItemsProvider(widget.orderId));
 
     return Scaffold(
-        backgroundColor: AppColors.getBackground(isDark),
-        appBar: AppBar(
-          title: Text(
-            'طلب شراء #${_order.purchaseNumber}',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: cs.onSurface,
-            ),
+      backgroundColor: AppColors.getBackground(isDark),
+      appBar: AppBar(
+        title: orderAsync.when(
+          data: (order) => Text(
+            order != null
+                ? (l10n?.distributorPurchaseOrder(order.purchaseNumber) ??
+                    'PO #${order.purchaseNumber}')
+                : '',
+            style: TextStyle(fontWeight: FontWeight.bold, color: cs.onSurface),
           ),
-          centerTitle: false,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_rounded),
-            onPressed: () => context.canPop() ? context.pop() : null,
-          ),
-          actions: [
+          loading: () => const SizedBox.shrink(),
+          error: (_, __) => const SizedBox.shrink(),
+        ),
+        centerTitle: false,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_rounded),
+          onPressed: () => context.canPop() ? context.pop() : context.go('/orders'),
+        ),
+        actions: [
+          if (orderAsync.hasValue && orderAsync.value != null)
             Container(
-              margin: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 10),
-              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xxs),
+              margin: const EdgeInsets.symmetric(
+                  horizontal: AlhaiSpacing.sm, vertical: 10),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xxs),
               decoration: BoxDecoration(
-                color: _getStatusColor(_order.status).withValues(alpha: 0.12),
+                color: _getStatusColor(orderAsync.value!.status)
+                    .withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Row(
@@ -208,67 +193,104 @@ class _DistributorOrderDetailScreenState
                     height: 8,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: _getStatusColor(_order.status),
+                      color: _getStatusColor(orderAsync.value!.status),
                     ),
                   ),
                   const SizedBox(width: 6),
                   Text(
-                    _getStatusLabel(_order.status),
+                    _getStatusLabel(orderAsync.value!.status, l10n),
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
-                      color: _getStatusColor(_order.status),
+                      color: _getStatusColor(orderAsync.value!.status),
                     ),
                   ),
                 ],
               ),
             ),
-          ],
+        ],
+      ),
+      body: orderAsync.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, _) => Center(
+          child: Text(l10n?.distributorLoadError ?? 'Error loading data'),
         ),
-        body: SingleChildScrollView(
-          padding: EdgeInsets.all(isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // ── Order Header Info ──
-              _buildOrderHeader(isDark, isMedium),
-              SizedBox(height: isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md),
+        data: (order) {
+          if (order == null) {
+            return Center(
+              child: Text(l10n?.distributorNoOrders ?? 'Order not found'),
+            );
+          }
 
-              // ── Items Section ──
-              if (isWide)
-                _buildItemsTable(isDark)
-              else
-                _buildItemsCards(isDark),
-              SizedBox(height: isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md),
+          return itemsAsync.when(
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (e, _) => Center(
+              child: Text(l10n?.distributorLoadError ?? 'Error'),
+            ),
+            data: (items) {
+              final total = _calculatedTotal(items);
 
-              // ── Total & Notes ──
-              if (isWide)
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+              return SingleChildScrollView(
+                padding: EdgeInsets.all(
+                    isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Expanded(flex: 3, child: _buildNotesSection(isDark)),
-                    const SizedBox(width: AlhaiSpacing.lg),
-                    Expanded(flex: 2, child: _buildTotalSection(isDark)),
-                  ],
-                )
-              else ...[
-                _buildTotalSection(isDark),
-                const SizedBox(height: AlhaiSpacing.md),
-                _buildNotesSection(isDark),
-              ],
-              const SizedBox(height: AlhaiSpacing.lg),
+                    // Order Header
+                    _buildOrderHeader(order, isDark, isMedium, l10n),
+                    SizedBox(
+                        height:
+                            isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md),
 
-              // ── Action Buttons ──
-              _buildActionButtons(isDark, isMedium),
-              const SizedBox(height: AlhaiSpacing.xl),
-            ],
-          ),
-        ),
+                    // Items
+                    if (isWide)
+                      _buildItemsTable(items, isDark, l10n)
+                    else
+                      _buildItemsCards(items, isDark, l10n),
+                    SizedBox(
+                        height:
+                            isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md),
+
+                    // Total & Notes
+                    if (isWide)
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                              flex: 3,
+                              child: _buildNotesSection(isDark, l10n)),
+                          const SizedBox(width: AlhaiSpacing.lg),
+                          Expanded(
+                              flex: 2,
+                              child: _buildTotalSection(
+                                  order, total, isDark, l10n)),
+                        ],
+                      )
+                    else ...[
+                      _buildTotalSection(order, total, isDark, l10n),
+                      const SizedBox(height: AlhaiSpacing.md),
+                      _buildNotesSection(isDark, l10n),
+                    ],
+                    const SizedBox(height: AlhaiSpacing.lg),
+
+                    // Actions
+                    if (order.status == 'sent' || order.status == 'pending')
+                      _buildActionButtons(total, isDark, isMedium, l10n),
+                    const SizedBox(height: AlhaiSpacing.xl),
+                  ],
+                ),
+              );
+            },
+          );
+        },
+      ),
     );
   }
 
-  Widget _buildOrderHeader(bool isDark, bool isMedium) {
-    final dateFormatted = DateFormat('yyyy/MM/dd - HH:mm', 'ar').format(_order.createdAt);
+  Widget _buildOrderHeader(DistributorOrder order, bool isDark, bool isMedium,
+      AppLocalizations? l10n) {
+    final dateFormatted =
+        DateFormat('yyyy/MM/dd - HH:mm', 'ar').format(order.createdAt);
 
     return Container(
       padding: EdgeInsets.all(isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md),
@@ -296,7 +318,7 @@ class _DistributorOrderDetailScreenState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      _order.storeName,
+                      order.storeName,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -322,8 +344,8 @@ class _DistributorOrderDetailScreenState
             decoration: BoxDecoration(
               color: AppColors.info.withValues(alpha: isDark ? 0.1 : 0.05),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                  color: AppColors.info.withValues(alpha: 0.2)),
+              border:
+                  Border.all(color: AppColors.info.withValues(alpha: 0.2)),
             ),
             child: Row(
               children: [
@@ -331,7 +353,7 @@ class _DistributorOrderDetailScreenState
                     color: AppColors.info, size: 20),
                 const SizedBox(width: 10),
                 Text(
-                  'المبلغ المقترح:',
+                  l10n?.distributorProposedAmount ?? 'Proposed Amount:',
                   style: TextStyle(
                     fontSize: 14,
                     color: AppColors.getTextSecondary(isDark),
@@ -339,7 +361,7 @@ class _DistributorOrderDetailScreenState
                 ),
                 const SizedBox(width: AlhaiSpacing.xs),
                 Text(
-                  '${NumberFormat('#,##0.00').format(_order.proposedTotal)} ريال',
+                  '${NumberFormat('#,##0.00').format(order.total)} ${l10n?.distributorRiyal ?? 'SAR'}',
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -354,9 +376,8 @@ class _DistributorOrderDetailScreenState
     );
   }
 
-  // ─── Wide Screen: Data Table ───────────────────────────────────
-
-  Widget _buildItemsTable(bool isDark) {
+  Widget _buildItemsTable(List<DistributorOrderItem> items, bool isDark,
+      AppLocalizations? l10n) {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
@@ -381,7 +402,7 @@ class _DistributorOrderDetailScreenState
                 ),
                 const SizedBox(width: AlhaiSpacing.sm),
                 Text(
-                  'بنود الطلب',
+                  l10n?.distributorOrderItems ?? 'Order Items',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -390,14 +411,15 @@ class _DistributorOrderDetailScreenState
                 ),
                 const Spacer(),
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
                     color: AppColors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
-                    '${_order.items.length} منتجات',
+                    l10n?.distributorProductCount(items.length) ??
+                        '${items.length} products',
                     style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
@@ -409,73 +431,38 @@ class _DistributorOrderDetailScreenState
             ),
           ),
           const Divider(height: 1),
-          // Table header
+          // Header
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.mdl, vertical: AlhaiSpacing.sm),
+            padding: const EdgeInsets.symmetric(
+                horizontal: AlhaiSpacing.mdl, vertical: AlhaiSpacing.sm),
             color: AppColors.getSurfaceVariant(isDark),
             child: Row(
               children: [
-                Expanded(
-                  flex: 3,
-                  child: Text('المنتج',
-                      style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.getTextSecondary(isDark))),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Text('الكمية',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.getTextSecondary(isDark))),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: Text('السعر المقترح',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.getTextSecondary(isDark))),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: Text('سعرك',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.getTextSecondary(isDark))),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: Text('الإجمالي',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.getTextSecondary(isDark))),
-                ),
+                _colHeader(l10n?.products ?? 'Product', 3, isDark),
+                _colHeader(l10n?.quantity ?? 'Qty', 1, isDark),
+                _colHeader(
+                    l10n?.distributorSuggestedPrice ?? 'Suggested', 2, isDark),
+                _colHeader(l10n?.distributorYourPrice ?? 'Your Price', 2, isDark),
+                _colHeader(l10n?.total ?? 'Total', 2, isDark),
               ],
             ),
           ),
-          // Table rows
-          ...List.generate(_order.items.length, (index) {
-            final item = _order.items[index];
-            final controller = _priceControllers[item.id]!;
+          // Rows
+          ...List.generate(items.length, (index) {
+            final item = items[index];
+            final controller = _getController(item.id);
             final price = double.tryParse(controller.text) ?? 0;
             final rowTotal = price * item.quantity;
 
             return Container(
-              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.mdl, vertical: 14),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AlhaiSpacing.mdl, vertical: 14),
               decoration: BoxDecoration(
-                border: index < _order.items.length - 1
+                border: index < items.length - 1
                     ? Border(
                         bottom: BorderSide(
-                          color: AppColors.getBorder(isDark).withValues(alpha: 0.5),
+                          color: AppColors.getBorder(isDark)
+                              .withValues(alpha: 0.5),
                         ),
                       )
                     : null,
@@ -484,36 +471,13 @@ class _DistributorOrderDetailScreenState
                 children: [
                   Expanded(
                     flex: 3,
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 36,
-                          height: 36,
-                          decoration: BoxDecoration(
-                            color: AppColors.primary.withValues(alpha: 0.08),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          alignment: Alignment.center,
-                          child: Text(
-                            '${index + 1}',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.primary,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            item.productName,
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.getTextPrimary(isDark),
-                            ),
-                          ),
-                        ),
-                      ],
+                    child: Text(
+                      item.productName,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.getTextPrimary(isDark),
+                      ),
                     ),
                   ),
                   Expanded(
@@ -531,7 +495,7 @@ class _DistributorOrderDetailScreenState
                   Expanded(
                     flex: 2,
                     child: Text(
-                      '${NumberFormat('#,##0').format(item.suggestedPrice)} ريال',
+                      '${NumberFormat('#,##0').format(item.suggestedPrice)} ${l10n?.distributorRiyal ?? 'SAR'}',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 14,
@@ -542,7 +506,8 @@ class _DistributorOrderDetailScreenState
                   Expanded(
                     flex: 2,
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: AlhaiSpacing.sm),
                       child: TextField(
                         controller: controller,
                         keyboardType: TextInputType.number,
@@ -559,7 +524,7 @@ class _DistributorOrderDetailScreenState
                               color: AppColors.getTextMuted(isDark)),
                           contentPadding: const EdgeInsets.symmetric(
                               horizontal: 10, vertical: 10),
-                          suffixText: 'ريال',
+                          suffixText: l10n?.distributorRiyal ?? 'SAR',
                           suffixStyle: TextStyle(
                             fontSize: 11,
                             color: AppColors.getTextMuted(isDark),
@@ -568,13 +533,13 @@ class _DistributorOrderDetailScreenState
                           fillColor: AppColors.getSurfaceVariant(isDark),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
-                            borderSide:
-                                BorderSide(color: AppColors.getBorder(isDark)),
+                            borderSide: BorderSide(
+                                color: AppColors.getBorder(isDark)),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
-                            borderSide:
-                                BorderSide(color: AppColors.getBorder(isDark)),
+                            borderSide: BorderSide(
+                                color: AppColors.getBorder(isDark)),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
@@ -589,7 +554,7 @@ class _DistributorOrderDetailScreenState
                     flex: 2,
                     child: Text(
                       rowTotal > 0
-                          ? '${NumberFormat('#,##0.00').format(rowTotal)} ريال'
+                          ? '${NumberFormat('#,##0.00').format(rowTotal)} ${l10n?.distributorRiyal ?? 'SAR'}'
                           : '-',
                       textAlign: TextAlign.center,
                       style: TextStyle(
@@ -610,26 +575,30 @@ class _DistributorOrderDetailScreenState
     );
   }
 
-  // ─── Mobile: Card View ─────────────────────────────────────────
+  Widget _colHeader(String text, int flex, bool isDark) {
+    return Expanded(
+      flex: flex,
+      child: Text(
+        text,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontSize: 13,
+          fontWeight: FontWeight.w600,
+          color: AppColors.getTextSecondary(isDark),
+        ),
+      ),
+    );
+  }
 
-  Widget _buildItemsCards(bool isDark) {
+  Widget _buildItemsCards(List<DistributorOrderItem> items, bool isDark,
+      AppLocalizations? l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            Container(
-              padding: const EdgeInsets.all(AlhaiSpacing.xs),
-              decoration: BoxDecoration(
-                color: AppColors.secondary.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: const Icon(Icons.list_alt_rounded,
-                  color: AppColors.secondary, size: 20),
-            ),
-            const SizedBox(width: AlhaiSpacing.sm),
             Text(
-              'بنود الطلب',
+              l10n?.distributorOrderItems ?? 'Order Items',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -637,27 +606,21 @@ class _DistributorOrderDetailScreenState
               ),
             ),
             const Spacer(),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                '${_order.items.length} منتجات',
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.primary,
-                ),
+            Text(
+              l10n?.distributorProductCount(items.length) ??
+                  '${items.length} products',
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: AppColors.primary,
               ),
             ),
           ],
         ),
         const SizedBox(height: AlhaiSpacing.sm),
-        ...List.generate(_order.items.length, (index) {
-          final item = _order.items[index];
-          final controller = _priceControllers[item.id]!;
+        ...List.generate(items.length, (index) {
+          final item = items[index];
+          final controller = _getController(item.id);
           final price = double.tryParse(controller.text) ?? 0;
           final rowTotal = price * item.quantity;
 
@@ -672,54 +635,25 @@ class _DistributorOrderDetailScreenState
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Container(
-                      width: 32,
-                      height: 32,
-                      decoration: BoxDecoration(
-                        color: AppColors.primary.withValues(alpha: 0.08),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      alignment: Alignment.center,
-                      child: Text(
-                        '${index + 1}',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.primary,
-                          fontSize: 13,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        item.productName,
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.getTextPrimary(isDark),
-                        ),
-                      ),
-                    ),
-                  ],
+                Text(
+                  item.productName,
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.getTextPrimary(isDark),
+                  ),
                 ),
                 const SizedBox(height: AlhaiSpacing.sm),
                 Row(
                   children: [
-                    _infoChip(
-                      'الكمية',
-                      '${item.quantity}',
-                      AppColors.info,
-                      isDark,
-                    ),
+                    _infoChip(l10n?.quantity ?? 'Qty', '${item.quantity}',
+                        AppColors.info, isDark),
                     const SizedBox(width: 10),
                     _infoChip(
-                      'السعر المقترح',
-                      '${NumberFormat('#,##0').format(item.suggestedPrice)} ر.س',
-                      AppColors.secondary,
-                      isDark,
-                    ),
+                        l10n?.distributorSuggestedPrice ?? 'Suggested',
+                        '${NumberFormat('#,##0').format(item.suggestedPrice)} ${l10n?.distributorSar ?? 'SAR'}',
+                        AppColors.secondary,
+                        isDark),
                   ],
                 ),
                 const SizedBox(height: AlhaiSpacing.sm),
@@ -730,42 +664,15 @@ class _DistributorOrderDetailScreenState
                         controller: controller,
                         keyboardType: TextInputType.number,
                         onChanged: (_) => setState(() {}),
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.getTextPrimary(isDark),
-                        ),
                         decoration: InputDecoration(
-                          labelText: 'سعرك',
-                          labelStyle: TextStyle(
-                              color: AppColors.getTextSecondary(isDark)),
+                          labelText: l10n?.distributorYourPrice ?? 'Your Price',
                           hintText: '0.00',
-                          hintStyle: TextStyle(
-                              color: AppColors.getTextMuted(isDark)),
-                          suffixText: 'ريال',
-                          suffixStyle: TextStyle(
-                            fontSize: 12,
-                            color: AppColors.getTextMuted(isDark),
-                          ),
+                          suffixText: l10n?.distributorRiyal ?? 'SAR',
                           filled: true,
                           fillColor: AppColors.getSurfaceVariant(isDark),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide(
-                                color: AppColors.getBorder(isDark)),
                           ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide(
-                                color: AppColors.getBorder(isDark)),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: const BorderSide(
-                                color: AppColors.primary, width: 2),
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 14, vertical: 12),
                         ),
                       ),
                     ),
@@ -779,7 +686,7 @@ class _DistributorOrderDetailScreenState
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(
-                          '${NumberFormat('#,##0.00').format(rowTotal)} ر.س',
+                          '${NumberFormat('#,##0.00').format(rowTotal)} ${l10n?.distributorSar ?? 'SAR'}',
                           style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
@@ -808,31 +715,19 @@ class _DistributorOrderDetailScreenState
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            '$label: ',
-            style: TextStyle(
-              fontSize: 12,
-              color: AppColors.getTextSecondary(isDark),
-            ),
-          ),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: color,
-            ),
-          ),
+          Text('$label: ',
+              style: TextStyle(
+                  fontSize: 12, color: AppColors.getTextSecondary(isDark))),
+          Text(value,
+              style: TextStyle(
+                  fontSize: 13, fontWeight: FontWeight.w600, color: color)),
         ],
       ),
     );
   }
 
-  // ─── Total Section ─────────────────────────────────────────────
-
-  Widget _buildTotalSection(bool isDark) {
-    final total = _calculatedTotal;
-
+  Widget _buildTotalSection(DistributorOrder order, double total, bool isDark,
+      AppLocalizations? l10n) {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
@@ -869,7 +764,7 @@ class _DistributorOrderDetailScreenState
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Text(
-                'إجمالي سعرك',
+                l10n?.distributorYourTotal ?? 'Your Total',
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
@@ -880,32 +775,37 @@ class _DistributorOrderDetailScreenState
           ),
           const SizedBox(height: AlhaiSpacing.md),
           Text(
-            '${NumberFormat('#,##0.00').format(total)} ريال',
+            '${NumberFormat('#,##0.00').format(total)} ${l10n?.distributorRiyal ?? 'SAR'}',
             style: TextStyle(
               fontSize: 28,
               fontWeight: FontWeight.bold,
-              color: total > 0
-                  ? AppColors.primary
-                  : AppColors.getTextMuted(isDark),
+              color:
+                  total > 0 ? AppColors.primary : AppColors.getTextMuted(isDark),
             ),
           ),
-          if (total > 0 && _order.proposedTotal > 0) ...[
+          if (total > 0 && order.total > 0) ...[
             const SizedBox(height: AlhaiSpacing.xs),
             Builder(
               builder: (_) {
-                final diff = total - _order.proposedTotal;
-                final percent = (diff / _order.proposedTotal * 100);
+                final diff = total - order.total;
+                final percent = (diff / order.total * 100);
                 final isLower = diff < 0;
                 return Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
                     color: (isLower ? AppColors.success : AppColors.warning)
                         .withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
-                    '${isLower ? '' : '+'}${percent.toStringAsFixed(1)}% ${isLower ? 'أقل' : 'أعلى'} من المقترح',
+                    isLower
+                        ? (l10n?.distributorLowerThanProposed(
+                                percent.abs().toStringAsFixed(1)) ??
+                            '${percent.abs().toStringAsFixed(1)}% lower')
+                        : (l10n?.distributorHigherThanProposed(
+                                percent.toStringAsFixed(1)) ??
+                            '+${percent.toStringAsFixed(1)}% higher'),
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
@@ -921,9 +821,7 @@ class _DistributorOrderDetailScreenState
     );
   }
 
-  // ─── Notes Section ─────────────────────────────────────────────
-
-  Widget _buildNotesSection(bool isDark) {
+  Widget _buildNotesSection(bool isDark, AppLocalizations? l10n) {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
@@ -934,27 +832,13 @@ class _DistributorOrderDetailScreenState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(AlhaiSpacing.xs),
-                decoration: BoxDecoration(
-                  color: AppColors.info.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: const Icon(Icons.note_alt_rounded,
-                    color: AppColors.info, size: 20),
-              ),
-              const SizedBox(width: AlhaiSpacing.sm),
-              Text(
-                'ملاحظات للمتجر',
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.getTextPrimary(isDark),
-                ),
-              ),
-            ],
+          Text(
+            l10n?.distributorNotesForStore ?? 'Notes for Store',
+            style: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+              color: AppColors.getTextPrimary(isDark),
+            ),
           ),
           const SizedBox(height: AlhaiSpacing.md),
           TextField(
@@ -962,7 +846,7 @@ class _DistributorOrderDetailScreenState
             maxLines: 4,
             style: TextStyle(color: AppColors.getTextPrimary(isDark)),
             decoration: InputDecoration(
-              hintText: 'أضف ملاحظات حول العرض (اختياري)...',
+              hintText: l10n?.distributorNotesHint ?? 'Add notes...',
               hintStyle: TextStyle(color: AppColors.getTextMuted(isDark)),
               filled: true,
               fillColor: AppColors.getSurfaceVariant(isDark),
@@ -987,14 +871,13 @@ class _DistributorOrderDetailScreenState
     );
   }
 
-  // ─── Action Buttons ────────────────────────────────────────────
-
-  Widget _buildActionButtons(bool isDark, bool isMedium) {
+  Widget _buildActionButtons(
+      double total, bool isDark, bool isMedium, AppLocalizations? l10n) {
     return Row(
       children: [
         Expanded(
           child: OutlinedButton.icon(
-            onPressed: _isProcessing ? null : _rejectOrder,
+            onPressed: _isProcessing ? null : () => _updateStatus('rejected', total),
             icon: _isProcessing
                 ? const SizedBox(
                     width: 18,
@@ -1002,13 +885,14 @@ class _DistributorOrderDetailScreenState
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
                 : const Icon(Icons.close_rounded, size: 20),
-            label: const Text('رفض الطلب',
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+            label: Text(l10n?.distributorRejectOrder ?? 'Reject',
+                style: const TextStyle(
+                    fontSize: 15, fontWeight: FontWeight.w600)),
             style: OutlinedButton.styleFrom(
               foregroundColor: AppColors.error,
               side: const BorderSide(color: AppColors.error),
-              padding: EdgeInsets.symmetric(
-                  vertical: isMedium ? 16 : 14),
+              padding:
+                  EdgeInsets.symmetric(vertical: isMedium ? 16 : 14),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12)),
             ),
@@ -1018,8 +902,9 @@ class _DistributorOrderDetailScreenState
         Expanded(
           flex: 2,
           child: FilledButton.icon(
-            onPressed:
-                _isProcessing || _calculatedTotal <= 0 ? null : _acceptOrder,
+            onPressed: _isProcessing || total <= 0
+                ? null
+                : () => _updateStatus('approved', total),
             icon: _isProcessing
                 ? const SizedBox(
                     width: 18,
@@ -1028,80 +913,20 @@ class _DistributorOrderDetailScreenState
                         strokeWidth: 2, color: Colors.white),
                   )
                 : const Icon(Icons.check_circle_rounded, size: 20),
-            label: const Text('قبول وإرسال العرض',
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+            label: Text(l10n?.distributorAcceptSendQuote ?? 'Accept & Send',
+                style: const TextStyle(
+                    fontSize: 15, fontWeight: FontWeight.w600)),
             style: FilledButton.styleFrom(
               backgroundColor: AppColors.success,
               foregroundColor: Colors.white,
-              padding: EdgeInsets.symmetric(
-                  vertical: isMedium ? 16 : 14),
+              padding:
+                  EdgeInsets.symmetric(vertical: isMedium ? 16 : 14),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12)),
             ),
           ),
         ),
       ],
-    );
-  }
-
-  // ─── Actions ───────────────────────────────────────────────────
-
-  Future<void> _rejectOrder() async {
-    setState(() => _isProcessing = true);
-
-    // Simulate API call
-    await Future.delayed(const Duration(seconds: 1));
-
-    if (!mounted) return;
-
-    setState(() {
-      _order = _MockOrder(
-        id: _order.id,
-        purchaseNumber: _order.purchaseNumber,
-        storeName: _order.storeName,
-        status: 'rejected',
-        createdAt: _order.createdAt,
-        proposedTotal: _order.proposedTotal,
-        items: _order.items,
-      );
-      _isProcessing = false;
-    });
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('تم رفض الطلب بنجاح'),
-        backgroundColor: AppColors.error,
-      ),
-    );
-  }
-
-  Future<void> _acceptOrder() async {
-    setState(() => _isProcessing = true);
-
-    // Simulate API call
-    await Future.delayed(const Duration(seconds: 1));
-
-    if (!mounted) return;
-
-    setState(() {
-      _order = _MockOrder(
-        id: _order.id,
-        purchaseNumber: _order.purchaseNumber,
-        storeName: _order.storeName,
-        status: 'approved',
-        createdAt: _order.createdAt,
-        proposedTotal: _order.proposedTotal,
-        items: _order.items,
-      );
-      _isProcessing = false;
-    });
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-            'تم قبول الطلب وإرسال العرض بمبلغ ${NumberFormat('#,##0.00').format(_calculatedTotal)} ريال'),
-        backgroundColor: AppColors.success,
-      ),
     );
   }
 }

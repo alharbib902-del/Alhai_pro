@@ -5,13 +5,18 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
+import 'package:alhai_l10n/alhai_l10n.dart';
+
+import '../core/supabase/supabase_client.dart';
+import '../providers/distributor_providers.dart';
 
 /// Navigation item model
 class _NavItem {
   final String id;
-  final String label;
+  final String Function(AppLocalizations? l10n) label;
   final IconData icon;
   final String route;
 
@@ -24,50 +29,50 @@ class _NavItem {
 }
 
 /// Distributor shell with persistent sidebar/drawer navigation
-class DistributorShell extends StatefulWidget {
+class DistributorShell extends ConsumerStatefulWidget {
   final Widget child;
 
   const DistributorShell({super.key, required this.child});
 
   @override
-  State<DistributorShell> createState() => _DistributorShellState();
+  ConsumerState<DistributorShell> createState() => _DistributorShellState();
 }
 
-class _DistributorShellState extends State<DistributorShell> {
-  static const _navItems = [
+class _DistributorShellState extends ConsumerState<DistributorShell> {
+  static final _navItems = [
     _NavItem(
       id: 'dashboard',
-      label: 'لوحة التحكم',
+      label: (l10n) => l10n?.distributorDashboard ?? 'Dashboard',
       icon: Icons.dashboard_outlined,
       route: '/dashboard',
     ),
     _NavItem(
       id: 'orders',
-      label: 'الطلبات',
+      label: (l10n) => l10n?.orders ?? 'Orders',
       icon: Icons.shopping_bag_outlined,
       route: '/orders',
     ),
     _NavItem(
       id: 'products',
-      label: 'المنتجات',
+      label: (l10n) => l10n?.products ?? 'Products',
       icon: Icons.inventory_2_outlined,
       route: '/products',
     ),
     _NavItem(
       id: 'pricing',
-      label: 'الأسعار',
+      label: (l10n) => l10n?.price ?? 'Pricing',
       icon: Icons.price_change_outlined,
       route: '/pricing',
     ),
     _NavItem(
       id: 'reports',
-      label: 'التقارير',
+      label: (l10n) => l10n?.reports ?? 'Reports',
       icon: Icons.bar_chart_outlined,
       route: '/reports',
     ),
     _NavItem(
       id: 'settings',
-      label: 'الإعدادات',
+      label: (l10n) => l10n?.settings ?? 'Settings',
       icon: Icons.settings_outlined,
       route: '/settings',
     ),
@@ -87,12 +92,22 @@ class _DistributorShellState extends State<DistributorShell> {
     context.go(route);
   }
 
-  Widget _buildSidebarContent(String selectedId, bool isDark) {
+  Future<void> _logout() async {
+    await AppSupabase.client.auth.signOut();
+    if (!mounted) return;
+    context.go('/login');
+  }
+
+  Widget _buildSidebarContent(
+      String selectedId, bool isDark, AppLocalizations? l10n) {
+    final user = ref.watch(currentUserProvider);
+
     return Column(
       children: [
         // Brand header
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.mdl, vertical: AlhaiSpacing.lg),
+          padding: const EdgeInsets.symmetric(
+              horizontal: AlhaiSpacing.mdl, vertical: AlhaiSpacing.lg),
           child: Row(
             children: [
               Container(
@@ -114,7 +129,7 @@ class _DistributorShellState extends State<DistributorShell> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'بوابة الموزع',
+                      l10n?.distributorPortal ?? 'Distributor Portal',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -125,9 +140,7 @@ class _DistributorShellState extends State<DistributorShell> {
                       'Alhai Platform',
                       style: TextStyle(
                         fontSize: 11,
-                        color: isDark
-                            ? Colors.white54
-                            : AppColors.textSecondary,
+                        color: isDark ? Colors.white54 : AppColors.textSecondary,
                       ),
                     ),
                   ],
@@ -176,7 +189,7 @@ class _DistributorShellState extends State<DistributorShell> {
                           ),
                           const SizedBox(width: AlhaiSpacing.sm),
                           Text(
-                            item.label,
+                            item.label(l10n),
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: isSelected
@@ -219,24 +232,34 @@ class _DistributorShellState extends State<DistributorShell> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'الموزع',
+                      user?.email?.split('@').first ?? l10n?.distributorPortal ?? 'Distributor',
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
                         color: isDark ? Colors.white : AppColors.textPrimary,
                       ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                     Text(
-                      'distributor@alhai.com',
+                      user?.email ?? '',
                       style: TextStyle(
                         fontSize: 11,
-                        color: isDark
-                            ? Colors.white54
-                            : AppColors.textSecondary,
+                        color:
+                            isDark ? Colors.white54 : AppColors.textSecondary,
                       ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
+              ),
+              IconButton(
+                onPressed: _logout,
+                icon: Icon(
+                  Icons.logout_rounded,
+                  size: 20,
+                  color: isDark ? Colors.white54 : AppColors.textSecondary,
+                ),
+                tooltip: l10n?.distributorLogout ?? 'Sign out',
               ),
             ],
           ),
@@ -247,20 +270,18 @@ class _DistributorShellState extends State<DistributorShell> {
 
   @override
   Widget build(BuildContext context) {
-    // M115: Use shared breakpoint from design system (905px)
-    final isDesktop = MediaQuery.sizeOf(context).width >= AlhaiBreakpoints.desktop;
+    final isDesktop =
+        MediaQuery.sizeOf(context).width >= AlhaiBreakpoints.desktop;
     final selectedId = _getSelectedId(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context);
 
-    final sidebarBg = isDark
-        ? const Color(0xFF1E293B)
-        : Colors.white;
+    final sidebarBg = isDark ? const Color(0xFF1E293B) : Colors.white;
 
     if (isDesktop) {
       return Scaffold(
-        backgroundColor: isDark
-            ? const Color(0xFF0F172A)
-            : AppColors.backgroundSecondary,
+        backgroundColor:
+            isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
         body: Row(
           children: [
             // Sidebar
@@ -272,12 +293,14 @@ class _DistributorShellState extends State<DistributorShell> {
                   left: BorderSide(
                     color: isDark
                         ? Colors.white10
-                        : Theme.of(context).colorScheme.surfaceContainerLow,
+                        : Theme.of(context)
+                            .colorScheme
+                            .surfaceContainerLow,
                   ),
                 ),
               ),
               child: SafeArea(
-                child: _buildSidebarContent(selectedId, isDark),
+                child: _buildSidebarContent(selectedId, isDark, l10n),
               ),
             ),
             // Content
@@ -288,11 +311,10 @@ class _DistributorShellState extends State<DistributorShell> {
     } else {
       // Mobile: drawer
       return Scaffold(
-        backgroundColor: isDark
-            ? const Color(0xFF0F172A)
-            : AppColors.backgroundSecondary,
+        backgroundColor:
+            isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
         appBar: AppBar(
-          title: const Text('بوابة الموزع'),
+          title: Text(l10n?.distributorPortal ?? 'Distributor Portal'),
           backgroundColor: sidebarBg,
           foregroundColor: isDark ? Colors.white : AppColors.textPrimary,
           elevation: 0,
@@ -300,7 +322,7 @@ class _DistributorShellState extends State<DistributorShell> {
         drawer: Drawer(
           backgroundColor: sidebarBg,
           child: SafeArea(
-            child: _buildSidebarContent(selectedId, isDark),
+            child: _buildSidebarContent(selectedId, isDark, l10n),
           ),
         ),
         body: widget.child,

@@ -12419,4 +12419,354 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get stores => 'Stores';
+
+  @override
+  String get distributorPortal => 'Distributor Portal';
+
+  @override
+  String get distributorDashboard => 'Dashboard';
+
+  @override
+  String get distributorDashboardSubtitle =>
+      'Distribution performance overview';
+
+  @override
+  String get distributorOrders => 'Incoming Orders';
+
+  @override
+  String get distributorProducts => 'Product Catalog';
+
+  @override
+  String get distributorPricing => 'Price Management';
+
+  @override
+  String get distributorReports => 'Reports';
+
+  @override
+  String get distributorSettings => 'Settings';
+
+  @override
+  String get distributorTotalOrders => 'Total Orders';
+
+  @override
+  String get distributorPendingOrders => 'Pending Orders';
+
+  @override
+  String get distributorApprovedOrders => 'Approved';
+
+  @override
+  String get distributorRevenue => 'Revenue';
+
+  @override
+  String get distributorMonthlySales => 'Monthly Sales';
+
+  @override
+  String get distributorRecentOrders => 'Recent Orders';
+
+  @override
+  String get distributorOrderNumber => 'Order Number';
+
+  @override
+  String get distributorStore => 'Store';
+
+  @override
+  String get distributorDate => 'Date';
+
+  @override
+  String get distributorAmount => 'Amount';
+
+  @override
+  String get distributorStatusPending => 'Pending';
+
+  @override
+  String get distributorStatusApproved => 'Approved';
+
+  @override
+  String get distributorStatusReceived => 'Received';
+
+  @override
+  String get distributorStatusRejected => 'Rejected';
+
+  @override
+  String get distributorStatusDraft => 'Draft';
+
+  @override
+  String get distributorNoOrders => 'No orders found';
+
+  @override
+  String get distributorAllOrders => 'All';
+
+  @override
+  String get distributorPendingTab => 'Pending';
+
+  @override
+  String get distributorApprovedTab => 'Approved';
+
+  @override
+  String get distributorRejectedTab => 'Rejected';
+
+  @override
+  String get distributorAddProduct => 'Add Product';
+
+  @override
+  String get distributorSearchHint => 'Search by name or barcode...';
+
+  @override
+  String get distributorNoProducts => 'No products found';
+
+  @override
+  String get distributorChangeSearch => 'Try changing your search criteria';
+
+  @override
+  String get distributorBarcode => 'Barcode';
+
+  @override
+  String get distributorCategory => 'Category';
+
+  @override
+  String get distributorStock => 'Stock';
+
+  @override
+  String get distributorStockEmpty => 'Out';
+
+  @override
+  String get distributorStockLow => 'Low';
+
+  @override
+  String get distributorActions => 'Actions';
+
+  @override
+  String distributorEditProduct(String name) {
+    return 'Edit $name';
+  }
+
+  @override
+  String get distributorCurrentPrice => 'Current Price';
+
+  @override
+  String get distributorNewPrice => 'New Price';
+
+  @override
+  String get distributorLastUpdated => 'Last Updated';
+
+  @override
+  String get distributorDifference => 'Diff';
+
+  @override
+  String get distributorTotalProducts => 'Total Products';
+
+  @override
+  String get distributorPendingChanges => 'Pending Changes';
+
+  @override
+  String distributorProductsWillUpdate(int count) {
+    return '$count products will be updated';
+  }
+
+  @override
+  String get distributorSaveChanges => 'Save Changes';
+
+  @override
+  String get distributorChangesSaved => 'Changes saved successfully';
+
+  @override
+  String distributorChangesCount(int count) {
+    return '$count changes';
+  }
+
+  @override
+  String get distributorExport => 'Export';
+
+  @override
+  String get distributorExportReport => 'Export Report';
+
+  @override
+  String get distributorDailySales => 'Daily Sales';
+
+  @override
+  String get distributorOrderCount => 'Order Count';
+
+  @override
+  String get distributorAvgOrderValue => 'Avg Order Value';
+
+  @override
+  String get distributorTopProduct => 'Top Product';
+
+  @override
+  String get distributorTopProducts => 'Top Products';
+
+  @override
+  String get distributorOrdersUnit => 'orders';
+
+  @override
+  String get distributorPeriodDay => 'Day';
+
+  @override
+  String get distributorPeriodWeek => 'Week';
+
+  @override
+  String get distributorPeriodMonth => 'Month';
+
+  @override
+  String get distributorPeriodYear => 'Year';
+
+  @override
+  String get distributorCompanyInfo => 'Company Info';
+
+  @override
+  String get distributorCompanyName => 'Company Name';
+
+  @override
+  String get distributorPhone => 'Phone';
+
+  @override
+  String get distributorEmail => 'Email';
+
+  @override
+  String get distributorAddress => 'Address';
+
+  @override
+  String get distributorNotificationSettings => 'Notification Settings';
+
+  @override
+  String get distributorNotificationChannels => 'Notification Channels';
+
+  @override
+  String get distributorEmailNotifications => 'Email';
+
+  @override
+  String get distributorPushNotifications => 'Push Notifications';
+
+  @override
+  String get distributorSmsNotifications => 'SMS';
+
+  @override
+  String get distributorNotificationTypes => 'Notification Types';
+
+  @override
+  String get distributorNewOrderNotification => 'New Orders';
+
+  @override
+  String get distributorOrderStatusNotification => 'Order Status Updates';
+
+  @override
+  String get distributorPaymentNotification => 'Payment Notifications';
+
+  @override
+  String get distributorDeliverySettings => 'Delivery Settings';
+
+  @override
+  String get distributorDeliveryZones => 'Delivery Zones';
+
+  @override
+  String get distributorDeliveryZonesHint => 'Enter cities separated by commas';
+
+  @override
+  String get distributorMinOrder => 'Min Order Amount (SAR)';
+
+  @override
+  String get distributorDeliveryFee => 'Delivery Fee (SAR)';
+
+  @override
+  String get distributorFreeDelivery => 'Free Delivery';
+
+  @override
+  String get distributorFreeDeliveryMin => 'Free Delivery Minimum (SAR)';
+
+  @override
+  String get distributorSaveSettings => 'Save Settings';
+
+  @override
+  String get distributorSettingsSaved => 'Settings saved successfully';
+
+  @override
+  String distributorPurchaseOrder(String number) {
+    return 'Purchase Order #$number';
+  }
+
+  @override
+  String get distributorProposedAmount => 'Proposed Amount:';
+
+  @override
+  String get distributorOrderItems => 'Order Items';
+
+  @override
+  String distributorProductCount(int count) {
+    return '$count products';
+  }
+
+  @override
+  String get distributorSuggestedPrice => 'Suggested Price';
+
+  @override
+  String get distributorYourPrice => 'Your Price';
+
+  @override
+  String get distributorYourTotal => 'Your Total';
+
+  @override
+  String get distributorNotesForStore => 'Notes for Store';
+
+  @override
+  String get distributorNotesHint => 'Add notes about the offer (optional)...';
+
+  @override
+  String get distributorRejectOrder => 'Reject Order';
+
+  @override
+  String get distributorAcceptSendQuote => 'Accept & Send Quote';
+
+  @override
+  String get distributorOrderRejected => 'Order rejected successfully';
+
+  @override
+  String distributorOrderAccepted(String amount) {
+    return 'Order accepted and quote sent for $amount SAR';
+  }
+
+  @override
+  String distributorLowerThanProposed(String percent) {
+    return '$percent% lower than proposed';
+  }
+
+  @override
+  String distributorHigherThanProposed(String percent) {
+    return '+$percent% higher than proposed';
+  }
+
+  @override
+  String get distributorComingSoon => 'Coming soon';
+
+  @override
+  String get distributorLoadError => 'Error loading data';
+
+  @override
+  String get distributorRetry => 'Retry';
+
+  @override
+  String get distributorLogin => 'Distributor Login';
+
+  @override
+  String get distributorLoginSubtitle => 'Enter your email and password';
+
+  @override
+  String get distributorEmailLabel => 'Email';
+
+  @override
+  String get distributorPasswordLabel => 'Password';
+
+  @override
+  String get distributorLoginButton => 'Sign In';
+
+  @override
+  String get distributorLoginError => 'Login failed';
+
+  @override
+  String get distributorLogout => 'Sign Out';
+
+  @override
+  String get distributorSar => 'SAR';
+
+  @override
+  String get distributorRiyal => 'SAR';
 }

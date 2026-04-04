@@ -1,58 +1,81 @@
 /// Lite Employee Performance Summary Screen
 ///
-/// Shows employee sales performance metrics, rankings,
-/// and attendance summary in a compact view.
-/// Supports RTL, dark mode, and responsive layouts.
+/// Shows employee sales performance metrics grouped by cashier,
+/// queried from salesDao JOIN users. Supports RTL, dark mode,
+/// and responsive layouts.
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 
+import '../../providers/lite_screen_providers.dart';
+
 /// Employee performance summary for Admin Lite
-class LiteEmployeePerformanceScreen extends StatelessWidget {
+class LiteEmployeePerformanceScreen extends ConsumerWidget {
   const LiteEmployeePerformanceScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final size = MediaQuery.of(context).size;
     final isMobile = size.width < 600;
     final l10n = AppLocalizations.of(context)!;
+    final dataAsync = ref.watch(liteEmployeePerformanceProvider);
 
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.employees),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Overview cards
-            _buildOverviewCards(context, isDark, isMobile, l10n),
-            const SizedBox(height: AlhaiSpacing.lg),
-
-            // Employee rankings
-            _buildSectionTitle(l10n.performanceOverview, Icons.leaderboard, isDark),
-            const SizedBox(height: AlhaiSpacing.sm),
-            ..._employees.asMap().entries.map((entry) {
-              return _buildEmployeeTile(context, entry.value, entry.key, isDark);
-            }),
-
-            const SizedBox(height: AlhaiSpacing.lg),
-          ],
+      body: dataAsync.when(
+        data: (employees) {
+          if (employees.isEmpty) {
+            return Center(
+              child: Text(l10n.noResults, style: TextStyle(color: isDark ? Colors.white54 : Theme.of(context).colorScheme.onSurfaceVariant)),
+            );
+          }
+          final activeCount = employees.length;
+          return SingleChildScrollView(
+            padding: EdgeInsets.all(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildOverviewCards(context, isDark, isMobile, l10n, employees.length, activeCount),
+                const SizedBox(height: AlhaiSpacing.lg),
+                _buildSectionTitle(l10n.performanceOverview, Icons.leaderboard, isDark),
+                const SizedBox(height: AlhaiSpacing.sm),
+                ...employees.asMap().entries.map((entry) {
+                  return _buildEmployeeTile(context, entry.value, entry.key, isDark);
+                }),
+                const SizedBox(height: AlhaiSpacing.lg),
+              ],
+            ),
+          );
+        },
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (_, __) => Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(l10n.errorOccurred),
+              TextButton.icon(
+                onPressed: () => ref.invalidate(liteEmployeePerformanceProvider),
+                icon: const Icon(Icons.refresh_rounded),
+                label: Text(l10n.tryAgain),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildOverviewCards(BuildContext context, bool isDark, bool isMobile, AppLocalizations l10n) {
+  Widget _buildOverviewCards(BuildContext context, bool isDark, bool isMobile, AppLocalizations l10n, int total, int active) {
     final items = [
-      _OverviewItem(l10n.employees, '12', Icons.people, AlhaiColors.primary),
-      _OverviewItem(l10n.active, '10', Icons.check_circle, AlhaiColors.success),
-      _OverviewItem(l10n.shiftsTitle, '4', Icons.access_time, AlhaiColors.info),
+      _OverviewItem(l10n.employees, '$total', Icons.people, AlhaiColors.primary),
+      _OverviewItem(l10n.active, '$active', Icons.check_circle, AlhaiColors.success),
     ];
 
     return Row(
@@ -120,7 +143,7 @@ class LiteEmployeePerformanceScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildEmployeeTile(BuildContext context, _EmployeeData emp, int index, bool isDark) {
+  Widget _buildEmployeeTile(BuildContext context, EmployeePerformanceData emp, int index, bool isDark) {
     final rank = index + 1;
     final rankColor = rank <= 3 ? AlhaiColors.warning : Colors.transparent;
 
@@ -136,7 +159,6 @@ class LiteEmployeePerformanceScreen extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // Rank badge
           Container(
             width: 32,
             height: 32,
@@ -158,12 +180,11 @@ class LiteEmployeePerformanceScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(width: AlhaiSpacing.sm),
-          // Avatar
           CircleAvatar(
             radius: 18,
             backgroundColor: AlhaiColors.primary.withValues(alpha: 0.15),
             child: Text(
-              emp.name.substring(0, 1),
+              emp.name.isNotEmpty ? emp.name.substring(0, 1) : '?',
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 color: AlhaiColors.primary,
@@ -172,7 +193,6 @@ class LiteEmployeePerformanceScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(width: AlhaiSpacing.sm),
-          // Name and role
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -195,12 +215,11 @@ class LiteEmployeePerformanceScreen extends StatelessWidget {
               ],
             ),
           ),
-          // Stats
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                emp.sales,
+                emp.totalSales.toStringAsFixed(0),
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
@@ -208,7 +227,7 @@ class LiteEmployeePerformanceScreen extends StatelessWidget {
                 ),
               ),
               Text(
-                '${emp.transactions} txn',
+                '${emp.transactionCount} txn',
                 style: TextStyle(
                   fontSize: 11,
                   color: isDark ? Colors.white38 : Colors.black45,
@@ -220,15 +239,6 @@ class LiteEmployeePerformanceScreen extends StatelessWidget {
       ),
     );
   }
-
-  static const _employees = [
-    _EmployeeData('Ahmed Al-Salem', 'Cashier', '18,200', 245),
-    _EmployeeData('Mohammed Ali', 'Cashier', '15,800', 210),
-    _EmployeeData('Sara Ibrahim', 'Cashier', '14,500', 195),
-    _EmployeeData('Khalid Omar', 'Senior Cashier', '12,300', 168),
-    _EmployeeData('Fatima Hassan', 'Cashier', '10,100', 142),
-    _EmployeeData('Omar Nasser', 'Cashier', '8,700', 115),
-  ];
 }
 
 class _OverviewItem {
@@ -237,12 +247,4 @@ class _OverviewItem {
   final IconData icon;
   final Color color;
   const _OverviewItem(this.label, this.value, this.icon, this.color);
-}
-
-class _EmployeeData {
-  final String name;
-  final String role;
-  final String sales;
-  final int transactions;
-  const _EmployeeData(this.name, this.role, this.sales, this.transactions);
 }

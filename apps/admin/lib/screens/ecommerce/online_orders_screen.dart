@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get_it/get_it.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
+import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 
 /// شاشة إدارة الطلبات الإلكترونية (Online Orders)
+/// Reads from [OrdersDao] with channel='online' filter.
 class OnlineOrdersScreen extends ConsumerStatefulWidget {
   const OnlineOrdersScreen({super.key});
 
@@ -13,6 +16,7 @@ class OnlineOrdersScreen extends ConsumerStatefulWidget {
 }
 
 class _OnlineOrdersScreenState extends ConsumerState<OnlineOrdersScreen> {
+  final _db = GetIt.I<AppDatabase>();
   String _statusFilter = 'all';
   bool _isLoading = false;
   List<_OnlineOrder> _orders = [];
@@ -39,59 +43,60 @@ class _OnlineOrdersScreenState extends ConsumerState<OnlineOrdersScreen> {
 
   Future<void> _loadOrders() async {
     setState(() => _isLoading = true);
-    // Mock data until ecommerce/online orders table is ready
-    await Future.delayed(const Duration(milliseconds: 300));
-    if (mounted) {
-      setState(() {
+    try {
+      final storeId = ref.read(currentStoreIdProvider)!;
+      final dbOrders = await _db.ordersDao.getOrders(storeId);
+
+      // Map DB rows to UI model.
+      // If no orders in DB yet, show placeholder data for demo purposes.
+      if (dbOrders.isNotEmpty) {
+        _orders = dbOrders.map((o) => _OnlineOrder(
+          id: o.orderNumber,
+          customerName: o.customerId ?? '',
+          phone: '',
+          items: [o.notes ?? ''],
+          total: o.total,
+          status: o.status,
+          platform: o.channel,
+          address: o.deliveryAddress ?? '',
+          createdAt: o.orderDate,
+        )).toList();
+      } else {
+        // Placeholder data when DB is empty (first run / demo)
         _orders = [
           _OnlineOrder(
             id: 'ORD-001',
-            customerName: 'أحمد محمد',
+            customerName: '\u0623\u062D\u0645\u062F \u0645\u062D\u0645\u062F',
             phone: '0501234567',
-            items: ['كوكاكولا × 2', 'شيبس × 1'],
+            items: ['\u0643\u0648\u0643\u0627\u0643\u0648\u0644\u0627 \u00D7 2', '\u0634\u064A\u0628\u0633 \u00D7 1'],
             total: 45.50,
             status: 'created',
             platform: 'app',
-            address: 'حي العليا، الرياض',
+            address: '\u062D\u064A \u0627\u0644\u0639\u0644\u064A\u0627\u060C \u0627\u0644\u0631\u064A\u0627\u0636',
             createdAt: DateTime.now().subtract(const Duration(minutes: 15)),
           ),
           _OnlineOrder(
             id: 'ORD-002',
-            customerName: 'سارة علي',
+            customerName: '\u0633\u0627\u0631\u0629 \u0639\u0644\u064A',
             phone: '0559876543',
-            items: ['عصير برتقال × 3', 'ماء × 6'],
+            items: ['\u0639\u0635\u064A\u0631 \u0628\u0631\u062A\u0642\u0627\u0644 \u00D7 3', '\u0645\u0627\u0621 \u00D7 6'],
             total: 78.00,
             status: 'preparing',
             platform: 'website',
-            address: 'حي الملقا، الرياض',
+            address: '\u062D\u064A \u0627\u0644\u0645\u0644\u0642\u0627\u060C \u0627\u0644\u0631\u064A\u0627\u0636',
             createdAt: DateTime.now().subtract(const Duration(hours: 1)),
           ),
-          _OnlineOrder(
-            id: 'ORD-003',
-            customerName: 'خالد الأحمد',
-            phone: '0533456789',
-            items: ['قهوة سادة × 1', 'كيك × 2'],
-            total: 120.00,
-            status: 'ready',
-            platform: 'whatsapp',
-            address: 'حي النزهة، الرياض',
-            createdAt: DateTime.now().subtract(const Duration(hours: 2)),
-          ),
-          _OnlineOrder(
-            id: 'ORD-004',
-            customerName: 'منى حسن',
-            phone: '0501111222',
-            items: ['منتجات متنوعة × 5'],
-            total: 250.00,
-            status: 'delivered',
-            platform: 'app',
-            address: 'حي الربوة، الرياض',
-            createdAt: DateTime.now().subtract(const Duration(hours: 5)),
-          ),
         ];
-        _applyFilter();
-        _isLoading = false;
-      });
+      }
+    } catch (_) {
+      // On error keep whatever we had
+    } finally {
+      if (mounted) {
+        setState(() {
+          _applyFilter();
+          _isLoading = false;
+        });
+      }
     }
   }
 

@@ -1,23 +1,26 @@
 /// Lite Top Products Screen
 ///
 /// Shows top selling products by revenue and quantity,
-/// with filter by period and category.
+/// queried from salesDao GROUP BY product.
 /// Supports RTL, dark mode, and responsive layouts.
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 
+import '../../providers/lite_screen_providers.dart';
+
 /// Top products report for Admin Lite
-class LiteTopProductsScreen extends StatefulWidget {
+class LiteTopProductsScreen extends ConsumerStatefulWidget {
   const LiteTopProductsScreen({super.key});
 
   @override
-  State<LiteTopProductsScreen> createState() => _LiteTopProductsScreenState();
+  ConsumerState<LiteTopProductsScreen> createState() => _LiteTopProductsScreenState();
 }
 
-class _LiteTopProductsScreenState extends State<LiteTopProductsScreen> {
+class _LiteTopProductsScreenState extends ConsumerState<LiteTopProductsScreen> {
   int _sortBy = 0; // 0=revenue, 1=quantity
 
   @override
@@ -26,6 +29,7 @@ class _LiteTopProductsScreenState extends State<LiteTopProductsScreen> {
     final size = MediaQuery.of(context).size;
     final isMobile = size.width < 600;
     final l10n = AppLocalizations.of(context)!;
+    final dataAsync = ref.watch(liteTopProductsProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -34,18 +38,41 @@ class _LiteTopProductsScreenState extends State<LiteTopProductsScreen> {
       ),
       body: Column(
         children: [
-          // Sort toggle
           _buildSortToggle(isDark, l10n),
-
-          // Products list
           Expanded(
-            child: ListView.builder(
-              padding: EdgeInsets.all(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
-              itemCount: _products.length,
-              itemBuilder: (context, index) {
-                final product = _products[index];
-                return _buildProductTile(context, product, index, isDark);
+            child: dataAsync.when(
+              data: (products) {
+                final sorted = List<TopProductData>.from(products);
+                if (_sortBy == 1) {
+                  sorted.sort((a, b) => b.quantity.compareTo(a.quantity));
+                }
+                if (sorted.isEmpty) {
+                  return Center(
+                    child: Text(l10n.noResults, style: TextStyle(color: isDark ? Colors.white54 : Theme.of(context).colorScheme.onSurfaceVariant)),
+                  );
+                }
+                return ListView.builder(
+                  padding: EdgeInsets.all(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
+                  itemCount: sorted.length,
+                  itemBuilder: (context, index) {
+                    return _buildProductTile(context, sorted[index], index, isDark);
+                  },
+                );
               },
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (_, __) => Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(l10n.errorOccurred),
+                    TextButton.icon(
+                      onPressed: () => ref.invalidate(liteTopProductsProvider),
+                      icon: const Icon(Icons.refresh_rounded),
+                      label: Text(l10n.tryAgain),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
         ],
@@ -96,7 +123,7 @@ class _LiteTopProductsScreenState extends State<LiteTopProductsScreen> {
     );
   }
 
-  Widget _buildProductTile(BuildContext context, _ProductData product, int index, bool isDark) {
+  Widget _buildProductTile(BuildContext context, TopProductData product, int index, bool isDark) {
     final rank = index + 1;
     final rankColor = rank <= 3 ? AlhaiColors.warning : (isDark ? Colors.white24 : Colors.grey.shade300);
 
@@ -112,7 +139,6 @@ class _LiteTopProductsScreenState extends State<LiteTopProductsScreen> {
       ),
       child: Row(
         children: [
-          // Rank
           Container(
             width: 32,
             height: 32,
@@ -132,7 +158,6 @@ class _LiteTopProductsScreenState extends State<LiteTopProductsScreen> {
             ),
           ),
           const SizedBox(width: AlhaiSpacing.sm),
-          // Product info
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -156,60 +181,16 @@ class _LiteTopProductsScreenState extends State<LiteTopProductsScreen> {
               ],
             ),
           ),
-          // Revenue
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                product.revenue,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                  color: isDark ? Colors.white : Colors.black87,
-                ),
-              ),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    product.trend >= 0 ? Icons.arrow_upward : Icons.arrow_downward,
-                    size: 12,
-                    color: product.trend >= 0 ? AlhaiColors.success : AlhaiColors.error,
-                  ),
-                  Text(
-                    '${product.trend.abs().toStringAsFixed(1)}%',
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: product.trend >= 0 ? AlhaiColors.success : AlhaiColors.error,
-                    ),
-                  ),
-                ],
-              ),
-            ],
+          Text(
+            product.revenue.toStringAsFixed(0),
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+              color: isDark ? Colors.white : Colors.black87,
+            ),
           ),
         ],
       ),
     );
   }
-
-  static const _products = [
-    _ProductData('Rice 10kg', '4,500', 450, 12.5),
-    _ProductData('Sugar 5kg', '3,800', 380, 8.2),
-    _ProductData('Cooking Oil 2L', '3,200', 320, -2.1),
-    _ProductData('Milk 1L', '2,800', 560, 15.0),
-    _ProductData('Bread', '2,500', 625, 3.4),
-    _ProductData('Eggs 30pc', '2,200', 220, 6.1),
-    _ProductData('Chicken 1kg', '2,000', 200, -5.3),
-    _ProductData('Tomato Paste', '1,800', 360, 1.2),
-    _ProductData('Tea 200g', '1,600', 320, 4.5),
-    _ProductData('Coffee 250g', '1,400', 140, 7.8),
-  ];
-}
-
-class _ProductData {
-  final String name;
-  final String revenue;
-  final int quantity;
-  final double trend;
-  const _ProductData(this.name, this.revenue, this.quantity, this.trend);
 }

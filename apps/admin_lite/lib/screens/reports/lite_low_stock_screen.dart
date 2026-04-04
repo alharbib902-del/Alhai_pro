@@ -1,24 +1,28 @@
 /// Lite Low Stock Alerts Screen
 ///
 /// Shows products that are below their reorder threshold,
-/// sorted by urgency. Provides quick reorder actions.
+/// sorted by urgency. Queries real data from productsDao.
 /// Supports RTL, dark mode, and responsive layouts.
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 
+import '../../providers/lite_screen_providers.dart';
+
 /// Low stock alerts report for Admin Lite
-class LiteLowStockScreen extends StatelessWidget {
+class LiteLowStockScreen extends ConsumerWidget {
   const LiteLowStockScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final size = MediaQuery.of(context).size;
     final isMobile = size.width < 600;
     final l10n = AppLocalizations.of(context)!;
+    final dataAsync = ref.watch(liteLowStockProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -26,34 +30,65 @@ class LiteLowStockScreen extends StatelessWidget {
         centerTitle: true,
         actions: [
           IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.filter_list),
-            tooltip: l10n.filter,
+            onPressed: () => ref.invalidate(liteLowStockProvider),
+            icon: const Icon(Icons.refresh),
+            tooltip: l10n.sync,
           ),
           const SizedBox(width: AlhaiSpacing.xs),
         ],
       ),
-      body: Column(
-        children: [
-          // Summary bar
-          _buildSummaryBar(context, isDark, l10n),
-
-          // Items list
-          Expanded(
-            child: ListView.builder(
-              padding: EdgeInsets.all(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
-              itemCount: _items.length,
-              itemBuilder: (context, index) {
-                return _buildStockItem(context, _items[index], isDark);
-              },
-            ),
+      body: dataAsync.when(
+        data: (items) {
+          if (items.isEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.check_circle_outline, size: 64, color: isDark ? Colors.white24 : AlhaiColors.success.withValues(alpha: 0.5)),
+                  const SizedBox(height: AlhaiSpacing.md),
+                  Text(l10n.noResults, style: TextStyle(fontSize: 16, color: isDark ? Colors.white54 : Theme.of(context).colorScheme.onSurfaceVariant)),
+                ],
+              ),
+            );
+          }
+          final outOfStockCount = items.where((p) => p.stockQty <= 0).length;
+          return Column(
+            children: [
+              _buildSummaryBar(context, isDark, l10n, items.length, outOfStockCount),
+              Expanded(
+                child: RefreshIndicator(
+                  onRefresh: () async => ref.invalidate(liteLowStockProvider),
+                  child: ListView.builder(
+                    padding: EdgeInsets.all(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
+                    itemCount: items.length,
+                    itemBuilder: (context, index) {
+                      return _buildStockItem(context, items[index], isDark);
+                    },
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (_, __) => Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(l10n.errorOccurred),
+              TextButton.icon(
+                onPressed: () => ref.invalidate(liteLowStockProvider),
+                icon: const Icon(Icons.refresh_rounded),
+                label: Text(l10n.tryAgain),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
 
-  Widget _buildSummaryBar(BuildContext context, bool isDark, AppLocalizations l10n) {
+  Widget _buildSummaryBar(BuildContext context, bool isDark, AppLocalizations l10n, int total, int outOfStock) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
       decoration: BoxDecoration(
@@ -70,7 +105,7 @@ class LiteLowStockScreen extends StatelessWidget {
           const SizedBox(width: AlhaiSpacing.xs),
           Expanded(
             child: Text(
-              '${_items.length} ${l10n.products}',
+              '$total ${l10n.products}',
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
@@ -85,7 +120,7 @@ class LiteLowStockScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
-              '${_items.where((i) => i.current == 0).length} ${l10n.outOfStock}',
+              '$outOfStock ${l10n.outOfStock}',
               style: const TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
@@ -98,11 +133,16 @@ class LiteLowStockScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStockItem(BuildContext context, _StockItem item, bool isDark) {
-    final urgencyColor = item.current == 0
+  Widget _buildStockItem(BuildContext context, dynamic product, bool isDark) {
+    final stockQty = (product.stockQty is int) ? (product.stockQty as int).toDouble() : product.stockQty as double;
+    final minQty = (product.minQty is int) ? (product.minQty as int).toDouble() : product.minQty as double;
+    final current = stockQty.toInt();
+    final threshold = minQty.toInt();
+
+    final urgencyColor = current == 0
         ? AlhaiColors.error
-        : (item.current <= 3 ? AlhaiColors.warning : AlhaiColors.info);
-    final fillRatio = item.threshold > 0 ? (item.current / item.threshold).clamp(0.0, 1.0) : 0.0;
+        : (current <= 3 ? AlhaiColors.warning : AlhaiColors.info);
+    final fillRatio = threshold > 0 ? (current / threshold).clamp(0.0, 1.0) : 0.0;
 
     return Container(
       margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
@@ -127,7 +167,7 @@ class LiteLowStockScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(
-                  item.current == 0 ? Icons.error_outline : Icons.warning_amber,
+                  current == 0 ? Icons.error_outline : Icons.warning_amber,
                   color: urgencyColor,
                   size: 20,
                 ),
@@ -138,7 +178,7 @@ class LiteLowStockScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      item.name,
+                      product.name as String,
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
@@ -146,7 +186,7 @@ class LiteLowStockScreen extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      item.sku,
+                      product.sku as String? ?? product.barcode as String? ?? '',
                       style: TextStyle(
                         fontSize: 12,
                         color: isDark ? Colors.white38 : Theme.of(context).colorScheme.onSurfaceVariant,
@@ -159,7 +199,7 @@ class LiteLowStockScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    '${item.current}/${item.threshold}',
+                    '$current/$threshold',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 15,
@@ -167,7 +207,7 @@ class LiteLowStockScreen extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    'units',
+                    product.unit as String? ?? 'units',
                     style: TextStyle(
                       fontSize: 11,
                       color: isDark ? Colors.white38 : Colors.black45,
@@ -178,7 +218,6 @@ class LiteLowStockScreen extends StatelessWidget {
             ],
           ),
           const SizedBox(height: AlhaiSpacing.sm),
-          // Stock level bar
           ClipRRect(
             borderRadius: BorderRadius.circular(3),
             child: LinearProgressIndicator(
@@ -192,23 +231,4 @@ class LiteLowStockScreen extends StatelessWidget {
       ),
     );
   }
-
-  static const _items = [
-    _StockItem('Rice 5kg', 'SKU-001', 0, 10),
-    _StockItem('Sugar 2kg', 'SKU-002', 2, 15),
-    _StockItem('Cooking Oil 1L', 'SKU-003', 3, 12),
-    _StockItem('Lentils 1kg', 'SKU-004', 0, 8),
-    _StockItem('Flour 2kg', 'SKU-005', 4, 10),
-    _StockItem('Butter 500g', 'SKU-006', 5, 12),
-    _StockItem('Cheese 200g', 'SKU-007', 1, 8),
-    _StockItem('Tomato Paste 400g', 'SKU-008', 3, 10),
-  ];
-}
-
-class _StockItem {
-  final String name;
-  final String sku;
-  final int current;
-  final int threshold;
-  const _StockItem(this.name, this.sku, this.current, this.threshold);
 }

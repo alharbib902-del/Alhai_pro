@@ -23029,6 +23029,672 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'المتاجر'**
   String get stores;
+
+  /// No description provided for @distributorPortal.
+  ///
+  /// In ar, this message translates to:
+  /// **'بوابة الموزع'**
+  String get distributorPortal;
+
+  /// No description provided for @distributorDashboard.
+  ///
+  /// In ar, this message translates to:
+  /// **'لوحة التحكم'**
+  String get distributorDashboard;
+
+  /// No description provided for @distributorDashboardSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'نظرة عامة على أداء التوزيع'**
+  String get distributorDashboardSubtitle;
+
+  /// No description provided for @distributorOrders.
+  ///
+  /// In ar, this message translates to:
+  /// **'الطلبات الواردة'**
+  String get distributorOrders;
+
+  /// No description provided for @distributorProducts.
+  ///
+  /// In ar, this message translates to:
+  /// **'كتالوج المنتجات'**
+  String get distributorProducts;
+
+  /// No description provided for @distributorPricing.
+  ///
+  /// In ar, this message translates to:
+  /// **'إدارة الأسعار'**
+  String get distributorPricing;
+
+  /// No description provided for @distributorReports.
+  ///
+  /// In ar, this message translates to:
+  /// **'التقارير'**
+  String get distributorReports;
+
+  /// No description provided for @distributorSettings.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإعدادات'**
+  String get distributorSettings;
+
+  /// No description provided for @distributorTotalOrders.
+  ///
+  /// In ar, this message translates to:
+  /// **'إجمالي الطلبات'**
+  String get distributorTotalOrders;
+
+  /// No description provided for @distributorPendingOrders.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلبات منتظرة'**
+  String get distributorPendingOrders;
+
+  /// No description provided for @distributorApprovedOrders.
+  ///
+  /// In ar, this message translates to:
+  /// **'تمت الموافقة'**
+  String get distributorApprovedOrders;
+
+  /// No description provided for @distributorRevenue.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإيرادات'**
+  String get distributorRevenue;
+
+  /// No description provided for @distributorMonthlySales.
+  ///
+  /// In ar, this message translates to:
+  /// **'المبيعات الشهرية'**
+  String get distributorMonthlySales;
+
+  /// No description provided for @distributorRecentOrders.
+  ///
+  /// In ar, this message translates to:
+  /// **'آخر الطلبات'**
+  String get distributorRecentOrders;
+
+  /// No description provided for @distributorOrderNumber.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم الطلب'**
+  String get distributorOrderNumber;
+
+  /// No description provided for @distributorStore.
+  ///
+  /// In ar, this message translates to:
+  /// **'المتجر'**
+  String get distributorStore;
+
+  /// No description provided for @distributorDate.
+  ///
+  /// In ar, this message translates to:
+  /// **'التاريخ'**
+  String get distributorDate;
+
+  /// No description provided for @distributorAmount.
+  ///
+  /// In ar, this message translates to:
+  /// **'المبلغ'**
+  String get distributorAmount;
+
+  /// No description provided for @distributorStatusPending.
+  ///
+  /// In ar, this message translates to:
+  /// **'منتظر'**
+  String get distributorStatusPending;
+
+  /// No description provided for @distributorStatusApproved.
+  ///
+  /// In ar, this message translates to:
+  /// **'موافق'**
+  String get distributorStatusApproved;
+
+  /// No description provided for @distributorStatusReceived.
+  ///
+  /// In ar, this message translates to:
+  /// **'مستلم'**
+  String get distributorStatusReceived;
+
+  /// No description provided for @distributorStatusRejected.
+  ///
+  /// In ar, this message translates to:
+  /// **'مرفوض'**
+  String get distributorStatusRejected;
+
+  /// No description provided for @distributorStatusDraft.
+  ///
+  /// In ar, this message translates to:
+  /// **'مسودة'**
+  String get distributorStatusDraft;
+
+  /// No description provided for @distributorNoOrders.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد طلبات'**
+  String get distributorNoOrders;
+
+  /// No description provided for @distributorAllOrders.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكل'**
+  String get distributorAllOrders;
+
+  /// No description provided for @distributorPendingTab.
+  ///
+  /// In ar, this message translates to:
+  /// **'منتظرة'**
+  String get distributorPendingTab;
+
+  /// No description provided for @distributorApprovedTab.
+  ///
+  /// In ar, this message translates to:
+  /// **'موافق عليها'**
+  String get distributorApprovedTab;
+
+  /// No description provided for @distributorRejectedTab.
+  ///
+  /// In ar, this message translates to:
+  /// **'مرفوضة'**
+  String get distributorRejectedTab;
+
+  /// No description provided for @distributorAddProduct.
+  ///
+  /// In ar, this message translates to:
+  /// **'إضافة منتج'**
+  String get distributorAddProduct;
+
+  /// No description provided for @distributorSearchHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'ابحث بالاسم أو الباركود...'**
+  String get distributorSearchHint;
+
+  /// No description provided for @distributorNoProducts.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد منتجات'**
+  String get distributorNoProducts;
+
+  /// No description provided for @distributorChangeSearch.
+  ///
+  /// In ar, this message translates to:
+  /// **'جرب تغيير معايير البحث'**
+  String get distributorChangeSearch;
+
+  /// No description provided for @distributorBarcode.
+  ///
+  /// In ar, this message translates to:
+  /// **'الباركود'**
+  String get distributorBarcode;
+
+  /// No description provided for @distributorCategory.
+  ///
+  /// In ar, this message translates to:
+  /// **'التصنيف'**
+  String get distributorCategory;
+
+  /// No description provided for @distributorStock.
+  ///
+  /// In ar, this message translates to:
+  /// **'المخزون'**
+  String get distributorStock;
+
+  /// No description provided for @distributorStockEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'نفذ'**
+  String get distributorStockEmpty;
+
+  /// No description provided for @distributorStockLow.
+  ///
+  /// In ar, this message translates to:
+  /// **'منخفض'**
+  String get distributorStockLow;
+
+  /// No description provided for @distributorActions.
+  ///
+  /// In ar, this message translates to:
+  /// **'إجراءات'**
+  String get distributorActions;
+
+  /// No description provided for @distributorEditProduct.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعديل {name}'**
+  String distributorEditProduct(String name);
+
+  /// No description provided for @distributorCurrentPrice.
+  ///
+  /// In ar, this message translates to:
+  /// **'السعر الحالي'**
+  String get distributorCurrentPrice;
+
+  /// No description provided for @distributorNewPrice.
+  ///
+  /// In ar, this message translates to:
+  /// **'السعر الجديد'**
+  String get distributorNewPrice;
+
+  /// No description provided for @distributorLastUpdated.
+  ///
+  /// In ar, this message translates to:
+  /// **'آخر تحديث'**
+  String get distributorLastUpdated;
+
+  /// No description provided for @distributorDifference.
+  ///
+  /// In ar, this message translates to:
+  /// **'الفرق'**
+  String get distributorDifference;
+
+  /// No description provided for @distributorTotalProducts.
+  ///
+  /// In ar, this message translates to:
+  /// **'إجمالي المنتجات'**
+  String get distributorTotalProducts;
+
+  /// No description provided for @distributorPendingChanges.
+  ///
+  /// In ar, this message translates to:
+  /// **'تغييرات معلقة'**
+  String get distributorPendingChanges;
+
+  /// No description provided for @distributorProductsWillUpdate.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} منتج سيتم تحديث سعره'**
+  String distributorProductsWillUpdate(int count);
+
+  /// No description provided for @distributorSaveChanges.
+  ///
+  /// In ar, this message translates to:
+  /// **'حفظ التغييرات'**
+  String get distributorSaveChanges;
+
+  /// No description provided for @distributorChangesSaved.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم حفظ التغييرات بنجاح'**
+  String get distributorChangesSaved;
+
+  /// No description provided for @distributorChangesCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} تغيير'**
+  String distributorChangesCount(int count);
+
+  /// No description provided for @distributorExport.
+  ///
+  /// In ar, this message translates to:
+  /// **'تصدير'**
+  String get distributorExport;
+
+  /// No description provided for @distributorExportReport.
+  ///
+  /// In ar, this message translates to:
+  /// **'تصدير التقرير'**
+  String get distributorExportReport;
+
+  /// No description provided for @distributorDailySales.
+  ///
+  /// In ar, this message translates to:
+  /// **'المبيعات اليومية'**
+  String get distributorDailySales;
+
+  /// No description provided for @distributorOrderCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'عدد الطلبات'**
+  String get distributorOrderCount;
+
+  /// No description provided for @distributorAvgOrderValue.
+  ///
+  /// In ar, this message translates to:
+  /// **'متوسط قيمة الطلب'**
+  String get distributorAvgOrderValue;
+
+  /// No description provided for @distributorTopProduct.
+  ///
+  /// In ar, this message translates to:
+  /// **'أفضل منتج'**
+  String get distributorTopProduct;
+
+  /// No description provided for @distributorTopProducts.
+  ///
+  /// In ar, this message translates to:
+  /// **'أفضل المنتجات'**
+  String get distributorTopProducts;
+
+  /// No description provided for @distributorOrdersUnit.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلب'**
+  String get distributorOrdersUnit;
+
+  /// No description provided for @distributorPeriodDay.
+  ///
+  /// In ar, this message translates to:
+  /// **'يوم'**
+  String get distributorPeriodDay;
+
+  /// No description provided for @distributorPeriodWeek.
+  ///
+  /// In ar, this message translates to:
+  /// **'أسبوع'**
+  String get distributorPeriodWeek;
+
+  /// No description provided for @distributorPeriodMonth.
+  ///
+  /// In ar, this message translates to:
+  /// **'شهر'**
+  String get distributorPeriodMonth;
+
+  /// No description provided for @distributorPeriodYear.
+  ///
+  /// In ar, this message translates to:
+  /// **'سنة'**
+  String get distributorPeriodYear;
+
+  /// No description provided for @distributorCompanyInfo.
+  ///
+  /// In ar, this message translates to:
+  /// **'معلومات الشركة'**
+  String get distributorCompanyInfo;
+
+  /// No description provided for @distributorCompanyName.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسم الشركة'**
+  String get distributorCompanyName;
+
+  /// No description provided for @distributorPhone.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم الهاتف'**
+  String get distributorPhone;
+
+  /// No description provided for @distributorEmail.
+  ///
+  /// In ar, this message translates to:
+  /// **'البريد الإلكتروني'**
+  String get distributorEmail;
+
+  /// No description provided for @distributorAddress.
+  ///
+  /// In ar, this message translates to:
+  /// **'العنوان'**
+  String get distributorAddress;
+
+  /// No description provided for @distributorNotificationSettings.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعدادات الإشعارات'**
+  String get distributorNotificationSettings;
+
+  /// No description provided for @distributorNotificationChannels.
+  ///
+  /// In ar, this message translates to:
+  /// **'قنوات الإشعارات'**
+  String get distributorNotificationChannels;
+
+  /// No description provided for @distributorEmailNotifications.
+  ///
+  /// In ar, this message translates to:
+  /// **'البريد الإلكتروني'**
+  String get distributorEmailNotifications;
+
+  /// No description provided for @distributorPushNotifications.
+  ///
+  /// In ar, this message translates to:
+  /// **'إشعارات الجوال'**
+  String get distributorPushNotifications;
+
+  /// No description provided for @distributorSmsNotifications.
+  ///
+  /// In ar, this message translates to:
+  /// **'رسائل SMS'**
+  String get distributorSmsNotifications;
+
+  /// No description provided for @distributorNotificationTypes.
+  ///
+  /// In ar, this message translates to:
+  /// **'أنواع الإشعارات'**
+  String get distributorNotificationTypes;
+
+  /// No description provided for @distributorNewOrderNotification.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلبات جديدة'**
+  String get distributorNewOrderNotification;
+
+  /// No description provided for @distributorOrderStatusNotification.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحديث حالة الطلب'**
+  String get distributorOrderStatusNotification;
+
+  /// No description provided for @distributorPaymentNotification.
+  ///
+  /// In ar, this message translates to:
+  /// **'إشعارات الدفع'**
+  String get distributorPaymentNotification;
+
+  /// No description provided for @distributorDeliverySettings.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعدادات التسليم'**
+  String get distributorDeliverySettings;
+
+  /// No description provided for @distributorDeliveryZones.
+  ///
+  /// In ar, this message translates to:
+  /// **'مناطق التوصيل'**
+  String get distributorDeliveryZones;
+
+  /// No description provided for @distributorDeliveryZonesHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدخل المدن مفصولة بفاصلة'**
+  String get distributorDeliveryZonesHint;
+
+  /// No description provided for @distributorMinOrder.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحد الأدنى للطلب (ر.س)'**
+  String get distributorMinOrder;
+
+  /// No description provided for @distributorDeliveryFee.
+  ///
+  /// In ar, this message translates to:
+  /// **'رسوم التوصيل (ر.س)'**
+  String get distributorDeliveryFee;
+
+  /// No description provided for @distributorFreeDelivery.
+  ///
+  /// In ar, this message translates to:
+  /// **'توصيل مجاني'**
+  String get distributorFreeDelivery;
+
+  /// No description provided for @distributorFreeDeliveryMin.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحد الأدنى للتوصيل المجاني (ر.س)'**
+  String get distributorFreeDeliveryMin;
+
+  /// No description provided for @distributorSaveSettings.
+  ///
+  /// In ar, this message translates to:
+  /// **'حفظ الإعدادات'**
+  String get distributorSaveSettings;
+
+  /// No description provided for @distributorSettingsSaved.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم حفظ الإعدادات بنجاح'**
+  String get distributorSettingsSaved;
+
+  /// No description provided for @distributorPurchaseOrder.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلب شراء #{number}'**
+  String distributorPurchaseOrder(String number);
+
+  /// No description provided for @distributorProposedAmount.
+  ///
+  /// In ar, this message translates to:
+  /// **'المبلغ المقترح:'**
+  String get distributorProposedAmount;
+
+  /// No description provided for @distributorOrderItems.
+  ///
+  /// In ar, this message translates to:
+  /// **'بنود الطلب'**
+  String get distributorOrderItems;
+
+  /// No description provided for @distributorProductCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} منتجات'**
+  String distributorProductCount(int count);
+
+  /// No description provided for @distributorSuggestedPrice.
+  ///
+  /// In ar, this message translates to:
+  /// **'السعر المقترح'**
+  String get distributorSuggestedPrice;
+
+  /// No description provided for @distributorYourPrice.
+  ///
+  /// In ar, this message translates to:
+  /// **'سعرك'**
+  String get distributorYourPrice;
+
+  /// No description provided for @distributorYourTotal.
+  ///
+  /// In ar, this message translates to:
+  /// **'إجمالي سعرك'**
+  String get distributorYourTotal;
+
+  /// No description provided for @distributorNotesForStore.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملاحظات للمتجر'**
+  String get distributorNotesForStore;
+
+  /// No description provided for @distributorNotesHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'أضف ملاحظات حول العرض (اختياري)...'**
+  String get distributorNotesHint;
+
+  /// No description provided for @distributorRejectOrder.
+  ///
+  /// In ar, this message translates to:
+  /// **'رفض الطلب'**
+  String get distributorRejectOrder;
+
+  /// No description provided for @distributorAcceptSendQuote.
+  ///
+  /// In ar, this message translates to:
+  /// **'قبول وإرسال العرض'**
+  String get distributorAcceptSendQuote;
+
+  /// No description provided for @distributorOrderRejected.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم رفض الطلب بنجاح'**
+  String get distributorOrderRejected;
+
+  /// No description provided for @distributorOrderAccepted.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم قبول الطلب وإرسال العرض بمبلغ {amount} ريال'**
+  String distributorOrderAccepted(String amount);
+
+  /// No description provided for @distributorLowerThanProposed.
+  ///
+  /// In ar, this message translates to:
+  /// **'{percent}% أقل من المقترح'**
+  String distributorLowerThanProposed(String percent);
+
+  /// No description provided for @distributorHigherThanProposed.
+  ///
+  /// In ar, this message translates to:
+  /// **'+{percent}% أعلى من المقترح'**
+  String distributorHigherThanProposed(String percent);
+
+  /// No description provided for @distributorComingSoon.
+  ///
+  /// In ar, this message translates to:
+  /// **'قريباً'**
+  String get distributorComingSoon;
+
+  /// No description provided for @distributorLoadError.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدث خطأ في تحميل البيانات'**
+  String get distributorLoadError;
+
+  /// No description provided for @distributorRetry.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعادة المحاولة'**
+  String get distributorRetry;
+
+  /// No description provided for @distributorLogin.
+  ///
+  /// In ar, this message translates to:
+  /// **'تسجيل دخول الموزع'**
+  String get distributorLogin;
+
+  /// No description provided for @distributorLoginSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدخل بريدك الإلكتروني وكلمة المرور'**
+  String get distributorLoginSubtitle;
+
+  /// No description provided for @distributorEmailLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'البريد الإلكتروني'**
+  String get distributorEmailLabel;
+
+  /// No description provided for @distributorPasswordLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'كلمة المرور'**
+  String get distributorPasswordLabel;
+
+  /// No description provided for @distributorLoginButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'تسجيل الدخول'**
+  String get distributorLoginButton;
+
+  /// No description provided for @distributorLoginError.
+  ///
+  /// In ar, this message translates to:
+  /// **'فشل تسجيل الدخول'**
+  String get distributorLoginError;
+
+  /// No description provided for @distributorLogout.
+  ///
+  /// In ar, this message translates to:
+  /// **'تسجيل الخروج'**
+  String get distributorLogout;
+
+  /// No description provided for @distributorSar.
+  ///
+  /// In ar, this message translates to:
+  /// **'ر.س'**
+  String get distributorSar;
+
+  /// No description provided for @distributorRiyal.
+  ///
+  /// In ar, this message translates to:
+  /// **'ريال'**
+  String get distributorRiyal;
 }
 
 class _AppLocalizationsDelegate

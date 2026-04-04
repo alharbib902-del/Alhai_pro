@@ -1,23 +1,30 @@
 /// Lite Stock Adjustment Screen
 ///
-/// Quick stock adjustments with search, current quantity display,
-/// and increment/decrement controls.
+/// Quick stock adjustments with search, queried from productsDao
+/// with real updateStock() and inventoryDao recording.
 /// Supports RTL, dark mode, and responsive layouts.
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:uuid/uuid.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
+import 'package:alhai_database/alhai_database.dart';
+import 'package:alhai_auth/alhai_auth.dart';
+import 'package:get_it/get_it.dart';
+
+import '../../providers/lite_screen_providers.dart';
 
 /// Quick stock adjustment screen for Admin Lite
-class LiteStockAdjustmentScreen extends StatefulWidget {
+class LiteStockAdjustmentScreen extends ConsumerStatefulWidget {
   const LiteStockAdjustmentScreen({super.key});
 
   @override
-  State<LiteStockAdjustmentScreen> createState() => _LiteStockAdjustmentScreenState();
+  ConsumerState<LiteStockAdjustmentScreen> createState() => _LiteStockAdjustmentScreenState();
 }
 
-class _LiteStockAdjustmentScreenState extends State<LiteStockAdjustmentScreen> {
+class _LiteStockAdjustmentScreenState extends ConsumerState<LiteStockAdjustmentScreen> {
   final _searchController = TextEditingController();
   String _searchQuery = '';
 
@@ -27,9 +34,32 @@ class _LiteStockAdjustmentScreenState extends State<LiteStockAdjustmentScreen> {
     super.dispose();
   }
 
-  List<_StockProduct> get _filteredProducts {
-    if (_searchQuery.isEmpty) return _products;
-    return _products.where((p) => p.name.toLowerCase().contains(_searchQuery.toLowerCase())).toList();
+  List<ProductsTableData> _filter(List<ProductsTableData> products) {
+    if (_searchQuery.isEmpty) return products;
+    final q = _searchQuery.toLowerCase();
+    return products.where((p) =>
+        p.name.toLowerCase().contains(q) ||
+        (p.barcode?.toLowerCase().contains(q) ?? false) ||
+        (p.sku?.toLowerCase().contains(q) ?? false)
+    ).toList();
+  }
+
+  Future<void> _adjustStock(ProductsTableData product, double delta) async {
+    final db = GetIt.I<AppDatabase>();
+    final storeId = ref.read(currentStoreIdProvider);
+    final newQty = product.stockQty + delta;
+    if (newQty < 0) return;
+
+    await db.productsDao.updateStock(product.id, newQty);
+    await db.inventoryDao.recordAdjustment(
+      id: const Uuid().v4(),
+      productId: product.id,
+      storeId: storeId ?? product.storeId,
+      newQty: newQty,
+      previousQty: product.stockQty,
+      reason: 'Admin Lite adjustment',
+    );
+    ref.invalidate(liteAllProductsProvider);
   }
 
   @override
@@ -38,6 +68,7 @@ class _LiteStockAdjustmentScreenState extends State<LiteStockAdjustmentScreen> {
     final size = MediaQuery.of(context).size;
     final isMobile = size.width < 600;
     final l10n = AppLocalizations.of(context)!;
+    final dataAsync = ref.watch(liteAllProductsProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -46,7 +77,6 @@ class _LiteStockAdjustmentScreenState extends State<LiteStockAdjustmentScreen> {
       ),
       body: Column(
         children: [
-          // Search bar
           Padding(
             padding: EdgeInsets.all(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
             child: TextField(
@@ -56,40 +86,40 @@ class _LiteStockAdjustmentScreenState extends State<LiteStockAdjustmentScreen> {
                 hintText: l10n.searchHint,
                 prefixIcon: const Icon(Icons.search),
                 suffixIcon: _searchQuery.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Icons.clear),
-                        onPressed: () {
-                          _searchController.clear();
-                          setState(() => _searchQuery = '');
-                        },
-                      )
+                    ? IconButton(icon: const Icon(Icons.clear), onPressed: () { _searchController.clear(); setState(() => _searchQuery = ''); })
                     : null,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(
-                    color: isDark ? Colors.white24 : Theme.of(context).colorScheme.outlineVariant,
-                  ),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(
-                    color: isDark ? Colors.white12 : Theme.of(context).colorScheme.outlineVariant,
-                  ),
-                ),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: isDark ? Colors.white24 : Theme.of(context).colorScheme.outlineVariant)),
+                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: isDark ? Colors.white12 : Theme.of(context).colorScheme.outlineVariant)),
                 filled: true,
                 fillColor: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.white,
               ),
             ),
           ),
-
-          // Products list
           Expanded(
-            child: ListView.builder(
-              padding: EdgeInsets.symmetric(horizontal: isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
-              itemCount: _filteredProducts.length,
-              itemBuilder: (context, index) {
-                return _buildProductTile(context, _filteredProducts[index], isDark, l10n);
+            child: dataAsync.when(
+              data: (products) {
+                final filtered = _filter(products);
+                if (filtered.isEmpty) {
+                  return Center(child: Text(l10n.noResults, style: TextStyle(color: isDark ? Colors.white54 : Theme.of(context).colorScheme.onSurfaceVariant)));
+                }
+                return ListView.builder(
+                  padding: EdgeInsets.symmetric(horizontal: isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
+                  itemCount: filtered.length,
+                  itemBuilder: (context, index) {
+                    return _buildProductTile(context, filtered[index], isDark, l10n);
+                  },
+                );
               },
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (_, __) => Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(l10n.errorOccurred),
+                    TextButton.icon(onPressed: () => ref.invalidate(liteAllProductsProvider), icon: const Icon(Icons.refresh_rounded), label: Text(l10n.tryAgain)),
+                  ],
+                ),
+              ),
             ),
           ),
         ],
@@ -97,10 +127,12 @@ class _LiteStockAdjustmentScreenState extends State<LiteStockAdjustmentScreen> {
     );
   }
 
-  Widget _buildProductTile(BuildContext context, _StockProduct product, bool isDark, AppLocalizations l10n) {
-    final stockColor = product.stock == 0
+  Widget _buildProductTile(BuildContext context, ProductsTableData product, bool isDark, AppLocalizations l10n) {
+    final stock = product.stockQty.toInt();
+    final threshold = product.minQty.toInt();
+    final stockColor = stock == 0
         ? AlhaiColors.error
-        : (product.stock <= product.threshold ? AlhaiColors.warning : AlhaiColors.success);
+        : (stock <= threshold ? AlhaiColors.warning : AlhaiColors.success);
 
     return Container(
       margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
@@ -108,19 +140,13 @@ class _LiteStockAdjustmentScreenState extends State<LiteStockAdjustmentScreen> {
       decoration: BoxDecoration(
         color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.white,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: isDark ? Colors.white12 : Theme.of(context).colorScheme.outlineVariant,
-        ),
+        border: Border.all(color: isDark ? Colors.white12 : Theme.of(context).colorScheme.outlineVariant),
       ),
       child: Row(
         children: [
           Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: stockColor.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(10),
-            ),
+            width: 44, height: 44,
+            decoration: BoxDecoration(color: stockColor.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(10)),
             child: Icon(Icons.inventory_2, color: stockColor, size: 22),
           ),
           const SizedBox(width: AlhaiSpacing.sm),
@@ -128,37 +154,16 @@ class _LiteStockAdjustmentScreenState extends State<LiteStockAdjustmentScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  product.name,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.white : Colors.black87,
-                  ),
-                ),
+                Text(product.name, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: isDark ? Colors.white : Colors.black87)),
                 Row(
                   children: [
-                    Text(
-                      '${l10n.stock}: ',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: isDark ? Colors.white38 : Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                    Text(
-                      '${product.stock}',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: stockColor,
-                      ),
-                    ),
+                    Text('${l10n.stock}: ', style: TextStyle(fontSize: 12, color: isDark ? Colors.white38 : Theme.of(context).colorScheme.onSurfaceVariant)),
+                    Text('$stock', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: stockColor)),
                   ],
                 ),
               ],
             ),
           ),
-          // Adjustment controls
           Container(
             decoration: BoxDecoration(
               color: isDark ? Colors.white.withValues(alpha: 0.08) : Theme.of(context).colorScheme.surfaceContainerLow,
@@ -168,7 +173,7 @@ class _LiteStockAdjustmentScreenState extends State<LiteStockAdjustmentScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 IconButton(
-                  onPressed: () {},
+                  onPressed: stock > 0 ? () => _adjustStock(product, -1) : null,
                   icon: const Icon(Icons.remove, size: 16),
                   constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
                   padding: EdgeInsets.zero,
@@ -176,17 +181,10 @@ class _LiteStockAdjustmentScreenState extends State<LiteStockAdjustmentScreen> {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xxs),
-                  child: Text(
-                    '${product.stock}',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                      color: isDark ? Colors.white : Colors.black87,
-                    ),
-                  ),
+                  child: Text('$stock', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: isDark ? Colors.white : Colors.black87)),
                 ),
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () => _adjustStock(product, 1),
                   icon: const Icon(Icons.add, size: 16),
                   constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
                   padding: EdgeInsets.zero,
@@ -199,24 +197,4 @@ class _LiteStockAdjustmentScreenState extends State<LiteStockAdjustmentScreen> {
       ),
     );
   }
-
-  static const _products = [
-    _StockProduct('Rice 10kg', 45, 10),
-    _StockProduct('Sugar 5kg', 22, 15),
-    _StockProduct('Cooking Oil 2L', 8, 12),
-    _StockProduct('Milk 1L', 35, 20),
-    _StockProduct('Bread', 50, 30),
-    _StockProduct('Eggs 30pc', 12, 10),
-    _StockProduct('Chicken 1kg', 0, 8),
-    _StockProduct('Tomato Paste 400g', 18, 10),
-    _StockProduct('Tea 200g', 25, 10),
-    _StockProduct('Coffee 250g', 3, 8),
-  ];
-}
-
-class _StockProduct {
-  final String name;
-  final int stock;
-  final int threshold;
-  const _StockProduct(this.name, this.stock, this.threshold);
 }

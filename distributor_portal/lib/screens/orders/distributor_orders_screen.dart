@@ -1,53 +1,34 @@
 /// Distributor Orders Screen
 ///
 /// Shows incoming purchase orders from stores with status filtering.
+/// Data from Supabase via Riverpod providers.
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
+import 'package:alhai_l10n/alhai_l10n.dart';
+import 'package:intl/intl.dart' show NumberFormat;
 
-// Mock order model
-class _MockOrder {
-  final String id;
-  final String number;
-  final String storeName;
-  final double total;
-  final String status;
-  final DateTime date;
+import '../../data/models.dart';
+import '../../providers/distributor_providers.dart';
 
-  const _MockOrder({
-    required this.id,
-    required this.number,
-    required this.storeName,
-    required this.total,
-    required this.status,
-    required this.date,
-  });
-}
-
-class DistributorOrdersScreen extends StatefulWidget {
+class DistributorOrdersScreen extends ConsumerStatefulWidget {
   const DistributorOrdersScreen({super.key});
 
   @override
-  State<DistributorOrdersScreen> createState() =>
+  ConsumerState<DistributorOrdersScreen> createState() =>
       _DistributorOrdersScreenState();
 }
 
-class _DistributorOrdersScreenState extends State<DistributorOrdersScreen>
+class _DistributorOrdersScreenState
+    extends ConsumerState<DistributorOrdersScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
-  static final _mockOrders = [
-    _MockOrder(id: '1', number: 'PO-1001', storeName: 'متجر الرياض المركزي', total: 15000, status: 'sent', date: DateTime(2026, 2, 22)),
-    _MockOrder(id: '2', number: 'PO-1002', storeName: 'سوبر ماركت جدة', total: 8500, status: 'approved', date: DateTime(2026, 2, 21)),
-    _MockOrder(id: '3', number: 'PO-1003', storeName: 'بقالة الدمام', total: 3200, status: 'received', date: DateTime(2026, 2, 20)),
-    _MockOrder(id: '4', number: 'PO-1004', storeName: 'متجر المدينة', total: 12000, status: 'sent', date: DateTime(2026, 2, 19)),
-    _MockOrder(id: '5', number: 'PO-1005', storeName: 'هايبر الخبر', total: 22000, status: 'approved', date: DateTime(2026, 2, 18)),
-    _MockOrder(id: '6', number: 'PO-1006', storeName: 'متجر تبوك', total: 5600, status: 'rejected', date: DateTime(2026, 2, 17)),
-    _MockOrder(id: '7', number: 'PO-1007', storeName: 'سوبر ماركت أبها', total: 9800, status: 'sent', date: DateTime(2026, 2, 16)),
-    _MockOrder(id: '8', number: 'PO-1008', storeName: 'بقالة نجران', total: 4500, status: 'received', date: DateTime(2026, 2, 15)),
-  ];
+  // Maps tab index to status filter value (null = all)
+  static const _tabStatuses = <String?>[null, 'sent', 'approved', 'rejected'];
 
   @override
   void initState() {
@@ -61,24 +42,10 @@ class _DistributorOrdersScreenState extends State<DistributorOrdersScreen>
     super.dispose();
   }
 
-  List<_MockOrder> _filterOrders(int tabIndex) {
-    switch (tabIndex) {
-      case 1:
-        return _mockOrders.where((o) => o.status == 'sent').toList();
-      case 2:
-        return _mockOrders.where((o) => o.status == 'approved').toList();
-      case 3:
-        return _mockOrders
-            .where((o) => o.status == 'rejected')
-            .toList();
-      default:
-        return _mockOrders;
-    }
-  }
-
   Color _statusColor(String status) {
     switch (status) {
       case 'sent':
+      case 'draft':
         return Colors.blue;
       case 'approved':
         return Colors.green;
@@ -91,18 +58,18 @@ class _DistributorOrdersScreenState extends State<DistributorOrdersScreen>
     }
   }
 
-  String _statusLabel(String status) {
+  String _statusLabel(String status, AppLocalizations? l10n) {
     switch (status) {
       case 'draft':
-        return 'مسودة';
+        return l10n?.distributorStatusDraft ?? 'Draft';
       case 'sent':
-        return 'منتظر';
+        return l10n?.distributorStatusPending ?? 'Pending';
       case 'approved':
-        return 'موافق';
+        return l10n?.distributorStatusApproved ?? 'Approved';
       case 'received':
-        return 'مستلم';
+        return l10n?.distributorStatusReceived ?? 'Received';
       case 'rejected':
-        return 'مرفوض';
+        return l10n?.distributorStatusRejected ?? 'Rejected';
       default:
         return status;
     }
@@ -112,6 +79,10 @@ class _DistributorOrdersScreenState extends State<DistributorOrdersScreen>
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isWide = MediaQuery.sizeOf(context).width > 900;
+    final l10n = AppLocalizations.of(context);
+
+    final statusFilter = _tabStatuses[_tabController.index];
+    final ordersAsync = ref.watch(ordersProvider(statusFilter));
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -120,9 +91,10 @@ class _DistributorOrdersScreenState extends State<DistributorOrdersScreen>
         children: [
           // Header
           Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.lg, AlhaiSpacing.lg, AlhaiSpacing.lg, 0),
+            padding: const EdgeInsetsDirectional.fromSTEB(
+                AlhaiSpacing.lg, AlhaiSpacing.lg, AlhaiSpacing.lg, 0),
             child: Text(
-              'الطلبات الواردة',
+              l10n?.distributorOrders ?? 'Incoming Orders',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -148,11 +120,11 @@ class _DistributorOrdersScreenState extends State<DistributorOrdersScreen>
               indicatorColor: AppColors.primary,
               indicatorSize: TabBarIndicatorSize.label,
               dividerColor: Colors.transparent,
-              tabs: const [
-                Tab(text: 'الكل'),
-                Tab(text: 'منتظرة'),
-                Tab(text: 'موافق عليها'),
-                Tab(text: 'مرفوضة'),
+              tabs: [
+                Tab(text: l10n?.distributorAllOrders ?? 'All'),
+                Tab(text: l10n?.distributorPendingTab ?? 'Pending'),
+                Tab(text: l10n?.distributorApprovedTab ?? 'Approved'),
+                Tab(text: l10n?.distributorRejectedTab ?? 'Rejected'),
               ],
             ),
           ),
@@ -160,9 +132,28 @@ class _DistributorOrdersScreenState extends State<DistributorOrdersScreen>
 
           // Orders list
           Expanded(
-            child: Builder(
-              builder: (context) {
-                final orders = _filterOrders(_tabController.index);
+            child: ordersAsync.when(
+              loading: () =>
+                  const Center(child: CircularProgressIndicator()),
+              error: (e, _) => Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.error_outline, size: 48,
+                        color: isDark ? Colors.white30 : AppColors.textMuted),
+                    const SizedBox(height: AlhaiSpacing.md),
+                    Text(l10n?.distributorLoadError ?? 'Error loading data'),
+                    const SizedBox(height: AlhaiSpacing.md),
+                    FilledButton.icon(
+                      onPressed: () =>
+                          ref.invalidate(ordersProvider(statusFilter)),
+                      icon: const Icon(Icons.refresh, size: 18),
+                      label: Text(l10n?.distributorRetry ?? 'Retry'),
+                    ),
+                  ],
+                ),
+              ),
+              data: (orders) {
                 if (orders.isEmpty) {
                   return Center(
                     child: Column(
@@ -171,12 +162,15 @@ class _DistributorOrdersScreenState extends State<DistributorOrdersScreen>
                         Icon(
                           Icons.inbox_outlined,
                           size: 64,
-                          color:
-                              isDark ? Colors.white30 : Theme.of(context).colorScheme.outlineVariant,
+                          color: isDark
+                              ? Colors.white30
+                              : Theme.of(context)
+                                  .colorScheme
+                                  .outlineVariant,
                         ),
                         const SizedBox(height: AlhaiSpacing.md),
                         Text(
-                          'لا توجد طلبات',
+                          l10n?.distributorNoOrders ?? 'No orders found',
                           style: TextStyle(
                             fontSize: 16,
                             color: isDark
@@ -190,9 +184,9 @@ class _DistributorOrdersScreenState extends State<DistributorOrdersScreen>
                 }
 
                 if (isWide) {
-                  return _buildDataTable(orders, isDark);
+                  return _buildDataTable(orders, isDark, l10n);
                 }
-                return _buildCardList(orders, isDark);
+                return _buildCardList(orders, isDark, l10n);
               },
             ),
           ),
@@ -201,7 +195,8 @@ class _DistributorOrdersScreenState extends State<DistributorOrdersScreen>
     );
   }
 
-  Widget _buildDataTable(List<_MockOrder> orders, bool isDark) {
+  Widget _buildDataTable(
+      List<DistributorOrder> orders, bool isDark, AppLocalizations? l10n) {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg),
       child: Container(
@@ -212,21 +207,25 @@ class _DistributorOrdersScreenState extends State<DistributorOrdersScreen>
         ),
         child: DataTable(
           headingRowColor: WidgetStateProperty.all(
-            isDark ? const Color(0xFF334155) : Theme.of(context).colorScheme.surfaceContainerLowest,
+            isDark
+                ? const Color(0xFF334155)
+                : Theme.of(context).colorScheme.surfaceContainerLowest,
           ),
-          columns: const [
-            DataColumn(label: Text('رقم الطلب')),
-            DataColumn(label: Text('المتجر')),
-            DataColumn(label: Text('التاريخ')),
-            DataColumn(label: Text('المبلغ')),
-            DataColumn(label: Text('الحالة')),
+          columns: [
+            DataColumn(
+                label: Text(l10n?.distributorOrderNumber ?? 'Order #')),
+            DataColumn(label: Text(l10n?.distributorStore ?? 'Store')),
+            DataColumn(label: Text(l10n?.distributorDate ?? 'Date')),
+            DataColumn(label: Text(l10n?.distributorAmount ?? 'Amount')),
+            DataColumn(label: Text(l10n?.status ?? 'Status')),
           ],
           rows: orders.map((order) {
             return DataRow(
-              onSelectChanged: (_) => context.go('/orders/${order.id}'),
+              onSelectChanged: (_) =>
+                  context.go('/orders/${order.id}'),
               cells: [
                 DataCell(Text(
-                  order.number,
+                  order.purchaseNumber,
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     color: isDark ? Colors.white : AppColors.textPrimary,
@@ -239,13 +238,13 @@ class _DistributorOrdersScreenState extends State<DistributorOrdersScreen>
                   ),
                 )),
                 DataCell(Text(
-                  '${order.date.day}/${order.date.month}/${order.date.year}',
+                  '${order.createdAt.day}/${order.createdAt.month}/${order.createdAt.year}',
                   style: TextStyle(
                     color: isDark ? Colors.white70 : AppColors.textSecondary,
                   ),
                 )),
                 DataCell(Text(
-                  '${order.total.toStringAsFixed(0)} ر.س',
+                  '${NumberFormat('#,##0').format(order.total)} ${l10n?.distributorSar ?? 'SAR'}',
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     color: isDark ? Colors.white : AppColors.textPrimary,
@@ -258,12 +257,12 @@ class _DistributorOrdersScreenState extends State<DistributorOrdersScreen>
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color:
-                          _statusColor(order.status).withValues(alpha: 0.1),
+                      color: _statusColor(order.status)
+                          .withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
-                      _statusLabel(order.status),
+                      _statusLabel(order.status, l10n),
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
@@ -280,7 +279,8 @@ class _DistributorOrdersScreenState extends State<DistributorOrdersScreen>
     );
   }
 
-  Widget _buildCardList(List<_MockOrder> orders, bool isDark) {
+  Widget _buildCardList(
+      List<DistributorOrder> orders, bool isDark, AppLocalizations? l10n) {
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg),
       itemCount: orders.length,
@@ -305,13 +305,12 @@ class _DistributorOrdersScreenState extends State<DistributorOrdersScreen>
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        order.number,
+                        order.purchaseNumber,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
-                          color: isDark
-                              ? Colors.white
-                              : AppColors.textPrimary,
+                          color:
+                              isDark ? Colors.white : AppColors.textPrimary,
                         ),
                       ),
                       Container(
@@ -325,7 +324,7 @@ class _DistributorOrdersScreenState extends State<DistributorOrdersScreen>
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
-                          _statusLabel(order.status),
+                          _statusLabel(order.status, l10n),
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
@@ -339,9 +338,8 @@ class _DistributorOrdersScreenState extends State<DistributorOrdersScreen>
                   Text(
                     order.storeName,
                     style: TextStyle(
-                      color: isDark
-                          ? Colors.white70
-                          : AppColors.textSecondary,
+                      color:
+                          isDark ? Colors.white70 : AppColors.textSecondary,
                     ),
                   ),
                   const SizedBox(height: AlhaiSpacing.xs),
@@ -349,7 +347,7 @@ class _DistributorOrdersScreenState extends State<DistributorOrdersScreen>
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        '${order.date.day}/${order.date.month}/${order.date.year}',
+                        '${order.createdAt.day}/${order.createdAt.month}/${order.createdAt.year}',
                         style: TextStyle(
                           fontSize: 13,
                           color: isDark
@@ -358,12 +356,11 @@ class _DistributorOrdersScreenState extends State<DistributorOrdersScreen>
                         ),
                       ),
                       Text(
-                        '${order.total.toStringAsFixed(0)} ر.س',
+                        '${NumberFormat('#,##0').format(order.total)} ${l10n?.distributorSar ?? 'SAR'}',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: isDark
-                              ? Colors.white
-                              : AppColors.textPrimary,
+                          color:
+                              isDark ? Colors.white : AppColors.textPrimary,
                         ),
                       ),
                     ],

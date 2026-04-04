@@ -1,27 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:fl_chart/fl_chart.dart';
+import '../../providers/sa_providers.dart';
 
-/// Revenue analytics: MRR, ARR, growth.
-class SARevenueAnalyticsScreen extends StatefulWidget {
+/// Revenue analytics: MRR, ARR, growth -- real Supabase data.
+class SARevenueAnalyticsScreen extends ConsumerStatefulWidget {
   const SARevenueAnalyticsScreen({super.key});
 
   @override
-  State<SARevenueAnalyticsScreen> createState() =>
+  ConsumerState<SARevenueAnalyticsScreen> createState() =>
       _SARevenueAnalyticsScreenState();
 }
 
 class _SARevenueAnalyticsScreenState
-    extends State<SARevenueAnalyticsScreen> {
-  String _period = 'last12Months';
-
+    extends ConsumerState<SARevenueAnalyticsScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
     final width = MediaQuery.sizeOf(context).width;
     final isWide = width >= AlhaiBreakpoints.desktop;
+    final period = ref.watch(saRevenuePeriodProvider);
+
+    final kpisAsync = ref.watch(saDashboardKPIsProvider);
+    final monthlyRevenueAsync = ref.watch(saMonthlyRevenueProvider);
+    final revenueByPlanAsync = ref.watch(saRevenueByPlanProvider);
+    final topStoresAsync = ref.watch(saTopStoresByRevenueProvider);
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -54,54 +60,63 @@ class _SARevenueAnalyticsScreenState
                       label: Text(l10n.last12Months),
                     ),
                   ],
-                  selected: {_period},
-                  onSelectionChanged: (v) =>
-                      setState(() => _period = v.first),
+                  selected: {period},
+                  onSelectionChanged: (v) => ref
+                      .read(saRevenuePeriodProvider.notifier)
+                      .state = v.first,
                 ),
               ],
             ),
             const SizedBox(height: AlhaiSpacing.lg),
 
             // KPIs
-            GridView.count(
-              crossAxisCount: isWide ? 4 : 2,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              mainAxisSpacing: AlhaiSpacing.md,
-              crossAxisSpacing: AlhaiSpacing.md,
-              childAspectRatio: 2.2,
-              children: [
-                _KpiCard(
-                  title: l10n.monthlyRecurringRevenue,
-                  value: '312,400',
-                  suffix: l10n.sar,
-                  change: '+5.2%',
-                  icon: Icons.repeat_rounded,
-                  color: Colors.teal,
-                ),
-                _KpiCard(
-                  title: l10n.annualRecurringRevenue,
-                  value: '3,748,800',
-                  suffix: l10n.sar,
-                  change: '+18.4%',
-                  icon: Icons.calendar_today_rounded,
-                  color: Colors.indigo,
-                ),
-                _KpiCard(
-                  title: l10n.growth,
-                  value: '23.5%',
-                  change: '+3.1%',
-                  icon: Icons.trending_up_rounded,
-                  color: Colors.green,
-                ),
-                _KpiCard(
-                  title: l10n.churnRate,
-                  value: '2.4%',
-                  change: '-0.3%',
-                  icon: Icons.trending_down_rounded,
-                  color: Colors.orange,
-                ),
-              ],
+            kpisAsync.when(
+              loading: () => const SizedBox(
+                height: 100,
+                child: Center(child: CircularProgressIndicator()),
+              ),
+              error: (e, _) => Text('Error: $e'),
+              data: (kpis) {
+                final mrr = kpis['mrr'] as double? ?? 0;
+                final arr = kpis['arr'] as double? ?? 0;
+
+                return GridView.count(
+                  crossAxisCount: isWide ? 4 : 2,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  mainAxisSpacing: AlhaiSpacing.md,
+                  crossAxisSpacing: AlhaiSpacing.md,
+                  childAspectRatio: 2.2,
+                  children: [
+                    _KpiCard(
+                      title: l10n.monthlyRecurringRevenue,
+                      value: _fmtNum(mrr),
+                      suffix: l10n.sar,
+                      icon: Icons.repeat_rounded,
+                      color: Colors.teal,
+                    ),
+                    _KpiCard(
+                      title: l10n.annualRecurringRevenue,
+                      value: _fmtNum(arr),
+                      suffix: l10n.sar,
+                      icon: Icons.calendar_today_rounded,
+                      color: Colors.indigo,
+                    ),
+                    _KpiCard(
+                      title: l10n.activeSubscriptions,
+                      value: '${kpis['active_subscriptions'] ?? 0}',
+                      icon: Icons.card_membership_rounded,
+                      color: Colors.green,
+                    ),
+                    _KpiCard(
+                      title: l10n.trialSubscriptions,
+                      value: '${kpis['trial_subscriptions'] ?? 0}',
+                      icon: Icons.science_rounded,
+                      color: Colors.orange,
+                    ),
+                  ],
+                );
+              },
             ),
             const SizedBox(height: AlhaiSpacing.xl),
 
@@ -113,7 +128,14 @@ class _SARevenueAnalyticsScreenState
               ),
             ),
             const SizedBox(height: AlhaiSpacing.md),
-            _MrrChart(theme: theme),
+            monthlyRevenueAsync.when(
+              loading: () => const SizedBox(
+                height: 280,
+                child: Center(child: CircularProgressIndicator()),
+              ),
+              error: (e, _) => Text('Error: $e'),
+              data: (data) => _MrrChart(theme: theme, monthlyData: data),
+            ),
             const SizedBox(height: AlhaiSpacing.xl),
 
             // Revenue by plan
@@ -124,7 +146,15 @@ class _SARevenueAnalyticsScreenState
               ),
             ),
             const SizedBox(height: AlhaiSpacing.md),
-            _RevenueByPlanTable(l10n: l10n),
+            revenueByPlanAsync.when(
+              loading: () => const SizedBox(
+                height: 120,
+                child: Center(child: CircularProgressIndicator()),
+              ),
+              error: (e, _) => Text('Error: $e'),
+              data: (plans) =>
+                  _RevenueByPlanTable(l10n: l10n, plans: plans),
+            ),
 
             const SizedBox(height: AlhaiSpacing.xl),
 
@@ -136,11 +166,33 @@ class _SARevenueAnalyticsScreenState
               ),
             ),
             const SizedBox(height: AlhaiSpacing.md),
-            _TopStoresTable(l10n: l10n),
+            topStoresAsync.when(
+              loading: () => const SizedBox(
+                height: 120,
+                child: Center(child: CircularProgressIndicator()),
+              ),
+              error: (e, _) => Text('Error: $e'),
+              data: (stores) =>
+                  _TopStoresTable(l10n: l10n, stores: stores),
+            ),
           ],
         ),
       ),
     );
+  }
+
+  String _fmtNum(double n) {
+    final intVal = n.round();
+    if (intVal >= 1000) {
+      final s = intVal.toString();
+      final buffer = StringBuffer();
+      for (int i = 0; i < s.length; i++) {
+        if (i > 0 && (s.length - i) % 3 == 0) buffer.write(',');
+        buffer.write(s[i]);
+      }
+      return buffer.toString();
+    }
+    return intVal.toString();
   }
 }
 
@@ -148,7 +200,6 @@ class _KpiCard extends StatelessWidget {
   final String title;
   final String value;
   final String? suffix;
-  final String change;
   final IconData icon;
   final Color color;
 
@@ -156,7 +207,6 @@ class _KpiCard extends StatelessWidget {
     required this.title,
     required this.value,
     this.suffix,
-    required this.change,
     required this.icon,
     required this.color,
   });
@@ -164,7 +214,6 @@ class _KpiCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isPositive = change.startsWith('+');
 
     return Card(
       elevation: 0,
@@ -219,25 +268,7 @@ class _KpiCard extends StatelessWidget {
                 ],
               ],
             ),
-            Row(
-              children: [
-                Icon(
-                  isPositive
-                      ? Icons.arrow_upward_rounded
-                      : Icons.arrow_downward_rounded,
-                  size: 14,
-                  color: isPositive ? Colors.green : Colors.red,
-                ),
-                const SizedBox(width: AlhaiSpacing.xxxs),
-                Text(
-                  change,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: isPositive ? Colors.green : Colors.red,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
+            const SizedBox.shrink(),
           ],
         ),
       ),
@@ -247,10 +278,48 @@ class _KpiCard extends StatelessWidget {
 
 class _MrrChart extends StatelessWidget {
   final ThemeData theme;
-  const _MrrChart({required this.theme});
+  final List<Map<String, dynamic>> monthlyData;
+  const _MrrChart({required this.theme, required this.monthlyData});
 
   @override
   Widget build(BuildContext context) {
+    if (monthlyData.isEmpty) {
+      return Card(
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AlhaiRadius.card),
+          side: BorderSide(
+            color: theme.colorScheme.outlineVariant,
+            width: AlhaiSpacing.strokeXs,
+          ),
+        ),
+        child: SizedBox(
+          height: 250,
+          child: Center(
+            child: Text(
+              'No revenue data',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.outline,
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    final spots = <FlSpot>[];
+    double maxY = 0;
+    for (int i = 0; i < monthlyData.length; i++) {
+      final val =
+          (monthlyData[i]['revenue'] as num?)?.toDouble() ?? 0;
+      // Show in thousands for chart
+      final kVal = val / 1000;
+      if (kVal > maxY) maxY = kVal;
+      spots.add(FlSpot(i.toDouble(), kVal));
+    }
+    maxY = maxY * 1.2;
+    if (maxY == 0) maxY = 100;
+
     return Card(
       elevation: 0,
       shape: RoundedRectangleBorder(
@@ -292,19 +361,20 @@ class _MrrChart extends StatelessWidget {
                   sideTitles: SideTitles(
                     showTitles: true,
                     getTitlesWidget: (value, _) {
-                      const months = [
-                        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-                      ];
                       final idx = value.toInt();
-                      if (idx < 0 || idx >= months.length) {
+                      if (idx < 0 || idx >= monthlyData.length) {
                         return const SizedBox();
                       }
+                      final month =
+                          monthlyData[idx]['month'] as String? ?? '';
+                      final label = month.length >= 7
+                          ? month.substring(5)
+                          : month;
                       return Padding(
-                        padding:
-                            const EdgeInsets.only(top: AlhaiSpacing.xs),
+                        padding: const EdgeInsets.only(
+                            top: AlhaiSpacing.xs),
                         child: Text(
-                          months[idx],
+                          label,
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.outline,
                           ),
@@ -319,31 +389,19 @@ class _MrrChart extends StatelessWidget {
                     sideTitles: SideTitles(showTitles: false)),
               ),
               borderData: FlBorderData(show: false),
-              minY: 150,
-              maxY: 350,
+              minY: 0,
+              maxY: maxY,
               lineBarsData: [
                 LineChartBarData(
-                  spots: const [
-                    FlSpot(0, 180),
-                    FlSpot(1, 195),
-                    FlSpot(2, 210),
-                    FlSpot(3, 225),
-                    FlSpot(4, 240),
-                    FlSpot(5, 250),
-                    FlSpot(6, 262),
-                    FlSpot(7, 275),
-                    FlSpot(8, 285),
-                    FlSpot(9, 295),
-                    FlSpot(10, 305),
-                    FlSpot(11, 312),
-                  ],
+                  spots: spots,
                   isCurved: true,
                   color: theme.colorScheme.primary,
                   barWidth: 3,
                   dotData: const FlDotData(show: false),
                   belowBarData: BarAreaData(
                     show: true,
-                    color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                    color: theme.colorScheme.primary
+                        .withValues(alpha: 0.1),
                   ),
                 ),
               ],
@@ -357,11 +415,33 @@ class _MrrChart extends StatelessWidget {
 
 class _RevenueByPlanTable extends StatelessWidget {
   final AppLocalizations l10n;
-  const _RevenueByPlanTable({required this.l10n});
+  final List<Map<String, dynamic>> plans;
+  const _RevenueByPlanTable({required this.l10n, required this.plans});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
+    if (plans.isEmpty) {
+      return Card(
+        elevation: 0,
+        child: Padding(
+          padding: const EdgeInsets.all(AlhaiSpacing.lg),
+          child: Text(
+            'No plan revenue data',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.outline,
+            ),
+          ),
+        ),
+      );
+    }
+
+    final totalRevenue = plans.fold<double>(
+      0,
+      (sum, p) => sum + ((p['revenue'] as num?)?.toDouble() ?? 0),
+    );
+
     return Card(
       elevation: 0,
       shape: RoundedRectangleBorder(
@@ -379,26 +459,22 @@ class _RevenueByPlanTable extends StatelessWidget {
           DataColumn(label: Text(l10n.revenue), numeric: true),
           const DataColumn(label: Text('% of Total'), numeric: true),
         ],
-        rows: [
-          DataRow(cells: [
-            DataCell(Text(l10n.basicPlan)),
-            const DataCell(Text('531')),
-            DataCell(Text('52,569 ${l10n.sar}')),
-            const DataCell(Text('16.8%')),
-          ]),
-          DataRow(cells: [
-            DataCell(Text(l10n.advancedPlan)),
-            const DataCell(Text('413')),
-            DataCell(Text('102,837 ${l10n.sar}')),
-            const DataCell(Text('32.9%')),
-          ]),
-          DataRow(cells: [
-            DataCell(Text(l10n.professionalPlan)),
-            const DataCell(Text('236')),
-            DataCell(Text('117,764 ${l10n.sar}')),
-            const DataCell(Text('37.7%')),
-          ]),
-        ],
+        rows: plans.map((plan) {
+          final name = plan['name'] as String? ?? 'Unknown';
+          final subs = plan['subscribers'] as int? ?? 0;
+          final revenue =
+              (plan['revenue'] as num?)?.toDouble() ?? 0;
+          final pct = totalRevenue > 0
+              ? (revenue / totalRevenue * 100).toStringAsFixed(1)
+              : '0.0';
+
+          return DataRow(cells: [
+            DataCell(Text(name)),
+            DataCell(Text('$subs')),
+            DataCell(Text('${revenue.toStringAsFixed(0)} ${l10n.sar}')),
+            DataCell(Text('$pct%')),
+          ]);
+        }).toList(),
       ),
     );
   }
@@ -406,11 +482,28 @@ class _RevenueByPlanTable extends StatelessWidget {
 
 class _TopStoresTable extends StatelessWidget {
   final AppLocalizations l10n;
-  const _TopStoresTable({required this.l10n});
+  final List<Map<String, dynamic>> stores;
+  const _TopStoresTable({required this.l10n, required this.stores});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
+    if (stores.isEmpty) {
+      return Card(
+        elevation: 0,
+        child: Padding(
+          padding: const EdgeInsets.all(AlhaiSpacing.lg),
+          child: Text(
+            'No store revenue data',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.outline,
+            ),
+          ),
+        ),
+      );
+    }
+
     return Card(
       elevation: 0,
       shape: RoundedRectangleBorder(
@@ -425,41 +518,21 @@ class _TopStoresTable extends StatelessWidget {
         columns: [
           const DataColumn(label: Text('#')),
           DataColumn(label: Text(l10n.storeName)),
-          DataColumn(label: Text(l10n.storePlan)),
           DataColumn(label: Text(l10n.revenue), numeric: true),
         ],
-        rows: const [
-          DataRow(cells: [
-            DataCell(Text('1')),
-            DataCell(Text('Auto Parts KSA')),
-            DataCell(Text('Professional')),
-            DataCell(Text('6,230 SAR')),
-          ]),
-          DataRow(cells: [
-            DataCell(Text('2')),
-            DataCell(Text('Fresh Market')),
-            DataCell(Text('Advanced')),
-            DataCell(Text('5,640 SAR')),
-          ]),
-          DataRow(cells: [
-            DataCell(Text('3')),
-            DataCell(Text('Grocery Plus')),
-            DataCell(Text('Professional')),
-            DataCell(Text('4,520 SAR')),
-          ]),
-          DataRow(cells: [
-            DataCell(Text('4')),
-            DataCell(Text('Tech Zone')),
-            DataCell(Text('Advanced')),
-            DataCell(Text('3,180 SAR')),
-          ]),
-          DataRow(cells: [
-            DataCell(Text('5')),
-            DataCell(Text('Home Essentials')),
-            DataCell(Text('Basic')),
-            DataCell(Text('1,870 SAR')),
-          ]),
-        ],
+        rows: List.generate(stores.length, (i) {
+          final store = stores[i];
+          final name = store['store_name'] as String? ?? 'Unknown';
+          final revenue =
+              (store['revenue'] as num?)?.toDouble() ?? 0;
+
+          return DataRow(cells: [
+            DataCell(Text('${i + 1}')),
+            DataCell(Text(name)),
+            DataCell(
+                Text('${revenue.toStringAsFixed(0)} ${l10n.sar}')),
+          ]);
+        }),
       ),
     );
   }

@@ -1,12 +1,24 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
+
 import 'core/router/app_router.dart';
+import 'core/supabase/supabase_client.dart';
 import 'di/injection.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Supabase
+  try {
+    await AppSupabase.initialize();
+  } catch (e) {
+    if (kDebugMode) debugPrint('Supabase init failed: $e');
+  }
+
   configureDependencies();
   runApp(const ProviderScope(child: SuperAdminApp()));
 }
