@@ -45,13 +45,8 @@ Map<String, dynamic> cleanSyncPayload(
 /// a column that Supabase lacks (rather than removing the column from Drift,
 /// which would require a local migration).
 const Map<String, Set<String>> _localOnlyColumns = {
-  // cash_movements.org_id exists in Drift for local org filtering,
-  // but the Supabase cash_movements table does not have this column.
-  'cash_movements': {'org_id', 'orgId'},
-  // sales.shift_id exists in Drift for local shift tracking.
-  // Supabase will have it after v24 migration; until then, strip it to
-  // prevent "column does not exist" errors on push.
-  'sales': {'shift_id', 'shiftId'},
+  // v24 added shift_id to Supabase, v29 added org_id to cash_movements.
+  // No columns need stripping anymore — all Drift columns exist in Supabase.
 };
 
 /// Converts map keys from camelCase to snake_case for Supabase compatibility.
