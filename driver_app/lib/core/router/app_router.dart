@@ -1,4 +1,3 @@
-import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -244,78 +243,4 @@ class _AuthNotifier extends ChangeNotifier {
   }
 
   final Ref _ref;
-}
-
-/// Placeholder screen for routes not yet implemented.
-class _PlaceholderScreen extends StatelessWidget {
-  final String title;
-
-  const _PlaceholderScreen({required this.title});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Scaffold(
-      appBar: AppBar(title: Text(title)),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(AlhaiSpacing.xl),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                width: 96,
-                height: 96,
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.primaryContainer,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.local_shipping_rounded,
-                  size: 48,
-                  color: theme.colorScheme.primary,
-                ),
-              ),
-              const SizedBox(height: AlhaiSpacing.lg),
-              Text(
-                title,
-                style: theme.textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: AlhaiSpacing.sm),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.tertiary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(AlhaiRadius.xl),
-                  border: Border.all(
-                    color: theme.colorScheme.tertiary.withValues(alpha: 0.3),
-                  ),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.construction_rounded,
-                        size: 18, color: theme.colorScheme.tertiary),
-                    const SizedBox(width: AlhaiSpacing.xs),
-                    Text(
-                      'قريباً - قيد التطوير',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.tertiary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 }

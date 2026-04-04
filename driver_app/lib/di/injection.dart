@@ -4,7 +4,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../core/services/local_cache_service.dart';
 import '../features/auth/data/driver_auth_datasource.dart';
 import '../features/deliveries/data/delivery_datasource.dart';
-import '../features/deliveries/data/order_datasource.dart';
 import '../features/shifts/data/shifts_datasource.dart';
 import '../features/proof/data/proof_datasource.dart';
 import '../features/chat/data/chat_datasource.dart';
@@ -33,7 +32,6 @@ void configureDependencies() {
 
     locator.registerLazySingleton(() => DriverAuthDatasource(client));
     locator.registerLazySingleton(() => DeliveryDatasource(client, cache));
-    locator.registerLazySingleton(() => OrderDatasource(client));
     locator.registerLazySingleton(() => ShiftsDatasource(client));
     locator.registerLazySingleton(() => ProofDatasource(client));
     locator.registerLazySingleton(() => ChatDatasource(client));

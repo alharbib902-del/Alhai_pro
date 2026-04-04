@@ -5,7 +5,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:admin/screens/settings/users_management_screen.dart';
+import 'package:admin/screens/settings/system/users_management_screen.dart';
 
 import '../../helpers/test_helpers.dart';
 

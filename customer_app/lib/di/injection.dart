@@ -15,7 +15,6 @@ import '../features/addresses/data/addresses_datasource.dart';
 import '../features/addresses/data/addresses_repository_impl.dart';
 import '../features/tracking/data/delivery_datasource.dart';
 import '../features/tracking/data/delivery_repository_impl.dart';
-import '../features/chat/data/chat_datasource.dart';
 
 final locator = GetIt.instance;
 
@@ -51,7 +50,6 @@ void configureDependencies() {
     locator.registerLazySingleton(() => OrdersRepositoryImpl(locator<OrdersDatasource>()));
     locator.registerLazySingleton(() => AddressesRepositoryImpl(locator<AddressesDatasource>()));
     locator.registerLazySingleton(() => DeliveryRepositoryImpl(locator<DeliveryDatasource>()));
-    locator.registerLazySingleton(() => CustomerChatDatasource(client));
   }
 
   locator.allowReassignment = false;

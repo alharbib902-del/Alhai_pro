@@ -3,7 +3,7 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:admin/screens/settings/activity_log_screen.dart';
+import 'package:admin/screens/settings/system/activity_log_screen.dart';
 
 import '../../helpers/test_helpers.dart';
 

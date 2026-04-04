@@ -2,7 +2,7 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:admin/screens/settings/printer_settings_screen.dart';
+import 'package:admin/screens/settings/pos/printer_settings_screen.dart';
 
 import '../../helpers/test_helpers.dart';
 

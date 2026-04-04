@@ -2,7 +2,7 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:admin/screens/settings/barcode_settings_screen.dart';
+import 'package:admin/screens/settings/pos/barcode_settings_screen.dart';
 
 import '../../helpers/test_helpers.dart';
 
