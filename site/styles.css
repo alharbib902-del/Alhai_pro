@@ -34,6 +34,10 @@ a:hover{color:var(--primary)}
 .nav-mobile.open{display:flex;flex-direction:column;gap:4px}
 .nav-mobile a{font-size:14px;padding:10px 16px;border-radius:8px;color:var(--text-muted)}
 .nav-mobile a:hover,.nav-mobile a.active{color:var(--text);background:rgba(108,99,255,0.15)}
+.nav-sep{font-size:10px;color:var(--primary);font-weight:700;padding:6px 8px;white-space:nowrap;opacity:0.7}
+.nav-mobile-group{font-size:12px;color:var(--primary);font-weight:700;padding:8px 16px 4px;opacity:0.7;border-top:1px solid var(--card-border);margin-top:4px}
+.nav-mobile-group:first-child{border-top:none;margin-top:0}
+.nav-mobile{max-height:80vh;overflow-y:auto}
 @media(max-width:900px){.nav-links{display:none}.nav-toggle{display:block}}
 
 /* PAGE HERO */
