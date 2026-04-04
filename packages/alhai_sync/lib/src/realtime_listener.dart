@@ -52,6 +52,8 @@ class RealtimeListener {
   static const List<String> watchedTables = [
     'stock_deltas',    // أولوية قصوى: تزامن مخزون بين أجهزة الكاشير
     'orders',          // طلبات أونلاين + تحديث حالة فوري
+    'sales',           // مبيعات POS - تحديث لوحة التحكم فوري
+    'sale_items',      // عناصر المبيعات - تفاصيل لوحة التحكم
     'products',        // أسعار + حالة + مخزون
     'notifications',   // إشعارات نفاد مخزون + طلبات جديدة
     'categories',      // تصنيفات

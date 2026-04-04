@@ -15,6 +15,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'print_service.dart';
 import 'receipt_data.dart';
 import 'printing_providers.dart' hide autoPrintEnabledProvider;
+import '../../core/services/zatca/zatca_qr_service.dart';
 
 /// Initialize auto-print from a widget context (e.g. CashierShell)
 Future<void> initializeAutoPrint(WidgetRef ref) async {
@@ -46,6 +47,22 @@ Future<bool> _autoPrintReceipt(WidgetRef ref, String saleId) async {
 
     final items = await db.saleItemsDao.getItemsBySaleId(saleId);
 
+    // Fetch real store data for receipt header and ZATCA QR
+    final store = await db.storesDao.getStoreById(sale.storeId);
+    final storeName = store?.name ?? 'Al-HAI Store';
+    final storeAddress = store?.address ?? 'الرياض - المملكة العربية السعودية';
+    final storePhone = store?.phone ?? '0500000000';
+    final vatNumber = store?.taxNumber ?? '300000000000003';
+
+    // Generate ZATCA QR data (base64-encoded TLV)
+    final zatcaQr = ZatcaQrService.generateQrData(
+      sellerName: storeName,
+      vatNumber: vatNumber,
+      timestamp: sale.createdAt,
+      totalWithVat: sale.total,
+      vatAmount: sale.tax,
+    );
+
     final receipt = ReceiptData(
       receiptNumber: sale.receiptNo,
       dateTime: sale.createdAt,
@@ -66,6 +83,13 @@ Future<bool> _autoPrintReceipt(WidgetRef ref, String saleId) async {
       paymentMethod: sale.paymentMethod,
       amountReceived: sale.amountReceived,
       changeAmount: sale.changeAmount,
+      store: ReceiptStoreInfo(
+        name: storeName,
+        address: storeAddress,
+        phone: storePhone,
+        vatNumber: vatNumber,
+      ),
+      zatcaQrData: zatcaQr,
     );
 
     final result = await service.printReceipt(receipt);

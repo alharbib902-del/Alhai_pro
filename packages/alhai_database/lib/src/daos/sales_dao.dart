@@ -537,6 +537,73 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
     );
   }
 
+  /// مجموع المبيعات النقدية فقط خلال فترة الوردية
+  /// يُستخدم لحساب النقد المتوقع في الدرج (بدون بطاقة/آجل)
+  Future<double> getCashSalesTotalForPeriod(
+    String storeId, {
+    required DateTime startDate,
+    DateTime? endDate,
+    String? cashierId,
+  }) async {
+    var whereClause = "store_id = ? AND status = 'completed' AND payment_method = 'cash' AND created_at >= ?";
+    final variables = <Variable>[
+      Variable.withString(storeId),
+      Variable.withDateTime(startDate),
+    ];
+
+    if (endDate != null) {
+      whereClause += ' AND created_at < ?';
+      variables.add(Variable.withDateTime(endDate));
+    }
+    if (cashierId != null) {
+      whereClause += ' AND cashier_id = ?';
+      variables.add(Variable.withString(cashierId));
+    }
+
+    final result = await customSelect(
+      'SELECT COALESCE(SUM(total), 0) as total FROM sales WHERE $whereClause',
+      variables: variables,
+    ).getSingle();
+
+    final total = result.data['total'];
+    if (total == null) return 0.0;
+    if (total is int) return total.toDouble();
+    return total as double;
+  }
+
+  /// مجموع الجزء النقدي من المبيعات المختلطة خلال فترة الوردية
+  Future<double> getMixedCashAmountForPeriod(
+    String storeId, {
+    required DateTime startDate,
+    DateTime? endDate,
+    String? cashierId,
+  }) async {
+    var whereClause = "store_id = ? AND status = 'completed' AND payment_method = 'mixed' AND cash_amount IS NOT NULL AND created_at >= ?";
+    final variables = <Variable>[
+      Variable.withString(storeId),
+      Variable.withDateTime(startDate),
+    ];
+
+    if (endDate != null) {
+      whereClause += ' AND created_at < ?';
+      variables.add(Variable.withDateTime(endDate));
+    }
+    if (cashierId != null) {
+      whereClause += ' AND cashier_id = ?';
+      variables.add(Variable.withString(cashierId));
+    }
+
+    final result = await customSelect(
+      'SELECT COALESCE(SUM(cash_amount), 0) as total FROM sales WHERE $whereClause',
+      variables: variables,
+    ).getSingle();
+
+    final total = result.data['total'];
+    if (total == null) return 0.0;
+    if (total is int) return total.toDouble();
+    return total as double;
+  }
+
   double _toDouble(dynamic value) {
     if (value == null) return 0.0;
     if (value is int) return value.toDouble();

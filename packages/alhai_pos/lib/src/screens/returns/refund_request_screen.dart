@@ -253,6 +253,67 @@ class _RefundRequestScreenState extends ConsumerState<RefundRequestScreen> {
 
       final items = await db.saleItemsDao.getItemsBySaleId(sale.id);
 
+      // BUG FIX: Check for existing returns to prevent double refunds
+      final existingReturns = await db.returnsDao.getReturnsBySaleId(sale.id, storeId);
+
+      if (existingReturns.isNotEmpty) {
+        // Gather all previously refunded item quantities
+        final refundedQtyByProduct = <String, double>{};
+        for (final ret in existingReturns) {
+          final returnItems = await db.returnsDao.getReturnItems(ret.id);
+          for (final ri in returnItems) {
+            refundedQtyByProduct[ri.productId] =
+                (refundedQtyByProduct[ri.productId] ?? 0) + ri.qty;
+          }
+        }
+
+        // Filter out items that have been fully refunded
+        final remainingItems = <SaleItemsTableData>[];
+        for (final item in items) {
+          final refundedQty = refundedQtyByProduct[item.productId] ?? 0;
+          if (item.qty > refundedQty) {
+            remainingItems.add(item);
+          }
+        }
+
+        if (remainingItems.isEmpty) {
+          // All items already refunded
+          if (mounted) {
+            setState(() {
+              _isSearching = false;
+              _saleData = null;
+              _saleItems = [];
+            });
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(AppLocalizations.of(context)!.invoiceAlreadyRefunded),
+                backgroundColor: AppColors.error,
+                duration: const Duration(seconds: 4),
+              ),
+            );
+          }
+          return;
+        }
+
+        // Some items still available for refund - show warning and continue
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(AppLocalizations.of(context)!.invoicePartiallyRefunded),
+              backgroundColor: AppColors.warning,
+              duration: const Duration(seconds: 3),
+            ),
+          );
+          setState(() {
+            _isSearching = false;
+            _saleData = sale;
+            _saleItems = remainingItems;
+            _selectedItems.clear();
+          });
+        }
+        return;
+      }
+
       if (mounted) {
         setState(() {
           _isSearching = false;

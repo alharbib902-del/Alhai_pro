@@ -44,6 +44,38 @@ final shiftMovementsProvider = FutureProvider.autoDispose
   return db.shiftsDao.getShiftMovements(shiftId);
 });
 
+/// مجاميع النقد فقط للوردية (مبيعات نقدية + جزء نقدي من المختلط - مرتجعات نقدية)
+/// يُستخدم لحساب النقد المتوقع في الدرج بدقة (بدون بطاقة/آجل)
+final shiftCashTotalsProvider = FutureProvider.autoDispose
+    .family<({double cashSales, double cashRefunds}), String>((ref, shiftId) async {
+  final db = GetIt.I<AppDatabase>();
+  final shift = await db.shiftsDao.getShiftById(shiftId);
+  if (shift == null) return (cashSales: 0.0, cashRefunds: 0.0);
+
+  final storeId = shift.storeId;
+  final startDate = shift.openedAt;
+
+  // مبيعات نقدية بالكامل
+  final cashSales = await db.salesDao.getCashSalesTotalForPeriod(
+    storeId,
+    startDate: startDate,
+  );
+
+  // الجزء النقدي من المبيعات المختلطة
+  final mixedCash = await db.salesDao.getMixedCashAmountForPeriod(
+    storeId,
+    startDate: startDate,
+  );
+
+  // مرتجعات نقدية
+  final cashRefunds = await db.returnsDao.getCashRefundsTotalForPeriod(
+    storeId,
+    startDate: startDate,
+  );
+
+  return (cashSales: cashSales + mixedCash, cashRefunds: cashRefunds);
+});
+
 // ============================================================================
 // ACTION PROVIDERS
 // ============================================================================

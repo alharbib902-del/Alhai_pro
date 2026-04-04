@@ -61,7 +61,7 @@ class SaleService {
   }) : _db = db,
        _syncService = syncService,
        _invoiceService = invoiceService;
-  
+
   /// إنشاء بيع جديد
   Future<SaleResult> createSale({
     required String storeId,
@@ -83,195 +83,299 @@ class SaleService {
     double? creditAmount,
   }) async {
     final saleId = _uuid.v4();
-    final receiptNo = await _generateReceiptNo(storeId);
     final now = DateTime.now();
     final priceCorrections = <PriceCorrection>[];
 
-    await _db.transaction(() async {
-      // Ensure cashier exists in local users table (FK requirement)
-      if (cashierId.isNotEmpty) {
-        final existingUser = await _db.usersDao.getUserById(cashierId);
-        if (existingUser == null) {
-          await _db.usersDao.ensureUser(UsersTableCompanion.insert(
-            id: cashierId,
-            storeId: Value(storeId),
-            name: 'Cashier',
-            role: const Value('cashier'),
-            isActive: const Value(true),
+    // Variables captured from inside the transaction, needed for sync enqueue after commit.
+    late String receiptNo;
+    String? validCustomerId;
+    String? orgId;
+    late double correctedSubtotal;
+    late double correctedTax;
+    late double correctedTotal;
+    late bool isPaid;
+    late List<String> insertedItemIds;
+    late Map<String, double> correctedPrices;
+
+    // Retry loop: if receipt number collides (unique constraint on idx_sales_store_receipt_unique),
+    // regenerate and retry up to 3 times before giving up.
+    const maxRetries = 3;
+    for (int attempt = 0; attempt < maxRetries; attempt++) {
+      try {
+        await _db.transaction(() async {
+          // [FIX: BUG 2] Generate receipt number INSIDE the transaction to prevent race conditions.
+          // Two concurrent sales reading the same count outside the transaction would
+          // produce duplicate receipt numbers. Inside, the unique index enforces correctness.
+          receiptNo = await _generateReceiptNo(storeId);
+
+          // Ensure cashier exists in local users table (FK requirement)
+          if (cashierId.isNotEmpty) {
+            final existingUser = await _db.usersDao.getUserById(cashierId);
+            if (existingUser == null) {
+              await _db.usersDao.ensureUser(UsersTableCompanion.insert(
+                id: cashierId,
+                storeId: Value(storeId),
+                name: 'Cashier',
+                role: const Value('cashier'),
+                isActive: const Value(true),
+                createdAt: now,
+              ));
+            }
+          }
+
+          // Validate customerId exists in DB (FK requirement)
+          // walk-in or null = no customer linked
+          validCustomerId = customerId;
+          if (customerId != null && customerId != 'walk-in' && customerId.isNotEmpty) {
+            final existingCustomer = await _db.customersDao.getCustomerById(customerId);
+            if (existingCustomer == null) {
+              if (kDebugMode) {
+                debugPrint('[SaleService] Customer $customerId not found in DB, setting to null');
+              }
+              validCustomerId = null;
+            }
+          } else if (customerId == 'walk-in') {
+            validCustomerId = null;
+          }
+
+          // 1. التحقق من توفر المخزون وتصحيح الأسعار (قراءة حية من قاعدة البيانات)
+          final freshProducts = <String, ProductsTableData>{};
+          correctedPrices = <String, double>{};
+          for (final item in items) {
+            final product = await _db.productsDao.getProductById(item.product.id);
+            if (product == null) {
+              throw SaleException(
+                message: 'Product not found in DB: ${item.product.id}',
+                userMessage: 'المنتج "${item.product.name}" غير موجود في قاعدة البيانات',
+                code: 'PRODUCT_NOT_FOUND',
+              );
+            }
+            freshProducts[item.product.id] = product;
+
+            // تصحيح السعر: إذا لم يحدد المستخدم سعراً مخصصاً والسعر تغير في قاعدة البيانات
+            if (item.customPrice == null && product.price != item.effectivePrice) {
+              correctedPrices[item.product.id] = product.price;
+              priceCorrections.add(PriceCorrection(
+                productId: item.product.id,
+                productName: item.product.name,
+                cartPrice: item.effectivePrice,
+                dbPrice: product.price,
+                quantity: item.quantity,
+              ));
+              if (kDebugMode) {
+                debugPrint(
+                  '[SaleService] Price correction: "${item.product.name}" '
+                  'cart=${item.effectivePrice} -> db=${product.price} '
+                  '(diff=${(product.price - item.effectivePrice).toStringAsFixed(2)})',
+                );
+              }
+            }
+
+            // تخطي المنتجات التي لا تتبع المخزون
+            if (!product.trackInventory) continue;
+
+            if (product.stockQty < item.quantity) {
+              throw SaleException.insufficientStock(
+                product.name,
+                product.stockQty,
+                item.quantity.toDouble(),
+              );
+            }
+          }
+
+          // إعادة حساب الإجمالي إذا تم تصحيح أي أسعار
+          correctedSubtotal = subtotal;
+          correctedTotal = total;
+          correctedTax = tax;
+          if (correctedPrices.isNotEmpty) {
+            correctedSubtotal = 0;
+            for (final item in items) {
+              final unitPrice = correctedPrices[item.product.id] ?? item.effectivePrice;
+              correctedSubtotal += unitPrice * item.quantity;
+            }
+            final taxRate = subtotal > 0 ? tax / subtotal : 0.15;
+            correctedTax = correctedSubtotal * taxRate;
+            correctedTotal = correctedSubtotal - discount + correctedTax;
+
+            if (kDebugMode) {
+              debugPrint(
+                '[SaleService] Totals corrected: '
+                'subtotal $subtotal -> $correctedSubtotal, '
+                'tax $tax -> $correctedTax, '
+                'total $total -> $correctedTotal',
+              );
+            }
+          }
+
+          // 2. Create sale record
+          if (paymentMethod == 'credit') {
+            isPaid = false;
+          } else if (paymentMethod == 'mixed' && amountReceived != null && amountReceived < correctedTotal) {
+            isPaid = false;
+          } else {
+            isPaid = true;
+          }
+          await _db.salesDao.insertSale(SalesTableCompanion.insert(
+            id: saleId,
+            storeId: storeId,
+            receiptNo: receiptNo,
+            cashierId: cashierId,
+            customerId: Value(validCustomerId),
+            customerName: Value(customerName),
+            customerPhone: Value(customerPhone),
+            subtotal: correctedSubtotal,
+            discount: Value(discount),
+            tax: Value(correctedTax),
+            total: correctedTotal,
+            paymentMethod: paymentMethod,
+            amountReceived: Value(amountReceived),
+            changeAmount: Value(changeAmount),
+            cashAmount: Value(cashAmount),
+            cardAmount: Value(cardAmount),
+            creditAmount: Value(creditAmount),
+            notes: Value(notes ?? ''),
+            channel: const Value('POS'),
+            status: const Value('completed'),
+            isPaid: Value(isPaid),
             createdAt: now,
           ));
-        }
-      }
 
-      // Validate customerId exists in DB (FK requirement)
-      // walk-in or null = no customer linked
-      String? validCustomerId = customerId;
-      if (customerId != null && customerId != 'walk-in' && customerId.isNotEmpty) {
-        final existingCustomer = await _db.customersDao.getCustomerById(customerId);
-        if (existingCustomer == null) {
-          // العميل غير موجود في قاعدة البيانات — نلغي الربط لتجنب FK error
-          if (kDebugMode) {
-            debugPrint('[SaleService] ⚠️ Customer $customerId not found in DB, setting to null');
-          }
-          validCustomerId = null;
-        }
-      } else if (customerId == 'walk-in') {
-        validCustomerId = null;
-      }
+          // 3. جلب org_id من المتجر (نحتاجه لدلتا المخزون والدين)
+          try {
+            final store = await _db.storesDao.getStoreById(storeId);
+            orgId = store?.orgId;
+          } catch (_) {}
 
-      // 1. التحقق من توفر المخزون وتصحيح الأسعار (قراءة حية من قاعدة البيانات)
-      final freshProducts = <String, ProductsTableData>{};
-      final correctedPrices = <String, double>{}; // productId -> corrected price
-      for (final item in items) {
-        final product = await _db.productsDao.getProductById(item.product.id);
-        if (product == null) {
-          throw SaleException(
-            message: 'Product not found in DB: ${item.product.id}',
-            userMessage: 'المنتج "${item.product.name}" غير موجود في قاعدة البيانات',
-            code: 'PRODUCT_NOT_FOUND',
-          );
-        }
-        freshProducts[item.product.id] = product;
+          // 4. إضافة عناصر البيع وخصم المخزون
+          insertedItemIds = <String>[];
+          for (final item in items) {
+            final freshProduct = freshProducts[item.product.id]!;
+            final unitPrice = correctedPrices[item.product.id] ?? item.effectivePrice;
+            final itemId = _uuid.v4();
+            insertedItemIds.add(itemId);
+            await _db.saleItemsDao.insertItem(SaleItemsTableCompanion.insert(
+              id: itemId,
+              saleId: saleId,
+              productId: item.product.id,
+              productName: item.product.name,
+              unitPrice: unitPrice,
+              qty: item.quantity.toDouble(),
+              subtotal: unitPrice * item.quantity,
+              discount: const Value(0),
+              total: unitPrice * item.quantity,
+            ));
 
-        // تصحيح السعر: إذا لم يحدد المستخدم سعراً مخصصاً والسعر تغير في قاعدة البيانات
-        if (item.customPrice == null && product.price != item.effectivePrice) {
-          correctedPrices[item.product.id] = product.price;
-          priceCorrections.add(PriceCorrection(
-            productId: item.product.id,
-            productName: item.product.name,
-            cartPrice: item.effectivePrice,
-            dbPrice: product.price,
-            quantity: item.quantity,
-          ));
-          if (kDebugMode) {
-            debugPrint(
-              '[SaleService] Price correction: "${item.product.name}" '
-              'cart=${item.effectivePrice} -> db=${product.price} '
-              '(diff=${(product.price - item.effectivePrice).toStringAsFixed(2)})',
+            // خصم المخزون
+            final movementId = _uuid.v4();
+            await _db.inventoryDao.recordSaleMovement(
+              id: movementId,
+              productId: item.product.id,
+              storeId: storeId,
+              qty: item.quantity.toDouble(),
+              previousQty: freshProduct.stockQty.toDouble(),
+              saleId: saleId,
+            );
+
+            // تحديث كمية المنتج
+            await _db.productsDao.updateStock(
+              item.product.id,
+              freshProduct.stockQty - item.quantity,
+            );
+
+            // تسجيل دلتا المخزون (للمزامنة بين الأجهزة المتعددة)
+            await _db.stockDeltasDao.addDelta(
+              id: _uuid.v4(),
+              productId: item.product.id,
+              storeId: storeId,
+              orgId: orgId,
+              quantityChange: -item.quantity.toDouble(),
+              deviceId: cashierId,
+              operationType: 'sale',
+              referenceId: saleId,
             );
           }
+
+          // [FIX: BUG 1] 5. تسجيل الدين إذا كانت المبيعة تحتوي جزء آجل (credit)
+          // تسجيل الدين جزء من المعاملة — إذا فشل، يُلغى البيع بالكامل
+          // لأن بيع آجل بدون تسجيل دين = خسارة مالية صامتة
+          if (!isPaid && validCustomerId != null) {
+            final debtAmount = paymentMethod == 'credit'
+                ? correctedTotal
+                : correctedTotal - (amountReceived ?? 0);
+
+            if (debtAmount > 0) {
+              var account = await _db.accountsDao.getCustomerAccount(validCustomerId!, storeId);
+
+              if (account == null) {
+                final accountId = _uuid.v4();
+                await _db.accountsDao.insertAccount(AccountsTableCompanion.insert(
+                  id: accountId,
+                  storeId: storeId,
+                  orgId: Value(orgId),
+                  type: 'receivable',
+                  customerId: Value(validCustomerId),
+                  name: customerName ?? 'عميل',
+                  phone: Value(customerPhone),
+                  balance: Value(debtAmount),
+                  createdAt: now,
+                ));
+                await _db.transactionsDao.recordInvoice(
+                  id: _uuid.v4(),
+                  storeId: storeId,
+                  accountId: accountId,
+                  amount: debtAmount,
+                  balanceAfter: debtAmount,
+                  saleId: saleId,
+                  createdBy: cashierId,
+                );
+              } else {
+                final newBalance = account.balance + debtAmount;
+                await _db.accountsDao.addToBalance(account.id, debtAmount);
+                await _db.transactionsDao.recordInvoice(
+                  id: _uuid.v4(),
+                  storeId: storeId,
+                  accountId: account.id,
+                  amount: debtAmount,
+                  balanceAfter: newBalance,
+                  saleId: saleId,
+                  createdBy: cashierId,
+                );
+              }
+              if (kDebugMode) {
+                debugPrint('[SaleService] Recorded credit debt: $debtAmount for customer $validCustomerId');
+              }
+            }
+          }
+        });
+        // Transaction committed successfully -- break out of retry loop
+        break;
+      } catch (e) {
+        // [FIX: BUG 2] Check if this is a unique constraint violation on receipt_no (race condition).
+        // The unique index idx_sales_store_receipt_unique catches concurrent duplicates.
+        final errorStr = e.toString().toLowerCase();
+        final isUniqueViolation = errorStr.contains('unique constraint failed') ||
+            errorStr.contains('unique constraint') ||
+            errorStr.contains('idx_sales_store_receipt_unique');
+        if (isUniqueViolation && attempt < maxRetries - 1) {
+          if (kDebugMode) {
+            debugPrint('[SaleService] Receipt number collision (attempt ${attempt + 1}/$maxRetries), retrying...');
+          }
+          // Clear price corrections collected in the failed attempt to avoid duplicates on retry
+          priceCorrections.clear();
+          await Future.delayed(Duration(milliseconds: 50 * (attempt + 1)));
+          continue;
         }
-
-        // تخطي المنتجات التي لا تتبع المخزون
-        if (!product.trackInventory) continue;
-
-        if (product.stockQty < item.quantity) {
-          throw SaleException.insufficientStock(
-            product.name,
-            product.stockQty,
-            item.quantity.toDouble(),
-          );
-        }
+        // Not a receipt collision, or exhausted retries -- rethrow
+        rethrow;
       }
+    }
 
-      // إعادة حساب الإجمالي إذا تم تصحيح أي أسعار
-      double correctedSubtotal = subtotal;
-      double correctedTotal = total;
-      double correctedTax = tax;
-      if (correctedPrices.isNotEmpty) {
-        correctedSubtotal = 0;
-        for (final item in items) {
-          final unitPrice = correctedPrices[item.product.id] ?? item.effectivePrice;
-          correctedSubtotal += unitPrice * item.quantity;
-        }
-        // إعادة حساب الضريبة والإجمالي بنفس نسبة الضريبة الأصلية
-        final taxRate = subtotal > 0 ? tax / subtotal : 0.15;
-        correctedTax = correctedSubtotal * taxRate;
-        correctedTotal = correctedSubtotal - discount + correctedTax;
-
-        if (kDebugMode) {
-          debugPrint(
-            '[SaleService] Totals corrected: '
-            'subtotal $subtotal -> $correctedSubtotal, '
-            'tax $tax -> $correctedTax, '
-            'total $total -> $correctedTotal',
-          );
-        }
-      }
-
-      // 2. Create sale record (with corrected prices if applicable)
-      // الدفع الآجل (credit) = غير مدفوع
-      // الدفع المختلط (mixed) مع جزء آجل = غير مدفوع بالكامل
-      // يُعرف وجود جزء آجل إذا: amountReceived < total (المبلغ المستلم أقل من الإجمالي)
-      final bool isPaid;
-      if (paymentMethod == 'credit') {
-        isPaid = false;
-      } else if (paymentMethod == 'mixed' && amountReceived != null && amountReceived < correctedTotal) {
-        // مختلط مع جزء آجل: المبلغ المستلم (نقد+بطاقة) أقل من الإجمالي
-        isPaid = false;
-      } else {
-        isPaid = true;
-      }
-      await _db.salesDao.insertSale(SalesTableCompanion.insert(
-        id: saleId,
-        storeId: storeId,
-        receiptNo: receiptNo,
-        cashierId: cashierId,
-        customerId: Value(validCustomerId),
-        customerName: Value(customerName),
-        customerPhone: Value(customerPhone),
-        subtotal: correctedSubtotal,
-        discount: Value(discount),
-        tax: Value(correctedTax),
-        total: correctedTotal,
-        paymentMethod: paymentMethod,
-        amountReceived: Value(amountReceived),
-        changeAmount: Value(changeAmount),
-        cashAmount: Value(cashAmount),
-        cardAmount: Value(cardAmount),
-        creditAmount: Value(creditAmount),
-        channel: const Value('POS'),
-        status: const Value('completed'),
-        isPaid: Value(isPaid),
-        createdAt: now,
-      ));
-
-      // 3. إضافة عناصر البيع وخصم المخزون
-      // نحتفظ بقائمة الـ IDs لاستخدامها في المزامنة
-      final insertedItemIds = <String>[];
-      for (final item in items) {
-        final freshProduct = freshProducts[item.product.id]!;
-        final unitPrice = correctedPrices[item.product.id] ?? item.effectivePrice;
-        final itemId = _uuid.v4();
-        insertedItemIds.add(itemId);
-        await _db.saleItemsDao.insertItem(SaleItemsTableCompanion.insert(
-          id: itemId,
-          saleId: saleId,
-          productId: item.product.id,
-          productName: item.product.name,
-          unitPrice: unitPrice,
-          qty: item.quantity.toDouble(),
-          subtotal: unitPrice * item.quantity,
-          discount: const Value(0),
-          total: unitPrice * item.quantity,
-        ));
-
-        // خصم المخزون
-        final movementId = _uuid.v4();
-        await _db.inventoryDao.recordSaleMovement(
-          id: movementId,
-          productId: item.product.id,
-          storeId: storeId,
-          qty: item.quantity.toDouble(),
-          previousQty: freshProduct.stockQty.toDouble(),
-          saleId: saleId,
-        );
-
-        // تحديث كمية المنتج
-        await _db.productsDao.updateStock(
-          item.product.id,
-          freshProduct.stockQty - item.quantity,
-        );
-      }
-      
-      // 4. إضافة البيع للمزامنة
-      // جلب org_id من المتجر
-      String? orgId;
-      try {
-        final store = await _db.storesDao.getStoreById(storeId);
-        orgId = store?.orgId;
-      } catch (_) {}
-
+    // =========================================================================
+    // [FIX: BUG 3] Sync enqueue: OUTSIDE the transaction.
+    // If sync enqueue fails, the sale is still saved locally and will be picked
+    // up by the next sync cycle (via getUnsyncedSales / repairMissingSaleItemsSync).
+    // =========================================================================
+    try {
       await _syncService.enqueueCreate(
         tableName: 'sales',
         recordId: saleId,
@@ -294,6 +398,7 @@ class SaleService {
           'cashAmount': cashAmount,
           'cardAmount': cardAmount,
           'creditAmount': creditAmount,
+          'notes': notes,
           'channel': 'POS',
           'status': 'completed',
           'isPaid': isPaid,
@@ -302,69 +407,6 @@ class SaleService {
         priority: SyncPriority.high,
       );
 
-      // 5. تسجيل الدين إذا كانت المبيعة تحتوي جزء آجل (credit)
-      if (!isPaid && validCustomerId != null) {
-        final debtAmount = paymentMethod == 'credit'
-            ? correctedTotal  // آجل كامل = كل المبلغ
-            : correctedTotal - (amountReceived ?? 0);  // مختلط = الإجمالي - المستلم فعلاً
-
-        if (debtAmount > 0) {
-          try {
-            // البحث عن حساب العميل أو إنشاء واحد جديد
-            var account = await _db.accountsDao.getCustomerAccount(validCustomerId, storeId);
-
-            if (account == null) {
-              // إنشاء حساب جديد للعميل
-              final accountId = _uuid.v4();
-              await _db.accountsDao.insertAccount(AccountsTableCompanion.insert(
-                id: accountId,
-                storeId: storeId,
-                orgId: Value(orgId),
-                type: 'receivable',
-                customerId: Value(validCustomerId),
-                name: customerName ?? 'عميل',
-                phone: Value(customerPhone),
-                balance: Value(debtAmount),
-                createdAt: now,
-              ));
-              // تسجيل حركة الفاتورة
-              await _db.transactionsDao.recordInvoice(
-                id: _uuid.v4(),
-                storeId: storeId,
-                accountId: accountId,
-                amount: debtAmount,
-                balanceAfter: debtAmount,
-                saleId: saleId,
-                createdBy: cashierId,
-              );
-            } else {
-              // تحديث رصيد الحساب الموجود
-              final newBalance = account.balance + debtAmount;
-              await _db.accountsDao.addToBalance(account.id, debtAmount);
-              // تسجيل حركة الفاتورة
-              await _db.transactionsDao.recordInvoice(
-                id: _uuid.v4(),
-                storeId: storeId,
-                accountId: account.id,
-                amount: debtAmount,
-                balanceAfter: newBalance,
-                saleId: saleId,
-                createdBy: cashierId,
-              );
-            }
-            if (kDebugMode) {
-              debugPrint('[SaleService] 📝 Recorded credit debt: $debtAmount for customer $validCustomerId');
-            }
-          } catch (e) {
-            // لا نمنع البيع إذا فشل تسجيل الدين
-            if (kDebugMode) {
-              debugPrint('[SaleService] ⚠️ Failed to record credit debt: $e');
-            }
-          }
-        }
-      }
-
-      // 6. إضافة عناصر البيع للمزامنة (نستخدم نفس الـ IDs المحلية)
       for (int i = 0; i < items.length; i++) {
         final item = items[i];
         final itemId = insertedItemIds[i];
@@ -386,9 +428,14 @@ class SaleService {
           priority: SyncPriority.high,
         );
       }
-    });
+    } catch (e) {
+      // Sync enqueue failed -- sale is saved locally, next sync cycle will pick it up
+      if (kDebugMode) {
+        debugPrint('[SaleService] Sync enqueue failed (non-blocking, sale saved locally): $e');
+      }
+    }
 
-    // 6. إنشاء فاتورة تلقائية بعد إتمام البيع (لا تمنع البيع عند الفشل)
+    // إنشاء فاتورة تلقائية بعد إتمام البيع (لا تمنع البيع عند الفشل)
     if (_invoiceService != null) {
       try {
         final sale = await _db.salesDao.getSaleById(saleId);
@@ -428,6 +475,13 @@ class SaleService {
 
       final items = await _db.saleItemsDao.getItemsBySaleId(saleId);
 
+      // جلب org_id من المتجر (لدلتا المخزون)
+      String? orgId;
+      try {
+        final store = await _db.storesDao.getStoreById(sale.storeId);
+        orgId = store?.orgId;
+      } catch (_) {}
+
       // قراءة الكميات الحالية قبل الإلغاء (للسجل)
       final stockSnapshots = <String, double>{};
       for (final item in items) {
@@ -440,7 +494,7 @@ class SaleService {
       // إلغاء البيع (يستعيد المخزون تلقائياً)
       await _db.salesDao.voidSale(saleId);
 
-      // تسجيل حركة المخزون (للسجل فقط، المخزون تم تحديثه بالفعل)
+      // تسجيل حركة المخزون ودلتا المخزون
       for (final item in items) {
         final previousQty = stockSnapshots[item.productId];
         if (previousQty != null) {
@@ -454,6 +508,18 @@ class SaleService {
             previousQty: previousQty,
             newQty: newQty,
             reason: reason ?? 'إلغاء بيع',
+          );
+
+          // تسجيل دلتا المخزون (موجب لاستعادة المخزون)
+          await _db.stockDeltasDao.addDelta(
+            id: _uuid.v4(),
+            productId: item.productId,
+            storeId: sale.storeId,
+            orgId: orgId,
+            quantityChange: item.qty,
+            deviceId: sale.cashierId,
+            operationType: 'void',
+            referenceId: saleId,
           );
         }
       }
@@ -471,7 +537,7 @@ class SaleService {
       );
     });
   }
-  
+
   /// توليد رقم إيصال فريد
   /// يستخدم عدد جميع مبيعات المتجر اليوم (بدون فلترة الكاشير)
   Future<String> _generateReceiptNo(String storeId) async {
@@ -485,17 +551,17 @@ class SaleService {
 
     return '$prefix-$sequence';
   }
-  
+
   /// الحصول على مبيعات اليوم
   Future<List<SalesTableData>> getTodaySales(String storeId) {
     return _db.salesDao.getSalesByDate(storeId, DateTime.now());
   }
-  
+
   /// إجمالي مبيعات اليوم
   Future<double> getTodayTotal(String storeId, String cashierId) {
     return _db.salesDao.getTodayTotal(storeId, cashierId);
   }
-  
+
   /// عدد مبيعات اليوم
   Future<int> getTodayCount(String storeId, String cashierId) {
     return _db.salesDao.getTodayCount(storeId, cashierId);
@@ -518,7 +584,7 @@ class SaleService {
       ).get();
 
       if (kDebugMode) {
-        debugPrint('[SaleService] 🔧 Repair: checking ${salesRows.length} recent sales for missing items sync');
+        debugPrint('[SaleService] Repair: checking ${salesRows.length} recent sales for missing items sync');
       }
 
       for (final row in salesRows) {
@@ -540,20 +606,20 @@ class SaleService {
         // إذا عدد العناصر في طابور المزامنة يطابق العدد المحلي، لا نحتاج إصلاح
         if (syncedItemsCount >= localItems.length) {
           if (kDebugMode) {
-            debugPrint('[SaleService] ✅ Sale $saleId: $syncedItemsCount sync entries for ${localItems.length} local items — OK');
+            debugPrint('[SaleService] Sale $saleId: $syncedItemsCount sync entries for ${localItems.length} local items -- OK');
           }
           continue;
         }
 
         if (kDebugMode) {
-          debugPrint('[SaleService] ⚠️ Sale $saleId: $syncedItemsCount sync entries for ${localItems.length} local items — needs repair');
+          debugPrint('[SaleService] Sale $saleId: $syncedItemsCount sync entries for ${localItems.length} local items -- needs repair');
         }
 
         // إذا لم يكن هناك أي عناصر في طابور المزامنة لهذا البيع، نضيف الكل
         // إذا كان هناك بعضها (حالة نادرة)، نتخطى لتجنب التعقيد
         if (syncedItemsCount > 0) {
           if (kDebugMode) {
-            debugPrint('[SaleService] ⏭️ Skipping partial repair for sale $saleId (has $syncedItemsCount/${ localItems.length})');
+            debugPrint('[SaleService] Skipping partial repair for sale $saleId (has $syncedItemsCount/${ localItems.length})');
           }
           continue;
         }
@@ -579,22 +645,22 @@ class SaleService {
             );
             repairedCount++;
             if (kDebugMode) {
-              debugPrint('[SaleService] 🔧 Repaired: sale_items/${item.id} for sale $saleId');
+              debugPrint('[SaleService] Repaired: sale_items/${item.id} for sale $saleId');
             }
           } catch (e) {
             if (kDebugMode) {
-              debugPrint('[SaleService] ⚠️ Repair failed for item ${item.id}: $e');
+              debugPrint('[SaleService] Repair failed for item ${item.id}: $e');
             }
           }
         }
       }
 
       if (kDebugMode) {
-        debugPrint('[SaleService] 🔧 Repair complete: $repairedCount items added to sync queue');
+        debugPrint('[SaleService] Repair complete: $repairedCount items added to sync queue');
       }
     } catch (e) {
       if (kDebugMode) {
-        debugPrint('[SaleService] ❌ Repair failed: $e');
+        debugPrint('[SaleService] Repair failed: $e');
       }
     }
 
@@ -612,7 +678,7 @@ class SaleService {
       ).get();
 
       if (kDebugMode) {
-        debugPrint('[SaleService] 🔧 RepairSync: checking ${salesInQueue.length} sales with customerId in queue');
+        debugPrint('[SaleService] RepairSync: checking ${salesInQueue.length} sales with customerId in queue');
       }
 
       for (final row in salesInQueue) {
@@ -626,7 +692,7 @@ class SaleService {
         final customerId = customerIdMatch.group(1)!;
 
         if (kDebugMode) {
-          debugPrint('[SaleService] ⚠️ Sale queue $queueId has customerId: $customerId — removing to fix FK');
+          debugPrint('[SaleService] Sale queue $queueId has customerId: $customerId -- removing to fix FK');
         }
 
         // إزالة customerId من الـ payload
@@ -643,16 +709,16 @@ class SaleService {
 
         repairedCount++;
         if (kDebugMode) {
-          debugPrint('[SaleService] 🔧 Fixed sync payload for sale $queueId');
+          debugPrint('[SaleService] Fixed sync payload for sale $queueId');
         }
       }
 
       if (kDebugMode) {
-        debugPrint('[SaleService] 🔧 RepairSync complete: $repairedCount sales fixed');
+        debugPrint('[SaleService] RepairSync complete: $repairedCount sales fixed');
       }
     } catch (e) {
       if (kDebugMode) {
-        debugPrint('[SaleService] ❌ RepairSync failed: $e');
+        debugPrint('[SaleService] RepairSync failed: $e');
       }
     }
     return repairedCount;

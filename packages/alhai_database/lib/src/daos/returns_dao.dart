@@ -45,4 +45,33 @@ class ReturnsDao extends DatabaseAccessor<AppDatabase> with _$ReturnsDaoMixin {
   Future<void> insertReturnItems(List<ReturnItemsTableCompanion> items) async {
     await batch((b) { b.insertAll(returnItemsTable, items); });
   }
+
+  /// مجموع المرتجعات النقدية فقط خلال فترة الوردية
+  /// يُستخدم لحساب النقد المتوقع في الدرج
+  Future<double> getCashRefundsTotalForPeriod(
+    String storeId, {
+    required DateTime startDate,
+    DateTime? endDate,
+  }) async {
+    var whereClause = "store_id = ? AND refund_method = 'cash' AND status = 'completed' AND created_at >= ?";
+    final variables = <Variable>[
+      Variable.withString(storeId),
+      Variable.withDateTime(startDate),
+    ];
+
+    if (endDate != null) {
+      whereClause += ' AND created_at < ?';
+      variables.add(Variable.withDateTime(endDate));
+    }
+
+    final result = await customSelect(
+      'SELECT COALESCE(SUM(total_refund), 0) as total FROM returns WHERE $whereClause',
+      variables: variables,
+    ).getSingle();
+
+    final total = result.data['total'];
+    if (total == null) return 0.0;
+    if (total is int) return total.toDouble();
+    return total as double;
+  }
 }

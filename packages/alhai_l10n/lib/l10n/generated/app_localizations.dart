@@ -24446,6 +24446,18 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'نسخ'**
   String get copyToClipboard;
+
+  /// No description provided for @invoiceAlreadyRefunded.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إرجاع هذه الفاتورة بالكامل مسبقاً'**
+  String get invoiceAlreadyRefunded;
+
+  /// No description provided for @invoicePartiallyRefunded.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إرجاع بعض المنتجات مسبقاً - يتم عرض المتبقي فقط'**
+  String get invoicePartiallyRefunded;
 }
 
 class _AppLocalizationsDelegate

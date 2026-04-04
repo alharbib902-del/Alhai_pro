@@ -85,8 +85,12 @@ class InvoiceService {
         taxAmount: Value(sale.tax),
         total: Value(sale.total),
         paymentMethod: Value(sale.paymentMethod),
-        amountPaid: Value(sale.isPaid ? sale.total : 0),
-        amountDue: Value(sale.isPaid ? 0 : sale.total),
+        amountPaid: Value(sale.isPaid
+            ? sale.total
+            : (sale.amountReceived ?? 0)),
+        amountDue: Value(sale.isPaid
+            ? 0
+            : sale.total - (sale.amountReceived ?? 0)),
         createdBy: Value(sale.cashierId),
         cashierName: Value(cashierName),
         issuedAt: Value(now),

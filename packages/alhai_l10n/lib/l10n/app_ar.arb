@@ -5644,5 +5644,7 @@
   "clearField": "مسح",
   "decreaseQuantity": "تقليل الكمية",
   "increaseQuantity": "زيادة الكمية",
-  "copyToClipboard": "نسخ"
+  "copyToClipboard": "نسخ",
+  "invoiceAlreadyRefunded": "تم إرجاع هذه الفاتورة بالكامل مسبقاً",
+  "invoicePartiallyRefunded": "تم إرجاع بعض المنتجات مسبقاً - يتم عرض المتبقي فقط"
 }

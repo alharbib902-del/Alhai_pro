@@ -107,16 +107,27 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
               if (shift == null) {
                 return _buildNoShiftMessage(isDark, l10n);
               }
-              return ref.watch(shiftMovementsProvider(shift.id)).when(
-                data: (movements) => SingleChildScrollView(
-                  padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-                  child: _buildContent(
-                    shift,
-                    movements,
-                    isWideScreen,
-                    isMediumScreen,
-                    isDark,
-                    l10n,
+              final movementsAsync = ref.watch(shiftMovementsProvider(shift.id));
+              final cashTotalsAsync = ref.watch(shiftCashTotalsProvider(shift.id));
+              return movementsAsync.when(
+                data: (movements) => cashTotalsAsync.when(
+                  data: (cashTotals) => SingleChildScrollView(
+                    padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+                    child: _buildContent(
+                      shift,
+                      movements,
+                      cashTotals,
+                      isWideScreen,
+                      isMediumScreen,
+                      isDark,
+                      l10n,
+                    ),
+                  ),
+                  loading: () => const AppLoadingState(),
+                  error: (e, _) => AppErrorState.general(
+                    context,
+                    message: '$e',
+                    onRetry: () => ref.invalidate(shiftCashTotalsProvider(shift.id)),
                   ),
                 ),
                 loading: () => const AppLoadingState(),
@@ -178,6 +189,7 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
   Widget _buildContent(
     ShiftsTableData shift,
     List<CashMovementsTableData> movements,
+    ({double cashSales, double cashRefunds}) cashTotals,
     bool isWideScreen,
     bool isMediumScreen,
     bool isDark,
@@ -192,8 +204,11 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
     final cashOut = movements
         .where((m) => m.type == 'cash_out')
         .fold<double>(0, (sum, m) => sum + m.amount);
-    final totalSalesAmount = shift.totalSalesAmount;
-    final totalRefundsAmount = shift.totalRefundsAmount;
+    // BUG FIX: use cash-only sales/refunds for expected drawer calculation
+    // Previously used shift.totalSalesAmount which included card/credit sales,
+    // causing a false deficit on shift close.
+    final totalSalesAmount = cashTotals.cashSales;
+    final totalRefundsAmount = cashTotals.cashRefunds;
     final expectedCash =
         openingCash + cashIn - cashOut + totalSalesAmount - totalRefundsAmount;
 

@@ -663,7 +663,40 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
         );
       case PaymentMethod.wallet:
       case PaymentMethod.bankTransfer:
-        return const CreditPaymentDetails();
+        final customerId = ref.read(cartStateProvider).customerId;
+        final hasCustomer = customerId != null && customerId.isNotEmpty;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const CreditPaymentDetails(),
+            if (!hasCustomer) ...[
+              const SizedBox(height: AppSpacing.md),
+              Container(
+                padding: const EdgeInsets.all(AppSpacing.md),
+                decoration: BoxDecoration(
+                  color: AppColors.error.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(AppRadius.md),
+                  border: Border.all(color: AppColors.error.withValues(alpha: 0.3)),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.person_off, color: AppColors.error, size: 22),
+                    const SizedBox(width: AppSpacing.sm),
+                    Expanded(
+                      child: Text(
+                        l10n.selectCustomerFirstError,
+                        style: AppTypography.bodyMedium.copyWith(
+                          color: AppColors.error,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ],
+        );
     }
   }
 
@@ -941,7 +974,9 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
         return _cardRrnController.text.isNotEmpty;
       case PaymentMethod.wallet:
       case PaymentMethod.bankTransfer:
-        return true;
+        // BUG FIX: credit/wallet payment requires a customer to track the debt
+        final customerId = ref.read(cartStateProvider).customerId;
+        return customerId != null && customerId.isNotEmpty;
     }
   }
 

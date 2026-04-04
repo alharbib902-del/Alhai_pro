@@ -259,22 +259,50 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
 
       await db.returnsDao.insertReturnItems(returnItems);
 
-      // Restore inventory via movement records
+      // جلب org_id من المتجر (لدلتا المخزون)
+      String? orgId;
+      try {
+        final store = await db.storesDao.getStoreById(storeId);
+        orgId = store?.orgId;
+      } catch (_) {}
+
+      // Restore inventory: update stock, record movements, and write stock deltas
       for (final item in pendingRefund.items) {
+        // قراءة الكمية الحالية من قاعدة البيانات
+        final product = await db.productsDao.getProductById(item.productId);
+        final previousQty = product?.stockQty.toDouble() ?? 0;
+        final newQty = previousQty + item.qty;
+
+        // تحديث كمية المنتج في جدول products
+        await db.productsDao.updateStock(item.productId, newQty);
+
+        // تسجيل حركة المخزون بالكميات الفعلية
         await db.inventoryDao.insertMovement(InventoryMovementsTableCompanion.insert(
           id: 'INV-RTN-${_uuid.v4()}',
           productId: item.productId,
           storeId: storeId,
           type: 'return',
           qty: item.qty,
-          previousQty: 0, // actual previous qty not tracked here
-          newQty: 0, // actual new qty not tracked here
+          previousQty: previousQty,
+          newQty: newQty,
           referenceType: const Value('return'),
           referenceId: Value(returnId),
           userId: Value(userId),
           reason: Value('return: $_selectedReason'),
           createdAt: DateTime.now(),
         ));
+
+        // تسجيل دلتا المخزون (موجب لاستعادة المخزون)
+        await db.stockDeltasDao.addDelta(
+          id: _uuid.v4(),
+          productId: item.productId,
+          storeId: storeId,
+          orgId: orgId,
+          quantityChange: item.qty,
+          deviceId: userId,
+          operationType: 'return',
+          referenceId: returnId,
+        );
       }
 
       // Invalidate the returns list so it refreshes

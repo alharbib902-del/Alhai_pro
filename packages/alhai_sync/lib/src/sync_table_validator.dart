@@ -12,6 +12,7 @@ const Set<String> allowedSyncTables = {
   'sale_items',
   'orders',
   'order_items',
+  'order_status_history',
   'purchases',
   'purchase_items',
   'returns',

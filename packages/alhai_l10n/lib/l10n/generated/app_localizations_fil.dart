@@ -13167,4 +13167,11 @@ class AppLocalizationsFil extends AppLocalizations {
 
   @override
   String get copyToClipboard => 'نسخ';
+
+  @override
+  String get invoiceAlreadyRefunded => 'تم إرجاع هذه الفاتورة بالكامل مسبقاً';
+
+  @override
+  String get invoicePartiallyRefunded =>
+      'تم إرجاع بعض المنتجات مسبقاً - يتم عرض المتبقي فقط';
 }

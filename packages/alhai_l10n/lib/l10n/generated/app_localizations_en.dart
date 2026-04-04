@@ -13169,4 +13169,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get copyToClipboard => 'Copy';
+
+  @override
+  String get invoiceAlreadyRefunded =>
+      'This invoice has already been fully refunded';
+
+  @override
+  String get invoicePartiallyRefunded =>
+      'Some items were previously refunded - showing remaining items only';
 }
