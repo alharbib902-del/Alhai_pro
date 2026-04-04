@@ -10,7 +10,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_core/alhai_core.dart';
-import '../../providers/settings_db_providers.dart';
+import '../../../providers/settings_db_providers.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 
 // مفاتيح إعدادات الضرائب
@@ -268,10 +268,7 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
           ),
           if (_enableZatca) ...[
             const Divider(indent: 16, endIndent: 16),
-            RadioGroup<String>(
-              groupValue: _zatcaPhase,
-              onChanged: (v) => setState(() => _zatcaPhase = v!),
-              child: Column(
+            Column(
                 children: [
                   RadioListTile<String>(
                     title: Text(l10n.phaseOne,
@@ -279,6 +276,8 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
                             color: Theme.of(context).colorScheme.onSurface)),
                     subtitle: Text(l10n.phaseOneDesc),
                     value: 'phase1',
+                    groupValue: _zatcaPhase,
+                    onChanged: (v) => setState(() => _zatcaPhase = v!),
                   ),
                   RadioListTile<String>(
                     title: Text(l10n.phaseTwo,
@@ -286,10 +285,11 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
                             color: Theme.of(context).colorScheme.onSurface)),
                     subtitle: Text(l10n.phaseTwoDesc),
                     value: 'phase2',
+                    groupValue: _zatcaPhase,
+                    onChanged: (v) => setState(() => _zatcaPhase = v!),
                   ),
                 ],
               ),
-            ),
           ],
           const SizedBox(height: AlhaiSpacing.xs),
         ]),

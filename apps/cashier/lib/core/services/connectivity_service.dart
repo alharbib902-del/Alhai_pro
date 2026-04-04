@@ -23,7 +23,7 @@ class ConnectivityService {
   /// Broadcast controller so multiple listeners can subscribe.
   final StreamController<bool> _controller = StreamController<bool>.broadcast();
 
-  StreamSubscription<List<ConnectivityResult>>? _subscription;
+  StreamSubscription<ConnectivityResult>? _subscription;
 
   /// Current connectivity state. Defaults to `true` (optimistic).
   bool _isOnline = true;
@@ -49,11 +49,12 @@ class ConnectivityService {
 
     // Check initial state
     try {
-      final results = await _connectivity.checkConnectivity();
-      _isOnline = results.any((r) => r != ConnectivityResult.none);
+      final result = await _connectivity.checkConnectivity();
+      _isOnline = result != ConnectivityResult.none;
     } catch (e) {
-      if (kDebugMode)
+      if (kDebugMode) {
         debugPrint('ConnectivityService: فشل فحص الاتصال الأولي: $e');
+      }
       _isOnline = true; // optimistic default
     }
 
@@ -64,7 +65,7 @@ class ConnectivityService {
 
     // Listen for changes
     _subscription = _connectivity.onConnectivityChanged.listen(
-      _handleConnectivityChange,
+      (result) => _handleConnectivityChange(result),
       onError: (Object error) {
         if (kDebugMode) {
           debugPrint('ConnectivityService: خطأ في مراقبة الاتصال: $error');
@@ -76,9 +77,9 @@ class ConnectivityService {
   /// Check connectivity on demand (useful for pull-to-refresh).
   Future<bool> checkNow() async {
     try {
-      final results = await _connectivity.checkConnectivity();
+      final result = await _connectivity.checkConnectivity();
       final wasOnline = _isOnline;
-      _isOnline = results.any((r) => r != ConnectivityResult.none);
+      _isOnline = result != ConnectivityResult.none;
 
       if (_isOnline != wasOnline) {
         _controller.add(_isOnline);
@@ -104,9 +105,9 @@ class ConnectivityService {
 
   // -- Internal --------------------------------------------------------------
 
-  void _handleConnectivityChange(List<ConnectivityResult> results) {
+  void _handleConnectivityChange(ConnectivityResult result) {
     final wasOnline = _isOnline;
-    _isOnline = results.any((r) => r != ConnectivityResult.none);
+    _isOnline = result != ConnectivityResult.none;
 
     // Only emit on actual state changes
     if (_isOnline != wasOnline) {

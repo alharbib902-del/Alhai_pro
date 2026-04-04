@@ -8,7 +8,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_core/alhai_core.dart';
-import '../../providers/settings_db_providers.dart';
+import '../../../providers/settings_db_providers.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 
 // مفاتيح إعدادات أجهزة الدفع
@@ -248,13 +248,7 @@ class _PaymentDevicesSettingsScreenState
         ]),
         _buildSettingsGroup(l10n.paymentTerminal, Icons.contactless_rounded,
             AppColors.primary, isDark, [
-          RadioGroup<String>(
-            groupValue: _terminalType,
-            onChanged: (v) {
-              setState(() => _terminalType = v!);
-              _saveSingleSetting(_kTerminalType, v!);
-            },
-            child: Column(
+          Column(
               children: [
                 RadioListTile<String>(
                   title: Text('Ingenico',
@@ -262,6 +256,11 @@ class _PaymentDevicesSettingsScreenState
                           color: Theme.of(context).colorScheme.onSurface)),
                   subtitle: Text(l10n.ingenicoDevices),
                   value: 'ingenico',
+                  groupValue: _terminalType,
+                  onChanged: (v) {
+                    setState(() => _terminalType = v!);
+                    _saveSingleSetting(_kTerminalType, v!);
+                  },
                 ),
                 RadioListTile<String>(
                   title: Text('Verifone',
@@ -269,6 +268,11 @@ class _PaymentDevicesSettingsScreenState
                           color: Theme.of(context).colorScheme.onSurface)),
                   subtitle: Text(l10n.verifoneDevices),
                   value: 'verifone',
+                  groupValue: _terminalType,
+                  onChanged: (v) {
+                    setState(() => _terminalType = v!);
+                    _saveSingleSetting(_kTerminalType, v!);
+                  },
                 ),
                 RadioListTile<String>(
                   title: Text('PAX',
@@ -276,10 +280,14 @@ class _PaymentDevicesSettingsScreenState
                           color: Theme.of(context).colorScheme.onSurface)),
                   subtitle: Text(l10n.paxDevices),
                   value: 'pax',
+                  groupValue: _terminalType,
+                  onChanged: (v) {
+                    setState(() => _terminalType = v!);
+                    _saveSingleSetting(_kTerminalType, v!);
+                  },
                 ),
               ],
             ),
-          ),
           const SizedBox(height: AlhaiSpacing.xs),
         ]),
         _buildSettingsGroup(l10n.settlement, Icons.account_balance_rounded,

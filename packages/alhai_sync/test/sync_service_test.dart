@@ -203,7 +203,7 @@ void main() {
       );
       when(() => mockDao.findByIdempotencyKey(any()))
           .thenAnswer((_) async => existingItem);
-      when(() => mockDao.updatePayload(any(), any())).thenAnswer((_) async {});
+      when(() => mockDao.updatePayload(any(), any())).thenAnswer((_) async => 1);
 
       final id = await service.enqueue(
         tableName: 'products',
@@ -298,19 +298,19 @@ void main() {
     });
 
     test('markAsSyncing delegates to DAO', () async {
-      when(() => mockDao.markAsSyncing(any())).thenAnswer((_) async {});
+      when(() => mockDao.markAsSyncing(any())).thenAnswer((_) async => 1);
       await service.markAsSyncing('id-1');
       verify(() => mockDao.markAsSyncing('id-1')).called(1);
     });
 
     test('markAsSynced delegates to DAO', () async {
-      when(() => mockDao.markAsSynced(any())).thenAnswer((_) async {});
+      when(() => mockDao.markAsSynced(any())).thenAnswer((_) async => 1);
       await service.markAsSynced('id-1');
       verify(() => mockDao.markAsSynced('id-1')).called(1);
     });
 
     test('markAsFailed delegates to DAO', () async {
-      when(() => mockDao.markAsFailed(any(), any())).thenAnswer((_) async {});
+      when(() => mockDao.markAsFailed(any(), any())).thenAnswer((_) async => 1);
       await service.markAsFailed('id-1', 'timeout');
       verify(() => mockDao.markAsFailed('id-1', 'timeout')).called(1);
     });
@@ -418,7 +418,7 @@ void _setupEnqueueSuccess(MockSyncQueueDao dao) {
         payload: any(named: 'payload'),
         idempotencyKey: any(named: 'idempotencyKey'),
         priority: any(named: 'priority'),
-      )).thenAnswer((_) async {});
+      )).thenAnswer((_) async => 1);
 }
 
 SyncQueueTableData _fakeSyncQueueItem({
@@ -437,8 +437,7 @@ SyncQueueTableData _fakeSyncQueueItem({
     retryCount: 0,
     maxRetries: 5,
     createdAt: DateTime.now(),
-    updatedAt: DateTime.now(),
     priority: 2,
-    errorMessage: null,
+    lastError: null,
   );
 }

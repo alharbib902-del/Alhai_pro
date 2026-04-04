@@ -61,10 +61,18 @@ class AlhaiSwitch extends StatelessWidget {
     final switchWidget = Switch(
       value: value,
       onChanged: isDisabled ? null : onChanged,
-      activeThumbColor: colorScheme.primary,
-      activeTrackColor: colorScheme.primaryContainer,
-      inactiveThumbColor: colorScheme.outline,
-      inactiveTrackColor: colorScheme.surfaceContainerHighest,
+      thumbColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return colorScheme.primary;
+        }
+        return colorScheme.outline;
+      }),
+      trackColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return colorScheme.primaryContainer;
+        }
+        return colorScheme.surfaceContainerHighest;
+      }),
       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
     );
 

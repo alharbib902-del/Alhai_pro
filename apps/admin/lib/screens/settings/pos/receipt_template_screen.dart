@@ -5,7 +5,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_core/alhai_core.dart';
-import '../../providers/settings_db_providers.dart';
+import '../../../providers/settings_db_providers.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 
 // مفاتيح إعدادات قالب الإيصال
@@ -331,10 +331,7 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
         // Paper size
         _buildSettingsGroup(l10n.paperSize, Icons.straighten_rounded,
             AppColors.success, isDark, [
-          RadioGroup<String>(
-            groupValue: _paperSize,
-            onChanged: (v) => setState(() => _paperSize = v!),
-            child: Column(
+          Column(
               children: [
                 RadioListTile<String>(
                   title: Text('80mm',
@@ -342,6 +339,8 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
                           color: Theme.of(context).colorScheme.onSurface)),
                   subtitle: Text(l10n.standardSize),
                   value: '80mm',
+                  groupValue: _paperSize,
+                  onChanged: (v) => setState(() => _paperSize = v!),
                 ),
                 RadioListTile<String>(
                   title: Text('58mm',
@@ -349,6 +348,8 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
                           color: Theme.of(context).colorScheme.onSurface)),
                   subtitle: Text(l10n.smallSize),
                   value: '58mm',
+                  groupValue: _paperSize,
+                  onChanged: (v) => setState(() => _paperSize = v!),
                 ),
                 RadioListTile<String>(
                   title: Text('A4',
@@ -356,10 +357,11 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
                           color: Theme.of(context).colorScheme.onSurface)),
                   subtitle: Text(l10n.normalPrint),
                   value: 'a4',
+                  groupValue: _paperSize,
+                  onChanged: (v) => setState(() => _paperSize = v!),
                 ),
               ],
             ),
-          ),
           const SizedBox(height: AlhaiSpacing.xs),
         ]),
 

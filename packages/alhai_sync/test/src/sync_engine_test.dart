@@ -32,6 +32,7 @@ void main() {
   late MockStockDeltaSync mockStockDelta;
   late MockConnectivityService mockConnectivity;
   late MockSyncStatusTracker mockStatusTracker;
+  late MockSyncQueueDao mockSyncQueueDao;
   late SyncEngine engine;
 
   setUpAll(() {
@@ -45,6 +46,7 @@ void main() {
     mockStockDelta = MockStockDeltaSync();
     mockConnectivity = MockConnectivityService();
     mockStatusTracker = MockSyncStatusTracker();
+    mockSyncQueueDao = MockSyncQueueDao();
 
     when(() => mockConnectivity.onConnectivityChanged)
         .thenAnswer((_) => const Stream.empty());
@@ -58,6 +60,7 @@ void main() {
       stockDeltaSync: mockStockDelta,
       connectivity: mockConnectivity,
       statusTracker: mockStatusTracker,
+      syncQueueDao: mockSyncQueueDao,
     );
   });
 

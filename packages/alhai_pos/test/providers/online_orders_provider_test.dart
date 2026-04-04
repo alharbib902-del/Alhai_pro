@@ -87,7 +87,7 @@ void main() {
     late OnlineOrdersNotifier notifier;
 
     setUp(() {
-      notifier = OnlineOrdersNotifier();
+      notifier = OnlineOrdersNotifier(null);
     });
 
     test('initializes with mock data', () {

@@ -9,7 +9,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_core/alhai_core.dart';
-import '../../providers/settings_db_providers.dart';
+import '../../../providers/settings_db_providers.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 
 const String _kProductDisplay = 'pos_product_display';

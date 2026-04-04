@@ -39,10 +39,8 @@ QueryExecutor openNativeConnection({String? dbName, String? encryptionKey}) {
       databaseName: name,
       sqlite3Uri: Uri.parse('sqlite3.wasm'),
       driftWorkerUri: Uri.parse('drift_worker.js'),
-      // Automatically migrate existing IndexedDB databases to OPFS
-      // when OPFS becomes available (e.g. after browser update).
-      // This is safe: it copies data first, then deletes the old DB.
-      moveExistingIndexedDbToOpfs: true,
+      // Note: moveExistingIndexedDbToOpfs was removed in drift 2.x.
+      // Drift now handles IndexedDB-to-OPFS migration automatically.
     );
 
     if (kDebugMode) {

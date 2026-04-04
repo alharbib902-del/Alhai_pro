@@ -202,6 +202,8 @@ SyncMetadataTableData createSyncMetadata({
   bool isInitialSynced = false,
   int lastSyncCount = 0,
   String? lastError,
+  int conflictCount = 0,
+  bool requiresManualReview = false,
 }) {
   return SyncMetadataTableData(
     tableName_: tableName,
@@ -212,6 +214,8 @@ SyncMetadataTableData createSyncMetadata({
     isInitialSynced: isInitialSynced,
     lastSyncCount: lastSyncCount,
     lastError: lastError,
+    conflictCount: conflictCount,
+    requiresManualReview: requiresManualReview,
   );
 }
 

@@ -11,9 +11,9 @@ import 'package:go_router/go_router.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_auth/alhai_auth.dart';
-import '../../core/services/sentry_service.dart';
-import '../../services/printing/print_service.dart';
-import '../../services/printing/printing_providers.dart'
+import '../../../core/services/sentry_service.dart';
+import '../../../services/printing/print_service.dart';
+import '../../../services/printing/printing_providers.dart'
     hide autoPrintEnabledProvider;
 import 'package:alhai_design_system/alhai_design_system.dart'
     show AlhaiBreakpoints, AlhaiSpacing;

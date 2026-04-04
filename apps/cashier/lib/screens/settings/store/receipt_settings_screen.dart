@@ -16,7 +16,7 @@ import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_design_system/alhai_design_system.dart'
     show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
-import '../../core/services/sentry_service.dart';
+import '../../../core/services/sentry_service.dart';
 
 /// Receipt settings screen
 class ReceiptSettingsScreen extends ConsumerStatefulWidget {

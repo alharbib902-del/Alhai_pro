@@ -5,7 +5,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_core/alhai_core.dart';
-import '../../providers/settings_db_providers.dart';
+import '../../../providers/settings_db_providers.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 
 // مفاتيح إعدادات الباركود
@@ -390,35 +390,51 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(l10n.barcodeFormats),
-        content: RadioGroup<String>(
-          groupValue: _barcodeFormat,
-          onChanged: (v) {
-            setState(() => _barcodeFormat = v!);
-            _saveAllSettings();
-            Navigator.pop(ctx);
-          },
-          child: Column(
+        content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               RadioListTile<String>(
                 title: Text(l10n.allFormats),
                 value: 'all',
+                groupValue: _barcodeFormat,
+                onChanged: (v) {
+                  setState(() => _barcodeFormat = v!);
+                  _saveAllSettings();
+                  Navigator.pop(ctx);
+                },
               ),
               RadioListTile<String>(
                 title: const Text('EAN-8, EAN-13'),
                 value: 'ean',
+                groupValue: _barcodeFormat,
+                onChanged: (v) {
+                  setState(() => _barcodeFormat = v!);
+                  _saveAllSettings();
+                  Navigator.pop(ctx);
+                },
               ),
               RadioListTile<String>(
                 title: const Text('UPC-A, UPC-E'),
                 value: 'upc',
+                groupValue: _barcodeFormat,
+                onChanged: (v) {
+                  setState(() => _barcodeFormat = v!);
+                  _saveAllSettings();
+                  Navigator.pop(ctx);
+                },
               ),
               RadioListTile<String>(
                 title: Text(l10n.qrCodeOnly),
                 value: 'qr',
+                groupValue: _barcodeFormat,
+                onChanged: (v) {
+                  setState(() => _barcodeFormat = v!);
+                  _saveAllSettings();
+                  Navigator.pop(ctx);
+                },
               ),
             ],
           ),
-        ),
       ),
     );
   }

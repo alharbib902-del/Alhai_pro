@@ -5,7 +5,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_core/alhai_core.dart';
-import '../../providers/settings_db_providers.dart';
+import '../../../providers/settings_db_providers.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 
 // مفاتيح إعدادات الطابعة
@@ -162,10 +162,7 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
         const SizedBox(height: AlhaiSpacing.mdl),
         _buildSettingsGroup(l10n.printerType, Icons.print_rounded,
             const Color(0xFF8B5CF6), isDark, [
-          RadioGroup<String>(
-            groupValue: _printerType,
-            onChanged: (v) => setState(() => _printerType = v!),
-            child: Column(
+          Column(
               children: [
                 RadioListTile<String>(
                   title: Text('USB',
@@ -173,6 +170,8 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
                           color: Theme.of(context).colorScheme.onSurface)),
                   subtitle: Text(l10n.thermalUsbPrinter),
                   value: 'usb',
+                  groupValue: _printerType,
+                  onChanged: (v) => setState(() => _printerType = v!),
                 ),
                 RadioListTile<String>(
                   title: Text('Bluetooth',
@@ -180,6 +179,8 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
                           color: Theme.of(context).colorScheme.onSurface)),
                   subtitle: Text(l10n.bluetoothPortablePrinter),
                   value: 'bluetooth',
+                  groupValue: _printerType,
+                  onChanged: (v) => setState(() => _printerType = v!),
                 ),
                 RadioListTile<String>(
                   title: Text('PDF',
@@ -187,18 +188,16 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
                           color: Theme.of(context).colorScheme.onSurface)),
                   subtitle: Text(l10n.saveAsPdf),
                   value: 'pdf',
+                  groupValue: _printerType,
+                  onChanged: (v) => setState(() => _printerType = v!),
                 ),
               ],
             ),
-          ),
           const SizedBox(height: AlhaiSpacing.xs),
         ]),
         _buildSettingsGroup(l10n.receiptTemplate, Icons.receipt_long_rounded,
             AppColors.info, isDark, [
-          RadioGroup<String>(
-            groupValue: _template,
-            onChanged: (v) => setState(() => _template = v!),
-            child: Column(
+          Column(
               children: [
                 RadioListTile<String>(
                   title: Text(l10n.compactTemplate,
@@ -206,6 +205,8 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
                           color: Theme.of(context).colorScheme.onSurface)),
                   subtitle: Text(l10n.basicInfoOnly),
                   value: 'compact',
+                  groupValue: _template,
+                  onChanged: (v) => setState(() => _template = v!),
                 ),
                 RadioListTile<String>(
                   title: Text(l10n.detailedTemplate,
@@ -213,10 +214,11 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
                           color: Theme.of(context).colorScheme.onSurface)),
                   subtitle: Text(l10n.allDetails),
                   value: 'detailed',
+                  groupValue: _template,
+                  onChanged: (v) => setState(() => _template = v!),
                 ),
               ],
             ),
-          ),
           const SizedBox(height: AlhaiSpacing.xs),
         ]),
         _buildSettingsGroup(l10n.printOptions, Icons.settings_rounded,

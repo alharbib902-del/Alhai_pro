@@ -13,7 +13,8 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiSpacing;
+import 'package:alhai_design_system/alhai_design_system.dart'
+    show AlhaiSpacing, AlhaiContextExtensions;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 
