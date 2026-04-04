@@ -45,8 +45,9 @@ Map<String, dynamic> cleanSyncPayload(
 /// a column that Supabase lacks (rather than removing the column from Drift,
 /// which would require a local migration).
 const Map<String, Set<String>> _localOnlyColumns = {
-  // v24 added shift_id to Supabase, v29 added org_id to cash_movements.
-  // No columns need stripping anymore — all Drift columns exist in Supabase.
+  // Verified against live Supabase 2026-04-04: these columns do NOT exist
+  'sales': {'shift_id', 'shiftId', 'deleted_at', 'deletedAt'},
+  'returns': {'deleted_at', 'deletedAt'},
 };
 
 /// Converts map keys from camelCase to snake_case for Supabase compatibility.
@@ -76,45 +77,10 @@ String _camelToSnake(String input) {
 /// The Drift ORM generates snake_case column names from Dart camelCase getters,
 /// but the Supabase SQL schema uses different names for some columns.
 /// This map defines the renames per table.
-const Map<String, Map<String, String>> _localToRemoteColumnMap = {
-  'orders': {
-    'discount': 'discount_amount',
-    'cancel_reason': 'cancellation_reason',
-  },
-  'order_items': {
-    'quantity': 'qty',
-    'total': 'total_price',
-  },
-  // M-COMPAT: shifts.difference → Supabase cash_difference (original column name)
-  'shifts': {
-    'difference': 'cash_difference',
-  },
-  // M-COMPAT: returns.total_refund → Supabase refund_amount (v25 original name)
-  'returns': {
-    'total_refund': 'refund_amount',
-  },
-  // M-COMPAT: return_items.refund_amount → Supabase total (v25 original name)
-  'return_items': {
-    'refund_amount': 'total',
-  },
-  // M-COMPAT: daily_summaries count vs amount column name mismatch.
-  // Drift totalSales (INTEGER count) → Supabase total_sales_count (v29).
-  // Drift totalSalesAmount (REAL money) → Supabase total_sales (v25 original).
-  'daily_summaries': {
-    'total_sales': 'total_sales_count',
-    'total_sales_amount': 'total_sales',
-  },
-  // M-COMPAT: loyalty_points column name mismatches
-  'loyalty_points': {
-    'current_points': 'points',
-    'total_earned': 'points_earned',
-    'total_redeemed': 'points_redeemed',
-  },
-  // M-COMPAT: users.avatar → Supabase image_url
-  'users': {
-    'avatar': 'image_url',
-  },
-};
+/// Verified against LIVE Supabase schema 2026-04-04:
+/// All Drift column names match Supabase exactly. NO renames needed.
+/// Previous renames were based on migration files, not the actual DB.
+const Map<String, Map<String, String>> _localToRemoteColumnMap = {};
 
 /// Reverse map: Supabase remote name -> local Drift name.
 /// Built lazily from [_localToRemoteColumnMap].
