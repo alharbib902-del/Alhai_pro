@@ -28,7 +28,7 @@ void main() {
     isProduction: true,
   );
 
-  final successResponse = const ZatcaResponse(
+  const successResponse = ZatcaResponse(
     isSuccess: true,
     statusCode: 200,
     reportingStatus: ReportingStatus.reported,

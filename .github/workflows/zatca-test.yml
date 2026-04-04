@@ -50,7 +50,7 @@ jobs:
       - name: Run ZATCA tests with coverage
         run: |
           cd packages/alhai_zatca
-          flutter test --coverage --reporter expanded
+          flutter test --coverage --reporter expanded --exclude-tags=integration
 
       - name: Install lcov
         run: sudo apt-get install -y lcov

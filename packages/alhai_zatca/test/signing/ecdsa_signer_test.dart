@@ -144,7 +144,7 @@ void main() {
       test('should sign and verify a SHA-256 digest successfully', () {
         // Simulate the ZATCA signing flow:
         // 1. Compute SHA-256 of invoice data
-        final invoiceData = 'invoice-xml-content-here';
+        const invoiceData = 'invoice-xml-content-here';
         final digest =
             Uint8List.fromList(sha256.convert(utf8.encode(invoiceData)).bytes);
 

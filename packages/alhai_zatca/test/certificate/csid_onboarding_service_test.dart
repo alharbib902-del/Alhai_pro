@@ -35,7 +35,7 @@ void main() {
   late MockComplianceApi mockComplianceApi;
   late MockCertificateStorage mockStorage;
 
-  final testConfig = const CsrConfig(
+  const testConfig = CsrConfig(
     solutionName: 'AlhaiPOS',
     modelVersion: '1.0',
     serialNumber: 'SN-001',

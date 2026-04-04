@@ -30,11 +30,11 @@ void main() {
       });
 
       test('round-trip: decode matches original values', () {
-        final sellerName = 'Bobs Records';
-        final vatNumber = '310122393500003';
+        const sellerName = 'Bobs Records';
+        const vatNumber = '310122393500003';
         final timestamp = DateTime(2022, 4, 25, 15, 30, 0);
-        final totalWithVat = 115.0;
-        final vatAmount = 15.0;
+        const totalWithVat = 115.0;
+        const vatAmount = 15.0;
 
         final encoded = encoder.encodeSimplified(
           sellerName: sellerName,
