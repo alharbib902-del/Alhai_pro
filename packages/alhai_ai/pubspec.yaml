@@ -12,8 +12,6 @@ dependencies:
     sdk: flutter
   alhai_core:
     path: ../../alhai_core
-  alhai_services:
-    path: ../../alhai_services
   alhai_design_system:
     path: ../../alhai_design_system
   alhai_l10n:

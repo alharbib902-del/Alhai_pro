@@ -11,14 +11,6 @@ dependencies:
   flutter:
     sdk: flutter
 
-  # Internal packages
-  alhai_core:
-    path: ../../alhai_core
-  alhai_database:
-    path: ../alhai_database
-  alhai_auth:
-    path: ../alhai_auth
-
   # XML
   xml: ^6.5.0
 

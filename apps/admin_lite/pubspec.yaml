@@ -13,14 +13,10 @@ dependencies:
     sdk: flutter
   alhai_core:
     path: ../../alhai_core
-  alhai_services:
-    path: ../../alhai_services
   alhai_design_system:
     path: ../../alhai_design_system
   alhai_database:
     path: ../../packages/alhai_database
-  alhai_sync:
-    path: ../../packages/alhai_sync
   alhai_l10n:
     path: ../../packages/alhai_l10n
   alhai_auth:
