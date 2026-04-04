@@ -165,23 +165,13 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
     if (_error != null) {
       return Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        body: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.error_outline, size: 48, color: AppColors.error),
-              const SizedBox(height: AlhaiSpacing.md),
-              Text(_error == 'storeNotSet' ? l10n.storeNotSet : _error!, style: AppTypography.bodyLarge),
-              const SizedBox(height: AlhaiSpacing.md),
-              ElevatedButton(
-                onPressed: () {
-                  setState(() { _isLoading = true; _error = null; });
-                  _loadData();
-                },
-                child: Text(l10n.retryAction),
-              ),
-            ],
-          ),
+        body: AppErrorState.general(
+          context,
+          message: _error == 'storeNotSet' ? l10n.storeNotSet : _error,
+          onRetry: () {
+            setState(() { _isLoading = true; _error = null; });
+            _loadData();
+          },
         ),
       );
     }

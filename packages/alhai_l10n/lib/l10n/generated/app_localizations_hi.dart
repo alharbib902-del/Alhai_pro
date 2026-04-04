@@ -12741,4 +12741,219 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get distributorRiyal => 'ريال';
+
+  @override
+  String get scanCouponBarcode => 'مسح باركود الكوبون';
+
+  @override
+  String get validateCoupon => 'تحقق';
+
+  @override
+  String get couponValid => 'الكوبون صالح';
+
+  @override
+  String get recentCoupons => 'الكوبونات الأخيرة';
+
+  @override
+  String get noRecentCoupons => 'لا توجد كوبونات حديثة';
+
+  @override
+  String get noExpiry => 'بدون انتهاء';
+
+  @override
+  String get invalidCouponCode => 'كود كوبون غير صالح';
+
+  @override
+  String get percentageOff => 'خصم نسبة مئوية';
+
+  @override
+  String get bundleDeals => 'عروض الباقات';
+
+  @override
+  String get includedProducts => 'المنتجات المشمولة';
+
+  @override
+  String get individualTotal => 'المجموع الفردي';
+
+  @override
+  String get bundlePrice => 'سعر الباقة';
+
+  @override
+  String get youSave => 'توفيرك';
+
+  @override
+  String get noBundleDeals => 'لا توجد عروض باقات';
+
+  @override
+  String get bundleDealsWillAppear => 'ستظهر عروض الباقات هنا';
+
+  @override
+  String validUntilDate(String date) {
+    return 'صالح حتى: $date';
+  }
+
+  @override
+  String validFromDate(String date) {
+    return 'صالح من: $date';
+  }
+
+  @override
+  String get autoApplied => 'تطبيق تلقائي';
+
+  @override
+  String get noActiveOffers => 'لا توجد عروض نشطة';
+
+  @override
+  String get wastage => 'الهدر والتالف';
+
+  @override
+  String get quantityWasted => 'الكمية المهدرة';
+
+  @override
+  String get photoLabel => 'صورة';
+
+  @override
+  String get photoAttached => 'تم إرفاق الصورة';
+
+  @override
+  String get tapToTakePhoto => 'انقر لالتقاط صورة';
+
+  @override
+  String get optionalLabel => 'اختياري';
+
+  @override
+  String get recordWastage => 'تسجيل الهدر';
+
+  @override
+  String get spillage => 'انسكاب';
+
+  @override
+  String get transferInventory => 'نقل المخزون';
+
+  @override
+  String get transferDetails => 'تفاصيل النقل';
+
+  @override
+  String get fromStore => 'من الفرع';
+
+  @override
+  String get toStore => 'إلى الفرع';
+
+  @override
+  String get selectStore => 'اختر الفرع';
+
+  @override
+  String get submitTransfer => 'إرسال النقل';
+
+  @override
+  String get optionalNote => 'ملاحظة اختيارية';
+
+  @override
+  String get addInventory => 'إضافة مخزون';
+
+  @override
+  String get scanLabel => 'مسح';
+
+  @override
+  String get quantityToAdd => 'الكمية المراد إضافتها';
+
+  @override
+  String get supplierReference => 'مرجع المورد';
+
+  @override
+  String get removeInventory => 'سحب مخزون';
+
+  @override
+  String get quantityToRemove => 'الكمية المراد سحبها';
+
+  @override
+  String get sold => 'مباع';
+
+  @override
+  String get transferred => 'منقول';
+
+  @override
+  String get fieldRequired => 'الحقل مطلوب';
+
+  @override
+  String get deviceInfo => 'معلومات الجهاز';
+
+  @override
+  String get deviceName => 'اسم الجهاز';
+
+  @override
+  String get deviceType => 'نوع الجهاز';
+
+  @override
+  String get connectionMethod => 'طريقة الاتصال';
+
+  @override
+  String get networkSettings => 'إعدادات الشبكة';
+
+  @override
+  String get ipAddress => 'عنوان IP';
+
+  @override
+  String get port => 'المنفذ';
+
+  @override
+  String get connectionTestPassed => 'نجح اختبار الاتصال';
+
+  @override
+  String get saveDevice => 'حفظ الجهاز';
+
+  @override
+  String get addDevice => 'إضافة جهاز';
+
+  @override
+  String get noPaymentDevices => 'لا توجد أجهزة دفع';
+
+  @override
+  String get addFirstPaymentDevice => 'أضف أول جهاز دفع';
+
+  @override
+  String get totalDevices => 'إجمالي الأجهزة';
+
+  @override
+  String get disconnected => 'غير متصل';
+
+  @override
+  String testingConnectionName(String name) {
+    return 'جاري اختبار الاتصال $name...';
+  }
+
+  @override
+  String connectionSuccessful(String name) {
+    return '$name - تم الاتصال بنجاح';
+  }
+
+  @override
+  String get pasteFromClipboard => 'لصق من الحافظة';
+
+  @override
+  String get confirmRestore => 'تأكيد الاستعادة';
+
+  @override
+  String get saleNotFound => 'لم يتم العثور على البيع';
+
+  @override
+  String get noItems => 'لا توجد عناصر';
+
+  @override
+  String get customerPaysExtra => 'العميل يدفع إضافي';
+
+  @override
+  String get submitExchange => 'تأكيد الاستبدال';
+
+  @override
+  String get applyInterest => 'تطبيق الفائدة';
+
+  @override
+  String get reportSettings => 'إعدادات التقرير';
+
+  @override
+  String get reportType => 'نوع التقرير';
+
+  @override
+  String get paymentDistribution => 'توزيع المدفوعات';
 }

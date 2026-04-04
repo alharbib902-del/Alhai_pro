@@ -48,7 +48,8 @@ class SettingsScreen extends ConsumerWidget {
     // Get sync pending count
     final syncCount = ref.watch(_syncPendingCountProvider).valueOrNull ?? 0;
 
-    return Column(
+    return SafeArea(
+      child: Column(
               children: [
                 AppHeader(
                   title: storeName ?? l10n.settings,
@@ -98,7 +99,8 @@ class SettingsScreen extends ConsumerWidget {
                   ),
                 ),
               ],
-            );
+            ),
+    );
   }
   Widget _buildContent(
       BuildContext context, bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n) {
@@ -173,6 +175,7 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   Widget _buildSettingCard(BuildContext context, _SettingsCategory cat, bool isDark) {
+    final adaptedColor = _adaptAccentColor(cat.color, isDark);
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -193,10 +196,10 @@ class SettingsScreen extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.all(AlhaiSpacing.sm),
                 decoration: BoxDecoration(
-                  color: cat.color.withValues(alpha: 0.1),
+                  color: adaptedColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(cat.icon, color: cat.color, size: 28),
+                child: Icon(cat.icon, color: adaptedColor, size: 28),
               ),
               const SizedBox(height: AlhaiSpacing.sm),
               Text(
@@ -382,4 +385,16 @@ class _SettingsCategory {
     required this.color,
     required this.onTap,
   });
+}
+
+/// Adjusts accent colors for dark mode readability.
+/// Keeps the hue but lightens overly dark or saturated colors in dark mode.
+Color _adaptAccentColor(Color color, bool isDark) {
+  if (!isDark) return color;
+  final hsl = HSLColor.fromColor(color);
+  // In dark mode, ensure lightness is at least 0.55 so icons remain visible
+  if (hsl.lightness < 0.55) {
+    return hsl.withLightness(0.55).withSaturation((hsl.saturation * 0.85).clamp(0.0, 1.0)).toColor();
+  }
+  return color;
 }

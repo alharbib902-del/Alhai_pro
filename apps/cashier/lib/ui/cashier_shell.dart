@@ -265,8 +265,8 @@ class _CashierShellState extends ConsumerState<CashierShell> {
             width: 220,
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
-              border: Border(
-                right: BorderSide(
+              border: BorderDirectional(
+                end: BorderSide(
                   color: Theme.of(context).colorScheme.outlineVariant,
                   width: 1,
                 ),
@@ -332,38 +332,43 @@ class _CashierShellState extends ConsumerState<CashierShell> {
   /// Sidebar navigation item
   Widget _buildSidebarItem(_NavItem item, bool isSelected) {
     final label = _getLocalizedLabel(context, item);
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxxs),
-      child: Material(
-        color: isSelected
-            ? AppColors.primary.withValues(alpha: 0.1)
-            : Colors.transparent,
-        borderRadius: BorderRadius.circular(8),
-        child: InkWell(
+    return Semantics(
+      label: label,
+      button: true,
+      selected: isSelected,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxxs),
+        child: Material(
+          color: isSelected
+              ? AppColors.primary.withValues(alpha: 0.1)
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
-          onTap: () => _onNavItemTapped(item.route),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 10),
-            child: Row(
-              children: [
-                Icon(
-                  item.icon,
-                  size: 22,
-                  color: isSelected
-                      ? AppColors.primary
-                      : Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
-                const SizedBox(width: AlhaiSpacing.sm),
-                Text(
-                  label,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(8),
+            onTap: () => _onNavItemTapped(item.route),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 10),
+              child: Row(
+                children: [
+                  Icon(
+                    item.icon,
+                    size: 22,
                     color: isSelected
                         ? AppColors.primary
-                        : Theme.of(context).colorScheme.onSurface,
+                        : Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
-                ),
-              ],
+                  const SizedBox(width: AlhaiSpacing.sm),
+                  Text(
+                    label,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                      color: isSelected
+                          ? AppColors.primary
+                          : Theme.of(context).colorScheme.onSurface,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

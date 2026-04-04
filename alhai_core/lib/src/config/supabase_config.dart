@@ -21,20 +21,21 @@ class SupabaseConfig {
   SupabaseConfig._();
 
   /// Supabase project URL
-  /// في وضع التطوير يستخدم القيمة الافتراضية تلقائياً
-  /// في الإنتاج: --dart-define=SUPABASE_URL=https://your-project.supabase.co
-  static const String url = String.fromEnvironment(
-    'SUPABASE_URL',
-    defaultValue: 'https://jtgwboqushihwvvsdtud.supabase.co',
-  );
+  /// Must be provided via --dart-define=SUPABASE_URL=https://your-project.supabase.co
+  static const String url = String.fromEnvironment('SUPABASE_URL');
 
   /// Supabase anon (public) key
-  /// في وضع التطوير يستخدم القيمة الافتراضية تلقائياً
-  /// في الإنتاج: --dart-define=SUPABASE_ANON_KEY=your_anon_key
-  static const String anonKey = String.fromEnvironment(
-    'SUPABASE_ANON_KEY',
-    defaultValue: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp0Z3dib3F1c2hpaHd2dnNkdHVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzODIyODMsImV4cCI6MjA4Njk1ODI4M30.nqYYVlk2YeSgG7FNy7CIpXaw4vHWfU4oRMKDHWL-gzM',
-  );
+  /// Must be provided via --dart-define=SUPABASE_ANON_KEY=your_anon_key
+  static const String anonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
+
+  /// Validate that required environment variables are set.
+  /// Call early in app startup (e.g. main()) to fail fast.
+  static void assertConfigured() {
+    assert(url.isNotEmpty,
+        'SUPABASE_URL not set. Use --dart-define=SUPABASE_URL=...');
+    assert(anonKey.isNotEmpty,
+        'SUPABASE_ANON_KEY not set. Use --dart-define=SUPABASE_ANON_KEY=...');
+  }
 
   /// Whether to enable Supabase debug logging
   static bool get enableDebugLogs => kDebugMode;

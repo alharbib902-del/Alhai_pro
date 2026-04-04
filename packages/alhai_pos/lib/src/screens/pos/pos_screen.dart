@@ -18,6 +18,7 @@ import 'hold_invoices_screen.dart';
 import '../../widgets/orders/orders_widgets.dart';
 import 'pos_cart_panel.dart';
 import 'pos_product_shortcuts.dart';
+import 'package:alhai_core/alhai_core.dart' show UserRole;
 import 'pos_products_panel.dart';
 
 /// شاشة نقطة البيع الرئيسية - التصميم الجديد
@@ -27,6 +28,24 @@ import 'pos_products_panel.dart';
 
 /// Maximum number of recent searches stored in memory.
 const int _kMaxRecentSearches = 5;
+
+/// Map [UserRole] to a localized label.
+String _localizedRole(UserRole? role, AppLocalizations l10n) {
+  switch (role) {
+    case UserRole.superAdmin:
+      return l10n.superAdminRole;
+    case UserRole.storeOwner:
+      return l10n.ownerRole;
+    case UserRole.employee:
+      return l10n.cashierRole;
+    case UserRole.delivery:
+      return l10n.employeeRole;
+    case UserRole.customer:
+      return l10n.cashierRole;
+    case null:
+      return l10n.cashierRole;
+  }
+}
 
 class PosScreen extends ConsumerStatefulWidget {
   const PosScreen({super.key});
@@ -697,8 +716,8 @@ class _PosScreenState extends ConsumerState<PosScreen> {
                     : () => Scaffold.of(context).openDrawer(),
                 onNotificationsTap: () {},
                 notificationsCount: 0,
-                userName: l10n.cashCustomer,
-                userRole: l10n.branchManager,
+                userName: ref.watch(currentUserProvider)?.name ?? l10n.cashCustomer,
+                userRole: _localizedRole(ref.watch(currentUserProvider)?.role, l10n),
                 onUserTap: () {},
               ),
 

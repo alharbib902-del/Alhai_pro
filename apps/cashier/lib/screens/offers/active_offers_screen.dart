@@ -139,7 +139,7 @@ class _ActiveOffersScreenState extends ConsumerState<ActiveOffersScreen> {
           _buildChip(l10n.allPeriods, _filterType == 'all',
               () => setState(() => _filterType = 'all'), isDark),
           const SizedBox(width: AlhaiSpacing.xs),
-          _buildChip('Percentage Off', _filterType == 'percentage',
+          _buildChip(l10n.percentageOff, _filterType == 'percentage',
               () => setState(() => _filterType = 'percentage'), isDark),
           const SizedBox(width: AlhaiSpacing.xs),
           _buildChip(l10n.fixedAmount, _filterType == 'fixed',
@@ -246,14 +246,14 @@ class _ActiveOffersScreenState extends ConsumerState<ActiveOffersScreen> {
                     color: AppColors.success.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(999),
                   ),
-                  child: const Row(
+                  child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.auto_awesome_rounded,
+                      const Icon(Icons.auto_awesome_rounded,
                           size: 14, color: AppColors.success),
-                      SizedBox(width: AlhaiSpacing.xxs),
-                      Text('Auto Applied',
-                          style: TextStyle(fontSize: 11,
+                      const SizedBox(width: AlhaiSpacing.xxs),
+                      Text(l10n.autoApplied,
+                          style: const TextStyle(fontSize: 11,
                               fontWeight: FontWeight.w600,
                               color: AppColors.success)),
                     ],
@@ -292,7 +292,7 @@ class _ActiveOffersScreenState extends ConsumerState<ActiveOffersScreen> {
                   color: AppColors.getTextMuted(isDark)),
               const SizedBox(width: AlhaiSpacing.xs),
               if (offer.startDate != null) Text(
-                'Valid From: ${_formatDate(offer.startDate!)}',
+                l10n.validFromDate(_formatDate(offer.startDate!)),
                 style: TextStyle(fontSize: 12,
                     color: AppColors.getTextSecondary(isDark)),
               ),
@@ -302,7 +302,7 @@ class _ActiveOffersScreenState extends ConsumerState<ActiveOffersScreen> {
                     color: AppColors.getTextMuted(isDark)),
                 const SizedBox(width: AlhaiSpacing.xs),
                 Text(
-                  'Valid Until: ${_formatDate(offer.endDate!)}',
+                  l10n.validUntilDate(_formatDate(offer.endDate!)),
                   style: TextStyle(fontSize: 12,
                       color: AppColors.getTextSecondary(isDark)),
                 ),
@@ -330,7 +330,7 @@ class _ActiveOffersScreenState extends ConsumerState<ActiveOffersScreen> {
           Icon(Icons.local_offer_outlined, size: 64,
               color: AppColors.getTextMuted(isDark).withValues(alpha: 0.4)),
           const SizedBox(height: AlhaiSpacing.md),
-          Text('No active offers',
+          Text(l10n.noActiveOffers,
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500,
                   color: AppColors.getTextMuted(isDark))),
         ],
@@ -360,7 +360,7 @@ class _ActiveOffersScreenState extends ConsumerState<ActiveOffersScreen> {
 
   String _getTypeLabel(String type, AppLocalizations l10n) {
     switch (type) {
-      case 'percentage': return 'Percentage Off';
+      case 'percentage': return l10n.percentageOff;
       case 'fixed': return l10n.fixedAmount;
       case 'buy_x_get_y': return l10n.buyXGetY;
       case 'bundle': return l10n.bundle;

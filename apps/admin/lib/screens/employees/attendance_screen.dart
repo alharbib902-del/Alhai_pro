@@ -143,7 +143,9 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
           ),
         ],
       ),
-      body: Column(
+      body: SafeArea(
+        top: false,
+        child: Column(
         children: [
           // Date banner
           Container(
@@ -291,6 +293,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                       ),
           ),
         ],
+      ),
       ),
     );
   }

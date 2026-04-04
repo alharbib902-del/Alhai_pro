@@ -44,82 +44,91 @@ class _PosProductCardState extends State<PosProductCard> {
       desktop: 56,
     );
 
-    return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
-      child: GestureDetector(
-        onTap: isOutOfStock ? null : widget.onAddToCart,
-        child: AnimatedScale(
-        scale: _isHovered && !isOutOfStock ? 1.02 : 1.0,
-        duration: AlhaiDurations.standard,
-        child: Container(
-          decoration: BoxDecoration(
-            color: colorScheme.surface,
-            borderRadius: BorderRadius.circular(AppRadius.lg),
-            border: Border.all(
-              color: colorScheme.outlineVariant,
-              width: 0.5,
+    return Semantics(
+      label: isOutOfStock
+          ? '${product.name}, ${l10n.quantitySoldOut}'
+          : '${product.name}, ${product.price.toStringAsFixed(2)} ${l10n.sar}',
+      button: !isOutOfStock,
+      child: MouseRegion(
+        onEnter: (_) => setState(() => _isHovered = true),
+        onExit: (_) => setState(() => _isHovered = false),
+        child: GestureDetector(
+          onTap: isOutOfStock ? null : widget.onAddToCart,
+          child: AnimatedScale(
+          scale: _isHovered && !isOutOfStock ? 1.02 : 1.0,
+          duration: AlhaiDurations.standard,
+          child: Container(
+            decoration: BoxDecoration(
+              color: colorScheme.surface,
+              borderRadius: BorderRadius.circular(AppRadius.lg),
+              border: Border.all(
+                color: colorScheme.outlineVariant,
+                width: 0.5,
+              ),
+              boxShadow: _isHovered ? AppShadows.md : AppShadows.sm,
             ),
-            boxShadow: _isHovered ? AppShadows.md : AppShadows.sm,
-          ),
-          clipBehavior: Clip.hardEdge,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Image area with overlays
-              _buildImageArea(product, imageHeight, isOutOfStock, isDark, l10n),
+            clipBehavior: Clip.hardEdge,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Image area with overlays
+                _buildImageArea(product, imageHeight, isOutOfStock, isDark, l10n),
 
-              // Info area - Row with consistent + button position
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.xs, AlhaiSpacing.xxs, AlhaiSpacing.xxs, AlhaiSpacing.xxs),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      // Product name
-                      Expanded(
-                        child: Text(
-                          product.name,
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: isDark
-                                ? AppColors.textPrimaryDark
-                                : AppColors.textPrimary,
+                // Info area - Row with consistent + button position
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.xs, AlhaiSpacing.xxs, AlhaiSpacing.xxs, AlhaiSpacing.xxs),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        // Product name
+                        Expanded(
+                          child: Text(
+                            product.name,
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: isDark
+                                  ? AppColors.textPrimaryDark
+                                  : AppColors.textPrimary,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
 
-                      // Add to cart button (+)
-                      if (!isOutOfStock)
-                        Padding(
-                          padding: const EdgeInsetsDirectional.only(start: AlhaiSpacing.xxs),
-                          child: Material(
-                            color: AppColors.primary,
-                            shape: const CircleBorder(),
-                            elevation: 2,
-                            child: InkWell(
-                              onTap: widget.onAddWithQuantity ?? widget.onAddToCart,
-                              customBorder: const CircleBorder(),
-                              child: SizedBox(
-                                width: 28,
-                                height: 28,
-                                child: Icon(Icons.add_rounded,
-                                    color: colorScheme.onPrimary, size: 16),
+                        // Add to cart button (+)
+                        if (!isOutOfStock)
+                          Padding(
+                            padding: const EdgeInsetsDirectional.only(start: AlhaiSpacing.xxs),
+                            child: Tooltip(
+                              message: l10n.addToCart,
+                              child: Material(
+                                color: AppColors.primary,
+                                shape: const CircleBorder(),
+                                elevation: 2,
+                                child: InkWell(
+                                  onTap: widget.onAddWithQuantity ?? widget.onAddToCart,
+                                  customBorder: const CircleBorder(),
+                                  child: SizedBox(
+                                    width: 28,
+                                    height: 28,
+                                    child: Icon(Icons.add_rounded,
+                                        color: colorScheme.onPrimary, size: 16),
+                                  ),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-      ),
+        ),
       ),
     );
   }
@@ -127,29 +136,33 @@ class _PosProductCardState extends State<PosProductCard> {
   Widget _buildImageArea(
       Product product, double height, bool isOutOfStock, bool isDark, AppLocalizations l10n) {
     final colorScheme = Theme.of(context).colorScheme;
-    Widget imageWidget = Container(
-      height: height,
-      width: double.infinity,
-      color: colorScheme.surfaceContainerLow,
-      child: product.imageThumbnail != null
-          ? CachedNetworkImage(
-              imageUrl: product.imageThumbnail!,
-              fit: BoxFit.cover,
-              memCacheWidth: 200,
-              memCacheHeight: 200,
-              placeholder: (_, __) => Center(
+    Widget imageWidget = Semantics(
+      label: product.name,
+      image: true,
+      child: Container(
+        height: height,
+        width: double.infinity,
+        color: colorScheme.surfaceContainerLow,
+        child: product.imageThumbnail != null
+            ? CachedNetworkImage(
+                imageUrl: product.imageThumbnail!,
+                fit: BoxFit.cover,
+                memCacheWidth: 200,
+                memCacheHeight: 200,
+                placeholder: (_, __) => Center(
+                  child: Icon(Icons.image_rounded,
+                      color: colorScheme.onSurfaceVariant, size: 32),
+                ),
+                errorWidget: (_, __, ___) => Center(
+                  child: Icon(Icons.image_not_supported_outlined,
+                      color: colorScheme.onSurfaceVariant, size: 32),
+                ),
+              )
+            : Center(
                 child: Icon(Icons.image_rounded,
-                    color: colorScheme.onSurfaceVariant, size: 32),
+                    color: colorScheme.onSurfaceVariant, size: 40),
               ),
-              errorWidget: (_, __, ___) => Center(
-                child: Icon(Icons.image_not_supported_outlined,
-                    color: colorScheme.onSurfaceVariant, size: 32),
-              ),
-            )
-          : Center(
-              child: Icon(Icons.image_rounded,
-                  color: colorScheme.onSurfaceVariant, size: 40),
-            ),
+      ),
     );
 
     // Grayscale for out of stock

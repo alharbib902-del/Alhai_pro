@@ -14,8 +14,27 @@ import 'package:alhai_database/alhai_database.dart';
 import '../../widgets/cash/denomination_counter_widget.dart';
 import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
+import 'package:alhai_core/alhai_core.dart' show UserRole;
 import '../../core/services/sentry_service.dart';
 import '../../core/services/audit_service.dart';
+
+/// Map [UserRole] to a localized label.
+String _localizedRole(UserRole? role, AppLocalizations l10n) {
+  switch (role) {
+    case UserRole.superAdmin:
+      return l10n.superAdminRole;
+    case UserRole.storeOwner:
+      return l10n.ownerRole;
+    case UserRole.employee:
+      return l10n.cashierRole;
+    case UserRole.delivery:
+      return l10n.employeeRole;
+    case UserRole.customer:
+      return l10n.cashierRole;
+    case null:
+      return l10n.cashierRole;
+  }
+}
 
 /// شاشة إيداع/سحب نقدي
 class CashInOutScreen extends ConsumerStatefulWidget {
@@ -58,9 +77,9 @@ class _CashInOutScreenState extends ConsumerState<CashInOutScreen> {
               ? null
               : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
-          notificationsCount: 3,
+          notificationsCount: ref.watch(unreadNotificationsCountProvider),
           userName: user?.name ?? l10n.cashCustomer,
-          userRole: l10n.branchManager,
+          userRole: _localizedRole(user?.role, l10n),
           onUserTap: () {},
         ),
         Expanded(

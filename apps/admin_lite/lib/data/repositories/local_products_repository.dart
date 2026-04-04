@@ -11,8 +11,9 @@ import 'package:alhai_database/alhai_database.dart';
 /// Local implementation of ProductsRepository
 class LocalProductsRepository implements ProductsRepository {
   final AppDatabase _db;
+  final String? defaultStoreId;
 
-  LocalProductsRepository(this._db);
+  LocalProductsRepository(this._db, {this.defaultStoreId});
 
   /// Convert from Drift Data to Domain Model
   Product _toProduct(ProductsTableData data) {
@@ -97,7 +98,10 @@ class LocalProductsRepository implements ProductsRepository {
 
   @override
   Future<Product?> getByBarcode(String barcode) async {
-    const storeId = 'store_demo_001';
+    if (defaultStoreId == null) {
+      throw StateError('No store selected — cannot look up barcode without storeId');
+    }
+    final storeId = defaultStoreId!;
     final data = await _db.productsDao.getProductByBarcode(barcode, storeId);
     return data != null ? _toProduct(data) : null;
   }

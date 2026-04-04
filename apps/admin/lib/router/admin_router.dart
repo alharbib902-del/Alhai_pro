@@ -278,6 +278,36 @@ String? _guardRedirect(Ref ref, GoRouterState state) {
     return AppRoutes.dashboard;
   }
 
+  // ── Granular permission guards for sensitive routes ─────────────
+  // Prevent access to admin-only screens unless the user has a
+  // sufficiently privileged role (owner / superAdmin / storeOwner).
+  // NOTE: When a full RBAC permission system is wired (e.g.
+  // 'users_manage', 'roles_manage' permission flags per user), replace
+  // these role-based checks with granular permission checks.
+  if (authState.status == AuthStatus.authenticated && storeId != null) {
+    final isSuperAdmin = role == UserRole.superAdmin || role == UserRole.storeOwner;
+
+    // Users management → requires 'users_manage' (currently: owner-level role)
+    if (path == AppRoutes.settingsUsers && !isSuperAdmin) {
+      return AppRoutes.home;
+    }
+
+    // Roles & permissions → requires 'roles_manage' (currently: owner-level role)
+    if (path == AppRoutes.settingsRoles && !isSuperAdmin) {
+      return AppRoutes.home;
+    }
+
+    // Settings root → requires 'settings_manage' (currently: owner-level role)
+    if (path == AppRoutes.settings && !isSuperAdmin) {
+      return AppRoutes.home;
+    }
+
+    // Reports → requires 'reports_view' (managers and above)
+    if (path == AppRoutes.reports && role == UserRole.employee) {
+      return AppRoutes.home;
+    }
+  }
+
   return null;
 }
 

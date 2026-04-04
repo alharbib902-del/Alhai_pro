@@ -152,7 +152,7 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
                     color: AppColors.primary, size: 20),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
-              Text('Enter Coupon Code',
+              Text(l10n.enterCouponCode,
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,
                       color: AppColors.getTextPrimary(isDark))),
             ],
@@ -212,7 +212,7 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
                 );
               },
               icon: const Icon(Icons.qr_code_scanner_rounded, size: 18),
-              label: const Text('Scan Coupon Barcode'),
+              label: Text(l10n.scanCouponBarcode),
               style: OutlinedButton.styleFrom(
                 foregroundColor: AppColors.info,
                 side: BorderSide(color: AppColors.info.withValues(alpha: 0.5)),
@@ -234,7 +234,7 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
                       ? const SizedBox(width: 18, height: 18,
                           child: CircularProgressIndicator(strokeWidth: 2))
                       : const Icon(Icons.check_circle_outlined, size: 18),
-                  label: const Text('Validate'),
+                  label: Text(l10n.validateCoupon),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.getTextSecondary(isDark),
                     side: BorderSide(color: AppColors.getBorder(isDark)),
@@ -282,7 +282,7 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
             children: [
               const Icon(Icons.check_circle_rounded, color: AppColors.success, size: 24),
               const SizedBox(width: AlhaiSpacing.sm),
-              Text('Coupon Valid',
+              Text(l10n.couponValid,
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700,
                       color: AppColors.getTextPrimary(isDark))),
             ],
@@ -362,7 +362,7 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
                     color: AppColors.warning, size: 20),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
-              Text('Recent Coupons',
+              Text(l10n.recentCoupons,
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,
                       color: AppColors.getTextPrimary(isDark))),
             ],
@@ -372,7 +372,7 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
             Center(
               child: Padding(
                 padding: const EdgeInsets.all(AlhaiSpacing.md),
-                child: Text('No recent coupons',
+                child: Text(l10n.noRecentCoupons,
                     style: TextStyle(fontSize: 13,
                         color: AppColors.getTextMuted(isDark))),
               ),
@@ -486,14 +486,14 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
                   : '${discount.value.toStringAsFixed(0)} ${AppLocalizations.of(context).sar}',
               'validUntil': discount.endDate != null
                   ? '${discount.endDate!.day}/${discount.endDate!.month}/${discount.endDate!.year}'
-                  : 'No Expiry',
+                  : AppLocalizations.of(context).noExpiry,
             };
           });
         }
       } else {
         if (mounted) {
           setState(() {
-            _validationError = 'Invalid coupon code';
+            _validationError = AppLocalizations.of(context).invalidCouponCode;
           });
         }
       }

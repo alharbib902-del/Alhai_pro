@@ -134,7 +134,7 @@ class _DiscountsSettingsScreenState
     final l10n = AppLocalizations.of(context);
 
     if (_isLoading) {
-      return Column(
+      return SafeArea(child: Column(
         children: [
           AppHeader(
             title: l10n.discountSettingsTitle,
@@ -146,10 +146,10 @@ class _DiscountsSettingsScreenState
           ),
           const Expanded(child: Center(child: CircularProgressIndicator())),
         ],
-      );
+      ));
     }
 
-    return Column(
+    return SafeArea(child: Column(
       children: [
         AppHeader(
           title: l10n.discountSettingsTitle,
@@ -166,7 +166,7 @@ class _DiscountsSettingsScreenState
           ),
         ),
       ],
-    );
+    ));
   }
 
   Widget _buildContent(bool isDark, AppLocalizations l10n) {
@@ -196,8 +196,8 @@ class _DiscountsSettingsScreenState
               ListTile(
                 title: Text(l10n.maxDiscountLimit, style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
                 subtitle: Text('${_maxDiscountPercent.toInt()}%'),
-                trailing: SizedBox(
-                  width: 200,
+                trailing: ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width > 600 ? 200 : 120),
                   child: Slider(value: _maxDiscountPercent, min: 5, max: 100, divisions: 19, label: '${_maxDiscountPercent.toInt()}%',
                       onChanged: (v) => setState(() => _maxDiscountPercent = v)),
                 ),
@@ -225,8 +225,8 @@ class _DiscountsSettingsScreenState
             ListTile(
               title: Text(l10n.vipDiscountRate, style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
               subtitle: Text('${_vipDiscountRate.toInt()}%'),
-              trailing: SizedBox(
-                width: 200,
+              trailing: ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width > 600 ? 200 : 120),
                 child: Slider(value: _vipDiscountRate, min: 5, max: 30, divisions: 5, label: '${_vipDiscountRate.toInt()}%',
                     onChanged: (v) => setState(() => _vipDiscountRate = v)),
               ),

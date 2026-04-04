@@ -10,6 +10,12 @@ import '../../providers/settings_db_providers.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// شاشة إعدادات الأمان
+///
+/// TODO(security): Implement rate limiting on PIN attempts to prevent brute-force attacks.
+/// After N consecutive failed PIN entries (e.g. 5), enforce an exponential
+/// backoff delay (30s, 1m, 5m, ...) or lock the account and require OTP
+/// re-verification. Track attempts in SecureStorage or a local DB table.
+/// See also: PinService.verifyPin() — the rate-limit check should wrap that call.
 class SecuritySettingsScreen extends ConsumerStatefulWidget {
   const SecuritySettingsScreen({super.key});
 

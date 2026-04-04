@@ -289,8 +289,8 @@ class _DistributorShellState extends ConsumerState<DistributorShell> {
               width: 240,
               decoration: BoxDecoration(
                 color: sidebarBg,
-                border: Border(
-                  left: BorderSide(
+                border: BorderDirectional(
+                  start: BorderSide(
                     color: isDark
                         ? Colors.white10
                         : Theme.of(context)

@@ -11,6 +11,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_core/alhai_core.dart';
+import 'package:alhai_auth/alhai_auth.dart' show isAdminProvider, currentUserProvider;
 import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// شاشة الأدوار والصلاحيات
@@ -694,7 +695,27 @@ class _RolesPermissionsScreenState
     );
   }
 
+  /// Security: verify the current user has admin privileges before
+  /// performing sensitive role-management operations.
+  bool _checkAdminPermission() {
+    final isAdmin = ref.read(isAdminProvider);
+    if (!isAdmin) {
+      final l10n = AppLocalizations.of(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.errorOccurred), backgroundColor: AppColors.error),
+      );
+      debugPrint('Security: non-admin attempted sensitive role operation');
+      return false;
+    }
+    return true;
+  }
+
   void _handleRoleAction(String action, Role role) {
+    // Security: edit, duplicate, delete require admin permission
+    if ((action == 'edit' || action == 'duplicate' || action == 'delete') &&
+        !_checkAdminPermission()) {
+      return;
+    }
     switch (action) {
       case 'edit':
         _showEditRoleDialog(role);
@@ -766,6 +787,26 @@ class _RolesPermissionsScreenState
     );
   }
 
+  /// Best-effort audit logging for sensitive role operations.
+  void _logRoleAuditEvent(String action, String entityId, String entityName) {
+    try {
+      final db = getIt<AppDatabase>();
+      final storeId = ref.read(currentStoreIdProvider) ?? '';
+      final currentUser = ref.read(currentUserProvider);
+      db.auditLogDao.log(
+        storeId: storeId,
+        userId: currentUser?.id ?? 'unknown',
+        userName: currentUser?.name ?? 'unknown',
+        action: AuditAction.settingsChange,
+        entityType: 'role',
+        entityId: entityId,
+        description: '$action: $entityName',
+      );
+    } catch (e) {
+      debugPrint('Audit log failed: $e');
+    }
+  }
+
   void _deleteRole(Role role) {
     final l10n = AppLocalizations.of(context);
     showDialog(
@@ -782,6 +823,8 @@ class _RolesPermissionsScreenState
             onPressed: () {
               Navigator.pop(context);
               HapticFeedback.mediumImpact();
+              // Audit log: role deletion
+              _logRoleAuditEvent('role_delete', role.id, role.name);
               ScaffoldMessenger.of(this.context).showSnackBar(
                 SnackBar(
                   content: Text('${l10n.delete}: ${role.name}'),

@@ -84,7 +84,7 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
     return Column(
       children: [
         AppHeader(
-          title: 'Wastage',
+          title: l10n.wastage,
           subtitle: _getDateSubtitle(l10n),
           showSearch: false,
           searchHint: l10n.searchPlaceholder,
@@ -243,7 +243,7 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
                     );
                   },
                   icon: const Icon(Icons.qr_code_scanner_rounded, size: 20),
-                  label: const Text('Scan'),
+                  label: Text(l10n.scanLabel),
                   style: FilledButton.styleFrom(
                     backgroundColor: AppColors.info,
                     foregroundColor: colorScheme.onPrimary,
@@ -340,7 +340,7 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Quantity Wasted',
+          Text(l10n.quantityWasted,
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,
                   color: colorScheme.onSurface)),
           const SizedBox(height: AlhaiSpacing.md),
@@ -384,7 +384,7 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
     final reasons = [
       {'value': 'expired', 'label': l10n.expired, 'icon': Icons.schedule_rounded},
       {'value': 'damaged', 'label': l10n.damaged, 'icon': Icons.broken_image_rounded},
-      {'value': 'spillage', 'label': 'Spillage', 'icon': Icons.water_drop_rounded},
+      {'value': 'spillage', 'label': l10n.spillage, 'icon': Icons.water_drop_rounded},
       {'value': 'other', 'label': l10n.other, 'icon': Icons.more_horiz_rounded},
     ];
 
@@ -472,7 +472,7 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Photo',
+          Text(l10n.photoLabel,
               style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600,
                   color: colorScheme.onSurface)),
           const SizedBox(height: AlhaiSpacing.sm),
@@ -495,15 +495,15 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
                 ),
               ),
               child: _hasPhoto
-                  ? const Center(
+                  ? Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.check_circle_rounded,
+                          const Icon(Icons.check_circle_rounded,
                               color: AppColors.success, size: 32),
-                          SizedBox(height: AlhaiSpacing.xs),
-                          Text('Photo attached',
-                              style: TextStyle(fontSize: 13,
+                          const SizedBox(height: AlhaiSpacing.xs),
+                          Text(l10n.photoAttached,
+                              style: const TextStyle(fontSize: 13,
                                   fontWeight: FontWeight.w500,
                                   color: AppColors.success)),
                         ],
@@ -516,7 +516,7 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
                           Icon(Icons.camera_alt_outlined, size: 32,
                               color: colorScheme.outline),
                           const SizedBox(height: AlhaiSpacing.xs),
-                          Text('Tap to take photo',
+                          Text(l10n.tapToTakePhoto,
                               style: TextStyle(fontSize: 13,
                                   color: colorScheme.outline)),
                         ],
@@ -525,7 +525,7 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
             ),
           ),
           const SizedBox(height: AlhaiSpacing.xs),
-          Text('Optional',
+          Text(l10n.optionalLabel,
               style: TextStyle(fontSize: 11, color: colorScheme.outline)),
         ],
       ),
@@ -552,7 +552,7 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
             maxLines: 3,
             style: TextStyle(color: colorScheme.onSurface),
             decoration: InputDecoration(
-              hintText: 'Optional note',
+              hintText: l10n.optionalNote,
               hintStyle: TextStyle(color: colorScheme.outline),
               filled: true,
               fillColor: colorScheme.surfaceContainerHighest,
@@ -588,8 +588,8 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
             ? SizedBox(width: 20, height: 20,
                 child: CircularProgressIndicator(strokeWidth: 2, color: colorScheme.onPrimary))
             : const Icon(Icons.save_rounded, size: 20),
-        label: const Text('Record Wastage',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+        label: Text(l10n.recordWastage,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.error,
           foregroundColor: colorScheme.onPrimary,

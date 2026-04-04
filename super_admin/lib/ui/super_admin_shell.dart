@@ -187,8 +187,8 @@ class _DesktopSidebar extends StatelessWidget {
       width: sidebarWidth,
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerLow,
-        border: Border(
-          right: BorderSide(
+        border: BorderDirectional(
+          end: BorderSide(
             color: theme.colorScheme.outlineVariant,
             width: AlhaiSpacing.strokeXs,
           ),

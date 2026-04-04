@@ -273,7 +273,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                         }
                       },
                       icon: const Icon(Icons.paste_rounded, size: 18),
-                      label: const Text('Paste from Clipboard'),
+                      label: Text(l10n.pasteFromClipboard),
                     ),
                   ),
                 ],
@@ -341,7 +341,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
             style: FilledButton.styleFrom(
               backgroundColor: AppColors.warning,
             ),
-            child: const Text('Confirm Restore'),
+            child: Text(l10n.confirmRestore),
           ),
         ],
       ),

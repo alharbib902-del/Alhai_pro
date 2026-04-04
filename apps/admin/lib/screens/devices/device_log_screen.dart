@@ -267,7 +267,7 @@ class _DeviceLogScreenState extends ConsumerState<DeviceLogScreen> {
               ),
               filled: true,
               fillColor: isDark
-                  ? Colors.white.withValues(alpha: 0.05)
+                  ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05)
                   : AppColors.border.withValues(alpha: 0.3),
               contentPadding:
                   const EdgeInsets.symmetric(vertical: 10),
@@ -450,17 +450,13 @@ class _DeviceLogScreenState extends ConsumerState<DeviceLogScreen> {
                   children: [
                     Icon(Icons.access_time,
                         size: 12,
-                        color: isDark
-                            ? Colors.white38
-                            : AppColors.textTertiary),
+                        color: Theme.of(context).colorScheme.onSurfaceVariant),
                     const SizedBox(width: AlhaiSpacing.xxs),
                     Text(
                       timeStr,
                       style: TextStyle(
                           fontSize: 11,
-                          color: isDark
-                              ? Colors.white38
-                              : AppColors.textTertiary),
+                          color: Theme.of(context).colorScheme.onSurfaceVariant),
                     ),
                     if (log.deviceInfo != null) ...[
                       const SizedBox(width: AlhaiSpacing.sm),

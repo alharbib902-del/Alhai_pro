@@ -17,7 +17,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
-import 'package:alhai_auth/alhai_auth.dart' show authStateProvider;
+import 'package:alhai_auth/alhai_auth.dart'
+    show authStateProvider, currentUserProvider;
 import 'package:alhai_shared_ui/alhai_shared_ui.dart'
     show
         AppRoutes,
@@ -210,9 +211,10 @@ class _AdminDashboardShellState extends ConsumerState<AdminDashboardShell> {
     final isDesktop = MediaQuery.sizeOf(context).width >= AlhaiBreakpoints.desktop;
     final selectedNavId = _getSelectedNavId(context);
     final l10n = AppLocalizations.of(context);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
+    final colorScheme = Theme.of(context).colorScheme;
     final sidebarGroups = _getSidebarGroups(context);
+    final currentUser = ref.watch(currentUserProvider);
+    final userName = currentUser?.name ?? l10n.branchManager;
 
     final sidebar = AppSidebar(
       storeName: l10n.brandName,
@@ -226,7 +228,7 @@ class _AdminDashboardShellState extends ConsumerState<AdminDashboardShell> {
         if (context.mounted) context.go(AppRoutes.login);
       },
       collapsed: false,
-      userName: 'Admin',
+      userName: userName,
       userRole: l10n.branchManager,
       onUserTap: () => context.go(AppRoutes.profile),
     );
@@ -234,9 +236,7 @@ class _AdminDashboardShellState extends ConsumerState<AdminDashboardShell> {
     final Widget layout;
     if (isDesktop) {
       layout = Scaffold(
-        backgroundColor: isDark
-            ? const Color(0xFF0F172A)
-            : AppColors.backgroundSecondary,
+        backgroundColor: colorScheme.surface,
         body: Row(
           children: [
             sidebar,
@@ -247,9 +247,7 @@ class _AdminDashboardShellState extends ConsumerState<AdminDashboardShell> {
     } else {
       // Mobile: drawer sidebar
       layout = Scaffold(
-        backgroundColor: isDark
-            ? const Color(0xFF0F172A)
-            : AppColors.backgroundSecondary,
+        backgroundColor: colorScheme.surface,
         drawer: Drawer(
           child: AppSidebar(
             storeName: l10n.brandName,
@@ -272,7 +270,7 @@ class _AdminDashboardShellState extends ConsumerState<AdminDashboardShell> {
               await ref.read(authStateProvider.notifier).logout();
               if (context.mounted) context.go(AppRoutes.login);
             },
-            userName: 'Admin',
+            userName: userName,
             userRole: l10n.branchManager,
             onUserTap: () {
               Navigator.pop(context);

@@ -63,7 +63,7 @@ class _PurchaseDetailScreenState extends ConsumerState<PurchaseDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final isWide = size.width > 900;
+    final isWide = AlhaiBreakpoints.isDesktop(size.width);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
 
@@ -448,7 +448,7 @@ class _PurchaseDetailScreenState extends ConsumerState<PurchaseDetailScreen> {
                       color: index < currentIndex
                           ? _statusColor(_statusFlow[index])
                           : (isDark
-                              ? Colors.white.withValues(alpha: 0.1)
+                              ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1)
                               : AppColors.grey200),
                     ),
                   ),
@@ -656,7 +656,7 @@ class _PurchaseDetailScreenState extends ConsumerState<PurchaseDetailScreen> {
               scrollDirection: Axis.horizontal,
               child: DataTable(
                 headingRowColor: WidgetStateProperty.all(
-                  isDark ? const Color(0xFF0F172A) : AppColors.grey50,
+                  isDark ? Theme.of(context).colorScheme.surface : AppColors.grey50,
                 ),
                 columns: [
                   DataColumn(label: Text(AppLocalizations.of(context).productColumn)),

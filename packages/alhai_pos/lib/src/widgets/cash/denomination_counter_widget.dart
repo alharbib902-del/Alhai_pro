@@ -323,9 +323,9 @@ Future<double?> showDenominationCounterSheet(
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(
-                    left: AlhaiSpacing.md,
-                    right: AlhaiSpacing.md,
+                  padding: EdgeInsetsDirectional.only(
+                    start: AlhaiSpacing.md,
+                    end: AlhaiSpacing.md,
                     bottom: AlhaiSpacing.md + MediaQuery.of(ctx).viewInsets.bottom,
                     top: 8,
                   ),

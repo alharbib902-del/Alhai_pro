@@ -7,6 +7,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_core/alhai_core.dart';
+import 'package:alhai_auth/alhai_auth.dart' show isAdminProvider, currentUserProvider;
 import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// شاشة إدارة المستخدمين
@@ -134,6 +135,21 @@ class _UsersManagementScreenState
     switch (role) { case 'owner': return l10n.ownerRole; case 'manager': return l10n.managerRole; case 'supervisor': return l10n.supervisorRole; case 'cashier': return l10n.cashierRole; default: return role; }
   }
 
+  /// Security: verify the current user has admin privileges before
+  /// performing sensitive user-management operations.
+  bool _checkAdminPermission() {
+    final isAdmin = ref.read(isAdminProvider);
+    if (!isAdmin) {
+      final l10n = AppLocalizations.of(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.errorOccurred), backgroundColor: AppColors.error),
+      );
+      debugPrint('Security: non-admin attempted sensitive user operation');
+      return false;
+    }
+    return true;
+  }
+
   Future<void> _handleUserAction(_User user, String action) async {
     switch (action) {
       case 'profile':
@@ -141,6 +157,7 @@ class _UsersManagementScreenState
         break;
       case 'edit': _editUser(user); break;
       case 'enable': case 'disable':
+        if (!_checkAdminPermission()) return;
         try {
           final db = getIt<AppDatabase>();
           final dbUser = await db.usersDao.getUserById(user.id);
@@ -149,17 +166,41 @@ class _UsersManagementScreenState
             await db.usersDao.updateUser(updatedUser);
             final syncService = ref.read(syncServiceProvider);
             await syncService.enqueueUpdate(tableName: 'users', recordId: user.id, changes: {'id': user.id, 'is_active': !user.active, 'updated_at': DateTime.now().toIso8601String()});
+            // Audit log: user status change
+            _logAuditEvent(db, 'user_${action}', user.id, user.name);
           }
         } catch (e) { debugPrint('Error updating user status: $e'); }
         await _loadUsers(); break;
       case 'delete':
+        if (!_checkAdminPermission()) return;
         try {
           final db = getIt<AppDatabase>();
           await db.usersDao.deleteUser(user.id);
           final syncService = ref.read(syncServiceProvider);
           await syncService.enqueueDelete(tableName: 'users', recordId: user.id);
+          // Audit log: user deletion
+          _logAuditEvent(db, 'user_delete', user.id, user.name);
         } catch (e) { debugPrint('Error deleting user: $e'); }
         await _loadUsers(); break;
+    }
+  }
+
+  /// Best-effort audit logging for sensitive user operations.
+  void _logAuditEvent(AppDatabase db, String action, String entityId, String entityName) {
+    try {
+      final storeId = ref.read(currentStoreIdProvider) ?? '';
+      final currentUser = ref.read(currentUserProvider);
+      db.auditLogDao.log(
+        storeId: storeId,
+        userId: currentUser?.id ?? 'unknown',
+        userName: currentUser?.name ?? 'unknown',
+        action: AuditAction.settingsChange,
+        entityType: 'user',
+        entityId: entityId,
+        description: '$action: $entityName',
+      );
+    } catch (e) {
+      debugPrint('Audit log failed: $e');
     }
   }
 

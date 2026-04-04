@@ -111,7 +111,17 @@ Future<String> _getOrCreateDbKey() async {
   const keyName = 'db_encryption_key';
 
   if (kIsWeb) {
-    // Web fallback: use SharedPreferences (no native keychain available)
+    // SECURITY WARNING: SharedPreferences on web stores data in plaintext
+    // localStorage, which is accessible to any JS running on the same origin.
+    // This is a known limitation — web has no secure keychain equivalent.
+    // The key is persisted so the encrypted DB can be reopened across sessions.
+    // For production hardening, consider:
+    //   1. Using a server-side key derivation (e.g. from auth session token)
+    //   2. Encrypting the key with a passphrase entered by the user
+    //   3. Using WebCrypto API with non-extractable keys
+    if (kDebugMode) {
+      debugPrint('WARNING: DB encryption key stored in localStorage (insecure on web)');
+    }
     final prefs = await SharedPreferences.getInstance();
     var key = prefs.getString('secure_storage_$keyName');
     if (key == null) {

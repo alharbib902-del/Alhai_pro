@@ -142,7 +142,9 @@ class _CommissionScreenState extends ConsumerState<CommissionScreen> {
           ),
         ],
       ),
-      body: _isLoading
+      body: SafeArea(
+        top: false,
+        child: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : Column(
               children: [
@@ -150,27 +152,27 @@ class _CommissionScreenState extends ConsumerState<CommissionScreen> {
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(AlhaiSpacing.md),
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Color(0xFF1A8FE3), Color(0xFF0EC9C9)],
+                      colors: [Theme.of(context).colorScheme.primary, Theme.of(context).colorScheme.primary.withValues(alpha: 0.8)],
                     ),
                   ),
                   child: Column(
                     children: [
                       Text(l10n.totalDueCommissions,
-                          style: const TextStyle(color: Colors.white70, fontSize: 12)),
+                          style: TextStyle(color: Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.7), fontSize: 12)),
                       const SizedBox(height: AlhaiSpacing.xxs),
                       Text(
                         l10n.amountSar(totalCommissions.toStringAsFixed(2)),
-                        style: const TextStyle(
-                          color: Colors.white,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onPrimary,
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
                         l10n.forEmployees(_employees.length),
-                        style: const TextStyle(color: Colors.white70, fontSize: 12),
+                        style: TextStyle(color: Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.7), fontSize: 12),
                       ),
                     ],
                   ),
@@ -193,19 +195,19 @@ class _CommissionScreenState extends ConsumerState<CommissionScreen> {
                             return Card(
                               margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
                               child: Padding(
-                                padding: const EdgeInsets.all(14),
+                                padding: const EdgeInsets.all(AlhaiSpacing.md),
                                 child: Column(
                                   children: [
                                     Row(
                                       children: [
                                         CircleAvatar(
                                           radius: 22,
-                                          backgroundColor: Colors.blue.withValues(alpha: 0.1),
+                                          backgroundColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                                           child: Text(
                                             emp.name.isNotEmpty ? emp.name[0] : '?',
-                                            style: const TextStyle(
+                                            style: TextStyle(
                                               fontWeight: FontWeight.bold,
-                                              color: Colors.blue,
+                                              color: Theme.of(context).colorScheme.primary,
                                               fontSize: 18,
                                             ),
                                           ),
@@ -229,7 +231,7 @@ class _CommissionScreenState extends ConsumerState<CommissionScreen> {
                                         Container(
                                           padding: const EdgeInsets.all(AlhaiSpacing.xs),
                                           decoration: BoxDecoration(
-                                            color: Colors.green.withValues(alpha: 0.1),
+                                            color: AppColors.success.withValues(alpha: 0.1),
                                             borderRadius: BorderRadius.circular(8),
                                           ),
                                           child: Column(
@@ -239,9 +241,9 @@ class _CommissionScreenState extends ConsumerState<CommissionScreen> {
                                                       fontSize: 10, color: Theme.of(context).hintColor)),
                                               Text(
                                                 l10n.amountSar(emp.commission.toStringAsFixed(0)),
-                                                style: const TextStyle(
+                                                style: TextStyle(
                                                   fontWeight: FontWeight.bold,
-                                                  color: Colors.green,
+                                                  color: AppColors.success,
                                                   fontSize: 15,
                                                 ),
                                               ),
@@ -264,7 +266,7 @@ class _CommissionScreenState extends ConsumerState<CommissionScreen> {
                                           style: TextStyle(
                                             fontSize: 11,
                                             fontWeight: FontWeight.bold,
-                                            color: achievedPct >= 1 ? Colors.green : Colors.orange,
+                                            color: achievedPct >= 1 ? AppColors.success : AppColors.warning,
                                           ),
                                         ),
                                       ],
@@ -274,7 +276,7 @@ class _CommissionScreenState extends ConsumerState<CommissionScreen> {
                                       value: achievedPct,
                                       backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
                                       valueColor: AlwaysStoppedAnimation<Color>(
-                                        achievedPct >= 1 ? Colors.green : Colors.orange,
+                                        achievedPct >= 1 ? AppColors.success : AppColors.warning,
                                       ),
                                       minHeight: 6,
                                       borderRadius: BorderRadius.circular(3),
@@ -293,6 +295,7 @@ class _CommissionScreenState extends ConsumerState<CommissionScreen> {
                 ),
               ],
             ),
+      ),
     );
   }
 }

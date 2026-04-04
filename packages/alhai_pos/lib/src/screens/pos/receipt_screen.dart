@@ -72,10 +72,16 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
 
       final items = await db.saleItemsDao.getItemsBySaleId(widget.saleId!);
 
+      // Load store info for ZATCA QR
+      final storeId = ref.read(currentStoreIdProvider) ?? kDefaultStoreId;
+      final store = await db.storesDao.getStoreById(storeId);
+      final sellerName = store?.name ?? 'Store';
+      final vatNumber = store?.taxNumber ?? '';
+
       // توليد QR Code بيانات ZATCA
       final qrData = ZatcaService.generateQrData(
-        sellerName: 'Al-HAI Store',
-        vatNumber: '300000000000003',
+        sellerName: sellerName,
+        vatNumber: vatNumber,
         timestamp: sale.createdAt,
         totalWithVat: sale.total,
         vatAmount: sale.tax,
@@ -108,33 +114,21 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
   }
 
   Widget _buildBody(BuildContext context) {
-    final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
 
     if (_error != null) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.error_outline, size: 64, color: theme.colorScheme.error.withValues(alpha: 0.7)),
-            const SizedBox(height: AlhaiSpacing.md),
-            Text(
-              _error == 'invoiceNotSpecified' ? l10n.invoiceNotSpecified
-                : _error == 'invoiceNotFound' ? l10n.invoiceNotFound
-                : _error!,
-              style: TextStyle(color: theme.colorScheme.error),
-            ),
-            const SizedBox(height: AlhaiSpacing.lg),
-            FilledButton.icon(
-              onPressed: () => context.go(AppRoutes.pos),
-              icon: const Icon(Icons.point_of_sale),
-              label: Text(l10n.newSale),
-            ),
-          ],
-        ),
+      return AppErrorState.general(
+        context,
+        message: _error == 'invoiceNotSpecified' ? l10n.invoiceNotSpecified
+          : _error == 'invoiceNotFound' ? l10n.invoiceNotFound
+          : _error,
+        onRetry: () {
+          setState(() { _isLoading = true; _error = null; });
+          _loadSaleData();
+        },
       );
     }
 

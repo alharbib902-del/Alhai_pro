@@ -98,8 +98,8 @@ class SAPlansScreen extends ConsumerWidget {
                     children: planCards.map((card) {
                       return Expanded(
                         child: Padding(
-                          padding: const EdgeInsets.only(
-                              right: AlhaiSpacing.md),
+                          padding: const EdgeInsetsDirectional.only(
+                              end: AlhaiSpacing.md),
                           child: card,
                         ),
                       );

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
@@ -165,15 +164,21 @@ class _PriceListsScreenState extends ConsumerState<PriceListsScreen> {
           ),
         ],
       ),
-      body: Column(
+      body: SafeArea(
+        child: Column(
         children: [
           // Price list selector
-          Container(
-            height: 100,
-            padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs),
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm),
+          Builder(
+            builder: (context) {
+              final screenWidth = MediaQuery.of(context).size.width;
+              final cardWidth = screenWidth >= AlhaiBreakpoints.tablet ? 150.0 : 130.0;
+              final selectorHeight = screenWidth >= AlhaiBreakpoints.tablet ? 100.0 : 85.0;
+              return SizedBox(
+                height: selectorHeight,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xs),
               itemCount: _priceLists.length,
               separatorBuilder: (_, __) => const SizedBox(width: AlhaiSpacing.xs),
               itemBuilder: (ctx, i) {
@@ -186,7 +191,7 @@ class _PriceListsScreenState extends ConsumerState<PriceListsScreen> {
                   },
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
-                    width: 130,
+                        width: cardWidth,
                     padding: const EdgeInsets.all(AlhaiSpacing.sm),
                     decoration: BoxDecoration(
                       color: isSelected
@@ -225,6 +230,8 @@ class _PriceListsScreenState extends ConsumerState<PriceListsScreen> {
                 );
               },
             ),
+              );
+            },
           ),
 
           // Active list header
@@ -254,7 +261,7 @@ class _PriceListsScreenState extends ConsumerState<PriceListsScreen> {
                     : ListView.separated(
                         padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm),
                         itemCount: _entries.length,
-                        separatorBuilder: (_, __) => const Divider(height: 1),
+                        separatorBuilder: (_, __) => const Divider(height: 1, thickness: 0),
                         itemBuilder: (ctx, i) {
                           final entry = _entries[i];
                           final diff = entry.listPrice - entry.basePrice;
@@ -307,6 +314,7 @@ class _PriceListsScreenState extends ConsumerState<PriceListsScreen> {
                       ),
           ),
         ],
+      ),
       ),
     );
   }

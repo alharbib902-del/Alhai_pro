@@ -23,6 +23,11 @@ import '../services/whatsapp_otp_service.dart';
 // ============================================================================
 
 /// معرّف المتجر الافتراضي (يستخدم فقط عند CSV seeding ولا يُعيّن تلقائياً)
+///
+/// SECURITY TODO: This value is hardcoded for development convenience.
+/// In production, it should come from environment configuration
+/// (e.g. --dart-define=DEFAULT_STORE_ID=...) or a remote config service.
+/// Never commit production store IDs in source code.
 const String kDefaultStoreId = 'b10f215e-2c70-4832-a37e-a42a74406a8d';
 
 /// مزود معرّف المتجر الحالي

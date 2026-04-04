@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -25,11 +27,18 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
   List<ProductsTableData> _productsWithoutImages = [];
   String _filter = 'all'; // all, images, no_images
   String _searchQuery = '';
+  Timer? _searchDebounce;
 
   @override
   void initState() {
     super.initState();
     _loadData();
+  }
+
+  @override
+  void dispose() {
+    _searchDebounce?.cancel();
+    super.dispose();
   }
 
   Future<void> _loadData() async {
@@ -142,7 +151,10 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
                       const EdgeInsets.symmetric(vertical: 10),
                 ),
                 onChanged: (value) {
-                  setState(() => _searchQuery = value);
+                  _searchDebounce?.cancel();
+                  _searchDebounce = Timer(const Duration(milliseconds: 300), () {
+                    if (mounted) setState(() => _searchQuery = value);
+                  });
                 },
               ),
               const SizedBox(height: AlhaiSpacing.xs),
@@ -379,10 +391,10 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
                                           'Image management placeholder')),
                                 );
                               },
-                              child: const Padding(
-                                padding: EdgeInsets.all(AlhaiSpacing.xxs),
+                              child: Padding(
+                                padding: const EdgeInsets.all(AlhaiSpacing.xxs),
                                 child: Icon(Icons.edit,
-                                    color: Colors.white, size: 18),
+                                    color: Theme.of(context).colorScheme.onInverseSurface, size: 18),
                               ),
                             ),
                           ),
@@ -472,9 +484,11 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
             Text(l10n.add),
           ],
         ),
-        content: SizedBox(
-          width: 400,
-          height: 300,
+        content: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxWidth: MediaQuery.of(context).size.width > 600 ? 400 : MediaQuery.of(context).size.width * 0.9,
+            maxHeight: MediaQuery.of(context).size.height * 0.5,
+          ),
           child: displayProducts.isEmpty
               ? Center(
                   child: Column(

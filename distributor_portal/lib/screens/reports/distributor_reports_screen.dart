@@ -81,7 +81,7 @@ class _DistributorReportsScreenState
         children: [
           // ── Period Filter (always visible) ──
           Padding(
-            padding: EdgeInsets.fromLTRB(
+            padding: EdgeInsetsDirectional.fromSTEB(
               isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md,
               isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md,
               isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md,

@@ -1,3 +1,5 @@
+import 'dart:math' show min;
+
 import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -125,8 +127,8 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final isWideScreen = size.width > 900;
-    final isMediumScreen = size.width > 600;
+    final isWideScreen = size.width >= AlhaiBreakpoints.desktop;
+    final isMediumScreen = size.width >= AlhaiBreakpoints.tablet;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
 
@@ -137,7 +139,12 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
         final shouldPop = await showDialog<bool>(
           context: context,
           builder: (context) => ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 400),
+            constraints: BoxConstraints(
+              maxWidth: min(
+                MediaQuery.of(context).size.width * 0.9,
+                AlhaiBreakpoints.maxDialogWidth,
+              ),
+            ),
             child: AlertDialog(
               title: Text(AppLocalizations.of(context).unsavedChanges),
               content: Text(AppLocalizations.of(context).leaveWithoutSaving),
@@ -156,27 +163,29 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
         );
         if (shouldPop == true && context.mounted) Navigator.pop(context);
       },
-      child: Column(
-        children: [
-          AppHeader(
-            title: widget.isEditing ? l10n.editProduct : l10n.addProduct,
-            onMenuTap:
-                isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
-            onNotificationsTap: () => context.push('/notifications'),
-            notificationsCount: 0,
-            userName: l10n.defaultUserName,
-            userRole: l10n.branchManager,
-          ),
-          Expanded(
-            child: _isLoadingProduct
-                ? const Center(child: CircularProgressIndicator())
-                : SingleChildScrollView(
-                    padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-                    child: _buildContent(
-                        isWideScreen, isMediumScreen, isDark, l10n),
-                  ),
-          ),
-        ],
+      child: SafeArea(
+        child: Column(
+          children: [
+            AppHeader(
+              title: widget.isEditing ? l10n.editProduct : l10n.addProduct,
+              onMenuTap:
+                  isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+              onNotificationsTap: () => context.push('/notifications'),
+              notificationsCount: 0,
+              userName: l10n.defaultUserName,
+              userRole: l10n.branchManager,
+            ),
+            Expanded(
+              child: _isLoadingProduct
+                  ? const Center(child: CircularProgressIndicator())
+                  : SingleChildScrollView(
+                      padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                      child: _buildContent(
+                          isWideScreen, isMediumScreen, isDark, l10n),
+                    ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -195,10 +204,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
           children: [
             IconButton(
               onPressed: () => context.pop(),
-              icon: Icon(
-                Icons.arrow_back_rounded,
-                color: Theme.of(context).colorScheme.onSurface,
-              ),
+              icon: const Icon(Icons.arrow_back_rounded),
             ),
             const SizedBox(width: AlhaiSpacing.xs),
             Expanded(
@@ -357,7 +363,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
             height: 120,
             decoration: BoxDecoration(
               color: isDark
-                  ? const Color(0xFF0F172A)
+                  ? Theme.of(context).colorScheme.surface
                   : AppColors.border.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(AppSizes.radiusLg),
               border: Border.all(

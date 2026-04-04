@@ -88,7 +88,7 @@ class _RemoveInventoryScreenState
     return Column(
       children: [
         AppHeader(
-          title: 'Remove Inventory',
+          title: l10n.removeInventory,
           subtitle: _getDateSubtitle(l10n),
           showSearch: false,
           searchHint: l10n.searchPlaceholder,
@@ -242,7 +242,7 @@ class _RemoveInventoryScreenState
                     );
                   },
                   icon: const Icon(Icons.qr_code_scanner_rounded, size: 20),
-                  label: const Text('Scan'),
+                  label: Text(l10n.scanLabel),
                   style: FilledButton.styleFrom(
                     backgroundColor: AppColors.info,
                     foregroundColor: colorScheme.onPrimary,
@@ -356,7 +356,7 @@ class _RemoveInventoryScreenState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Quantity to Remove',
+          Text(l10n.quantityToRemove,
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,
                   color: colorScheme.onSurface)),
           const SizedBox(height: AlhaiSpacing.md),
@@ -398,10 +398,10 @@ class _RemoveInventoryScreenState
 
   Widget _buildReasonCard(ColorScheme colorScheme, AppLocalizations l10n) {
     final reasons = [
-      {'value': 'sold', 'label': 'Sold', 'icon': Icons.shopping_cart_rounded, 'color': AppColors.success},
+      {'value': 'sold', 'label': l10n.sold, 'icon': Icons.shopping_cart_rounded, 'color': AppColors.success},
       {'value': 'damaged', 'label': l10n.damaged, 'icon': Icons.broken_image_rounded, 'color': AppColors.error},
       {'value': 'expired', 'label': l10n.expired, 'icon': Icons.schedule_rounded, 'color': AppColors.warning},
-      {'value': 'transferred', 'label': 'Transferred', 'icon': Icons.swap_horiz_rounded, 'color': AppColors.info},
+      {'value': 'transferred', 'label': l10n.transferred, 'icon': Icons.swap_horiz_rounded, 'color': AppColors.info},
       {'value': 'other', 'label': l10n.other, 'icon': Icons.more_horiz_rounded, 'color': Theme.of(context).colorScheme.outline},
     ];
 
@@ -496,7 +496,7 @@ class _RemoveInventoryScreenState
             maxLines: 3,
             style: TextStyle(color: colorScheme.onSurface),
             decoration: InputDecoration(
-              hintText: 'Optional note',
+              hintText: l10n.optionalNote,
               hintStyle: TextStyle(color: colorScheme.onSurfaceVariant),
               filled: true,
               fillColor: colorScheme.surfaceContainerLow,

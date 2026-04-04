@@ -243,7 +243,7 @@ class _CustomerAccountsScreenState
             _applyFilters();
           }, isDark, icon: Icons.warning_amber_rounded),
           const SizedBox(width: AlhaiSpacing.xs),
-          _buildChip('Overdue', _statusFilter == 'overdue', () {
+          _buildChip(l10n.overdue, _statusFilter == 'overdue', () {
             setState(() => _statusFilter = 'overdue');
             _applyFilters();
           }, isDark, icon: Icons.schedule_rounded),
@@ -327,7 +327,7 @@ class _CustomerAccountsScreenState
           Expanded(
             child: Column(
               children: [
-                Text('Customers',
+                Text(l10n.customers,
                     style: TextStyle(
                         fontSize: 12,
                         color: AppColors.getTextSecondary(isDark))),
@@ -369,7 +369,7 @@ class _CustomerAccountsScreenState
           Expanded(
             child: Column(
               children: [
-                Text('Overdue',
+                Text(l10n.overdue,
                     style: TextStyle(
                         fontSize: 12,
                         color: AppColors.getTextSecondary(isDark))),
@@ -467,9 +467,9 @@ class _CustomerAccountsScreenState
                                 AppColors.warning.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(999),
                           ),
-                          child: const Text(
-                            'Overdue',
-                            style: TextStyle(
+                          child: Text(
+                            l10n.overdue,
+                            style: const TextStyle(
                               fontSize: 9,
                               fontWeight: FontWeight.w600,
                               color: AppColors.warning,

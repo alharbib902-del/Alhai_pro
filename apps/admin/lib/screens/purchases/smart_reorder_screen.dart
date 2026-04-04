@@ -60,8 +60,8 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final isWideScreen = size.width > 900;
-    final isMediumScreen = size.width > 600;
+    final isWideScreen = AlhaiBreakpoints.isDesktop(size.width);
+    final isMediumScreen = size.width >= AlhaiBreakpoints.tablet;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
 
@@ -111,32 +111,32 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: isDark
-                  ? [const Color(0xFF581C87), const Color(0xFF4C1D95)]
-                  : [const Color(0xFFF3E8FF), const Color(0xFFEDE9FE)],
+                  ? [Theme.of(context).colorScheme.primaryContainer, Theme.of(context).colorScheme.surfaceContainerHighest]
+                  : [Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3), Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.15)],
               begin: AlignmentDirectional.topStart,
               end: AlignmentDirectional.bottomEnd,
             ),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: isDark ? Colors.purple.withValues(alpha: 0.3) : const Color(0xFFD8B4FE)),
+            border: Border.all(color: isDark ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.3) : Theme.of(context).colorScheme.primaryContainer),
           ),
           child: Row(
             children: [
               Container(
                 padding: const EdgeInsets.all(AlhaiSpacing.sm),
                 decoration: BoxDecoration(
-                  color: isDark ? Colors.purple.withValues(alpha: 0.3) : Colors.purple.withValues(alpha: 0.15),
+                  color: Theme.of(context).colorScheme.primaryContainer,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(Icons.psychology, color: isDark ? Colors.purple.shade200 : Colors.purple, size: 28),
+                child: Icon(Icons.psychology, color: Theme.of(context).colorScheme.primary, size: 28),
               ),
               const SizedBox(width: AlhaiSpacing.md),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(l10n.smartReorderAiTitle, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: isDark ? Colors.white : Colors.purple.shade900)),
+                    Text(l10n.smartReorderAiTitle, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Theme.of(context).colorScheme.onSurface)),
                     const SizedBox(height: AlhaiSpacing.xxs),
-                    Text(l10n.smartReorderDescription, style: TextStyle(fontSize: 13, color: isDark ? Colors.white.withValues(alpha: 0.7) : Colors.purple.shade700)),
+                    Text(l10n.smartReorderDescription, style: TextStyle(fontSize: 13, color: Theme.of(context).colorScheme.onSurfaceVariant)),
                   ],
                 ),
               ),

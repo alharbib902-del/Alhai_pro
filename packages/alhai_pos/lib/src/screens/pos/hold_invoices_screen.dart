@@ -85,31 +85,10 @@ class HoldInvoicesScreen extends ConsumerWidget {
         // حالة التحميل
         loading: () => const Center(child: CircularProgressIndicator()),
         // حالة الخطأ
-        error: (error, _) => Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.error_outline, size: 48, color: AppColors.error),
-              const SizedBox(height: AppSizes.md),
-              Text(
-                l10n.errorLoadingHeldInvoices,
-                style: AppTypography.titleMedium,
-              ),
-              const SizedBox(height: AppSizes.sm),
-              Text(
-                error.toString(),
-                style: AppTypography.bodySmall
-                    .copyWith(color: AppColors.textMuted),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: AppSizes.lg),
-              ElevatedButton.icon(
-                onPressed: () => ref.invalidate(dbHeldInvoicesListProvider),
-                icon: const Icon(Icons.refresh),
-                label: Text(l10n.retry),
-              ),
-            ],
-          ),
+        error: (error, _) => AppErrorState.general(
+          context,
+          message: error.toString(),
+          onRetry: () => ref.invalidate(dbHeldInvoicesListProvider),
         ),
         // حالة البيانات
         data: (heldInvoices) => heldInvoices.isEmpty

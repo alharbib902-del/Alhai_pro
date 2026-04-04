@@ -130,7 +130,7 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
     return Column(
       children: [
         AppHeader(
-          title: 'Apply Interest',
+          title: l10n.applyInterest,
           subtitle: _getDateSubtitle(l10n),
           showSearch: false,
           searchHint: l10n.searchPlaceholder,
@@ -212,7 +212,7 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
           Icon(Icons.account_balance_wallet_outlined,
               size: 64, color: AppColors.getTextMuted(isDark)),
           const SizedBox(height: AlhaiSpacing.md),
-          Text('No outstanding debts',
+          Text(l10n.noOutstandingDebts,
               style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -613,8 +613,8 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
                     strokeWidth: 2, color: Colors.white),
               )
             : const Icon(Icons.percent_rounded, size: 20),
-        label: const Text('Apply Interest',
-            style: TextStyle(
+        label: Text(l10n.applyInterest,
+            style: const TextStyle(
                 fontSize: 16, fontWeight: FontWeight.w600)),
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.warning,

@@ -25,16 +25,31 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
   List<ProductsTableData> _products = [];
   Map<String, String> _ecomSettings = {};
 
+  // Cached counts - updated when _products changes
+  int _onlineCount = 0;
+  int _activeCount = 0;
+
+  // Settings tab controllers - class-level to avoid memory leak
+  late final TextEditingController _minOrderController;
+  late final TextEditingController _deliveryFeeController;
+  late final TextEditingController _freeShippingLimitController;
+
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+    _minOrderController = TextEditingController(text: '50');
+    _deliveryFeeController = TextEditingController(text: '15');
+    _freeShippingLimitController = TextEditingController(text: '200');
     _loadData();
   }
 
   @override
   void dispose() {
     _tabController.dispose();
+    _minOrderController.dispose();
+    _deliveryFeeController.dispose();
+    _freeShippingLimitController.dispose();
     super.dispose();
   }
 
@@ -66,6 +81,11 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
         setState(() {
           _products = products;
           _ecomSettings = settings;
+          _onlineCount = _products.where((p) => _isProductOnline(p.id)).length;
+          _activeCount = _products.where((p) => p.isActive).length;
+          _minOrderController.text = settings['ecom_min_order'] ?? '50';
+          _deliveryFeeController.text = settings['ecom_delivery_fee'] ?? '15';
+          _freeShippingLimitController.text = settings['ecom_free_shipping_limit'] ?? '200';
           _isLoading = false;
         });
       }
@@ -103,6 +123,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
           );
       setState(() {
         _ecomSettings[key] = newValue.toString();
+        _onlineCount = _products.where((p) => _isProductOnline(p.id)).length;
       });
     } catch (e) {
       if (mounted) {
@@ -239,9 +260,6 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
       );
     }
 
-    final onlineCount = _products.where((p) => _isProductOnline(p.id)).length;
-    final activeCount = _products.where((p) => p.isActive).length;
-
     return SingleChildScrollView(
       padding: const EdgeInsets.all(AlhaiSpacing.md),
       child: Column(
@@ -261,21 +279,21 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
               ),
               _buildStatCard(
                 'Online',
-                '$onlineCount',
+                '$_onlineCount',
                 Icons.cloud_done,
                 AppColors.success,
                 isDark,
               ),
               _buildStatCard(
                 l10n.active,
-                '$activeCount',
+                '$_activeCount',
                 Icons.check_circle,
                 Colors.teal, // specific status color
                 isDark,
               ),
               _buildStatCard(
                 l10n.inactive,
-                '${_products.length - onlineCount}',
+                '${_products.length - _onlineCount}',
                 Icons.cloud_off,
                 AppColors.warning,
                 isDark,
@@ -325,7 +343,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
             height: 56,
             decoration: BoxDecoration(
               color: isDark
-                  ? Colors.white.withValues(alpha: 0.05)
+                  ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05)
                   : AppColors.border.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(10),
             ),
@@ -341,7 +359,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
                       errorWidget: (_, __, ___) => Icon(
                         Icons.image_not_supported_outlined,
                         color: isDark
-                            ? Colors.white24
+                            ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.24)
                             : AppColors.textTertiary,
                       ),
                     ),
@@ -349,7 +367,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
                 : Icon(
                     Icons.inventory_2_outlined,
                     color:
-                        isDark ? Colors.white24 : AppColors.textTertiary,
+                        isDark ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.24) : AppColors.textTertiary,
                   ),
           ),
           const SizedBox(width: AlhaiSpacing.sm),
@@ -435,7 +453,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
                 onChanged: (val) =>
                     _toggleOnlineAvailability(product.id, val),
                 activeTrackColor: AppColors.primary,
-                activeThumbColor: Colors.white,
+                activeThumbColor: Theme.of(context).colorScheme.onPrimary,
               ),
             ],
           ),
@@ -532,16 +550,6 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
     final freeShippingEnabled =
         _ecomSettings['ecom_free_shipping_enabled'] == 'true';
 
-    final minOrderController = TextEditingController(
-      text: _ecomSettings['ecom_min_order'] ?? '50',
-    );
-    final deliveryFeeController = TextEditingController(
-      text: _ecomSettings['ecom_delivery_fee'] ?? '15',
-    );
-    final freeShippingLimitController = TextEditingController(
-      text: _ecomSettings['ecom_free_shipping_limit'] ?? '200',
-    );
-
     return SingleChildScrollView(
       padding: const EdgeInsets.all(AlhaiSpacing.md),
       child: Column(
@@ -603,13 +611,13 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
           ),
           const SizedBox(height: AlhaiSpacing.sm),
           _buildInputField(
-              'Min Order Amount', minOrderController, isDark),
+              'Min Order Amount', _minOrderController, isDark),
           const SizedBox(height: AlhaiSpacing.sm),
           _buildInputField(
-              'Delivery Fee', deliveryFeeController, isDark),
+              'Delivery Fee', _deliveryFeeController, isDark),
           const SizedBox(height: AlhaiSpacing.sm),
           _buildInputField('Free Shipping Limit',
-              freeShippingLimitController, isDark),
+              _freeShippingLimitController, isDark),
           const SizedBox(height: AlhaiSpacing.md),
           // Delivery Zones Link
           Card(
@@ -627,11 +635,11 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
             child: ElevatedButton.icon(
               onPressed: () async {
                 await _saveEcomSetting(
-                    'ecom_min_order', minOrderController.text);
+                    'ecom_min_order', _minOrderController.text);
                 await _saveEcomSetting(
-                    'ecom_delivery_fee', deliveryFeeController.text);
+                    'ecom_delivery_fee', _deliveryFeeController.text);
                 await _saveEcomSetting('ecom_free_shipping_limit',
-                    freeShippingLimitController.text);
+                    _freeShippingLimitController.text);
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
@@ -643,7 +651,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
               label: const Text('Save Settings'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
-                foregroundColor: Colors.white,
+                foregroundColor: Theme.of(context).colorScheme.onPrimary,
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -699,7 +707,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
             Icon(icon,
                 size: 80,
                 color: isDark
-                    ? Colors.white24
+                    ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.24)
                     : AppColors.textTertiary),
             const SizedBox(height: AlhaiSpacing.md),
             Text(
@@ -715,7 +723,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
               style: TextStyle(
                 fontSize: 13,
                 color: isDark
-                    ? Colors.white38
+                    ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.38)
                     : AppColors.textTertiary,
               ),
               textAlign: TextAlign.center,
@@ -858,7 +866,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
           value: value,
           onChanged: onChanged,
           activeTrackColor: AppColors.primary,
-          activeThumbColor: Colors.white,
+          activeThumbColor: Theme.of(context).colorScheme.onPrimary,
         ),
       ),
     );
@@ -877,7 +885,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
         ),
         filled: true,
         fillColor: isDark
-            ? Colors.white.withValues(alpha: 0.05)
+            ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05)
             : AppColors.border.withValues(alpha: 0.2),
       ),
       controller: controller,

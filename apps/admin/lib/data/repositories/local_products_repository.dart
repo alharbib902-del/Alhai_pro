@@ -4,6 +4,7 @@
 /// as a fallback for the external API.
 library;
 
+import 'package:flutter/foundation.dart';
 import 'package:alhai_core/alhai_core.dart';
 import 'package:drift/drift.dart';
 import 'package:alhai_database/alhai_database.dart';
@@ -11,8 +12,9 @@ import 'package:alhai_database/alhai_database.dart';
 /// Local implementation of ProductsRepository
 class LocalProductsRepository implements ProductsRepository {
   final AppDatabase _db;
+  final String? defaultStoreId;
 
-  LocalProductsRepository(this._db);
+  LocalProductsRepository(this._db, {this.defaultStoreId});
 
   /// Convert from Drift Data to Domain Model
   Product _toProduct(ProductsTableData data) {
@@ -48,42 +50,47 @@ class LocalProductsRepository implements ProductsRepository {
     String? categoryId,
     String? searchQuery,
   }) async {
-    final offset = (page - 1) * limit;
+    try {
+      final offset = (page - 1) * limit;
 
-    final total = await _db.productsDao.getProductsCount(
-      storeId,
-      categoryId: categoryId,
-      activeOnly: true,
-    );
-
-    final List<ProductsTableData> paginatedData;
-
-    if (searchQuery != null && searchQuery.isNotEmpty) {
-      paginatedData = await _db.productsDao.searchProductsPaginated(
-        searchQuery,
+      final total = await _db.productsDao.getProductsCount(
         storeId,
-        offset: offset,
-        limit: limit,
-      );
-    } else {
-      paginatedData = await _db.productsDao.getProductsPaginated(
-        storeId,
-        offset: offset,
-        limit: limit,
         categoryId: categoryId,
         activeOnly: true,
       );
+
+      final List<ProductsTableData> paginatedData;
+
+      if (searchQuery != null && searchQuery.isNotEmpty) {
+        paginatedData = await _db.productsDao.searchProductsPaginated(
+          searchQuery,
+          storeId,
+          offset: offset,
+          limit: limit,
+        );
+      } else {
+        paginatedData = await _db.productsDao.getProductsPaginated(
+          storeId,
+          offset: offset,
+          limit: limit,
+          categoryId: categoryId,
+          activeOnly: true,
+        );
+      }
+
+      final products = paginatedData.map(_toProduct).toList();
+
+      return Paginated(
+        items: products,
+        total: total,
+        page: page,
+        limit: limit,
+        hasMore: offset + products.length < total,
+      );
+    } catch (e, stack) {
+      debugPrint('[LocalProductsRepo] getProducts failed for store=$storeId: $e\n$stack');
+      rethrow;
     }
-
-    final products = paginatedData.map(_toProduct).toList();
-
-    return Paginated(
-      items: products,
-      total: total,
-      page: page,
-      limit: limit,
-      hasMore: offset + products.length < total,
-    );
   }
 
   @override
@@ -97,9 +104,17 @@ class LocalProductsRepository implements ProductsRepository {
 
   @override
   Future<Product?> getByBarcode(String barcode) async {
-    const storeId = 'store_demo_001';
-    final data = await _db.productsDao.getProductByBarcode(barcode, storeId);
-    return data != null ? _toProduct(data) : null;
+    try {
+      if (defaultStoreId == null) {
+        throw StateError('No store selected — cannot look up barcode without storeId');
+      }
+      final storeId = defaultStoreId!;
+      final data = await _db.productsDao.getProductByBarcode(barcode, storeId);
+      return data != null ? _toProduct(data) : null;
+    } catch (e, stack) {
+      debugPrint('[LocalProductsRepo] getByBarcode failed for barcode=$barcode: $e\n$stack');
+      rethrow;
+    }
   }
 
   @override

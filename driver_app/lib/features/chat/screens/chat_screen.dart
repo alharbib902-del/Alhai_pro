@@ -144,7 +144,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
           // Input field
           Container(
-            padding: const EdgeInsets.fromLTRB(AlhaiSpacing.md, AlhaiSpacing.xs, AlhaiSpacing.md, AlhaiSpacing.md),
+            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.md, AlhaiSpacing.xs, AlhaiSpacing.md, AlhaiSpacing.md),
             decoration: BoxDecoration(
               color: theme.colorScheme.surface,
               border: Border(

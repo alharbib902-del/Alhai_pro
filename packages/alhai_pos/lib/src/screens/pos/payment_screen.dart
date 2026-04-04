@@ -386,8 +386,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
           width: isDesktop ? 400 : 350,
           decoration: BoxDecoration(
             color: theme.colorScheme.surface,
-            border: const BorderDirectional(
-              end: BorderSide(color: AppColors.border),
+            border: BorderDirectional(
+              end: BorderSide(color: theme.dividerColor),
             ),
             boxShadow: AppShadows.lg,
           ),

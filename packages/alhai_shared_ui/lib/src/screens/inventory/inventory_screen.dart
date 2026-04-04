@@ -367,7 +367,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
       width: 260,
       decoration: BoxDecoration(
         color: colorScheme.surface,
-        border: Border(left: BorderSide(color: Theme.of(context).dividerColor)),
+        border: BorderDirectional(start: BorderSide(color: Theme.of(context).dividerColor)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

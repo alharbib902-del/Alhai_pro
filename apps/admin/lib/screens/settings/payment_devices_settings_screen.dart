@@ -147,7 +147,7 @@ class _PaymentDevicesSettingsScreenState
     final l10n = AppLocalizations.of(context);
 
     if (_isLoading) {
-      return Column(
+      return SafeArea(child: Column(
         children: [
           AppHeader(
             title: l10n.paymentDevicesSettings,
@@ -163,10 +163,10 @@ class _PaymentDevicesSettingsScreenState
             child: Center(child: CircularProgressIndicator()),
           ),
         ],
-      );
+      ));
     }
 
-    return Column(
+    return SafeArea(child: Column(
       children: [
         AppHeader(
           title: l10n.paymentDevicesSettings,
@@ -185,7 +185,7 @@ class _PaymentDevicesSettingsScreenState
           ),
         ),
       ],
-    );
+    ));
   }
 
   Widget _buildContent(bool isDark, AppLocalizations l10n) {

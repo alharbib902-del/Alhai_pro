@@ -150,8 +150,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen>
                 width: double.infinity,
                 padding: const EdgeInsets.all(AlhaiSpacing.lg),
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                      colors: [AppColors.primary, Color(0xFF5B2D8E)]),
+                  gradient: AppColors.getPrimaryGradient(isDark),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: _isLoading
@@ -354,7 +353,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen>
                   style: TextStyle(
                       fontSize: 11,
                       color: isDark
-                          ? Colors.white38
+                          ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.38)
                           : AppColors.textTertiary),
                 ),
               ],
@@ -378,7 +377,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen>
                   style: TextStyle(
                       fontSize: 10,
                       color: isDark
-                          ? Colors.white38
+                          ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.38)
                           : AppColors.textTertiary),
                 ),
             ],

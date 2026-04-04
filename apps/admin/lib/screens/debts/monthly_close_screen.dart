@@ -301,14 +301,14 @@ class _MonthlyCloseScreenState extends ConsumerState<MonthlyCloseScreen> {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         border: Border(top: BorderSide(color: Theme.of(context).dividerColor)),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, -2))],
+        boxShadow: [BoxShadow(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, -2))],
       ),
       child: Row(children: [
         Expanded(child: Text(l10n.selectedCustomerCount(selectedCount), style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant))),
         FilledButton.icon(
           onPressed: selectedCount > 0 && !_isProcessing ? _showConfirmationDialog : null,
           icon: _isProcessing
-              ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+              ? SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Theme.of(context).colorScheme.onPrimary))
               : const Icon(Icons.check_rounded),
           label: Text(_isProcessing ? l10n.processingClose : l10n.executeClose),
         ),

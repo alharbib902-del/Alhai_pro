@@ -145,7 +145,7 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
     final l10n = AppLocalizations.of(context);
 
     if (_isLoading) {
-      return Column(
+      return SafeArea(child: Column(
         children: [
           AppHeader(
             title: l10n.taxSettings,
@@ -161,10 +161,10 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
             child: Center(child: CircularProgressIndicator()),
           ),
         ],
-      );
+      ));
     }
 
-    return Column(
+    return SafeArea(child: Column(
               children: [
                 AppHeader(
                   title: l10n.taxSettings,
@@ -183,7 +183,7 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
                   ),
                 ),
               ],
-            );
+            ));
   }
 
   Widget _buildContent(bool isDark, AppLocalizations l10n) {
@@ -211,8 +211,8 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
                   style: TextStyle(
                       color: Theme.of(context).colorScheme.onSurface)),
               subtitle: Text('${_vatRate.toInt()}%'),
-              trailing: SizedBox(
-                width: 200,
+              trailing: ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width > 600 ? 200 : 120),
                 child: Slider(
                   value: _vatRate,
                   min: 5,

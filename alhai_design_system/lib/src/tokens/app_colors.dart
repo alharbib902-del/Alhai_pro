@@ -345,6 +345,34 @@ class AppColors {
     end: AlignmentDirectional.bottomEnd,
   );
 
+  /// تدرج الخطأ
+  static const LinearGradient errorGradient = LinearGradient(
+    colors: [Color(0xFFEF4444), Color(0xFFDC2626)],
+    begin: AlignmentDirectional.topStart,
+    end: AlignmentDirectional.bottomEnd,
+  );
+
+  /// تدرج الخطأ - وضع داكن
+  static const LinearGradient errorGradientDark = LinearGradient(
+    colors: [Color(0xFF991B1B), Color(0xFF7F1D1D)],
+    begin: AlignmentDirectional.topStart,
+    end: AlignmentDirectional.bottomEnd,
+  );
+
+  /// تدرج المعلومات
+  static const LinearGradient infoGradient = LinearGradient(
+    colors: [Color(0xFFEFF6FF), Color(0xFFDBEAFE)],
+    begin: AlignmentDirectional.topStart,
+    end: AlignmentDirectional.bottomEnd,
+  );
+
+  /// تدرج المعلومات - وضع داكن
+  static const LinearGradient infoGradientDark = LinearGradient(
+    colors: [Color(0xFF1E3A5F), Color(0xFF1E293B)],
+    begin: AlignmentDirectional.topStart,
+    end: AlignmentDirectional.bottomEnd,
+  );
+
   // ---------- Theme-aware gradient helpers (L83) ----------
 
   /// الحصول على التدرج الأساسي حسب الوضع
@@ -362,6 +390,14 @@ class AppColors {
   /// الحصول على تدرج الكارد حسب الوضع
   static LinearGradient getCardGradient(bool isDark) =>
       isDark ? cardGradientDark : cardGradient;
+
+  /// الحصول على تدرج الخطأ حسب الوضع
+  static LinearGradient getErrorGradient(bool isDark) =>
+      isDark ? errorGradientDark : errorGradient;
+
+  /// الحصول على تدرج المعلومات حسب الوضع
+  static LinearGradient getInfoGradient(bool isDark) =>
+      isDark ? infoGradientDark : infoGradient;
 
   // ==========================================================================
   // CATEGORY COLORS - ألوان التصنيفات

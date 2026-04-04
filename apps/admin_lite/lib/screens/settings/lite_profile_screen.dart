@@ -177,7 +177,7 @@ class LiteProfileScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(AlhaiSpacing.md, AlhaiSpacing.md, AlhaiSpacing.md, AlhaiSpacing.xs),
+            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.md, AlhaiSpacing.md, AlhaiSpacing.md, AlhaiSpacing.xs),
             child: Row(
               children: [
                 Icon(icon, size: 18, color: AlhaiColors.primary),

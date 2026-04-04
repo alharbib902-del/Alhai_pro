@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:alhai_zatca/src/models/certificate_info.dart';
 
 /// Secure storage for ZATCA certificates and private keys
@@ -47,8 +48,17 @@ abstract class CertificateStorage {
   Future<List<String>> listStoreIds();
 }
 
-/// In-memory certificate storage for testing and development
+/// In-memory certificate storage for testing and development.
+///
+/// Must NOT be used in release builds -- certificates would be lost
+/// on restart and are not encrypted at rest.
 class InMemoryCertificateStorage implements CertificateStorage {
+  InMemoryCertificateStorage() {
+    assert(kDebugMode,
+        'InMemoryCertificateStorage must not be used in production. '
+        'Use a secure CertificateStorage implementation instead.');
+  }
+
   final Map<String, CertificateInfo> _certificates = {};
   final Map<String, String> _privateKeys = {};
 
@@ -106,11 +116,15 @@ class InMemoryCertificateStorage implements CertificateStorage {
   }
 }
 
-/// JSON-backed certificate storage for persistence
+/// JSON-backed certificate storage for persistence.
 ///
 /// Stores certificates as JSON strings using a key-value backend.
 /// Subclasses must implement [readValue] and [writeValue] for the
 /// actual storage mechanism (SharedPreferences, Hive, etc.).
+///
+/// WARNING: Subclasses MUST use encrypted storage in production
+/// (e.g., flutter_secure_storage, encrypted Hive). Plain
+/// SharedPreferences is NOT acceptable for ZATCA certificates.
 abstract class JsonCertificateStorage implements CertificateStorage {
   static const String _prefix = 'zatca_cert_';
   static const String _keyPrefix = 'zatca_pk_';

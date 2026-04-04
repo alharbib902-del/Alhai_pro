@@ -492,7 +492,7 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
       width: 260,
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
-        border: Border(left: BorderSide(color: AppColors.getBorder(isDark))),
+        border: BorderDirectional(start: BorderSide(color: AppColors.getBorder(isDark))),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

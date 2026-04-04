@@ -24,8 +24,8 @@ class _AiInvoiceImportScreenState extends ConsumerState<AiInvoiceImportScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final isWideScreen = size.width > 900;
-    final isMediumScreen = size.width > 600;
+    final isWideScreen = AlhaiBreakpoints.isDesktop(size.width);
+    final isMediumScreen = size.width >= AlhaiBreakpoints.tablet;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
 
@@ -74,14 +74,19 @@ class _AiInvoiceImportScreenState extends ConsumerState<AiInvoiceImportScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Container(
-                  width: 120,
-                  height: 120,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(colors: [AppColors.info.withValues(alpha: 0.15), AppColors.info.withValues(alpha: 0.05)]),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(Icons.document_scanner, size: 56, color: AppColors.info),
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final iconSize = constraints.maxWidth < 400 ? 80.0 : 120.0;
+                    return Container(
+                      width: iconSize,
+                      height: iconSize,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(colors: [AppColors.info.withValues(alpha: 0.15), AppColors.info.withValues(alpha: 0.05)]),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(Icons.document_scanner, size: iconSize * 0.47, color: AppColors.info),
+                    );
+                  },
                 ),
                 const SizedBox(height: AlhaiSpacing.xl),
                 Text(l10n.importSupplierInvoice, style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),

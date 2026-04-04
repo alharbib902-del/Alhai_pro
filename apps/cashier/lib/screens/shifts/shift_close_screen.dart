@@ -15,7 +15,26 @@ import 'package:alhai_database/alhai_database.dart';
 import '../../widgets/cash/denomination_counter_widget.dart';
 import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
+import 'package:alhai_core/alhai_core.dart' show UserRole;
 import '../../core/services/sentry_service.dart';
+
+/// Map [UserRole] to a localized label.
+String _localizedRole(UserRole? role, AppLocalizations l10n) {
+  switch (role) {
+    case UserRole.superAdmin:
+      return l10n.superAdminRole;
+    case UserRole.storeOwner:
+      return l10n.ownerRole;
+    case UserRole.employee:
+      return l10n.cashierRole;
+    case UserRole.delivery:
+      return l10n.employeeRole;
+    case UserRole.customer:
+      return l10n.cashierRole;
+    case null:
+      return l10n.cashierRole;
+  }
+}
 
 /// شاشة إغلاق الوردية
 class ShiftCloseScreen extends ConsumerStatefulWidget {
@@ -77,9 +96,9 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
               ? null
               : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
-          notificationsCount: 3,
+          notificationsCount: ref.watch(unreadNotificationsCountProvider),
           userName: userName,
-          userRole: l10n.branchManager,
+          userRole: _localizedRole(ref.watch(currentUserProvider)?.role, l10n),
           onUserTap: () {},
         ),
         Expanded(

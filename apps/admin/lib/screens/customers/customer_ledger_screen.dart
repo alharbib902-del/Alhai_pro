@@ -1,3 +1,4 @@
+import 'dart:math' show min;
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -31,6 +32,11 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
   String _typeFilter = 'all';
   DateTimeRange? _customDateRange;
 
+  // Cached filtered results (performance optimization)
+  List<Map<String, dynamic>>? _cachedFiltered;
+  double? _cachedTotalDebit;
+  double? _cachedTotalCredit;
+
   @override
   void initState() {
     super.initState();
@@ -49,6 +55,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
         setState(() {
           _account = account;
           _transactions = transactions;
+          _invalidateFilterCache();
           _isLoading = false;
         });
       }
@@ -77,7 +84,15 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
     ];
   }
 
+  void _invalidateFilterCache() {
+    _cachedFiltered = null;
+    _cachedTotalDebit = null;
+    _cachedTotalCredit = null;
+  }
+
   List<Map<String, dynamic>> get _filteredTransactions {
+    if (_cachedFiltered != null) return _cachedFiltered!;
+
     var list = _transactions.expand(_txnToMap).toList();
 
     final now = DateTime.now();
@@ -105,17 +120,22 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
       list = list.where((t) => t['type'] == _typeFilter).toList();
     }
 
+    _cachedFiltered = list;
     return list;
   }
 
   double get _totalDebit {
-    return _filteredTransactions.fold(
+    if (_cachedTotalDebit != null) return _cachedTotalDebit!;
+    _cachedTotalDebit = _filteredTransactions.fold<double>(
         0.0, (sum, t) => sum + (t['debit'] as double));
+    return _cachedTotalDebit!;
   }
 
   double get _totalCredit {
-    return _filteredTransactions.fold(
+    if (_cachedTotalCredit != null) return _cachedTotalCredit!;
+    _cachedTotalCredit = _filteredTransactions.fold<double>(
         0.0, (sum, t) => sum + (t['credit'] as double));
+    return _cachedTotalCredit!;
   }
 
   double get _currentBalance {
@@ -254,8 +274,8 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
             width: isMobile ? 48 : 56,
             height: isMobile ? 48 : 56,
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFF3B82F6), Color(0xFF2563EB)],
+              gradient: LinearGradient(
+                colors: [Theme.of(context).colorScheme.primary, Theme.of(context).colorScheme.primary.withValues(alpha: 0.8)],
                 begin: AlignmentDirectional.topStart,
                 end: AlignmentDirectional.bottomEnd,
               ),
@@ -267,7 +287,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
               style: TextStyle(
                 fontSize: isMobile ? 18 : 22,
                 fontWeight: FontWeight.w700,
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.onPrimary,
               ),
             ),
           ),
@@ -385,6 +405,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                   () => setState(() {
                     _dateFilter = 'all';
                     _customDateRange = null;
+                    _invalidateFilterCache();
                   }),
                   isDark,
                 ),
@@ -392,14 +413,14 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                 _buildFilterChip(
                   l10n.thisMonthPeriod,
                   _dateFilter == 'thisMonth',
-                  () => setState(() => _dateFilter = 'thisMonth'),
+                  () => setState(() { _dateFilter = 'thisMonth'; _invalidateFilterCache(); }),
                   isDark,
                 ),
                 const SizedBox(width: AlhaiSpacing.xs),
                 _buildFilterChip(
                   l10n.threeMonths,
                   _dateFilter == 'threeMonths',
-                  () => setState(() => _dateFilter = 'threeMonths'),
+                  () => setState(() { _dateFilter = 'threeMonths'; _invalidateFilterCache(); }),
                   isDark,
                 ),
                 const SizedBox(width: AlhaiSpacing.xs),
@@ -438,35 +459,35 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                 _buildFilterChip(
                   l10n.allMovements,
                   _typeFilter == 'all',
-                  () => setState(() => _typeFilter = 'all'),
+                  () => setState(() { _typeFilter = 'all'; _invalidateFilterCache(); }),
                   isDark,
                 ),
                 const SizedBox(width: AlhaiSpacing.xs),
                 _buildFilterChip(
                   l10n.invoices,
                   _typeFilter == 'invoice',
-                  () => setState(() => _typeFilter = 'invoice'),
+                  () => setState(() { _typeFilter = 'invoice'; _invalidateFilterCache(); }),
                   isDark,
                 ),
                 const SizedBox(width: AlhaiSpacing.xs),
                 _buildFilterChip(
                   l10n.payment,
                   _typeFilter == 'payment',
-                  () => setState(() => _typeFilter = 'payment'),
+                  () => setState(() { _typeFilter = 'payment'; _invalidateFilterCache(); }),
                   isDark,
                 ),
                 const SizedBox(width: AlhaiSpacing.xs),
                 _buildFilterChip(
                   l10n.returns,
                   _typeFilter == 'return',
-                  () => setState(() => _typeFilter = 'return'),
+                  () => setState(() { _typeFilter = 'return'; _invalidateFilterCache(); }),
                   isDark,
                 ),
                 const SizedBox(width: AlhaiSpacing.xs),
                 _buildFilterChip(
                   l10n.adjustments,
                   _typeFilter == 'adjustment',
-                  () => setState(() => _typeFilter = 'adjustment'),
+                  () => setState(() { _typeFilter = 'adjustment'; _invalidateFilterCache(); }),
                   isDark,
                 ),
               ],
@@ -509,7 +530,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                 icon,
                 size: 14,
                 color: isSelected
-                    ? Colors.white
+                    ? Theme.of(context).colorScheme.onPrimary
                     : Theme.of(context).colorScheme.onSurfaceVariant,
               ),
               const SizedBox(width: 6),
@@ -520,7 +541,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                 fontSize: 13,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                 color: isSelected
-                    ? Colors.white
+                    ? Theme.of(context).colorScheme.onPrimary
                     : Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
@@ -626,7 +647,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
             : (index.isEven
                 ? Colors.transparent
                 : (isDark
-                    ? Colors.white.withValues(alpha: 0.03)
+                    ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.03)
                     : AppColors.surfaceVariant.withValues(alpha: 0.5))),
         border: Border(
           bottom: BorderSide(
@@ -1036,7 +1057,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
+            color: Theme.of(context).shadowColor.withValues(alpha: 0.06),
             blurRadius: 8,
             offset: const Offset(0, -2),
           ),
@@ -1160,7 +1181,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
               Icons.receipt_long_outlined,
               size: 64,
               color: isDark
-                  ? Colors.white.withValues(alpha: 0.2)
+                  ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2)
                   : AppColors.textMuted.withValues(alpha: 0.4),
             ),
             const SizedBox(height: AlhaiSpacing.md),
@@ -1195,7 +1216,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
           final dialogIsDark =
               Theme.of(dialogContext).brightness == Brightness.dark;
           final dialogCardColor =
-              dialogIsDark ? const Color(0xFF1E293B) : Colors.white;
+              Theme.of(dialogContext).colorScheme.surface;
 
           return Dialog(
             shape: RoundedRectangleBorder(
@@ -1203,7 +1224,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
             ),
             backgroundColor: dialogCardColor,
             child: Container(
-              width: 440,
+              width: min(MediaQuery.of(dialogContext).size.width * 0.9, 440),
               padding: const EdgeInsets.all(AlhaiSpacing.lg),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -1441,7 +1462,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                           label: Text(l10n.saveAdjustment),
                           style: FilledButton.styleFrom(
                             backgroundColor: AppColors.primary,
-                            foregroundColor: Colors.white,
+                            foregroundColor: Theme.of(dialogContext).colorScheme.onPrimary,
                             padding: const EdgeInsets.symmetric(
                                 vertical: 14),
                             shape: RoundedRectangleBorder(
@@ -1556,7 +1577,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: $e'),
+            content: Text(l10n.errorSaving),
             backgroundColor: AppColors.error,
           ),
         );
@@ -1580,6 +1601,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
       setState(() {
         _dateFilter = 'custom';
         _customDateRange = picked;
+        _invalidateFilterCache();
       });
     }
   }

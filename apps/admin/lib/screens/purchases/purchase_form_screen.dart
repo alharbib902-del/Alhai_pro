@@ -36,8 +36,8 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final isWideScreen = size.width > 900;
-    final isMediumScreen = size.width > 600;
+    final isWideScreen = AlhaiBreakpoints.isDesktop(size.width);
+    final isMediumScreen = size.width >= AlhaiBreakpoints.tablet;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
 
@@ -88,7 +88,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
             FilledButton.icon(
               onPressed: _items.isEmpty || _isSaving ? null : _savePurchase,
               icon: _isSaving
-                  ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                  ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.textOnPrimary))
                   : const Icon(Icons.save),
               label: Text(_isSaving ? l10n.savingLabel : l10n.saveLabel),
             ),
@@ -135,8 +135,8 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
           Row(children: [
             Container(
               padding: const EdgeInsets.all(AlhaiSpacing.xs),
-              decoration: BoxDecoration(color: AppColors.primary.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
-              child: const Icon(Icons.store_rounded, color: AppColors.primary, size: 20),
+              decoration: BoxDecoration(color: Theme.of(context).colorScheme.primaryContainer, borderRadius: BorderRadius.circular(8)),
+              child: Icon(Icons.store_rounded, color: Theme.of(context).colorScheme.primary, size: 20),
             ),
             const SizedBox(width: AlhaiSpacing.sm),
             Text(l10n.supplierData, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
@@ -271,13 +271,13 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: isDark
-              ? [const Color(0xFF065F46), const Color(0xFF064E3B)]
-              : [AppColors.primary.withValues(alpha: 0.1), AppColors.primary.withValues(alpha: 0.05)],
-          begin: AlignmentDirectional.topStart,
-          end: AlignmentDirectional.bottomEnd,
-        ),
+        gradient: isDark
+            ? AppColors.primaryGradientDark
+            : LinearGradient(
+                colors: [AppColors.primarySurface, AppColors.primarySurface.withValues(alpha: 0.5)],
+                begin: AlignmentDirectional.topStart,
+                end: AlignmentDirectional.bottomEnd,
+              ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: isDark ? AppColors.primary.withValues(alpha: 0.3) : AppColors.primaryBorder),
       ),

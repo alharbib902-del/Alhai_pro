@@ -200,7 +200,7 @@ class _UsersPermissionsScreenState
             if (user.lastLogin != null)
               _detailRow(
                 Icons.access_time_rounded,
-                'Last login',
+                l10n.lastLogin,
                 _formatDate(user.lastLogin!),
                 isDark,
               ),
@@ -532,7 +532,7 @@ class _UsersPermissionsScreenState
                         style: _tableHeaderStyle(isDark))),
                 Expanded(
                     flex: 2,
-                    child: Text('Last login',
+                    child: Text(l10n.lastLogin,
                         style: _tableHeaderStyle(isDark))),
               ],
             ),

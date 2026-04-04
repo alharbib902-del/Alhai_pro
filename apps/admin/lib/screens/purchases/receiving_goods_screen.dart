@@ -62,7 +62,7 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final isWide = size.width > 900;
+    final isWide = AlhaiBreakpoints.isDesktop(size.width);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
 
@@ -407,8 +407,8 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
                             ),
                           ),
                           // Received qty (editable)
-                          SizedBox(
-                            width: 100,
+                          ConstrainedBox(
+                            constraints: const BoxConstraints(minWidth: 80, maxWidth: 120),
                             child: TextFormField(
                               controller: qtyCtrl,
                               keyboardType: TextInputType.number,
@@ -603,7 +603,7 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
                 height: 20,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  color: Colors.white,
+                  color: AppColors.textOnPrimary,
                 ),
               )
             : const Icon(Icons.check_circle_rounded),

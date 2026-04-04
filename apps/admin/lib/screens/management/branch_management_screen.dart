@@ -116,8 +116,8 @@ class _BranchManagementScreenState extends ConsumerState<BranchManagementScreen>
               margin: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
               decoration: BoxDecoration(
                 color: isDark
-                    ? (store.isActive ? const Color(0xFF1E293B) : const Color(0xFF1E293B).withValues(alpha: 0.5))
-                    : (store.isActive ? Colors.white : Theme.of(context).colorScheme.surfaceContainerLowest),
+                    ? (store.isActive ? Theme.of(context).colorScheme.surfaceContainerHighest : Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5))
+                    : (store.isActive ? Theme.of(context).colorScheme.surface : Theme.of(context).colorScheme.surfaceContainerLowest),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: Theme.of(context).dividerColor),
               ),
@@ -145,7 +145,7 @@ class _BranchManagementScreenState extends ConsumerState<BranchManagementScreen>
                                 Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                   decoration: BoxDecoration(color: AppColors.textSecondary, borderRadius: BorderRadius.circular(4)),
-                                  child: Text(l10n.close, style: const TextStyle(color: Colors.white, fontSize: 10)),
+                                  child: Text(l10n.close, style: TextStyle(color: Theme.of(context).colorScheme.onInverseSurface, fontSize: 10)),
                                 ),
                             ]),
                             Text(store.address ?? '', style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant)),

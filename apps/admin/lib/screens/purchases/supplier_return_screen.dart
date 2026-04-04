@@ -5,7 +5,6 @@ import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:get_it/get_it.dart';
-import 'package:alhai_auth/alhai_auth.dart';
 import 'package:uuid/uuid.dart';
 
 /// شاشة مرتجعات المشتريات للمورد
@@ -273,7 +272,7 @@ class _SupplierReturnScreenState extends ConsumerState<SupplierReturnScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.error_outline, size: 48, color: Colors.red),
+              const Icon(Icons.error_outline, size: 48, color: AppColors.error),
               const SizedBox(height: AlhaiSpacing.sm),
               Text(_error!),
               TextButton(onPressed: _loadSuppliers, child: Text(l10n.retryAction)),
@@ -292,7 +291,7 @@ class _SupplierReturnScreenState extends ConsumerState<SupplierReturnScreen> {
               onPressed: _submitReturn,
               icon: const Icon(Icons.check_rounded),
               label: Text(l10n.issueCreditNote),
-              style: TextButton.styleFrom(foregroundColor: Colors.white),
+              style: TextButton.styleFrom(foregroundColor: AppColors.textOnPrimary),
             )
           else
             const Padding(
@@ -300,7 +299,7 @@ class _SupplierReturnScreenState extends ConsumerState<SupplierReturnScreen> {
               child: SizedBox(
                 width: 20,
                 height: 20,
-                child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                child: CircularProgressIndicator(color: AppColors.textOnPrimary, strokeWidth: 2),
               ),
             ),
         ],
@@ -403,7 +402,7 @@ class _SupplierReturnScreenState extends ConsumerState<SupplierReturnScreen> {
                               style: const TextStyle(fontWeight: FontWeight.bold),
                             ),
                             IconButton(
-                              icon: const Icon(Icons.delete_outline, size: 18, color: Colors.red),
+                              icon: const Icon(Icons.delete_outline, size: 18, color: AppColors.error),
                               onPressed: () => setState(() => _items.removeAt(i)),
                             ),
                           ],
@@ -434,20 +433,18 @@ class _SupplierReturnScreenState extends ConsumerState<SupplierReturnScreen> {
             Container(
               padding: const EdgeInsets.all(AlhaiSpacing.md),
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFFE53935), Color(0xFFEF5350)],
-                ),
+                gradient: AppColors.getErrorGradient(Theme.of(context).brightness == Brightness.dark),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(l10n.totalReturn,
-                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                      style: const TextStyle(color: AppColors.textOnPrimary, fontWeight: FontWeight.bold)),
                   Text(
                     '${_totalReturn.toStringAsFixed(2)} ${l10n.sarSuffix}',
                     style: const TextStyle(
-                      color: Colors.white,
+                      color: AppColors.textOnPrimary,
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
                     ),
@@ -464,7 +461,7 @@ class _SupplierReturnScreenState extends ConsumerState<SupplierReturnScreen> {
                   ? const SizedBox(
                       width: 20,
                       height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                      child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.textOnPrimary),
                     )
                   : const Icon(Icons.assignment_return_rounded),
               label: Text(l10n.issueCreditNoteWithAmount(_totalReturn.toStringAsFixed(0))),

@@ -119,7 +119,7 @@ class _TransferInventoryScreenState
     return Column(
       children: [
         AppHeader(
-          title: 'Transfer Inventory',
+          title: l10n.transferInventory,
           subtitle: _getDateSubtitle(l10n),
           showSearch: false,
           searchHint: l10n.searchPlaceholder,
@@ -231,14 +231,14 @@ class _TransferInventoryScreenState
                     color: AppColors.info, size: 20),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
-              Text('Transfer Details',
+              Text(l10n.transferDetails,
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,
                       color: colorScheme.onSurface)),
             ],
           ),
           const SizedBox(height: AlhaiSpacing.mdl),
           // From store (read-only)
-          Text('From Store',
+          Text(l10n.fromStore,
               style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600,
                   color: colorScheme.onSurfaceVariant)),
           const SizedBox(height: AlhaiSpacing.xs),
@@ -264,8 +264,8 @@ class _TransferInventoryScreenState
                     color: AppColors.info.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(999),
                   ),
-                  child: const Text('Current',
-                      style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600,
+                  child: Text(l10n.currentLabel,
+                      style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w600,
                           color: AppColors.info)),
                 ),
               ],
@@ -273,7 +273,7 @@ class _TransferInventoryScreenState
           ),
           const SizedBox(height: AlhaiSpacing.mdl),
           // To store dropdown
-          Text('To Store',
+          Text(l10n.toStore,
               style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600,
                   color: colorScheme.onSurfaceVariant)),
           const SizedBox(height: AlhaiSpacing.xs),
@@ -282,7 +282,7 @@ class _TransferInventoryScreenState
             style: TextStyle(color: colorScheme.onSurface),
             dropdownColor: colorScheme.surface,
             decoration: InputDecoration(
-              hintText: 'Select Store',
+              hintText: l10n.selectStore,
               hintStyle: TextStyle(color: colorScheme.outline),
               prefixIcon: Icon(Icons.store_mall_directory_rounded,
                   color: colorScheme.outline),
@@ -514,7 +514,7 @@ class _TransferInventoryScreenState
             maxLines: 3,
             style: TextStyle(color: colorScheme.onSurface),
             decoration: InputDecoration(
-              hintText: 'Optional note',
+              hintText: l10n.optionalNote,
               hintStyle: TextStyle(color: colorScheme.outline),
               filled: true,
               fillColor: colorScheme.surfaceContainerHighest,
@@ -551,8 +551,8 @@ class _TransferInventoryScreenState
             ? SizedBox(width: 20, height: 20,
                 child: CircularProgressIndicator(strokeWidth: 2, color: colorScheme.onPrimary))
             : const Icon(Icons.send_rounded, size: 20),
-        label: const Text('Submit Transfer',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+        label: Text(l10n.submitTransfer,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.primary,
           foregroundColor: colorScheme.onPrimary,

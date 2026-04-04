@@ -120,8 +120,8 @@ class _SidebarState extends State<Sidebar> with SingleTickerProviderStateMixin {
           width: _widthAnimation.value,
           decoration: BoxDecoration(
             color: AppColors.surface,
-            border: const Border(
-              left: BorderSide(
+            border: const BorderDirectional(
+              start: BorderSide(
                 color: AppColors.border,
                 width: 1,
               ),

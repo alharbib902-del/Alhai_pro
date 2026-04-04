@@ -120,6 +120,18 @@ class _OnlineOrdersScreenState extends ConsumerState<OnlineOrdersScreen> {
     }
   }
 
+  IconData _statusIcon(String status) {
+    switch (status) {
+      case 'created': return Icons.fiber_new;
+      case 'preparing': return Icons.restaurant;
+      case 'ready': return Icons.check_circle_outline;
+      case 'out_for_delivery': return Icons.local_shipping;
+      case 'delivered': return Icons.done_all;
+      case 'cancelled': return Icons.cancel;
+      default: return Icons.info_outline;
+    }
+  }
+
   String _statusLabel(String status, BuildContext context) {
     final l10n = AppLocalizations.of(context);
     switch (status) {
@@ -190,7 +202,7 @@ class _OnlineOrdersScreenState extends ConsumerState<OnlineOrdersScreen> {
                 ),
                 child: Text(
                   '$pendingCount',
-                  style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+                  style: TextStyle(color: Theme.of(context).colorScheme.onError, fontSize: 12, fontWeight: FontWeight.bold),
                 ),
               ),
             ],
@@ -220,7 +232,7 @@ class _OnlineOrdersScreenState extends ConsumerState<OnlineOrdersScreen> {
                     label: Text('${tab.$2} ${count > 0 ? "($count)" : ""}',
                         style: TextStyle(
                           fontSize: 12,
-                          color: isSelected ? Colors.white : null,
+                          color: isSelected ? Theme.of(context).colorScheme.onPrimary : null,
                         )),
                     selected: isSelected,
                     onSelected: (_) {
@@ -286,13 +298,20 @@ class _OnlineOrdersScreenState extends ConsumerState<OnlineOrdersScreen> {
                                             borderRadius: BorderRadius.circular(10),
                                             border: Border.all(color: color.withValues(alpha: 0.3)),
                                           ),
-                                          child: Text(
-                                            _statusLabel(order.status, context),
-                                            style: TextStyle(
-                                              fontSize: 11,
-                                              color: color,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(_statusIcon(order.status), size: 12, color: color),
+                                              const SizedBox(width: 4),
+                                              Text(
+                                                _statusLabel(order.status, context),
+                                                style: TextStyle(
+                                                  fontSize: 11,
+                                                  color: color,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ],

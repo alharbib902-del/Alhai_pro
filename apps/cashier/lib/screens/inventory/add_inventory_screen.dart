@@ -103,7 +103,7 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
     return Column(
       children: [
         AppHeader(
-          title: 'Add Inventory',
+          title: l10n.addInventory,
           subtitle: _getDateSubtitle(l10n),
           showSearch: false,
           searchHint: l10n.searchPlaceholder,
@@ -257,7 +257,7 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
                     );
                   },
                   icon: const Icon(Icons.qr_code_scanner_rounded, size: 20),
-                  label: const Text('Scan'),
+                  label: Text(l10n.scanLabel),
                   style: FilledButton.styleFrom(
                     backgroundColor: AppColors.info,
                     foregroundColor: colorScheme.onPrimary,
@@ -405,7 +405,7 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
                     color: AppColors.success, size: 20),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
-              Text('Quantity to Add',
+              Text(l10n.quantityToAdd,
                   style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -500,7 +500,7 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Supplier Reference',
+          Text(l10n.supplierReference,
               style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600,
                   color: colorScheme.onSurfaceVariant)),
           const SizedBox(height: AlhaiSpacing.xs),
@@ -538,7 +538,7 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
             maxLines: 3,
             style: TextStyle(color: colorScheme.onSurface),
             decoration: InputDecoration(
-              hintText: 'Optional note',
+              hintText: l10n.optionalNote,
               hintStyle: TextStyle(color: colorScheme.onSurfaceVariant),
               filled: true,
               fillColor: colorScheme.surfaceContainerLow,

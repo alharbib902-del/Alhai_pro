@@ -28,7 +28,7 @@ class _CustomerGroupsScreenState extends ConsumerState<CustomerGroupsScreen> {
       _CustomerGroup(id: 'all', name: l10n.allCustomersGroup, icon: Icons.group_rounded, color: AppColors.info, minPurchase: 0),
       _CustomerGroup(id: 'vip', name: l10n.vipCustomersGroup, icon: Icons.star_rounded, color: AppColors.warning, minPurchase: 10000),
       _CustomerGroup(id: 'regular', name: l10n.regularCustomersGroup, icon: Icons.person_rounded, color: AppColors.success, minPurchase: 1000),
-      _CustomerGroup(id: 'new', name: l10n.newCustomersGroup, icon: Icons.person_add_rounded, color: Colors.cyan, minPurchase: 0), // segment status color
+      _CustomerGroup(id: 'new', name: l10n.newCustomersGroup, icon: Icons.person_add_rounded, color: const Color(0xFF06B6D4), minPurchase: 0), // segment status color - Cyan 500
       _CustomerGroup(id: 'debt', name: l10n.customersWithDebt, icon: Icons.account_balance_rounded, color: AppColors.error, minPurchase: 0),
       _CustomerGroup(id: 'inactive', name: l10n.inactive, icon: Icons.person_off_rounded, color: Theme.of(context).colorScheme.outline, minPurchase: 0),
     ];
@@ -184,13 +184,15 @@ class _CustomerGroupsScreenState extends ConsumerState<CustomerGroupsScreen> {
           IconButton(icon: const Icon(Icons.refresh_rounded), onPressed: _loadGroupStats),
         ],
       ),
-      body: _isLoading
+      body: SafeArea(
+        top: false,
+        child: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : Row(
               children: [
                 // Groups panel
                 SizedBox(
-                  width: 180,
+                  width: MediaQuery.of(context).size.width > 600 ? 180 : MediaQuery.of(context).size.width * 0.4,
                   child: Card(
                     margin: const EdgeInsets.all(AlhaiSpacing.xs),
                     child: ListView.builder(
@@ -206,7 +208,7 @@ class _CustomerGroupsScreenState extends ConsumerState<CustomerGroupsScreen> {
                             decoration: BoxDecoration(
                               color: isSelected ? g.color.withValues(alpha: 0.15) : null,
                               border: isSelected
-                                  ? Border(right: BorderSide(color: g.color, width: 3))
+                                  ? BorderDirectional(end: BorderSide(color: g.color, width: 3))
                                   : null,
                             ),
                             child: Column(
@@ -311,6 +313,7 @@ class _CustomerGroupsScreenState extends ConsumerState<CustomerGroupsScreen> {
                 ),
               ],
             ),
+      ),
     );
   }
 }

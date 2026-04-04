@@ -197,8 +197,8 @@ class _PosProductsPanelState extends ConsumerState<PosProductsPanel> {
         }
       },
       child: Padding(
-        padding: EdgeInsets.only(
-          left: AlhaiSpacing.xs, right: AlhaiSpacing.xs, top: AlhaiSpacing.xs,
+        padding: EdgeInsetsDirectional.only(
+          start: AlhaiSpacing.xs, end: AlhaiSpacing.xs, top: AlhaiSpacing.xs,
           bottom: widget.showShortcutsBar ? 80 : 8,
         ),
         child: GridView.builder(

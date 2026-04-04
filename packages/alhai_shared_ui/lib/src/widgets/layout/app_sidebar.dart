@@ -123,8 +123,8 @@ class _AppSidebarState extends ConsumerState<AppSidebar> {
       clipBehavior: Clip.hardEdge,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        border: Border(
-          left: BorderSide(
+        border: BorderDirectional(
+          start: BorderSide(
             color: isDarkMode
                 ? Colors.white.withAlpha(26)
                 : AppColors.border,

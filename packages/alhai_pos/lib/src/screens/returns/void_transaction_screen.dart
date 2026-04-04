@@ -16,6 +16,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
+import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:get_it/get_it.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
@@ -81,6 +82,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
   bool _isSearching = false;
   _InvoiceData? _invoiceData;
   bool _showNotFound = false;
+  String? _searchError;
 
   // Form state
   String? _selectedReason;
@@ -115,6 +117,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
     setState(() {
       _isSearching = true;
       _showNotFound = false;
+      _searchError = null;
       _invoiceData = null;
     });
 
@@ -178,7 +181,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
       // خطأ في البحث
       setState(() {
         _isSearching = false;
-        _showNotFound = true;
+        _searchError = e.toString();
       });
     }
   }
@@ -188,6 +191,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
       _invoiceController.clear();
       _invoiceData = null;
       _showNotFound = false;
+      _searchError = null;
       _selectedReason = null;
       _notesController.clear();
       _pinController.clear();
@@ -347,7 +351,14 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
                           _buildWarningBanner(isDark, l10n, isMediumScreen),
                           SizedBox(height: isMediumScreen ? AlhaiSpacing.xl : AlhaiSpacing.md),
 
-                          if (_invoiceData == null && !_showNotFound) ...[
+                          if (_searchError != null) ...[
+                            // Search Error
+                            AppErrorState.general(
+                              context,
+                              message: _searchError,
+                              onRetry: _resetForm,
+                            ),
+                          ] else if (_invoiceData == null && !_showNotFound) ...[
                             // Search Section
                             _buildSearchSection(isDark, l10n, isMediumScreen),
                           ] else if (_showNotFound) ...[

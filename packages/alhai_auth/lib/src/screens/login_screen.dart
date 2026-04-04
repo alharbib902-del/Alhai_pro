@@ -289,8 +289,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       _error = null;
     });
 
-    // التحقق من الرمز الثابت (للتطوير)
-    if (otpToVerify == _devOtp) {
+    // التحقق من الرمز الثابت (للتطوير فقط)
+    if (kDebugMode && otpToVerify == _devOtp) {
       if (kDebugMode) {
         debugPrint('✅ OTP verified (dev mode): $_devOtp');
       }

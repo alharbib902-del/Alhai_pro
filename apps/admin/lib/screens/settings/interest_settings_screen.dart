@@ -122,18 +122,18 @@ class _InterestSettingsScreenState
     final l10n = AppLocalizations.of(context);
 
     if (_isLoading) {
-      return Column(children: [
+      return SafeArea(child: Column(children: [
         AppHeader(title: l10n.interestSettingsTitle, onMenuTap: isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
             onNotificationsTap: () => context.push('/notifications'), notificationsCount: 3, userName: l10n.defaultUserName, userRole: l10n.branchManager),
         const Expanded(child: Center(child: CircularProgressIndicator())),
-      ]);
+      ]));
     }
 
-    return Column(children: [
+    return SafeArea(child: Column(children: [
       AppHeader(title: l10n.interestSettingsTitle, onMenuTap: isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'), notificationsCount: 3, userName: l10n.defaultUserName, userRole: l10n.branchManager),
       Expanded(child: SingleChildScrollView(padding: EdgeInsets.all(isMediumScreen ? 24 : 16), child: _buildContent(isDark, l10n))),
-    ]);
+    ]));
   }
 
   Widget _buildContent(bool isDark, AppLocalizations l10n) {
@@ -148,12 +148,12 @@ class _InterestSettingsScreenState
           const Divider(indent: 16, endIndent: 16),
           ListTile(title: Text(l10n.monthlyInterestRate, style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
               subtitle: Text('${_monthlyRate.toStringAsFixed(1)}%'),
-              trailing: SizedBox(width: 200, child: Slider(value: _monthlyRate, min: 0.5, max: _maxInterestRate,
+              trailing: ConstrainedBox(constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width > 600 ? 200 : 120), child: Slider(value: _monthlyRate, min: 0.5, max: _maxInterestRate,
                   divisions: ((_maxInterestRate - 0.5) * 2).toInt(), label: '${_monthlyRate.toStringAsFixed(1)}%',
                   onChanged: (v) => setState(() => _monthlyRate = v)))),
           ListTile(title: Text(l10n.maxInterestRateLabel, style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
               subtitle: Text('${_maxInterestRate.toStringAsFixed(1)}%'),
-              trailing: SizedBox(width: 200, child: Slider(value: _maxInterestRate, min: 2, max: 10, divisions: 16,
+              trailing: ConstrainedBox(constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width > 600 ? 200 : 120), child: Slider(value: _maxInterestRate, min: 2, max: 10, divisions: 16,
                   label: '${_maxInterestRate.toStringAsFixed(1)}%',
                   onChanged: (v) { setState(() { _maxInterestRate = v; if (_monthlyRate > v) _monthlyRate = v; }); }))),
         ],
@@ -164,7 +164,7 @@ class _InterestSettingsScreenState
         _buildSettingsGroup(l10n.gracePeriod, Icons.schedule_rounded, AppColors.info, isDark, [
           ListTile(title: Text(l10n.graceDays, style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
               subtitle: Text(l10n.graceDaysLabel(_gracePeriodDays)),
-              trailing: SizedBox(width: 200, child: Slider(value: _gracePeriodDays.toDouble(), min: 0, max: 90, divisions: 9,
+              trailing: ConstrainedBox(constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width > 600 ? 200 : 120), child: Slider(value: _gracePeriodDays.toDouble(), min: 0, max: 90, divisions: 9,
                   label: '$_gracePeriodDays', onChanged: (v) => setState(() => _gracePeriodDays = v.toInt())))),
           SwitchListTile(title: Text(l10n.compoundInterest, style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
               subtitle: Text(l10n.compoundInterestDesc), value: _compoundInterest, onChanged: (v) => setState(() => _compoundInterest = v)),

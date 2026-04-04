@@ -94,7 +94,7 @@ class _PurchasesListScreenState extends ConsumerState<PurchasesListScreen>
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final isWide = size.width > 900;
+    final isWide = AlhaiBreakpoints.isDesktop(size.width);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
 
@@ -246,7 +246,7 @@ class _PurchasesContent extends StatelessWidget {
           child: FloatingActionButton.extended(
             heroTag: 'purchases_fab',
             backgroundColor: AppColors.primary,
-            foregroundColor: Colors.white,
+            foregroundColor: AppColors.textOnPrimary,
             icon: const Icon(Icons.add),
             label: Text(AppLocalizations.of(context).newPurchaseOrder),
             onPressed: () => context.go(AppRoutes.purchaseForm),
@@ -275,7 +275,7 @@ class _PurchasesContent extends StatelessWidget {
           scrollDirection: Axis.horizontal,
           child: DataTable(
             headingRowColor: WidgetStateProperty.all(
-              isDark ? const Color(0xFF0F172A) : AppColors.grey50,
+              isDark ? Theme.of(context).colorScheme.surface : AppColors.grey50,
             ),
             columns: [
               DataColumn(label: Text(AppLocalizations.of(context).orderNumberColumn)),
@@ -300,7 +300,7 @@ class _PurchasesContent extends StatelessWidget {
                     p.supplierName ?? '-',
                     style: TextStyle(
                       color: isDark
-                          ? Colors.white.withValues(alpha: 0.8)
+                          ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8)
                           : AppColors.textSecondary,
                     ),
                   )),
@@ -321,7 +321,7 @@ class _PurchasesContent extends StatelessWidget {
                     dateFormat.format(p.createdAt),
                     style: TextStyle(
                       color: isDark
-                          ? Colors.white.withValues(alpha: 0.6)
+                          ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)
                           : AppColors.textTertiary,
                     ),
                   )),
@@ -393,7 +393,7 @@ class _PurchasesContent extends StatelessWidget {
                         p.supplierName ?? '-',
                         style: TextStyle(
                           color: isDark
-                              ? Colors.white.withValues(alpha: 0.7)
+                              ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7)
                               : AppColors.textSecondary,
                         ),
                       ),

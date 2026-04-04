@@ -26,8 +26,8 @@ class OrdersPanel extends ConsumerWidget {
       width: 400,
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
-        border: Border(
-          right: BorderSide(
+        border: BorderDirectional(
+          end: BorderSide(
             color: theme.colorScheme.outlineVariant,
           ),
         ),

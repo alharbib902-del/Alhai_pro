@@ -219,8 +219,8 @@ class _SidebarItemWidgetState extends State<_SidebarItemWidget> {
                         : Colors.transparent,
                 borderRadius: BorderRadius.circular(12),
                 border: widget.isSelected
-                    ? const Border(
-                        right: BorderSide(
+                    ? const BorderDirectional(
+                        end: BorderSide(
                           color: AppColors.primary,
                           width: 3,
                         ),

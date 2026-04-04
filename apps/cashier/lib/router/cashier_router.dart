@@ -287,6 +287,15 @@ final List<RouteBase> _routes = [
       transitionsBuilder: _fadeTransition,
     ),
   ),
+  GoRoute(
+    path: AppRoutes.kioskMode,
+    name: 'kiosk-mode',
+    pageBuilder: (context, state) => CustomTransitionPage(
+      key: state.pageKey,
+      child: const KioskScreen(),
+      transitionsBuilder: _fadeTransition,
+    ),
+  ),
 
   // ============================================================================
   // CASHIER SHELL ROUTE - sidebar/drawer navigation

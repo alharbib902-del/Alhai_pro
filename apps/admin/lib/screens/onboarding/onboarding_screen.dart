@@ -259,19 +259,23 @@ class _OnboardingPageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final iconContainerSize = screenWidth > 600 ? 160.0 : (screenWidth * 0.35).clamp(100.0, 160.0);
+    final iconSize = iconContainerSize * 0.5;
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSizes.xxxl),
+      padding: EdgeInsets.symmetric(horizontal: screenWidth > 600 ? AppSizes.xxxl : AppSizes.xl),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            width: 160,
-            height: 160,
+            width: iconContainerSize,
+            height: iconContainerSize,
             decoration: BoxDecoration(
               color: page.color.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
-            child: Icon(page.icon, size: 80, color: page.color),
+            child: Icon(page.icon, size: iconSize, color: page.color),
           ),
           const SizedBox(height: AppSizes.xxxl),
           Text(

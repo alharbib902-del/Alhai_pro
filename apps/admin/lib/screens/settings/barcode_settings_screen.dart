@@ -118,7 +118,7 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
     final l10n = AppLocalizations.of(context);
 
     if (_isLoading) {
-      return Column(
+      return SafeArea(child: Column(
         children: [
           AppHeader(
             title: l10n.barcodeSettings,
@@ -132,10 +132,10 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
             child: Center(child: CircularProgressIndicator()),
           ),
         ],
-      );
+      ));
     }
 
-    return Column(
+    return SafeArea(child: Column(
       children: [
         AppHeader(
           title: l10n.barcodeSettings,
@@ -152,7 +152,7 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
           ),
         ),
       ],
-    );
+    ));
   }
 
   Widget _buildContent(bool isDark, AppLocalizations l10n) {
@@ -420,7 +420,7 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
     showModalBottomSheet(
       context: context,
       builder: (ctx) => Container(
-        height: 400,
+        height: MediaQuery.of(context).size.height * 0.5,
         padding: const EdgeInsets.all(AlhaiSpacing.lg),
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,

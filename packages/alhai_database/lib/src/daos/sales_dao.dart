@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'package:flutter/foundation.dart';
 
 import '../app_database.dart';
 import '../tables/sales_table.dart';
@@ -9,7 +10,12 @@ part 'sales_dao.g.dart';
 @DriftAccessor(tables: [SalesTable])
 class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
   SalesDao(super.db);
-  
+
+  // Simple time-based cache for getTodayTotal (30-second TTL)
+  DateTime? _todayTotalCacheTime;
+  double? _todayTotalCacheValue;
+  String? _todayTotalCacheKey;
+
   /// الحصول على جميع المبيعات للمتجر (باستثناء المحذوفة)
   Future<List<SalesTableData>> getAllSales(String storeId, {int limit = 1000}) {
     return (select(salesTable)
@@ -81,44 +87,59 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
   /// إلغاء بيع مع استعادة المخزون
   Future<int> voidSale(String id) {
     return transaction(() async {
-      // 1. جلب عناصر البيع لاستعادة الكميات
-      final items = await customSelect(
-        'SELECT product_id, qty FROM sale_items WHERE sale_id = ?',
-        variables: [Variable.withString(id)],
-      ).get();
+      try {
+        // 1. جلب عناصر البيع لاستعادة الكميات
+        final items = await customSelect(
+          'SELECT product_id, qty FROM sale_items WHERE sale_id = ?',
+          variables: [Variable.withString(id)],
+        ).get();
 
-      // 2. استعادة المخزون لكل منتج
-      for (final item in items) {
-        final productId = item.data['product_id'] as String;
-        final qty = item.data['qty'];
-        final qtyDouble = (qty is int) ? qty.toDouble() : qty as double;
-        await customStatement(
-          'UPDATE products SET stock_qty = stock_qty + ? WHERE id = ?',
-          [Variable.withReal(qtyDouble), Variable.withString(productId)],
-        );
+        // 2. استعادة المخزون لكل منتج
+        for (final item in items) {
+          final productId = item.data['product_id'] as String;
+          final qty = item.data['qty'];
+          final qtyDouble = (qty is int) ? qty.toDouble() : qty as double;
+          await customStatement(
+            'UPDATE products SET stock_qty = stock_qty + ? WHERE id = ?',
+            [Variable.withReal(qtyDouble), Variable.withString(productId)],
+          );
+        }
+
+        // 3. تحديث حالة البيع إلى ملغي
+        return (update(salesTable)..where((s) => s.id.equals(id)))
+          .write(SalesTableCompanion(
+            status: const Value('voided'),
+            updatedAt: Value(DateTime.now()),
+          ));
+      } catch (e) {
+        debugPrint('[DB] voidSale transaction failed for $id: $e');
+        rethrow;
       }
-
-      // 3. تحديث حالة البيع إلى ملغي
-      return (update(salesTable)..where((s) => s.id.equals(id)))
-        .write(SalesTableCompanion(
-          status: const Value('voided'),
-          updatedAt: Value(DateTime.now()),
-        ));
     });
   }
   
-  /// إجمالي مبيعات اليوم
+  /// إجمالي مبيعات اليوم (cached for 30 seconds)
   Future<double> getTodayTotal(String storeId, String cashierId) async {
-    final today = DateTime.now();
-    final startOfDay = DateTime(today.year, today.month, today.day);
+    final cacheKey = '${storeId}_$cashierId';
+    final now = DateTime.now();
+
+    // Return cached value if still valid (within 30 seconds)
+    if (_todayTotalCacheTime != null &&
+        _todayTotalCacheKey == cacheKey &&
+        _todayTotalCacheValue != null &&
+        now.difference(_todayTotalCacheTime!).inSeconds < 30) {
+      return _todayTotalCacheValue!;
+    }
+
+    final startOfDay = DateTime(now.year, now.month, now.day);
     final endOfDay = startOfDay.add(const Duration(days: 1));
-    
+
     final result = await customSelect(
-      '''SELECT COALESCE(SUM(total), 0) as total 
-         FROM sales 
-         WHERE store_id = ? 
-         AND cashier_id = ? 
-         AND created_at >= ? 
+      '''SELECT COALESCE(SUM(total), 0) as total
+         FROM sales
+         WHERE store_id = ?
+         AND cashier_id = ?
+         AND created_at >= ?
          AND created_at < ?
          AND status = 'completed' ''',
       variables: [
@@ -128,11 +149,23 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
         Variable.withDateTime(endOfDay),
       ],
     ).getSingle();
-    
+
     final total = result.data['total'];
-    if (total == null) return 0.0;
-    if (total is int) return total.toDouble();
-    return total as double;
+    double value;
+    if (total == null) {
+      value = 0.0;
+    } else if (total is int) {
+      value = total.toDouble();
+    } else {
+      value = total as double;
+    }
+
+    // Update cache
+    _todayTotalCacheTime = now;
+    _todayTotalCacheKey = cacheKey;
+    _todayTotalCacheValue = value;
+
+    return value;
   }
   
   /// عدد مبيعات اليوم للكاشير
@@ -487,7 +520,9 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
   double _toDouble(dynamic value) {
     if (value == null) return 0.0;
     if (value is int) return value.toDouble();
-    return value as double;
+    if (value is double) return value;
+    if (value is String) return double.tryParse(value) ?? 0.0;
+    return 0.0;
   }
 }
 

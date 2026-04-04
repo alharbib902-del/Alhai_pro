@@ -1,3 +1,5 @@
+import 'dart:math' show min;
+
 import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -92,6 +94,10 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
   String? _selectedCategoryId;
   bool _isCreating = false;
   String _searchQuery = '';
+
+  // Cached parsed colors/icons per category id to avoid re-parsing on every build
+  final Map<String, Color> _colorCache = {};
+  final Map<String, IconData> _iconCache = {};
 
   // Form
   final _formKey = GlobalKey<FormState>();
@@ -191,6 +197,8 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
         }
       }
 
+      _colorCache.clear();
+      _iconCache.clear();
       ref.invalidate(_adminCategoriesProvider);
 
       if (mounted) {
@@ -205,7 +213,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: $e'),
+            content: Text(l10n.errorWithDetails('$e')),
             backgroundColor: AppColors.error,
           ),
         );
@@ -220,7 +228,12 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 400),
+        constraints: BoxConstraints(
+          maxWidth: min(
+            MediaQuery.of(ctx).size.width * 0.9,
+            AlhaiBreakpoints.maxDialogWidth,
+          ),
+        ),
         child: AlertDialog(
           title: Text(l10n.deleteCategory),
           content: Text(l10n.deleteCategoryConfirm),
@@ -245,6 +258,8 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
       final dao = getIt<AppDatabase>().categoriesDao;
       await dao.deleteCategory(_selectedCategoryId!);
 
+      _colorCache.clear();
+      _iconCache.clear();
       ref.invalidate(_adminCategoriesProvider);
 
       setState(() {
@@ -262,9 +277,10 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
       }
     } catch (e) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: $e'),
+            content: Text(l10n.errorWithDetails('$e')),
             backgroundColor: AppColors.error,
           ),
         );
@@ -279,8 +295,8 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final isWideScreen = size.width > 900;
-    final isMediumScreen = size.width > 600;
+    final isWideScreen = size.width >= AlhaiBreakpoints.desktop;
+    final isMediumScreen = size.width >= AlhaiBreakpoints.tablet;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
 
@@ -470,7 +486,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                     ),
                     filled: true,
                     fillColor: isDark
-                        ? const Color(0xFF0F172A)
+                        ? Colors.white.withValues(alpha: 0.05)
                         : AppColors.border.withValues(alpha: 0.15),
                     contentPadding: const EdgeInsets.symmetric(
                         horizontal: 16, vertical: 10),
@@ -545,8 +561,10 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                   itemCount: filtered.length,
                   itemBuilder: (context, index) {
                     final category = filtered[index];
-                    final color = _parseColor(category.color);
-                    final icon = _parseIcon(category.icon);
+                    final color = _colorCache.putIfAbsent(
+                        category.id, () => _parseColor(category.color));
+                    final icon = _iconCache.putIfAbsent(
+                        category.id, () => _parseIcon(category.icon));
                     final isSelected =
                         _selectedCategoryId == category.id;
 
@@ -563,11 +581,9 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
               },
               loading: () =>
                   const Center(child: CircularProgressIndicator()),
-              error: (err, _) => Center(
-                child: Text(
-                  '$err',
-                  style: const TextStyle(color: AppColors.error),
-                ),
+              error: (err, _) => AppErrorState(
+                message: '$err',
+                onRetry: () => ref.invalidate(_adminCategoriesProvider),
               ),
             ),
           ),
@@ -802,7 +818,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                       color: isSelected
                           ? _selectedColor.withValues(alpha: 0.15)
                           : (isDark
-                              ? const Color(0xFF0F172A)
+                              ? Colors.white.withValues(alpha: 0.05)
                               : AppColors.border.withValues(alpha: 0.15)),
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
@@ -951,7 +967,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
         ),
         filled: true,
         fillColor: isDark
-            ? const Color(0xFF0F172A)
+            ? Colors.white.withValues(alpha: 0.05)
             : AppColors.border.withValues(alpha: 0.15),
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -1005,7 +1021,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
       padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
       decoration: BoxDecoration(
         color: isDark
-            ? const Color(0xFF0F172A)
+            ? Colors.white.withValues(alpha: 0.05)
             : AppColors.border.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(

@@ -30,8 +30,8 @@ class OrderCard extends StatelessWidget {
       child: AnimatedContainer(
         duration: AlhaiDurations.slow,
         decoration: BoxDecoration(
-          border: Border(
-            right: BorderSide(
+          border: BorderDirectional(
+            end: BorderSide(
               color: _getStatusColor(order.status),
               width: 4,
             ),

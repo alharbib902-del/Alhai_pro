@@ -58,12 +58,26 @@ class LoyaltyTierConfig {
 }
 
 // ============================================================================
+// TIER COLORS
+// ============================================================================
+
+/// Semantic tier colors as static constants
+abstract class LoyaltyTierColors {
+  static const Map<String, Color> colors = {
+    'bronze': Color(0xFF8D6E63),
+    'silver': Color(0xFF757575),
+    'gold': Color(0xFFFFA000),
+    'platinum': Color(0xFF546E7A),
+  };
+}
+
+// ============================================================================
 // DEFAULT TIERS
 // ============================================================================
 
 /// المستويات الافتراضية
 final List<LoyaltyTierConfig> _defaultTiers = [
-  const LoyaltyTierConfig(
+  LoyaltyTierConfig(
     id: 'bronze',
     name: 'برونزي',
     nameEn: 'Bronze',
@@ -71,9 +85,9 @@ final List<LoyaltyTierConfig> _defaultTiers = [
     maxPoints: 499,
     discount: 0.0,
     multiplier: 1.0,
-    color: Color(0xFF8D6E63),
+    color: LoyaltyTierColors.colors['bronze']!,
   ),
-  const LoyaltyTierConfig(
+  LoyaltyTierConfig(
     id: 'silver',
     name: 'فضي',
     nameEn: 'Silver',
@@ -81,9 +95,9 @@ final List<LoyaltyTierConfig> _defaultTiers = [
     maxPoints: 999,
     discount: 0.03,
     multiplier: 1.5,
-    color: Color(0xFF757575),
+    color: LoyaltyTierColors.colors['silver']!,
   ),
-  const LoyaltyTierConfig(
+  LoyaltyTierConfig(
     id: 'gold',
     name: 'ذهبي',
     nameEn: 'Gold',
@@ -91,9 +105,9 @@ final List<LoyaltyTierConfig> _defaultTiers = [
     maxPoints: 2499,
     discount: 0.05,
     multiplier: 2.0,
-    color: Color(0xFFFFA000),
+    color: LoyaltyTierColors.colors['gold']!,
   ),
-  const LoyaltyTierConfig(
+  LoyaltyTierConfig(
     id: 'platinum',
     name: 'بلاتيني',
     nameEn: 'Platinum',
@@ -101,7 +115,7 @@ final List<LoyaltyTierConfig> _defaultTiers = [
     maxPoints: -1,
     discount: 0.10,
     multiplier: 3.0,
-    color: Color(0xFF546E7A),
+    color: LoyaltyTierColors.colors['platinum']!,
   ),
 ];
 
@@ -730,10 +744,10 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
             child: FloatingActionButton.extended(
               onPressed: () => _showAddTierDialog(isDark),
               backgroundColor: AppColors.primary,
-              icon: const Icon(Icons.add, color: Colors.white),
+              icon: Icon(Icons.add, color: Theme.of(context).colorScheme.onPrimary),
               label: Text(
                 l10n.addTier,
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
               ),
             ),
           ),
@@ -805,8 +819,8 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
                       style: TextStyle(color: textColor)),
                   subtitle: Text('$_pointsPerRiyal',
                       style: TextStyle(color: subtextColor)),
-                  trailing: SizedBox(
-                    width: 150,
+                  trailing: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width > 600 ? 150 : 100),
                     child: Slider(
                       value: _pointsPerRiyal,
                       min: 0.5,
@@ -824,8 +838,8 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
                       style: TextStyle(color: textColor)),
                   subtitle: Text('$_redemptionRate ${l10n.sar}',
                       style: TextStyle(color: subtextColor)),
-                  trailing: SizedBox(
-                    width: 150,
+                  trailing: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width > 600 ? 150 : 100),
                     child: Slider(
                       value: _redemptionRate,
                       min: 50,

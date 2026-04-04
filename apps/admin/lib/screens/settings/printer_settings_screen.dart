@@ -114,7 +114,7 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
     final l10n = AppLocalizations.of(context);
 
     if (_isLoading) {
-      return Column(
+      return SafeArea(child: Column(
         children: [
           AppHeader(
             title: l10n.printerSettings,
@@ -130,10 +130,10 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
             child: Center(child: CircularProgressIndicator()),
           ),
         ],
-      );
+      ));
     }
 
-    return Column(
+    return SafeArea(child: Column(
               children: [
                 AppHeader(
                   title: l10n.printerSettings,
@@ -152,7 +152,7 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
                   ),
                 ),
               ],
-            );
+            ));
   }
   Widget _buildContent(bool isDark, AppLocalizations l10n) {
     return Column(

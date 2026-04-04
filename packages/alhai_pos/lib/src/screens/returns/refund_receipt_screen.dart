@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:alhai_design_system/alhai_design_system.dart';
+import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_database/alhai_database.dart';
 import '../../providers/returns_providers.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
@@ -50,7 +51,11 @@ class RefundReceiptScreen extends ConsumerWidget {
         top: false,
         child: returnDetailAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text(l10n.errorLabel(e.toString()))),
+        error: (e, _) => AppErrorState.general(
+          context,
+          message: e.toString(),
+          onRetry: () => ref.invalidate(returnDetailProvider(refundId!)),
+        ),
         data: (detail) {
           if (detail == null) {
             return Center(child: Text(l10n.refundNotFound));
@@ -68,113 +73,125 @@ class RefundReceiptScreen extends ConsumerWidget {
     List<ReturnItemsTableData> items,
   ) {
     final totalRefund = returnData.totalRefund;
+    final l10n = AppLocalizations.of(context)!;
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final isMobile = screenWidth < AlhaiBreakpoints.tablet;
+    // Responsive receipt width: fill on mobile, constrained on larger screens
+    final receiptMaxWidth = isMobile ? double.infinity : 440.0;
+    final padding = isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg;
 
     return Center(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.all(AlhaiSpacing.lg),
-        child: Column(
-          children: [
-            // Success icon
-            Container(
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                color: AppColors.success.withValues(alpha: 0.15),
-                shape: BoxShape.circle,
+        padding: EdgeInsets.all(padding),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: receiptMaxWidth),
+          child: Column(
+            children: [
+              // Success icon
+              Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  color: AppColors.success.withValues(alpha: 0.15),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.check_circle, size: 48, color: AppColors.success),
               ),
-              child: const Icon(Icons.check_circle, size: 48, color: AppColors.success),
-            ),
-            const SizedBox(height: AlhaiSpacing.md),
-            Text(AppLocalizations.of(context)!.refundSuccessful, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-            const SizedBox(height: AlhaiSpacing.xs),
-            Text(
-              AppLocalizations.of(context)!.refundNumberLabel(returnData.returnNumber),
-              style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
-            ),
-            const SizedBox(height: AlhaiSpacing.xl),
+              const SizedBox(height: AlhaiSpacing.md),
+              Text(
+                l10n.refundSuccessful,
+                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: AlhaiSpacing.xs),
+              Text(
+                l10n.refundNumberLabel(returnData.returnNumber),
+                style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+              ),
+              const SizedBox(height: AlhaiSpacing.xl),
 
-            // Receipt card
-            Card(
-              child: Container(
-                width: 340,
-                padding: const EdgeInsets.all(AlhaiSpacing.mdl),
-                child: Column(
-                  children: [
-                    Text(AppLocalizations.of(context)!.refundReceipt, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                    const Divider(height: 24),
-                    _ReceiptRow(label: AppLocalizations.of(context)!.originalInvoiceNumber, value: returnData.saleId),
-                    _ReceiptRow(label: AppLocalizations.of(context)!.refundDate, value: _formatDate(returnData.createdAt)),
-                    if (returnData.createdBy != null && returnData.createdBy!.isNotEmpty)
-                      _ReceiptRow(label: AppLocalizations.of(context)!.cashierLabel, value: returnData.createdBy!),
-                    if (returnData.refundMethod.isNotEmpty)
-                      _ReceiptRow(label: AppLocalizations.of(context)!.refundMethodField, value: _getRefundMethodLabel(context, returnData.refundMethod)),
-                    const Divider(height: 24),
-                    Text(AppLocalizations.of(context)!.returnedProducts, style: const TextStyle(fontWeight: FontWeight.bold)),
-                    const SizedBox(height: AlhaiSpacing.xs),
+              // Receipt card — responsive width
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(AlhaiSpacing.mdl),
+                  child: Column(
+                    children: [
+                      Text(l10n.refundReceipt, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                      const Divider(height: 24),
+                      _ReceiptRow(label: l10n.originalInvoiceNumber, value: returnData.saleId),
+                      _ReceiptRow(label: l10n.refundDate, value: _formatDate(returnData.createdAt)),
+                      if (returnData.createdBy != null && returnData.createdBy!.isNotEmpty)
+                        _ReceiptRow(label: l10n.cashierLabel, value: returnData.createdBy!),
+                      if (returnData.refundMethod.isNotEmpty)
+                        _ReceiptRow(label: l10n.refundMethodField, value: _getRefundMethodLabel(context, returnData.refundMethod)),
+                      const Divider(height: 24),
+                      Text(l10n.returnedProducts, style: const TextStyle(fontWeight: FontWeight.bold)),
+                      const SizedBox(height: AlhaiSpacing.xs),
 
-                    // Items list
-                    ...items.map((item) => _ProductRow(
-                      name: item.productName,
-                      qty: item.qty.toInt(),
-                      price: item.unitPrice,
-                    )),
+                      // Items list
+                      ...items.map((item) => _ProductRow(
+                        name: item.productName,
+                        qty: item.qty.toInt(),
+                        price: item.unitPrice,
+                      )),
 
-                    const Divider(height: 24),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(AppLocalizations.of(context)!.totalRefund, style: const TextStyle(fontWeight: FontWeight.bold)),
-                        Text(
-                          '${totalRefund.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
-                          style: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.error, fontSize: 18),
+                      const Divider(height: 24),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(l10n.totalRefund, style: const TextStyle(fontWeight: FontWeight.bold)),
+                          Text(
+                            '${totalRefund.toStringAsFixed(2)} ${l10n.sar}',
+                            style: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.error, fontSize: 18),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: AlhaiSpacing.sm),
+                      if (returnData.reason != null && returnData.reason!.isNotEmpty)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(l10n.reasonLabel, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
+                            Text(_getReasonLabel(context, returnData.reason!)),
+                          ],
+                        ),
+                      if (returnData.notes != null && returnData.notes!.isNotEmpty) ...[
+                        const SizedBox(height: AlhaiSpacing.xs),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(l10n.notesLabel, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
+                            Flexible(child: Text(returnData.notes!, textAlign: TextAlign.end)),
+                          ],
                         ),
                       ],
-                    ),
-                    const SizedBox(height: AlhaiSpacing.sm),
-                    if (returnData.reason != null && returnData.reason!.isNotEmpty)
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(AppLocalizations.of(context)!.reasonLabel, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
-                          Text(_getReasonLabel(context, returnData.reason!)),
-                        ],
-                      ),
-                    if (returnData.notes != null && returnData.notes!.isNotEmpty) ...[
-                      const SizedBox(height: AlhaiSpacing.xs),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(AppLocalizations.of(context)!.notesLabel, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
-                          Flexible(child: Text(returnData.notes!, textAlign: TextAlign.end)),
-                        ],
-                      ),
                     ],
-                  ],
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: AlhaiSpacing.lg),
+              const SizedBox(height: AlhaiSpacing.lg),
 
-            // Actions
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                OutlinedButton.icon(
-                  onPressed: () => _printReceipt(context, returnData.saleId),
-                  icon: const Icon(Icons.print),
-                  label: Text(AppLocalizations.of(context)!.printAction),
-                  style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg, vertical: AlhaiSpacing.sm)),
-                ),
-                const SizedBox(width: AlhaiSpacing.sm),
-                FilledButton.icon(
-                  onPressed: () => context.go('/returns'),
-                  icon: const Icon(Icons.home),
-                  label: Text(AppLocalizations.of(context)!.homeAction),
-                  style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg, vertical: AlhaiSpacing.sm)),
-                ),
-              ],
-            ),
-          ],
+              // Actions — wrap on narrow screens
+              Wrap(
+                alignment: WrapAlignment.center,
+                spacing: AlhaiSpacing.sm,
+                runSpacing: AlhaiSpacing.sm,
+                children: [
+                  OutlinedButton.icon(
+                    onPressed: () => _printReceipt(context, returnData.saleId),
+                    icon: const Icon(Icons.print),
+                    label: Text(l10n.printAction),
+                    style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg, vertical: AlhaiSpacing.sm)),
+                  ),
+                  FilledButton.icon(
+                    onPressed: () => context.go('/returns'),
+                    icon: const Icon(Icons.home),
+                    label: Text(l10n.homeAction),
+                    style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg, vertical: AlhaiSpacing.sm)),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -124,7 +124,7 @@ class _OffersContent extends ConsumerWidget {
                   if (isExpired) Container(
                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     decoration: BoxDecoration(color: AppColors.textSecondary, borderRadius: BorderRadius.circular(4)),
-                    child: Text(l10n.offerExpired, style: const TextStyle(color: Colors.white, fontSize: 10)),
+                    child: Text(l10n.offerExpired, style: TextStyle(color: Theme.of(context).colorScheme.onInverseSurface, fontSize: 10)),
                   ),
                 ],
               ),
@@ -267,7 +267,7 @@ class _OffersContent extends ConsumerWidget {
     final isDarkTheme = Theme.of(context).brightness == Brightness.dark;
     showModalBottomSheet(
       context: context,
-      backgroundColor: isDarkTheme ? const Color(0xFF1E293B) : Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       builder: (context) => Padding(
         padding: const EdgeInsets.all(AlhaiSpacing.lg),
         child: Column(
@@ -277,7 +277,7 @@ class _OffersContent extends ConsumerWidget {
             Row(children: [
               Icon(_getTypeIcon(p.type), size: 32, color: _getTypeColor(p.type)),
               const SizedBox(width: AlhaiSpacing.sm),
-              Expanded(child: Text(p.name, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: isDarkTheme ? Colors.white : AppColors.textPrimary))),
+              Expanded(child: Text(p.name, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface))),
             ]),
             const SizedBox(height: AlhaiSpacing.md),
             _DetailRow(label: l10n.offerType, value: _getTypeLabel(p, l10n), isDark: isDarkTheme),
@@ -306,7 +306,7 @@ class _DetailRow extends StatelessWidget {
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: TextStyle(color: isDark ? Colors.white60 : AppColors.textSecondary)),
+        Text(label, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
         Text(value, style: TextStyle(fontWeight: FontWeight.w500, color: Theme.of(context).colorScheme.onSurface)),
       ],
     ),

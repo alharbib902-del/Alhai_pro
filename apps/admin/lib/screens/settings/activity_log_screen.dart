@@ -19,6 +19,7 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
   String _selectedFilter = 'all';
 
   List<_ActivityItem> _activities = [];
+  List<_ActivityItem> _filteredActivities = [];
   bool _isLoading = true;
 
   @override
@@ -46,9 +47,16 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
           color: _getActionColor(log.action),
           type: _getActionType(log.action),
         )).toList();
+        _updateFilteredList();
         _isLoading = false;
       });
     }
+  }
+
+  void _updateFilteredList() {
+    _filteredActivities = _selectedFilter == 'all'
+        ? _activities
+        : _activities.where((a) => a.type == _selectedFilter).toList();
   }
 
   static IconData _getActionIcon(String action) {
@@ -97,7 +105,7 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
 
-    return Column(
+    return SafeArea(child: Column(
       children: [
         AppHeader(
           title: l10n.activityLog,
@@ -116,14 +124,10 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
                 ),
         ),
       ],
-    );
+    ));
   }
 
   Widget _buildContent(bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n) {
-    final filtered = _selectedFilter == 'all'
-        ? _activities
-        : _activities.where((a) => a.type == _selectedFilter).toList();
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -145,8 +149,8 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
           ]),
         ),
         const SizedBox(height: AlhaiSpacing.mdl),
-        _buildGroup('${l10n.activityLog} (${filtered.length})',
-            filtered.map((a) => _buildActivityTile(a, isDark)).toList(), isDark,
+        _buildGroup('${l10n.activityLog} (${_filteredActivities.length})',
+            _filteredActivities.map((a) => _buildActivityTile(a, isDark)).toList(), isDark,
             noItemsText: l10n.noActivities),
       ],
     );
@@ -159,7 +163,7 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
         color: sel ? Colors.white : (Theme.of(context).colorScheme.onSurface),
         fontWeight: sel ? FontWeight.bold : FontWeight.normal, fontSize: 12)),
       selected: sel,
-      onSelected: (_) => setState(() => _selectedFilter = filter),
+      onSelected: (_) => setState(() { _selectedFilter = filter; _updateFilteredList(); }),
       selectedColor: AppColors.primary,
       backgroundColor: Theme.of(context).colorScheme.surface,
       side: BorderSide(color: sel ? AppColors.primary : (Theme.of(context).dividerColor)),
@@ -207,7 +211,7 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
         Text(a.details, style: TextStyle(
             color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 12)),
         Text(a.user, style: TextStyle(
-            color: isDark ? Colors.white.withValues(alpha: 0.3) : AppColors.textTertiary, fontSize: 11)),
+            color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.6), fontSize: 11)),
       ]),
     );
   }

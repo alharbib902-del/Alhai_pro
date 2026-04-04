@@ -273,7 +273,7 @@ class _PolicyBullet extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
-      padding: const EdgeInsets.only(bottom: 6, right: AlhaiSpacing.xs, left: AlhaiSpacing.xs),
+      padding: const EdgeInsetsDirectional.only(bottom: 6, end: AlhaiSpacing.xs, start: AlhaiSpacing.xs),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

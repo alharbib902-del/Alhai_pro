@@ -92,12 +92,12 @@ class _ShippingGatewaysScreenState extends ConsumerState<ShippingGatewaysScreen>
 
     if (_isLoading) {
       return Scaffold(
-        body: Column(
+        body: SafeArea(child: Column(
           children: [
             Container(
               padding: const EdgeInsets.all(AlhaiSpacing.md),
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF1E1E2E) : Colors.white,
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
                 border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor)),
               ),
               child: Row(
@@ -113,17 +113,17 @@ class _ShippingGatewaysScreenState extends ConsumerState<ShippingGatewaysScreen>
               child: Center(child: CircularProgressIndicator()),
             ),
           ],
-        ),
+        )),
       );
     }
 
     return Scaffold(
-      body: Column(
+      body: SafeArea(child: Column(
         children: [
           Container(
             padding: const EdgeInsets.all(AlhaiSpacing.md),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF1E1E2E) : Colors.white,
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
               border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor)),
             ),
             child: Row(
@@ -163,7 +163,7 @@ class _ShippingGatewaysScreenState extends ConsumerState<ShippingGatewaysScreen>
                       _saveSingleSetting(_kShippingFastlo, v.toString());
                     }),
                   const SizedBox(height: AlhaiSpacing.sm),
-                  _buildGatewayCard('DHL', 'DHL Express', AppLocalizations.of(context).dhlDesc, Icons.public, _dhlActive, const Color(0xFFFFCC00), isDark,
+                  _buildGatewayCard('DHL', 'DHL Express', AppLocalizations.of(context).dhlDesc, Icons.public, _dhlActive, isDark ? const Color(0xFFFFCC00).withValues(alpha: 0.8) : const Color(0xFFFFCC00), isDark,
                     onToggle: (v) {
                       setState(() => _dhlActive = v);
                       _saveSingleSetting(_kShippingDhl, v.toString());
@@ -185,7 +185,7 @@ class _ShippingGatewaysScreenState extends ConsumerState<ShippingGatewaysScreen>
             ),
           ),
         ],
-      ),
+      )),
     );
   }
 
@@ -193,7 +193,7 @@ class _ShippingGatewaysScreenState extends ConsumerState<ShippingGatewaysScreen>
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E2E) : Colors.white,
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: isActive ? AppColors.primary.withValues(alpha: 0.3) : (Theme.of(context).dividerColor)),
         boxShadow: isActive ? [BoxShadow(color: AppColors.primary.withValues(alpha: 0.05), blurRadius: 10)] : null,

@@ -337,7 +337,7 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
                     color: AppColors.primary, size: 20),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
-              Text('Report Settings',
+              Text(l10n.reportSettings,
                   style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -346,7 +346,7 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
           ),
           const SizedBox(height: AlhaiSpacing.mdl),
           // Report type
-          Text('Report Type',
+          Text(l10n.reportType,
               style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,

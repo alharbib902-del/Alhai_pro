@@ -64,11 +64,19 @@ class _CashDrawerScreenState extends ConsumerState<CashDrawerScreen> {
                   ),
                 ),
                 loading: () => const Center(child: CircularProgressIndicator()),
-                error: (e, _) => Center(child: Text('$e')),
+                error: (e, _) => AppErrorState.general(
+                  context,
+                  message: e.toString(),
+                  onRetry: () => ref.invalidate(shiftMovementsProvider(shift.id)),
+                ),
               );
             },
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (e, _) => Center(child: Text('$e')),
+            error: (e, _) => AppErrorState.general(
+              context,
+              message: e.toString(),
+              onRetry: () => ref.invalidate(openShiftProvider),
+            ),
           ),
         ),
       ],

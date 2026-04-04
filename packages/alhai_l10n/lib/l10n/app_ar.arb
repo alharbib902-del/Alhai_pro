@@ -5431,5 +5431,109 @@
   "distributorLoginError": "فشل تسجيل الدخول",
   "distributorLogout": "تسجيل الخروج",
   "distributorSar": "ر.س",
-  "distributorRiyal": "ريال"
+  "distributorRiyal": "ريال",
+
+  "scanCouponBarcode": "مسح باركود الكوبون",
+  "validateCoupon": "تحقق",
+  "couponValid": "الكوبون صالح",
+  "recentCoupons": "الكوبونات الأخيرة",
+  "noRecentCoupons": "لا توجد كوبونات حديثة",
+  "noExpiry": "بدون انتهاء",
+  "invalidCouponCode": "كود كوبون غير صالح",
+  "percentageOff": "خصم نسبة مئوية",
+
+  "bundleDeals": "عروض الباقات",
+  "includedProducts": "المنتجات المشمولة",
+  "individualTotal": "المجموع الفردي",
+  "bundlePrice": "سعر الباقة",
+  "youSave": "توفيرك",
+  "noBundleDeals": "لا توجد عروض باقات",
+  "bundleDealsWillAppear": "ستظهر عروض الباقات هنا",
+  "validUntilDate": "صالح حتى: {date}",
+  "@validUntilDate": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "validFromDate": "صالح من: {date}",
+  "@validFromDate": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+
+  "autoApplied": "تطبيق تلقائي",
+  "noActiveOffers": "لا توجد عروض نشطة",
+
+  "wastage": "الهدر والتالف",
+  "quantityWasted": "الكمية المهدرة",
+  "photoLabel": "صورة",
+  "photoAttached": "تم إرفاق الصورة",
+  "tapToTakePhoto": "انقر لالتقاط صورة",
+  "optionalLabel": "اختياري",
+  "recordWastage": "تسجيل الهدر",
+  "spillage": "انسكاب",
+
+  "transferInventory": "نقل المخزون",
+  "transferDetails": "تفاصيل النقل",
+  "fromStore": "من الفرع",
+  "toStore": "إلى الفرع",
+  "currentLabel": "الحالي",
+  "selectStore": "اختر الفرع",
+  "submitTransfer": "إرسال النقل",
+  "optionalNote": "ملاحظة اختيارية",
+
+  "addInventory": "إضافة مخزون",
+  "scanLabel": "مسح",
+  "quantityToAdd": "الكمية المراد إضافتها",
+  "supplierReference": "مرجع المورد",
+
+  "removeInventory": "سحب مخزون",
+  "quantityToRemove": "الكمية المراد سحبها",
+  "sold": "مباع",
+  "transferred": "منقول",
+
+  "fieldRequired": "الحقل مطلوب",
+  "deviceInfo": "معلومات الجهاز",
+  "deviceName": "اسم الجهاز",
+  "deviceType": "نوع الجهاز",
+  "connectionMethod": "طريقة الاتصال",
+  "networkSettings": "إعدادات الشبكة",
+  "ipAddress": "عنوان IP",
+  "port": "المنفذ",
+  "connectionTestPassed": "نجح اختبار الاتصال",
+  "saveDevice": "حفظ الجهاز",
+
+  "addDevice": "إضافة جهاز",
+  "noPaymentDevices": "لا توجد أجهزة دفع",
+  "addFirstPaymentDevice": "أضف أول جهاز دفع",
+  "totalDevices": "إجمالي الأجهزة",
+  "disconnected": "غير متصل",
+  "testingConnectionName": "جاري اختبار الاتصال {name}...",
+  "@testingConnectionName": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "connectionSuccessful": "{name} - تم الاتصال بنجاح",
+  "@connectionSuccessful": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+
+  "pasteFromClipboard": "لصق من الحافظة",
+  "confirmRestore": "تأكيد الاستعادة",
+
+  "saleNotFound": "لم يتم العثور على البيع",
+  "noItems": "لا توجد عناصر",
+
+  "customerPaysExtra": "العميل يدفع إضافي",
+  "submitExchange": "تأكيد الاستبدال",
+
+  "applyInterest": "تطبيق الفائدة",
+
+  "reportSettings": "إعدادات التقرير",
+  "reportType": "نوع التقرير",
+  "paymentDistribution": "توزيع المدفوعات"
 }

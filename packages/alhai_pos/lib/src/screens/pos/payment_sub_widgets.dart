@@ -51,7 +51,14 @@ class _PaymentMethodCardState extends State<PaymentMethodCard> {
     final colorScheme = Theme.of(context).colorScheme;
     final effectiveColor = isDisabled ? colorScheme.onSurfaceVariant : widget.color;
 
-    return Opacity(
+    return Semantics(
+      label: isDisabled
+          ? '${widget.label}, ${widget.disabledLabel ?? ''}'
+          : '${widget.label}, ${widget.shortcut}',
+      button: true,
+      selected: widget.selected,
+      enabled: !isDisabled,
+      child: Opacity(
       opacity: isDisabled ? 0.5 : 1.0,
       child: MouseRegion(
         onEnter: isDisabled ? null : (_) => setState(() => _isHovered = true),
@@ -150,6 +157,7 @@ class _PaymentMethodCardState extends State<PaymentMethodCard> {
           ),
         ),
       ),
+      ),
     );
   }
 }
@@ -185,33 +193,38 @@ class _QuickAmountChipState extends State<QuickAmountChip> {
     final colorScheme = Theme.of(context).colorScheme;
     final color = widget.color ?? colorScheme.outline;
 
-    return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
-      child: AnimatedContainer(
-        duration: AppDurations.fast,
-        child: Material(
-          color: _isHovered ? color.withValues(alpha: 0.1) : AppColors.surface,
-          borderRadius: BorderRadius.circular(AppRadius.full),
-          child: InkWell(
-            onTap: widget.onTap,
+    final displayText = widget.label ?? '${widget.amount.toInt()}';
+
+    return Tooltip(
+      message: displayText,
+      child: MouseRegion(
+        onEnter: (_) => setState(() => _isHovered = true),
+        onExit: (_) => setState(() => _isHovered = false),
+        child: AnimatedContainer(
+          duration: AppDurations.fast,
+          child: Material(
+            color: _isHovered ? color.withValues(alpha: 0.1) : AppColors.surface,
             borderRadius: BorderRadius.circular(AppRadius.full),
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.lg,
-                vertical: AppSpacing.md,
-              ),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(AppRadius.full),
-                border: Border.all(
-                  color: _isHovered ? color : AppColors.border,
+            child: InkWell(
+              onTap: widget.onTap,
+              borderRadius: BorderRadius.circular(AppRadius.full),
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.lg,
+                  vertical: AppSpacing.md,
                 ),
-              ),
-              child: Text(
-                widget.label ?? '${widget.amount.toInt()}',
-                style: AppTypography.labelLarge.copyWith(
-                  color: _isHovered ? color : AppColors.textPrimary,
-                  fontWeight: FontWeight.w600,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(AppRadius.full),
+                  border: Border.all(
+                    color: _isHovered ? color : AppColors.border,
+                  ),
+                ),
+                child: Text(
+                  displayText,
+                  style: AppTypography.labelLarge.copyWith(
+                    color: _isHovered ? color : AppColors.textPrimary,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ),

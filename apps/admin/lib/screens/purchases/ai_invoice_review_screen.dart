@@ -36,8 +36,8 @@ class _AiInvoiceReviewScreenState extends ConsumerState<AiInvoiceReviewScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final isWideScreen = size.width > 900;
-    final isMediumScreen = size.width > 600;
+    final isWideScreen = AlhaiBreakpoints.isDesktop(size.width);
+    final isMediumScreen = size.width >= AlhaiBreakpoints.tablet;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
 
@@ -98,22 +98,16 @@ class _AiInvoiceReviewScreenState extends ConsumerState<AiInvoiceReviewScreen> {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: isDark
-              ? [const Color(0xFF1E3A5F), const Color(0xFF1E293B)]
-              : [const Color(0xFFEFF6FF), const Color(0xFFDBEAFE)],
-          begin: AlignmentDirectional.topStart,
-          end: AlignmentDirectional.bottomEnd,
-        ),
+        gradient: AppColors.getInfoGradient(isDark),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: isDark ? AppColors.info.withValues(alpha: 0.3) : const Color(0xFFBFDBFE)),
+        border: Border.all(color: isDark ? AppColors.info.withValues(alpha: 0.3) : AppColors.infoLight),
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(AlhaiSpacing.sm),
             decoration: BoxDecoration(color: AppColors.info.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(12)),
-            child: Icon(Icons.receipt_long, color: isDark ? Colors.blue.shade200 : AppColors.info, size: 32),
+            child: Icon(Icons.receipt_long, color: isDark ? AppColors.infoLight : AppColors.info, size: 32),
           ),
           const SizedBox(width: AlhaiSpacing.md),
           Expanded(
@@ -122,12 +116,12 @@ class _AiInvoiceReviewScreenState extends ConsumerState<AiInvoiceReviewScreen> {
               children: [
                 Text(
                   widget.invoiceData.supplierName ?? l10n.unknownSupplier,
-                  style: TextStyle(fontWeight: FontWeight.bold, color: isDark ? Colors.white : const Color(0xFF1E3A8A), fontSize: 16),
+                  style: TextStyle(fontWeight: FontWeight.bold, color: isDark ? Theme.of(context).colorScheme.onSurface : Theme.of(context).colorScheme.primary, fontSize: 16),
                 ),
                 if (widget.invoiceData.invoiceNumber != null)
                   Text(
                     l10n.invoiceNumberLabel(widget.invoiceData.invoiceNumber!),
-                    style: TextStyle(color: isDark ? Colors.white.withValues(alpha: 0.6) : const Color(0xFF3B82F6), fontSize: 12),
+                    style: TextStyle(color: isDark ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6) : Theme.of(context).colorScheme.primary, fontSize: 12),
                   ),
               ],
             ),
@@ -137,9 +131,9 @@ class _AiInvoiceReviewScreenState extends ConsumerState<AiInvoiceReviewScreen> {
             children: [
               Text(
                 '${widget.invoiceData.totalAmount.toStringAsFixed(2)} \u0631.\u0633',
-                style: TextStyle(fontWeight: FontWeight.bold, color: isDark ? Colors.white : const Color(0xFF1E3A8A), fontSize: 18),
+                style: TextStyle(fontWeight: FontWeight.bold, color: isDark ? Theme.of(context).colorScheme.onSurface : Theme.of(context).colorScheme.primary, fontSize: 18),
               ),
-              Text(l10n.itemCount(_items.length), style: TextStyle(color: isDark ? Colors.white.withValues(alpha: 0.6) : const Color(0xFF3B82F6), fontSize: 12)),
+              Text(l10n.itemCount(_items.length), style: TextStyle(color: isDark ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6) : Theme.of(context).colorScheme.primary, fontSize: 12)),
             ],
           ),
         ],
@@ -181,7 +175,7 @@ class _AiInvoiceReviewScreenState extends ConsumerState<AiInvoiceReviewScreen> {
             borderRadius: BorderRadius.circular(6),
             child: LinearProgressIndicator(
               value: progress,
-              backgroundColor: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.backgroundSecondary,
+              backgroundColor: isDark ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1) : AppColors.backgroundSecondary,
               minHeight: 8,
               color: AppColors.primary,
             ),
@@ -301,7 +295,7 @@ class _AiInvoiceReviewScreenState extends ConsumerState<AiInvoiceReviewScreen> {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         border: Border(top: BorderSide(color: Theme.of(context).dividerColor)),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, -2))],
+        boxShadow: [BoxShadow(color: AppColors.overlay.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, -2))],
       ),
       child: SafeArea(
         child: Row(
@@ -322,7 +316,7 @@ class _AiInvoiceReviewScreenState extends ConsumerState<AiInvoiceReviewScreen> {
             FilledButton.icon(
               onPressed: allConfirmed && !_isProcessing ? _savePurchase : null,
               icon: _isProcessing
-                  ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                  ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.textOnPrimary))
                   : const Icon(Icons.save),
               label: Text(_isProcessing ? l10n.savingInvoice : l10n.saveInvoice),
             ),

@@ -76,8 +76,29 @@ class SyncQueueDao extends DatabaseAccessor<AppDatabase> with _$SyncQueueDaoMixi
       ));
   }
   
-  /// تحديث الحالة إلى "فشل"
+  /// تحديث الحالة إلى "فشل" مع كشف التعارضات تلقائياً
   Future<int> markAsFailed(String id, String error) {
+    final errorLower = error.toLowerCase();
+    final isConflict = errorLower.contains('409') ||
+        errorLower.contains('conflict') ||
+        errorLower.contains('constraint');
+
+    if (isConflict) {
+      // Conflict detected: mark as 'conflict' and set retry_count = max_retries
+      // to prevent infinite retries
+      return customUpdate(
+        'UPDATE sync_queue SET status = ?, last_error = ?, retry_count = max_retries, last_attempt_at = ? WHERE id = ?',
+        variables: [
+          const Variable('conflict'),
+          Variable.withString(error),
+          Variable.withDateTime(DateTime.now()),
+          Variable.withString(id),
+        ],
+        updates: {syncQueueTable},
+        updateKind: UpdateKind.update,
+      );
+    }
+
     return customUpdate(
       'UPDATE sync_queue SET status = ?, last_error = ?, retry_count = retry_count + 1, last_attempt_at = ? WHERE id = ?',
       variables: [

@@ -163,7 +163,7 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
     final l10n = AppLocalizations.of(context);
 
     if (_isLoading) {
-      return Column(
+      return SafeArea(child: Column(
         children: [
           AppHeader(
             title: l10n.receiptTemplateTitle,
@@ -179,10 +179,10 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
             child: Center(child: CircularProgressIndicator()),
           ),
         ],
-      );
+      ));
     }
 
-    return Column(
+    return SafeArea(child: Column(
               children: [
                 AppHeader(
                   title: l10n.receiptTemplateTitle,
@@ -201,7 +201,7 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
                   ),
                 ),
               ],
-            );
+            ));
   }
 
   Widget _buildContent(bool isDark, AppLocalizations l10n) {

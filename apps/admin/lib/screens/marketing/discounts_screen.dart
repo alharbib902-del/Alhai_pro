@@ -148,7 +148,25 @@ class _DiscountsContent extends ConsumerWidget {
                     ),
                     Switch(
                       value: discount.isActive,
-                      onChanged: (v) => _toggleActive(ref, discount, v),
+                      onChanged: (v) {
+                        if (!v) {
+                          showDialog<bool>(
+                            context: context,
+                            builder: (ctx) => AlertDialog(
+                              title: Text(l10n.confirm),
+                              content: Text('${l10n.deactivate} "${discount.name}"?'),
+                              actions: [
+                                TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(l10n.cancel)),
+                                FilledButton(onPressed: () => Navigator.pop(ctx, true), child: Text(l10n.confirm)),
+                              ],
+                            ),
+                          ).then((confirmed) {
+                            if (confirmed == true) _toggleActive(ref, discount, v);
+                          });
+                        } else {
+                          _toggleActive(ref, discount, v);
+                        }
+                      },
                       activeThumbColor: AppColors.primary,
                     ),
                     IconButton(

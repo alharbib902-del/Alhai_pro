@@ -53,8 +53,9 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
     if (pendingRefund == null) {
       return Scaffold(
         appBar: AppBar(title: Text(AppLocalizations.of(context)!.refundReasonTitle)),
-        body: Center(
-          child: Text(AppLocalizations.of(context)!.noRefundData),
+        body: AppEmptyState(
+          icon: Icons.receipt_long_outlined,
+          title: AppLocalizations.of(context)!.noRefundData,
         ),
       );
     }

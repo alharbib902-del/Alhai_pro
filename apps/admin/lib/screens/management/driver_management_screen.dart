@@ -231,11 +231,13 @@ class _DriverManagementScreenState extends ConsumerState<DriverManagementScreen>
       context: context,
       builder: (context) => AlertDialog(
         title: Text(l10n.trackingMap),
-        content: SizedBox(
-          width: 400,
-          height: 300,
+        content: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxWidth: MediaQuery.of(context).size.width > 600 ? 400 : MediaQuery.of(context).size.width * 0.9,
+            maxHeight: MediaQuery.of(context).size.height * 0.6,
+          ),
           child: Container(
-            decoration: BoxDecoration(color: isDark ? const Color(0xFF1E293B) : AppColors.border, borderRadius: BorderRadius.circular(12)),
+            decoration: BoxDecoration(color: isDark ? Theme.of(context).colorScheme.surfaceContainerHighest : AppColors.border, borderRadius: BorderRadius.circular(12)),
             child: Center(
               child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                 Icon(Icons.map, size: 64, color: isDark ? Colors.white24 : AppColors.textTertiary),

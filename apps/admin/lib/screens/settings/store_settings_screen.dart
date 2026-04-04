@@ -83,7 +83,7 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
     final l10n = AppLocalizations.of(context);
     final padding = size.width < 600 ? 12.0 : isWideScreen ? 24.0 : 16.0;
 
-    return Column(
+    return SafeArea(child: Column(
               children: [
                 AppHeader(
                   title: l10n.storeSettings,
@@ -113,7 +113,7 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
                         ),
                 ),
               ],
-            );
+            ));
   }
   Widget _buildContent(
       bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n) {
@@ -225,8 +225,8 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
                   style: TextStyle(
                       color: Theme.of(context).colorScheme.onSurface)),
               subtitle: Text('${_vatRate.toInt()}%'),
-              trailing: SizedBox(
-                width: 150,
+              trailing: ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width > 600 ? 200 : 120),
                 child: Slider(
                   value: _vatRate,
                   min: 5,

@@ -88,9 +88,7 @@ class _ConflictResolutionScreenState
                     children: [
                       Icon(Icons.check_circle,
                           size: 64,
-                          color: isDark
-                              ? Colors.white24
-                              : AppColors.success),
+                          color: AppColors.success.withValues(alpha: isDark ? 0.5 : 1.0)),
                       const SizedBox(height: AlhaiSpacing.md),
                       Text(
                         l10n.noConflicts,
@@ -609,9 +607,7 @@ class _ConflictOption extends StatelessWidget {
                 '${time!.hour}:${time!.minute.toString().padLeft(2, '0')}',
                 style: TextStyle(
                   fontSize: 11,
-                  color: isDark
-                      ? Colors.white38
-                      : AppColors.textTertiary,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
           ],

@@ -176,7 +176,7 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
               size: 64,
               color: AppColors.getTextMuted(isDark).withValues(alpha: 0.4)),
           const SizedBox(height: AlhaiSpacing.md),
-          Text('Sale not found',
+          Text(l10n.saleNotFound,
               style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
@@ -392,7 +392,7 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
               child: Padding(
                 padding: const EdgeInsets.all(AlhaiSpacing.lg),
                 child: Text(
-                  'No items',
+                  l10n.noItems,
                   style: TextStyle(
                       color: AppColors.getTextMuted(isDark), fontSize: 14),
                 ),

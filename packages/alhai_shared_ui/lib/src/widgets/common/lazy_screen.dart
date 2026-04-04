@@ -373,8 +373,8 @@ class PosLoadingScreen extends StatelessWidget {
               width: 350,
               padding: const EdgeInsets.all(AlhaiSpacing.md),
               decoration: BoxDecoration(
-                border: Border(
-                  right: BorderSide(
+                border: BorderDirectional(
+                  end: BorderSide(
                     color: Theme.of(context).dividerColor,
                   ),
                 ),

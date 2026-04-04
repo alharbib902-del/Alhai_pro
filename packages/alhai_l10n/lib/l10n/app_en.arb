@@ -6046,5 +6046,109 @@
   "distributorLoginError": "Login failed",
   "distributorLogout": "Sign Out",
   "distributorSar": "SAR",
-  "distributorRiyal": "SAR"
+  "distributorRiyal": "SAR",
+
+  "scanCouponBarcode": "Scan Coupon Barcode",
+  "validateCoupon": "Validate",
+  "couponValid": "Coupon Valid",
+  "recentCoupons": "Recent Coupons",
+  "noRecentCoupons": "No recent coupons",
+  "noExpiry": "No Expiry",
+  "invalidCouponCode": "Invalid coupon code",
+  "percentageOff": "Percentage Off",
+
+  "bundleDeals": "Bundle Deals",
+  "includedProducts": "Included Products",
+  "individualTotal": "Individual Total",
+  "bundlePrice": "Bundle Price",
+  "youSave": "You Save",
+  "noBundleDeals": "No bundle deals",
+  "bundleDealsWillAppear": "Bundle deals will appear here",
+  "validUntilDate": "Valid Until: {date}",
+  "@validUntilDate": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "validFromDate": "Valid From: {date}",
+  "@validFromDate": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+
+  "autoApplied": "Auto Applied",
+  "noActiveOffers": "No active offers",
+
+  "wastage": "Wastage",
+  "quantityWasted": "Quantity Wasted",
+  "photoLabel": "Photo",
+  "photoAttached": "Photo attached",
+  "tapToTakePhoto": "Tap to take photo",
+  "optionalLabel": "Optional",
+  "recordWastage": "Record Wastage",
+  "spillage": "Spillage",
+
+  "transferInventory": "Transfer Inventory",
+  "transferDetails": "Transfer Details",
+  "fromStore": "From Store",
+  "toStore": "To Store",
+  "currentLabel": "Current",
+  "selectStore": "Select Store",
+  "submitTransfer": "Submit Transfer",
+  "optionalNote": "Optional note",
+
+  "addInventory": "Add Inventory",
+  "scanLabel": "Scan",
+  "quantityToAdd": "Quantity to Add",
+  "supplierReference": "Supplier Reference",
+
+  "removeInventory": "Remove Inventory",
+  "quantityToRemove": "Quantity to Remove",
+  "sold": "Sold",
+  "transferred": "Transferred",
+
+  "fieldRequired": "Field required",
+  "deviceInfo": "Device Info",
+  "deviceName": "Device Name",
+  "deviceType": "Device Type",
+  "connectionMethod": "Connection Method",
+  "networkSettings": "Network Settings",
+  "ipAddress": "IP Address",
+  "port": "Port",
+  "connectionTestPassed": "Connection test passed",
+  "saveDevice": "Save Device",
+
+  "addDevice": "Add Device",
+  "noPaymentDevices": "No payment devices",
+  "addFirstPaymentDevice": "Add your first payment device",
+  "totalDevices": "Total Devices",
+  "disconnected": "Disconnected",
+  "testingConnectionName": "Testing connection {name}...",
+  "@testingConnectionName": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "connectionSuccessful": "{name} - Connection successful",
+  "@connectionSuccessful": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+
+  "pasteFromClipboard": "Paste from Clipboard",
+  "confirmRestore": "Confirm Restore",
+
+  "saleNotFound": "Sale not found",
+  "noItems": "No items",
+
+  "customerPaysExtra": "Customer pays extra",
+  "submitExchange": "Submit Exchange",
+
+  "applyInterest": "Apply Interest",
+
+  "reportSettings": "Report Settings",
+  "reportType": "Report Type",
+  "paymentDistribution": "Payment Distribution"
 }

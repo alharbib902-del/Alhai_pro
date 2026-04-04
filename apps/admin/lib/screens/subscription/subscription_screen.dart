@@ -287,8 +287,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
       width: double.infinity,
       padding: const EdgeInsets.all(AlhaiSpacing.lg),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-            colors: [AppColors.primary, Color(0xFF5B2D8E)]),
+        gradient: AppColors.getPrimaryGradient(isDark),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -527,9 +526,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                           Expanded(
                               child: Text(f,
                                   style: TextStyle(
-                                      color: isDark
-                                          ? Colors.white70
-                                          : Colors.black87))),
+                                      color: Theme.of(context).colorScheme.onSurface))),
                         ],
                       ),
                     ))

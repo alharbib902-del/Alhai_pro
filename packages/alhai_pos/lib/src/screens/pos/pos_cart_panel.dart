@@ -1037,21 +1037,24 @@ class PosCartItemTile extends ConsumerWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             // Decrease button
-            PosQtyButton(
-              icon: Icons.remove,
-              isDark: isDark,
-              isPrimary: false,
-              onTap: () {
-                if (item.quantity > 1) {
-                  ref
-                      .read(cartStateProvider.notifier)
-                      .decrementQuantity(item.product.id);
-                } else {
-                  ref
-                      .read(cartStateProvider.notifier)
-                      .removeProduct(item.product.id);
-                }
-              },
+            Tooltip(
+              message: '-1',
+              child: PosQtyButton(
+                icon: Icons.remove,
+                isDark: isDark,
+                isPrimary: false,
+                onTap: () {
+                  if (item.quantity > 1) {
+                    ref
+                        .read(cartStateProvider.notifier)
+                        .decrementQuantity(item.product.id);
+                  } else {
+                    ref
+                        .read(cartStateProvider.notifier)
+                        .removeProduct(item.product.id);
+                  }
+                },
+              ),
             ),
             SizedBox(
               width: 28,
@@ -1066,15 +1069,18 @@ class PosCartItemTile extends ConsumerWidget {
               ),
             ),
             // Increase button
-            PosQtyButton(
-              icon: Icons.add,
-              isDark: isDark,
-              isPrimary: true,
-              onTap: () {
-                ref
-                    .read(cartStateProvider.notifier)
-                    .incrementQuantity(item.product.id);
-              },
+            Tooltip(
+              message: '+1',
+              child: PosQtyButton(
+                icon: Icons.add,
+                isDark: isDark,
+                isPrimary: true,
+                onTap: () {
+                  ref
+                      .read(cartStateProvider.notifier)
+                      .incrementQuantity(item.product.id);
+                },
+              ),
             ),
           ],
         ),
@@ -1161,26 +1167,29 @@ class PosCartItemTile extends ConsumerWidget {
         ),
         const SizedBox(width: 2),
         // Delete button - always visible
-        Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: () {
-              ref.read(cartStateProvider.notifier).removeProduct(item.product.id);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(l10n.itemDeletedMsg),
-                  behavior: SnackBarBehavior.floating,
-                  duration: const Duration(seconds: 2),
+        Tooltip(
+          message: l10n.delete,
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () {
+                ref.read(cartStateProvider.notifier).removeProduct(item.product.id);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(l10n.itemDeletedMsg),
+                    behavior: SnackBarBehavior.floating,
+                    duration: const Duration(seconds: 2),
+                  ),
+                );
+              },
+              borderRadius: BorderRadius.circular(8),
+              child: Padding(
+                padding: const EdgeInsets.all(AlhaiSpacing.xxs),
+                child: Icon(
+                  Icons.delete_outline_rounded,
+                  size: 18,
+                  color: Theme.of(context).colorScheme.error.withValues(alpha: 0.7),
                 ),
-              );
-            },
-            borderRadius: BorderRadius.circular(8),
-            child: Padding(
-              padding: const EdgeInsets.all(AlhaiSpacing.xxs),
-              child: Icon(
-                Icons.delete_outline_rounded,
-                size: 18,
-                color: Theme.of(context).colorScheme.error.withValues(alpha: 0.7),
               ),
             ),
           ),

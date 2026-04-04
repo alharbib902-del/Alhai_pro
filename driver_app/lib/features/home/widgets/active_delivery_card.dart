@@ -25,8 +25,8 @@ class ActiveDeliveryCard extends StatelessWidget {
         onTap: onTap,
         child: Container(
           decoration: BoxDecoration(
-            border: Border(
-              right: BorderSide(
+            border: BorderDirectional(
+              end: BorderSide(
                 color: theme.colorScheme.primary,
                 width: 4,
               ),

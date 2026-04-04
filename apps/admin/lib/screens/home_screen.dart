@@ -19,20 +19,21 @@ class AdminHomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
+    final colorScheme = Theme.of(context).colorScheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final locale = Localizations.localeOf(context).toString();
     final dashboardAsync = ref.watch(dashboardDataProvider);
 
     return Scaffold(
-      backgroundColor: isDark
-          ? const Color(0xFF0F172A)
-          : AppColors.backgroundSecondary,
-      body: dashboardAsync.when(
+      backgroundColor: colorScheme.surface,
+      body: SafeArea(
+        child: dashboardAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, _) => Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.error_outline, size: 48, color: AppColors.error),
+              const Icon(Icons.error_outline, size: 48, color: AppColors.error),
               const SizedBox(height: AlhaiSpacing.md),
               Text(
                 l10n.errorWithDetails('$err'),
@@ -61,14 +62,14 @@ class AdminHomeScreen extends ConsumerWidget {
                   l10n.home,
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.onSurface,
+                        color: colorScheme.onSurface,
                       ),
                 ),
                 const SizedBox(height: AlhaiSpacing.xxs),
                 Text(
                   l10n.dashboardTitle,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        color: colorScheme.onSurfaceVariant,
                       ),
                 ),
                 const SizedBox(height: AlhaiSpacing.lg),
@@ -76,11 +77,12 @@ class AdminHomeScreen extends ConsumerWidget {
                 // Stat cards grid
                 LayoutBuilder(
                   builder: (context, constraints) {
-                    final crossAxisCount = constraints.maxWidth >= 900
-                        ? 4
-                        : constraints.maxWidth >= 600
-                            ? 2
-                            : 2;
+                    final crossAxisCount =
+                        constraints.maxWidth >= AlhaiBreakpoints.desktop
+                            ? 4
+                            : constraints.maxWidth >= AlhaiBreakpoints.tablet
+                                ? 2
+                                : 1;
                     return GridView.count(
                       crossAxisCount: crossAxisCount,
                       shrinkWrap: true,
@@ -92,7 +94,7 @@ class AdminHomeScreen extends ConsumerWidget {
                         _StatTile(
                           icon: Icons.attach_money_rounded,
                           label: l10n.todaySales,
-                          value: '${data.todaySales.toStringAsFixed(0)} ${l10n.sar}',
+                          value: '${AppNumberFormatter.currency(data.todaySales, locale: locale)} ${l10n.sar}',
                           changePercent: data.salesChangePercent,
                           color: AppColors.primary,
                           isDark: isDark,
@@ -100,7 +102,7 @@ class AdminHomeScreen extends ConsumerWidget {
                         _StatTile(
                           icon: Icons.receipt_long_rounded,
                           label: l10n.orders,
-                          value: '${data.todayOrders}',
+                          value: AppNumberFormatter.integer(data.todayOrders, locale: locale),
                           changePercent: data.ordersChangePercent,
                           color: AppColors.info,
                           isDark: isDark,
@@ -108,14 +110,14 @@ class AdminHomeScreen extends ConsumerWidget {
                         _StatTile(
                           icon: Icons.warning_amber_rounded,
                           label: l10n.lowStockLabel,
-                          value: '${data.lowStockCount}',
+                          value: AppNumberFormatter.integer(data.lowStockCount, locale: locale),
                           color: AppColors.warning,
                           isDark: isDark,
                         ),
                         _StatTile(
                           icon: Icons.people_outline_rounded,
                           label: l10n.newCustomers,
-                          value: '${data.newCustomersToday}',
+                          value: AppNumberFormatter.integer(data.newCustomersToday, locale: locale),
                           color: AppColors.success,
                           isDark: isDark,
                         ),
@@ -130,7 +132,7 @@ class AdminHomeScreen extends ConsumerWidget {
                   l10n.quickActions,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.onSurface,
+                        color: colorScheme.onSurface,
                       ),
                 ),
                 const SizedBox(height: AlhaiSpacing.md),
@@ -172,7 +174,7 @@ class AdminHomeScreen extends ConsumerWidget {
                     l10n.recentTransactions,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.onSurface,
+                          color: colorScheme.onSurface,
                         ),
                   ),
                   const SizedBox(height: AlhaiSpacing.md),
@@ -206,8 +208,8 @@ class AdminHomeScreen extends ConsumerWidget {
                               ),
                             ),
                             Text(
-                              '${sale.total.toStringAsFixed(2)} ${l10n.sar}',
-                              style: TextStyle(
+                              '${AppNumberFormatter.currency(sale.total, locale: locale)} ${l10n.sar}',
+                              style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.primary,
                               ),
@@ -220,6 +222,7 @@ class AdminHomeScreen extends ConsumerWidget {
             ),
           ),
         ),
+      ),
       ),
     );
   }

@@ -100,7 +100,7 @@ class _PaymentDevicesScreenState
     // Simulate connection test
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Testing connection ${device.name}...'),
+        content: Text(AppLocalizations.of(context).testingConnectionName(device.name)),
         backgroundColor: AppColors.info,
         duration: const Duration(seconds: 1),
       ),
@@ -114,7 +114,7 @@ class _PaymentDevicesScreenState
       });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('${device.name} - Connection successful'),
+          content: Text(AppLocalizations.of(context).connectionSuccessful(device.name)),
           backgroundColor: AppColors.success,
         ),
       );
@@ -146,7 +146,7 @@ class _PaymentDevicesScreenState
             FilledButton.icon(
               onPressed: () => context.push('/settings/payment-devices/add'),
               icon: const Icon(Icons.add_rounded, size: 18),
-              label: const Text('Add Device'),
+              label: Text(l10n.addDevice),
               style: FilledButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 foregroundColor: Colors.white,
@@ -198,7 +198,7 @@ class _PaymentDevicesScreenState
           ),
           const SizedBox(height: AlhaiSpacing.mdl),
           Text(
-            'No payment devices',
+            l10n.noPaymentDevices,
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -207,7 +207,7 @@ class _PaymentDevicesScreenState
           ),
           const SizedBox(height: AlhaiSpacing.xs),
           Text(
-            'Add your first payment device',
+            l10n.addFirstPaymentDevice,
             style: TextStyle(
               fontSize: 14,
               color: AppColors.getTextSecondary(isDark),
@@ -218,7 +218,7 @@ class _PaymentDevicesScreenState
             onPressed: () =>
                 context.push('/settings/payment-devices/add'),
             icon: const Icon(Icons.add_rounded, size: 20),
-            label: const Text('Add Device'),
+            label: Text(l10n.addDevice),
             style: FilledButton.styleFrom(
               backgroundColor: AppColors.primary,
               foregroundColor: Colors.white,
@@ -289,7 +289,7 @@ class _PaymentDevicesScreenState
           _summaryItem(
             Icons.devices_rounded,
             '${_devices.length}',
-            'Total Devices',
+            l10n.totalDevices,
             AppColors.info,
             isDark,
           ),
@@ -313,7 +313,7 @@ class _PaymentDevicesScreenState
           _summaryItem(
             Icons.cancel_rounded,
             '$disconnectedCount',
-            'Disconnected',
+            l10n.disconnected,
             AppColors.error,
             isDark,
           ),
@@ -416,7 +416,7 @@ class _PaymentDevicesScreenState
                     Text(
                       device.isConnected
                           ? l10n.connected
-                          : 'Disconnected',
+                          : l10n.disconnected,
                       style: TextStyle(
                         fontSize: 12,
                         color: statusColor,

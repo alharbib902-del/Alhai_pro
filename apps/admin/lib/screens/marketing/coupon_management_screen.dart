@@ -129,7 +129,7 @@ class _CouponsContent extends ConsumerWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(color: AppColors.textSecondary, borderRadius: BorderRadius.circular(4)),
-                      child: Text(isExpired ? l10n.expired : l10n.deactivated, style: const TextStyle(color: Colors.white, fontSize: 10)),
+                      child: Text(isExpired ? l10n.expired : l10n.deactivated, style: TextStyle(color: Theme.of(context).colorScheme.onInverseSurface, fontSize: 10)),
                     ),
                 ],
               ),
@@ -139,7 +139,25 @@ class _CouponsContent extends ConsumerWidget {
               ),
               trailing: Switch(
                 value: coupon.isActive && !isExpired,
-                onChanged: isExpired ? null : (v) => _toggleActive(ref, coupon, v),
+                onChanged: isExpired ? null : (v) {
+                  if (!v) {
+                    showDialog<bool>(
+                      context: context,
+                      builder: (ctx) => AlertDialog(
+                        title: Text(l10n.confirm),
+                        content: Text('${l10n.deactivate} "${coupon.code}"?'),
+                        actions: [
+                          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(l10n.cancel)),
+                          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: Text(l10n.confirm)),
+                        ],
+                      ),
+                    ).then((confirmed) {
+                      if (confirmed == true) _toggleActive(ref, coupon, v);
+                    });
+                  } else {
+                    _toggleActive(ref, coupon, v);
+                  }
+                },
                 activeThumbColor: AppColors.primary,
               ),
               onTap: () => _showDetails(context, ref, coupon),
@@ -290,14 +308,14 @@ class _CouponsContent extends ConsumerWidget {
     final isDarkTheme = Theme.of(context).brightness == Brightness.dark;
     showModalBottomSheet(
       context: context,
-      backgroundColor: isDarkTheme ? const Color(0xFF1E293B) : Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       builder: (context) => Padding(
         padding: const EdgeInsets.all(AlhaiSpacing.lg),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(c.code, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, fontFamily: 'monospace', color: isDarkTheme ? Colors.white : AppColors.textPrimary)),
+            Text(c.code, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, fontFamily: 'monospace', color: Theme.of(context).colorScheme.onSurface)),
             const SizedBox(height: AlhaiSpacing.md),
             _DetailRow(label: l10n.couponTypeLabel, value: _getTypeLabel(c, l10n), isDark: isDarkTheme),
             _DetailRow(label: l10n.minimumOrder, value: '${c.minPurchase.toInt()} ${l10n.currency}', isDark: isDarkTheme),
@@ -342,7 +360,7 @@ class _DetailRow extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: TextStyle(color: isDark ? Colors.white60 : AppColors.textSecondary)),
+          Text(label, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
           Text(value, style: TextStyle(fontWeight: FontWeight.w500, color: Theme.of(context).colorScheme.onSurface)),
         ],
       ),

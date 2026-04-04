@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_database/alhai_database.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiColors, AlhaiSpacing;
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiColors, AlhaiSpacing;
 import 'package:get_it/get_it.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 
@@ -43,8 +43,8 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
         top: false,
         child: LayoutBuilder(
         builder: (context, constraints) {
-          final isMobile = constraints.maxWidth < 600;
-          final isDesktop = constraints.maxWidth >= 1200;
+          final isMobile = constraints.maxWidth < AlhaiBreakpoints.tablet;
+          final isDesktop = constraints.maxWidth >= AlhaiBreakpoints.desktop;
           final padding = isMobile ? 12.0 : isDesktop ? 24.0 : 16.0;
 
           return Column(
@@ -114,32 +114,30 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
                       ],
                     ),
                   )
-                : ListView.builder(
-                    padding: EdgeInsetsDirectional.only(start: padding, end: padding),
-                    itemCount: _scannedProducts.length,
-                    itemBuilder: (context, index) {
-                      final product = _scannedProducts[_scannedProducts.length - 1 - index];
-                      return Card(
-                        child: ListTile(
-                          leading: Container(
-                            padding: const EdgeInsets.all(AlhaiSpacing.xs),
-                            decoration: BoxDecoration(color: colorScheme.primaryContainer, borderRadius: BorderRadius.circular(8)),
-                            child: Icon(Icons.inventory_2, color: colorScheme.primary),
-                          ),
-                          title: Text(product.name),
-                          subtitle: Text('${l10n.barcode}: ${product.barcode}', style: const TextStyle(fontFamily: 'monospace', fontSize: 11)),
-                          trailing: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text('${product.price.toStringAsFixed(2)} ${l10n.sar}', style: const TextStyle(fontWeight: FontWeight.bold, color: AlhaiColors.success)),
-                              Text('${l10n.stock}: ${product.stock}', style: TextStyle(fontSize: 11, color: product.stock < 10 ? colorScheme.error : colorScheme.onSurfaceVariant)),
-                            ],
-                          ),
+                : isDesktop
+                    // Desktop/wide: 2-column grid for scanned products
+                    ? GridView.builder(
+                        padding: EdgeInsetsDirectional.only(start: padding, end: padding),
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 8,
+                          mainAxisSpacing: 8,
+                          childAspectRatio: 3.5,
                         ),
-                      );
-                    },
-                  ),
+                        itemCount: _scannedProducts.length,
+                        itemBuilder: (context, index) {
+                          final product = _scannedProducts[_scannedProducts.length - 1 - index];
+                          return _ScannedProductCard(product: product, l10n: l10n, colorScheme: colorScheme);
+                        },
+                      )
+                    : ListView.builder(
+                        padding: EdgeInsetsDirectional.only(start: padding, end: padding),
+                        itemCount: _scannedProducts.length,
+                        itemBuilder: (context, index) {
+                          final product = _scannedProducts[_scannedProducts.length - 1 - index];
+                          return _ScannedProductCard(product: product, l10n: l10n, colorScheme: colorScheme);
+                        },
+                      ),
           ),
 
           // شريط الإجراءات
@@ -255,4 +253,40 @@ class _ScannedProduct {
   final double price;
   final double stock;
   _ScannedProduct({required this.id, required this.barcode, required this.name, required this.price, required this.stock});
+}
+
+/// Extracted card widget for scanned products (used by both list and grid).
+class _ScannedProductCard extends StatelessWidget {
+  final _ScannedProduct product;
+  final AppLocalizations l10n;
+  final ColorScheme colorScheme;
+
+  const _ScannedProductCard({
+    required this.product,
+    required this.l10n,
+    required this.colorScheme,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: ListTile(
+        leading: Container(
+          padding: const EdgeInsets.all(AlhaiSpacing.xs),
+          decoration: BoxDecoration(color: colorScheme.primaryContainer, borderRadius: BorderRadius.circular(8)),
+          child: Icon(Icons.inventory_2, color: colorScheme.primary),
+        ),
+        title: Text(product.name),
+        subtitle: Text('${l10n.barcode}: ${product.barcode}', style: const TextStyle(fontFamily: 'monospace', fontSize: 11)),
+        trailing: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text('${product.price.toStringAsFixed(2)} ${l10n.sar}', style: const TextStyle(fontWeight: FontWeight.bold, color: AlhaiColors.success)),
+            Text('${l10n.stock}: ${product.stock}', style: TextStyle(fontSize: 11, color: product.stock < 10 ? colorScheme.error : colorScheme.onSurfaceVariant)),
+          ],
+        ),
+      ),
+    );
+  }
 }

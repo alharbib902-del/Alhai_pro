@@ -79,7 +79,7 @@ class _BundleDealsScreenState extends ConsumerState<BundleDealsScreen> {
     return Column(
       children: [
         AppHeader(
-          title: 'Bundle Deals',
+          title: l10n.bundleDeals,
           subtitle: '${_bundles.length} ${l10n.activeOffers} \u2022 ${l10n.mainBranch}',
           showSearch: false,
           searchHint: l10n.searchPlaceholder,
@@ -232,7 +232,7 @@ class _BundleDealsScreenState extends ConsumerState<BundleDealsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Included Products',
+                Text(l10n.includedProducts,
                     style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600,
                         color: AppColors.getTextSecondary(isDark))),
                 const SizedBox(height: AlhaiSpacing.sm),
@@ -255,7 +255,7 @@ class _BundleDealsScreenState extends ConsumerState<BundleDealsScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Individual Total',
+                          Text(l10n.individualTotal,
                               style: TextStyle(fontSize: 13,
                                   color: AppColors.getTextSecondary(isDark))),
                           Text(
@@ -270,7 +270,7 @@ class _BundleDealsScreenState extends ConsumerState<BundleDealsScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Bundle Price',
+                          Text(l10n.bundlePrice,
                               style: TextStyle(fontSize: 14,
                                   fontWeight: FontWeight.w600,
                                   color: AppColors.getTextPrimary(isDark))),
@@ -286,8 +286,8 @@ class _BundleDealsScreenState extends ConsumerState<BundleDealsScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text('You Save',
-                              style: TextStyle(fontSize: 13,
+                          Text(l10n.youSave,
+                              style: const TextStyle(fontSize: 13,
                                   fontWeight: FontWeight.w600,
                                   color: AppColors.success)),
                           Text(
@@ -310,7 +310,7 @@ class _BundleDealsScreenState extends ConsumerState<BundleDealsScreen> {
                           color: AppColors.getTextMuted(isDark)),
                       const SizedBox(width: 6),
                       Text(
-                        'Valid Until: ${bundle.endDate!.day}/${bundle.endDate!.month}/${bundle.endDate!.year}',
+                        l10n.validUntilDate('${bundle.endDate!.day}/${bundle.endDate!.month}/${bundle.endDate!.year}'),
                         style: TextStyle(fontSize: 12,
                             color: AppColors.getTextMuted(isDark)),
                       ),
@@ -356,11 +356,11 @@ class _BundleDealsScreenState extends ConsumerState<BundleDealsScreen> {
           Icon(Icons.inventory_2_outlined, size: 64,
               color: AppColors.getTextMuted(isDark).withValues(alpha: 0.4)),
           const SizedBox(height: AlhaiSpacing.md),
-          Text('No bundle deals',
+          Text(l10n.noBundleDeals,
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500,
                   color: AppColors.getTextMuted(isDark))),
           const SizedBox(height: AlhaiSpacing.xs),
-          Text('Bundle deals will appear here',
+          Text(l10n.bundleDealsWillAppear,
               style: TextStyle(fontSize: 13,
                   color: AppColors.getTextMuted(isDark))),
         ],

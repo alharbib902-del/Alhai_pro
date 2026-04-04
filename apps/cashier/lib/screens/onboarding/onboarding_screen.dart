@@ -134,6 +134,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     final l10n = AppLocalizations.of(context);
     final pages = _buildPages(l10n);
     final isLastPage = _currentPage == pages.length - 1;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       body: SafeArea(
@@ -149,7 +150,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   child: Text(
                     l10n.skip,
                     style: AppTypography.bodyMedium.copyWith(
-                      color: AppColors.textSecondary,
+                      color: AppColors.getTextSecondary(isDark),
                     ),
                   ),
                 ),
@@ -189,7 +190,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               child: Text(
                 'سياسة الخصوصية | Privacy Policy',
                 style: AppTypography.bodySmall.copyWith(
-                  color: AppColors.textSecondary,
+                  color: AppColors.getTextSecondary(isDark),
                   decoration: TextDecoration.underline,
                 ),
               ),
@@ -266,6 +267,8 @@ class _OnboardingPageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: AppSizes.xxxl),
       child: Column(
@@ -291,7 +294,7 @@ class _OnboardingPageWidget extends StatelessWidget {
           Text(
             page.description,
             style: AppTypography.bodyLarge.copyWith(
-              color: AppColors.textSecondary,
+              color: AppColors.getTextSecondary(isDark),
               height: 1.6,
             ),
             textAlign: TextAlign.center,
@@ -311,13 +314,15 @@ class _PageIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return AnimatedContainer(
       duration: AppDurations.fast,
       margin: const EdgeInsets.symmetric(horizontal: AppSizes.xs),
       width: isActive ? 32 : 8,
       height: 8,
       decoration: BoxDecoration(
-        color: isActive ? color : AppColors.border,
+        color: isActive ? color : AppColors.getBorder(isDark),
         borderRadius: BorderRadius.circular(AppSizes.radiusFull),
       ),
     );

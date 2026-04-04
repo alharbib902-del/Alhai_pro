@@ -316,7 +316,7 @@ class AppTheme {
         backgroundColor: surface,
         surfaceTintColor: Colors.transparent,
         shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.horizontal(left: Radius.circular(0)),
+          borderRadius: BorderRadiusDirectional.horizontal(start: Radius.circular(0)),
         ),
       ),
 

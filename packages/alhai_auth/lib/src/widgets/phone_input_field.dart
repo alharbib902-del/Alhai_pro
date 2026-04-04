@@ -198,8 +198,9 @@ class _PhoneInputFieldState extends State<PhoneInputField> {
               // زر اختيار الدولة
               InkWell(
                 onTap: widget.enabled ? _showCountryPicker : null,
-                borderRadius: const BorderRadius.horizontal(
-                  right: Radius.circular(12),
+                borderRadius: BorderRadius.horizontal(
+                  right: Directionality.of(context) == TextDirection.rtl ? Radius.zero : const Radius.circular(12),
+                  left: Directionality.of(context) == TextDirection.rtl ? const Radius.circular(12) : Radius.zero,
                 ),
                 child: Container(
                   padding: const EdgeInsets.symmetric(
@@ -208,8 +209,8 @@ class _PhoneInputFieldState extends State<PhoneInputField> {
                   ),
                   decoration: BoxDecoration(
                     color: isDarkMode ? const Color(0xFF374151) : AppColors.backgroundSecondary,
-                    borderRadius: const BorderRadius.horizontal(
-                      right: Radius.circular(11),
+                    borderRadius: BorderRadiusDirectional.horizontal(
+                      end: const Radius.circular(11),
                     ),
                   ),
                   child: Row(

@@ -128,7 +128,7 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
         final shouldPop = await showDialog<bool>(
           context: context,
           builder: (context) => ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 400),
+            constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width > 600 ? 400 : MediaQuery.of(context).size.width * 0.9),
             child: AlertDialog(
               title: Text(AppLocalizations.of(context).unsavedChanges),
               content: Text(AppLocalizations.of(context).leaveWithoutSaving),
@@ -147,10 +147,11 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
         );
         if (shouldPop == true && context.mounted) Navigator.pop(context);
       },
-      child: Column(
-        children: [
-          AppHeader(
-            title: widget.isEditing ? l10n.editSupplier : l10n.addNewSupplier,
+      child: SafeArea(
+        child: Column(
+          children: [
+            AppHeader(
+              title: widget.isEditing ? l10n.editSupplier : l10n.addNewSupplier,
             onMenuTap:
                 isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
             onNotificationsTap: () => context.push('/notifications'),
@@ -158,22 +159,23 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
             userName: l10n.defaultUserName,
             userRole: l10n.branchManager,
           ),
-          Expanded(
-            child: _isLoadingData
-                ? const Center(child: CircularProgressIndicator())
-                : Center(
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 1000),
-                      child: Form(
-                        key: _formKey,
-                        child: isWideScreen
-                            ? _buildWideLayout(isDark, isMediumScreen, l10n)
-                            : _buildNarrowLayout(isDark, l10n),
+            Expanded(
+              child: _isLoadingData
+                  ? const Center(child: CircularProgressIndicator())
+                  : Center(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 1000),
+                        child: Form(
+                          key: _formKey,
+                          child: isWideScreen
+                              ? _buildWideLayout(isDark, isMediumScreen, l10n)
+                              : _buildNarrowLayout(isDark, l10n),
+                        ),
                       ),
                     ),
-                  ),
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -297,7 +299,7 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
+            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: isDark ? 0.2 : 0.04),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -882,7 +884,7 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
     showDialog(
       context: context,
       builder: (ctx) => ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 400),
+        constraints: BoxConstraints(maxWidth: MediaQuery.of(ctx).size.width > 600 ? 400 : MediaQuery.of(ctx).size.width * 0.9),
         child: AlertDialog(
           backgroundColor:
               Theme.of(context).colorScheme.surface,

@@ -557,7 +557,7 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
                     ),
                   ),
                   if (diff > 0)
-                    Text('Customer pays extra',
+                    Text(l10n.customerPaysExtra,
                         style: TextStyle(
                             fontSize: 11,
                             color: AppColors.getTextMuted(isDark)))
@@ -583,8 +583,8 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
                             strokeWidth: 2, color: Colors.white),
                       )
                     : const Icon(Icons.swap_horiz_rounded, size: 20),
-                label: const Text('Submit Exchange',
-                    style: TextStyle(
+                label: Text(l10n.submitExchange,
+                    style: const TextStyle(
                         fontSize: 15, fontWeight: FontWeight.w600)),
                 style: FilledButton.styleFrom(
                   backgroundColor: AppColors.primary,

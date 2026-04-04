@@ -12769,4 +12769,219 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get distributorRiyal => 'SAR';
+
+  @override
+  String get scanCouponBarcode => 'Scan Coupon Barcode';
+
+  @override
+  String get validateCoupon => 'Validate';
+
+  @override
+  String get couponValid => 'Coupon Valid';
+
+  @override
+  String get recentCoupons => 'Recent Coupons';
+
+  @override
+  String get noRecentCoupons => 'No recent coupons';
+
+  @override
+  String get noExpiry => 'No Expiry';
+
+  @override
+  String get invalidCouponCode => 'Invalid coupon code';
+
+  @override
+  String get percentageOff => 'Percentage Off';
+
+  @override
+  String get bundleDeals => 'Bundle Deals';
+
+  @override
+  String get includedProducts => 'Included Products';
+
+  @override
+  String get individualTotal => 'Individual Total';
+
+  @override
+  String get bundlePrice => 'Bundle Price';
+
+  @override
+  String get youSave => 'You Save';
+
+  @override
+  String get noBundleDeals => 'No bundle deals';
+
+  @override
+  String get bundleDealsWillAppear => 'Bundle deals will appear here';
+
+  @override
+  String validUntilDate(String date) {
+    return 'Valid Until: $date';
+  }
+
+  @override
+  String validFromDate(String date) {
+    return 'Valid From: $date';
+  }
+
+  @override
+  String get autoApplied => 'Auto Applied';
+
+  @override
+  String get noActiveOffers => 'No active offers';
+
+  @override
+  String get wastage => 'Wastage';
+
+  @override
+  String get quantityWasted => 'Quantity Wasted';
+
+  @override
+  String get photoLabel => 'Photo';
+
+  @override
+  String get photoAttached => 'Photo attached';
+
+  @override
+  String get tapToTakePhoto => 'Tap to take photo';
+
+  @override
+  String get optionalLabel => 'Optional';
+
+  @override
+  String get recordWastage => 'Record Wastage';
+
+  @override
+  String get spillage => 'Spillage';
+
+  @override
+  String get transferInventory => 'Transfer Inventory';
+
+  @override
+  String get transferDetails => 'Transfer Details';
+
+  @override
+  String get fromStore => 'From Store';
+
+  @override
+  String get toStore => 'To Store';
+
+  @override
+  String get selectStore => 'Select Store';
+
+  @override
+  String get submitTransfer => 'Submit Transfer';
+
+  @override
+  String get optionalNote => 'Optional note';
+
+  @override
+  String get addInventory => 'Add Inventory';
+
+  @override
+  String get scanLabel => 'Scan';
+
+  @override
+  String get quantityToAdd => 'Quantity to Add';
+
+  @override
+  String get supplierReference => 'Supplier Reference';
+
+  @override
+  String get removeInventory => 'Remove Inventory';
+
+  @override
+  String get quantityToRemove => 'Quantity to Remove';
+
+  @override
+  String get sold => 'Sold';
+
+  @override
+  String get transferred => 'Transferred';
+
+  @override
+  String get fieldRequired => 'Field required';
+
+  @override
+  String get deviceInfo => 'Device Info';
+
+  @override
+  String get deviceName => 'Device Name';
+
+  @override
+  String get deviceType => 'Device Type';
+
+  @override
+  String get connectionMethod => 'Connection Method';
+
+  @override
+  String get networkSettings => 'Network Settings';
+
+  @override
+  String get ipAddress => 'IP Address';
+
+  @override
+  String get port => 'Port';
+
+  @override
+  String get connectionTestPassed => 'Connection test passed';
+
+  @override
+  String get saveDevice => 'Save Device';
+
+  @override
+  String get addDevice => 'Add Device';
+
+  @override
+  String get noPaymentDevices => 'No payment devices';
+
+  @override
+  String get addFirstPaymentDevice => 'Add your first payment device';
+
+  @override
+  String get totalDevices => 'Total Devices';
+
+  @override
+  String get disconnected => 'Disconnected';
+
+  @override
+  String testingConnectionName(String name) {
+    return 'Testing connection $name...';
+  }
+
+  @override
+  String connectionSuccessful(String name) {
+    return '$name - Connection successful';
+  }
+
+  @override
+  String get pasteFromClipboard => 'Paste from Clipboard';
+
+  @override
+  String get confirmRestore => 'Confirm Restore';
+
+  @override
+  String get saleNotFound => 'Sale not found';
+
+  @override
+  String get noItems => 'No items';
+
+  @override
+  String get customerPaysExtra => 'Customer pays extra';
+
+  @override
+  String get submitExchange => 'Submit Exchange';
+
+  @override
+  String get applyInterest => 'Apply Interest';
+
+  @override
+  String get reportSettings => 'Report Settings';
+
+  @override
+  String get reportType => 'Report Type';
+
+  @override
+  String get paymentDistribution => 'Payment Distribution';
 }

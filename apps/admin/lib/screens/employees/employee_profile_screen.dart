@@ -65,7 +65,11 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
         _loadSalesPerformance();
       }
     } catch (e) {
-      if (mounted) setState(() { _error = e.toString(); _isLoading = false; });
+      debugPrint('Error loading user: $e');
+      if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
+        setState(() { _error = l10n.errorOccurred; _isLoading = false; });
+      }
     }
   }
 
@@ -224,10 +228,11 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
         );
       }
     } catch (e) {
+      debugPrint('Error saving role: $e');
       if (mounted) {
         final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.errorWithMessage(e.toString())), backgroundColor: Theme.of(context).colorScheme.error),
+          SnackBar(content: Text(l10n.errorOccurred), backgroundColor: Theme.of(context).colorScheme.error),
         );
       }
     }
@@ -293,14 +298,17 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
           ],
         ),
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          _buildProfileTab(user, initials, roleColor),
-          _buildSalesTab(),
-          _buildShiftsTab(),
-          _buildPermissionsTab(user),
-        ],
+      body: SafeArea(
+        top: false,
+        child: TabBarView(
+          controller: _tabController,
+          children: [
+            _buildProfileTab(user, initials, roleColor),
+            _buildSalesTab(),
+            _buildShiftsTab(),
+            _buildPermissionsTab(user),
+          ],
+        ),
       ),
     );
   }
@@ -308,9 +316,9 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
   Color _roleColor(String role) {
     // Role-specific colors for badges
     switch (role) {
-      case 'owner': return Colors.purple; // role status color
+      case 'owner': return const Color(0xFF9333EA); // role status color - Purple 600
       case 'manager': return AppColors.info;
-      case 'supervisor': return Colors.teal; // role status color
+      case 'supervisor': return const Color(0xFF0D9488); // role status color - Teal 600
       default: return AppColors.success;
     }
   }
@@ -471,7 +479,7 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
                               final metrics = [
                                 (Icons.attach_money_rounded, AppColors.success, l10n.totalSales, l10n.amountSar(_salesStats!.total.toStringAsFixed(0))),
                                 (Icons.receipt_long_outlined, AppColors.info, l10n.invoiceCountLabel2, '${_salesStats!.count}'),
-                                (Icons.trending_up_rounded, Colors.purple, l10n.averageInvoice, l10n.amountSar(_salesStats!.average.toStringAsFixed(0))), // chart metric color
+                                (Icons.trending_up_rounded, const Color(0xFF9333EA), l10n.averageInvoice, l10n.amountSar(_salesStats!.average.toStringAsFixed(0))), // chart metric color - Purple 600
                                 (Icons.schedule_outlined, AppColors.warning, l10n.peakHourLabel, _hourlySales.isNotEmpty ? '${_hourlySales.reduce((a, b) => a.total > b.total ? a : b).hour.toString().padLeft(2, '0')}:00' : '-'),
                               ];
                               final m = metrics[index];

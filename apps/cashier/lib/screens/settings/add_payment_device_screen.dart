@@ -280,7 +280,7 @@ class _AddPaymentDeviceScreenState
               color: AppColors.getTextPrimary(isDark),
             ),
             validator: (v) =>
-                v == null || v.isEmpty ? 'Field required' : null,
+                v == null || v.isEmpty ? l10n.fieldRequired : null,
             decoration: _inputDecoration('e.g. Main Terminal', isDark),
           ),
           const SizedBox(height: AlhaiSpacing.mdl),
@@ -454,7 +454,7 @@ class _AddPaymentDeviceScreenState
             ),
             validator: (v) =>
                 _connectionMethod == 'Network' && (v == null || v.isEmpty)
-                    ? 'Field required'
+                    ? l10n.fieldRequired
                     : null,
             decoration: _inputDecoration('192.168.1.100', isDark),
           ),
@@ -550,7 +550,7 @@ class _AddPaymentDeviceScreenState
                             strokeWidth: 2, color: Colors.white),
                       )
                     : const Icon(Icons.save_rounded, size: 20),
-                label: const Text('Save Device'),
+                label: Text(l10n.saveDevice),
                 style: FilledButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
