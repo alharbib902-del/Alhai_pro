@@ -41,10 +41,8 @@ class CashierFeatureSettings {
 
 CashierFeatureSettings parseSettingsFromMap(Map<String, String> settingsMap) {
   return CashierFeatureSettings(
-    enableCustomerDisplay:
-        settingsMap['feature_customer_display'] == 'true',
-    enablePhoneCollection:
-        settingsMap['feature_phone_collection'] != 'false',
+    enableCustomerDisplay: settingsMap['feature_customer_display'] == 'true',
+    enablePhoneCollection: settingsMap['feature_phone_collection'] != 'false',
     enableNfcPayment: settingsMap['feature_nfc_payment'] == 'true',
     nfcTimeoutSeconds:
         int.tryParse(settingsMap['nfc_timeout_seconds'] ?? '') ?? 30,

@@ -87,8 +87,7 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
           _buildCustomerInput(context, ref, cartState, isDark, l10n),
 
           // Customer quick info (when customer is linked)
-          if (cartState.customerId != null &&
-              cartState.customerId!.isNotEmpty)
+          if (cartState.customerId != null && cartState.customerId!.isNotEmpty)
             CustomerQuickInfo(
               customerId: cartState.customerId!,
               storeId: ref.read(currentStoreIdProvider) ?? kDefaultStoreId,

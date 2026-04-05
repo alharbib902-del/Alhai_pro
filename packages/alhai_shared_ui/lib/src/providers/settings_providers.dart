@@ -157,8 +157,7 @@ final paymentDeviceSettingsProvider =
       enableApplePay: settingsMap['payment_enable_apple_pay'] == 'true',
       terminalType: settingsMap['payment_terminal_type'] ?? 'ingenico',
       autoSettle: settingsMap['payment_auto_settle'] != 'false',
-      enableNfcSoftPos:
-          settingsMap['payment_enable_nfc_softpos'] == 'true',
+      enableNfcSoftPos: settingsMap['payment_enable_nfc_softpos'] == 'true',
       softPosMode: settingsMap['payment_softpos_mode'] ?? 'mock',
     );
   } catch (_) {

@@ -785,19 +785,23 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
     if (_cartItems.isEmpty) return;
 
     // عرض نافذة إدخال رقم الجوال إذا كانت الميزة مفعّلة
-    final featureSettings = ref.read(cashierFeatureSettingsProvider).valueOrNull;
+    final featureSettings =
+        ref.read(cashierFeatureSettingsProvider).valueOrNull;
     if (featureSettings?.enablePhoneCollection == true) {
       final storeId = ref.read(currentStoreIdProvider) ?? '';
-      final phoneResult = await PhoneEntryDialog.show(context, storeId: storeId);
+      final phoneResult =
+          await PhoneEntryDialog.show(context, storeId: storeId);
       if (!mounted) return;
 
       if (!phoneResult.wasSkipped) {
-        ref.read(cartStateProvider.notifier).setCustomerPhone(phoneResult.phone);
+        ref
+            .read(cartStateProvider.notifier)
+            .setCustomerPhone(phoneResult.phone);
         if (phoneResult.hasExistingCustomer) {
           ref.read(cartStateProvider.notifier).setCustomer(
-            phoneResult.customerId,
-            customerName: phoneResult.customerName,
-          );
+                phoneResult.customerId,
+                customerName: phoneResult.customerName,
+              );
         }
       }
     }

@@ -1229,11 +1229,14 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
       }
 
       // بناء رسالة النجاح مع نقاط الولاء المكتسبة
-      String successMessage = '\u062A\u0645\u062A \u0627\u0644\u0639\u0645\u0644\u064A\u0629 \u0628\u0646\u062C\u0627\u062D';
+      String successMessage =
+          '\u062A\u0645\u062A \u0627\u0644\u0639\u0645\u0644\u064A\u0629 \u0628\u0646\u062C\u0627\u062D';
       if (cartState.customerId != null && loyaltySettings.isEnabled) {
-        final pointsEarned = ((subtotal + tax) * loyaltySettings.pointsPerRiyal).floor();
+        final pointsEarned =
+            ((subtotal + tax) * loyaltySettings.pointsPerRiyal).floor();
         if (pointsEarned > 0) {
-          successMessage = '\u062A\u0645\u062A \u0627\u0644\u0639\u0645\u0644\u064A\u0629 \u0628\u0646\u062C\u0627\u062D\n\u062A\u0645 \u0625\u0636\u0627\u0641\u0629 $pointsEarned \u0646\u0642\u0637\u0629';
+          successMessage =
+              '\u062A\u0645\u062A \u0627\u0644\u0639\u0645\u0644\u064A\u0629 \u0628\u0646\u062C\u0627\u062D\n\u062A\u0645 \u0625\u0636\u0627\u0641\u0629 $pointsEarned \u0646\u0642\u0637\u0629';
         }
       }
 
@@ -1245,9 +1248,9 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
       // تحديث شاشة العميل - نجاح مع رسالة الولاء
       try {
         ref.read(customerDisplayServiceProvider).showSuccess(
-          total: total,
-          message: successMessage,
-        );
+              total: total,
+              message: successMessage,
+            );
       } catch (_) {}
       _animationController.forward();
 
@@ -1255,7 +1258,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
       await Future.delayed(const Duration(seconds: 2));
 
       // إرسال إيصال واتساب تلقائي إذا كان الرقم متاحاً
-      if (cartState.customerPhone != null && cartState.customerPhone!.isNotEmpty) {
+      if (cartState.customerPhone != null &&
+          cartState.customerPhone!.isNotEmpty) {
         try {
           final whatsappService = ref.read(whatsappReceiptServiceProvider);
           final receiptText = WhatsAppReceiptService.formatReceipt(
@@ -1278,12 +1282,13 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
           // Non-blocking - لا ننتظر النتيجة
           whatsappService
               .sendReceiptText(
-                phone: cartState.customerPhone!,
-                receiptText: receiptText,
-                saleId: saleId,
-              )
+            phone: cartState.customerPhone!,
+            receiptText: receiptText,
+            saleId: saleId,
+          )
               .catchError((Object e) {
-            debugPrint('[PaymentScreen] WhatsApp receipt failed (non-blocking): $e');
+            debugPrint(
+                '[PaymentScreen] WhatsApp receipt failed (non-blocking): $e');
             return '';
           });
         } catch (e) {

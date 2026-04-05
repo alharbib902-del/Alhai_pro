@@ -133,7 +133,8 @@ class CartState {
       paymentMethod: paymentMethod ?? this.paymentMethod,
       customerId: clearCustomer ? null : (customerId ?? this.customerId),
       customerName: clearCustomer ? null : (customerName ?? this.customerName),
-      customerPhone: clearCustomer ? null : (customerPhone ?? this.customerPhone),
+      customerPhone:
+          clearCustomer ? null : (customerPhone ?? this.customerPhone),
       notes: notes ?? this.notes,
       lastModified: lastModified ?? DateTime.now(),
     );

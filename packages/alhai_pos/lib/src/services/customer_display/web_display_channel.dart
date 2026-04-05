@@ -171,8 +171,7 @@ void openCustomerDisplayWindow(String path) {
       'open'.toJS,
       path.toJS,
       'customer_display'.toJS,
-      'width=1024,height=768,menubar=no,toolbar=no,location=no,status=no'
-          .toJS,
+      'width=1024,height=768,menubar=no,toolbar=no,location=no,status=no'.toJS,
     );
     debugPrint('[CustomerDisplay] Opened window: $path');
   } catch (e) {

@@ -13,12 +13,12 @@ void main() {
       expect(CustomerDisplayPhase.values, hasLength(7));
       expect(CustomerDisplayPhase.values, contains(CustomerDisplayPhase.idle));
       expect(CustomerDisplayPhase.values, contains(CustomerDisplayPhase.cart));
-      expect(
-          CustomerDisplayPhase.values, contains(CustomerDisplayPhase.phoneEntry));
+      expect(CustomerDisplayPhase.values,
+          contains(CustomerDisplayPhase.phoneEntry));
       expect(
           CustomerDisplayPhase.values, contains(CustomerDisplayPhase.payment));
-      expect(
-          CustomerDisplayPhase.values, contains(CustomerDisplayPhase.nfcWaiting));
+      expect(CustomerDisplayPhase.values,
+          contains(CustomerDisplayPhase.nfcWaiting));
       expect(
           CustomerDisplayPhase.values, contains(CustomerDisplayPhase.success));
       expect(

@@ -71,15 +71,15 @@ class _CustomerQuickInfoState extends State<CustomerQuickInfo> {
     final db = GetIt.I<AppDatabase>();
 
     // 1) بيانات العميل الأساسية + إحصائيات المبيعات
-    final stats =
-        await db.customersDao.getCustomerWithStats(widget.customerId, widget.storeId);
+    final stats = await db.customersDao
+        .getCustomerWithStats(widget.customerId, widget.storeId);
     if (stats == null) return null;
 
     // 2) رصيد الحساب
     double balance = 0;
     try {
-      final account =
-          await db.accountsDao.getCustomerAccount(widget.customerId, widget.storeId);
+      final account = await db.accountsDao
+          .getCustomerAccount(widget.customerId, widget.storeId);
       if (account != null) {
         balance = account.balance;
       }
@@ -90,8 +90,8 @@ class _CustomerQuickInfoState extends State<CustomerQuickInfo> {
     // 3) نقاط الولاء
     int? loyaltyPoints;
     try {
-      final loyalty =
-          await db.loyaltyDao.getCustomerLoyalty(widget.customerId, widget.storeId);
+      final loyalty = await db.loyaltyDao
+          .getCustomerLoyalty(widget.customerId, widget.storeId);
       if (loyalty != null) {
         loyaltyPoints = loyalty.currentPoints;
       }
@@ -231,7 +231,8 @@ class _CustomerQuickInfoState extends State<CustomerQuickInfo> {
 
   Widget _buildStatsRow(BuildContext context, _CustomerSummary summary) {
     final hasDebt = summary.balance > 0;
-    final hasLoyalty = summary.loyaltyPoints != null && summary.loyaltyPoints! > 0;
+    final hasLoyalty =
+        summary.loyaltyPoints != null && summary.loyaltyPoints! > 0;
 
     return Row(
       children: [

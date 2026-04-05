@@ -215,7 +215,8 @@ class _CustomerDisplayScreenState extends ConsumerState<CustomerDisplayScreen>
         key: 'slide_loyalty',
         icon: Icons.card_giftcard_rounded,
         iconColor: AlhaiColors.warning,
-        text: '\u0627\u0633\u0623\u0644 \u0639\u0646 \u0628\u0631\u0646\u0627\u0645\u062C \u0627\u0644\u0648\u0644\u0627\u0621',
+        text:
+            '\u0627\u0633\u0623\u0644 \u0639\u0646 \u0628\u0631\u0646\u0627\u0645\u062C \u0627\u0644\u0648\u0644\u0627\u0621',
       ),
     ];
 
@@ -229,7 +230,8 @@ class _CustomerDisplayScreenState extends ConsumerState<CustomerDisplayScreen>
           key: 'slide_nfc',
           icon: Icons.contactless_rounded,
           iconColor: AlhaiColors.info,
-          text: '\u0627\u062F\u0641\u0639 \u0628\u062A\u0642\u0631\u064A\u0628 \u0627\u0644\u0628\u0637\u0627\u0642\u0629',
+          text:
+              '\u0627\u062F\u0641\u0639 \u0628\u062A\u0642\u0631\u064A\u0628 \u0627\u0644\u0628\u0637\u0627\u0642\u0629',
         ),
       );
     }
@@ -755,9 +757,8 @@ class _CustomerDisplayScreenState extends ConsumerState<CustomerDisplayScreen>
                 statusMessage,
                 key: ValueKey(statusMessage),
                 style: AlhaiTypography.headlineMedium.copyWith(
-                  color: isError
-                      ? AlhaiColors.error
-                      : AppColors.textPrimaryDark,
+                  color:
+                      isError ? AlhaiColors.error : AppColors.textPrimaryDark,
                 ),
                 textAlign: TextAlign.center,
               ),

@@ -266,7 +266,8 @@ void main() {
       service.dispose();
     });
 
-    test('ترتيب الأحداث: detected → reading → processing → completed', () async {
+    test('ترتيب الأحداث: detected → reading → processing → completed',
+        () async {
       final events = <NfcListenerEvent>[];
       final sub = service.events.listen(events.add);
 

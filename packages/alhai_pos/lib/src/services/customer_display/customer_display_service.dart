@@ -36,8 +36,7 @@ abstract class CustomerDisplayChannel {
 
 /// قناة في الذاكرة - تعمل داخل نفس العملية
 class InMemoryDisplayChannel implements CustomerDisplayChannel {
-  static final _controller =
-      StreamController<CustomerDisplayState>.broadcast();
+  static final _controller = StreamController<CustomerDisplayState>.broadcast();
 
   @override
   void sendState(CustomerDisplayState state) {

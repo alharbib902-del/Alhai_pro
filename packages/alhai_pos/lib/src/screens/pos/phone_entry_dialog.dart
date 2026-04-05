@@ -129,7 +129,8 @@ class _PhoneEntryDialogState extends State<PhoneEntryDialog> {
     // بدء البحث بتأخير
     _debounceTimer?.cancel();
     if (sanitized.length >= 3) {
-      _debounceTimer = Timer(_debounceDuration, () => _searchCustomers(sanitized));
+      _debounceTimer =
+          Timer(_debounceDuration, () => _searchCustomers(sanitized));
     } else {
       setState(() {
         _matchedCustomers = [];
@@ -150,14 +151,16 @@ class _PhoneEntryDialogState extends State<PhoneEntryDialog> {
     if (phone.startsWith('05')) {
       // صيغة سعودية محلية
       if (phone.length < 10) {
-        hint = '${10 - phone.length} ${AppLocalizations.of(context).digitsRemaining}';
+        hint =
+            '${10 - phone.length} ${AppLocalizations.of(context).digitsRemaining}';
       } else if (phone.length > 10) {
         hint = AppLocalizations.of(context).phoneNumberTooLong;
       }
     } else if (phone.startsWith('+966')) {
       // صيغة دولية سعودية
       if (phone.length < 13) {
-        hint = '${13 - phone.length} ${AppLocalizations.of(context).digitsRemaining}';
+        hint =
+            '${13 - phone.length} ${AppLocalizations.of(context).digitsRemaining}';
       }
     } else if (phone.length < 8) {
       hint = AppLocalizations.of(context).enterValidPhoneNumber;
@@ -188,7 +191,8 @@ class _PhoneEntryDialogState extends State<PhoneEntryDialog> {
     setState(() => _isSearching = true);
 
     try {
-      final results = await _customersDao.searchCustomers(query, widget.storeId);
+      final results =
+          await _customersDao.searchCustomers(query, widget.storeId);
       if (!mounted) return;
 
       setState(() {
@@ -317,7 +321,8 @@ class _PhoneEntryDialogState extends State<PhoneEntryDialog> {
                 _buildValidationHint(),
 
               // العميل المطابق
-              if (_selectedCustomer != null) _buildSelectedCustomer(colorScheme),
+              if (_selectedCustomer != null)
+                _buildSelectedCustomer(colorScheme),
 
               // نتائج البحث
               if (_matchedCustomers.isNotEmpty && _selectedCustomer == null)
@@ -551,7 +556,8 @@ class _PhoneEntryDialogState extends State<PhoneEntryDialog> {
   }
 
   /// عنصر عميل في قائمة النتائج
-  Widget _buildCustomerTile(_MatchedCustomer customer, ColorScheme colorScheme) {
+  Widget _buildCustomerTile(
+      _MatchedCustomer customer, ColorScheme colorScheme) {
     return Padding(
       padding: const EdgeInsets.only(bottom: AppSizes.xs),
       child: Material(
