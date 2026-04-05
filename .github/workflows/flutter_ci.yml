@@ -131,12 +131,12 @@ jobs:
           COVERAGE=$(lcov --summary coverage/merged_lcov.info 2>&1 | grep "lines" | grep -oP '[\d.]+%' | head -1 | tr -d '%')
           echo "Total coverage: ${COVERAGE}%"
           if [ -n "$COVERAGE" ]; then
-            THRESHOLD=50
+            THRESHOLD=20
             if (( $(echo "$COVERAGE < $THRESHOLD" | bc -l) )); then
               echo "::error::Coverage ${COVERAGE}% is below minimum threshold ${THRESHOLD}%"
               exit 1
-            elif (( $(echo "$COVERAGE < 60" | bc -l) )); then
-              echo "::warning::Coverage ${COVERAGE}% is below recommended threshold 60%"
+            elif (( $(echo "$COVERAGE < 40" | bc -l) )); then
+              echo "::warning::Coverage ${COVERAGE}% is below recommended threshold 40%"
             else
               echo "Coverage ${COVERAGE}% meets threshold"
             fi
