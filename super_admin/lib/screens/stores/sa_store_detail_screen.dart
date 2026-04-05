@@ -284,7 +284,7 @@ class SAStoreDetailScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: AlhaiSpacing.md),
                 DropdownButtonFormField<String>(
-                  initialValue: selectedSlug,
+                  value: selectedSlug,
                   decoration: InputDecoration(
                     labelText: l10n.selectPlan,
                     border: const OutlineInputBorder(),

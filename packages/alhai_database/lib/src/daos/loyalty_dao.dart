@@ -89,8 +89,9 @@ class LoyaltyDao extends DatabaseAccessor<AppDatabase> with _$LoyaltyDaoMixin {
     return result > 0;
   }
 
-  /// حساب مستوى العميل
-  String _calculateTier(int totalPoints) {
+  /// حساب مستوى العميل بناءً على النقاط
+  /// يستخدم لتحديد المستوى عند تحديث النقاط
+  String calculateTier(int totalPoints) {
     if (totalPoints >= 10000) return 'platinum';
     if (totalPoints >= 5000) return 'gold';
     if (totalPoints >= 1000) return 'silver';

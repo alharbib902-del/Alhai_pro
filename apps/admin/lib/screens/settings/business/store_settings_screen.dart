@@ -301,7 +301,7 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
             padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl,
                 AlhaiSpacing.xs, AlhaiSpacing.mdl, AlhaiSpacing.xs),
             child: DropdownButtonFormField<String>(
-              initialValue: _language,
+              value: _language,
               decoration: InputDecoration(
                 labelText: l10n.language,
                 prefixIcon: const Icon(Icons.translate),
@@ -321,7 +321,7 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
             padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl,
                 AlhaiSpacing.xs, AlhaiSpacing.mdl, AlhaiSpacing.md),
             child: DropdownButtonFormField<String>(
-              initialValue: _currency,
+              value: _currency,
               decoration: InputDecoration(
                 labelText: l10n.currencyFieldLabel,
                 prefixIcon: const Icon(Icons.attach_money),

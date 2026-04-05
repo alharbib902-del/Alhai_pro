@@ -250,7 +250,7 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
           ),
           const SizedBox(height: AlhaiSpacing.md),
           DropdownButtonFormField<String>(
-            initialValue: _selectedSupplier,
+            value: _selectedSupplier,
             decoration: InputDecoration(
               labelText: l10n.supplier,
               prefixIcon: const Icon(Icons.storefront),

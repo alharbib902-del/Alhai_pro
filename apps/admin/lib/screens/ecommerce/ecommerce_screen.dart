@@ -461,7 +461,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
                 value: isOnline,
                 onChanged: (val) => _toggleOnlineAvailability(product.id, val),
                 activeTrackColor: AppColors.primary,
-                activeThumbColor: Theme.of(context).colorScheme.onPrimary,
+                activeColor: Theme.of(context).colorScheme.onPrimary,
               ),
             ],
           ),
@@ -879,7 +879,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
           value: value,
           onChanged: onChanged,
           activeTrackColor: AppColors.primary,
-          activeThumbColor: Theme.of(context).colorScheme.onPrimary,
+          activeColor: Theme.of(context).colorScheme.onPrimary,
         ),
       ),
     );

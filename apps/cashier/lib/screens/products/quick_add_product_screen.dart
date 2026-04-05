@@ -281,7 +281,7 @@ class _QuickAddProductScreenState extends ConsumerState<QuickAddProductScreen> {
           const SizedBox(height: AlhaiSpacing.md),
           // Category dropdown
           DropdownButtonFormField<String>(
-            initialValue: _selectedCategoryId,
+            value: _selectedCategoryId,
             style: TextStyle(color: AppColors.getTextPrimary(isDark)),
             dropdownColor: AppColors.getSurface(isDark),
             decoration: _inputDecoration(

@@ -1054,7 +1054,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
           Switch(
             value: _isActive,
             onChanged: (v) => setState(() => _isActive = v),
-            activeThumbColor: AppColors.success,
+            activeColor: AppColors.success,
           ),
         ],
       ),

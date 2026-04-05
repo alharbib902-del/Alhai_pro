@@ -597,7 +597,7 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
               ),
             ),
             value: _isActive,
-            activeThumbColor: AppColors.primary,
+            activeColor: AppColors.primary,
             onChanged: (value) {
               setState(() => _isActive = value);
             },
@@ -712,7 +712,7 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
     required ValueChanged<String?> onChanged,
   }) {
     return DropdownButtonFormField<String>(
-      initialValue: value,
+      value: value,
       decoration: InputDecoration(
         labelText: label,
         prefixIcon: Icon(icon),

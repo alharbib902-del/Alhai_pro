@@ -530,7 +530,7 @@ class ExpensesScreen extends ConsumerWidget {
               ),
               SizedBox(height: AlhaiSpacing.sm),
               DropdownButtonFormField<String>(
-                initialValue: category,
+                value: category,
                 decoration: InputDecoration(
                   labelText: l10n.categoryLabel,
                   prefixIcon: const Icon(Icons.category),

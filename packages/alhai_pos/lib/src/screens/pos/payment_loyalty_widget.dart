@@ -155,7 +155,7 @@ class PaymentLoyaltyWidget extends StatelessWidget {
               const Spacer(),
               Switch(
                 value: useLoyaltyPoints,
-                activeThumbColor: AppColors.success,
+                activeColor: AppColors.success,
                 onChanged: onToggleLoyalty,
               ),
             ],

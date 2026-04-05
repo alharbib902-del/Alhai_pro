@@ -794,7 +794,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                   _saveAutoBackupSettings();
                 },
                 activeTrackColor: AppColors.primary.withValues(alpha: 0.5),
-                activeThumbColor: AppColors.primary,
+                activeColor: AppColors.primary,
               ),
             ],
           ),

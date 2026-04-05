@@ -463,7 +463,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen>
               ),
               const SizedBox(height: AlhaiSpacing.sm),
               DropdownButtonFormField<String>(
-                initialValue: selectedMethod,
+                value: selectedMethod,
                 decoration: InputDecoration(
                   labelText: 'Payment Method',
                   border: OutlineInputBorder(

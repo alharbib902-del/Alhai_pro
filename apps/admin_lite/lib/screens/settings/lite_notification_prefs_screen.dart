@@ -249,7 +249,7 @@ class _LiteNotificationPrefsScreenState
             value: value,
             onChanged: onChanged,
             activeTrackColor: AlhaiColors.primary,
-            activeThumbColor: isDark ? Colors.black : Colors.white,
+            activeColor: isDark ? Colors.black : Colors.white,
           ),
         ],
       ),

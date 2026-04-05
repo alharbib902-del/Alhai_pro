@@ -714,7 +714,7 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
                       style: const TextStyle(fontWeight: FontWeight.bold)),
                   const SizedBox(height: AlhaiSpacing.sm),
                   DropdownButtonFormField<String>(
-                    initialValue: _selectedRole,
+                    value: _selectedRole,
                     decoration:
                         const InputDecoration(border: OutlineInputBorder()),
                     items: [

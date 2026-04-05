@@ -438,7 +438,7 @@ class _UsersManagementScreenState extends ConsumerState<UsersManagementScreen> {
                                 border: const OutlineInputBorder())),
                         const SizedBox(height: AlhaiSpacing.sm),
                         DropdownButtonFormField<String>(
-                            initialValue: role,
+                            value: role,
                             decoration: InputDecoration(
                                 labelText: l10n.roleLabel,
                                 prefixIcon: const Icon(Icons.security),
@@ -536,7 +536,7 @@ class _UsersManagementScreenState extends ConsumerState<UsersManagementScreen> {
                         const SizedBox(height: AlhaiSpacing.sm),
                         if (user.role != 'owner')
                           DropdownButtonFormField<String>(
-                              initialValue: role,
+                              value: role,
                               decoration: InputDecoration(
                                   labelText: l10n.roleLabel,
                                   prefixIcon: const Icon(Icons.security),

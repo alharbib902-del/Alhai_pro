@@ -192,7 +192,7 @@ class _OffersContent extends ConsumerWidget {
                   onChanged: isExpired
                       ? null
                       : (v) => _toggleActive(ref, promotion, v),
-                  activeThumbColor: AppColors.primary,
+                  activeColor: AppColors.primary,
                 ),
                 onTap: () => _showPromotionDetails(context, ref, promotion),
               ),
@@ -310,7 +310,7 @@ class _OffersContent extends ConsumerWidget {
                         prefixIcon: const Icon(Icons.local_offer))),
                 const SizedBox(height: AlhaiSpacing.sm),
                 DropdownButtonFormField<String>(
-                  initialValue: type,
+                  value: type,
                   decoration: InputDecoration(
                       labelText: l10n.offerType,
                       prefixIcon: const Icon(Icons.category)),

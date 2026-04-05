@@ -282,7 +282,7 @@ class _TopProductsReportScreenState
           // فلتر الفئة
           Expanded(
             child: DropdownButtonFormField<String>(
-              initialValue: _selectedCategory,
+              value: _selectedCategory,
               decoration: InputDecoration(
                 labelText: l10n.categoryFilter,
                 contentPadding: const EdgeInsets.symmetric(
@@ -313,7 +313,7 @@ class _TopProductsReportScreenState
           // الترتيب حسب
           Expanded(
             child: DropdownButtonFormField<String>(
-              initialValue: _sortBy,
+              value: _sortBy,
               decoration: InputDecoration(
                 labelText: l10n.sortByField,
                 contentPadding: const EdgeInsets.symmetric(

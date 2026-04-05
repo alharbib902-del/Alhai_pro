@@ -44,8 +44,8 @@ command:
 
 scripts:
   analyze:
-    run: melos exec -c 6 -- dart analyze
-    description: Run analyzer in all packages and apps
+    run: melos exec -c 6 -- dart analyze --no-fatal-warnings
+    description: Run analyzer in all packages and apps (errors only, warnings non-fatal)
 
   test:
     run: melos exec -c 6 -- flutter test

@@ -690,7 +690,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
 
   Widget _buildCategoryDropdown(bool isDark, AppLocalizations l10n) {
     return DropdownButtonFormField<String?>(
-      initialValue: _selectedCategoryId,
+      value: _selectedCategoryId,
       isExpanded: true,
       dropdownColor: Theme.of(context).colorScheme.surface,
       style: TextStyle(
@@ -795,7 +795,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
-        activeThumbColor: AppColors.primary,
+        activeColor: AppColors.primary,
       ),
     );
   }

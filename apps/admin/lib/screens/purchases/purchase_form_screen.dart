@@ -227,7 +227,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
                 border:
                     OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
-              initialValue: _selectedSupplierId,
+              value: _selectedSupplierId,
               items: suppliers
                   .map(
                       (s) => DropdownMenuItem(value: s.id, child: Text(s.name)))

@@ -195,7 +195,7 @@ class _SACreateStoreScreenState extends ConsumerState<SACreateStoreScreen> {
                                 ),
                                 const SizedBox(height: AlhaiSpacing.md),
                                 DropdownButtonFormField<String>(
-                                  initialValue: _selectedBusiness,
+                                  value: _selectedBusiness,
                                   decoration: InputDecoration(
                                     labelText: l10n.businessType,
                                     prefixIcon:
