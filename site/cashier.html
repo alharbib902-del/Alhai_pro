@@ -62,22 +62,22 @@
 <div class="page-hero">
   <div class="icon">💳</div>
   <h1>نقطة البيع (الكاشير)</h1>
-  <p>نظام كاشير متقدم يعمل بدون إنترنت مع طباعة حرارية ودعم زاتكا</p>
+  <p>نظام كاشير متقدم يعمل بدون إنترنت مع طباعة حرارية ودعم هيئة الزكاة والدخل</p>
   <div class="stats-bar">
     <div class="stat-item fade-in">
-      <div class="stat-number">76</div>
+      <div class="stat-number">91</div>
       <div class="stat-label">ملف</div>
     </div>
     <div class="stat-item fade-in">
-      <div class="stat-number">37,271</div>
+      <div class="stat-number">55,338</div>
       <div class="stat-label">سطر</div>
     </div>
     <div class="stat-item fade-in">
-      <div class="stat-number">46</div>
+      <div class="stat-number">48</div>
       <div class="stat-label">شاشة</div>
     </div>
     <div class="stat-item fade-in">
-      <div class="stat-number">55</div>
+      <div class="stat-number">194</div>
       <div class="stat-label">اختبار</div>
     </div>
   </div>
@@ -88,7 +88,7 @@
   <div class="container">
     <div class="section-header fade-in">
       <span class="tag tag-blue">الشاشات</span>
-      <h2>46 شاشة متكاملة</h2>
+      <h2>48 شاشة متكاملة</h2>
       <p>تغطي كل العمليات من نقطة البيع إلى التقارير والإعدادات</p>
     </div>
 
@@ -136,6 +136,17 @@
         <h4>CashDrawer</h4>
         <p>إدارة درج النقدية - الرصيد الحالي، إدخال/إخراج نقدي مع السبب</p>
         <div class="tags"><span class="ftag">صندوق</span></div>
+      </div>
+      <div class="card">
+        <div class="card-top green"></div>
+        <div class="card-icon">🖥️</div>
+        <h4>شاشة العميل</h4>
+        <p>شاشة ثانية أمام العميل تعرض الفاتورة لحظياً مع حالات الترحيب والدفع والنتيجة</p>
+        <div class="tags">
+          <span class="ftag green">عرض لحظي</span>
+          <span class="ftag">BroadcastChannel</span>
+          <span class="ftag green">6 حالات</span>
+        </div>
       </div>
     </div>
 
@@ -188,6 +199,17 @@
         <div class="card-icon">💸</div>
         <h4>SplitRefund</h4>
         <p>استرجاع مبلغ مقسم - إرجاع المبلغ لكل طريقة دفع بشكل منفصل</p>
+      </div>
+      <div class="card">
+        <div class="card-top blue"></div>
+        <div class="card-icon">📱</div>
+        <h4>إدخال رقم الجوال</h4>
+        <p>خطوة سريعة قبل الدفع لربط العميل بالفاتورة عبر رقم الجوال — اختياري مع تخطي بضغطة واحدة</p>
+        <div class="tags">
+          <span class="ftag blue">اختياري</span>
+          <span class="ftag">بحث عملاء</span>
+          <span class="ftag blue">ولاء تلقائي</span>
+        </div>
       </div>
     </div>
 
@@ -431,7 +453,7 @@
       <div class="card">
         <div class="card-top yellow"></div>
         <h4>اعدادات الضريبة</h4>
-        <p>نسبة الضريبة، شامل/غير شامل، رقم زاتكا</p>
+        <p>نسبة الضريبة، شامل/غير شامل، رقم هيئة الزكاة والدخل</p>
         <div class="tags"><span class="ftag">متجر</span></div>
       </div>
       <div class="card">
@@ -487,6 +509,105 @@
         <h4>حول التطبيق</h4>
         <p>رقم الإصدار، التراخيص، الدعم الفني</p>
         <div class="tags"><span class="ftag">نظام</span></div>
+      </div>
+      <div class="card">
+        <div class="card-top blue"></div>
+        <div class="card-icon">🔧</div>
+        <h4>إعدادات الميزات</h4>
+        <p>تفعيل/تعطيل شاشة العميل، جمع رقم الجوال، الدفع اللاتلامسي، مهلة NFC</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION: شاشة العميل والدفع اللاتلامسي -->
+<section>
+  <div class="container">
+    <div class="section-header fade-in">
+      <span class="tag tag-blue">جديد</span>
+      <h2>شاشة العميل والدفع اللاتلامسي</h2>
+      <p>ميزات جديدة لتحسين تجربة العميل وتسريع عملية الدفع</p>
+    </div>
+
+    <div class="grid grid-2 fade-in">
+      <div class="card">
+        <div class="card-top blue"></div>
+        <div class="card-icon">🖥️</div>
+        <h4>شاشة العميل الثانية</h4>
+        <p>شاشة مستقلة على شاشة ثانية تعرض للعميل تفاصيل الفاتورة لحظياً أثناء البيع</p>
+        <table class="tbl" style="margin-top:14px">
+          <tr><th>الحالة</th><th>ما يظهر للعميل</th></tr>
+          <tr><td>انتظار</td><td>شاشة ترحيب مع اسم المتجر وعروض دوّارة</td></tr>
+          <tr><td>فاتورة</td><td>المنتجات والكميات والأسعار والإجمالي</td></tr>
+          <tr><td>رقم الجوال</td><td>جاري إدخال بيانات العميل</td></tr>
+          <tr><td>NFC</td><td>قرّب البطاقة أو الجوال مع أيقونة متحركة</td></tr>
+          <tr><td>نجاح</td><td>تمت العملية بنجاح + نقاط الولاء المكتسبة</td></tr>
+          <tr><td>فشل</td><td>رسالة الخطأ مع طلب المحاولة مرة أخرى</td></tr>
+        </table>
+        <div class="tags" style="margin-top:14px">
+          <span class="ftag blue">BroadcastChannel</span>
+          <span class="ftag green">cross-window</span>
+          <span class="ftag">read-only</span>
+          <span class="ftag blue">dark theme</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-top green"></div>
+        <div class="card-icon">📶</div>
+        <h4>الدفع اللاتلامسي (NFC)</h4>
+        <p>وضع استماع تلقائي يُفعّل عند فتح شاشة الدفع — ليس طريقة دفع منفصلة بل واجهة قبول بطاقة</p>
+        <table class="tbl" style="margin-top:14px">
+          <tr><th>المرحلة</th><th>الوصف</th></tr>
+          <tr><td>انتظار</td><td>NFC reader يستمع تلقائياً في الخلفية</td></tr>
+          <tr><td>اكتشاف</td><td>تم اكتشاف بطاقة — جاري القراءة</td></tr>
+          <tr><td>معالجة</td><td>تمرير للبوابة (MadaPaymentGateway)</td></tr>
+          <tr><td>نتيجة</td><td>نجاح أو فشل أو انتهاء المهلة</td></tr>
+        </table>
+        <div class="tags" style="margin-top:14px">
+          <span class="ftag green">SoftPOS</span>
+          <span class="ftag">Tap-to-Phone</span>
+          <span class="ftag green">Mock + Real</span>
+          <span class="ftag">فحص تلقائي</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-3 fade-in" style="margin-top:28px">
+      <div class="card">
+        <div class="card-top purple"></div>
+        <div class="card-icon">📱</div>
+        <h4>رقم الجوال قبل الدفع</h4>
+        <p>خطوة خفيفة لجمع رقم الجوال فقط — بدون إنشاء عميل كامل. تربط الفاتورة بالولاء والمرتجعات وسجل العميل</p>
+        <div class="tags">
+          <span class="ftag purple">اختياري</span>
+          <span class="ftag">تخطي بضغطة</span>
+          <span class="ftag purple">بحث تلقائي</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-top yellow"></div>
+        <div class="card-icon">📊</div>
+        <h4>معلومات العميل السريعة</h4>
+        <p>عند ربط عميل بالفاتورة يظهر ملخص فوري: عدد الزيارات، إجمالي المشتريات، الرصيد المستحق، نقاط الولاء</p>
+        <div class="tags">
+          <span class="ftag yellow">4 مؤشرات</span>
+          <span class="ftag">تحذير ديون</span>
+          <span class="ftag yellow">تحميل فوري</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-top green"></div>
+        <div class="card-icon">💬</div>
+        <h4>إيصال واتساب تلقائي</h4>
+        <p>بعد نجاح الدفع يُرسل الإيصال عبر واتساب تلقائياً للعميل إذا كان رقم الجوال متاحاً — بدون تدخل الكاشير</p>
+        <div class="tags">
+          <span class="ftag green">تلقائي</span>
+          <span class="ftag">fire &amp; forget</span>
+          <span class="ftag green">WaSender API</span>
+        </div>
       </div>
     </div>
   </div>
@@ -566,7 +687,7 @@
             </tr>
             <tr>
               <td>محتوى الإيصال</td>
-              <td>شعار المتجر، QR Code زاتكا، المنتجات، الضريبة، الإجمالي، طريقة الدفع</td>
+              <td>شعار المتجر، QR Code هيئة الزكاة والدخل، المنتجات، الضريبة، الإجمالي، طريقة الدفع</td>
             </tr>
             <tr>
               <td>إعادة الطباعة</td>
@@ -667,9 +788,19 @@
         <h4>6. الدفع - نقدي / بطاقة / آجل / مقسم <span class="step-tag">دفع</span></h4>
         <p>اختيار طريقة الدفع. للنقدي يُدخل المبلغ المدفوع ويحسب النظام الباقي. يمكن تقسيم الدفع بين عدة طرق.</p>
       </div>
+      <div class="journey-step fade-in">
+        <span class="tag tag-blue">خطوة اختيارية</span>
+        <h4>إدخال رقم جوال العميل</h4>
+        <p>خطوة سريعة لربط العميل — إدخال الرقم أو تخطي بضغطة واحدة</p>
+      </div>
+      <div class="journey-step fade-in">
+        <span class="tag tag-green">تلقائي</span>
+        <h4>الدفع اللاتلامسي</h4>
+        <p>NFC reader يستمع تلقائياً — العميل يرى "قرّب البطاقة" على شاشته</p>
+      </div>
       <div class="journey-step">
         <h4>7. طباعة الإيصال تلقائيا <span class="step-tag">طباعة</span></h4>
-        <p>بعد إتمام الدفع، يُطبع الإيصال تلقائيا مع QR Code زاتكا والتفاصيل الكاملة.</p>
+        <p>بعد إتمام الدفع، يُطبع الإيصال تلقائيا مع QR Code هيئة الزكاة والدخل والتفاصيل الكاملة.</p>
       </div>
       <div class="journey-step">
         <h4>8. تعليق فاتورة - خدمة عميل آخر - استئناف <span class="step-tag">تعليق</span></h4>
@@ -745,6 +876,17 @@
         <h3>كوبون</h3>
         <p>استخدام كوبون خصم كطريقة دفع جزئية أو كاملة. التحقق التلقائي من صلاحية الكوبون والرصيد المتبقي.</p>
       </div>
+      <div class="card">
+        <div class="card-top blue"></div>
+        <div class="card-icon">📶</div>
+        <h4>الدفع اللاتلامسي</h4>
+        <p>وضع استماع تلقائي — العميل يقرّب بطاقته أو جواله. يُعالج عبر بوابة مدى الموجودة</p>
+        <div class="tags">
+          <span class="ftag blue">NFC</span>
+          <span class="ftag">Tap-to-Phone</span>
+          <span class="ftag blue">SoftPOS</span>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -755,7 +897,7 @@
     <div class="section-header fade-in">
       <span class="tag tag-red">الاختبارات</span>
       <h2>الاختبارات المطلوبة</h2>
-      <p>55 اختبار شامل يغطي كل العمليات الحرجة</p>
+      <p>189 اختبار شامل يغطي كل العمليات الحرجة</p>
     </div>
 
     <div class="grid grid-2 fade-in">
@@ -874,6 +1016,19 @@
             </tbody>
           </table>
         </div>
+      </div>
+      <div class="card">
+        <div class="card-top blue"></div>
+        <h4>اختبارات الميزات الجديدة</h4>
+        <p>134 اختبار</p>
+        <table class="tbl">
+          <tr><th>الملف</th><th>النوع</th><th>العدد</th></tr>
+          <tr><td>customer_display_state_test</td><td>Unit</td><td>36</td></tr>
+          <tr><td>customer_display_service_test</td><td>Unit</td><td>27</td></tr>
+          <tr><td>nfc_listener_service_test</td><td>Unit</td><td>32</td></tr>
+          <tr><td>customer_display_providers_test</td><td>Unit</td><td>19</td></tr>
+          <tr><td>phone_entry_dialog_test</td><td>Unit</td><td>20</td></tr>
+        </table>
       </div>
     </div>
   </div>
