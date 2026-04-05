@@ -154,7 +154,7 @@ class _CustomerQuickInfoState extends State<CustomerQuickInfo> {
         padding: const EdgeInsets.all(AlhaiSpacing.xs),
         decoration: BoxDecoration(
           color: colorScheme.surfaceContainerLowest,
-          borderRadius: BorderRadius.circular(AppRadius.md),
+          borderRadius: BorderRadius.circular(AlhaiRadius.md),
           border: Border.all(
             color: hasDebt
                 ? AppColors.warning.withValues(alpha: 0.5)
@@ -213,7 +213,7 @@ class _CustomerQuickInfoState extends State<CustomerQuickInfo> {
             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
             decoration: BoxDecoration(
               color: AppColors.info.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(AppRadius.xs),
+              borderRadius: BorderRadius.circular(AlhaiRadius.xs),
             ),
             child: const Text(
               'شركة',

@@ -87,9 +87,11 @@ class _CashierFeaturesSettingsScreenState
 
     await _db.into(_db.settingsTable).insertOnConflictUpdate(
           SettingsTableCompanion.insert(
+            id: '${storeId}_$key',
             storeId: storeId,
             key: key,
             value: value,
+            updatedAt: DateTime.now(),
           ),
         );
 
