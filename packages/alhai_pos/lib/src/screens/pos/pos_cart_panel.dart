@@ -8,6 +8,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import '../../providers/cart_providers.dart';
+import '../../widgets/pos/customer_quick_info.dart';
 import '../../widgets/pos/customer_search_dialog.dart';
 import '../../widgets/pos/sale_note_dialog.dart';
 import '../../providers/held_invoices_providers.dart';
@@ -84,6 +85,14 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
 
           // Customer input
           _buildCustomerInput(context, ref, cartState, isDark, l10n),
+
+          // Customer quick info (when customer is linked)
+          if (cartState.customerId != null &&
+              cartState.customerId!.isNotEmpty)
+            CustomerQuickInfo(
+              customerId: cartState.customerId!,
+              storeId: ref.read(currentStoreIdProvider) ?? kDefaultStoreId,
+            ),
 
           // Divider
           Divider(

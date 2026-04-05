@@ -1,29 +1,31 @@
 /// شاشة عرض العميل - Customer Display Screen
 ///
 /// شاشة للقراءة فقط تُعرض على الشاشة الثانية الموجهة للعميل.
-/// تستقبل الحالة من الكاشير عبر [StreamProvider] وتعرض:
-/// - شاشة ترحيب (idle)
-/// - الفاتورة الحالية (cart)
-/// - إدخال بيانات العميل (phoneEntry)
-/// - انتظار NFC (nfcWaiting)
-/// - نجاح الدفع (success)
-/// - فشل الدفع (failure)
+///
+/// يعمل بوضعين:
+/// 1. **نفس النافذة**: يستقبل الحالة عبر [StreamProvider] من الكاشير
+/// 2. **نافذة مستقلة** (web): يستقبل الحالة عبر BroadcastChannel
+///
+/// عند فتح الشاشة في نافذة جديدة على الويب، تُنشئ قناة BroadcastChannel
+/// خاصة بها لاستقبال الحالات من نافذة الكاشير.
 library;
 
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 
+import '../../providers/customer_display_providers.dart';
+import '../../services/customer_display/customer_display_service.dart';
 import '../../services/customer_display/customer_display_state.dart';
+import '../../services/customer_display/web_display_channel_factory.dart'
+    as channel_factory;
 
-// ============================================================================
-// PROVIDER
-// ============================================================================
-
-/// مزود حالة شاشة العميل - يُعاد تعريفه على مستوى التطبيق
-final customerDisplayStreamProvider = StreamProvider<CustomerDisplayState>(
-  (ref) => Stream.value(const CustomerDisplayState.idle()),
-);
+// The customerDisplayStreamProvider is defined in customer_display_providers.dart
+// and imported above. It provides the state stream from the cashier service.
+// In standalone web mode, the screen uses its own BroadcastChannel instead.
 
 // ============================================================================
 // SCREEN
@@ -44,6 +46,26 @@ class _CustomerDisplayScreenState extends ConsumerState<CustomerDisplayScreen>
   late final AnimationController _pulseController;
   late final Animation<double> _pulseAnimation;
 
+  /// فهرس الشريحة الحالية في شاشة الترحيب الدوارة
+  int _idleSlideIndex = 0;
+
+  /// مؤقت تدوير شرائح شاشة الترحيب
+  Timer? _idleSlideTimer;
+
+  // ── BroadcastChannel receiver (web standalone mode) ──
+  /// Whether this screen is receiving state via its own BroadcastChannel
+  /// (i.e. running in a standalone window, not embedded in the cashier app).
+  bool _isStandaloneMode = false;
+
+  /// The BroadcastChannel receiver for standalone mode (web only).
+  CustomerDisplayChannel? _receiverChannel;
+
+  /// Subscription to the receiver channel's state stream.
+  StreamSubscription<CustomerDisplayState>? _receiverSubscription;
+
+  /// Current state received via BroadcastChannel (standalone mode).
+  CustomerDisplayState _broadcastState = const CustomerDisplayState.idle();
+
   @override
   void initState() {
     super.initState();
@@ -58,10 +80,54 @@ class _CustomerDisplayScreenState extends ConsumerState<CustomerDisplayScreen>
         curve: AlhaiMotion.standard,
       ),
     );
+
+    _startIdleSlideTimer();
+    _initBroadcastReceiver();
+  }
+
+  /// Initialize the BroadcastChannel receiver on web.
+  ///
+  /// On web, the customer display screen creates its own channel to listen
+  /// for state updates from the cashier window. This works regardless of
+  /// whether the screen is in the same window or a separate window.
+  void _initBroadcastReceiver() {
+    if (!kIsWeb) return;
+
+    try {
+      _receiverChannel = channel_factory.createWebDisplayChannel();
+      _receiverSubscription = _receiverChannel!.stateStream.listen(
+        (state) {
+          if (mounted) {
+            setState(() {
+              _broadcastState = state;
+              _isStandaloneMode = true;
+            });
+          }
+        },
+        onError: (Object error) {
+          debugPrint('[CustomerDisplay] Receiver error: $error');
+        },
+      );
+      debugPrint('[CustomerDisplay] Receiver channel initialized');
+    } catch (e) {
+      debugPrint('[CustomerDisplay] Failed to init receiver: $e');
+    }
+  }
+
+  void _startIdleSlideTimer() {
+    _idleSlideTimer?.cancel();
+    _idleSlideTimer = Timer.periodic(const Duration(seconds: 8), (_) {
+      if (mounted) {
+        setState(() => _idleSlideIndex++);
+      }
+    });
   }
 
   @override
   void dispose() {
+    _idleSlideTimer?.cancel();
+    _receiverSubscription?.cancel();
+    _receiverChannel?.dispose();
     _pulseController.dispose();
     super.dispose();
   }
@@ -79,7 +145,31 @@ class _CustomerDisplayScreenState extends ConsumerState<CustomerDisplayScreen>
 
   @override
   Widget build(BuildContext context) {
-    final asyncState = ref.watch(customerDisplayStreamProvider);
+    // On web standalone mode, use state from BroadcastChannel directly.
+    // Otherwise, use the Riverpod provider (same-window mode).
+    final Widget body;
+    if (_isStandaloneMode) {
+      // الوضع المستقل: استقبال عبر BroadcastChannel
+      body = AnimatedSwitcher(
+        duration: AlhaiDurations.slow,
+        switchInCurve: AlhaiMotion.standardDecelerate,
+        switchOutCurve: AlhaiMotion.standardAccelerate,
+        child: _buildPhase(_broadcastState),
+      );
+    } else {
+      // الوضع العادي: استقبال عبر Riverpod provider
+      final asyncState = ref.watch(customerDisplayStreamProvider);
+      body = asyncState.when(
+        data: (state) => AnimatedSwitcher(
+          duration: AlhaiDurations.slow,
+          switchInCurve: AlhaiMotion.standardDecelerate,
+          switchOutCurve: AlhaiMotion.standardAccelerate,
+          child: _buildPhase(state),
+        ),
+        loading: () => _buildIdleView(const CustomerDisplayState.idle()),
+        error: (_, __) => _buildIdleView(const CustomerDisplayState.idle()),
+      );
+    }
 
     // تجاهل أي تفاعل لمس - الشاشة للقراءة فقط
     return IgnorePointer(
@@ -87,16 +177,7 @@ class _CustomerDisplayScreenState extends ConsumerState<CustomerDisplayScreen>
         textDirection: TextDirection.rtl,
         child: Scaffold(
           backgroundColor: AppColors.backgroundDark,
-          body: asyncState.when(
-            data: (state) => AnimatedSwitcher(
-              duration: AlhaiDurations.slow,
-              switchInCurve: AlhaiMotion.standardDecelerate,
-              switchOutCurve: AlhaiMotion.standardAccelerate,
-              child: _buildPhase(state),
-            ),
-            loading: () => _buildIdleView(const CustomerDisplayState.idle()),
-            error: (_, __) => _buildIdleView(const CustomerDisplayState.idle()),
-          ),
+          body: body,
         ),
       ),
     );
@@ -120,6 +201,41 @@ class _CustomerDisplayScreenState extends ConsumerState<CustomerDisplayScreen>
   // ==========================================================================
 
   Widget _buildIdleView(CustomerDisplayState state) {
+    // بناء قائمة الشرائح الدوارة
+    final slides = <Widget>[
+      // شريحة 1: شعار المتجر + نسعد بخدمتك
+      _buildIdleSlide(
+        key: 'slide_store',
+        icon: Icons.store_rounded,
+        iconColor: AlhaiColors.primary,
+        text: '\u0646\u0633\u0639\u062F \u0628\u062E\u062F\u0645\u062A\u0643',
+      ),
+      // شريحة 3: برنامج الولاء
+      _buildIdleSlide(
+        key: 'slide_loyalty',
+        icon: Icons.card_giftcard_rounded,
+        iconColor: AlhaiColors.warning,
+        text: '\u0627\u0633\u0623\u0644 \u0639\u0646 \u0628\u0631\u0646\u0627\u0645\u062C \u0627\u0644\u0648\u0644\u0627\u0621',
+      ),
+    ];
+
+    // شريحة NFC - فقط إذا كانت الميزة مفعّلة
+    final featureSettings =
+        ref.watch(cashierFeatureSettingsProvider).valueOrNull;
+    if (featureSettings?.enableNfcPayment == true) {
+      slides.insert(
+        1,
+        _buildIdleSlide(
+          key: 'slide_nfc',
+          icon: Icons.contactless_rounded,
+          iconColor: AlhaiColors.info,
+          text: '\u0627\u062F\u0641\u0639 \u0628\u062A\u0642\u0631\u064A\u0628 \u0627\u0644\u0628\u0637\u0627\u0642\u0629',
+        ),
+      );
+    }
+
+    final currentSlide = slides[_idleSlideIndex % slides.length];
+
     return Container(
       key: const ValueKey('idle'),
       width: double.infinity,
@@ -161,6 +277,19 @@ class _CustomerDisplayScreenState extends ConsumerState<CustomerDisplayScreen>
             ),
             const SizedBox(height: AlhaiSpacing.xxl),
 
+            // قسم المحتوى الدوّار
+            SizedBox(
+              height: 160,
+              child: AnimatedSwitcher(
+                duration: AlhaiDurations.slow,
+                switchInCurve: AlhaiMotion.standardDecelerate,
+                switchOutCurve: AlhaiMotion.standardAccelerate,
+                child: currentSlide,
+              ),
+            ),
+
+            const SizedBox(height: AlhaiSpacing.lg),
+
             // نقطة نابضة للإشارة إلى أن الشاشة نشطة
             AnimatedBuilder(
               animation: _pulseAnimation,
@@ -181,6 +310,38 @@ class _CustomerDisplayScreenState extends ConsumerState<CustomerDisplayScreen>
           ],
         ),
       ),
+    );
+  }
+
+  /// بناء شريحة واحدة في شاشة الترحيب الدوارة
+  Widget _buildIdleSlide({
+    required String key,
+    required IconData icon,
+    required Color iconColor,
+    required String text,
+  }) {
+    return Column(
+      key: ValueKey(key),
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 80,
+          height: 80,
+          decoration: BoxDecoration(
+            color: iconColor.withValues(alpha: 0.12),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(icon, color: iconColor, size: 40),
+        ),
+        const SizedBox(height: AlhaiSpacing.md),
+        Text(
+          text,
+          style: AlhaiTypography.titleLarge.copyWith(
+            color: AppColors.textSecondaryDark,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ],
     );
   }
 

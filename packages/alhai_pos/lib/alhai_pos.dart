@@ -42,6 +42,8 @@ export 'src/services/whatsapp_service.dart';
 export 'src/services/whatsapp_receipt_service.dart';
 export 'src/services/customer_display/customer_display_service.dart';
 export 'src/services/customer_display/customer_display_state.dart';
+export 'src/services/customer_display/web_display_channel_factory.dart';
+export 'src/services/payment/nfc_capability_service.dart';
 export 'src/services/payment/nfc_listener_service.dart';
 
 // ─── Widgets: Cash ──────────────────────────────────────────────
@@ -62,6 +64,7 @@ export 'src/widgets/pos/inline_payment.dart' hide PaymentMethod, PaymentResult;
 export 'src/widgets/pos/payment_success_dialog.dart';
 export 'src/widgets/pos/quantity_input_dialog.dart';
 export 'src/widgets/pos/split_payment_dialog.dart' hide PaymentMethod;
+export 'src/widgets/pos/customer_quick_info.dart';
 
 // ─── Widgets: Returns ───────────────────────────────────────────
 export 'src/widgets/returns/create_return_drawer.dart';

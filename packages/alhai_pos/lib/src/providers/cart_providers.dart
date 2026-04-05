@@ -83,6 +83,7 @@ class CartState {
   final PaymentMethod paymentMethod;
   final String? customerId;
   final String? customerName;
+  final String? customerPhone;
   final String? notes;
   final DateTime? lastModified;
 
@@ -92,6 +93,7 @@ class CartState {
     this.paymentMethod = PaymentMethod.cash,
     this.customerId,
     this.customerName,
+    this.customerPhone,
     this.notes,
     this.lastModified,
   });
@@ -120,6 +122,7 @@ class CartState {
     PaymentMethod? paymentMethod,
     String? customerId,
     String? customerName,
+    String? customerPhone,
     String? notes,
     DateTime? lastModified,
     bool clearCustomer = false,
@@ -130,6 +133,7 @@ class CartState {
       paymentMethod: paymentMethod ?? this.paymentMethod,
       customerId: clearCustomer ? null : (customerId ?? this.customerId),
       customerName: clearCustomer ? null : (customerName ?? this.customerName),
+      customerPhone: clearCustomer ? null : (customerPhone ?? this.customerPhone),
       notes: notes ?? this.notes,
       lastModified: lastModified ?? DateTime.now(),
     );
@@ -142,6 +146,7 @@ class CartState {
         'paymentMethod': paymentMethod.name,
         'customerId': customerId,
         'customerName': customerName,
+        'customerPhone': customerPhone,
         'notes': notes,
         'lastModified': lastModified?.toIso8601String(),
       };
@@ -160,6 +165,7 @@ class CartState {
       ),
       customerId: json['customerId'] as String?,
       customerName: json['customerName'] as String?,
+      customerPhone: json['customerPhone'] as String?,
       notes: json['notes'] as String?,
       lastModified: json['lastModified'] != null
           ? DateTime.tryParse(json['lastModified'] as String)
@@ -681,6 +687,12 @@ class CartNotifier extends StateNotifier<CartState> {
       customerName: customerName,
       clearCustomer: customerId == null,
     );
+    _saveCart();
+  }
+
+  /// تعيين رقم جوال العميل
+  void setCustomerPhone(String? phone) {
+    state = state.copyWith(customerPhone: phone);
     _saveCart();
   }
 

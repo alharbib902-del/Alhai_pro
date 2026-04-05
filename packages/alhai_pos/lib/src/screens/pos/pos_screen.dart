@@ -22,6 +22,8 @@ import 'pos_product_shortcuts.dart';
 import 'package:alhai_core/alhai_core.dart' show UserRole;
 import 'package:alhai_zatca/alhai_zatca.dart' show VatCalculator;
 import 'pos_products_panel.dart';
+import 'phone_entry_dialog.dart';
+import '../../providers/customer_display_providers.dart';
 
 /// شاشة نقطة البيع الرئيسية - التصميم الجديد
 ///
@@ -295,7 +297,26 @@ class _PosScreenState extends ConsumerState<PosScreen> {
     );
   }
 
-  void _showPaymentDialog(double total) {
+  Future<void> _showPaymentDialog(double total) async {
+    // عرض نافذة إدخال رقم الجوال إذا كانت الميزة مفعّلة
+    final featureSettings = ref.read(cashierFeatureSettingsProvider).valueOrNull;
+    if (featureSettings?.enablePhoneCollection == true) {
+      final storeId = ref.read(currentStoreIdProvider) ?? '';
+      final phoneResult = await PhoneEntryDialog.show(context, storeId: storeId);
+      if (!mounted) return;
+
+      if (!phoneResult.wasSkipped) {
+        ref.read(cartStateProvider.notifier).setCustomerPhone(phoneResult.phone);
+        if (phoneResult.hasExistingCustomer) {
+          ref.read(cartStateProvider.notifier).setCustomer(
+            phoneResult.customerId,
+            customerName: phoneResult.customerName,
+          );
+        }
+      }
+    }
+
+    if (!mounted) return;
     setState(() => _isPaymentDialogOpen = true);
     final isWide = context.isDesktop;
 

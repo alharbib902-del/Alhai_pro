@@ -15,6 +15,9 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:uuid/uuid.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_zatca/alhai_zatca.dart' show VatCalculator;
+import '../../providers/cart_providers.dart';
+import '../../providers/customer_display_providers.dart';
+import 'phone_entry_dialog.dart';
 
 /// شاشة البيع السريع
 class QuickSaleScreen extends ConsumerStatefulWidget {
@@ -778,8 +781,28 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
     }
   }
 
-  void _checkout() {
+  Future<void> _checkout() async {
     if (_cartItems.isEmpty) return;
+
+    // عرض نافذة إدخال رقم الجوال إذا كانت الميزة مفعّلة
+    final featureSettings = ref.read(cashierFeatureSettingsProvider).valueOrNull;
+    if (featureSettings?.enablePhoneCollection == true) {
+      final storeId = ref.read(currentStoreIdProvider) ?? '';
+      final phoneResult = await PhoneEntryDialog.show(context, storeId: storeId);
+      if (!mounted) return;
+
+      if (!phoneResult.wasSkipped) {
+        ref.read(cartStateProvider.notifier).setCustomerPhone(phoneResult.phone);
+        if (phoneResult.hasExistingCustomer) {
+          ref.read(cartStateProvider.notifier).setCustomer(
+            phoneResult.customerId,
+            customerName: phoneResult.customerName,
+          );
+        }
+      }
+    }
+
+    if (!mounted) return;
     context.push('/pos/payment');
   }
 }

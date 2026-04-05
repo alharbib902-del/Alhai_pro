@@ -20,6 +20,7 @@ import 'package:get_it/get_it.dart';
 import 'package:alhai_database/alhai_database.dart' hide PaymentMethod;
 import '../../providers/sale_providers.dart';
 import '../../providers/cart_providers.dart';
+import '../../services/whatsapp_receipt_service.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import '../../services/sale_service.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
@@ -111,7 +112,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
 
   /// بدء الاستماع لـ NFC إذا كانت الميزة مفعّلة
   void _startNfcListenerIfEnabled() {
-    final featureSettings = ref.read(cashierFeatureSettingsProvider).valueOrNull;
+    final featureSettings =
+        ref.read(cashierFeatureSettingsProvider).valueOrNull;
     if (featureSettings?.enableNfcPayment != true) return;
 
     final nfcService = ref.read(nfcListenerServiceProvider);
@@ -126,7 +128,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
   }
 
   /// تحديث شاشة العميل بحالة السلة
-  void _updateCustomerDisplay(CartState cartState, double subtotal, double tax, double discount) {
+  void _updateCustomerDisplay(
+      CartState cartState, double subtotal, double tax, double discount) {
     try {
       final displayService = ref.read(customerDisplayServiceProvider);
       if (!displayService.isEnabled) return;
@@ -234,7 +237,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
     _updateCustomerDisplay(cartState, subtotal, tax, cartState.discount);
 
     // الاستماع لأحداث NFC
-    ref.listen<AsyncValue<NfcListenerEvent>>(nfcListenerStreamProvider, (prev, next) {
+    ref.listen<AsyncValue<NfcListenerEvent>>(nfcListenerStreamProvider,
+        (prev, next) {
       next.whenData((event) {
         switch (event) {
           case NfcCompleted(:final result):
@@ -755,8 +759,22 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
         ),
         // مؤشر NFC (إذا كانت الميزة مفعّلة)
         Builder(builder: (context) {
-          final featureSettings = ref.watch(cashierFeatureSettingsProvider).valueOrNull;
-          if (featureSettings?.enableNfcPayment != true) return const SizedBox.shrink();
+          final featureSettings =
+              ref.watch(cashierFeatureSettingsProvider).valueOrNull;
+          if (featureSettings?.enableNfcPayment != true)
+            return const SizedBox.shrink();
+
+          final capability = ref.watch(nfcCapabilityProvider);
+          final bool isReady = capability.valueOrNull?.isReady ?? false;
+          final String? reason = capability.valueOrNull?.unavailableReason;
+
+          final Color bannerColor =
+              isReady ? AlhaiColors.info : AlhaiColors.warning;
+          final String bannerText = isReady
+              ? 'الدفع اللاتلامسي مفعّل — يمكن للعميل تقريب البطاقة'
+              : reason ?? 'NFC غير متاح على هذا الجهاز';
+          final IconData bannerIcon =
+              isReady ? Icons.contactless_rounded : Icons.warning_amber_rounded;
 
           return Container(
             width: double.infinity,
@@ -766,19 +784,19 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
               vertical: AppSpacing.sm,
             ),
             decoration: BoxDecoration(
-              color: AlhaiColors.info.withValues(alpha: 0.06),
+              color: bannerColor.withValues(alpha: 0.06),
               borderRadius: BorderRadius.circular(AppRadius.md),
-              border: Border.all(color: AlhaiColors.info.withValues(alpha: 0.3)),
+              border: Border.all(color: bannerColor.withValues(alpha: 0.3)),
             ),
             child: Row(
               children: [
-                Icon(Icons.contactless_rounded, size: 20, color: AlhaiColors.info),
+                Icon(bannerIcon, size: 20, color: bannerColor),
                 const SizedBox(width: AppSpacing.sm),
                 Expanded(
                   child: Text(
-                    'الدفع اللاتلامسي مفعّل — يمكن للعميل تقريب البطاقة',
+                    bannerText,
                     style: AppTypography.bodySmall.copyWith(
-                      color: AlhaiColors.info,
+                      color: bannerColor,
                     ),
                   ),
                 ),
@@ -1184,6 +1202,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
         total: total,
         paymentMethod: _isSplitPayment ? 'mixed' : _selectedMethod.name,
         customerId: cartState.customerId,
+        customerPhone: cartState.customerPhone,
         notes: cartState.notes,
         shiftId: openShift?.id,
       );
@@ -1209,19 +1228,68 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
         );
       }
 
+      // بناء رسالة النجاح مع نقاط الولاء المكتسبة
+      String successMessage = '\u062A\u0645\u062A \u0627\u0644\u0639\u0645\u0644\u064A\u0629 \u0628\u0646\u062C\u0627\u062D';
+      if (cartState.customerId != null && loyaltySettings.isEnabled) {
+        final pointsEarned = ((subtotal + tax) * loyaltySettings.pointsPerRiyal).floor();
+        if (pointsEarned > 0) {
+          successMessage = '\u062A\u0645\u062A \u0627\u0644\u0639\u0645\u0644\u064A\u0629 \u0628\u0646\u062C\u0627\u062D\n\u062A\u0645 \u0625\u0636\u0627\u0641\u0629 $pointsEarned \u0646\u0642\u0637\u0629';
+        }
+      }
+
       // Show success animation
       setState(() {
         _isProcessing = false;
         _showSuccess = true;
       });
-      // تحديث شاشة العميل - نجاح
+      // تحديث شاشة العميل - نجاح مع رسالة الولاء
       try {
-        ref.read(customerDisplayServiceProvider).showSuccess(total: total);
+        ref.read(customerDisplayServiceProvider).showSuccess(
+          total: total,
+          message: successMessage,
+        );
       } catch (_) {}
       _animationController.forward();
 
       // Wait and navigate
       await Future.delayed(const Duration(seconds: 2));
+
+      // إرسال إيصال واتساب تلقائي إذا كان الرقم متاحاً
+      if (cartState.customerPhone != null && cartState.customerPhone!.isNotEmpty) {
+        try {
+          final whatsappService = ref.read(whatsappReceiptServiceProvider);
+          final receiptText = WhatsAppReceiptService.formatReceipt(
+            storeName: '',
+            receiptNo: saleId.substring(0, 8),
+            date: DateTime.now(),
+            items: cartState.items
+                .map((item) => ReceiptLineItem(
+                      name: item.product.name,
+                      quantity: item.quantity,
+                      total: item.total,
+                    ))
+                .toList(),
+            subtotal: subtotal,
+            tax: tax,
+            discount: cartState.discount + loyaltyDiscount,
+            total: total,
+            paymentMethod: _getMethodLabel(),
+          );
+          // Non-blocking - لا ننتظر النتيجة
+          whatsappService
+              .sendReceiptText(
+                phone: cartState.customerPhone!,
+                receiptText: receiptText,
+                saleId: saleId,
+              )
+              .catchError((Object e) {
+            debugPrint('[PaymentScreen] WhatsApp receipt failed (non-blocking): $e');
+            return '';
+          });
+        } catch (e) {
+          debugPrint('[PaymentScreen] WhatsApp service not available: $e');
+        }
+      }
 
       // مسح السلة بعد البيع الناجح
       ref.read(cartStateProvider.notifier).clear();
@@ -1236,7 +1304,9 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
 
       // إعادة شاشة العميل للانتظار بعد 3 ثوان
       Future.delayed(const Duration(seconds: 3), () {
-        try { ref.read(customerDisplayServiceProvider).showIdle(); } catch (_) {}
+        try {
+          ref.read(customerDisplayServiceProvider).showIdle();
+        } catch (_) {}
       });
 
       // الانتقال لشاشة الإيصال
@@ -1246,7 +1316,9 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
     } catch (e) {
       // تحديث شاشة العميل - فشل
       try {
-        ref.read(customerDisplayServiceProvider).showFailure(message: e.toString());
+        ref
+            .read(customerDisplayServiceProvider)
+            .showFailure(message: e.toString());
       } catch (_) {}
       if (mounted) {
         setState(() => _isProcessing = false);

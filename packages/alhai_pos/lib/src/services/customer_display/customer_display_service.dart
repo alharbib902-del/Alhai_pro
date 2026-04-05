@@ -1,14 +1,15 @@
 /// Customer Display Service - خدمة شاشة العميل الثانية
 ///
 /// تدير المزامنة بين شاشة الكاشير وشاشة العميل:
-/// - BroadcastChannel للويب (cross-window)
-/// - StreamController للعمليات داخل نفس النافذة
+/// - BroadcastChannel للويب (cross-window communication)
+/// - InMemoryDisplayChannel للعمليات داخل نفس النافذة / non-web
 /// - تدعم فتح/إغلاق الشاشة الثانية
 library;
 
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'customer_display_state.dart';
+import 'web_display_channel_factory.dart' as channel_factory;
 
 // ============================================================================
 // ABSTRACT CHANNEL (platform-agnostic)
@@ -58,75 +59,12 @@ class InMemoryDisplayChannel implements CustomerDisplayChannel {
 }
 
 // ============================================================================
-// WEB BROADCAST CHANNEL
+// WEB BROADCAST CHANNEL (factory)
 // ============================================================================
 
-/// قناة BroadcastChannel للويب - تعمل بين النوافذ
-///
-/// تستخدم Web BroadcastChannel API للتواصل بين:
-/// - نافذة الكاشير (sender)
-/// - نافذة شاشة العميل (receiver)
-///
-/// ملاحظة: تعمل فقط على نفس الـ origin
-class WebBroadcastDisplayChannel implements CustomerDisplayChannel {
-  final StreamController<CustomerDisplayState> _streamController =
-      StreamController<CustomerDisplayState>.broadcast();
-  bool _isConnected = false;
-
-  // Web-specific: will be initialized via conditional import or js_interop
-  // For now, falls back to in-memory if web APIs unavailable
-  final InMemoryDisplayChannel _fallback = InMemoryDisplayChannel();
-
-  WebBroadcastDisplayChannel() {
-    _init();
-  }
-
-  void _init() {
-    if (kIsWeb) {
-      try {
-        // Use the in-memory fallback within same isolate
-        // Real BroadcastChannel integration would use dart:js_interop
-        _isConnected = true;
-        debugPrint('[CustomerDisplay] Web channel initialized (in-memory mode)');
-      } catch (e) {
-        debugPrint('[CustomerDisplay] BroadcastChannel not available: $e');
-        _isConnected = false;
-      }
-    } else {
-      _isConnected = true;
-    }
-  }
-
-  @override
-  void sendState(CustomerDisplayState state) {
-    if (!_isConnected) return;
-
-    // Send via in-memory fallback (works in same isolate)
-    _fallback.sendState(state);
-
-    // Also broadcast to stream controller for direct listeners
-    if (!_streamController.isClosed) {
-      _streamController.add(state);
-    }
-
-    if (kDebugMode) {
-      debugPrint('[CustomerDisplay] State sent: ${state.phase.name}');
-    }
-  }
-
-  @override
-  Stream<CustomerDisplayState> get stateStream =>
-      _fallback.stateStream;
-
-  @override
-  bool get isConnected => _isConnected;
-
-  @override
-  void dispose() {
-    _streamController.close();
-    _isConnected = false;
-  }
-}
+// The real WebBroadcastDisplayChannel is in web_display_channel.dart
+// and is selected at compile time via conditional import in
+// web_display_channel_factory.dart. See createWebDisplayChannel().
 
 // ============================================================================
 // CUSTOMER DISPLAY SERVICE
@@ -149,10 +87,17 @@ class CustomerDisplayService {
   CustomerDisplayState _lastState = const CustomerDisplayState.idle();
 
   CustomerDisplayService({CustomerDisplayChannel? channel}) {
-    _channel = channel ??
-        (kIsWeb
-            ? WebBroadcastDisplayChannel()
-            : InMemoryDisplayChannel());
+    _channel = channel ?? _createDefaultChannel();
+  }
+
+  /// Creates the platform-appropriate channel:
+  /// - Web: real BroadcastChannel (cross-window)
+  /// - Native: InMemoryDisplayChannel (same-process)
+  static CustomerDisplayChannel _createDefaultChannel() {
+    if (kIsWeb) {
+      return channel_factory.createWebDisplayChannel();
+    }
+    return InMemoryDisplayChannel();
   }
 
   /// تفعيل الخدمة

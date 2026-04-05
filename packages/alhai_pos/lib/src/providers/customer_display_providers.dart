@@ -9,12 +9,14 @@
 /// - [nfcListenerStreamProvider]: بث أحداث NFC
 library;
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_it/get_it.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import '../services/customer_display/customer_display_service.dart';
 import '../services/customer_display/customer_display_state.dart';
+import '../services/payment/nfc_capability_service.dart';
 import '../services/payment/nfc_listener_service.dart';
 import '../services/payment/payment_gateway.dart';
 
@@ -66,10 +68,8 @@ final cashierFeatureSettingsProvider =
     }
 
     return CashierFeatureSettings(
-      enableCustomerDisplay:
-          settingsMap['feature_customer_display'] == 'true',
-      enablePhoneCollection:
-          settingsMap['feature_phone_collection'] != 'false',
+      enableCustomerDisplay: settingsMap['feature_customer_display'] == 'true',
+      enablePhoneCollection: settingsMap['feature_phone_collection'] != 'false',
       enableNfcPayment: settingsMap['feature_nfc_payment'] == 'true',
       nfcTimeoutSeconds:
           int.tryParse(settingsMap['nfc_timeout_seconds'] ?? '') ?? 30,
@@ -84,8 +84,7 @@ final cashierFeatureSettingsProvider =
 // ============================================================================
 
 /// مزود خدمة شاشة العميل (singleton)
-final customerDisplayServiceProvider =
-    Provider<CustomerDisplayService>((ref) {
+final customerDisplayServiceProvider = Provider<CustomerDisplayService>((ref) {
   final service = CustomerDisplayService();
 
   // تفعيل/تعطيل حسب الإعدادات
@@ -152,4 +151,23 @@ final nfcListenerServiceProvider = Provider<NfcListenerService>((ref) {
 final nfcListenerStreamProvider = StreamProvider<NfcListenerEvent>((ref) {
   final service = ref.watch(nfcListenerServiceProvider);
   return service.events;
+});
+
+// ============================================================================
+// NFC CAPABILITY PROVIDERS
+// ============================================================================
+
+/// مزود خدمة فحص NFC
+final nfcCapabilityServiceProvider = Provider<NfcCapabilityService>((ref) {
+  if (kIsWeb) {
+    return WebNfcCapabilityService();
+  }
+  return NativeNfcCapabilityService();
+});
+
+/// مزود حالة قدرة NFC
+final nfcCapabilityProvider =
+    FutureProvider.autoDispose<NfcCapability>((ref) async {
+  final service = ref.watch(nfcCapabilityServiceProvider);
+  return service.checkCapability();
 });

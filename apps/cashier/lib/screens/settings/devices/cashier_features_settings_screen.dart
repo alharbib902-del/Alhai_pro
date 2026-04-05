@@ -9,6 +9,7 @@
 /// يحفظ الإعدادات في settings_table عبر قاعدة البيانات.
 library;
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -67,8 +68,7 @@ class _CashierFeaturesSettingsScreenState
               settingsMap['feature_customer_display'] == 'true';
           _enablePhoneCollection =
               settingsMap['feature_phone_collection'] != 'false';
-          _enableNfcPayment =
-              settingsMap['feature_nfc_payment'] == 'true';
+          _enableNfcPayment = settingsMap['feature_nfc_payment'] == 'true';
           _nfcTimeoutSeconds =
               int.tryParse(settingsMap['nfc_timeout_seconds'] ?? '') ?? 30;
         });
@@ -198,15 +198,29 @@ class _CashierFeaturesSettingsScreenState
               Padding(
                 padding: const EdgeInsets.all(AlhaiSpacing.md),
                 child: FilledButton.icon(
-                  onPressed: () => context.push('/customer-display'),
-                  icon: const Icon(Icons.open_in_new_rounded, size: 18),
-                  label: const Text('فتح شاشة العميل'),
+                  onPressed: () {
+                    if (kIsWeb) {
+                      // Open in a new browser window for second monitor
+                      openCustomerDisplayWindow(
+                        '/#/customer-display',
+                      );
+                    } else {
+                      // On non-web, navigate within the app
+                      context.push('/customer-display');
+                    }
+                  },
+                  icon: Icon(
+                    kIsWeb ? Icons.open_in_new_rounded : Icons.monitor_rounded,
+                    size: 18,
+                  ),
+                  label: Text(
+                    kIsWeb ? 'فتح في نافذة جديدة' : 'فتح شاشة العميل',
+                  ),
                   style: FilledButton.styleFrom(
                     backgroundColor: AppColors.info,
                     foregroundColor: AppColors.textOnPrimary,
                     padding: const EdgeInsets.symmetric(
-                        horizontal: AlhaiSpacing.md,
-                        vertical: AlhaiSpacing.xs),
+                        horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10)),
                   ),
@@ -276,6 +290,41 @@ class _CashierFeaturesSettingsScreenState
               activeColor: AppColors.primary,
             ),
             if (_enableNfcPayment) ...[
+              const Divider(height: 1),
+              // حالة أجهزة NFC
+              Consumer(builder: (context, ref, _) {
+                final capability = ref.watch(nfcCapabilityProvider);
+                return capability.when(
+                  data: (cap) => ListTile(
+                    leading: Icon(
+                      cap.isReady ? Icons.check_circle : Icons.warning,
+                      color:
+                          cap.isReady ? AppColors.success : AppColors.warning,
+                    ),
+                    title: Text(
+                      cap.isReady ? 'NFC جاهز للاستخدام' : 'NFC غير متاح',
+                    ),
+                    subtitle: cap.unavailableReason != null
+                        ? Text(cap.unavailableReason!)
+                        : null,
+                    dense: true,
+                  ),
+                  loading: () => const ListTile(
+                    leading: SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                    title: Text('جاري فحص NFC...'),
+                    dense: true,
+                  ),
+                  error: (_, __) => const ListTile(
+                    leading: Icon(Icons.error, color: Colors.red),
+                    title: Text('فشل فحص NFC'),
+                    dense: true,
+                  ),
+                );
+              }),
               const Divider(height: 1),
               Padding(
                 padding: const EdgeInsets.symmetric(
@@ -384,8 +433,7 @@ class _CashierFeaturesSettingsScreenState
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color:
-                        iconColor.withValues(alpha: isDark ? 0.2 : 0.1),
+                    color: iconColor.withValues(alpha: isDark ? 0.2 : 0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(icon, color: iconColor, size: 22),
