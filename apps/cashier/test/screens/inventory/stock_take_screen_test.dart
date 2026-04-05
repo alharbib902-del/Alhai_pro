@@ -116,7 +116,10 @@ void main() {
       await tester.pumpAndSettle();
 
       // Summary bar shows Total Items count
-      expect(find.text('Total Items'), findsOneWidget);
+      expect(
+          find.text(
+              '\u0625\u062c\u0645\u0627\u0644\u064a \u0627\u0644\u0639\u0646\u0627\u0635\u0631'),
+          findsOneWidget);
       expect(find.text('5'), findsOneWidget);
 
       tester.view.resetPhysicalSize();
@@ -152,8 +155,11 @@ void main() {
       await tester.pumpWidget(createTestWidget(const StockTakeScreen()));
       await tester.pumpAndSettle();
 
-      expect(find.text('Save Draft'), findsOneWidget);
-      expect(find.text('Finalize'), findsOneWidget);
+      expect(
+          find.text(
+              '\u062d\u0641\u0638 \u0627\u0644\u0645\u0633\u0648\u062f\u0629'),
+          findsOneWidget);
+      expect(find.text('\u0625\u0646\u0647\u0627\u0621'), findsOneWidget);
 
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();

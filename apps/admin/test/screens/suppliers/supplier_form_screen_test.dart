@@ -25,7 +25,7 @@ void main() {
       suppressOverflowErrors();
 
       await tester.pumpWidget(createTestWidget(const SupplierFormScreen()));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 500));
 
       expect(find.byType(SupplierFormScreen), findsOneWidget);
 
@@ -39,7 +39,7 @@ void main() {
       suppressOverflowErrors();
 
       await tester.pumpWidget(createTestWidget(const SupplierFormScreen()));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 500));
 
       expect(find.byType(TextFormField), findsWidgets);
 
@@ -53,7 +53,7 @@ void main() {
       suppressOverflowErrors();
 
       await tester.pumpWidget(createTestWidget(const SupplierFormScreen()));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 500));
 
       expect(find.byIcon(Icons.save_rounded), findsWidgets);
 
@@ -67,7 +67,7 @@ void main() {
       suppressOverflowErrors();
 
       await tester.pumpWidget(createTestWidget(const SupplierFormScreen()));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 500));
 
       expect(find.byIcon(Icons.person), findsWidgets);
 

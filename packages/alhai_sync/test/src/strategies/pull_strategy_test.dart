@@ -44,6 +44,7 @@ void main() {
           'loyalty_rewards',
           'drivers',
           'expense_categories',
+          'org_products',
         ]);
       });
     });

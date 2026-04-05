@@ -98,7 +98,7 @@ void main() {
       await tester.pumpWidget(createTestWidget(const QuickAddProductScreen()));
       await tester.pumpAndSettle();
 
-      expect(find.text('Scan'), findsOneWidget);
+      expect(find.text('\u0645\u0633\u062d'), findsOneWidget);
       expect(find.byIcon(Icons.qr_code_scanner_rounded), findsOneWidget);
 
       tester.view.resetPhysicalSize();

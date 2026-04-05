@@ -61,7 +61,7 @@ void main() {
 
       // Search field and scan button should be present
       expect(find.byIcon(Icons.search_rounded), findsWidgets);
-      expect(find.text('Scan'), findsOneWidget);
+      expect(find.text('\u0645\u0633\u062d'), findsOneWidget);
 
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();
@@ -76,7 +76,10 @@ void main() {
       await tester.pumpAndSettle();
 
       // Quantity to Add title
-      expect(find.text('Quantity to Add'), findsOneWidget);
+      expect(
+          find.text(
+              '\u0627\u0644\u0643\u0645\u064a\u0629 \u0627\u0644\u0645\u0631\u0627\u062f \u0625\u0636\u0627\u0641\u062a\u0647\u0627'),
+          findsOneWidget);
       // Quick quantity chips
       expect(find.text('1'), findsOneWidget);
       expect(find.text('5'), findsOneWidget);
@@ -97,7 +100,10 @@ void main() {
       await tester.pumpWidget(createTestWidget(const AddInventoryScreen()));
       await tester.pumpAndSettle();
 
-      expect(find.text('Supplier Reference'), findsOneWidget);
+      expect(
+          find.text(
+              '\u0645\u0631\u062c\u0639 \u0627\u0644\u0645\u0648\u0631\u062f'),
+          findsOneWidget);
 
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();

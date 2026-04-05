@@ -118,7 +118,10 @@ void main() {
 
       // Active offers screen uses custom InkWell chips for offer types
       // Verify known filter chip labels are present
-      expect(find.text('Percentage Off'), findsOneWidget);
+      expect(
+          find.text(
+              '\u062e\u0635\u0645 \u0646\u0633\u0628\u0629 \u0645\u0626\u0648\u064a\u0629'),
+          findsOneWidget);
 
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();

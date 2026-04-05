@@ -72,7 +72,11 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Difference'), findsOneWidget);
-      expect(find.text('Submit Exchange'), findsOneWidget);
+      // Arabic l10n: submitExchange
+      expect(
+          find.text(
+              '\u062a\u0623\u0643\u064a\u062f \u0627\u0644\u0627\u0633\u062a\u0628\u062f\u0627\u0644'),
+          findsOneWidget);
     });
 
     testWidgets('submit button is disabled when no items', (tester) async {

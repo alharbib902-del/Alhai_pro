@@ -55,8 +55,8 @@ void main() {
       await tester.pumpWidget(createTestWidget(const OnlineOrdersScreen()));
       await tester.pumpAndSettle();
 
-      // Screen loads with mock data; verify location icon in order cards
-      expect(find.byIcon(Icons.location_on_rounded), findsWidgets);
+      // With no mock data, ordersDao throws and empty state is shown
+      expect(find.byIcon(Icons.shopping_bag_outlined), findsWidgets);
 
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();

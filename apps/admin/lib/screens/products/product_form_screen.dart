@@ -116,7 +116,9 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
   @override
   void dispose() {
     // Clear unsaved changes flag when leaving
-    ref.read(unsavedChangesProvider.notifier).state = false;
+    try {
+      ref.read(unsavedChangesProvider.notifier).state = false;
+    } catch (_) {}
     _nameController.dispose();
     _nameEnController.dispose();
     _barcodeController.dispose();

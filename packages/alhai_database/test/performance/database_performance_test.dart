@@ -33,6 +33,7 @@ void main() {
   group('Product FTS Search Performance', () {
     setUp(() async {
       db = createTestDatabase();
+      await seedTestData(db);
 
       // Seed 1000 products with Arabic and English names, barcodes, and SKUs
       for (int i = 0; i < 1000; i++) {
@@ -94,6 +95,7 @@ void main() {
   group('Barcode Lookup Performance', () {
     setUp(() async {
       db = createTestDatabase();
+      await seedTestData(db);
 
       for (int i = 0; i < 1000; i++) {
         await db.productsDao.insertProduct(makeProduct(
@@ -158,6 +160,7 @@ void main() {
   group('Products Count Query Performance', () {
     setUp(() async {
       db = createTestDatabase();
+      await seedTestData(db);
 
       for (int i = 0; i < 1000; i++) {
         await db.productsDao.insertProduct(makeProduct(

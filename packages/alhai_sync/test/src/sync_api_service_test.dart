@@ -200,6 +200,9 @@ void main() {
             final onValue = invocation.positionalArguments[0] as Function;
             return Future.value(onValue(null));
           });
+          when(() => upsertBuilder.timeout(any(),
+                  onTimeout: any(named: 'onTimeout')))
+              .thenAnswer((_) => Future<dynamic>.value(null));
           return upsertBuilder;
         });
 

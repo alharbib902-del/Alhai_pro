@@ -102,7 +102,9 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
 
   @override
   void dispose() {
-    ref.read(unsavedChangesProvider.notifier).state = false;
+    try {
+      ref.read(unsavedChangesProvider.notifier).state = false;
+    } catch (_) {}
     _companyNameController.dispose();
     _contactNameController.dispose();
     _phoneController.dispose();

@@ -48,6 +48,8 @@ void main() {
           'order_status_history',
           'daily_summaries',
           'whatsapp_messages',
+          // فواتير - تُنشأ محلياً وتُدفع للسيرفر
+          'invoices',
         ]);
       });
     });

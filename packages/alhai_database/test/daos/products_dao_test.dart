@@ -5,8 +5,9 @@ import '../helpers/database_test_helpers.dart';
 void main() {
   late AppDatabase db;
 
-  setUp(() {
+  setUp(() async {
     db = createTestDatabase();
+    await seedTestData(db);
   });
 
   tearDown(() async {
@@ -139,6 +140,21 @@ void main() {
     });
 
     test('getProductsByCategory filters correctly', () async {
+      // Create category parents for the FK constraint
+      final now = DateTime(2025, 1, 1);
+      await db.categoriesDao.insertCategory(CategoriesTableCompanion.insert(
+        id: 'cat-1',
+        storeId: 'store-1',
+        name: 'Cat 1',
+        createdAt: now,
+      ));
+      await db.categoriesDao.insertCategory(CategoriesTableCompanion.insert(
+        id: 'cat-2',
+        storeId: 'store-1',
+        name: 'Cat 2',
+        createdAt: now,
+      ));
+
       await db.productsDao.insertProduct(makeProduct(categoryId: 'cat-1'));
       await db.productsDao.insertProduct(makeProduct(
         id: 'prod-2',

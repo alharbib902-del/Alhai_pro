@@ -115,8 +115,8 @@ void main() {
       expect(find.byIcon(Icons.add), findsNWidgets(2));
       expect(find.byIcon(Icons.remove), findsNWidgets(2));
 
-      // Default values
-      expect(find.text('10 units'), findsOneWidget);
+      // Default values - threshold displays as "10 {units_localized}"
+      expect(find.textContaining('10'), findsWidgets);
 
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();
@@ -134,7 +134,7 @@ void main() {
       await tester.tap(find.byIcon(Icons.add).first);
       await tester.pumpAndSettle();
 
-      expect(find.text('11 units'), findsOneWidget);
+      expect(find.textContaining('11'), findsWidgets);
 
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();

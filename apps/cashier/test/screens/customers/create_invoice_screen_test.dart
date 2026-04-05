@@ -81,8 +81,13 @@ void main() {
       await tester.pumpWidget(createTestWidget(const CreateInvoiceScreen()));
       await tester.pumpAndSettle();
 
-      expect(find.text('Finalize Invoice'), findsOneWidget);
-      expect(find.text('Save as Draft'), findsOneWidget);
+      expect(
+          find.text(
+              '\u0625\u0646\u0647\u0627\u0621 \u0627\u0644\u0641\u0627\u062a\u0648\u0631\u0629'),
+          findsOneWidget);
+      expect(
+          find.text('\u062d\u0641\u0638 \u0643\u0645\u0633\u0648\u062f\u0629'),
+          findsOneWidget);
     });
 
     testWidgets('finalize button is disabled when no items or customer',
@@ -98,7 +103,8 @@ void main() {
       // Finalize button should be disabled
       // Use ancestor finder because FilledButton.icon creates a subclass
       final filledButtonFinder = find.ancestor(
-        of: find.text('Finalize Invoice'),
+        of: find.text(
+            '\u0625\u0646\u0647\u0627\u0621 \u0627\u0644\u0641\u0627\u062a\u0648\u0631\u0629'),
         matching: find.byWidgetPredicate((w) => w is FilledButton),
       );
       expect(filledButtonFinder, findsOneWidget);

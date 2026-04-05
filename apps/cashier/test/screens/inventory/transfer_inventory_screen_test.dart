@@ -108,10 +108,15 @@ void main() {
           .pumpWidget(createTestWidget(const TransferInventoryScreen()));
       await tester.pumpAndSettle();
 
-      expect(find.text('Transfer Details'), findsOneWidget);
-      expect(find.text('From Store'), findsOneWidget);
-      expect(find.text('To Store'), findsOneWidget);
-      expect(find.text('Current'), findsOneWidget);
+      expect(
+          find.text(
+              '\u062a\u0641\u0627\u0635\u064a\u0644 \u0627\u0644\u0646\u0642\u0644'),
+          findsOneWidget);
+      expect(find.text('\u0645\u0646 \u0627\u0644\u0641\u0631\u0639'),
+          findsOneWidget);
+      expect(find.text('\u0625\u0644\u0649 \u0627\u0644\u0641\u0631\u0639'),
+          findsOneWidget);
+      expect(find.text('\u0627\u0644\u062d\u0627\u0644\u064a'), findsOneWidget);
 
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();
@@ -144,7 +149,10 @@ void main() {
           .pumpWidget(createTestWidget(const TransferInventoryScreen()));
       await tester.pumpAndSettle();
 
-      expect(find.text('Submit Transfer'), findsOneWidget);
+      expect(
+          find.text(
+              '\u0625\u0631\u0633\u0627\u0644 \u0627\u0644\u0646\u0642\u0644'),
+          findsOneWidget);
 
       // Find submit button (FilledButton.icon creates a subclass)
       final filledButtons = find.byWidgetPredicate((w) => w is FilledButton);

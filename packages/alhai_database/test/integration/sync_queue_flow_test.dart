@@ -5,8 +5,9 @@ import '../helpers/database_test_helpers.dart';
 void main() {
   late AppDatabase db;
 
-  setUp(() {
+  setUp(() async {
     db = createTestDatabase();
+    await seedTestData(db);
   });
 
   tearDown(() async {
@@ -179,20 +180,18 @@ void main() {
         idempotencyKey: 'same-key',
       );
 
-      // Attempting to insert with same idempotency key should fail
-      // (unique constraint on idempotency_key)
-      expect(
-        () => db.syncQueueDao.enqueue(
-          id: 'uniq-2',
-          tableName: 'products',
-          recordId: 'prod-1',
-          operation: 'CREATE',
-          payload: '{"v":2}',
-          idempotencyKey: 'same-key',
-        ),
-        throwsA(anything),
-        reason: 'Duplicate idempotency key should throw an error',
+      // Attempting to insert with same idempotency key should be silently
+      // skipped (idempotency guard returns 0 instead of inserting)
+      final result = await db.syncQueueDao.enqueue(
+        id: 'uniq-2',
+        tableName: 'products',
+        recordId: 'prod-1',
+        operation: 'CREATE',
+        payload: '{"v":2}',
+        idempotencyKey: 'same-key',
       );
+      expect(result, 0,
+          reason: 'Duplicate idempotency key should be skipped (return 0)');
 
       // Verify findByIdempotencyKey works
       final found = await db.syncQueueDao.findByIdempotencyKey('same-key');

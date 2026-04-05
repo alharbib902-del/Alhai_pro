@@ -117,10 +117,13 @@ void main() {
       ));
       await tester.pumpAndSettle();
 
-      // Current stock should show 50 (may appear in multiple places)
-      expect(find.text('50'), findsWidgets);
-      // Adjustment card title
-      expect(find.text('Adjust Quantity'), findsOneWidget);
+      // Current stock should show 50.0 (stockQty is double, may appear in multiple places)
+      expect(find.text('50.0'), findsWidgets);
+      // Adjustment card title (Arabic l10n)
+      expect(
+          find.text(
+              '\u062a\u0639\u062f\u064a\u0644 \u0627\u0644\u0643\u0645\u064a\u0629'),
+          findsOneWidget);
 
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();

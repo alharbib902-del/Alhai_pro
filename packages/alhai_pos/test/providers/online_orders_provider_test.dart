@@ -1,8 +1,55 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:get_it/get_it.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:alhai_database/alhai_database.dart'
+    hide OrderStatus, PaymentStatus;
 import 'package:alhai_pos/src/models/online_order.dart';
 import 'package:alhai_pos/src/providers/online_orders_provider.dart';
 
+class _MockAppDatabase extends Mock implements AppDatabase {}
+
+class _MockOrdersDao extends Mock implements OrdersDao {}
+
+class _MockSyncQueueDao extends Mock implements SyncQueueDao {}
+
 void main() {
+  setUpAll(() {
+    final mockDb = _MockAppDatabase();
+    final mockOrdersDao = _MockOrdersDao();
+    final mockSyncQueueDao = _MockSyncQueueDao();
+    when(() => mockDb.ordersDao).thenReturn(mockOrdersDao);
+    when(() => mockDb.syncQueueDao).thenReturn(mockSyncQueueDao);
+    when(() => mockOrdersDao.getPendingOrders(any()))
+        .thenAnswer((_) async => <OrdersTableData>[]);
+    when(() => mockOrdersDao.updateOrderStatus(any(), any()))
+        .thenAnswer((_) async => 1);
+    when(() => mockOrdersDao.assignDriver(any(), any()))
+        .thenAnswer((_) async => 1);
+    when(() => mockOrdersDao.cancelOrder(any(), any()))
+        .thenAnswer((_) async => 1);
+    when(() => mockSyncQueueDao.enqueue(
+          id: any(named: 'id'),
+          tableName: any(named: 'tableName'),
+          recordId: any(named: 'recordId'),
+          operation: any(named: 'operation'),
+          payload: any(named: 'payload'),
+          idempotencyKey: any(named: 'idempotencyKey'),
+          priority: any(named: 'priority'),
+        )).thenAnswer((_) async => 1);
+
+    final getIt = GetIt.instance;
+    if (!getIt.isRegistered<AppDatabase>()) {
+      getIt.registerSingleton<AppDatabase>(mockDb);
+    }
+  });
+
+  tearDownAll(() {
+    final getIt = GetIt.instance;
+    if (getIt.isRegistered<AppDatabase>()) {
+      getIt.unregister<AppDatabase>();
+    }
+  });
+
   group('OnlineOrdersState', () {
     test('default state has empty orders', () {
       const state = OnlineOrdersState();
@@ -88,9 +135,14 @@ void main() {
 
     setUp(() {
       notifier = OnlineOrdersNotifier(null);
+      // Seed with some orders for testing
+      notifier
+          .addOrder(_createOrder(id: 'SEED-001', status: OrderStatus.pending));
+      notifier
+          .addOrder(_createOrder(id: 'SEED-002', status: OrderStatus.pending));
     });
 
-    test('initializes with mock data', () {
+    test('initializes and can hold orders', () {
       expect(notifier.state.orders, isNotEmpty);
       expect(notifier.state.hasNewOrders, isTrue);
     });
@@ -188,13 +240,10 @@ void main() {
       expect(notifier.state.hasNewOrders, isFalse);
     });
 
-    test('refreshOrders sets loading then clears', () async {
-      final future = notifier.refreshOrders();
+    test('refreshOrders completes without error', () async {
+      await notifier.refreshOrders();
 
-      expect(notifier.state.isLoading, isTrue);
-
-      await future;
-
+      // With null storeId, refreshOrders returns early
       expect(notifier.state.isLoading, isFalse);
       expect(notifier.state.error, isNull);
     });

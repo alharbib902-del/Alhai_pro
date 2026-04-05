@@ -17,6 +17,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show SupabaseClient;
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 
@@ -101,6 +102,12 @@ void setupTestGetIt({MockAppDatabase? mockDb}) {
     getIt.unregister<AppDatabase>();
   }
   getIt.registerSingleton<AppDatabase>(mockDb ?? MockAppDatabase());
+
+  // Register MockSupabaseClient so sync providers that call
+  // GetIt.I<SupabaseClient>() don't throw during widget tests.
+  if (!getIt.isRegistered<SupabaseClient>()) {
+    getIt.registerSingleton<SupabaseClient>(MockSupabaseClient());
+  }
 }
 
 /// Reset GetIt after each test to avoid leaking state.

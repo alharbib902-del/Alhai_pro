@@ -146,8 +146,9 @@ void main() {
       await tester.pumpAndSettle();
 
       // Summary stats should show "Customers" text
-      expect(find.text('Customers'), findsOneWidget);
-      expect(find.text('Overdue'), findsWidgets);
+      expect(find.text('\u0627\u0644\u0639\u0645\u0644\u0627\u0621'),
+          findsOneWidget);
+      expect(find.text('\u0645\u062a\u0623\u062e\u0631\u0629'), findsWidgets);
     });
 
     testWidgets('shows status filter chips', (tester) async {

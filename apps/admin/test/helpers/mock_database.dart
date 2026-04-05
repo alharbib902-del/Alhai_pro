@@ -3,6 +3,7 @@ library;
 
 import 'package:mocktail/mocktail.dart';
 import 'package:alhai_database/alhai_database.dart';
+import 'package:alhai_sync/alhai_sync.dart' show SyncPriority;
 
 // ============================================================================
 // MOCK DATABASE
@@ -136,6 +137,10 @@ void registerAdminFallbackValues() {
   registerFallbackValue(FakeCouponsTableCompanion());
   registerFallbackValue(FakePromotionsTableCompanion());
   registerFallbackValue(FakeSuppliersTableCompanion());
+  // SyncPriority is needed by defaultProviderOverrides() for any(named: 'priority')
+  registerFallbackValue(SyncPriority.normal);
+  // Duration is needed for recoverStuckSyncingItems(stuckThreshold: any(...))
+  registerFallbackValue(const Duration(minutes: 5));
 }
 
 // ============================================================================

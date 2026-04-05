@@ -5,8 +5,9 @@ import '../helpers/database_test_helpers.dart';
 void main() {
   late AppDatabase db;
 
-  setUp(() {
+  setUp(() async {
     db = createTestDatabase();
+    await seedTestData(db);
   });
 
   tearDown(() async {

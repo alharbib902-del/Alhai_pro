@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:alhai_sync/src/org_sync_service.dart';
 
@@ -127,14 +128,18 @@ void main() {
         when(() => filterBuilder.eq(any(), any()))
             .thenAnswer((_) => filterBuilder);
 
+        final orgData = <Map<String, dynamic>>[
+          {'id': 'org-1', 'name': 'Test'}
+        ];
         // Mock the async resolution via then()
         when(() => filterBuilder.then<dynamic>(any(),
             onError: any(named: 'onError'))).thenAnswer((invocation) {
           final onValue = invocation.positionalArguments[0] as Function;
-          return Future.value(onValue([
-            {'id': 'org-1', 'name': 'Test'}
-          ]));
+          return Future.value(onValue(orgData));
         });
+        when(() => filterBuilder.timeout(any(),
+                onTimeout: any(named: 'onTimeout')))
+            .thenAnswer((_) => Future<PostgrestList>.value(orgData));
 
         final result = await service.fetchOrgUpdates(
           tableName: 'organizations',
@@ -154,13 +159,17 @@ void main() {
         when(() => filterBuilder.eq(any(), any()))
             .thenAnswer((_) => filterBuilder);
 
+        final subData = <Map<String, dynamic>>[
+          {'id': 'sub-1', 'org_id': 'org-1'}
+        ];
         when(() => filterBuilder.then<dynamic>(any(),
             onError: any(named: 'onError'))).thenAnswer((invocation) {
           final onValue = invocation.positionalArguments[0] as Function;
-          return Future.value(onValue([
-            {'id': 'sub-1', 'org_id': 'org-1'}
-          ]));
+          return Future.value(onValue(subData));
         });
+        when(() => filterBuilder.timeout(any(),
+                onTimeout: any(named: 'onTimeout')))
+            .thenAnswer((_) => Future<PostgrestList>.value(subData));
 
         final result = await service.fetchOrgUpdates(
           tableName: 'subscriptions',
@@ -198,13 +207,17 @@ void main() {
         when(() => filterBuilder.eq(any(), any()))
             .thenAnswer((_) => filterBuilder);
 
+        final storeData = <Map<String, dynamic>>[
+          {'id': 'pos-1', 'store_id': 'store-1'}
+        ];
         when(() => filterBuilder.then<dynamic>(any(),
             onError: any(named: 'onError'))).thenAnswer((invocation) {
           final onValue = invocation.positionalArguments[0] as Function;
-          return Future.value(onValue([
-            {'id': 'pos-1', 'store_id': 'store-1'}
-          ]));
+          return Future.value(onValue(storeData));
         });
+        when(() => filterBuilder.timeout(any(),
+                onTimeout: any(named: 'onTimeout')))
+            .thenAnswer((_) => Future<PostgrestList>.value(storeData));
 
         final result = await service.fetchStoreUpdates(
           tableName: 'pos_terminals',
@@ -233,6 +246,7 @@ void main() {
         'org_members',
         'user_stores',
         'pos_terminals',
+        'org_products',
       ]);
     });
   });

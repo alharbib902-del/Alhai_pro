@@ -41,8 +41,8 @@ void main() {
       await tester.pumpWidget(createTestWidget(const DeliveryZonesScreen()));
       await tester.pumpAndSettle();
 
-      // Zones are rendered as Card widgets
-      expect(find.byType(Card), findsWidgets);
+      // With no mock data, screen shows empty state with map icon
+      expect(find.byIcon(Icons.map_outlined), findsWidgets);
 
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();
@@ -71,8 +71,8 @@ void main() {
       await tester.pumpWidget(createTestWidget(const DeliveryZonesScreen()));
       await tester.pumpAndSettle();
 
-      // Zone cards use place_rounded icon
-      expect(find.byIcon(Icons.place_rounded), findsWidgets);
+      // AppBar and empty state use add_location_alt_rounded icon
+      expect(find.byIcon(Icons.add_location_alt_rounded), findsWidgets);
 
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();

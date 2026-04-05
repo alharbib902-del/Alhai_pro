@@ -5,8 +5,20 @@ import '../helpers/database_test_helpers.dart';
 void main() {
   late AppDatabase db;
 
-  setUp(() {
+  setUp(() async {
     db = createTestDatabase();
+    await seedTestData(db);
+    // purchase_items reference products via FK
+    final now = DateTime(2025, 1, 1);
+    for (var i = 1; i <= 2; i++) {
+      await db.productsDao.insertProduct(ProductsTableCompanion.insert(
+        id: 'prod-$i',
+        storeId: 'store-1',
+        name: 'P$i',
+        price: 10.0,
+        createdAt: now,
+      ));
+    }
   });
 
   tearDown(() async {

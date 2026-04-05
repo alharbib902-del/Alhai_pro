@@ -1,16 +1,23 @@
 import 'package:admin/screens/marketing/gift_cards_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
 
 import '../../helpers/test_helpers.dart';
 
 void main() {
+  late MockDiscountsDao mockDiscountsDao;
+
   setUpAll(() {
     suppressOverflowErrors();
+    registerAdminFallbackValues();
   });
 
   setUp(() {
-    final mockDb = setupMockDatabase();
+    mockDiscountsDao = MockDiscountsDao();
+    when(() => mockDiscountsDao.getAllCoupons(any()))
+        .thenAnswer((_) async => []);
+    final mockDb = setupMockDatabase(discountsDao: mockDiscountsDao);
     setupTestGetIt(mockDb: mockDb);
   });
 
@@ -33,10 +40,9 @@ void main() {
       await tester.pumpWidget(createTestWidget(const GiftCardsScreen()));
       await tester.pumpAndSettle();
 
-      // Mock data is loaded after delay, should show card codes
+      // Placeholder data has 2 gift cards when DB returns empty coupons
       expect(find.text('GC-2025-001'), findsOneWidget);
       expect(find.text('GC-2025-002'), findsOneWidget);
-      expect(find.text('GC-2025-003'), findsOneWidget);
     });
 
     testWidgets('shows search field', (tester) async {

@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -18,10 +21,41 @@ class MockDeliveryDatasource extends Mock implements DeliveryDatasource {}
 // ---------------------------------------------------------------------------
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  // Mock the FlutterSecureStorage platform channel
+  final Map<String, String> secureStorageData = {};
+  TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+      .setMockMethodCallHandler(
+    const MethodChannel('plugins.it_nomads.com/flutter_secure_storage'),
+    (MethodCall methodCall) async {
+      switch (methodCall.method) {
+        case 'read':
+          final key = methodCall.arguments['key'] as String;
+          return secureStorageData[key];
+        case 'write':
+          final key = methodCall.arguments['key'] as String;
+          final value = methodCall.arguments['value'] as String;
+          secureStorageData[key] = value;
+          return null;
+        case 'delete':
+          final key = methodCall.arguments['key'] as String;
+          secureStorageData.remove(key);
+          return null;
+        case 'deleteAll':
+          secureStorageData.clear();
+          return null;
+        default:
+          return null;
+      }
+    },
+  );
+
   late OfflineQueueService service;
   late MockDeliveryDatasource mockDatasource;
 
   setUp(() async {
+    secureStorageData.clear();
     service = OfflineQueueService.instance;
     mockDatasource = MockDeliveryDatasource();
     service.onSyncEvent = null;
@@ -227,9 +261,12 @@ void main() {
       var health = await service.getQueueHealth();
       expect(health['pending'], 1);
 
+      // Reset backoff by moving lastAttempt to far in the past
+      _clearBackoff(secureStorageData);
       // Second failure: retryCount 1 -> 2
       await service.flushQueue(mockDatasource);
 
+      _clearBackoff(secureStorageData);
       // Third failure: retryCount 2 -> 3 (becomes 'failed')
       await service.flushQueue(mockDatasource);
 
@@ -251,8 +288,9 @@ void main() {
         throw Exception('network timeout');
       });
 
-      // Exhaust retries (3 max)
+      // Exhaust retries (3 max), clearing backoff between calls
       for (var i = 0; i < 5; i++) {
+        _clearBackoff(secureStorageData);
         await service.flushQueue(mockDatasource);
       }
 
@@ -411,4 +449,25 @@ void main() {
       expect(messages, isNotEmpty);
     });
   });
+}
+
+/// Clears the backoff window by setting `last_attempt` to far in the past
+/// and invalidating the in-memory cache so the service re-reads from storage.
+void _clearBackoff(Map<String, String> storageData) {
+  const key = 'offline_delivery_queue';
+  final raw = storageData[key];
+  if (raw == null) return;
+  try {
+    final items = jsonDecode(raw) as List;
+    final pastDate =
+        DateTime.now().subtract(const Duration(hours: 1)).toIso8601String();
+    for (final item in items) {
+      if (item is Map<String, dynamic> && item['last_attempt'] != null) {
+        item['last_attempt'] = pastDate;
+      }
+    }
+    storageData[key] = jsonEncode(items);
+    // Force cache invalidation so the service re-reads from storage
+    OfflineQueueService.instance.clearCacheForTesting();
+  } catch (_) {}
 }

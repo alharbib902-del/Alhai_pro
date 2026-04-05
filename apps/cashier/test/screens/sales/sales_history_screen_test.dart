@@ -11,7 +11,7 @@ import '../../helpers/test_helpers.dart';
 import 'package:cashier/screens/sales/sales_history_screen.dart';
 
 void main() {
-  late MockOrdersDao ordersDao;
+  late MockSalesDao salesDao;
   late MockAppDatabase db;
 
   setUpAll(() {
@@ -19,8 +19,8 @@ void main() {
   });
 
   setUp(() {
-    ordersDao = MockOrdersDao();
-    db = setupMockDatabase(ordersDao: ordersDao);
+    salesDao = MockSalesDao();
+    db = setupMockDatabase(salesDao: salesDao);
     setupTestGetIt(mockDb: db);
   });
 
@@ -34,8 +34,16 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => ordersDao.getOrders(any()))
-          .thenAnswer((_) async => <OrdersTableData>[]);
+      // Screen uses salesDao.getSalesPaginated(...)
+      when(() => salesDao.getSalesPaginated(
+            any(),
+            offset: any(named: 'offset'),
+            limit: any(named: 'limit'),
+            startDate: any(named: 'startDate'),
+            endDate: any(named: 'endDate'),
+            status: any(named: 'status'),
+            cashierId: any(named: 'cashierId'),
+          )).thenAnswer((_) async => <SalesTableData>[]);
 
       await tester.pumpWidget(createTestWidget(const SalesHistoryScreen()));
 
@@ -49,8 +57,15 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => ordersDao.getOrders(any()))
-          .thenAnswer((_) async => <OrdersTableData>[]);
+      when(() => salesDao.getSalesPaginated(
+            any(),
+            offset: any(named: 'offset'),
+            limit: any(named: 'limit'),
+            startDate: any(named: 'startDate'),
+            endDate: any(named: 'endDate'),
+            status: any(named: 'status'),
+            cashierId: any(named: 'cashierId'),
+          )).thenAnswer((_) async => <SalesTableData>[]);
 
       await tester.pumpWidget(createTestWidget(const SalesHistoryScreen()));
       await tester.pumpAndSettle();
@@ -65,28 +80,36 @@ void main() {
 
       suppressOverflowErrors();
 
-      final orders = [
-        createTestOrder(
-          id: 'order-1',
+      final sales = [
+        createTestSale(
+          id: 'sale-1',
           total: 115.0,
           status: 'completed',
           createdAt: DateTime.now(),
         ),
-        createTestOrder(
-          id: 'order-2',
+        createTestSale(
+          id: 'sale-2',
           total: 230.0,
           status: 'completed',
           createdAt: DateTime.now(),
         ),
       ];
 
-      when(() => ordersDao.getOrders(any())).thenAnswer((_) async => orders);
+      when(() => salesDao.getSalesPaginated(
+            any(),
+            offset: any(named: 'offset'),
+            limit: any(named: 'limit'),
+            startDate: any(named: 'startDate'),
+            endDate: any(named: 'endDate'),
+            status: any(named: 'status'),
+            cashierId: any(named: 'cashierId'),
+          )).thenAnswer((_) async => sales);
 
       await tester.pumpWidget(createTestWidget(const SalesHistoryScreen()));
       await tester.pumpAndSettle();
 
-      // Should find order amount text
-      expect(find.byIcon(Icons.receipt_long_rounded), findsWidgets);
+      // Order cards should show payment method icons (cash = payments_outlined)
+      expect(find.byIcon(Icons.payments_outlined), findsWidgets);
     });
 
     testWidgets('shows search bar after loading', (tester) async {
@@ -95,8 +118,15 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => ordersDao.getOrders(any()))
-          .thenAnswer((_) async => <OrdersTableData>[]);
+      when(() => salesDao.getSalesPaginated(
+            any(),
+            offset: any(named: 'offset'),
+            limit: any(named: 'limit'),
+            startDate: any(named: 'startDate'),
+            endDate: any(named: 'endDate'),
+            status: any(named: 'status'),
+            cashierId: any(named: 'cashierId'),
+          )).thenAnswer((_) async => <SalesTableData>[]);
 
       await tester.pumpWidget(createTestWidget(const SalesHistoryScreen()));
       await tester.pumpAndSettle();
@@ -112,16 +142,24 @@ void main() {
 
       suppressOverflowErrors();
 
-      final orders = [
-        createTestOrder(
-          id: 'order-today',
+      final sales = [
+        createTestSale(
+          id: 'sale-today',
           total: 100.0,
           status: 'completed',
           createdAt: DateTime.now(),
         ),
       ];
 
-      when(() => ordersDao.getOrders(any())).thenAnswer((_) async => orders);
+      when(() => salesDao.getSalesPaginated(
+            any(),
+            offset: any(named: 'offset'),
+            limit: any(named: 'limit'),
+            startDate: any(named: 'startDate'),
+            endDate: any(named: 'endDate'),
+            status: any(named: 'status'),
+            cashierId: any(named: 'cashierId'),
+          )).thenAnswer((_) async => sales);
 
       await tester.pumpWidget(createTestWidget(const SalesHistoryScreen()));
       await tester.pumpAndSettle();
@@ -136,8 +174,15 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => ordersDao.getOrders(any()))
-          .thenAnswer((_) async => <OrdersTableData>[]);
+      when(() => salesDao.getSalesPaginated(
+            any(),
+            offset: any(named: 'offset'),
+            limit: any(named: 'limit'),
+            startDate: any(named: 'startDate'),
+            endDate: any(named: 'endDate'),
+            status: any(named: 'status'),
+            cashierId: any(named: 'cashierId'),
+          )).thenAnswer((_) async => <SalesTableData>[]);
 
       await tester.pumpWidget(createTestWidget(const SalesHistoryScreen()));
       await tester.pumpAndSettle();

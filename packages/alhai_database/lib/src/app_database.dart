@@ -991,14 +991,11 @@ class AppDatabase extends _$AppDatabase {
            (version, migrated_at, duration_ms, success, error_message)
            VALUES (?, ?, ?, ?, ?)''',
         [
-          Variable.withInt(version),
-          Variable.withInt(DateTime.now().millisecondsSinceEpoch),
-          Variable.withInt(durationMs),
-          Variable.withInt(success ? 1 : 0),
-          if (errorMessage != null)
-            Variable.withString(errorMessage)
-          else
-            const Variable<String>(null),
+          version,
+          DateTime.now().millisecondsSinceEpoch,
+          durationMs,
+          success ? 1 : 0,
+          errorMessage,
         ],
       );
     } catch (e) {

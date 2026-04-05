@@ -1,3 +1,4 @@
+import 'package:fake_async/fake_async.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:alhai_core/alhai_core.dart' hide CartItem;
@@ -291,6 +292,9 @@ void main() {
     });
 
     test('setDiscount updates discount', () {
+      // Add a product so subtotal > 0 (discount is clamped to subtotal)
+      final product = createTestProduct(id: 'p-1', price: 100.0);
+      notifier.addProduct(product);
       notifier.setDiscount(15.0);
       expect(notifier.state.discount, equals(15.0));
     });
@@ -332,14 +336,16 @@ void main() {
       expect(notifier.state.customerId, isNull);
     });
 
-    test('addProduct saves cart automatically', () async {
-      final product = createTestProduct(id: 'p-1');
-      notifier.addProduct(product);
+    test('addProduct saves cart automatically', () {
+      fakeAsync((async) {
+        final product = createTestProduct(id: 'p-1');
+        notifier.addProduct(product);
 
-      // Allow async save to happen
-      await Future.delayed(Duration.zero);
+        // Advance past the 2-second debounce timer
+        async.elapse(const Duration(seconds: 3));
 
-      verify(() => mockPersistence.saveCart(any())).called(greaterThan(0));
+        verify(() => mockPersistence.saveCart(any())).called(greaterThan(0));
+      });
     });
 
     test('holdInvoice saves and clears cart', () async {

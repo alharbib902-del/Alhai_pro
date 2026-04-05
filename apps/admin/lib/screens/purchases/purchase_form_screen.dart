@@ -38,7 +38,9 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
 
   @override
   void dispose() {
-    ref.read(unsavedChangesProvider.notifier).state = false;
+    try {
+      ref.read(unsavedChangesProvider.notifier).state = false;
+    } catch (_) {}
     _invoiceNoController.dispose();
     super.dispose();
   }

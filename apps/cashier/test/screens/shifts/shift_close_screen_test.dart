@@ -87,6 +87,9 @@ void main() {
           shiftMovementsProvider(shift.id).overrideWith(
             (ref) async => <CashMovementsTableData>[],
           ),
+          shiftCashTotalsProvider(shift.id).overrideWith(
+            (ref) async => (cashSales: 1200.0, cashRefunds: 100.0),
+          ),
         ],
       ));
       await tester.pumpAndSettle();
@@ -112,6 +115,9 @@ void main() {
           shiftMovementsProvider(shift.id).overrideWith(
             (ref) async => <CashMovementsTableData>[],
           ),
+          shiftCashTotalsProvider(shift.id).overrideWith(
+            (ref) async => (cashSales: 0.0, cashRefunds: 0.0),
+          ),
         ],
       ));
       await tester.pumpAndSettle();
@@ -136,6 +142,9 @@ void main() {
           openShiftProvider.overrideWith((ref) async => shift),
           shiftMovementsProvider(shift.id).overrideWith(
             (ref) async => <CashMovementsTableData>[],
+          ),
+          shiftCashTotalsProvider(shift.id).overrideWith(
+            (ref) async => (cashSales: 0.0, cashRefunds: 0.0),
           ),
         ],
       ));

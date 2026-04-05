@@ -42,6 +42,7 @@ void main() {
           'roles',
           // المرحلة 2: البيانات المرجعية
           'categories',
+          'org_products',
           'products',
           'settings',
           'expense_categories',
@@ -58,10 +59,13 @@ void main() {
           'accounts',
           'loyalty_points',
           'whatsapp_templates',
-          // المرحلة 5: البيانات التفصيلية
+          // المرحلة 5: البيانات التفصيلية (تعتمد على جداول أعلاه)
           'shifts',
           'notifications',
           'product_expiry',
+          // المرحلة 6: المبيعات (لاسترجاع البيانات بعد إعادة التشغيل)
+          'sales',
+          'sale_items',
         ]);
       });
     });

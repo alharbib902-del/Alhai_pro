@@ -4,7 +4,9 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:alhai_l10n/alhai_l10n.dart';
 
 /// Wraps a widget in MaterialApp + ProviderScope for widget testing.
 ///
@@ -40,6 +42,14 @@ Widget createSimpleTestWidget(
   ThemeData? theme,
 }) {
   return MaterialApp(
+    locale: const Locale('ar'),
+    localizationsDelegates: const [
+      AppLocalizations.delegate,
+      GlobalMaterialLocalizations.delegate,
+      GlobalWidgetsLocalizations.delegate,
+      GlobalCupertinoLocalizations.delegate,
+    ],
+    supportedLocales: AppLocalizations.supportedLocales,
     theme: theme ?? ThemeData.light(),
     home: Directionality(
       textDirection: textDirection,

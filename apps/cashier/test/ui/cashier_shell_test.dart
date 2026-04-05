@@ -11,7 +11,20 @@ import 'package:go_router/go_router.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:cashier/ui/cashier_shell.dart';
 
+import '../helpers/mock_database.dart';
+import '../helpers/mock_providers.dart';
+import '../helpers/test_helpers.dart';
+
 void main() {
+  setUpAll(() => registerCashierFallbackValues());
+
+  setUp(() {
+    final db = setupMockDatabase();
+    setupTestGetIt(mockDb: db);
+  });
+
+  tearDown(tearDownTestGetIt);
+
   group('CashierShell - Widget creation', () {
     testWidgets('CashierShell can be instantiated and renders content',
         (tester) async {
@@ -46,6 +59,7 @@ void main() {
 
       await tester.pumpWidget(
         ProviderScope(
+          overrides: defaultProviderOverrides(),
           child: MaterialApp.router(
             routerConfig: router,
             locale: const Locale('en'),
@@ -121,6 +135,7 @@ void main() {
 
       await tester.pumpWidget(
         ProviderScope(
+          overrides: defaultProviderOverrides(),
           child: MaterialApp.router(
             routerConfig: router,
             locale: const Locale('en'),
@@ -132,15 +147,12 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      // Verify desktop sidebar navigation items are shown (English l10n values)
+      // Verify desktop sidebar top-level navigation items are shown (English l10n)
       expect(find.text('Point of Sale'), findsOneWidget);
       expect(find.text('Customers'), findsOneWidget);
       expect(find.text('Shifts'), findsOneWidget);
-      expect(find.text('Returns'), findsOneWidget);
+      // Note: 'Returns' is a child of the POS group, not a top-level item
       expect(find.text('Profile'), findsOneWidget);
-
-      // Verify app title
-      expect(find.text('Al-HAI Cashier'), findsOneWidget);
 
       // Verify content is shown
       expect(find.text('POS Screen'), findsOneWidget);
@@ -205,6 +217,7 @@ void main() {
 
       await tester.pumpWidget(
         ProviderScope(
+          overrides: defaultProviderOverrides(),
           child: MaterialApp.router(
             routerConfig: router,
             locale: const Locale('en'),

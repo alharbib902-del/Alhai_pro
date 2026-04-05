@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -30,6 +31,13 @@ Map<String, dynamic> _refundPayload({String? originalSaleId}) => {
 // ---------------------------------------------------------------------------
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  // Mock the flutter_secure_storage method channel so calls to read/write/delete
+  // don't throw MissingPluginException in unit tests.
+  const channel = MethodChannel('plugins.it_nomads.com/flutter_secure_storage');
+  final storage = <String, String>{};
+
   // OfflineQueueService is a singleton with an in-memory cache. Between test
   // groups we need to clear it. We cannot replace _secureStorage because it is
   // const, so instead we test the public API through enqueue/flush/clear and
@@ -38,6 +46,35 @@ void main() {
   late OfflineQueueService service;
 
   setUp(() async {
+    // Set up mock method channel before any secure storage calls
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall call) async {
+      switch (call.method) {
+        case 'read':
+          final key = call.arguments['key'] as String;
+          return storage[key];
+        case 'write':
+          final key = call.arguments['key'] as String;
+          final value = call.arguments['value'] as String;
+          storage[key] = value;
+          return null;
+        case 'delete':
+          final key = call.arguments['key'] as String;
+          storage.remove(key);
+          return null;
+        case 'deleteAll':
+          storage.clear();
+          return null;
+        case 'readAll':
+          return storage;
+        case 'containsKey':
+          final key = call.arguments['key'] as String;
+          return storage.containsKey(key) ? 'true' : 'false';
+        default:
+          return null;
+      }
+    });
+
     service = OfflineQueueService.instance;
     // Reset state between tests
     service.onSyncEvent = null;
@@ -47,6 +84,9 @@ void main() {
 
   tearDown(() async {
     await service.clear();
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, null);
+    storage.clear();
   });
 
   // -------------------------------------------------------------------------
@@ -274,18 +314,22 @@ void main() {
       service.itemProcessor =
           (_) async => throw Exception('SocketException timeout');
 
-      // Each flush increments retryCount by 1 (backoff is 0 on first few
-      // because lastAttempt + backoff < now after the test advances).
-      // We flush 3 times.
-      for (var i = 0; i < 3; i++) {
-        await service.flush();
-      }
+      // First flush processes the item (no backoff yet).
+      await service.flush();
+
+      // After first retry, backoff is 4s. We must wait for it to expire.
+      await Future<void>.delayed(const Duration(seconds: 5));
+      await service.flush();
+
+      // After second retry, backoff is 8s.
+      await Future<void>.delayed(const Duration(seconds: 9));
+      await service.flush();
 
       final items = await service.getItems();
       expect(items.length, 1);
       expect(items.first.retryCount, 3);
       expect(items.first.itemStatus, 'failed');
-    });
+    }, timeout: const Timeout(Duration(seconds: 30)));
 
     test('failed items beyond maxRetries are not reprocessed', () async {
       await service.enqueue(
@@ -299,15 +343,20 @@ void main() {
         throw Exception('network error');
       };
 
-      // Exhaust retries
-      for (var i = 0; i < 4; i++) {
-        await service.flush();
-      }
+      // Exhaust retries with delays for backoff
+      await service.flush(); // retry 1
+      await Future<void>.delayed(const Duration(seconds: 5));
+      await service.flush(); // retry 2
+      await Future<void>.delayed(const Duration(seconds: 9));
+      await service.flush(); // retry 3 (now marked failed)
+      await Future<void>.delayed(const Duration(seconds: 1));
+      await service
+          .flush(); // 4th flush: item has maxRetries, should be skipped
 
       // The 4th flush should NOT call the processor again because retryCount
       // already reached maxRetries.
       expect(callCount, 3);
-    });
+    }, timeout: const Timeout(Duration(seconds: 30)));
   });
 
   // -------------------------------------------------------------------------

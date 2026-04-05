@@ -10,7 +10,7 @@ import '../../helpers/test_helpers.dart';
 import 'package:cashier/screens/sales/sale_detail_screen.dart';
 
 void main() {
-  late MockOrdersDao ordersDao;
+  late MockSalesDao salesDao;
   late MockSaleItemsDao saleItemsDao;
   late MockAppDatabase db;
 
@@ -19,9 +19,9 @@ void main() {
   });
 
   setUp(() {
-    ordersDao = MockOrdersDao();
+    salesDao = MockSalesDao();
     saleItemsDao = MockSaleItemsDao();
-    db = setupMockDatabase(ordersDao: ordersDao, saleItemsDao: saleItemsDao);
+    db = setupMockDatabase(salesDao: salesDao, saleItemsDao: saleItemsDao);
     setupTestGetIt(mockDb: db);
   });
 
@@ -34,7 +34,7 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => ordersDao.getOrderById(any())).thenAnswer((_) async => null);
+      when(() => salesDao.getSaleById(any())).thenAnswer((_) async => null);
 
       await tester.pumpWidget(
         createTestWidget(const SaleDetailScreen(saleId: 'sale-1')),
@@ -49,14 +49,18 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => ordersDao.getOrderById(any())).thenAnswer((_) async => null);
+      when(() => salesDao.getSaleById(any())).thenAnswer((_) async => null);
 
       await tester.pumpWidget(
         createTestWidget(const SaleDetailScreen(saleId: 'nonexistent')),
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('Sale not found'), findsOneWidget);
+      // Arabic l10n: saleNotFound
+      expect(
+          find.text(
+              '\u0644\u0645 \u064a\u062a\u0645 \u0627\u0644\u0639\u062b\u0648\u0631 \u0639\u0644\u0649 \u0627\u0644\u0628\u064a\u0639'),
+          findsOneWidget);
     });
 
     testWidgets('displays order details when loaded', (tester) async {
@@ -65,7 +69,7 @@ void main() {
 
       suppressOverflowErrors();
 
-      final order = createTestOrder(
+      final sale = createTestSale(
         id: 'sale-123',
         total: 115.0,
         status: 'completed',
@@ -80,8 +84,8 @@ void main() {
         ),
       ];
 
-      when(() => ordersDao.getOrderById('sale-123'))
-          .thenAnswer((_) async => order);
+      when(() => salesDao.getSaleById('sale-123'))
+          .thenAnswer((_) async => sale);
       when(() => saleItemsDao.getItemsBySaleId('sale-123'))
           .thenAnswer((_) async => items);
 
@@ -100,7 +104,7 @@ void main() {
 
       suppressOverflowErrors();
 
-      final order = createTestOrder(id: 'sale-1', total: 50.0);
+      final sale = createTestSale(id: 'sale-1', total: 50.0);
       final items = [
         createTestSaleItem(id: 'item-1', saleId: 'sale-1'),
         createTestSaleItem(
@@ -109,8 +113,7 @@ void main() {
             productName: '\u0645\u0646\u062a\u062c 2'),
       ];
 
-      when(() => ordersDao.getOrderById('sale-1'))
-          .thenAnswer((_) async => order);
+      when(() => salesDao.getSaleById('sale-1')).thenAnswer((_) async => sale);
       when(() => saleItemsDao.getItemsBySaleId('sale-1'))
           .thenAnswer((_) async => items);
 
@@ -129,10 +132,9 @@ void main() {
 
       suppressOverflowErrors();
 
-      final order = createTestOrder(id: 'sale-1', total: 100.0);
+      final sale = createTestSale(id: 'sale-1', total: 100.0);
 
-      when(() => ordersDao.getOrderById('sale-1'))
-          .thenAnswer((_) async => order);
+      when(() => salesDao.getSaleById('sale-1')).thenAnswer((_) async => sale);
       when(() => saleItemsDao.getItemsBySaleId('sale-1'))
           .thenAnswer((_) async => <SaleItemsTableData>[]);
 
@@ -153,7 +155,7 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => ordersDao.getOrderById(any())).thenAnswer((_) async => null);
+      when(() => salesDao.getSaleById(any())).thenAnswer((_) async => null);
 
       await tester.pumpWidget(
         createTestWidget(const SaleDetailScreen(saleId: 'sale-1')),

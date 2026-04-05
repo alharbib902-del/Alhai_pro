@@ -16,6 +16,8 @@ library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' hide User;
+import 'package:alhai_database/alhai_database.dart' show SyncQueueTableData;
 import 'package:alhai_sync/alhai_sync.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_auth/alhai_auth.dart';
@@ -24,6 +26,8 @@ import 'package:alhai_core/alhai_core.dart';
 // ============================================================================
 // MOCK SERVICE CLASSES
 // ============================================================================
+
+class MockSupabaseClient extends Mock implements SupabaseClient {}
 
 class MockSyncService extends Mock implements SyncService {}
 
@@ -80,6 +84,45 @@ List<Override> defaultProviderOverrides({
 
   when(() => mockSyncService.watchConflictCount())
       .thenAnswer((_) => Stream.value(0));
+
+  // SyncManager.initialize() and syncPending() call these methods:
+  when(() => mockSyncService.getPendingItems())
+      .thenAnswer((_) async => <SyncQueueTableData>[]);
+
+  when(() => mockSyncService.getConflictItems())
+      .thenAnswer((_) async => <SyncQueueTableData>[]);
+
+  when(() => mockSyncService.getStuckSyncingItems())
+      .thenAnswer((_) async => <SyncQueueTableData>[]);
+
+  when(() => mockSyncService.resetStuckItems()).thenAnswer((_) async => 0);
+
+  when(() => mockSyncService.recoverStuckSyncingItems(
+        stuckThreshold: any(named: 'stuckThreshold'),
+      )).thenAnswer((_) async => 0);
+
+  when(() => mockSyncService.retryItem(any())).thenAnswer((_) async {});
+
+  when(() => mockSyncService.markAsSyncing(any())).thenAnswer((_) async {});
+
+  when(() => mockSyncService.markAsSynced(any())).thenAnswer((_) async {});
+
+  when(() => mockSyncService.markAsFailed(any(), any()))
+      .thenAnswer((_) async {});
+
+  when(() => mockSyncService.cleanup(olderThan: any(named: 'olderThan')))
+      .thenAnswer((_) async => 0);
+
+  when(() => mockSyncService.getDeadLetterItems())
+      .thenAnswer((_) async => <SyncQueueTableData>[]);
+
+  when(() => mockSyncService.getDeadLetterCount()).thenAnswer((_) async => 0);
+
+  when(() => mockSyncService.watchDeadLetterCount())
+      .thenAnswer((_) => Stream.value(0));
+
+  when(() => mockSyncService.watchPendingCountWithOldest())
+      .thenAnswer((_) => Stream.value((count: 0, oldestAt: null)));
 
   // Create a test user for auth providers
   final testUser = User(
@@ -145,6 +188,44 @@ MockSyncService createMockSyncService() {
 
   when(() => mockSyncService.watchConflictCount())
       .thenAnswer((_) => Stream.value(0));
+
+  when(() => mockSyncService.getPendingItems())
+      .thenAnswer((_) async => <SyncQueueTableData>[]);
+
+  when(() => mockSyncService.getConflictItems())
+      .thenAnswer((_) async => <SyncQueueTableData>[]);
+
+  when(() => mockSyncService.getStuckSyncingItems())
+      .thenAnswer((_) async => <SyncQueueTableData>[]);
+
+  when(() => mockSyncService.resetStuckItems()).thenAnswer((_) async => 0);
+
+  when(() => mockSyncService.recoverStuckSyncingItems(
+        stuckThreshold: any(named: 'stuckThreshold'),
+      )).thenAnswer((_) async => 0);
+
+  when(() => mockSyncService.retryItem(any())).thenAnswer((_) async {});
+
+  when(() => mockSyncService.markAsSyncing(any())).thenAnswer((_) async {});
+
+  when(() => mockSyncService.markAsSynced(any())).thenAnswer((_) async {});
+
+  when(() => mockSyncService.markAsFailed(any(), any()))
+      .thenAnswer((_) async {});
+
+  when(() => mockSyncService.cleanup(olderThan: any(named: 'olderThan')))
+      .thenAnswer((_) async => 0);
+
+  when(() => mockSyncService.getDeadLetterItems())
+      .thenAnswer((_) async => <SyncQueueTableData>[]);
+
+  when(() => mockSyncService.getDeadLetterCount()).thenAnswer((_) async => 0);
+
+  when(() => mockSyncService.watchDeadLetterCount())
+      .thenAnswer((_) => Stream.value(0));
+
+  when(() => mockSyncService.watchPendingCountWithOldest())
+      .thenAnswer((_) => Stream.value((count: 0, oldestAt: null)));
 
   return mockSyncService;
 }

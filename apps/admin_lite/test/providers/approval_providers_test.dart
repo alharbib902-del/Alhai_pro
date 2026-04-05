@@ -117,15 +117,13 @@ void main() {
     });
 
     test('filters to pending only when filter is pending', () async {
-      final returns = [
+      final pendingReturns = [
         createTestReturn(id: 'r1', status: 'pending'),
-        createTestReturn(id: 'r2', status: 'approved'),
-        createTestReturn(id: 'r3', status: 'rejected'),
         createTestReturn(id: 'r4', status: 'pending'),
       ];
 
-      when(() => returnsDao.getAllReturns(any()))
-          .thenAnswer((_) async => returns);
+      when(() => returnsDao.getReturnsByStatus(any(), any()))
+          .thenAnswer((_) async => pendingReturns);
 
       setupTestGetIt(mockDb: db);
       final container = ProviderContainer(overrides: [
@@ -141,14 +139,13 @@ void main() {
     });
 
     test('filters to approved when filter is approved', () async {
-      final returns = [
-        createTestReturn(id: 'r1', status: 'pending'),
+      final approvedReturns = [
         createTestReturn(id: 'r2', status: 'approved'),
         createTestReturn(id: 'r3', status: 'completed'),
       ];
 
-      when(() => returnsDao.getAllReturns(any()))
-          .thenAnswer((_) async => returns);
+      when(() => returnsDao.getReturnsByStatuses(any(), any()))
+          .thenAnswer((_) async => approvedReturns);
 
       setupTestGetIt(mockDb: db);
       final container = ProviderContainer(overrides: [
@@ -164,13 +161,12 @@ void main() {
     });
 
     test('filters to rejected when filter is rejected', () async {
-      final returns = [
-        createTestReturn(id: 'r1', status: 'pending'),
+      final rejectedReturns = [
         createTestReturn(id: 'r2', status: 'rejected'),
       ];
 
-      when(() => returnsDao.getAllReturns(any()))
-          .thenAnswer((_) async => returns);
+      when(() => returnsDao.getReturnsByStatus(any(), any()))
+          .thenAnswer((_) async => rejectedReturns);
 
       setupTestGetIt(mockDb: db);
       final container = ProviderContainer(overrides: [

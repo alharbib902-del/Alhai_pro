@@ -76,6 +76,9 @@ void setupSelectChain(
     final onValue = invocation.positionalArguments[0] as Function;
     return Future.value(onValue(data));
   });
+  // Production code chains .timeout() on the builder
+  when(() => filterBuilder.timeout(any(), onTimeout: any(named: 'onTimeout')))
+      .thenAnswer((_) => Future<PostgrestList>.value(data));
 }
 
 /// Setup upsert on queryBuilder to succeed (resolves when awaited)
@@ -88,6 +91,9 @@ void setupUpsertChain(MockSupabaseQueryBuilder queryBuilder) {
     final onValue = invocation.positionalArguments[0] as Function;
     return Future.value(onValue(null));
   });
+  // Production code chains .timeout() on the builder
+  when(() => upsertBuilder.timeout(any(), onTimeout: any(named: 'onTimeout')))
+      .thenAnswer((_) => Future<dynamic>.value(null));
 }
 
 /// Setup delete chain: delete() -> eq() -> then(resolve)
@@ -100,6 +106,9 @@ void setupDeleteChain(MockSupabaseQueryBuilder queryBuilder) {
     final onValue = invocation.positionalArguments[0] as Function;
     return Future.value(onValue(null));
   });
+  // Production code chains .timeout() on the builder
+  when(() => deleteBuilder.timeout(any(), onTimeout: any(named: 'onTimeout')))
+      .thenAnswer((_) => Future<dynamic>.value(null));
 }
 
 /// Setup RPC call on client that resolves with [result]
@@ -112,6 +121,9 @@ void setupRpcCall(MockSupabaseClient client, {dynamic result}) {
     final onValue = invocation.positionalArguments[0] as Function;
     return Future.value(onValue(result));
   });
+  // Production code chains .timeout() on the builder
+  when(() => rpcBuilder.timeout(any(), onTimeout: any(named: 'onTimeout')))
+      .thenAnswer((_) => Future<dynamic>.value(result));
 }
 
 /// Setup maybeSingle() on a filter builder to resolve with [data]
@@ -127,6 +139,10 @@ void setupMaybeSingle(
     final onValue = invocation.positionalArguments[0] as Function;
     return Future.value(onValue(data));
   });
+  // Production code chains .timeout() on the builder
+  when(() =>
+          transformBuilder.timeout(any(), onTimeout: any(named: 'onTimeout')))
+      .thenAnswer((_) => Future<Map<String, dynamic>?>.value(data));
 }
 
 // ============================================================================

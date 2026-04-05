@@ -149,6 +149,10 @@ class OfflineQueueService {
   /// Clears the in-memory cache (call when the queue is wiped).
   void _clearCache() => _cache = null;
 
+  /// Exposed for testing only – invalidates cache so next access re-reads storage.
+  @visibleForTesting
+  void clearCacheForTesting() => _clearCache();
+
   Duration _backoffFor(int retryCount) {
     // 2^retryCount seconds: 2s, 4s, 8s
     return Duration(seconds: 1 << (retryCount + 1));

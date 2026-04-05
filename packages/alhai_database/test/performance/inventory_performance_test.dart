@@ -29,6 +29,7 @@ void main() {
   group('Batch Stock Update Performance', () {
     setUp(() async {
       db = createTestDatabase();
+      await seedTestData(db);
 
       // Seed 100 products for stock updates
       for (int i = 0; i < 100; i++) {
@@ -89,6 +90,7 @@ void main() {
   group('Low Stock Query Performance', () {
     setUp(() async {
       db = createTestDatabase();
+      await seedTestData(db);
 
       // Seed 1000 products: 200 with low stock, 800 with adequate stock
       for (int i = 0; i < 1000; i++) {
@@ -145,6 +147,15 @@ void main() {
   group('Inventory Movement History Performance', () {
     setUp(() async {
       db = createTestDatabase();
+      await seedTestData(db);
+
+      // Seed products that inventory movements reference
+      for (int i = 0; i < 20; i++) {
+        await db.productsDao.insertProduct(makeProduct(
+          id: 'prod_$i',
+          name: 'Product $i',
+        ));
+      }
 
       // Seed 500 inventory movements for various products
       for (int i = 0; i < 500; i++) {
@@ -184,13 +195,7 @@ void main() {
 
     test('getMovementsWithProductName with pagination completes under 200ms',
         () async {
-      // First insert some products so the JOIN can resolve names
-      for (int i = 0; i < 20; i++) {
-        await db.productsDao.insertProduct(makeProduct(
-          id: 'prod_$i',
-          name: 'Product $i',
-        ));
-      }
+      // Products are already created in setUp
 
       final sw = Stopwatch()..start();
       final movements = await db.inventoryDao.getMovementsWithProductName(

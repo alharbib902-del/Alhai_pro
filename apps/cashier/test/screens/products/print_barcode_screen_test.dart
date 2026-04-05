@@ -52,7 +52,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.search_rounded), findsWidgets);
-      expect(find.text('Scan'), findsOneWidget);
+      expect(find.text('\u0645\u0633\u062d'), findsOneWidget);
 
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();
@@ -67,7 +67,10 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Barcode Preview'), findsOneWidget);
-      expect(find.text('Select a product first'), findsOneWidget);
+      expect(
+          find.text(
+              '\u0627\u062e\u062a\u0631 \u0645\u0646\u062a\u062c \u0623\u0648\u0644\u0627\u064b'),
+          findsOneWidget);
 
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();

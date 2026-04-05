@@ -5,8 +5,32 @@ import '../helpers/database_test_helpers.dart';
 void main() {
   late AppDatabase db;
 
-  setUp(() {
+  setUp(() async {
     db = createTestDatabase();
+    await seedTestData(db);
+    final now = DateTime(2025, 1, 1);
+    // returns reference sales and products via FK
+    for (var i = 1; i <= 2; i++) {
+      await db.productsDao.insertProduct(ProductsTableCompanion.insert(
+        id: 'prod-$i',
+        storeId: 'store-1',
+        name: 'P$i',
+        price: 10.0,
+        createdAt: now,
+      ));
+    }
+    for (final id in ['sale-1', 'sale-2', 'sale-other']) {
+      await db.salesDao.insertSale(SalesTableCompanion.insert(
+        id: id,
+        storeId: 'store-1',
+        receiptNo: 'R-$id',
+        cashierId: 'cashier-1',
+        subtotal: 100.0,
+        total: 100.0,
+        paymentMethod: 'cash',
+        createdAt: now,
+      ));
+    }
   });
 
   tearDown(() async {

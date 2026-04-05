@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' hide User;
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 
@@ -73,6 +74,9 @@ void setupTestGetIt({MockAppDatabase? mockDb}) {
     getIt.unregister<AppDatabase>();
   }
   getIt.registerSingleton<AppDatabase>(mockDb ?? MockAppDatabase());
+  if (!getIt.isRegistered<SupabaseClient>()) {
+    getIt.registerSingleton<SupabaseClient>(MockSupabaseClient());
+  }
 }
 
 /// Reset GetIt to a clean state.

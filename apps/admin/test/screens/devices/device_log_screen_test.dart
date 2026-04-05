@@ -75,7 +75,8 @@ void main() {
       await tester.pumpWidget(createTestWidget(const DeviceLogScreen()));
       await tester.pumpAndSettle();
 
-      expect(find.byIcon(Icons.history_outlined), findsWidgets);
+      // With empty logs, shows empty state with folder_open icon
+      expect(find.byIcon(Icons.folder_open), findsWidgets);
 
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();

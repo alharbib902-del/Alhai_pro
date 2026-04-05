@@ -59,7 +59,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.delete_outline_rounded), findsOneWidget);
-      expect(find.text('Scan'), findsOneWidget);
+      expect(find.text('\u0645\u0633\u062d'), findsOneWidget);
 
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();
@@ -73,7 +73,10 @@ void main() {
       await tester.pumpWidget(createTestWidget(const WastageScreen()));
       await tester.pumpAndSettle();
 
-      expect(find.text('Quantity Wasted'), findsOneWidget);
+      expect(
+          find.text(
+              '\u0627\u0644\u0643\u0645\u064a\u0629 \u0627\u0644\u0645\u0647\u062f\u0631\u0629'),
+          findsOneWidget);
 
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();
@@ -89,7 +92,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Wastage reasons include Spillage
-      expect(find.text('Spillage'), findsOneWidget);
+      expect(find.text('\u0627\u0646\u0633\u0643\u0627\u0628'), findsOneWidget);
 
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();
@@ -103,9 +106,13 @@ void main() {
       await tester.pumpWidget(createTestWidget(const WastageScreen()));
       await tester.pumpAndSettle();
 
-      expect(find.text('Photo'), findsOneWidget);
-      expect(find.text('Tap to take photo'), findsOneWidget);
-      expect(find.text('Optional'), findsWidgets);
+      expect(find.text('\u0635\u0648\u0631\u0629'), findsOneWidget);
+      expect(
+          find.text(
+              '\u0627\u0646\u0642\u0631 \u0644\u0627\u0644\u062a\u0642\u0627\u0637 \u0635\u0648\u0631\u0629'),
+          findsOneWidget);
+      expect(find.text('\u0627\u062e\u062a\u064a\u0627\u0631\u064a'),
+          findsWidgets);
 
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();
@@ -120,7 +127,10 @@ void main() {
       await tester.pumpWidget(createTestWidget(const WastageScreen()));
       await tester.pumpAndSettle();
 
-      expect(find.text('Record Wastage'), findsOneWidget);
+      expect(
+          find.text(
+              '\u062a\u0633\u062c\u064a\u0644 \u0627\u0644\u0647\u062f\u0631'),
+          findsOneWidget);
 
       // Find the last FilledButton (Record Wastage)
       // FilledButton.icon creates a subclass, so use predicate

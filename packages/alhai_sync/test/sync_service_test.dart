@@ -14,6 +14,10 @@ void main() {
   late MockSyncQueueDao mockDao;
   late SyncService service;
 
+  setUpAll(() {
+    registerFallbackValue(Duration.zero);
+  });
+
   setUp(() {
     mockDao = MockSyncQueueDao();
     service = SyncService(mockDao);
@@ -23,8 +27,9 @@ void main() {
 
   group('Payload validation', () {
     test('rejects empty payload', () async {
-      expect(
-        () => service.enqueue(
+      _setupHealthyQueue(mockDao);
+      await expectLater(
+        service.enqueue(
           tableName: 'products',
           recordId: 'r1',
           operation: SyncOperation.create,
@@ -35,8 +40,9 @@ void main() {
     });
 
     test('rejects payload without id (non-delete)', () async {
-      expect(
-        () => service.enqueue(
+      _setupHealthyQueue(mockDao);
+      await expectLater(
+        service.enqueue(
           tableName: 'products',
           recordId: 'r1',
           operation: SyncOperation.create,
@@ -61,8 +67,9 @@ void main() {
     });
 
     test('rejects payload with NaN value', () async {
-      expect(
-        () => service.enqueue(
+      _setupHealthyQueue(mockDao);
+      await expectLater(
+        service.enqueue(
           tableName: 'products',
           recordId: 'r1',
           operation: SyncOperation.update,
@@ -73,8 +80,9 @@ void main() {
     });
 
     test('rejects payload with Infinity value', () async {
-      expect(
-        () => service.enqueue(
+      _setupHealthyQueue(mockDao);
+      await expectLater(
+        service.enqueue(
           tableName: 'products',
           recordId: 'r1',
           operation: SyncOperation.update,

@@ -55,14 +55,14 @@ class LoyaltyDao extends DatabaseAccessor<AppDatabase> with _$LoyaltyDaoMixin {
              updated_at = ?
          WHERE customer_id = ? AND store_id = ?''',
       [
-        Variable.withInt(points),
-        Variable.withInt(points),
-        Variable.withInt(points),
-        Variable.withInt(points),
-        Variable.withInt(points),
-        Variable.withDateTime(DateTime.now()),
-        Variable.withString(customerId),
-        Variable.withString(storeId),
+        points,
+        points,
+        points,
+        points,
+        points,
+        DateTime.now().millisecondsSinceEpoch,
+        customerId,
+        storeId,
       ],
     );
   }

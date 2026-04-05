@@ -17,9 +17,9 @@ void main() {
       await db.close();
     });
 
-    test('schema version is 11', () async {
+    test('schema version is 22', () async {
       final db = createTestDatabase();
-      expect(db.schemaVersion, 11);
+      expect(db.schemaVersion, 22);
       await db.close();
     });
 
@@ -69,6 +69,7 @@ void main() {
 
     test('database can perform basic CRUD operations', () async {
       final db = createTestDatabase();
+      await seedTestData(db);
 
       // Insert a product
       await db.productsDao.insertProduct(
@@ -97,6 +98,8 @@ void main() {
     test('multiple databases are independent', () async {
       final db1 = createTestDatabase();
       final db2 = createTestDatabase();
+      await seedTestData(db1);
+      await seedTestData(db2);
 
       await db1.productsDao.insertProduct(
         ProductsTableCompanion.insert(

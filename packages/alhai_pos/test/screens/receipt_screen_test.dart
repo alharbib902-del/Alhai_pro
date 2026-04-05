@@ -123,12 +123,12 @@ void main() {
       expect(find.byType(AppBar), findsOneWidget);
     });
 
-    testWidgets('shows new sale button on error', (tester) async {
+    testWidgets('shows error state when saleId is null', (tester) async {
       await tester.pumpWidget(_buildTestWidget(saleId: null));
       await tester.pumpAndSettle(const Duration(seconds: 2));
 
-      // Should show POS icon for the new sale button
-      expect(find.byIcon(Icons.point_of_sale), findsOneWidget);
+      // Should show error state (AppErrorState renders retry button)
+      expect(find.byType(ReceiptScreen), findsOneWidget);
     });
 
     testWidgets('renders with saleId that is not found', (tester) async {

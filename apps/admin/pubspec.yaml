@@ -47,7 +47,7 @@ dependencies:
   flutter_secure_storage: ^9.0.0
 
   # Formatting
-  intl: ^0.19.0
+  intl: any
 
   # App infra
   go_router: ^13.0.0
@@ -68,7 +68,8 @@ dev_dependencies:
   build_runner: ^2.4.7
   mocktail: ^1.0.4
 
-  alhai_sync: any
+  alhai_sync:
+    path: ../../packages/alhai_sync
 flutter:
   uses-material-design: true
   assets:

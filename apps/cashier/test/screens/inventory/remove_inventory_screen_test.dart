@@ -60,7 +60,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.search_rounded), findsWidgets);
-      expect(find.text('Scan'), findsOneWidget);
+      expect(find.text('\u0645\u0633\u062d'), findsOneWidget);
 
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();
@@ -74,7 +74,10 @@ void main() {
       await tester.pumpWidget(createTestWidget(const RemoveInventoryScreen()));
       await tester.pumpAndSettle();
 
-      expect(find.text('Quantity to Remove'), findsOneWidget);
+      expect(
+          find.text(
+              '\u0627\u0644\u0643\u0645\u064a\u0629 \u0627\u0644\u0645\u0631\u0627\u062f \u0633\u062d\u0628\u0647\u0627'),
+          findsOneWidget);
 
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();
@@ -89,8 +92,8 @@ void main() {
       await tester.pumpAndSettle();
 
       // Reason options
-      expect(find.text('Sold'), findsOneWidget);
-      expect(find.text('Transferred'), findsOneWidget);
+      expect(find.text('\u0645\u0628\u0627\u0639'), findsOneWidget);
+      expect(find.text('\u0645\u0646\u0642\u0648\u0644'), findsOneWidget);
 
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();

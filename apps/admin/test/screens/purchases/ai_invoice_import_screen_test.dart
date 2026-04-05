@@ -22,14 +22,14 @@ void main() {
   group('AiInvoiceImportScreen', () {
     testWidgets('renders the screen', (tester) async {
       await tester.pumpWidget(createTestWidget(const AiInvoiceImportScreen()));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 500));
 
       expect(find.byType(AiInvoiceImportScreen), findsOneWidget);
     });
 
     testWidgets('shows upload area by default', (tester) async {
       await tester.pumpWidget(createTestWidget(const AiInvoiceImportScreen()));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 500));
 
       // Upload view shows camera and gallery icons
       expect(find.byIcon(Icons.camera_alt), findsWidgets);
@@ -37,14 +37,15 @@ void main() {
 
     testWidgets('has back navigation', (tester) async {
       await tester.pumpWidget(createTestWidget(const AiInvoiceImportScreen()));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 500));
 
-      expect(find.byIcon(Icons.arrow_back_rounded), findsWidgets);
+      // RTL locale uses arrow_forward_rounded for back navigation
+      expect(find.byIcon(Icons.arrow_forward_rounded), findsWidgets);
     });
 
     testWidgets('shows document scanner icon in upload view', (tester) async {
       await tester.pumpWidget(createTestWidget(const AiInvoiceImportScreen()));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 500));
 
       // Upload view shows document scanner icon
       expect(find.byIcon(Icons.document_scanner), findsWidgets);

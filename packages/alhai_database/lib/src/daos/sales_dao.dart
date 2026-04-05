@@ -141,10 +141,10 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
               'UPDATE products SET stock_qty = stock_qty + ?, updated_at = ? WHERE id = ?'
               '${storeId != null ? ' AND store_id = ?' : ''}',
               [
-                Variable.withReal(qtyDouble),
-                Variable.withDateTime(now),
-                Variable.withString(productId),
-                if (storeId != null) Variable.withString(storeId),
+                qtyDouble,
+                now.millisecondsSinceEpoch,
+                productId,
+                if (storeId != null) storeId,
               ],
             );
 

@@ -9,7 +9,7 @@ import '../../helpers/test_helpers.dart';
 import 'package:cashier/screens/payment/split_receipt_screen.dart';
 
 void main() {
-  late MockOrdersDao ordersDao;
+  late MockSalesDao salesDao;
   late MockAppDatabase db;
 
   setUpAll(() {
@@ -17,8 +17,8 @@ void main() {
   });
 
   setUp(() {
-    ordersDao = MockOrdersDao();
-    db = setupMockDatabase(ordersDao: ordersDao);
+    salesDao = MockSalesDao();
+    db = setupMockDatabase(salesDao: salesDao);
     setupTestGetIt(mockDb: db);
   });
 
@@ -31,8 +31,8 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => ordersDao.getOrderById(any()))
-          .thenAnswer((_) async => createTestOrder(id: 'order-1'));
+      when(() => salesDao.getSaleById(any()))
+          .thenAnswer((_) async => createTestSale(id: 'order-1'));
 
       await tester.pumpWidget(
           createTestWidget(const SplitReceiptScreen(orderId: 'order-1')));
@@ -46,14 +46,18 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => ordersDao.getOrderById(any())).thenAnswer((_) async => null);
+      when(() => salesDao.getSaleById(any())).thenAnswer((_) async => null);
 
       await tester.pumpWidget(
           createTestWidget(const SplitReceiptScreen(orderId: 'order-1')));
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.receipt_long_outlined), findsOneWidget);
-      expect(find.text('Order not found'), findsOneWidget);
+      // Arabic l10n: orderNotFound
+      expect(
+          find.text(
+              '\u0644\u0645 \u064a\u062a\u0645 \u0627\u0644\u0639\u062b\u0648\u0631 \u0639\u0644\u0649 \u0627\u0644\u0637\u0644\u0628'),
+          findsOneWidget);
     });
 
     testWidgets('shows order summary card when loaded', (tester) async {
@@ -62,8 +66,8 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => ordersDao.getOrderById(any()))
-          .thenAnswer((_) async => createTestOrder(
+      when(() => salesDao.getSaleById(any()))
+          .thenAnswer((_) async => createTestSale(
                 id: 'order-1',
                 total: 200.0,
                 paymentMethod: 'cash',
@@ -83,8 +87,8 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => ordersDao.getOrderById(any()))
-          .thenAnswer((_) async => createTestOrder(
+      when(() => salesDao.getSaleById(any()))
+          .thenAnswer((_) async => createTestSale(
                 id: 'order-1',
                 total: 200.0,
                 paymentMethod: 'cash',
@@ -104,8 +108,8 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => ordersDao.getOrderById(any()))
-          .thenAnswer((_) async => createTestOrder(
+      when(() => salesDao.getSaleById(any()))
+          .thenAnswer((_) async => createTestSale(
                 id: 'order-1',
                 total: 200.0,
               ));
@@ -124,8 +128,8 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => ordersDao.getOrderById(any()))
-          .thenAnswer((_) async => createTestOrder(
+      when(() => salesDao.getSaleById(any()))
+          .thenAnswer((_) async => createTestSale(
                 id: 'order-1',
                 total: 200.0,
               ));

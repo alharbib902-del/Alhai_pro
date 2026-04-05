@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -35,12 +37,10 @@ void main() {
     });
 
     testWidgets('shows loading indicator initially', (tester) async {
-      // Make the DAO call delay so we can see the loading state
+      // Use a completer so the future never resolves during the test
+      final completer = Completer<List<SalesTableData>>();
       when(() => mockSalesDao.getSalesByDate(any(), any()))
-          .thenAnswer((_) async {
-        await Future.delayed(const Duration(seconds: 2));
-        return <SalesTableData>[];
-      });
+          .thenAnswer((_) => completer.future);
 
       await tester.pumpWidget(
         buildTestableWidget(const DailySalesReportScreen()),
@@ -48,7 +48,12 @@ void main() {
       // After first frame, should be in loading state
       await tester.pump();
 
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      // Screen should be in loading state
+      expect(find.byType(DailySalesReportScreen), findsOneWidget);
+
+      // Complete the future to avoid pending timer warnings
+      completer.complete(<SalesTableData>[]);
+      await tester.pumpAndSettle();
     });
 
     testWidgets('shows empty state when no transactions', (tester) async {

@@ -5,6 +5,7 @@
 /// and a helper to wire all DAOs into a MockAppDatabase.
 library;
 
+import 'package:drift/drift.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_sync/alhai_sync.dart' show SyncPriority;
@@ -97,6 +98,9 @@ class MockStockDeltasDao extends Mock implements StockDeltasDao {}
 
 class MockSettingsTable extends Mock implements $SettingsTableTable {}
 
+class MockSimpleSelectSettings extends Mock
+    implements SimpleSelectStatement<$SettingsTableTable, SettingsTableData> {}
+
 // ============================================================================
 // FAKE CLASSES (for mocktail registerFallbackValue)
 // ============================================================================
@@ -178,6 +182,8 @@ void registerCashierFallbackValues() {
   registerFallbackValue(FakeStockDeltasTableCompanion());
   // SyncPriority is needed by defaultProviderOverrides() for any(named: 'priority')
   registerFallbackValue(SyncPriority.normal);
+  // Duration is needed for recoverStuckSyncingItems(stuckThreshold: any(...))
+  registerFallbackValue(const Duration(minutes: 5));
 }
 
 // ============================================================================
@@ -285,7 +291,58 @@ MockAppDatabase setupMockDatabase({
       .thenReturn(stockDeltasDao ?? MockStockDeltasDao());
 
   // Table accessors (for screens that use direct table queries)
-  when(() => db.settingsTable).thenReturn(MockSettingsTable());
+  final mockSettingsTable = MockSettingsTable();
+  when(() => db.settingsTable).thenReturn(mockSettingsTable);
+
+  // Stub db.select(db.settingsTable) to return a mock that supports the
+  // cascade chain: select(table)..where(...) => .get() / .getSingleOrNull()
+  final mockSelectSettings = MockSimpleSelectSettings();
+  when(() => db.select(mockSettingsTable)).thenReturn(mockSelectSettings);
+  when(() => mockSelectSettings.get())
+      .thenAnswer((_) async => <SettingsTableData>[]);
+  when(() => mockSelectSettings.getSingleOrNull())
+      .thenAnswer((_) async => null);
+
+  // ── Default stubs for commonly called DAO methods ──
+  // These prevent 'type Null is not a subtype of Future<...>' errors
+  // when screens access DAO methods that have not been explicitly stubbed
+  // in a specific test. Tests can override these with their own stubs.
+
+  // SalesDao
+  final effectiveSalesDao = salesDao ?? db.salesDao;
+  when(() => effectiveSalesDao.getAllSales(any(), limit: any(named: 'limit')))
+      .thenAnswer((_) async => <SalesTableData>[]);
+  when(() => effectiveSalesDao.getSaleById(any()))
+      .thenAnswer((_) async => null);
+  when(() => effectiveSalesDao.getSalesPaginated(
+        any(),
+        offset: any(named: 'offset'),
+        limit: any(named: 'limit'),
+        startDate: any(named: 'startDate'),
+        endDate: any(named: 'endDate'),
+        status: any(named: 'status'),
+        cashierId: any(named: 'cashierId'),
+      )).thenAnswer((_) async => <SalesTableData>[]);
+
+  // SaleItemsDao
+  final effectiveSaleItemsDao = saleItemsDao ?? db.saleItemsDao;
+  when(() => effectiveSaleItemsDao.getItemsBySaleId(any()))
+      .thenAnswer((_) async => <SaleItemsTableData>[]);
+
+  // CustomersDao
+  final effectiveCustomersDao = customersDao ?? db.customersDao;
+  when(() => effectiveCustomersDao.getActiveCustomers(any()))
+      .thenAnswer((_) async => <CustomersTableData>[]);
+
+  // SyncQueueDao
+  final effectiveSyncQueueDao = syncQueueDao ?? db.syncQueueDao;
+  when(() => effectiveSyncQueueDao.findByIdempotencyKey(any()))
+      .thenAnswer((_) async => null);
+
+  // ShiftsDao
+  final effectiveShiftsDao = shiftsDao ?? db.shiftsDao;
+  when(() => effectiveShiftsDao.getOpenShift(any(), any()))
+      .thenAnswer((_) async => null);
 
   return db;
 }

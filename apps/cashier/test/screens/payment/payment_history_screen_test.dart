@@ -10,7 +10,7 @@ import '../../helpers/test_helpers.dart';
 import 'package:cashier/screens/payment/payment_history_screen.dart';
 
 void main() {
-  late MockOrdersDao ordersDao;
+  late MockSalesDao salesDao;
   late MockAppDatabase db;
 
   setUpAll(() {
@@ -18,8 +18,8 @@ void main() {
   });
 
   setUp(() {
-    ordersDao = MockOrdersDao();
-    db = setupMockDatabase(ordersDao: ordersDao);
+    salesDao = MockSalesDao();
+    db = setupMockDatabase(salesDao: salesDao);
     setupTestGetIt(mockDb: db);
   });
 
@@ -32,8 +32,8 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => ordersDao.getOrders(any()))
-          .thenAnswer((_) async => <OrdersTableData>[]);
+      when(() => salesDao.getAllSales(any(), limit: any(named: 'limit')))
+          .thenAnswer((_) async => <SalesTableData>[]);
 
       await tester.pumpWidget(createTestWidget(const PaymentHistoryScreen()));
 
@@ -46,8 +46,8 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => ordersDao.getOrders(any()))
-          .thenAnswer((_) async => <OrdersTableData>[]);
+      when(() => salesDao.getAllSales(any(), limit: any(named: 'limit')))
+          .thenAnswer((_) async => <SalesTableData>[]);
 
       await tester.pumpWidget(createTestWidget(const PaymentHistoryScreen()));
       await tester.pumpAndSettle();
@@ -61,8 +61,8 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => ordersDao.getOrders(any()))
-          .thenAnswer((_) async => <OrdersTableData>[]);
+      when(() => salesDao.getAllSales(any(), limit: any(named: 'limit')))
+          .thenAnswer((_) async => <SalesTableData>[]);
 
       await tester.pumpWidget(createTestWidget(const PaymentHistoryScreen()));
       await tester.pumpAndSettle();
@@ -77,8 +77,8 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => ordersDao.getOrders(any()))
-          .thenAnswer((_) async => <OrdersTableData>[]);
+      when(() => salesDao.getAllSales(any(), limit: any(named: 'limit')))
+          .thenAnswer((_) async => <SalesTableData>[]);
 
       await tester.pumpWidget(createTestWidget(const PaymentHistoryScreen()));
       await tester.pumpAndSettle();
@@ -95,22 +95,23 @@ void main() {
 
       suppressOverflowErrors();
 
-      final orders = [
-        createTestOrder(
-          id: 'order-1',
+      final sales = [
+        createTestSale(
+          id: 'sale-1',
           total: 150.0,
           paymentMethod: 'cash',
           status: 'completed',
         ),
-        createTestOrder(
-          id: 'order-2',
+        createTestSale(
+          id: 'sale-2',
           total: 250.0,
           paymentMethod: 'card',
           status: 'completed',
         ),
       ];
 
-      when(() => ordersDao.getOrders(any())).thenAnswer((_) async => orders);
+      when(() => salesDao.getAllSales(any(), limit: any(named: 'limit')))
+          .thenAnswer((_) async => sales);
 
       await tester.pumpWidget(createTestWidget(const PaymentHistoryScreen()));
       await tester.pumpAndSettle();
@@ -127,21 +128,23 @@ void main() {
 
       suppressOverflowErrors();
 
-      final orders = [
-        createTestOrder(
-          id: 'order-1',
+      final sales = [
+        createTestSale(
+          id: 'sale-1',
           total: 100.0,
           status: 'completed',
         ),
       ];
 
-      when(() => ordersDao.getOrders(any())).thenAnswer((_) async => orders);
+      when(() => salesDao.getAllSales(any(), limit: any(named: 'limit')))
+          .thenAnswer((_) async => sales);
 
       await tester.pumpWidget(createTestWidget(const PaymentHistoryScreen()));
       await tester.pumpAndSettle();
 
-      // Summary stats should show "Payments" text
-      expect(find.text('Payments'), findsOneWidget);
+      // Summary stats should show "Payments" text (Arabic l10n)
+      expect(find.text('\u0627\u0644\u062f\u0641\u0639\u0627\u062a'),
+          findsOneWidget);
     });
   });
 }

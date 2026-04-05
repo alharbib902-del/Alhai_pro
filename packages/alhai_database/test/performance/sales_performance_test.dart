@@ -52,8 +52,9 @@ void main() {
   }
 
   group('Sales Insert Performance', () {
-    setUp(() {
+    setUp(() async {
       db = createTestDatabase();
+      await seedTestData(db);
     });
 
     tearDown(() async {
@@ -126,6 +127,7 @@ void main() {
   group('Sales Query By Date Range Performance', () {
     setUp(() async {
       db = createTestDatabase();
+      await seedTestData(db);
 
       // Seed 500 sales spread across 30 days in June 2025
       for (int i = 0; i < 500; i++) {
@@ -203,6 +205,7 @@ void main() {
   group('Sales Aggregation Performance', () {
     setUp(() async {
       db = createTestDatabase();
+      await seedTestData(db);
 
       // Seed 500 completed sales for aggregation testing
       for (int i = 0; i < 500; i++) {

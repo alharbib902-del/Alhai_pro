@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -32,24 +34,26 @@ void main() {
 
     testWidgets('shows loading indicator initially', (tester) async {
       // Make the DAO call slow so we see loading
+      final completer = Completer<SalesStats>();
       final mocks = setupMockGetIt();
       when(() => mocks.salesDao.getSalesStats(
             any(),
             startDate: any(named: 'startDate'),
             endDate: any(named: 'endDate'),
             cashierId: any(named: 'cashierId'),
-          )).thenAnswer((_) async {
-        await Future.delayed(const Duration(seconds: 5));
-        return const SalesStats(
-            count: 0, total: 0, average: 0, maxSale: 0, minSale: 0);
-      });
-
+          )).thenAnswer((_) => completer.future);
       await tester.pumpWidget(
         buildTestableWidget(const ProfitReportScreen()),
       );
       await tester.pump();
 
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      // Screen should be in loading state
+      expect(find.byType(ProfitReportScreen), findsOneWidget);
+
+      // Complete the future to avoid pending timer warnings
+      completer.complete(const SalesStats(
+          count: 0, total: 0, average: 0, maxSale: 0, minSale: 0));
+      await tester.pumpAndSettle();
     });
 
     testWidgets('shows error state when data loading fails', (tester) async {

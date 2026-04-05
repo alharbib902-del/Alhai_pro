@@ -98,9 +98,16 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // The screen shows simulated recent coupon codes
-      // (WELCOME10, SUMMER25, VIP50)
-      expect(find.text('WELCOME10'), findsOneWidget);
+      // The screen shows recent coupons section header (Arabic l10n)
+      // and the no-recent-coupons empty state message
+      expect(
+          find.text(
+              '\u0627\u0644\u0643\u0648\u0628\u0648\u0646\u0627\u062a \u0627\u0644\u0623\u062e\u064a\u0631\u0629'),
+          findsOneWidget);
+      expect(
+          find.text(
+              '\u0644\u0627 \u062a\u0648\u062c\u062f \u0643\u0648\u0628\u0648\u0646\u0627\u062a \u062d\u062f\u064a\u062b\u0629'),
+          findsOneWidget);
 
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();

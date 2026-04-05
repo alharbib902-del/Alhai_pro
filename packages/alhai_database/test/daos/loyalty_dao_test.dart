@@ -5,8 +5,19 @@ import '../helpers/database_test_helpers.dart';
 void main() {
   late AppDatabase db;
 
-  setUp(() {
+  setUp(() async {
     db = createTestDatabase();
+    await seedTestData(db);
+    // loyalty references customers via FK
+    final now = DateTime(2025, 1, 1);
+    for (var i = 0; i <= 4; i++) {
+      await db.customersDao.insertCustomer(CustomersTableCompanion.insert(
+        id: 'cust-$i',
+        storeId: 'store-1',
+        name: 'Cust $i',
+        createdAt: now,
+      ));
+    }
   });
 
   tearDown(() async {
@@ -133,6 +144,9 @@ void main() {
 
   group('LoyaltyDao - Transactions', () {
     test('logTransaction and getCustomerTransactions', () async {
+      // Create prerequisite loyalty record (FK parent for loyaltyId)
+      await db.loyaltyDao.createLoyalty(makeLoyalty());
+
       await db.loyaltyDao.logTransaction(
         LoyaltyTransactionsTableCompanion.insert(
           id: 'ltx-1',

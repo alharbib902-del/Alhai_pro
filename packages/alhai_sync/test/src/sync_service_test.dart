@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
+import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_sync/src/sync_service.dart';
 
 import '../helpers/sync_test_helpers.dart';
@@ -18,6 +19,22 @@ void main() {
   setUp(() {
     mockSyncQueueDao = MockSyncQueueDao();
     syncService = SyncService(mockSyncQueueDao);
+
+    // Default stubs needed by enqueue's queue-health check and cross-op dedup
+    when(() => mockSyncQueueDao.getQueueHealth())
+        .thenAnswer((_) async => SyncQueueHealth(
+              totalItems: 10,
+              pendingCount: 5,
+              syncingCount: 0,
+              failedCount: 0,
+              conflictCount: 0,
+              syncedCount: 5,
+              oldestPendingAt: null,
+              avgRetryCount: 0,
+              itemsPerTable: {},
+            ));
+    when(() => mockSyncQueueDao.findPendingByTableRecord(any(), any()))
+        .thenAnswer((_) async => []);
   });
 
   group('SyncService', () {
@@ -58,6 +75,8 @@ void main() {
         final existingItem = createSyncQueueItem(id: 'existing-id');
         when(() => mockSyncQueueDao.findByIdempotencyKey(any()))
             .thenAnswer((_) async => existingItem);
+        when(() => mockSyncQueueDao.updatePayload(any(), any()))
+            .thenAnswer((_) async => 1);
 
         final id = await syncService.enqueue(
           tableName: 'products',
@@ -197,7 +216,7 @@ void main() {
         await syncService.enqueueUpdate(
           tableName: 'products',
           recordId: 'p-1',
-          changes: {'name': 'Updated'},
+          changes: {'id': 'p-1', 'name': 'Updated'},
         );
 
         verify(() => mockSyncQueueDao.enqueue(

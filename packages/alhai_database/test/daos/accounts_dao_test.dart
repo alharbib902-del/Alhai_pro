@@ -5,8 +5,16 @@ import '../helpers/database_test_helpers.dart';
 void main() {
   late AppDatabase db;
 
-  setUp(() {
+  setUp(() async {
     db = createTestDatabase();
+    await seedTestData(db);
+    // Accounts reference customers via FK
+    await db.customersDao.insertCustomer(CustomersTableCompanion.insert(
+      id: 'cust-1',
+      storeId: 'store-1',
+      name: 'Cust 1',
+      createdAt: DateTime(2025, 1, 1),
+    ));
   });
 
   tearDown(() async {

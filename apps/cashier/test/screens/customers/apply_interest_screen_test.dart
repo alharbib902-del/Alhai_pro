@@ -131,7 +131,9 @@ void main() {
       // People icon for customers section
       expect(find.byIcon(Icons.people_rounded), findsOneWidget);
       // Select All button
-      expect(find.text('Select All'), findsOneWidget);
+      expect(
+          find.text('\u062a\u062d\u062f\u064a\u062f \u0627\u0644\u0643\u0644'),
+          findsOneWidget);
     });
 
     testWidgets('shows preview card with preview icon', (tester) async {
@@ -153,7 +155,7 @@ void main() {
       // Preview icon
       expect(find.byIcon(Icons.preview_rounded), findsOneWidget);
       // Preview text
-      expect(find.text('Preview'), findsOneWidget);
+      expect(find.text('\u0645\u0639\u0627\u064a\u0646\u0629'), findsOneWidget);
     });
 
     testWidgets('apply button is disabled when no customers selected',
@@ -176,7 +178,8 @@ void main() {
       // Apply button should be disabled (no customers selected)
       // Use ancestor finder because FilledButton.icon creates a subclass
       final filledButtonFinder = find.ancestor(
-        of: find.text('Apply Interest'),
+        of: find.text(
+            '\u062a\u0637\u0628\u064a\u0642 \u0627\u0644\u0641\u0627\u0626\u062f\u0629'),
         matching: find.byWidgetPredicate((w) => w is FilledButton),
       );
       expect(filledButtonFinder, findsOneWidget);

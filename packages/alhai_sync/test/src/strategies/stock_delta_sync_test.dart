@@ -85,6 +85,8 @@ void main() {
         when(() => mockMetadataDao.updateLastPushAt(any(), any(),
             syncCount: any(named: 'syncCount'))).thenAnswer((_) async {});
         when(() => mockMetadataDao.clearError(any())).thenAnswer((_) async {});
+        when(() => mockMetadataDao.setError(any(), any()))
+            .thenAnswer((_) async {});
 
         final result = await stockDeltaSync.sync(
           orgId: 'org-1',
@@ -128,6 +130,8 @@ void main() {
         when(() => mockMetadataDao.updateLastPushAt(any(), any(),
             syncCount: any(named: 'syncCount'))).thenAnswer((_) async {});
         when(() => mockMetadataDao.clearError(any())).thenAnswer((_) async {});
+        when(() => mockMetadataDao.setError(any(), any()))
+            .thenAnswer((_) async {});
 
         final result = await stockDeltaSync.sync(
           orgId: 'org-1',
@@ -181,6 +185,8 @@ void main() {
         when(() => mockMetadataDao.updateLastPushAt(any(), any(),
             syncCount: any(named: 'syncCount'))).thenAnswer((_) async {});
         when(() => mockMetadataDao.clearError(any())).thenAnswer((_) async {});
+        when(() => mockMetadataDao.setError(any(), any()))
+            .thenAnswer((_) async {});
 
         final result = await stockDeltaSync.sync(
           orgId: 'org-1',

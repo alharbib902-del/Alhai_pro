@@ -19,6 +19,8 @@ class MockConnectivity extends Mock implements Connectivity {}
 // ---------------------------------------------------------------------------
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   late ConnectivityService service;
 
   setUp(() {

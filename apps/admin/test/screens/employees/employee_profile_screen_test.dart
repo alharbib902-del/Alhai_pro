@@ -95,11 +95,11 @@ void main() {
 
     testWidgets('screen handles error from getUserById', (tester) async {
       when(() => mockUsersDao.getUserById('user-1'))
-          .thenThrow(Exception('DB error'));
+          .thenAnswer((_) async => throw Exception('DB error'));
 
       await tester.pumpWidget(
           createTestWidget(const EmployeeProfileScreen(userId: 'user-1')));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 1));
 
       expect(find.byType(EmployeeProfileScreen), findsOneWidget);
     });

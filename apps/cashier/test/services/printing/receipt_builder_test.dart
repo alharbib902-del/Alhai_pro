@@ -108,7 +108,14 @@ void main() {
     });
 
     test('receipt contains store name', () async {
-      final receipt = _sampleReceipt();
+      final receipt = _sampleReceipt(
+        store: const ReceiptStoreInfo(
+          name: 'Al-HAI Store',
+          address: 'Riyadh',
+          phone: '0500000000',
+          vatNumber: '300000000000003',
+        ),
+      );
       final bytes = await ReceiptBuilder.build(receipt);
       final text = _bytesToString(bytes);
 
@@ -296,11 +303,18 @@ void main() {
   // -------------------------------------------------------------------------
   group('Arabic text in receipt', () {
     test('receipt contains Arabic store address', () async {
-      final receipt = _sampleReceipt();
+      final receipt = _sampleReceipt(
+        store: const ReceiptStoreInfo(
+          name: '\u0645\u062a\u062c\u0631 \u0627\u0644\u0647\u0627\u064a',
+          address: '\u0627\u0644\u0631\u064a\u0627\u0636',
+          phone: '0500000000',
+          vatNumber: '300000000000003',
+        ),
+      );
       final bytes = await ReceiptBuilder.build(receipt);
       final text = _bytesToString(bytes);
 
-      // Default store address is Arabic
+      // Store address is Arabic
       expect(
           text, contains('\u0627\u0644\u0631\u064a\u0627\u0636')); // "الرياض"
     });

@@ -12,17 +12,18 @@ import '../../helpers/test_helpers.dart';
 import '../../helpers/mock_database.dart';
 
 void main() {
-  late MockOrdersDao ordersDao;
+  late MockSalesDao salesDao;
 
   setUpAll(() => registerCashierFallbackValues());
 
   setUp(() {
-    ordersDao = MockOrdersDao();
+    salesDao = MockSalesDao();
 
-    // PaymentReportsScreen uses _db.ordersDao.getOrders(storeId).
-    when(() => ordersDao.getOrders(any())).thenAnswer((_) async => []);
+    // PaymentReportsScreen uses _db.salesDao.getAllSales(storeId).
+    when(() => salesDao.getAllSales(any(), limit: any(named: 'limit')))
+        .thenAnswer((_) async => []);
 
-    final db = setupMockDatabase(ordersDao: ordersDao);
+    final db = setupMockDatabase(salesDao: salesDao);
     setupTestGetIt(mockDb: db);
   });
 
@@ -50,8 +51,8 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      final completer = Completer<List<OrdersTableData>>();
-      when(() => ordersDao.getOrders(any()))
+      final completer = Completer<List<SalesTableData>>();
+      when(() => salesDao.getAllSales(any(), limit: any(named: 'limit')))
           .thenAnswer((_) => completer.future);
 
       await tester.pumpWidget(
