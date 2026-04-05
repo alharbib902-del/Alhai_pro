@@ -1,0 +1,5 @@
+# Golden tests are environment-dependent (fonts, rendering engine) and produce
+# false failures on CI. Run them locally with: flutter test --tags golden
+tags:
+  golden:
+    skip: "Golden tests are environment-dependent and only run locally"

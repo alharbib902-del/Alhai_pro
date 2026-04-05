@@ -1,0 +1,5 @@
+# Performance tests depend on machine speed and produce flaky results on CI.
+# Run them locally with: flutter test --tags performance
+tags:
+  performance:
+    skip: "Performance tests are machine-dependent and only run locally"

@@ -1,3 +1,6 @@
+@Tags(['performance'])
+library;
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:alhai_database/alhai_database.dart';
 import '../helpers/database_test_helpers.dart';
