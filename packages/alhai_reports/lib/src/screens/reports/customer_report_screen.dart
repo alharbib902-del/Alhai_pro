@@ -130,27 +130,27 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.customerReport),
+        title: Text(AppLocalizations.of(context).customerReport),
         actions: [
           IconButton(
             onPressed: _selectDateRange,
             icon: const Icon(Icons.date_range),
-            tooltip: AppLocalizations.of(context)!.date,
+            tooltip: AppLocalizations.of(context).date,
           ),
           IconButton(
             onPressed: _exportReport,
             icon: const Icon(Icons.download),
-            tooltip: AppLocalizations.of(context)!.exportAction,
+            tooltip: AppLocalizations.of(context).exportAction,
           ),
         ],
         bottom: TabBar(
           controller: _tabController,
           isScrollable: true,
           tabs: [
-            Tab(text: AppLocalizations.of(context)!.overviewTab),
-            Tab(text: AppLocalizations.of(context)!.topCustomersTab),
-            Tab(text: AppLocalizations.of(context)!.growthAnalysisTab),
-            Tab(text: AppLocalizations.of(context)!.loyaltyTab),
+            Tab(text: AppLocalizations.of(context).overviewTab),
+            Tab(text: AppLocalizations.of(context).topCustomersTab),
+            Tab(text: AppLocalizations.of(context).growthAnalysisTab),
+            Tab(text: AppLocalizations.of(context).loyaltyTab),
           ],
         ),
       ),
@@ -167,7 +167,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
                             size: 64, color: AppColors.textMuted),
                         const SizedBox(height: AlhaiSpacing.md),
                         Text(
-                          AppLocalizations.of(context)!
+                          AppLocalizations.of(context)
                               .errorLoadingCustomerReport,
                           style: AppTypography.bodyLarge
                               .copyWith(color: AppColors.textMuted),
@@ -177,7 +177,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
                         FilledButton.icon(
                           onPressed: _loadCustomerData,
                           icon: const Icon(Icons.refresh_rounded),
-                          label: Text(AppLocalizations.of(context)!.retry),
+                          label: Text(AppLocalizations.of(context).retry),
                         ),
                       ],
                     ),
@@ -223,7 +223,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
           ),
           const SizedBox(width: AppSizes.sm),
           Text(
-            '(${AppLocalizations.of(context)!.daysCountLabel(_dateRange.duration.inDays)})',
+            '(${AppLocalizations.of(context).daysCountLabel(_dateRange.duration.inDays)})',
             style: AppTypography.bodySmall.copyWith(
               color: AppColors.textMuted,
             ),
@@ -252,7 +252,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
   }
 
   Widget _buildStatsRow() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Column(
       children: [
         Row(
@@ -349,7 +349,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
 
   Widget _buildTierDistribution() {
     final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     // حساب التوزيع الحقيقي من بيانات العملاء المحملة
     int diamond = 0, gold = 0, silver = 0, bronze = 0;
     for (final c in _topCustomers) {
@@ -470,7 +470,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
   }
 
   Widget _buildActivitySummary() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(AppSizes.md),
@@ -552,7 +552,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
   }
 
   Widget _buildTopCustomersTab() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return ListView.builder(
       padding: const EdgeInsets.all(AppSizes.lg),
       itemCount: _topCustomers.length + 1,
@@ -698,14 +698,14 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      '${customer.totalSpent.toStringAsFixed(0)} ${AppLocalizations.of(context)!.sar}',
+                      '${customer.totalSpent.toStringAsFixed(0)} ${AppLocalizations.of(context).sar}',
                       style: AppTypography.titleMedium.copyWith(
                         color: AppColors.success,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     Text(
-                      AppLocalizations.of(context)!
+                      AppLocalizations.of(context)
                           .ordersCount(customer.totalOrders),
                       style: AppTypography.bodySmall.copyWith(
                         color: AppColors.textMuted,
@@ -720,15 +720,15 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _buildCustomerStat(
-                  AppLocalizations.of(context)!.avgOrderStat,
-                  '${customer.avgOrderValue.toStringAsFixed(0)} ${AppLocalizations.of(context)!.sar}',
+                  AppLocalizations.of(context).avgOrderStat,
+                  '${customer.avgOrderValue.toStringAsFixed(0)} ${AppLocalizations.of(context).sar}',
                 ),
                 _buildCustomerStat(
-                  AppLocalizations.of(context)!.loyaltyPointsStat,
+                  AppLocalizations.of(context).loyaltyPointsStat,
                   '${customer.loyaltyPoints}',
                 ),
                 _buildCustomerStat(
-                  AppLocalizations.of(context)!.lastOrderStat,
+                  AppLocalizations.of(context).lastOrderStat,
                   _formatRelativeDate(context, customer.lastOrderDate),
                 ),
               ],
@@ -759,7 +759,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
   }
 
   Widget _buildGrowthTab() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return ListView(
       padding: const EdgeInsets.all(AppSizes.lg),
       children: [
@@ -861,7 +861,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
   }
 
   Widget _buildRetentionCard() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(AppSizes.md),
@@ -962,7 +962,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
   }
 
   Widget _buildCohortAnalysis() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(AppSizes.md),
@@ -1063,7 +1063,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
   }
 
   Widget _buildLoyaltyStats() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(AppSizes.md),
@@ -1168,7 +1168,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
   }
 
   Widget _buildPointsDistribution() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(AppSizes.md),
@@ -1223,7 +1223,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
           SizedBox(
             width: 80,
             child: Text(
-              '$points ${AppLocalizations.of(context)!.pointsUnit}',
+              '$points ${AppLocalizations.of(context).pointsUnit}',
               style: AppTypography.bodySmall,
               textAlign: TextAlign.end,
             ),
@@ -1234,7 +1234,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
   }
 
   Widget _buildRedemptionStats() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(AppSizes.md),
@@ -1305,7 +1305,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
   }
 
   String _getTierName(BuildContext context, String tier) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     switch (tier) {
       case 'diamond':
         return l10n.diamondTier;
@@ -1325,7 +1325,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
   }
 
   String _formatRelativeDate(BuildContext context, DateTime date) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final difference = DateTime.now().difference(date);
     if (difference.inDays == 0) {
       return l10n.todayDate;
@@ -1358,7 +1358,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
   void _exportReport() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(AppLocalizations.of(context)!.exportingReportMsg),
+        content: Text(AppLocalizations.of(context).exportingReportMsg),
       ),
     );
   }

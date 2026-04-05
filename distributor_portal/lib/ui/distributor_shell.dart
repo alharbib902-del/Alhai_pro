@@ -97,19 +97,19 @@ class _DistributorShellState extends ConsumerState<DistributorShell> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text(l10n?.distributorLogout ?? 'Sign out'),
+        title: Text(l10n.distributorLogout),
         content: const Text('Are you sure you want to sign out?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text(l10n?.cancel ?? 'Cancel'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.of(ctx).pop(true),
             style: FilledButton.styleFrom(
               backgroundColor: AppColors.error,
             ),
-            child: Text(l10n?.distributorLogout ?? 'Sign out',
+            child: Text(l10n.distributorLogout,
                 style: const TextStyle(color: AppColors.textOnPrimary)),
           ),
         ],
@@ -465,7 +465,7 @@ class _DistributorShellState extends ConsumerState<DistributorShell> {
         backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
         appBar: AppBar(
           title: Text(
-            l10n?.distributorPortal ?? 'Distributor Portal',
+            l10n.distributorPortal,
             overflow: TextOverflow.ellipsis,
             maxLines: 1,
           ),

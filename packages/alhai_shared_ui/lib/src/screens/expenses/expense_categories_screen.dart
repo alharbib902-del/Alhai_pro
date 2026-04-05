@@ -68,7 +68,7 @@ class _ExpenseCategoriesScreenState
     final isWideScreen = context.isDesktop;
     final isMediumScreen = !context.isMobile;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
@@ -98,7 +98,7 @@ class _ExpenseCategoriesScreenState
                   loading: () =>
                       const Center(child: CircularProgressIndicator()),
                   error: (e, _) =>
-                      Center(child: Text(l10n.errorPrefix('$e', e ?? ''))),
+                      Center(child: Text(l10n.errorPrefix('$e', e))),
                   data: (categoriesData) {
                     final categories = categoriesData.map(_fromData).toList();
                     final totalBudget =
@@ -159,7 +159,7 @@ class _ExpenseCategoriesScreenState
 
   Widget _buildBudgetSummary(
       double totalBudget, double totalSpent, bool isDark) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final percentage = totalBudget > 0 ? totalSpent / totalBudget * 100 : 0.0;
     final remaining = totalBudget - totalSpent;
 
@@ -472,7 +472,7 @@ class _ExpenseCategoriesScreenState
 
   void _showCategoryDetails(ExpenseCategory category) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     showModalBottomSheet(
       context: context,
@@ -574,7 +574,7 @@ class _ExpenseCategoriesScreenState
                   const Spacer(),
                   TextButton(
                       onPressed: () {},
-                      child: Text(AppLocalizations.of(context)!.viewAll)),
+                      child: Text(AppLocalizations.of(context).viewAll)),
                 ],
               ),
             ),
@@ -639,7 +639,7 @@ class _ExpenseCategoriesScreenState
   }
 
   void _showAddCategoryDialog() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (dialogContext) => _CategoryFormDialog(
@@ -682,7 +682,7 @@ class _ExpenseCategoriesScreenState
   }
 
   void _editCategory(ExpenseCategory category) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (dialogContext) => _CategoryFormDialog(
@@ -700,7 +700,7 @@ class _ExpenseCategoriesScreenState
   }
 
   void _deleteCategory(ExpenseCategory category) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -802,7 +802,7 @@ class _CategoryFormDialogState extends State<_CategoryFormDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return AlertDialog(
       title:
           Text(widget.category == null ? l10n.addCategory : l10n.editCategory),

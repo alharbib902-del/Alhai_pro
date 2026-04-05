@@ -131,8 +131,7 @@ class _CashierCategoriesScreenState
         setState(() => _isLoadingProducts = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content:
-                Text(AppLocalizations.of(context)?.errorOccurred ?? 'حدث خطأ'),
+            content: Text(AppLocalizations.of(context).errorOccurred),
             backgroundColor: AppColors.error,
           ),
         );

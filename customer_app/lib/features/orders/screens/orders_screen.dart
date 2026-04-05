@@ -28,7 +28,7 @@ class OrdersScreen extends ConsumerWidget {
         body: SafeArea(
           top: false,
           child: TabBarView(
-            children: [
+            children: const [
               _OrdersList(statuses: [
                 OrderStatus.created,
                 OrderStatus.confirmed,

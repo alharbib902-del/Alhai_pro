@@ -102,25 +102,25 @@ class _DistributorProductsScreenState
       backgroundColor: AppColors.getBackground(isDark),
       appBar: AppBar(
         title: Text(
-          l10n?.distributorProducts ?? 'Product Catalog',
+          l10n.distributorProducts,
           style: TextStyle(fontWeight: FontWeight.bold, color: cs.onSurface),
         ),
         centerTitle: false,
         actions: [
           Semantics(
             button: true,
-            label: l10n?.distributorAddProduct ?? 'Add Product',
+            label: l10n.distributorAddProduct,
             child: FilledButton.icon(
               onPressed: () {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(l10n?.distributorComingSoon ?? 'Coming soon'),
+                    content: Text(l10n.distributorComingSoon),
                     backgroundColor: AppColors.info,
                   ),
                 );
               },
               icon: const Icon(Icons.add_rounded, size: 18),
-              label: Text(l10n?.distributorAddProduct ?? 'Add Product'),
+              label: Text(l10n.distributorAddProduct),
               style: FilledButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 foregroundColor: AppColors.textOnPrimary,
@@ -140,12 +140,12 @@ class _DistributorProductsScreenState
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(l10n?.distributorLoadError ?? 'Error loading data'),
+              Text(l10n.distributorLoadError),
               const SizedBox(height: AlhaiSpacing.md),
               FilledButton.icon(
                 onPressed: () => ref.invalidate(productsProvider),
                 icon: const Icon(Icons.refresh, size: 18),
-                label: Text(l10n?.distributorRetry ?? 'Retry'),
+                label: Text(l10n.distributorRetry),
               ),
             ],
           ),

@@ -196,8 +196,7 @@ class _DefaultErrorScreen extends StatelessWidget {
                 ),
                 SizedBox(height: AlhaiSpacing.md),
                 Text(
-                  AppLocalizations.of(context)?.screenLoadError ??
-                      'An error occurred while loading the screen',
+                  AppLocalizations.of(context).screenLoadError,
                   style: theme.textTheme.titleLarge,
                   textAlign: TextAlign.center,
                 ),
@@ -213,7 +212,7 @@ class _DefaultErrorScreen extends StatelessWidget {
                 FilledButton.icon(
                   onPressed: onRetry,
                   icon: const Icon(Icons.refresh),
-                  label: Text(AppLocalizations.of(context)?.retry ?? 'Retry'),
+                  label: Text(AppLocalizations.of(context).retry),
                 ),
               ],
             ),
@@ -226,10 +225,9 @@ class _DefaultErrorScreen extends StatelessWidget {
   String _getErrorMessage(Object error, BuildContext context) {
     final l10n = AppLocalizations.of(context);
     if (error is TimeoutException) {
-      return l10n?.timeoutCheckConnection ??
-          'Timed out. Check your internet connection.';
+      return l10n.timeoutCheckConnection;
     }
-    return l10n?.retryLaterMessage ?? 'Please try again later.';
+    return l10n.retryLaterMessage;
   }
 }
 

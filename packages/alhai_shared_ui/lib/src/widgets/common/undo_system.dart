@@ -102,7 +102,7 @@ void showUndoSnackBar(
       );
 
   // عرض الـ SnackBar
-  final l10n = AppLocalizations.of(context)!;
+  final l10n = AppLocalizations.of(context);
   ScaffoldMessenger.of(context).hideCurrentSnackBar();
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
@@ -132,7 +132,7 @@ Future<bool> confirmLargeOperation(
     return true;
   }
 
-  final l10n = AppLocalizations.of(context)!;
+  final l10n = AppLocalizations.of(context);
   final result = await showDialog<bool>(
     context: context,
     builder: (context) => AlertDialog(
@@ -200,7 +200,7 @@ class UndoFloatingButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final canUndo = ref.watch(canUndoProvider);
     final lastAction = ref.watch(undoStackProvider).isEmpty
         ? null

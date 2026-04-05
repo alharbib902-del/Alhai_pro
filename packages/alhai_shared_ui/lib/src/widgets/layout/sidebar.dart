@@ -172,7 +172,7 @@ class _SidebarState extends State<Sidebar> with SingleTickerProviderStateMixin {
       return widget.header!;
     }
 
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Container(
       height: AppTopBarSize.height,
       padding: EdgeInsets.symmetric(
@@ -240,7 +240,7 @@ class _SidebarState extends State<Sidebar> with SingleTickerProviderStateMixin {
       return widget.footer!;
     }
 
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: EdgeInsets.all(
         widget.isCollapsed ? AppSpacing.sm : AppSpacing.md,

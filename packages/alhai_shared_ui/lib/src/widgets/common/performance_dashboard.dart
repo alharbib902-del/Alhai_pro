@@ -21,7 +21,7 @@ class PerformanceDashboard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final stats = ref.watch(performanceProvider);
     final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     if (compact) {
       return _CompactView(stats: stats);
@@ -176,19 +176,19 @@ class _CompactView extends StatelessWidget {
         _MiniKpi(
           icon: Icons.timer,
           value: '${stats.avgSaleTime.toStringAsFixed(0)}s',
-          tooltip: AppLocalizations.of(context)!.averageSaleTime,
+          tooltip: AppLocalizations.of(context).averageSaleTime,
         ),
         SizedBox(width: AlhaiSpacing.xs),
         _MiniKpi(
           icon: Icons.speed,
           value: '${stats.salesPerHour.toStringAsFixed(0)}/h',
-          tooltip: AppLocalizations.of(context)!.operationsPerHour,
+          tooltip: AppLocalizations.of(context).operationsPerHour,
         ),
         SizedBox(width: AlhaiSpacing.xs),
         _MiniKpi(
           icon: Icons.check_circle,
           value: '${stats.completedSales}',
-          tooltip: AppLocalizations.of(context)!.completedOperations,
+          tooltip: AppLocalizations.of(context).completedOperations,
         ),
       ],
     );

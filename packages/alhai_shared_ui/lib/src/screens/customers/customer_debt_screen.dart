@@ -110,7 +110,7 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
 
     if (_isLoading) {
@@ -453,7 +453,7 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
   }
 
   void _showDebtDetails(AccountsTableData debt) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
     final status = _getStatus(debt);
     final isOverdue = status == 'overdue';
@@ -575,7 +575,7 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
   void _recordPayment(AccountsTableData debt) {
     final amountController = TextEditingController();
     String paymentMethod = 'cash';
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     showDialog(
       context: context,
@@ -687,7 +687,7 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
   }
 
   void _sendReminders() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final overdueDebts =
         _debtors.where((d) => _getStatus(d) == 'overdue').toList();
     showDialog(

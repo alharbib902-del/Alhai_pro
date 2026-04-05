@@ -78,7 +78,6 @@ void main() {
           // ReturnsScreen uses a CreateReturnDrawer that opens via an action.
           expect(find.byType(ReturnsScreen), findsOneWidget);
           // Look for add/create icons commonly used for new return action
-          final addIcons = find.byIcon(Icons.add);
           // The presence of the screen confirms the route is correct
           expect(find.byType(Scaffold), findsWidgets);
         },

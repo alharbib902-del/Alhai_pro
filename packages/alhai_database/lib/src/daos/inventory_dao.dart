@@ -18,8 +18,9 @@ class InventoryDao extends DatabaseAccessor<AppDatabase>
     return (select(inventoryMovementsTable)
           ..where((m) {
             var condition = m.productId.equals(productId);
-            if (storeId != null)
+            if (storeId != null) {
               condition = condition & m.storeId.equals(storeId);
+            }
             return condition;
           })
           ..orderBy([(m) => OrderingTerm.desc(m.createdAt)])

@@ -206,8 +206,9 @@ class _CouponsContent extends ConsumerWidget {
                                 ],
                               ),
                             ).then((confirmed) {
-                              if (confirmed == true)
+                              if (confirmed == true) {
                                 _toggleActive(ref, coupon, v);
+                              }
                             });
                           } else {
                             _toggleActive(ref, coupon, v);

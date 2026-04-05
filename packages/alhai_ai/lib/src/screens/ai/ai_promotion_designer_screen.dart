@@ -47,7 +47,7 @@ class _AiPromotionDesignerScreenState
     final size = MediaQuery.of(context).size;
     final isWideScreen = size.width > 900;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       children: [
@@ -106,7 +106,7 @@ class _AiPromotionDesignerScreenState
     return promotions.when(
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (e, _) {
-        final l10n = AppLocalizations.of(context)!;
+        final l10n = AppLocalizations.of(context);
         return Center(child: Text(l10n.aiErrorOccurred(e.toString())));
       },
       data: (promos) {
@@ -139,7 +139,7 @@ class _AiPromotionDesignerScreenState
 
   Widget _buildAiHeader(bool isDark, AsyncValue<double> totalRevenue,
       AsyncValue<double> avgConfidence, int count) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
@@ -270,8 +270,8 @@ class _AiPromotionDesignerScreenState
       scrollDirection: Axis.horizontal,
       child: Row(
         children: [
-          _buildFilterChip(isDark, AppLocalizations.of(context)!.all, null,
-              selected == null),
+          _buildFilterChip(
+              isDark, AppLocalizations.of(context).all, null, selected == null),
           ...types.map((type) => _buildFilterChip(
                 isDark,
                 AiPromotionDesignerService.getPromotionTypeLabel(type),
@@ -336,8 +336,8 @@ class _AiPromotionDesignerScreenState
             onApply: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(AppLocalizations.of(context)!
-                      .aiPromotionApplied(p.title)),
+                  content: Text(
+                      AppLocalizations.of(context).aiPromotionApplied(p.title)),
                   backgroundColor: AppColors.success,
                   behavior: SnackBarBehavior.floating,
                   shape: RoundedRectangleBorder(
@@ -367,8 +367,8 @@ class _AiPromotionDesignerScreenState
             onApply: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(AppLocalizations.of(context)!
-                      .aiPromotionApplied(p.title)),
+                  content: Text(
+                      AppLocalizations.of(context).aiPromotionApplied(p.title)),
                   backgroundColor: AppColors.success,
                   behavior: SnackBarBehavior.floating,
                   shape: RoundedRectangleBorder(
@@ -387,7 +387,7 @@ class _AiPromotionDesignerScreenState
   // ============================================================================
 
   Widget _buildRoiTab(bool isDark, bool isWideScreen) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final selectedPromotion = ref.watch(selectedPromotionProvider);
     final roiForecast = ref.watch(roiForecastProvider);
 
@@ -438,7 +438,7 @@ class _AiPromotionDesignerScreenState
   }
 
   Widget _buildSelectedPromotionDetail(bool isDark, GeneratedPromotion promo) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final textColor = isDark ? Colors.white : AppColors.textPrimary;
     final subtextColor = isDark ? Colors.white70 : AppColors.textSecondary;
     final typeColor = Color(
@@ -585,7 +585,7 @@ class _AiPromotionDesignerScreenState
   // ============================================================================
 
   Widget _buildAbTestTab(bool isDark, bool isWideScreen) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final promoA = ref.watch(abTestPromotionAProvider);
     final promoB = ref.watch(abTestPromotionBProvider);
     final duration = ref.watch(abTestDurationProvider);

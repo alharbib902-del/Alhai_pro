@@ -80,8 +80,7 @@ class AppDataTable<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return AppLoadingState(
-          message: AppLocalizations.of(context)!.loadingData);
+      return AppLoadingState(message: AppLocalizations.of(context).loadingData);
     }
 
     if (data.isEmpty) {
@@ -328,7 +327,7 @@ class AppPagination extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: const BoxDecoration(

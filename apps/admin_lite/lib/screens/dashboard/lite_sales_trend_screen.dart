@@ -30,7 +30,7 @@ class _LiteSalesTrendScreenState extends ConsumerState<LiteSalesTrendScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final size = MediaQuery.of(context).size;
     final isMobile = size.width < 600;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     final dailyAsync = ref.watch(liteDailySalesProvider);
     final weeklyAsync = ref.watch(liteWeeklyComparisonProvider);

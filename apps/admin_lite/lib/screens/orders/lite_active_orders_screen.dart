@@ -32,7 +32,7 @@ class _LiteActiveOrdersScreenState
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final size = MediaQuery.of(context).size;
     final isMobile = size.width < 600;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final dataAsync = ref.watch(liteActiveOrdersProvider);
 
     return Scaffold(

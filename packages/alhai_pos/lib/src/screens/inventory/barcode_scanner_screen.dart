@@ -30,7 +30,7 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
@@ -219,7 +219,7 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
   }
 
   void _toggleScanning() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     setState(() => _isScanning = !_isScanning);
     if (_isScanning) {
       // في بيئة حقيقية سيتم استخدام كاميرا الجهاز

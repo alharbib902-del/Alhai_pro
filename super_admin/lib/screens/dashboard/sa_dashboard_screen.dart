@@ -239,7 +239,6 @@ class _StatCard extends StatelessWidget {
   final String change;
   final IconData icon;
   final Color color;
-  final bool isNegativeGood;
   final bool showArrow;
 
   const _StatCard({
@@ -249,7 +248,6 @@ class _StatCard extends StatelessWidget {
     required this.change,
     required this.icon,
     required this.color,
-    this.isNegativeGood = false,
     this.showArrow = true,
   });
 
@@ -261,9 +259,7 @@ class _StatCard extends StatelessWidget {
     final positiveColor =
         isDark ? const Color(0xFF4ADE80) : const Color(0xFF15803D);
     final changeColor = showArrow
-        ? ((isPositive && !isNegativeGood) || (!isPositive && isNegativeGood)
-            ? positiveColor
-            : theme.colorScheme.error)
+        ? (isPositive ? positiveColor : theme.colorScheme.error)
         : theme.colorScheme.outline;
 
     return Card(

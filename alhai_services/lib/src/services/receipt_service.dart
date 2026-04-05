@@ -117,8 +117,9 @@ class ReceiptService {
     }
     buffer.writeln('<h2>${_escapeHtml(store.name)}</h2>');
     buffer.writeln('<p>${_escapeHtml(store.address)}</p>');
-    if (store.phone != null)
+    if (store.phone != null) {
       buffer.writeln('<p>هاتف: ${_escapeHtml(store.phone!)}</p>');
+    }
     buffer.writeln('</div>');
 
     buffer.writeln('<div class="divider"></div>');
@@ -127,8 +128,9 @@ class ReceiptService {
     buffer.writeln('<p>رقم الفاتورة: ${_escapeHtml(order.displayNumber)}</p>');
     buffer.writeln(
         '<p>التاريخ: ${_formatDate(order.createdAt)} ${_formatTime(order.createdAt)}</p>');
-    if (cashierName != null)
+    if (cashierName != null) {
       buffer.writeln('<p>الكاشير: ${_escapeHtml(cashierName)}</p>');
+    }
 
     buffer.writeln('<div class="divider"></div>');
 

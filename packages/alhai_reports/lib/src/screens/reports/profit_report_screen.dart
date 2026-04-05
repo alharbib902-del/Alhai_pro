@@ -86,11 +86,12 @@ class _ProfitReportScreenState extends ConsumerState<ProfitReportScreen> {
       final db = GetIt.I<AppDatabase>();
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) {
-        if (mounted)
+        if (mounted) {
           setState(() {
             _error = 'لم يتم تحديد المتجر';
             _isLoading = false;
           });
+        }
         return;
       }
 
@@ -209,7 +210,7 @@ class _ProfitReportScreenState extends ConsumerState<ProfitReportScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -534,7 +535,7 @@ class _StatementRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Padding(
       padding: EdgeInsets.symmetric(vertical: isHeader ? 8 : 4),
       child: Row(
@@ -613,7 +614,7 @@ class _ProductProfitRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final profit = revenue - cost;
     final margin = revenue > 0 ? (profit / revenue) * 100 : 0.0;

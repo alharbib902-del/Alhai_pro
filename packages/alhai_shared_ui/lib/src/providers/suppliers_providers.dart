@@ -3,7 +3,6 @@
 /// توفر بيانات الموردين من قاعدة البيانات
 library;
 
-import 'package:drift/drift.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

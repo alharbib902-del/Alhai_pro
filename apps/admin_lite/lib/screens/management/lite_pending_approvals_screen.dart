@@ -14,7 +14,6 @@ import 'package:alhai_auth/alhai_auth.dart';
 import 'package:get_it/get_it.dart';
 
 import '../../providers/lite_screen_providers.dart';
-import '../../providers/approval_providers.dart';
 
 /// Pending approvals screen for Admin Lite
 class LitePendingApprovalsScreen extends ConsumerWidget {
@@ -25,7 +24,7 @@ class LitePendingApprovalsScreen extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final size = MediaQuery.of(context).size;
     final isMobile = size.width < 600;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final dataAsync = ref.watch(litePendingApprovalsProvider);
 
     return Scaffold(

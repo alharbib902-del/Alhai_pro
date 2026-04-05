@@ -402,7 +402,7 @@ void main() {
 
     group('resolve - merge', () {
       test('merges product data with server base and local stock', () async {
-        final conflict = makeConflict(
+        makeConflict(
           tableName: 'products',
           type: ConflictType.versionConflict,
           localData: {

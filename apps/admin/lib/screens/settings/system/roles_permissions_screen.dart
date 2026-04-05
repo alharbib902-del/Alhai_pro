@@ -185,32 +185,50 @@ class _RolesPermissionsScreenState extends ConsumerState<RolesPermissionsScreen>
   Color _getRoleColor(String roleName) {
     if (roleName.contains(
             '\u0645\u062f\u064a\u0631 \u0627\u0644\u0646\u0638\u0627\u0645') ||
-        roleName.toLowerCase().contains('admin')) return Colors.purple;
+        roleName.toLowerCase().contains('admin')) {
+      return Colors.purple;
+    }
     if (roleName.contains('\u0645\u062f\u064a\u0631') ||
-        roleName.toLowerCase().contains('manager')) return AppColors.primary;
+        roleName.toLowerCase().contains('manager')) {
+      return AppColors.primary;
+    }
     if (roleName.contains('\u0643\u0627\u0634\u064a\u0631') ||
-        roleName.toLowerCase().contains('cashier')) return AppColors.success;
+        roleName.toLowerCase().contains('cashier')) {
+      return AppColors.success;
+    }
     if (roleName.contains('\u0623\u0645\u064a\u0646') ||
-        roleName.toLowerCase().contains('warehouse')) return AppColors.warning;
+        roleName.toLowerCase().contains('warehouse')) {
+      return AppColors.warning;
+    }
     if (roleName.contains('\u0645\u062d\u0627\u0633\u0628') ||
-        roleName.toLowerCase().contains('accountant')) return AppColors.info;
+        roleName.toLowerCase().contains('accountant')) {
+      return AppColors.info;
+    }
     return AppColors.primary;
   }
 
   IconData _getRoleIcon(String roleName) {
     if (roleName.contains(
             '\u0645\u062f\u064a\u0631 \u0627\u0644\u0646\u0638\u0627\u0645') ||
-        roleName.toLowerCase().contains('admin'))
+        roleName.toLowerCase().contains('admin')) {
       return Icons.admin_panel_settings;
+    }
     if (roleName.contains('\u0645\u062f\u064a\u0631') ||
-        roleName.toLowerCase().contains('manager')) return Icons.store;
+        roleName.toLowerCase().contains('manager')) {
+      return Icons.store;
+    }
     if (roleName.contains('\u0643\u0627\u0634\u064a\u0631') ||
-        roleName.toLowerCase().contains('cashier')) return Icons.point_of_sale;
+        roleName.toLowerCase().contains('cashier')) {
+      return Icons.point_of_sale;
+    }
     if (roleName.contains('\u0623\u0645\u064a\u0646') ||
-        roleName.toLowerCase().contains('warehouse')) return Icons.inventory;
+        roleName.toLowerCase().contains('warehouse')) {
+      return Icons.inventory;
+    }
     if (roleName.contains('\u0645\u062d\u0627\u0633\u0628') ||
-        roleName.toLowerCase().contains('accountant'))
+        roleName.toLowerCase().contains('accountant')) {
       return Icons.account_balance;
+    }
     return Icons.badge;
   }
 

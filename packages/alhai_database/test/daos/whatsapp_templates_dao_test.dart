@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:drift/drift.dart' hide isNotNull, isNull;
 import 'package:alhai_database/alhai_database.dart';
 import '../helpers/database_test_helpers.dart';
 
@@ -14,7 +13,7 @@ void main() {
     await db.close();
   });
 
-  WhatsAppTemplatesTableCompanion _makeTemplate({
+  WhatsAppTemplatesTableCompanion makeTemplate({
     String id = 'tmpl-1',
     String storeId = 'store-1',
     String name = 'إيصال إلكتروني',
@@ -37,7 +36,7 @@ void main() {
 
   group('WhatsAppTemplatesDao', () {
     test('insertTemplate and getAllTemplates', () async {
-      await db.whatsAppTemplatesDao.insertTemplate(_makeTemplate());
+      await db.whatsAppTemplatesDao.insertTemplate(makeTemplate());
 
       final templates =
           await db.whatsAppTemplatesDao.getAllTemplates('store-1');
@@ -48,8 +47,8 @@ void main() {
 
     test('getAllTemplates returns only active templates', () async {
       await db.whatsAppTemplatesDao
-          .insertTemplate(_makeTemplate(isActive: true));
-      await db.whatsAppTemplatesDao.insertTemplate(_makeTemplate(
+          .insertTemplate(makeTemplate(isActive: true));
+      await db.whatsAppTemplatesDao.insertTemplate(makeTemplate(
         id: 'tmpl-2',
         name: 'قالب محذوف',
         isActive: false,
@@ -62,8 +61,8 @@ void main() {
 
     test('getTemplatesByType filters by type', () async {
       await db.whatsAppTemplatesDao
-          .insertTemplate(_makeTemplate(type: 'receipt'));
-      await db.whatsAppTemplatesDao.insertTemplate(_makeTemplate(
+          .insertTemplate(makeTemplate(type: 'receipt'));
+      await db.whatsAppTemplatesDao.insertTemplate(makeTemplate(
         id: 'tmpl-2',
         name: 'تذكير دين',
         type: 'debt_reminder',
@@ -77,8 +76,8 @@ void main() {
 
     test('getDefaultTemplate returns default for type', () async {
       await db.whatsAppTemplatesDao
-          .insertTemplate(_makeTemplate(id: 'tmpl-1', isDefault: false));
-      await db.whatsAppTemplatesDao.insertTemplate(_makeTemplate(
+          .insertTemplate(makeTemplate(id: 'tmpl-1', isDefault: false));
+      await db.whatsAppTemplatesDao.insertTemplate(makeTemplate(
         id: 'tmpl-2',
         name: 'إيصال افتراضي',
         type: 'receipt',
@@ -94,7 +93,7 @@ void main() {
 
     test('getDefaultTemplate returns null when no default', () async {
       await db.whatsAppTemplatesDao
-          .insertTemplate(_makeTemplate(isDefault: false));
+          .insertTemplate(makeTemplate(isDefault: false));
 
       final defaultTemplate = await db.whatsAppTemplatesDao
           .getDefaultTemplate('store-1', 'receipt');
@@ -102,7 +101,7 @@ void main() {
     });
 
     test('updateTemplate modifies template', () async {
-      await db.whatsAppTemplatesDao.insertTemplate(_makeTemplate());
+      await db.whatsAppTemplatesDao.insertTemplate(makeTemplate());
 
       await db.whatsAppTemplatesDao.updateTemplate(
         'tmpl-1',
@@ -119,19 +118,19 @@ void main() {
     });
 
     test('deleteTemplate removes template', () async {
-      await db.whatsAppTemplatesDao.insertTemplate(_makeTemplate());
+      await db.whatsAppTemplatesDao.insertTemplate(makeTemplate());
 
       final deleted = await db.whatsAppTemplatesDao.deleteTemplate('tmpl-1');
       expect(deleted, 1);
     });
 
     test('setAsDefault changes default template', () async {
-      await db.whatsAppTemplatesDao.insertTemplate(_makeTemplate(
+      await db.whatsAppTemplatesDao.insertTemplate(makeTemplate(
         id: 'tmpl-old',
         type: 'receipt',
         isDefault: true,
       ));
-      await db.whatsAppTemplatesDao.insertTemplate(_makeTemplate(
+      await db.whatsAppTemplatesDao.insertTemplate(makeTemplate(
         id: 'tmpl-new',
         name: 'إيصال جديد',
         type: 'receipt',
@@ -147,7 +146,7 @@ void main() {
     });
 
     test('hasTemplates returns true when templates exist', () async {
-      await db.whatsAppTemplatesDao.insertTemplate(_makeTemplate());
+      await db.whatsAppTemplatesDao.insertTemplate(makeTemplate());
 
       final has = await db.whatsAppTemplatesDao.hasTemplates('store-1');
       expect(has, true);
@@ -160,9 +159,9 @@ void main() {
 
     test('insertAll batch inserts templates', () async {
       await db.whatsAppTemplatesDao.insertAll([
-        _makeTemplate(id: 'tmpl-1', name: 'إيصال', type: 'receipt'),
-        _makeTemplate(id: 'tmpl-2', name: 'تذكير', type: 'debt_reminder'),
-        _makeTemplate(id: 'tmpl-3', name: 'ترحيب', type: 'welcome'),
+        makeTemplate(id: 'tmpl-1', name: 'إيصال', type: 'receipt'),
+        makeTemplate(id: 'tmpl-2', name: 'تذكير', type: 'debt_reminder'),
+        makeTemplate(id: 'tmpl-3', name: 'ترحيب', type: 'welcome'),
       ]);
 
       final templates =

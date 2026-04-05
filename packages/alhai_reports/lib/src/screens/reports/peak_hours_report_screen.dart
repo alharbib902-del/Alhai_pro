@@ -93,17 +93,17 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.reports),
+        title: Text(AppLocalizations.of(context).reports),
         actions: [
           IconButton(
             onPressed: _selectDateRange,
             icon: const Icon(Icons.date_range),
-            tooltip: AppLocalizations.of(context)!.date,
+            tooltip: AppLocalizations.of(context).date,
           ),
           IconButton(
             onPressed: _exportReport,
             icon: const Icon(Icons.download),
-            tooltip: AppLocalizations.of(context)!.exportAction,
+            tooltip: AppLocalizations.of(context).exportAction,
           ),
         ],
       ),
@@ -174,12 +174,12 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
           segments: [
             ButtonSegment(
               value: 'hourly',
-              label: Text(AppLocalizations.of(context)!.hourlyView),
+              label: Text(AppLocalizations.of(context).hourlyView),
               icon: const Icon(Icons.access_time, size: 16),
             ),
             ButtonSegment(
               value: 'daily',
-              label: Text(AppLocalizations.of(context)!.dailyView),
+              label: Text(AppLocalizations.of(context).dailyView),
               icon: const Icon(Icons.today, size: 16),
             ),
           ],
@@ -210,9 +210,9 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
       children: [
         Expanded(
           child: _buildSummaryCard(
-            AppLocalizations.of(context)!.peakHourLabel,
+            AppLocalizations.of(context).peakHourLabel,
             '${peakHour.hour}:00',
-            AppLocalizations.of(context)!
+            AppLocalizations.of(context)
                 .transactionsWithCount(peakHour.transactions),
             Icons.schedule,
             AppColors.error,
@@ -221,9 +221,9 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
         const SizedBox(width: AppSizes.md),
         Expanded(
           child: _buildSummaryCard(
-            AppLocalizations.of(context)!.peakDayLabel,
+            AppLocalizations.of(context).peakDayLabel,
             peakDay.day,
-            AppLocalizations.of(context)!
+            AppLocalizations.of(context)
                 .transactionsWithCount(peakDay.transactions),
             Icons.event,
             AppColors.primary,
@@ -232,9 +232,9 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
         const SizedBox(width: AppSizes.md),
         Expanded(
           child: _buildSummaryCard(
-            AppLocalizations.of(context)!.avgPerHour,
+            AppLocalizations.of(context).avgPerHour,
             avgTransactions.toString(),
-            AppLocalizations.of(context)!.transactionWord,
+            AppLocalizations.of(context).transactionWord,
             Icons.bar_chart,
             AppColors.success,
           ),
@@ -299,8 +299,8 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
           children: [
             Text(
               _viewMode == 'hourly'
-                  ? AppLocalizations.of(context)!.transactionsByHour
-                  : AppLocalizations.of(context)!.transactionsByDay,
+                  ? AppLocalizations.of(context).transactionsByHour
+                  : AppLocalizations.of(context).transactionsByDay,
               style: AppTypography.titleMedium.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -453,7 +453,7 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
     ];
 
     final hours = List.generate(15, (i) => '${8 + i}:00');
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final days = [
       l10n.satShort,
       l10n.sunShort,
@@ -473,7 +473,7 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
             Row(
               children: [
                 Text(
-                  AppLocalizations.of(context)!.activityHeatmap,
+                  AppLocalizations.of(context).activityHeatmap,
                   style: AppTypography.titleMedium.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -545,7 +545,7 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
     return Row(
       children: [
         Text(
-          AppLocalizations.of(context)!.lowLabel,
+          AppLocalizations.of(context).lowLabel,
           style: AppTypography.labelSmall.copyWith(
             color: AppColors.textMuted,
             fontSize: 10,
@@ -569,7 +569,7 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
         ),
         const SizedBox(width: AlhaiSpacing.xxs),
         Text(
-          AppLocalizations.of(context)!.highLabel,
+          AppLocalizations.of(context).highLabel,
           style: AppTypography.labelSmall.copyWith(
             color: AppColors.textMuted,
             fontSize: 10,
@@ -603,7 +603,7 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
                 const Icon(Icons.lightbulb, color: AppColors.warning),
                 const SizedBox(width: AppSizes.sm),
                 Text(
-                  AppLocalizations.of(context)!.analysisRecommendations,
+                  AppLocalizations.of(context).analysisRecommendations,
                   style: AppTypography.titleMedium.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -613,26 +613,26 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
             const SizedBox(height: AppSizes.md),
             const Divider(),
             _buildRecommendationItem(
-              AppLocalizations.of(context)!.staffRecommendation,
-              AppLocalizations.of(context)!.staffRecommendationDesc,
+              AppLocalizations.of(context).staffRecommendation,
+              AppLocalizations.of(context).staffRecommendationDesc,
               Icons.people,
               AppColors.primary,
             ),
             _buildRecommendationItem(
-              AppLocalizations.of(context)!.offersRecommendation,
-              AppLocalizations.of(context)!.offersRecommendationDesc,
+              AppLocalizations.of(context).offersRecommendation,
+              AppLocalizations.of(context).offersRecommendationDesc,
               Icons.local_offer,
               AppColors.success,
             ),
             _buildRecommendationItem(
-              AppLocalizations.of(context)!.inventoryRecommendation,
-              AppLocalizations.of(context)!.inventoryRecommendationDesc,
+              AppLocalizations.of(context).inventoryRecommendation,
+              AppLocalizations.of(context).inventoryRecommendationDesc,
               Icons.inventory,
               AppColors.info,
             ),
             _buildRecommendationItem(
-              AppLocalizations.of(context)!.shiftsRecommendation,
-              AppLocalizations.of(context)!.shiftsRecommendationDesc,
+              AppLocalizations.of(context).shiftsRecommendation,
+              AppLocalizations.of(context).shiftsRecommendationDesc,
               Icons.schedule,
               AppColors.warning,
             ),
@@ -688,7 +688,7 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
 
   // ignore: unused_element
   String _getDayName(BuildContext context, String key) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     switch (key) {
       case 'sat':
         return l10n.saturdayDay;
@@ -710,7 +710,7 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
   }
 
   String _getDayShort(BuildContext context, String key) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     switch (key) {
       case 'sat':
         return l10n.satShort;
@@ -755,7 +755,7 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
   void _exportReport() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(AppLocalizations.of(context)!.exportingReport),
+        content: Text(AppLocalizations.of(context).exportingReport),
       ),
     );
   }

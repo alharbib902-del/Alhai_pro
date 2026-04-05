@@ -75,7 +75,7 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
     final isWideScreen = context.isDesktop;
     final isMediumScreen = !context.isMobile;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     // مراقبة حالة الاتصال من المزود الحقيقي
     final isOnlineAsync = ref.watch(isOnlineProvider);
@@ -430,7 +430,7 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
       await _loadStatus();
 
       if (!mounted) return;
-      final l10n = AppLocalizations.of(context)!;
+      final l10n = AppLocalizations.of(context);
 
       if (result.hasErrors) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -450,7 +450,7 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
     } catch (e) {
       debugPrint('SyncStatusScreen: Force sync error: $e');
       if (mounted) {
-        final errL10n = AppLocalizations.of(context)!;
+        final errL10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
               content: Text(errL10n.syncErrorMessage('$e')),

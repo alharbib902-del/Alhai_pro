@@ -42,7 +42,7 @@ class _AiCompetitorAnalysisScreenState
   Widget build(BuildContext context) {
     final isWideScreen = context.isDesktop;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       children: [
@@ -57,7 +57,7 @@ class _AiCompetitorAnalysisScreenState
   }
 
   Widget _buildContent(bool isDark, bool isWideScreen) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final summary = ref.watch(competitorSummaryProvider);
     final alerts = ref.watch(competitorAlertsProvider);
     final unreadAlerts = alerts.where((a) => !a.isRead).length;
@@ -170,7 +170,7 @@ class _AiCompetitorAnalysisScreenState
 
   Widget _buildSummaryCards(
       CompetitorAnalysisSummary summary, bool isDark, bool isWideScreen) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final cards = [
       _SummaryData(
         icon: Icons.inventory_2_rounded,
@@ -285,9 +285,9 @@ class _AiCompetitorAnalysisScreenState
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (e, _) => Center(
           child: Text(
-              AppLocalizations.of(context)!.aiErrorWithMessage(e.toString()))),
+              AppLocalizations.of(context).aiErrorWithMessage(e.toString()))),
       data: (data) {
-        final l10n = AppLocalizations.of(context)!;
+        final l10n = AppLocalizations.of(context);
         var filtered = filter == l10n.all
             ? data
             : data.where((c) => c.category == filter).toList();
@@ -439,7 +439,7 @@ class _AiCompetitorAnalysisScreenState
   }
 
   Widget _buildCompetitorCard(Competitor competitor, bool isDark) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final competitorColors = {
       'بنده': const Color(0xFFF97316),
       'الدانوب': const Color(0xFF3B82F6),
@@ -572,7 +572,7 @@ class _AiCompetitorAnalysisScreenState
   }
 
   Widget _buildAlertsTab(bool isDark, List<CompetitorAlert> alerts) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final alertsNotifier = ref.read(competitorAlertsProvider.notifier);
 
     return Column(
@@ -778,7 +778,7 @@ class _AiCompetitorAnalysisScreenState
   }
 
   String _formatTimeAgo(DateTime time) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final diff = DateTime.now().difference(time);
     if (diff.inMinutes < 60) return l10n.aiMinutesAgo(diff.inMinutes);
     if (diff.inHours < 24) return l10n.aiHoursAgo(diff.inHours);

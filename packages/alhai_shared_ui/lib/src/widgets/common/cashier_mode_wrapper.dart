@@ -240,7 +240,7 @@ class CashierModeBadge extends ConsumerWidget {
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
-        children: [
+        children: const [
           Icon(Icons.speed, size: 16, color: AlhaiColors.warningDark),
           SizedBox(width: AlhaiSpacing.xxs),
           Text(

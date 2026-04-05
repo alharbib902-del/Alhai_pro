@@ -22,7 +22,7 @@ class CompetitorPriceTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     if (comparisons.isEmpty) {
       return Center(
@@ -258,7 +258,7 @@ class _PositionIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     String label;
     Color color;
     IconData icon;

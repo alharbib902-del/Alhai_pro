@@ -96,7 +96,7 @@ class AppBadge extends StatelessWidget {
   /// شارة المخزون
   static AppBadge stock(BuildContext context, double quantity,
       {double minQuantity = 5}) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     if (quantity <= 0) {
       return AppBadge(
         label: l10n.soldOut,
@@ -123,7 +123,7 @@ class AppBadge extends StatelessWidget {
 
   /// شارة طريقة الدفع
   static AppBadge paymentMethod(BuildContext context, String method) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final color = AppColors.getPaymentMethodColor(method);
     String label;
     IconData icon;
@@ -385,7 +385,7 @@ class AppStatusBadge extends StatelessWidget {
 
   /// حالة الاتصال
   static AppStatusBadge online(BuildContext context, {bool isOnline = true}) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return AppStatusBadge(
       isActive: isOnline,
       label: isOnline ? l10n.online : l10n.offline,
@@ -395,7 +395,7 @@ class AppStatusBadge extends StatelessWidget {
 
   /// حالة النشاط
   static AppStatusBadge active(BuildContext context, {bool isActive = true}) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return AppStatusBadge(
       isActive: isActive,
       label: isActive ? l10n.active : l10n.inactive,

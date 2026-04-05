@@ -54,7 +54,7 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
     final isWideScreen = context.isDesktop;
     final isMediumScreen = !context.isMobile;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       floatingActionButton: _showScrollToTop
@@ -414,7 +414,7 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
 
   void _showSupplierDetailFromData(
       BuildContext context, SuppliersTableData supplier) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -506,7 +506,7 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
   }
 
   void _showAddSupplierDialog(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final nameCtrl = TextEditingController();
     final phoneCtrl = TextEditingController();
     final emailCtrl = TextEditingController();

@@ -55,7 +55,7 @@ class AppDialog extends StatelessWidget {
     IconData? icon,
     bool isDangerous = false,
   }) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final effectiveConfirmText = confirmText ?? l10n.confirm;
     final effectiveCancelText = cancelText ?? l10n.cancel;
     return showDialog<bool>(
@@ -96,7 +96,7 @@ class AppDialog extends StatelessWidget {
     String? buttonText,
     VoidCallback? onDismiss,
   }) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final effectiveButtonText = buttonText ?? l10n.gotIt;
     return showDialog(
       context: context,
@@ -133,7 +133,7 @@ class AppDialog extends StatelessWidget {
     String? buttonText,
     VoidCallback? onRetry,
   }) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final effectiveButtonText = buttonText ?? l10n.gotIt;
     return showDialog(
       context: context,
@@ -218,7 +218,7 @@ class AppDialog extends StatelessWidget {
     int? maxLines = 1,
     String? Function(String?)? validator,
   }) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     confirmText ??= l10n.confirm;
     cancelText ??= l10n.cancel;
     final controller = TextEditingController(text: initialValue);

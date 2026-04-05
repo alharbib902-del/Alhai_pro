@@ -236,7 +236,7 @@ class _CustomerNotesSectionState extends State<CustomerNotesSection> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content:
-              Text(AppLocalizations.of(context)!.inputContainsDangerousContent),
+              Text(AppLocalizations.of(context).inputContainsDangerousContent),
           backgroundColor: Theme.of(context).colorScheme.error,
         ),
       );

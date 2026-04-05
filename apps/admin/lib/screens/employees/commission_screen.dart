@@ -1,7 +1,6 @@
 import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:get_it/get_it.dart';

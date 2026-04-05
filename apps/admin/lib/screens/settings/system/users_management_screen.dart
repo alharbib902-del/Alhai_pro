@@ -1,4 +1,3 @@
-import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -364,7 +363,7 @@ class _UsersManagementScreenState extends ConsumerState<UsersManagementScreen> {
               'updated_at': DateTime.now().toIso8601String()
             });
             // Audit log: user status change
-            _logAuditEvent(db, 'user_${action}', user.id, user.name);
+            _logAuditEvent(db, 'user_$action', user.id, user.name);
           }
         } catch (e) {
           debugPrint('Error updating user status: $e');

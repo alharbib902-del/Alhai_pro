@@ -481,7 +481,7 @@ class _ManagerApprovalDialogState extends State<ManagerApprovalDialog> {
               onPressed:
                   _isVerifying ? null : () => Navigator.of(context).pop(false),
               child: Text(
-                AppLocalizations.of(context)!.cancel,
+                AppLocalizations.of(context).cancel,
                 style: const TextStyle(
                   color: AppColors.textSecondary,
                   fontSize: 16,

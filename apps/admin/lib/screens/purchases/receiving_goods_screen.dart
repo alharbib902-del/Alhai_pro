@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -429,8 +428,9 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
                                 keyboardType: TextInputType.number,
                                 textInputAction: TextInputAction.next,
                                 onChanged: (_) {
-                                  if (!_isDirty)
+                                  if (!_isDirty) {
                                     setState(() => _isDirty = true);
+                                  }
                                 },
                                 decoration: InputDecoration(
                                   labelText: AppLocalizations.of(context)
@@ -502,8 +502,9 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
                                     keyboardType: TextInputType.number,
                                     textInputAction: TextInputAction.next,
                                     onChanged: (_) {
-                                      if (!_isDirty)
+                                      if (!_isDirty) {
                                         setState(() => _isDirty = true);
+                                      }
                                     },
                                     decoration: InputDecoration(
                                       labelText: AppLocalizations.of(context)

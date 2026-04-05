@@ -32,7 +32,7 @@ class _AiSentimentAnalysisScreenState
     return Column(
       children: [
         AppHeader(
-          title: AppLocalizations.of(context)!.aiSentimentAnalysisTitle,
+          title: AppLocalizations.of(context).aiSentimentAnalysisTitle,
           onMenuTap:
               !isWideScreen ? () => Scaffold.of(context).openDrawer() : null,
         ),
@@ -114,7 +114,7 @@ class _AiSentimentAnalysisScreenState
   }
 
   Widget _buildDistribution(SentimentResult result, bool isDark) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final entries = [
       _DistEntry(
           l10n.veryPositiveSentiment,
@@ -257,7 +257,7 @@ class _AiSentimentAnalysisScreenState
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Text(
-                AppLocalizations.of(context)!.sentimentTrendTitle,
+                AppLocalizations.of(context).sentimentTrendTitle,
                 style: TextStyle(
                   fontWeight: FontWeight.w700,
                   fontSize: 15,
@@ -279,7 +279,7 @@ class _AiSentimentAnalysisScreenState
   }
 
   Widget _buildFeedbackFilter(SentimentScore? current, bool isDark) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final filters = [
       _FilterOption(null, l10n.filterAllLabel, AppColors.textSecondary),
       _FilterOption(SentimentScore.veryPositive, l10n.veryPositiveSentiment,
@@ -523,7 +523,7 @@ class _AiSentimentAnalysisScreenState
           Row(
             children: [
               Text(
-                AppLocalizations.of(context)!.sentimentIndicator,
+                AppLocalizations.of(context).sentimentIndicator,
                 style: TextStyle(
                   fontSize: 10,
                   color: isDark
@@ -562,7 +562,7 @@ class _AiSentimentAnalysisScreenState
   }
 
   String _formatTimeAgo(DateTime time) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final diff = DateTime.now().difference(time);
     if (diff.inMinutes < 60) return l10n.minutesAgoSentiment(diff.inMinutes);
     if (diff.inHours < 24) return l10n.hoursAgoSentiment(diff.inHours);

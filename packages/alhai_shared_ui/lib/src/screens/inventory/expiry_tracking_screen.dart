@@ -51,7 +51,7 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
   @override
   Widget build(BuildContext context) {
     final expiryAsync = ref.watch(expiryTrackingProvider);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
 
     return expiryAsync.when(
@@ -370,16 +370,6 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
     );
   }
 
-  void _showDiscountDialog(ExpiryItemData item, AppLocalizations l10n) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-            '${l10n.applyDiscountTo} "${item.productName}" - ${l10n.featureNotAvailableNow}'),
-        backgroundColor: Theme.of(context).colorScheme.primary,
-      ),
-    );
-  }
-
   void _confirmRemove(ExpiryItemData item, AppLocalizations l10n) {
     final colorScheme = Theme.of(context).colorScheme;
     showDialog(
@@ -581,7 +571,7 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
   Future<void> _searchProduct(
       String query, void Function(void Function()) setDialogState) async {
     if (query.isEmpty) return;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     final db = GetIt.I<AppDatabase>();
     final storeId = ref.read(currentStoreIdProvider);

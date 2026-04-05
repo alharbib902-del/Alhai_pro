@@ -90,7 +90,7 @@ class _OrderNotificationPopupState extends State<OrderNotificationPopup>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return SlideTransition(
       position: _slideAnimation,
@@ -135,7 +135,7 @@ class _OrderNotificationPopupState extends State<OrderNotificationPopup>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            AppLocalizations.of(context)!
+                            AppLocalizations.of(context)
                                 .newOrderNotification(widget.order.id),
                             style: theme.textTheme.titleSmall?.copyWith(
                               fontWeight: FontWeight.bold,
@@ -217,7 +217,7 @@ class _OrderNotificationPopupState extends State<OrderNotificationPopup>
                       ),
                     ),
                     Text(
-                      AppLocalizations.of(context)!
+                      AppLocalizations.of(context)
                           .priceSar(widget.order.total.toStringAsFixed(2)),
                       style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
@@ -231,7 +231,7 @@ class _OrderNotificationPopupState extends State<OrderNotificationPopup>
 
                 // Items count
                 Text(
-                  '📦 ${AppLocalizations.of(context)!.productCountItems(widget.order.itemCount)}',
+                  '📦 ${AppLocalizations.of(context).productCountItems(widget.order.itemCount)}',
                   style: theme.textTheme.bodyMedium,
                 ),
 
@@ -311,7 +311,7 @@ class OrdersBadge extends ConsumerWidget {
             color: hasNew ? AppColors.warning : null,
           ),
           onPressed: onTap,
-          tooltip: AppLocalizations.of(context)!.onlineOrdersTooltip,
+          tooltip: AppLocalizations.of(context).onlineOrdersTooltip,
         ),
         if (count > 0)
           PositionedDirectional(

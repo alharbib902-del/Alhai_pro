@@ -32,7 +32,7 @@ class _AiChatWithDataScreenState extends ConsumerState<AiChatWithDataScreen> {
     final size = MediaQuery.of(context).size;
     final isWideScreen = size.width > 900;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       children: [
@@ -159,7 +159,7 @@ class _AiChatWithDataScreenState extends ConsumerState<AiChatWithDataScreen> {
   }
 
   Widget _buildAiBanner(bool isDark) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
@@ -246,7 +246,7 @@ class _AiChatWithDataScreenState extends ConsumerState<AiChatWithDataScreen> {
 
   Widget _buildWelcomeArea(
       bool isDark, List<String> suggestions, bool isWideScreen) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final textColor = isDark ? Colors.white : AppColors.textPrimary;
     final subtextColor = isDark ? Colors.white70 : AppColors.textSecondary;
 

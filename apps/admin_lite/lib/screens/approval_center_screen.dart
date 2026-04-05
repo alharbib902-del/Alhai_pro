@@ -30,7 +30,7 @@ class ApprovalCenterScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n?.returns ?? 'Approval Center'),
+        title: Text(l10n.returns),
         centerTitle: true,
         actions: [
           // Pending count badge
@@ -126,7 +126,7 @@ class ApprovalCenterScreen extends ConsumerWidget {
                     ),
                     const SizedBox(height: AlhaiSpacing.md),
                     Text(
-                      l10n?.errorOccurred ?? 'An error occurred',
+                      l10n.errorOccurred,
                       style: TextStyle(
                         color: isDark
                             ? Colors.white54
@@ -137,7 +137,7 @@ class ApprovalCenterScreen extends ConsumerWidget {
                     TextButton.icon(
                       onPressed: () => ref.invalidate(pendingRefundsProvider),
                       icon: const Icon(Icons.refresh),
-                      label: Text(l10n?.tryAgain ?? 'Try Again'),
+                      label: Text(l10n.tryAgain),
                     ),
                   ],
                 ),
@@ -157,19 +157,19 @@ class ApprovalCenterScreen extends ConsumerWidget {
 
     switch (filter) {
       case ApprovalFilter.pending:
-        message = l10n?.noResults ?? 'No pending approvals';
+        message = l10n.noResults;
         icon = Icons.check_circle_outline;
         break;
       case ApprovalFilter.approved:
-        message = l10n?.noResults ?? 'No approved refunds';
+        message = l10n.noResults;
         icon = Icons.thumb_up_outlined;
         break;
       case ApprovalFilter.rejected:
-        message = l10n?.noResults ?? 'No rejected refunds';
+        message = l10n.noResults;
         icon = Icons.thumb_down_outlined;
         break;
       case ApprovalFilter.all:
-        message = l10n?.noResults ?? 'No refunds found';
+        message = l10n.noResults;
         icon = Icons.receipt_long_outlined;
         break;
     }
@@ -237,16 +237,13 @@ class _FilterTabs extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         child: Row(
           children: [
-            _buildChip(context, l10n?.all ?? 'All', ApprovalFilter.all),
+            _buildChip(context, l10n.all, ApprovalFilter.all),
             const SizedBox(width: AlhaiSpacing.xs),
-            _buildChip(
-                context, l10n?.pending ?? 'Pending', ApprovalFilter.pending),
+            _buildChip(context, l10n.pending, ApprovalFilter.pending),
             const SizedBox(width: AlhaiSpacing.xs),
-            _buildChip(context, l10n?.completed ?? 'Approved',
-                ApprovalFilter.approved),
+            _buildChip(context, l10n.completed, ApprovalFilter.approved),
             const SizedBox(width: AlhaiSpacing.xs),
-            _buildChip(context, l10n?.cancelled ?? 'Rejected',
-                ApprovalFilter.rejected),
+            _buildChip(context, l10n.cancelled, ApprovalFilter.rejected),
           ],
         ),
       ),
@@ -456,7 +453,7 @@ class _RefundCard extends ConsumerWidget {
                     child: OutlinedButton.icon(
                       onPressed: () => _handleReject(context, ref),
                       icon: const Icon(Icons.close, size: 18),
-                      label: Text(l10n?.cancel ?? 'Reject'),
+                      label: Text(l10n.cancel),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: AlhaiColors.error,
                         side: const BorderSide(color: AlhaiColors.error),
@@ -472,7 +469,7 @@ class _RefundCard extends ConsumerWidget {
                     child: FilledButton.icon(
                       onPressed: () => _handleApprove(context, ref),
                       icon: const Icon(Icons.check, size: 18),
-                      label: Text(l10n?.confirm ?? 'Approve'),
+                      label: Text(l10n.confirm),
                       style: FilledButton.styleFrom(
                         backgroundColor: AlhaiColors.success,
                         shape: RoundedRectangleBorder(
@@ -498,7 +495,7 @@ class _RefundCard extends ConsumerWidget {
     // PIN verification via ManagerApprovalScreen
     final approved = await ManagerApprovalScreen.showApprovalDialog(
       context,
-      action: l10n?.confirm ?? 'Approve refund #${refund.returnNumber}',
+      action: l10n.confirm,
     );
 
     if (!approved) return;
@@ -522,7 +519,7 @@ class _RefundCard extends ConsumerWidget {
       ref.invalidate(pendingApprovalsCountProvider);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(l10n?.success ?? 'Refund approved successfully'),
+          content: Text(l10n.success),
           backgroundColor: AlhaiColors.success,
           behavior: SnackBarBehavior.floating,
           shape:
@@ -539,7 +536,7 @@ class _RefundCard extends ConsumerWidget {
     // PIN verification via ManagerApprovalScreen
     final approved = await ManagerApprovalScreen.showApprovalDialog(
       context,
-      action: l10n?.cancel ?? 'Reject refund #${refund.returnNumber}',
+      action: l10n.cancel,
     );
 
     if (!approved) return;
@@ -563,7 +560,7 @@ class _RefundCard extends ConsumerWidget {
       ref.invalidate(pendingApprovalsCountProvider);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(l10n?.cancelled ?? 'Refund rejected'),
+          content: Text(l10n.cancelled),
           backgroundColor: AlhaiColors.error,
           behavior: SnackBarBehavior.floating,
           shape:

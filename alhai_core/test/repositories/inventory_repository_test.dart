@@ -22,7 +22,7 @@ void main() {
   late MockInventoryRemoteDataSource mockRemote;
 
   // Test data - using 'sold' which is a valid AdjustmentType enum value
-  final testAdjustmentResponse = StockAdjustmentResponse(
+  const testAdjustmentResponse = StockAdjustmentResponse(
     id: 'adj-1',
     productId: 'prod-1',
     storeId: 'store-1',
@@ -34,7 +34,7 @@ void main() {
     createdAt: '2026-01-19T10:00:00Z',
   );
 
-  final testLowStockResponse = LowStockProductResponse(
+  const testLowStockResponse = LowStockProductResponse(
     productId: 'prod-1',
     productName: 'Test Product',
     currentQty: 5,

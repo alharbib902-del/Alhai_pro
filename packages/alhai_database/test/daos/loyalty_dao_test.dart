@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:drift/drift.dart' hide isNotNull, isNull;
 import 'package:alhai_database/alhai_database.dart';
 import '../helpers/database_test_helpers.dart';
 
@@ -14,7 +13,7 @@ void main() {
     await db.close();
   });
 
-  LoyaltyPointsTableCompanion _makeLoyalty({
+  LoyaltyPointsTableCompanion makeLoyalty({
     String id = 'lp-1',
     String customerId = 'cust-1',
     String storeId = 'store-1',
@@ -37,7 +36,7 @@ void main() {
 
   group('LoyaltyDao - Points', () {
     test('createLoyalty and getCustomerLoyalty', () async {
-      await db.loyaltyDao.createLoyalty(_makeLoyalty());
+      await db.loyaltyDao.createLoyalty(makeLoyalty());
 
       final loyalty =
           await db.loyaltyDao.getCustomerLoyalty('cust-1', 'store-1');
@@ -48,7 +47,7 @@ void main() {
     });
 
     test('getLoyaltyById returns correct record', () async {
-      await db.loyaltyDao.createLoyalty(_makeLoyalty());
+      await db.loyaltyDao.createLoyalty(makeLoyalty());
 
       final loyalty = await db.loyaltyDao.getLoyaltyById('lp-1');
       expect(loyalty, isNotNull);
@@ -56,7 +55,7 @@ void main() {
     });
 
     test('addPoints increases points and totalEarned', () async {
-      await db.loyaltyDao.createLoyalty(_makeLoyalty(
+      await db.loyaltyDao.createLoyalty(makeLoyalty(
         currentPoints: 100,
         totalEarned: 200,
       ));
@@ -70,7 +69,7 @@ void main() {
     });
 
     test('redeemPoints decreases currentPoints', () async {
-      await db.loyaltyDao.createLoyalty(_makeLoyalty(currentPoints: 200));
+      await db.loyaltyDao.createLoyalty(makeLoyalty(currentPoints: 200));
 
       final result = await db.loyaltyDao.redeemPoints('cust-1', 'store-1', 50);
       expect(result, true);
@@ -81,15 +80,15 @@ void main() {
     });
 
     test('redeemPoints fails when insufficient points', () async {
-      await db.loyaltyDao.createLoyalty(_makeLoyalty(currentPoints: 30));
+      await db.loyaltyDao.createLoyalty(makeLoyalty(currentPoints: 30));
 
       final result = await db.loyaltyDao.redeemPoints('cust-1', 'store-1', 50);
       expect(result, false);
     });
 
     test('getAllLoyaltyAccounts returns all for store', () async {
-      await db.loyaltyDao.createLoyalty(_makeLoyalty());
-      await db.loyaltyDao.createLoyalty(_makeLoyalty(
+      await db.loyaltyDao.createLoyalty(makeLoyalty());
+      await db.loyaltyDao.createLoyalty(makeLoyalty(
         id: 'lp-2',
         customerId: 'cust-2',
         currentPoints: 500,
@@ -103,7 +102,7 @@ void main() {
 
     test('getTopCustomers returns limited results', () async {
       for (var i = 0; i < 5; i++) {
-        await db.loyaltyDao.createLoyalty(_makeLoyalty(
+        await db.loyaltyDao.createLoyalty(makeLoyalty(
           id: 'lp-$i',
           customerId: 'cust-$i',
           totalEarned: i * 100,
@@ -115,12 +114,12 @@ void main() {
     });
 
     test('getCustomersByTier filters correctly', () async {
-      await db.loyaltyDao.createLoyalty(_makeLoyalty(
+      await db.loyaltyDao.createLoyalty(makeLoyalty(
         id: 'lp-1',
         customerId: 'cust-1',
         tierLevel: 'gold',
       ));
-      await db.loyaltyDao.createLoyalty(_makeLoyalty(
+      await db.loyaltyDao.createLoyalty(makeLoyalty(
         id: 'lp-2',
         customerId: 'cust-2',
         tierLevel: 'bronze',

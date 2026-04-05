@@ -30,7 +30,7 @@ class OfflineBanner extends ConsumerWidget {
               const Icon(Icons.wifi_off, color: Colors.white, size: 18),
               SizedBox(width: AlhaiSpacing.xs),
               Text(
-                AppLocalizations.of(context)!.noInternetConnection,
+                AppLocalizations.of(context).noInternetConnection,
                 style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w500,

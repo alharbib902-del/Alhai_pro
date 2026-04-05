@@ -31,7 +31,7 @@ class LiteSystemAlertsScreen extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final size = MediaQuery.of(context).size;
     final isMobile = size.width < 600;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final dataAsync = ref.watch(liteSystemAlertsProvider);
 
     return Scaffold(
@@ -103,8 +103,9 @@ class LiteSystemAlertsScreen extends ConsumerWidget {
   }
 
   IconData _alertIcon(String title) {
-    if (title.contains('Sync') || title.contains('Unsynced'))
+    if (title.contains('Sync') || title.contains('Unsynced')) {
       return Icons.sync_problem;
+    }
     if (title.contains('Inventory')) return Icons.inventory_2_outlined;
     if (title.contains('Storage')) return Icons.storage;
     return Icons.warning_amber_rounded;

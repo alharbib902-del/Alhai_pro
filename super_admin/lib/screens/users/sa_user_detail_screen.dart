@@ -255,8 +255,9 @@ class _SAUserDetailScreenState extends ConsumerState<SAUserDetailScreen> {
                                         ],
                                       ),
                                     );
-                                    if (confirmed != true || !context.mounted)
+                                    if (confirmed != true || !context.mounted) {
                                       return;
+                                    }
 
                                     await UndoService.executeWithUndo(
                                       context: context,

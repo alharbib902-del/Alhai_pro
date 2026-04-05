@@ -114,7 +114,7 @@ class _AppSidebarState extends ConsumerState<AppSidebar> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDarkMode = theme.brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final filteredGroups = _filterGroups(widget.groups);
 
     return AnimatedContainer(

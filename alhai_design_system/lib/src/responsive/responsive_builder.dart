@@ -73,9 +73,9 @@ class ResponsiveValue<T> extends StatelessWidget {
         T value;
 
         if (AlhaiBreakpoints.isDesktop(width) && desktop != null) {
-          value = desktop!;
+          value = desktop as T;
         } else if (AlhaiBreakpoints.isTablet(width) && tablet != null) {
-          value = tablet!;
+          value = tablet as T;
         } else {
           value = mobile;
         }

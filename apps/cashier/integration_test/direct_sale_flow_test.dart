@@ -20,12 +20,8 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:alhai_pos/alhai_pos.dart';
-import 'package:alhai_shared_ui/alhai_shared_ui.dart';
-import 'package:alhai_auth/alhai_auth.dart';
-import 'package:alhai_l10n/alhai_l10n.dart';
 
 import 'helpers/test_data.dart';
 import 'helpers/test_app.dart';
@@ -193,7 +189,6 @@ void main() {
 
           // Assert: There should be a text input for searching products
           // The POS screen uses an AppHeader with search or a dedicated search widget
-          final textFields = find.byType(TextField);
           // POS should have at least one input (search bar or barcode field)
           expect(find.byType(PosScreen), findsOneWidget);
         },
@@ -478,7 +473,6 @@ void main() {
           // ReceiptScreen provides print, WhatsApp share, and new sale options.
           expect(find.byType(ReceiptScreen), findsOneWidget);
           // Look for print icon in the action bar
-          final printIcons = find.byIcon(Icons.print);
           // Print button may or may not render depending on data availability,
           // but the screen itself should always load.
           expect(find.byType(Scaffold), findsWidgets);

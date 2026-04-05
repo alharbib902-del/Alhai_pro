@@ -103,8 +103,9 @@ class OrdersDao extends DatabaseAccessor<AppDatabase> with _$OrdersDaoMixin {
     return (select(ordersTable)
           ..where((o) {
             var condition = o.orderNumber.equals(orderNumber);
-            if (storeId != null)
+            if (storeId != null) {
               condition = condition & o.storeId.equals(storeId);
+            }
             return condition;
           }))
         .getSingleOrNull();

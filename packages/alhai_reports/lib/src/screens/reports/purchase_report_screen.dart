@@ -161,11 +161,12 @@ class _PurchaseReportScreenState extends ConsumerState<PurchaseReportScreen> {
         });
       }
     } catch (e) {
-      if (mounted)
+      if (mounted) {
         setState(() {
           _error = e.toString();
           _isLoading = false;
         });
+      }
     }
   }
 

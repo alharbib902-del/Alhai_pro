@@ -37,7 +37,7 @@ class _PosProductCardState extends State<PosProductCard> {
     final isOutOfStock = product.isOutOfStock;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final colorScheme = Theme.of(context).colorScheme;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final imageHeight = getResponsiveValue<double>(
       context,
       mobile: 56,
@@ -295,8 +295,7 @@ class PosShortcutsBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final heldCount = ref.watch(dbHeldInvoicesCountProvider);
 
     return Container(

@@ -127,7 +127,7 @@ class _DistributorSettingsScreenState
             backgroundColor: AppColors.getBackground(isDark),
             appBar: AppBar(
               title: Text(
-                l10n?.distributorSettings ?? 'الإعدادات',
+                l10n.distributorSettings,
                 style:
                     TextStyle(fontWeight: FontWeight.bold, color: cs.onSurface),
               ),
@@ -143,8 +143,7 @@ class _DistributorSettingsScreenState
                         size: 48, color: AppColors.getTextMuted(isDark)),
                     const SizedBox(height: AlhaiSpacing.md),
                     Text(
-                      l10n?.distributorLoadError ??
-                          'حدث خطأ في تحميل الإعدادات',
+                      l10n.distributorLoadError,
                       style: TextStyle(
                         fontSize: 16,
                         color: AppColors.getTextSecondary(isDark),
@@ -154,7 +153,7 @@ class _DistributorSettingsScreenState
                     FilledButton.icon(
                       onPressed: () => ref.invalidate(orgSettingsProvider),
                       icon: const Icon(Icons.refresh, size: 18),
-                      label: Text(l10n?.distributorRetry ?? 'إعادة المحاولة'),
+                      label: Text(l10n.distributorRetry),
                       style: FilledButton.styleFrom(
                         backgroundColor: AppColors.primary,
                         foregroundColor: AppColors.textOnPrimary,
@@ -183,8 +182,7 @@ class _DistributorSettingsScreenState
                         FilledButton.icon(
                           onPressed: () => ref.invalidate(orgSettingsProvider),
                           icon: const Icon(Icons.refresh, size: 18),
-                          label:
-                              Text(l10n?.distributorRetry ?? 'إعادة المحاولة'),
+                          label: Text(l10n.distributorRetry),
                           style: FilledButton.styleFrom(
                             backgroundColor: AppColors.primary,
                             foregroundColor: AppColors.textOnPrimary,
@@ -269,13 +267,12 @@ class _DistributorSettingsScreenState
     final result = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(l10n?.distributorUnsavedChanges ?? 'تغييرات غير محفوظة'),
-        content: Text(l10n?.distributorUnsavedChangesMessage ??
-            'لديك تغييرات غير محفوظة. هل تريد المغادرة بدون حفظ؟'),
+        title: Text(l10n.distributorUnsavedChanges),
+        content: Text(l10n.distributorUnsavedChangesMessage),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: Text(l10n?.distributorStay ?? 'البقاء'),
+            child: Text(l10n.distributorStay),
           ),
           FilledButton(
             onPressed: () => Navigator.of(context).pop(true),
@@ -283,7 +280,7 @@ class _DistributorSettingsScreenState
               backgroundColor: AppColors.error,
               foregroundColor: AppColors.textOnPrimary,
             ),
-            child: Text(l10n?.distributorLeave ?? 'مغادرة'),
+            child: Text(l10n.distributorLeave),
           ),
         ],
       ),
@@ -825,7 +822,7 @@ class _DistributorSettingsScreenState
               onChanged(v);
               _hasChanges = true;
             },
-            activeColor: AppColors.primary,
+            activeThumbColor: AppColors.primary,
           ),
         ],
       ),
@@ -843,8 +840,7 @@ class _DistributorSettingsScreenState
         final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(l10n?.distributorInvalidEmail ??
-                'يرجى إدخال بريد إلكتروني صحيح'),
+            content: Text(l10n.distributorInvalidEmail),
             backgroundColor: AppColors.error,
           ),
         );
@@ -859,8 +855,7 @@ class _DistributorSettingsScreenState
         final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-                l10n?.distributorInvalidPhone ?? 'يرجى إدخال رقم هاتف صحيح'),
+            content: Text(l10n.distributorInvalidPhone),
             backgroundColor: AppColors.error,
           ),
         );
@@ -903,8 +898,7 @@ class _DistributorSettingsScreenState
       final l10n = AppLocalizations.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content:
-              Text(l10n?.distributorSettingsSaved ?? 'تم حفظ الإعدادات بنجاح'),
+          content: Text(l10n.distributorSettingsSaved),
           backgroundColor: AppColors.success,
         ),
       );
@@ -915,8 +909,7 @@ class _DistributorSettingsScreenState
       final l10n = AppLocalizations.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content:
-              Text(l10n?.distributorSaveError ?? 'حدث خطأ أثناء حفظ الإعدادات'),
+          content: Text(l10n.distributorSaveError),
           backgroundColor: AppColors.error,
         ),
       );

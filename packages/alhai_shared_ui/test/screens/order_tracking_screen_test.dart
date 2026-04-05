@@ -15,7 +15,6 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_shared_ui/src/screens/orders/order_tracking_screen.dart';
-import 'package:alhai_shared_ui/src/providers/sync_providers.dart';
 
 // ---------------------------------------------------------------------------
 // Mocks

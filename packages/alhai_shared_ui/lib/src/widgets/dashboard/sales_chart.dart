@@ -58,7 +58,7 @@ class SimpleBarChart extends StatelessWidget {
         height: height,
         child: Center(
           child: Text(
-            AppLocalizations.of(context)?.noData ?? 'No data',
+            AppLocalizations.of(context).noData,
             style: TextStyle(
               color:
                   isDark ? Colors.white.withAlpha(128) : AppColors.textTertiary,
@@ -209,7 +209,7 @@ class _SalesChartCardState extends State<SalesChartCard> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final currentData = widget.data[_selectedPeriod] ?? [];
     final isMobile = context.isMobile;
 
@@ -348,7 +348,7 @@ class TopProductsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final displayProducts = products.take(maxItems).toList();
 
     return Container(
@@ -428,7 +428,7 @@ class _TopProductRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return InkWell(
       onTap: onTap,

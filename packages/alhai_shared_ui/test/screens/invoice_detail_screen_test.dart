@@ -8,10 +8,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:alhai_l10n/alhai_l10n.dart';
-import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
-import 'package:alhai_shared_ui/src/screens/invoices/invoice_detail_screen.dart';
 
 // ---------------------------------------------------------------------------
 // Test data
@@ -83,7 +81,7 @@ Widget _buildTestWidget({
               data: (d) => Future.value(d),
               loading: () =>
                   Future.delayed(const Duration(days: 1), () => null),
-              error: (e, _) => Future.error(e!),
+              error: (e, _) => Future.error(e),
             ) ??
             Future.value(null),
       ),

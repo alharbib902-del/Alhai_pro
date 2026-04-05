@@ -19,7 +19,7 @@ class ExpensesScreen extends ConsumerWidget {
     final isWideScreen = context.isDesktop;
     final isMediumScreen = !context.isMobile;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
@@ -501,7 +501,7 @@ class ExpensesScreen extends ConsumerWidget {
     final titleController = TextEditingController();
     final amountController = TextEditingController();
     String category = 'utilities';
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     showDialog(
       context: context,
@@ -530,7 +530,7 @@ class ExpensesScreen extends ConsumerWidget {
               ),
               SizedBox(height: AlhaiSpacing.sm),
               DropdownButtonFormField<String>(
-                value: category,
+                initialValue: category,
                 decoration: InputDecoration(
                   labelText: l10n.categoryLabel,
                   prefixIcon: const Icon(Icons.category),
@@ -590,7 +590,7 @@ class ExpensesScreen extends ConsumerWidget {
   }
 
   void _showFilterDialog(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(l10n.filterExpenses)),
     );

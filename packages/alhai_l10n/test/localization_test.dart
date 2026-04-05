@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:alhai_l10n/alhai_l10n.dart';
-import 'package:alhai_l10n/l10n/generated/app_localizations.dart';
 import 'package:alhai_l10n/l10n/generated/app_localizations_ar.dart';
 import 'package:alhai_l10n/l10n/generated/app_localizations_en.dart';
 import 'package:alhai_l10n/l10n/generated/app_localizations_ur.dart';
@@ -138,7 +137,7 @@ void main() {
     });
 
     test('unknown locale returns language code', () {
-      final unknown = const Locale('xx');
+      const unknown = Locale('xx');
       expect(SupportedLocales.getNativeName(unknown), 'xx');
     });
   });
@@ -154,7 +153,7 @@ void main() {
     });
 
     test('unknown locale returns globe emoji', () {
-      final unknown = const Locale('zz');
+      const unknown = Locale('zz');
       expect(SupportedLocales.getFlag(unknown), '\u{1f310}');
     });
   });

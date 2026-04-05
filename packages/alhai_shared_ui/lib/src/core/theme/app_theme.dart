@@ -458,8 +458,9 @@ class AppTheme {
           return AppColors.grey400;
         }),
         trackColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.selected))
+          if (states.contains(WidgetState.selected)) {
             return AppColors.primarySurface;
+          }
           return AppColors.grey200;
         }),
         trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
@@ -506,8 +507,9 @@ class AppTheme {
       dataTableTheme: DataTableThemeData(
         headingRowColor: WidgetStateProperty.all(surfaceVariant),
         dataRowColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.selected))
+          if (states.contains(WidgetState.selected)) {
             return AppColors.primarySurface;
+          }
           if (states.contains(WidgetState.hovered)) return surfaceVariant;
           return surface;
         }),

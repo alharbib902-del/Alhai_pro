@@ -69,11 +69,11 @@ class _VatReportScreenState extends ConsumerState<VatReportScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.vatReportTitle),
+        title: Text(AppLocalizations.of(context).vatReportTitle),
         actions: [
           IconButton(
             icon: const Icon(Icons.picture_as_pdf),
-            tooltip: AppLocalizations.of(context)!.exportPdf,
+            tooltip: AppLocalizations.of(context).exportPdf,
             onPressed: _exportPdf,
           ),
         ],
@@ -104,7 +104,7 @@ class _VatReportScreenState extends ConsumerState<VatReportScreen> {
                                     .onSurfaceVariant),
                             const SizedBox(height: AlhaiSpacing.md),
                             Text(
-                              AppLocalizations.of(context)!
+                              AppLocalizations.of(context)
                                   .errorLoadingVatReport,
                               style: TextStyle(
                                   fontSize: 16,
@@ -118,7 +118,7 @@ class _VatReportScreenState extends ConsumerState<VatReportScreen> {
                               onPressed: _loadVatData,
                               icon: const Icon(Icons.refresh_rounded),
                               label: Text(
-                                  AppLocalizations.of(context)!.retryAction),
+                                  AppLocalizations.of(context).retryAction),
                             ),
                           ],
                         ),
@@ -136,7 +136,7 @@ class _VatReportScreenState extends ConsumerState<VatReportScreen> {
                               child: ListTile(
                                 leading: const Icon(Icons.date_range),
                                 title: Text(_dateRange == null
-                                    ? AppLocalizations.of(context)!.selectPeriod
+                                    ? AppLocalizations.of(context).selectPeriod
                                     : '${_formatDate(_dateRange!.start)} - ${_formatDate(_dateRange!.end)}'),
                                 trailing:
                                     const AdaptiveIcon(Icons.chevron_right),
@@ -147,16 +147,16 @@ class _VatReportScreenState extends ConsumerState<VatReportScreen> {
 
                             // Sales VAT
                             _VatCard(
-                              title: AppLocalizations.of(context)!.salesVat,
+                              title: AppLocalizations.of(context).salesVat,
                               icon: Icons.trending_up,
                               color: Colors.green,
                               items: [
                                 _VatItem(
-                                    AppLocalizations.of(context)!
+                                    AppLocalizations.of(context)
                                         .totalSalesIncVat,
                                     _totalSales),
                                 _VatItem(
-                                    AppLocalizations.of(context)!.vatCollected,
+                                    AppLocalizations.of(context).vatCollected,
                                     _vatCollected,
                                     isVat: true),
                               ],
@@ -165,15 +165,15 @@ class _VatReportScreenState extends ConsumerState<VatReportScreen> {
 
                             // Purchases VAT
                             _VatCard(
-                              title: AppLocalizations.of(context)!.purchasesVat,
+                              title: AppLocalizations.of(context).purchasesVat,
                               icon: Icons.trending_down,
                               color: Colors.orange,
                               items: [
                                 _VatItem(
-                                    AppLocalizations.of(context)!
+                                    AppLocalizations.of(context)
                                         .totalPurchasesIncVat,
                                     _totalPurchases),
-                                _VatItem(AppLocalizations.of(context)!.vatPaid,
+                                _VatItem(AppLocalizations.of(context).vatPaid,
                                     _vatPaid,
                                     isVat: true),
                               ],
@@ -190,14 +190,14 @@ class _VatReportScreenState extends ConsumerState<VatReportScreen> {
                                 child: Column(
                                   children: [
                                     Text(
-                                      AppLocalizations.of(context)!.netVatDue,
+                                      AppLocalizations.of(context).netVatDue,
                                       style: Theme.of(context)
                                           .textTheme
                                           .titleMedium,
                                     ),
                                     const SizedBox(height: AlhaiSpacing.xs),
                                     Text(
-                                      '${_netVat.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
+                                      '${_netVat.toStringAsFixed(2)} ${AppLocalizations.of(context).sar}',
                                       style: TextStyle(
                                         fontSize: 32,
                                         fontWeight: FontWeight.bold,
@@ -209,9 +209,9 @@ class _VatReportScreenState extends ConsumerState<VatReportScreen> {
                                     const SizedBox(height: AlhaiSpacing.xs),
                                     Text(
                                       _netVat >= 0
-                                          ? AppLocalizations.of(context)!
+                                          ? AppLocalizations.of(context)
                                               .dueToAuthority
-                                          : AppLocalizations.of(context)!
+                                          : AppLocalizations.of(context)
                                               .dueFromAuthority,
                                       style: TextStyle(
                                           color: Theme.of(context)
@@ -234,14 +234,14 @@ class _VatReportScreenState extends ConsumerState<VatReportScreen> {
                                           .showSnackBar(
                                         SnackBar(
                                           content: Text(
-                                            AppLocalizations.of(context)!
+                                            AppLocalizations.of(context)
                                                 .exportingPdfReport,
                                           ),
                                         ),
                                       );
                                     },
                                     icon: const Icon(Icons.print),
-                                    label: Text(AppLocalizations.of(context)!
+                                    label: Text(AppLocalizations.of(context)
                                         .printAction),
                                   ),
                                 ),
@@ -282,7 +282,7 @@ class _VatReportScreenState extends ConsumerState<VatReportScreen> {
                                       );
                                     },
                                     icon: const AdaptiveIcon(Icons.send),
-                                    label: Text(AppLocalizations.of(context)!
+                                    label: Text(AppLocalizations.of(context)
                                         .sendToAuthority),
                                   ),
                                 ),
@@ -319,7 +319,7 @@ class _VatReportScreenState extends ConsumerState<VatReportScreen> {
 
   void _exportPdf() {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppLocalizations.of(context)!.exportingPdfReport)),
+      SnackBar(content: Text(AppLocalizations.of(context).exportingPdfReport)),
     );
   }
 }
@@ -361,7 +361,7 @@ class _VatCard extends StatelessWidget {
                     children: [
                       Text(item.label),
                       Text(
-                        '${item.amount.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
+                        '${item.amount.toStringAsFixed(2)} ${AppLocalizations.of(context).sar}',
                         style: TextStyle(
                           fontWeight:
                               item.isVat ? FontWeight.bold : FontWeight.normal,

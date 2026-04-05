@@ -191,19 +191,18 @@ final cashierRouterProvider = Provider<GoRouter>((ref) {
 Widget _errorBuilder(BuildContext context, GoRouterState state) {
   final l10n = AppLocalizations.of(context);
   return Scaffold(
-    appBar: AppBar(title: Text(l10n?.pageNotFoundTitle ?? 'Page Not Found')),
+    appBar: AppBar(title: Text(l10n.pageNotFoundTitle)),
     body: Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Icon(Icons.error_outline, size: 64, color: Colors.red),
           const SizedBox(height: AlhaiSpacing.md),
-          Text(l10n?.pageNotFoundMessage(state.uri.path) ??
-              'Page not found: ${state.uri.path}'),
+          Text(l10n.pageNotFoundMessage(state.uri.path)),
           const SizedBox(height: AlhaiSpacing.lg),
           FilledButton(
             onPressed: () => GoRouter.of(context).go(AppRoutes.pos),
-            child: Text(l10n?.pointOfSale ?? 'POS'),
+            child: Text(l10n.pointOfSale),
           ),
         ],
       ),

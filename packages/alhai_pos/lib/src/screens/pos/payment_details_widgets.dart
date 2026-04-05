@@ -46,7 +46,7 @@ class CashPaymentDetails extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          AppLocalizations.of(context)!.amountReceived,
+          AppLocalizations.of(context).amountReceived,
           style: AppTypography.titleMedium.copyWith(
             color: AppColors.textPrimary,
           ),
@@ -79,7 +79,7 @@ class CashPaymentDetails extends StatelessWidget {
               hintStyle: AppTypography.displayMedium.copyWith(
                 color: AppColors.textMuted,
               ),
-              suffixText: AppLocalizations.of(context)!.sar,
+              suffixText: AppLocalizations.of(context).sar,
               suffixStyle: AppTypography.titleLarge.copyWith(
                 color: AppColors.textMuted,
               ),
@@ -95,7 +95,7 @@ class CashPaymentDetails extends StatelessWidget {
 
         // Quick Amount Buttons
         Text(
-          AppLocalizations.of(context)!.quickAmounts,
+          AppLocalizations.of(context).quickAmounts,
           style: AppTypography.labelLarge.copyWith(
             color: AppColors.textSecondary,
           ),
@@ -107,7 +107,7 @@ class CashPaymentDetails extends StatelessWidget {
           runSpacing: AppSpacing.sm,
           children: [
             QuickAmountChip(
-              label: AppLocalizations.of(context)!.requiredAmount,
+              label: AppLocalizations.of(context).requiredAmount,
               amount: total,
               color: AppColors.primary,
               onTap: () => onQuickAmountSelected(total),
@@ -149,7 +149,7 @@ class CashPaymentDetails extends StatelessWidget {
                   ),
                   const SizedBox(width: AppSpacing.md),
                   Text(
-                    AppLocalizations.of(context)!.changeLabel,
+                    AppLocalizations.of(context).changeLabel,
                     style: AppTypography.titleLarge.copyWith(
                       color: change >= 0 ? AppColors.success : AppColors.error,
                     ),
@@ -158,8 +158,8 @@ class CashPaymentDetails extends StatelessWidget {
               ),
               Text(
                 change >= 0
-                    ? '${change.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}'
-                    : AppLocalizations.of(context)!.insufficientAmount,
+                    ? '${change.toStringAsFixed(2)} ${AppLocalizations.of(context).sar}'
+                    : AppLocalizations.of(context).insufficientAmount,
                 style: AppTypography.displaySmall.copyWith(
                   color: change >= 0 ? AppColors.success : AppColors.error,
                   fontWeight: FontWeight.w700,
@@ -194,7 +194,7 @@ class CardPaymentDetails extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          AppLocalizations.of(context)!.rrnLabel,
+          AppLocalizations.of(context).rrnLabel,
           style: AppTypography.titleMedium.copyWith(
             color: AppColors.textPrimary,
           ),
@@ -218,7 +218,7 @@ class CardPaymentDetails extends StatelessWidget {
             ),
             decoration: InputDecoration(
               border: InputBorder.none,
-              hintText: AppLocalizations.of(context)!.enterRrnFromDevice,
+              hintText: AppLocalizations.of(context).enterRrnFromDevice,
               hintStyle: AppTypography.bodyLarge.copyWith(
                 color: AppColors.textMuted,
               ),
@@ -244,7 +244,7 @@ class CardPaymentDetails extends StatelessWidget {
               const SizedBox(width: AppSpacing.md),
               Expanded(
                 child: Text(
-                  AppLocalizations.of(context)!.cardPaymentInstructions,
+                  AppLocalizations.of(context).cardPaymentInstructions,
                   style: AppTypography.bodyMedium.copyWith(
                     color: AppColors.info,
                   ),
@@ -272,7 +272,7 @@ class CreditPaymentDetails extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          AppLocalizations.of(context)!.creditSale,
+          AppLocalizations.of(context).creditSale,
           style: AppTypography.titleMedium.copyWith(
             color: AppColors.textPrimary,
           ),
@@ -294,7 +294,7 @@ class CreditPaymentDetails extends StatelessWidget {
               const SizedBox(width: AppSpacing.md),
               Expanded(
                 child: Text(
-                  AppLocalizations.of(context)!.creditSaleWarning,
+                  AppLocalizations.of(context).creditSaleWarning,
                   style: AppTypography.bodyMedium.copyWith(
                     color: AppColors.warning,
                   ),
@@ -333,14 +333,14 @@ class PaymentProcessingState extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.xl),
           Text(
-            AppLocalizations.of(context)!.processingPayment,
+            AppLocalizations.of(context).processingPayment,
             style: AppTypography.titleLarge.copyWith(
               color: theme.colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(
-            AppLocalizations.of(context)!.pleaseWait,
+            AppLocalizations.of(context).pleaseWait,
             style: AppTypography.bodyMedium.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),
@@ -387,7 +387,7 @@ class PaymentSuccessState extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.xl),
             Text(
-              AppLocalizations.of(context)!.paymentSuccessful,
+              AppLocalizations.of(context).paymentSuccessful,
               style: AppTypography.displaySmall.copyWith(
                 color: AppColors.success,
                 fontWeight: FontWeight.w700,
@@ -395,7 +395,7 @@ class PaymentSuccessState extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.md),
             Text(
-              AppLocalizations.of(context)!.printingReceipt,
+              AppLocalizations.of(context).printingReceipt,
               style: AppTypography.bodyLarge.copyWith(
                 color: AppColors.textSecondary,
               ),

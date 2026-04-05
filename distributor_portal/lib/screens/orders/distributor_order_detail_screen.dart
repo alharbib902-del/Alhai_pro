@@ -7,7 +7,6 @@
 /// Data from Supabase via Riverpod providers.
 library;
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -114,7 +113,7 @@ class _DistributorOrderDetailScreenState
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text(l10n?.cancel ?? 'Cancel'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.of(ctx).pop(true),
@@ -133,19 +132,19 @@ class _DistributorOrderDetailScreenState
 
     if (newStatus == 'rejected') {
       final confirmed = await _showConfirmationDialog(
-        title: l10n?.distributorRejectOrder ?? 'Reject Order',
+        title: l10n.distributorRejectOrder,
         message:
             'Are you sure you want to reject this order? This action cannot be undone.',
-        confirmLabel: l10n?.distributorRejectOrder ?? 'Reject',
+        confirmLabel: l10n.distributorRejectOrder,
         confirmColor: AppColors.error,
       );
       if (!confirmed) return;
     } else if (newStatus == 'approved') {
       final confirmed = await _showConfirmationDialog(
-        title: l10n?.distributorAcceptSendQuote ?? 'Accept & Send Quote',
+        title: l10n.distributorAcceptSendQuote,
         message:
             'Are you sure you want to approve this order with a total of ${NumberFormat('#,##0.00').format(total)} SAR?',
-        confirmLabel: l10n?.distributorAcceptSendQuote ?? 'Accept & Send',
+        confirmLabel: l10n.distributorAcceptSendQuote,
         confirmColor: AppColors.success,
       );
       if (!confirmed) return;
@@ -187,22 +186,21 @@ class _DistributorOrderDetailScreenState
       ref.invalidate(orderItemsProvider(widget.orderId));
 
       // Show SnackBar with Undo action (revert within 5 seconds)
-      final previousStatus = 'sent'; // Orders are 'sent' before action
+      const previousStatus = 'sent'; // Orders are 'sent' before action
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
             newStatus == 'rejected'
-                ? (l10n?.distributorOrderRejected ?? 'Order rejected')
-                : (l10n?.distributorOrderAccepted(
-                        NumberFormat('#,##0.00').format(total)) ??
-                    'Order accepted'),
+                ? l10n.distributorOrderRejected
+                : l10n.distributorOrderAccepted(
+                    NumberFormat('#,##0.00').format(total)),
           ),
           backgroundColor:
               newStatus == 'rejected' ? AppColors.error : AppColors.success,
           duration: const Duration(seconds: 5),
           action: SnackBarAction(
-            label: l10n?.undo ?? 'Undo',
+            label: l10n.undo,
             textColor: AppColors.textOnPrimary,
             onPressed: () async {
               // Revert the status back
@@ -217,8 +215,7 @@ class _DistributorOrderDetailScreenState
                   ref.invalidate(orderItemsProvider(widget.orderId));
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text(
-                          l10n?.distributorActionUndone ?? 'Action undone'),
+                      content: Text(l10n.distributorActionUndone),
                       backgroundColor: AppColors.info,
                     ),
                   );
@@ -236,7 +233,7 @@ class _DistributorOrderDetailScreenState
       final l10n = AppLocalizations.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(l10n?.distributorLoadError ?? 'Error'),
+          content: Text(l10n.distributorLoadError),
           backgroundColor: AppColors.error,
         ),
       );
@@ -274,8 +271,7 @@ class _DistributorOrderDetailScreenState
             title: orderAsync.when(
               data: (order) => Text(
                 order != null
-                    ? (l10n?.distributorPurchaseOrder(order.purchaseNumber) ??
-                        'PO #${order.purchaseNumber}')
+                    ? l10n.distributorPurchaseOrder(order.purchaseNumber)
                     : '',
                 style:
                     TextStyle(fontWeight: FontWeight.bold, color: cs.onSurface),
@@ -286,7 +282,7 @@ class _DistributorOrderDetailScreenState
             centerTitle: false,
             leading: Semantics(
               button: true,
-              label: l10n?.distributorOrders ?? 'Back to orders',
+              label: l10n.distributorOrders,
               child: IconButton(
                 icon: const Icon(Icons.arrow_back_rounded),
                 onPressed: () =>
@@ -335,19 +331,19 @@ class _DistributorOrderDetailScreenState
           body: orderAsync.when(
             loading: () => const TableSkeleton(rows: 6, columns: 4),
             error: (e, _) => Center(
-              child: Text(l10n?.distributorLoadError ?? 'Error loading data'),
+              child: Text(l10n.distributorLoadError),
             ),
             data: (order) {
               if (order == null) {
                 return Center(
-                  child: Text(l10n?.distributorNoOrders ?? 'Order not found'),
+                  child: Text(l10n.distributorNoOrders),
                 );
               }
 
               return itemsAsync.when(
                 loading: () => const TableSkeleton(rows: 4, columns: 4),
                 error: (e, _) => Center(
-                  child: Text(l10n?.distributorLoadError ?? 'Error'),
+                  child: Text(l10n.distributorLoadError),
                 ),
                 data: (items) {
                   // Sync controllers: dispose stale ones, prepare for current items
@@ -374,7 +370,7 @@ class _DistributorOrderDetailScreenState
                                     borderRadius:
                                         BorderRadius.circular(AlhaiRadius.xs),
                                     child: Text(
-                                      l10n?.distributorOrders ?? 'Orders',
+                                      l10n.distributorOrders,
                                       style: const TextStyle(
                                         fontSize: 14,
                                         color: AppColors.primary,
@@ -392,7 +388,7 @@ class _DistributorOrderDetailScreenState
                                     ),
                                   ),
                                   Text(
-                                    '${l10n?.distributorOrderNumber ?? 'Order'} #${order.purchaseNumber}',
+                                    '${l10n.distributorOrderNumber} #${order.purchaseNumber}',
                                     style: TextStyle(
                                       fontSize: 14,
                                       color: AppColors.getTextSecondary(isDark),

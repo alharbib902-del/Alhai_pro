@@ -15,7 +15,6 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:uuid/uuid.dart';
 // alhai_design_system is re-exported via alhai_shared_ui
-import 'package:drift/drift.dart' show Value;
 import 'package:alhai_design_system/alhai_design_system.dart'
     show AlhaiBreakpoints, AlhaiSpacing;
 import '../../core/services/sentry_service.dart';

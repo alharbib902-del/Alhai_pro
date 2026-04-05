@@ -1,4 +1,3 @@
-import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -36,7 +35,7 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
   }
 
   List<Map<String, dynamic>> _getReasons(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return [
       {
         'id': 'damaged',
@@ -71,18 +70,18 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
 
     if (pendingRefund == null) {
       return Scaffold(
-        appBar: AppBar(
-            title: Text(AppLocalizations.of(context)!.refundReasonTitle)),
+        appBar:
+            AppBar(title: Text(AppLocalizations.of(context).refundReasonTitle)),
         body: AppEmptyState(
           icon: Icons.receipt_long_outlined,
-          title: AppLocalizations.of(context)!.noRefundData,
+          title: AppLocalizations.of(context).noRefundData,
         ),
       );
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.refundReasonTitle),
+        title: Text(AppLocalizations.of(context).refundReasonTitle),
       ),
       body: SafeArea(
         top: false,
@@ -117,13 +116,13 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              AppLocalizations.of(context)!
+                              AppLocalizations.of(context)
                                   .invoiceFieldLabel(pendingRefund.receiptNo),
                               style:
                                   const TextStyle(fontWeight: FontWeight.bold),
                             ),
                             Text(
-                              AppLocalizations.of(context)!.productsCountAmount(
+                              AppLocalizations.of(context).productsCountAmount(
                                   pendingRefund.items.length,
                                   pendingRefund.amount.toStringAsFixed(2)),
                               style: TextStyle(
@@ -144,7 +143,7 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
                     padding: EdgeInsets.symmetric(horizontal: padding),
                     children: [
                       Text(
-                        AppLocalizations.of(context)!.selectRefundReason,
+                        AppLocalizations.of(context).selectRefundReason,
                         style: const TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold),
                       ),
@@ -211,7 +210,7 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
 
                       // Notes
                       Text(
-                        AppLocalizations.of(context)!.additionalNotesOptional,
+                        AppLocalizations.of(context).additionalNotesOptional,
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: AlhaiSpacing.xs),
@@ -219,7 +218,7 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
                         controller: _notesController,
                         maxLines: 3,
                         decoration: InputDecoration(
-                          hintText: AppLocalizations.of(context)!.addNotesHint,
+                          hintText: AppLocalizations.of(context).addNotesHint,
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12)),
                         ),
@@ -259,8 +258,8 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
                             )
                           : const AdaptiveIcon(Icons.arrow_forward),
                       label: Text(_isProcessing
-                          ? AppLocalizations.of(context)!.processingAction
-                          : AppLocalizations.of(context)!
+                          ? AppLocalizations.of(context).processingAction
+                          : AppLocalizations.of(context)
                               .nextSupervisorApproval),
                       style: FilledButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
@@ -399,8 +398,8 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
         setState(() => _isProcessing = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(AppLocalizations.of(context)!
-                .refundCreationError(e.toString())),
+            content: Text(
+                AppLocalizations.of(context).refundCreationError(e.toString())),
             backgroundColor: AppColors.error,
           ),
         );

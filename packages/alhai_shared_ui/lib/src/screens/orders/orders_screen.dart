@@ -167,7 +167,7 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
     final isWideScreen = context.isDesktop;
     final isMediumScreen = !context.isMobile;
     final colorScheme = Theme.of(context).colorScheme;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     final ordersAsync = ref.watch(ordersListProvider);
 
@@ -1427,7 +1427,7 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
   Widget _totalRow(
       String label, double amount, Color labelColor, Color valueColor,
       {bool isDiscount = false}) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [

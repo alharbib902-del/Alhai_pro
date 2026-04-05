@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:drift/drift.dart' hide isNotNull, isNull;
 import 'package:alhai_database/alhai_database.dart';
 import '../helpers/database_test_helpers.dart';
 
@@ -14,7 +13,7 @@ void main() {
     await db.close();
   });
 
-  AccountsTableCompanion _makeAccount({
+  AccountsTableCompanion makeAccount({
     String id = 'acc-1',
     String storeId = 'store-1',
     String type = 'receivable',
@@ -35,7 +34,7 @@ void main() {
 
   group('AccountsDao', () {
     test('insertAccount and getAccountById', () async {
-      await db.accountsDao.insertAccount(_makeAccount());
+      await db.accountsDao.insertAccount(makeAccount());
 
       final account = await db.accountsDao.getAccountById('acc-1');
       expect(account, isNotNull);
@@ -45,8 +44,8 @@ void main() {
     });
 
     test('getAllAccounts returns accounts for store', () async {
-      await db.accountsDao.insertAccount(_makeAccount());
-      await db.accountsDao.insertAccount(_makeAccount(
+      await db.accountsDao.insertAccount(makeAccount());
+      await db.accountsDao.insertAccount(makeAccount(
         id: 'acc-2',
         name: 'حساب خالد',
         type: 'payable',
@@ -58,9 +57,9 @@ void main() {
 
     test('getReceivableAccounts filters by type', () async {
       await db.accountsDao
-          .insertAccount(_makeAccount(id: 'acc-r', type: 'receivable'));
+          .insertAccount(makeAccount(id: 'acc-r', type: 'receivable'));
       await db.accountsDao.insertAccount(
-          _makeAccount(id: 'acc-p', name: 'مورد', type: 'payable'));
+          makeAccount(id: 'acc-p', name: 'مورد', type: 'payable'));
 
       final receivables = await db.accountsDao.getReceivableAccounts('store-1');
       expect(receivables, hasLength(1));
@@ -69,9 +68,9 @@ void main() {
 
     test('getPayableAccounts filters by type', () async {
       await db.accountsDao
-          .insertAccount(_makeAccount(id: 'acc-r', type: 'receivable'));
+          .insertAccount(makeAccount(id: 'acc-r', type: 'receivable'));
       await db.accountsDao.insertAccount(
-          _makeAccount(id: 'acc-p', name: 'مورد', type: 'payable'));
+          makeAccount(id: 'acc-p', name: 'مورد', type: 'payable'));
 
       final payables = await db.accountsDao.getPayableAccounts('store-1');
       expect(payables, hasLength(1));
@@ -79,7 +78,7 @@ void main() {
     });
 
     test('getCustomerAccount finds by customerId and storeId', () async {
-      await db.accountsDao.insertAccount(_makeAccount());
+      await db.accountsDao.insertAccount(makeAccount());
 
       final account =
           await db.accountsDao.getCustomerAccount('cust-1', 'store-1');
@@ -88,7 +87,7 @@ void main() {
     });
 
     test('updateBalance changes balance', () async {
-      await db.accountsDao.insertAccount(_makeAccount(balance: 500.0));
+      await db.accountsDao.insertAccount(makeAccount(balance: 500.0));
 
       await db.accountsDao.updateBalance('acc-1', 750.0);
 
@@ -98,7 +97,7 @@ void main() {
     });
 
     test('addToBalance increases balance', () async {
-      await db.accountsDao.insertAccount(_makeAccount(balance: 500.0));
+      await db.accountsDao.insertAccount(makeAccount(balance: 500.0));
 
       await db.accountsDao.addToBalance('acc-1', 200.0);
 
@@ -107,7 +106,7 @@ void main() {
     });
 
     test('subtractFromBalance decreases balance', () async {
-      await db.accountsDao.insertAccount(_makeAccount(balance: 500.0));
+      await db.accountsDao.insertAccount(makeAccount(balance: 500.0));
 
       await db.accountsDao.subtractFromBalance('acc-1', 150.0);
 
@@ -116,7 +115,7 @@ void main() {
     });
 
     test('markAsSynced sets syncedAt', () async {
-      await db.accountsDao.insertAccount(_makeAccount());
+      await db.accountsDao.insertAccount(makeAccount());
 
       await db.accountsDao.markAsSynced('acc-1');
 

@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:drift/drift.dart' hide isNotNull, isNull;
 import 'package:alhai_database/alhai_database.dart';
 import '../helpers/database_test_helpers.dart';
 
@@ -14,7 +13,7 @@ void main() {
     await db.close();
   });
 
-  StoresTableCompanion _makeStore({
+  StoresTableCompanion makeStore({
     String id = 'store-1',
     String name = 'متجر الرياض',
     bool isActive = true,
@@ -31,7 +30,7 @@ void main() {
 
   group('StoresDao', () {
     test('insertStore and getStoreById', () async {
-      await db.storesDao.insertStore(_makeStore());
+      await db.storesDao.insertStore(makeStore());
 
       final store = await db.storesDao.getStoreById('store-1');
       expect(store, isNotNull);
@@ -45,17 +44,17 @@ void main() {
     });
 
     test('getAllStores returns all stores', () async {
-      await db.storesDao.insertStore(_makeStore());
+      await db.storesDao.insertStore(makeStore());
       await db.storesDao
-          .insertStore(_makeStore(id: 'store-2', name: 'متجر جدة'));
+          .insertStore(makeStore(id: 'store-2', name: 'متجر جدة'));
 
       final stores = await db.storesDao.getAllStores();
       expect(stores, hasLength(2));
     });
 
     test('getActiveStores excludes inactive', () async {
-      await db.storesDao.insertStore(_makeStore(isActive: true));
-      await db.storesDao.insertStore(_makeStore(
+      await db.storesDao.insertStore(makeStore(isActive: true));
+      await db.storesDao.insertStore(makeStore(
         id: 'store-2',
         name: 'متجر مغلق',
         isActive: false,
@@ -67,7 +66,7 @@ void main() {
     });
 
     test('deleteStore removes store', () async {
-      await db.storesDao.insertStore(_makeStore());
+      await db.storesDao.insertStore(makeStore());
 
       final deleted = await db.storesDao.deleteStore('store-1');
       expect(deleted, 1);
@@ -77,7 +76,7 @@ void main() {
     });
 
     test('markAsSynced sets syncedAt', () async {
-      await db.storesDao.insertStore(_makeStore());
+      await db.storesDao.insertStore(makeStore());
 
       await db.storesDao.markAsSynced('store-1');
 

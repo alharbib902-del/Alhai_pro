@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:drift/drift.dart' hide isNotNull, isNull;
 import 'package:alhai_database/alhai_database.dart';
 import '../helpers/database_test_helpers.dart';
 
@@ -14,7 +13,7 @@ void main() {
     await db.close();
   });
 
-  SuppliersTableCompanion _makeSupplier({
+  SuppliersTableCompanion makeSupplier({
     String id = 'sup-1',
     String storeId = 'store-1',
     String name = 'شركة الأغذية المتحدة',
@@ -35,7 +34,7 @@ void main() {
 
   group('SuppliersDao', () {
     test('insertSupplier and getSupplierById', () async {
-      await db.suppliersDao.insertSupplier(_makeSupplier());
+      await db.suppliersDao.insertSupplier(makeSupplier());
 
       final supplier = await db.suppliersDao.getSupplierById('sup-1');
       expect(supplier, isNotNull);
@@ -43,8 +42,8 @@ void main() {
     });
 
     test('getAllSuppliers returns all for store', () async {
-      await db.suppliersDao.insertSupplier(_makeSupplier());
-      await db.suppliersDao.insertSupplier(_makeSupplier(
+      await db.suppliersDao.insertSupplier(makeSupplier());
+      await db.suppliersDao.insertSupplier(makeSupplier(
         id: 'sup-2',
         name: 'مؤسسة التوزيع',
       ));
@@ -54,8 +53,8 @@ void main() {
     });
 
     test('getActiveSuppliers excludes inactive', () async {
-      await db.suppliersDao.insertSupplier(_makeSupplier());
-      await db.suppliersDao.insertSupplier(_makeSupplier(
+      await db.suppliersDao.insertSupplier(makeSupplier());
+      await db.suppliersDao.insertSupplier(makeSupplier(
         id: 'sup-2',
         name: 'مورد قديم',
         isActive: false,
@@ -66,14 +65,14 @@ void main() {
     });
 
     test('searchSuppliers finds by name', () async {
-      await db.suppliersDao.insertSupplier(_makeSupplier());
+      await db.suppliersDao.insertSupplier(makeSupplier());
 
       final results = await db.suppliersDao.searchSuppliers('أغذية', 'store-1');
       expect(results, hasLength(1));
     });
 
     test('searchSuppliers finds by phone', () async {
-      await db.suppliersDao.insertSupplier(_makeSupplier());
+      await db.suppliersDao.insertSupplier(makeSupplier());
 
       final results =
           await db.suppliersDao.searchSuppliers('011234', 'store-1');
@@ -81,7 +80,7 @@ void main() {
     });
 
     test('updateBalance changes supplier balance', () async {
-      await db.suppliersDao.insertSupplier(_makeSupplier(balance: 0.0));
+      await db.suppliersDao.insertSupplier(makeSupplier(balance: 0.0));
 
       await db.suppliersDao.updateBalance('sup-1', 5000.0);
 
@@ -90,7 +89,7 @@ void main() {
     });
 
     test('deleteSupplier removes supplier', () async {
-      await db.suppliersDao.insertSupplier(_makeSupplier());
+      await db.suppliersDao.insertSupplier(makeSupplier());
 
       final deleted = await db.suppliersDao.deleteSupplier('sup-1');
       expect(deleted, 1);
@@ -100,7 +99,7 @@ void main() {
     });
 
     test('markAsSynced sets syncedAt', () async {
-      await db.suppliersDao.insertSupplier(_makeSupplier());
+      await db.suppliersDao.insertSupplier(makeSupplier());
 
       await db.suppliersDao.markAsSynced('sup-1');
 

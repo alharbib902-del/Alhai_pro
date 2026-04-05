@@ -47,7 +47,7 @@ class _AiReturnPredictionScreenState
     final size = MediaQuery.of(context).size;
     final isWideScreen = size.width > 900;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       children: [
@@ -108,7 +108,7 @@ class _AiReturnPredictionScreenState
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (e, _) => Center(
           child: Text(
-              AppLocalizations.of(context)!.errorOccurredDetail(e.toString()))),
+              AppLocalizations.of(context).errorOccurredDetail(e.toString()))),
       data: (probs) {
         return SingleChildScrollView(
           padding:
@@ -135,7 +135,7 @@ class _AiReturnPredictionScreenState
 
               // قائمة العمليات
               Text(
-                AppLocalizations.of(context)!
+                AppLocalizations.of(context)
                     .operationsAtRiskCount(probs.length),
                 style: TextStyle(
                   color: isDark ? Colors.white : AppColors.textPrimary,
@@ -162,7 +162,7 @@ class _AiReturnPredictionScreenState
     AsyncValue<double> atRisk,
     AsyncValue<int> highRisk,
   ) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final cards = [
       _SummaryCardData(
         title: l10n.returnRateTitle,
@@ -310,7 +310,7 @@ class _AiReturnPredictionScreenState
               const Icon(Icons.show_chart, color: AppColors.primary, size: 20),
               const SizedBox(width: AlhaiSpacing.xs),
               Text(
-                AppLocalizations.of(context)!.returnTrendTitle,
+                AppLocalizations.of(context).returnTrendTitle,
                 style: TextStyle(
                   color: isDark ? Colors.white : AppColors.textPrimary,
                   fontSize: 16,
@@ -381,7 +381,7 @@ class _AiReturnPredictionScreenState
   }
 
   Widget _buildRiskFilter(bool isDark, ReturnRiskLevel? selected) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final filters = [
       _FilterOption(label: l10n.riskFilterAll, value: null),
       _FilterOption(
@@ -446,7 +446,7 @@ class _AiReturnPredictionScreenState
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (e, _) => Center(
           child: Text(
-              AppLocalizations.of(context)!.errorOccurredDetail(e.toString()))),
+              AppLocalizations.of(context).errorOccurredDetail(e.toString()))),
       data: (actionsList) {
         final totalSavings = actionsList.fold<double>(
           0,
@@ -501,7 +501,7 @@ class _AiReturnPredictionScreenState
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            AppLocalizations.of(context)!.totalExpectedSavings,
+                            AppLocalizations.of(context).totalExpectedSavings,
                             style: TextStyle(
                               color: Colors.white.withValues(alpha: 0.85),
                               fontSize: 14,
@@ -509,7 +509,7 @@ class _AiReturnPredictionScreenState
                           ),
                           const SizedBox(height: AlhaiSpacing.xxs),
                           Text(
-                            AppLocalizations.of(context)!
+                            AppLocalizations.of(context)
                                 .amountSar(totalSavings.toStringAsFixed(2)),
                             style: const TextStyle(
                               color: Colors.white,
@@ -518,7 +518,7 @@ class _AiReturnPredictionScreenState
                             ),
                           ),
                           Text(
-                            AppLocalizations.of(context)!
+                            AppLocalizations.of(context)
                                 .fromPreventiveActions(actionsList.length),
                             style: TextStyle(
                               color: Colors.white.withValues(alpha: 0.7),
@@ -560,7 +560,7 @@ class _AiReturnPredictionScreenState
 
               // عنوان القائمة
               Text(
-                AppLocalizations.of(context)!.suggestedPreventiveActions,
+                AppLocalizations.of(context).suggestedPreventiveActions,
                 style: TextStyle(
                   color: isDark ? Colors.white : AppColors.textPrimary,
                   fontSize: 18,
@@ -569,7 +569,7 @@ class _AiReturnPredictionScreenState
               ),
               const SizedBox(height: AlhaiSpacing.xxs),
               Text(
-                AppLocalizations.of(context)!.applyPreventiveHint,
+                AppLocalizations.of(context).applyPreventiveHint,
                 style: TextStyle(
                   color: isDark ? Colors.white54 : AppColors.textSecondary,
                   fontSize: 13,
@@ -586,7 +586,7 @@ class _AiReturnPredictionScreenState
                       onApply: () {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text(AppLocalizations.of(context)!
+                            content: Text(AppLocalizations.of(context)
                                 .actionApplied(action.title)),
                             backgroundColor: AppColors.success,
                             behavior: SnackBarBehavior.floating,
@@ -599,7 +599,7 @@ class _AiReturnPredictionScreenState
                       onDismiss: () {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text(AppLocalizations.of(context)!
+                            content: Text(AppLocalizations.of(context)
                                 .actionDismissed(action.title)),
                             behavior: SnackBarBehavior.floating,
                             shape: RoundedRectangleBorder(

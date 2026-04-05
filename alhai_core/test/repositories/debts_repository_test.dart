@@ -25,7 +25,7 @@ void main() {
   late MockDebtsRemoteDataSource mockRemote;
 
   // Test data - using 'customer' string for type (converted to DebtType.customerDebt in toDomain)
-  final testDebtResponse = DebtResponse(
+  const testDebtResponse = DebtResponse(
     id: 'debt-1',
     storeId: 'store-1',
     type: 'customer',
@@ -37,7 +37,7 @@ void main() {
     createdAt: '2026-01-19T10:00:00Z',
   );
 
-  final testPaymentResponse = DebtPaymentResponse(
+  const testPaymentResponse = DebtPaymentResponse(
     id: 'pay-1',
     debtId: 'debt-1',
     amount: 100.0,
@@ -45,7 +45,7 @@ void main() {
     createdAt: '2026-01-19T10:00:00Z',
   );
 
-  final testSummaryResponse = DebtSummaryResponse(
+  const testSummaryResponse = DebtSummaryResponse(
     totalCustomerDebts: 5000.0,
     totalSupplierDebts: 3000.0,
     overdueCount: 2,
@@ -107,7 +107,7 @@ void main() {
     group('createDebt', () {
       test('creates debt successfully', () async {
         // Arrange
-        final params = CreateDebtParams(
+        const params = CreateDebtParams(
           storeId: 'store-1',
           type: DebtType.customerDebt,
           partyId: 'cust-1',
@@ -130,7 +130,7 @@ void main() {
     group('recordPayment', () {
       test('records payment successfully', () async {
         // Arrange
-        final params = RecordPaymentParams(
+        const params = RecordPaymentParams(
           debtId: 'debt-1',
           amount: 100.0,
           paymentMethod: 'cash',

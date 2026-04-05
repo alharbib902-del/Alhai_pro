@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:drift/drift.dart' hide isNotNull, isNull;
 import 'package:alhai_database/alhai_database.dart';
 import '../helpers/database_test_helpers.dart';
 
@@ -14,7 +13,7 @@ void main() {
     await db.close();
   });
 
-  PosTerminalsTableCompanion _makeTerminal({
+  PosTerminalsTableCompanion makeTerminal({
     String id = 'term-1',
     String storeId = 'store-1',
     String orgId = 'org-1',
@@ -33,7 +32,7 @@ void main() {
 
   group('PosTerminalsDao', () {
     test('upsertTerminal and getTerminal', () async {
-      await db.posTerminalsDao.upsertTerminal(_makeTerminal());
+      await db.posTerminalsDao.upsertTerminal(makeTerminal());
 
       final terminal = await db.posTerminalsDao.getTerminal('term-1');
       expect(terminal, isNotNull);
@@ -47,8 +46,8 @@ void main() {
     });
 
     test('getStoreTerminals returns all terminals for store', () async {
-      await db.posTerminalsDao.upsertTerminal(_makeTerminal());
-      await db.posTerminalsDao.upsertTerminal(_makeTerminal(
+      await db.posTerminalsDao.upsertTerminal(makeTerminal());
+      await db.posTerminalsDao.upsertTerminal(makeTerminal(
         id: 'term-2',
         name: 'كاشير 2',
       ));
@@ -58,8 +57,8 @@ void main() {
     });
 
     test('getActiveTerminals returns only active', () async {
-      await db.posTerminalsDao.upsertTerminal(_makeTerminal(isActive: true));
-      await db.posTerminalsDao.upsertTerminal(_makeTerminal(
+      await db.posTerminalsDao.upsertTerminal(makeTerminal(isActive: true));
+      await db.posTerminalsDao.upsertTerminal(makeTerminal(
         id: 'term-2',
         name: 'معطل',
         isActive: false,
@@ -71,7 +70,7 @@ void main() {
     });
 
     test('deleteTerminal removes terminal', () async {
-      await db.posTerminalsDao.upsertTerminal(_makeTerminal());
+      await db.posTerminalsDao.upsertTerminal(makeTerminal());
 
       final deleted = await db.posTerminalsDao.deleteTerminal('term-1');
       expect(deleted, 1);
@@ -81,7 +80,7 @@ void main() {
     });
 
     test('updateHeartbeat sets lastHeartbeatAt', () async {
-      await db.posTerminalsDao.upsertTerminal(_makeTerminal());
+      await db.posTerminalsDao.upsertTerminal(makeTerminal());
 
       await db.posTerminalsDao.updateHeartbeat('term-1');
 
@@ -90,7 +89,7 @@ void main() {
     });
 
     test('updateCurrentShift sets currentShiftId', () async {
-      await db.posTerminalsDao.upsertTerminal(_makeTerminal());
+      await db.posTerminalsDao.upsertTerminal(makeTerminal());
 
       await db.posTerminalsDao.updateCurrentShift('term-1', 'shift-1');
 
@@ -99,7 +98,7 @@ void main() {
     });
 
     test('updateCurrentShift clears shiftId with null', () async {
-      await db.posTerminalsDao.upsertTerminal(_makeTerminal());
+      await db.posTerminalsDao.upsertTerminal(makeTerminal());
       await db.posTerminalsDao.updateCurrentShift('term-1', 'shift-1');
       await db.posTerminalsDao.updateCurrentShift('term-1', null);
 
@@ -108,7 +107,7 @@ void main() {
     });
 
     test('updateCurrentUser sets currentUserId', () async {
-      await db.posTerminalsDao.upsertTerminal(_makeTerminal());
+      await db.posTerminalsDao.upsertTerminal(makeTerminal());
 
       await db.posTerminalsDao.updateCurrentUser('term-1', 'user-1');
 
@@ -117,7 +116,7 @@ void main() {
     });
 
     test('markAsSynced sets syncedAt', () async {
-      await db.posTerminalsDao.upsertTerminal(_makeTerminal());
+      await db.posTerminalsDao.upsertTerminal(makeTerminal());
 
       await db.posTerminalsDao.markAsSynced('term-1');
 

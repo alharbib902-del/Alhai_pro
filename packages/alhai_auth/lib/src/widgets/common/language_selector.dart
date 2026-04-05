@@ -134,7 +134,7 @@ class LanguagePickerSheet extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.all(AlhaiSpacing.mdl),
             child: Text(
-              AppLocalizations.of(context)?.selectLanguage ?? 'Select Language',
+              AppLocalizations.of(context).selectLanguage,
               style: TextStyle(
                 color: colorScheme.onSurface,
                 fontSize: 18,
@@ -253,7 +253,7 @@ class LanguageSettingsScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n?.language ?? 'Language'),
+        title: Text(l10n.language),
       ),
       body: ListView(
         padding: const EdgeInsets.all(AlhaiSpacing.md),
@@ -274,8 +274,7 @@ class LanguageSettingsScreen extends ConsumerWidget {
                 const SizedBox(width: AlhaiSpacing.sm),
                 Expanded(
                   child: Text(
-                    l10n?.languageChangeInfo ??
-                        'Choose your preferred display language. Changes will be applied immediately.',
+                    l10n.languageChangeInfo,
                     style: const TextStyle(
                       color: AppColors.textSecondary,
                       fontSize: 13,

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
@@ -67,7 +66,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
       ).get();
 
       if (mounted) {
-        final l10n = AppLocalizations.of(context)!;
+        final l10n = AppLocalizations.of(context);
         setState(() {
           _employees = users
               .map((u) => _EmployeeOption(
@@ -113,7 +112,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
 
   String _formatDuration(Duration? d) {
     if (d == null) return '--';
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return l10n.hoursMinutes(d.inHours, d.inMinutes.remainder(60));
   }
 
@@ -133,7 +132,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final presentCount = _records.where((r) => r.checkIn != null).length;
     final absentCount =
         (_employees.length - presentCount).clamp(0, _employees.length);

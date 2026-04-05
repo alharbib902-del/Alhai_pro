@@ -63,7 +63,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
     final isMediumScreen = !context.isMobile;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final colorScheme = Theme.of(context).colorScheme;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       children: [
@@ -186,7 +186,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
   }
 
   Widget _buildSupplierInfoCard(bool isDark) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
@@ -301,7 +301,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
   }
 
   Widget _buildBalanceCard(bool isDark) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
     final balance = _supplier!.balance;
     final isNegative = balance < 0;
@@ -387,7 +387,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
   }
 
   Widget _buildStatsCards(bool isDark) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final totalPurchases = _recentPurchases.fold<double>(
       0.0,
       (sum, p) => sum + p.total,
@@ -422,7 +422,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
   }
 
   Widget _buildRecentPurchasesSection(bool isDark) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -595,7 +595,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
   bool get isDark => Theme.of(context).brightness == Brightness.dark;
 
   void _deleteSupplier() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
     showDialog(
       context: context,
@@ -675,7 +675,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
     final colorScheme = Theme.of(context).colorScheme;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(AppLocalizations.of(context)!.registerPayment),
+        content: Text(AppLocalizations.of(context).registerPayment),
         backgroundColor: colorScheme.inverseSurface,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),

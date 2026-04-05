@@ -9,11 +9,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:alhai_l10n/alhai_l10n.dart';
-import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
-import 'package:alhai_shared_ui/src/screens/invoices/invoices_screen.dart';
-import 'package:alhai_shared_ui/src/widgets/common/app_empty_state.dart';
 
 // ---------------------------------------------------------------------------
 // Test data
@@ -63,7 +60,7 @@ Widget _buildTestWidget({
               data: (d) => Future.value(d),
               loading: () => Future.delayed(
                   const Duration(days: 1), () => <SalesTableData>[]),
-              error: (e, _) => Future.error(e!),
+              error: (e, _) => Future.error(e),
             ) ??
             Future.value(<SalesTableData>[]),
       ),
@@ -75,7 +72,7 @@ Widget _buildTestWidget({
                   const Duration(days: 1),
                   () => const SalesStats(
                       count: 0, total: 0, average: 0, maxSale: 0, minSale: 0)),
-              error: (e, _) => Future.error(e!),
+              error: (e, _) => Future.error(e),
             ) ??
             Future.value(const SalesStats(
                 count: 0, total: 0, average: 0, maxSale: 0, minSale: 0)),
@@ -103,8 +100,9 @@ void main() {
   setUp(() {
     FlutterError.onError = (details) {
       final msg = details.toString();
-      if (msg.contains('overflowed') || msg.contains('Multiple exceptions'))
+      if (msg.contains('overflowed') || msg.contains('Multiple exceptions')) {
         return;
+      }
       originalOnError?.call(details);
     };
   });

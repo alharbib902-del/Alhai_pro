@@ -28,13 +28,13 @@ void main() {
   late MockAuthLocalDataSource mockLocal;
 
   // Test data
-  final testAuthTokensResponse = AuthTokensResponse(
+  const testAuthTokensResponse = AuthTokensResponse(
     accessToken: 'test-access-token',
     refreshToken: 'test-refresh-token',
     expiresAt: '2026-01-10T11:00:00Z',
   );
 
-  final testAuthResponse = AuthResponse(
+  const testAuthResponse = AuthResponse(
     user: UserResponse(
       id: 'user-1',
       phone: '+966500000000',
@@ -45,7 +45,7 @@ void main() {
     tokens: testAuthTokensResponse,
   );
 
-  final testUserEntity = UserEntity(
+  const testUserEntity = UserEntity(
     id: 'user-1',
     phone: '+966500000000',
     name: 'Test User',

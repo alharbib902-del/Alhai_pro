@@ -66,7 +66,7 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
     final size = MediaQuery.of(context).size;
     final isWideScreen = size.width > 900;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     final messages = ref.watch(chatMessagesProvider);
     final isProcessing = ref.watch(isProcessingProvider);
@@ -189,7 +189,7 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
 
   /// الحالة الفارغة
   Widget _buildEmptyState(bool isDark) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

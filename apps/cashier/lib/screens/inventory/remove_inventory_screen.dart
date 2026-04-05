@@ -13,7 +13,6 @@ import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:uuid/uuid.dart';
-import 'package:drift/drift.dart' show Value;
 import 'package:alhai_design_system/alhai_design_system.dart'
     show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
@@ -72,8 +71,7 @@ class _RemoveInventoryScreenState extends ConsumerState<RemoveInventoryScreen> {
         setState(() => _isSearching = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text(
-                  AppLocalizations.of(context)?.errorOccurred ?? 'حدث خطأ'),
+              content: Text(AppLocalizations.of(context).errorOccurred),
               backgroundColor: AppColors.error),
         );
       }

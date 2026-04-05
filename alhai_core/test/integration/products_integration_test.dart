@@ -146,7 +146,7 @@ void main() {
     group('Create Product', () {
       test('should create product successfully', () async {
         // Arrange
-        final params = CreateProductParams(
+        const params = CreateProductParams(
           storeId: 'store-123',
           name: 'New Product',
           price: 15.0,
@@ -166,7 +166,7 @@ void main() {
     group('Update Product', () {
       test('should update product successfully', () async {
         // Arrange
-        final params = UpdateProductParams(
+        const params = UpdateProductParams(
           id: 'prod-123',
           name: 'Updated Product',
           price: 20.0,

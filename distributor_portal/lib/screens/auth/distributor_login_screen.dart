@@ -57,7 +57,7 @@ class _DistributorLoginScreenState
       if (!mounted) return;
       final l10n = AppLocalizations.of(context);
       setState(() {
-        _error = l10n?.distributorLoginError ?? 'Login failed';
+        _error = l10n.distributorLoginError;
         _isLoading = false;
       });
     }
@@ -119,7 +119,7 @@ class _DistributorLoginScreenState
 
                   // Title
                   Text(
-                    l10n?.distributorLogin ?? 'Distributor Login',
+                    l10n.distributorLogin,
                     style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
@@ -128,8 +128,7 @@ class _DistributorLoginScreenState
                   ),
                   const SizedBox(height: AlhaiSpacing.xs),
                   Text(
-                    l10n?.distributorLoginSubtitle ??
-                        'Enter your email and password',
+                    l10n.distributorLoginSubtitle,
                     style: TextStyle(
                       fontSize: 14,
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -177,7 +176,7 @@ class _DistributorLoginScreenState
                     textInputAction: TextInputAction.next,
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
-                        return l10n?.distributorEmailLabel ?? 'Email required';
+                        return l10n.distributorEmailLabel;
                       }
                       // Email format validation
                       final emailRegex =
@@ -191,7 +190,7 @@ class _DistributorLoginScreenState
                       color: Theme.of(context).colorScheme.onSurface,
                     ),
                     decoration: InputDecoration(
-                      labelText: '${l10n?.distributorEmailLabel ?? 'Email'} *',
+                      labelText: '${l10n.distributorEmailLabel} *',
                       prefixIcon: Icon(Icons.email_outlined,
                           color:
                               Theme.of(context).colorScheme.onSurfaceVariant),
@@ -222,8 +221,7 @@ class _DistributorLoginScreenState
                     onFieldSubmitted: (_) => _login(),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return l10n?.distributorPasswordLabel ??
-                            'Password required';
+                        return l10n.distributorPasswordLabel;
                       }
                       if (value.length < 8) {
                         return 'Password must be at least 8 characters';
@@ -234,8 +232,7 @@ class _DistributorLoginScreenState
                       color: Theme.of(context).colorScheme.onSurface,
                     ),
                     decoration: InputDecoration(
-                      labelText:
-                          '${l10n?.distributorPasswordLabel ?? 'Password'} *',
+                      labelText: '${l10n.distributorPasswordLabel} *',
                       prefixIcon: Icon(Icons.lock_outline,
                           color:
                               Theme.of(context).colorScheme.onSurfaceVariant),
@@ -292,7 +289,7 @@ class _DistributorLoginScreenState
                               ),
                             )
                           : Text(
-                              l10n?.distributorLoginButton ?? 'Sign In',
+                              l10n.distributorLoginButton,
                               style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,

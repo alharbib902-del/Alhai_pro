@@ -287,7 +287,7 @@ class PaymentSummaryRow extends StatelessWidget {
           ],
         ),
         Text(
-          '${value < 0 ? '-' : ''}${value.abs().toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
+          '${value < 0 ? '-' : ''}${value.abs().toStringAsFixed(2)} ${AppLocalizations.of(context).sar}',
           style: AppTypography.bodyMedium.copyWith(
             color: valueColor ?? AppColors.textPrimary,
             fontWeight: FontWeight.w500,

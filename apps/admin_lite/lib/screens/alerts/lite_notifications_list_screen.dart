@@ -24,7 +24,7 @@ class LiteNotificationsListScreen extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final size = MediaQuery.of(context).size;
     final isMobile = size.width < 600;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final dataAsync = ref.watch(liteNotificationsProvider);
 
     return Scaffold(
@@ -232,7 +232,7 @@ class LiteNotificationsListScreen extends ConsumerWidget {
                               : FontWeight.bold,
                           color: Theme.of(context).colorScheme.onSurface)),
                   const SizedBox(height: AlhaiSpacing.xxxs),
-                  Text(notification.body ?? '',
+                  Text(notification.body,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: isDark
                               ? Colors.white38

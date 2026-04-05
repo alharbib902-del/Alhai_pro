@@ -112,7 +112,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final isWideScreen = context.screenWidth >= 1200;
     final isMediumScreen = !context.isMobile;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final padding = context.isMobile
         ? 12.0
         : isWideScreen
@@ -121,7 +121,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final user = ref.watch(currentUserProvider);
     final userName = user?.name ?? l10n.unknownUserName;
     final userEmail = user?.email ?? '';
-    final userRole = user?.role?.name ?? l10n.defaultEmployeeRole;
+    final userRole = user?.role.name ?? l10n.defaultEmployeeRole;
 
     return Column(
       children: [
@@ -365,7 +365,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   String _translateRole(String role) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     switch (role) {
       case 'admin':
         return l10n.roleAdmin;
@@ -379,16 +379,16 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   void _editProfile() => ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.editProfileSnack)),
+        SnackBar(content: Text(AppLocalizations.of(context).editProfileSnack)),
       );
 
   void _changePassword() => ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text(AppLocalizations.of(context)!.changePasswordSnack)),
+            content: Text(AppLocalizations.of(context).changePasswordSnack)),
       );
 
   Future<void> _logout() async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(

@@ -200,8 +200,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     // التحقق من طول الرقم
     if (phoneDigits.length < 9) {
-      setState(() =>
-          _error = l10n?.pleaseEnterValidPhone ?? 'يرجى إدخال رقم جوال صحيح');
+      setState(() => _error = l10n.pleaseEnterValidPhone);
       return;
     }
 
@@ -209,8 +208,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     if (_selectedCountry.dialCode == '+966') {
       final saudiPattern = RegExp(r'^0[5][0-9]{8}$');
       if (!saudiPattern.hasMatch(phoneDigits)) {
-        setState(() => _error = l10n?.pleaseEnterValidPhone ??
-            'رقم الجوال يجب أن يبدأ بـ 05 ويتكون من 10 أرقام');
+        setState(() => _error = l10n.pleaseEnterValidPhone);
         return;
       }
     }
@@ -289,8 +287,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
 
     if (otpToVerify.length < 6) {
-      setState(
-          () => _error = l10n?.enterOtpFully ?? 'يرجى إدخال رمز التحقق كاملاً');
+      setState(() => _error = l10n.enterOtpFully);
       return;
     }
 
@@ -461,8 +458,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                 return Column(
                                   children: [
                                     Text(
-                                      l10n?.welcomeTitle ??
-                                          'مرحباً بك مجدداً! 👋',
+                                      l10n.welcomeTitle,
                                       style: const TextStyle(
                                         color: Colors.white,
                                         fontSize: 28,
@@ -472,8 +468,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                     ),
                                     const SizedBox(height: AlhaiSpacing.sm),
                                     Text(
-                                      l10n?.welcomeSubtitle ??
-                                          'سجّل دخولك لإدارة متجرك',
+                                      l10n.welcomeSubtitle,
                                       style: TextStyle(
                                         color:
                                             Colors.white.withValues(alpha: 0.9),
@@ -540,7 +535,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           return Column(
                             children: [
                               Text(
-                                l10n?.welcomeTitle ?? 'مرحباً بك مجدداً! 👋',
+                                l10n.welcomeTitle,
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 22,
@@ -549,8 +544,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               ),
                               const SizedBox(height: AlhaiSpacing.xs),
                               Text(
-                                l10n?.welcomeSubtitleShort ??
-                                    'سجّل دخولك لإدارة متجرك',
+                                l10n.welcomeSubtitleShort,
                                 style: TextStyle(
                                   color: Colors.white.withValues(alpha: 0.9),
                                   fontSize: 14,
@@ -608,9 +602,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             ? Colors.white70
                             : AppColors.textSecondary,
                       ),
-                      tooltip: isDarkMode
-                          ? (l10n?.dayMode ?? 'الوضع النهاري')
-                          : (l10n?.nightMode ?? 'الوضع الليلي'),
+                      tooltip: isDarkMode ? l10n.dayMode : l10n.nightMode,
                     ),
                   ],
                 ),
@@ -656,8 +648,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     switch (_currentStep) {
       case LoginStep.phone:
-        title = l10n?.login ?? 'تسجيل الدخول';
-        subtitle = l10n?.enterPhoneToContinue ?? 'أدخل رقم جوالك للمتابعة';
+        title = l10n.login;
+        subtitle = l10n.enterPhoneToContinue;
       case LoginStep.otp:
         title = 'رمز التحقق';
         subtitle =
@@ -784,7 +776,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         const SizedBox(height: AlhaiSpacing.lg),
 
         Text(
-          l10n?.verificationCode ?? 'رمز التحقق',
+          l10n.verificationCode,
           style: TextStyle(
             color: isDarkMode ? Colors.white : AppColors.textPrimary,
             fontSize: 14,
@@ -871,8 +863,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           const SizedBox(height: AlhaiSpacing.xs),
           Center(
             child: Text(
-              l10n?.remainingAttempts(_remainingAttempts) ??
-                  'المحاولات المتبقية: $_remainingAttempts',
+              l10n.remainingAttempts(_remainingAttempts),
               style: TextStyle(
                 color: _remainingAttempts == 1
                     ? AppColors.error
@@ -955,7 +946,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       strokeWidth: 2, color: Colors.white),
                 )
               : Text(
-                  l10n?.next ?? 'التالي',
+                  l10n.next,
                   style: const TextStyle(
                       fontSize: 16, fontWeight: FontWeight.bold),
                 ),
@@ -1007,7 +998,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   size: 16, color: AppColors.primary),
               const SizedBox(width: 6),
               Text(
-                l10n?.changeNumber ?? 'تغيير الرقم',
+                l10n.changeNumber,
                 style: const TextStyle(color: AppColors.primary),
               ),
             ],
@@ -1050,7 +1041,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               icon: Icon(Icons.support_agent_rounded,
                   size: 16, color: footerTextColor),
               label: Text(
-                l10n?.technicalSupport ?? 'الدعم الفني',
+                l10n.technicalSupport,
                 style: TextStyle(color: footerTextColor, fontSize: 13),
               ),
             ),
@@ -1060,7 +1051,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               icon: Icon(Icons.privacy_tip_outlined,
                   size: 16, color: footerTextColor),
               label: Text(
-                l10n?.privacyPolicy ?? 'سياسة الخصوصية',
+                l10n.privacyPolicy,
                 style: TextStyle(color: footerTextColor, fontSize: 13),
               ),
             ),
@@ -1070,7 +1061,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               icon: Icon(Icons.description_outlined,
                   size: 16, color: footerTextColor),
               label: Text(
-                l10n?.termsAndConditions ?? 'الشروط والأحكام',
+                l10n.termsAndConditions,
                 style: TextStyle(color: footerTextColor, fontSize: 13),
               ),
             ),

@@ -45,7 +45,7 @@ class TopSellingList extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDarkMode = theme.brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     String formatAmount(double amount) {
       if (formatCurrency != null) return formatCurrency!(amount);

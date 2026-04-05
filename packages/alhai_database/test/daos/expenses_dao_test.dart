@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:drift/drift.dart' hide isNotNull, isNull;
 import 'package:alhai_database/alhai_database.dart';
 import '../helpers/database_test_helpers.dart';
 
@@ -14,7 +13,7 @@ void main() {
     await db.close();
   });
 
-  ExpensesTableCompanion _makeExpense({
+  ExpensesTableCompanion makeExpense({
     String id = 'exp-1',
     String storeId = 'store-1',
     double amount = 200.0,
@@ -34,8 +33,8 @@ void main() {
 
   group('ExpensesDao', () {
     test('insertExpense and getAllExpenses', () async {
-      await db.expensesDao.insertExpense(_makeExpense());
-      await db.expensesDao.insertExpense(_makeExpense(
+      await db.expensesDao.insertExpense(makeExpense());
+      await db.expensesDao.insertExpense(makeExpense(
         id: 'exp-2',
         amount: 150.0,
       ));
@@ -45,11 +44,11 @@ void main() {
     });
 
     test('getExpensesByDateRange filters correctly', () async {
-      await db.expensesDao.insertExpense(_makeExpense(
+      await db.expensesDao.insertExpense(makeExpense(
         id: 'exp-jun',
         expenseDate: DateTime(2025, 6, 15),
       ));
-      await db.expensesDao.insertExpense(_makeExpense(
+      await db.expensesDao.insertExpense(makeExpense(
         id: 'exp-jul',
         expenseDate: DateTime(2025, 7, 15),
       ));
@@ -64,14 +63,14 @@ void main() {
     });
 
     test('deleteExpense removes expense', () async {
-      await db.expensesDao.insertExpense(_makeExpense());
+      await db.expensesDao.insertExpense(makeExpense());
 
       final deleted = await db.expensesDao.deleteExpense('exp-1');
       expect(deleted, 1);
     });
 
     test('markAsSynced sets syncedAt', () async {
-      await db.expensesDao.insertExpense(_makeExpense());
+      await db.expensesDao.insertExpense(makeExpense());
 
       await db.expensesDao.markAsSynced('exp-1');
 

@@ -161,7 +161,7 @@ class _InlinePaymentState extends State<InlinePayment> {
     if (amount <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text(AppLocalizations.of(context)!.enterValidAmountError),
+            content: Text(AppLocalizations.of(context).enterValidAmountError),
             backgroundColor: Theme.of(context).colorScheme.error),
       );
       return;
@@ -169,7 +169,7 @@ class _InlinePaymentState extends State<InlinePayment> {
     if (amount > 999999.99) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text(AppLocalizations.of(context)!.amountExceedsMaxError),
+            content: Text(AppLocalizations.of(context).amountExceedsMaxError),
             backgroundColor: Theme.of(context).colorScheme.error),
       );
       return;
@@ -178,7 +178,7 @@ class _InlinePaymentState extends State<InlinePayment> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
             content:
-                Text(AppLocalizations.of(context)!.amountExceedsRemainingError),
+                Text(AppLocalizations.of(context).amountExceedsRemainingError),
             backgroundColor: Theme.of(context).colorScheme.error),
       );
       return;
@@ -213,8 +213,7 @@ class _InlinePaymentState extends State<InlinePayment> {
       if (paid < 0 || paid > 999999.99) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content:
-                Text(AppLocalizations.of(context)!.amountBetweenZeroAndMax),
+            content: Text(AppLocalizations.of(context).amountBetweenZeroAndMax),
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
@@ -225,7 +224,7 @@ class _InlinePaymentState extends State<InlinePayment> {
       if (paid < widget.total - 0.01) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(AppLocalizations.of(context)!.amountLessThanTotal),
+            content: Text(AppLocalizations.of(context).amountLessThanTotal),
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
@@ -249,7 +248,7 @@ class _InlinePaymentState extends State<InlinePayment> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content:
-                Text(AppLocalizations.of(context)!.selectCustomerFirstError),
+                Text(AppLocalizations.of(context).selectCustomerFirstError),
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
@@ -258,7 +257,7 @@ class _InlinePaymentState extends State<InlinePayment> {
       if (_creditLimitExceeded) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(AppLocalizations.of(context)!.debtLimitExceededError),
+            content: Text(AppLocalizations.of(context).debtLimitExceededError),
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
@@ -278,7 +277,7 @@ class _InlinePaymentState extends State<InlinePayment> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content:
-                Text(AppLocalizations.of(context)!.completePaymentFirstError),
+                Text(AppLocalizations.of(context).completePaymentFirstError),
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
@@ -301,7 +300,7 @@ class _InlinePaymentState extends State<InlinePayment> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.md),
@@ -393,7 +392,7 @@ class _InlinePaymentState extends State<InlinePayment> {
             FilledButton.icon(
               onPressed: _canComplete ? _completePayment : null,
               icon: const Icon(Icons.check_circle),
-              label: Text(AppLocalizations.of(context)!.completePaymentLabel),
+              label: Text(AppLocalizations.of(context).completePaymentLabel),
               style: FilledButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
                 textStyle: theme.textTheme.titleMedium?.copyWith(
@@ -435,8 +434,8 @@ class _InlinePaymentState extends State<InlinePayment> {
             LengthLimitingTextInputFormatter(12),
           ],
           decoration: InputDecoration(
-            labelText: AppLocalizations.of(context)!.receivedAmountLabel,
-            prefixText: AppLocalizations.of(context)!.sarPrefix,
+            labelText: AppLocalizations.of(context).receivedAmountLabel,
+            prefixText: AppLocalizations.of(context).sarPrefix,
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
             filled: true,
           ),
@@ -451,7 +450,7 @@ class _InlinePaymentState extends State<InlinePayment> {
           children: [50, 100, 200, 500].map((amount) {
             return ActionChip(
               label: Text(
-                  AppLocalizations.of(context)!.amountSar(amount.toString())),
+                  AppLocalizations.of(context).amountSar(amount.toString())),
               onPressed: () {
                 _amountController.text = amount.toStringAsFixed(2);
               },
@@ -476,7 +475,7 @@ class _InlinePaymentState extends State<InlinePayment> {
                     const Icon(Icons.currency_exchange,
                         color: AppColors.success),
                     const SizedBox(width: AlhaiSpacing.xs),
-                    Text(AppLocalizations.of(context)!.remainingLabel),
+                    Text(AppLocalizations.of(context).remainingLabel),
                   ],
                 ),
                 Text(
@@ -556,7 +555,7 @@ class _InlinePaymentState extends State<InlinePayment> {
                           ],
                         )
                       : Text(
-                          AppLocalizations.of(context)!.selectCustomerLabel,
+                          AppLocalizations.of(context).selectCustomerLabel,
                           style: TextStyle(
                             color: isDark
                                 ? theme.colorScheme.onSurface
@@ -597,7 +596,7 @@ class _InlinePaymentState extends State<InlinePayment> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(AppLocalizations.of(context)!.currentBalanceTitle),
+                    Text(AppLocalizations.of(context).currentBalanceTitle),
                     Text(
                       CurrencyFormatter.formatWithContext(
                           context, _selectedCustomer!.balance),
@@ -614,9 +613,9 @@ class _InlinePaymentState extends State<InlinePayment> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(AppLocalizations.of(context)!.creditLimitTitle),
+                    Text(AppLocalizations.of(context).creditLimitTitle),
                     Text(
-                      AppLocalizations.of(context)!.creditLimitAmount,
+                      AppLocalizations.of(context).creditLimitAmount,
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         color: isDark
@@ -634,7 +633,7 @@ class _InlinePaymentState extends State<InlinePayment> {
                           color: theme.colorScheme.error, size: 18),
                       const SizedBox(width: 6),
                       Text(
-                        AppLocalizations.of(context)!.debtLimitExceededWarning,
+                        AppLocalizations.of(context).debtLimitExceededWarning,
                         style: TextStyle(
                           color: theme.colorScheme.error,
                           fontWeight: FontWeight.bold,
@@ -676,7 +675,7 @@ class _InlinePaymentState extends State<InlinePayment> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(AppLocalizations.of(context)!.paidLabel,
+                  Text(AppLocalizations.of(context).paidLabel,
                       style: const TextStyle(color: Colors.white70)),
                   Text(
                     CurrencyFormatter.formatWithContext(
@@ -692,8 +691,8 @@ class _InlinePaymentState extends State<InlinePayment> {
                 children: [
                   Text(
                     _splitRemaining <= 0.01
-                        ? AppLocalizations.of(context)!.completeLabel
-                        : AppLocalizations.of(context)!.remainingLabel,
+                        ? AppLocalizations.of(context).completeLabel
+                        : AppLocalizations.of(context).remainingLabel,
                     style: const TextStyle(
                         color: Colors.white, fontWeight: FontWeight.bold),
                   ),
@@ -733,7 +732,7 @@ class _InlinePaymentState extends State<InlinePayment> {
                   Icon(split.method.icon, color: split.method.color, size: 20),
                   const SizedBox(width: AlhaiSpacing.xs),
                   Text(split.method
-                      .localizedLabel(AppLocalizations.of(context)!)),
+                      .localizedLabel(AppLocalizations.of(context))),
                   const Spacer(),
                   Text(
                     CurrencyFormatter.formatWithContext(context, split.amount),
@@ -791,7 +790,7 @@ class _InlinePaymentState extends State<InlinePayment> {
                                 size: 20),
                             const SizedBox(height: 2),
                             Text(
-                              m.localizedLabel(AppLocalizations.of(context)!),
+                              m.localizedLabel(AppLocalizations.of(context)),
                               style: TextStyle(
                                 fontSize: 11,
                                 color: isSelected ? m.color : theme.hintColor,
@@ -825,8 +824,8 @@ class _InlinePaymentState extends State<InlinePayment> {
                     LengthLimitingTextInputFormatter(12),
                   ],
                   decoration: InputDecoration(
-                    hintText: AppLocalizations.of(context)!.amount,
-                    suffixText: AppLocalizations.of(context)!.sarCurrency,
+                    hintText: AppLocalizations.of(context).amount,
+                    suffixText: AppLocalizations.of(context).sarCurrency,
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10)),
                     contentPadding: const EdgeInsets.symmetric(
@@ -840,7 +839,7 @@ class _InlinePaymentState extends State<InlinePayment> {
               FilledButton.icon(
                 onPressed: _addSplit,
                 icon: const Icon(Icons.add, size: 18),
-                label: Text(AppLocalizations.of(context)!.addPayment),
+                label: Text(AppLocalizations.of(context).addPayment),
                 style: FilledButton.styleFrom(
                   padding: const EdgeInsets.symmetric(
                       horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.sm),
@@ -858,7 +857,7 @@ class _InlinePaymentState extends State<InlinePayment> {
                 onPressed: _selectCustomer,
                 icon: const Icon(Icons.person_search, size: 18),
                 label: Text(
-                    AppLocalizations.of(context)!.selectCustomerFirstButton),
+                    AppLocalizations.of(context).selectCustomerFirstButton),
               ),
             ),
         ],
@@ -910,7 +909,7 @@ class _PaymentMethodButton extends StatelessWidget {
               ),
               const SizedBox(height: 2),
               Text(
-                method.localizedLabel(AppLocalizations.of(context)!),
+                method.localizedLabel(AppLocalizations.of(context)),
                 style: TextStyle(
                   color: isSelected ? method.color : theme.hintColor,
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,

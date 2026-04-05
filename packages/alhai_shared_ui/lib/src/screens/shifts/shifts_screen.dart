@@ -25,7 +25,7 @@ class ShiftsScreen extends ConsumerWidget {
     final isWideScreen = context.isDesktop;
     final isMediumScreen = !context.isMobile;
     final colorScheme = Theme.of(context).colorScheme;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       children: [

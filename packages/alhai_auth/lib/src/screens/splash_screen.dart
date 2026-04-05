@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:alhai_core/alhai_core.dart';
 import '../core/monitoring/memory_monitor.dart';
-import '../core/monitoring/production_logger.dart';
 import '../security/secure_storage_service.dart';
 import '../providers/auth_providers.dart';
 import 'package:alhai_database/alhai_database.dart';
@@ -161,7 +160,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     // اللون الأخضر الطازج
     const primaryGreen = Color(0xFF10B981);
     const darkGreen = Color(0xFF059669);

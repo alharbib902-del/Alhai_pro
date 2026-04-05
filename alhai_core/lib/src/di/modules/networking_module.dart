@@ -19,9 +19,9 @@ abstract class NetworkingModule {
   Dio get refreshDio => Dio(
         BaseOptions(
           baseUrl: AppConfig.apiBaseUrl,
-          connectTimeout: Duration(seconds: AppConfig.connectTimeout),
-          receiveTimeout: Duration(seconds: AppConfig.receiveTimeout),
-          sendTimeout: Duration(seconds: AppConfig.sendTimeout),
+          connectTimeout: const Duration(seconds: AppConfig.connectTimeout),
+          receiveTimeout: const Duration(seconds: AppConfig.receiveTimeout),
+          sendTimeout: const Duration(seconds: AppConfig.sendTimeout),
           headers: {'Content-Type': 'application/json'},
         ),
       );
@@ -49,9 +49,9 @@ abstract class NetworkingModule {
     final dio = Dio(
       BaseOptions(
         baseUrl: AppConfig.apiBaseUrl,
-        connectTimeout: Duration(seconds: AppConfig.connectTimeout),
-        receiveTimeout: Duration(seconds: AppConfig.receiveTimeout),
-        sendTimeout: Duration(seconds: AppConfig.sendTimeout),
+        connectTimeout: const Duration(seconds: AppConfig.connectTimeout),
+        receiveTimeout: const Duration(seconds: AppConfig.receiveTimeout),
+        sendTimeout: const Duration(seconds: AppConfig.sendTimeout),
         headers: {'Content-Type': 'application/json'},
       ),
     );

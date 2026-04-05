@@ -151,7 +151,7 @@ class _TaxReportScreenState extends ConsumerState<TaxReportScreen> {
 
   /// ترجمة أسماء طرق الدفع
   String _translatePaymentMethod(BuildContext context, String method) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     switch (method.toLowerCase()) {
       case 'cash':
         return l10n.cashPaymentMethod;
@@ -169,7 +169,7 @@ class _TaxReportScreenState extends ConsumerState<TaxReportScreen> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      final l10n = AppLocalizations.of(context)!;
+      final l10n = AppLocalizations.of(context);
       return Scaffold(
         appBar: AppBar(title: Text(l10n.taxReportTitle)),
         body: const Center(child: CircularProgressIndicator()),
@@ -177,7 +177,7 @@ class _TaxReportScreenState extends ConsumerState<TaxReportScreen> {
     }
 
     if (_error != null) {
-      final l10n = AppLocalizations.of(context)!;
+      final l10n = AppLocalizations.of(context);
       return Scaffold(
         appBar: AppBar(title: Text(l10n.taxReportTitle)),
         body: Center(
@@ -198,7 +198,7 @@ class _TaxReportScreenState extends ConsumerState<TaxReportScreen> {
       );
     }
 
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.taxReportTitle),
@@ -242,8 +242,10 @@ class _TaxReportScreenState extends ConsumerState<TaxReportScreen> {
                 width: double.infinity,
                 padding: const EdgeInsets.all(AlhaiSpacing.mdl),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                      colors: [AlhaiColors.successDark, AlhaiColors.success]),
+                  gradient: LinearGradient(colors: const [
+                    AlhaiColors.successDark,
+                    AlhaiColors.success
+                  ]),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Column(
@@ -475,7 +477,7 @@ class _DetailCard extends StatelessWidget {
                     fontSize: 11,
                     color: Theme.of(context).colorScheme.onSurfaceVariant)),
             const SizedBox(height: AlhaiSpacing.xs),
-            Text('$value ${AppLocalizations.of(context)!.sar}',
+            Text('$value ${AppLocalizations.of(context).sar}',
                 style:
                     const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           ],
@@ -506,7 +508,7 @@ class _TaxRow extends StatelessWidget {
               style: TextStyle(
                   fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
                   fontSize: isTotal ? 16 : 14)),
-          Text('$value ${AppLocalizations.of(context)!.sar}',
+          Text('$value ${AppLocalizations.of(context).sar}',
               style: TextStyle(
                   fontWeight: highlight ? FontWeight.bold : FontWeight.normal,
                   color: isTotal

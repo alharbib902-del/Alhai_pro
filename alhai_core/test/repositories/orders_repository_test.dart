@@ -25,7 +25,7 @@ void main() {
   late MockOrdersRemoteDataSource mockRemote;
 
   // Test data
-  final testOrderItemResponse = OrderItemResponse(
+  const testOrderItemResponse = OrderItemResponse(
     productId: 'prod-1',
     name: 'Test Product',
     unitPrice: 50.0,
@@ -33,7 +33,7 @@ void main() {
     lineTotal: 100.0,
   );
 
-  final testOrderResponse = OrderResponse(
+  const testOrderResponse = OrderResponse(
     id: 'order-1',
     storeId: 'store-1',
     customerId: 'cust-1',
@@ -64,7 +64,7 @@ void main() {
     group('createOrder', () {
       test('creates order with correct DTO mapping', () async {
         // Arrange
-        final params = CreateOrderParams(
+        const params = CreateOrderParams(
           clientOrderId: 'client-order-1',
           storeId: 'store-1',
           items: [
@@ -94,7 +94,7 @@ void main() {
 
       test('throws ValidationException on invalid data', () async {
         // Arrange
-        final params = CreateOrderParams(
+        const params = CreateOrderParams(
           clientOrderId: 'client-order-2',
           storeId: 'store-1',
           items: [],

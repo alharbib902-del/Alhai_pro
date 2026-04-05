@@ -31,7 +31,7 @@ class _CashDrawerScreenState extends ConsumerState<CashDrawerScreen> {
     final isWideScreen = context.isDesktop;
     final isMediumScreen = !context.isMobile;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final user = ref.watch(currentUserProvider);
     final userName = user?.name ?? l10n.defaultUserName;
 
@@ -451,7 +451,7 @@ class _CashDrawerScreenState extends ConsumerState<CashDrawerScreen> {
   void _addCashMovement(bool isDeposit, ShiftsTableData shift) {
     final controller = TextEditingController();
     final noteController = TextEditingController();
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     showDialog(
       context: context,
@@ -570,7 +570,7 @@ class _BalanceRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs),
       child: Row(

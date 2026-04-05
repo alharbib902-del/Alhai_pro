@@ -36,7 +36,7 @@ class InvoiceDetailScreen extends ConsumerStatefulWidget {
 class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
   void _copyInvoiceId(String id) {
     Clipboard.setData(ClipboardData(text: id));
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(l10n.copiedToClipboard(id)),
@@ -49,7 +49,7 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
 
   void _showVoidDialog(SalesTableData sale) {
     final colorScheme = Theme.of(context).colorScheme;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -168,7 +168,7 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
     final isWideScreen = context.isDesktop;
     final isMediumScreen = !context.isMobile;
     final colorScheme = Theme.of(context).colorScheme;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     final invoiceAsync = ref.watch(invoiceDetailProvider(widget.invoiceId));
 
@@ -671,7 +671,7 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
   }
 
   Widget _buildStatusBadge(String status) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     Color bgColor;
     Color textColor;
     String label;
@@ -925,7 +925,7 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
 
   // ─── Timeline ────────────────────────────────────────────
   Widget _buildTimeline(ColorScheme colorScheme, SalesTableData sale) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final cardBg = colorScheme.surface;
     final borderColor = colorScheme.outlineVariant;
     final textColor = colorScheme.onSurface;
@@ -1025,7 +1025,7 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
 
   // ─── Technical Data ────────────────────────────────────────────
   Widget _buildTechnicalData(ColorScheme colorScheme, SalesTableData sale) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final cardBg = colorScheme.surface;
     final borderColor = colorScheme.outlineVariant;
     final textColor = colorScheme.onSurface;

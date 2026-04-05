@@ -28,7 +28,7 @@ class _LanguageScreenState extends ConsumerState<LanguageScreen> {
     final isWideScreen = context.isDesktop;
     final isMediumScreen = !context.isMobile;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       children: [
@@ -254,7 +254,7 @@ class LanguagePickerDialog extends ConsumerWidget {
     final currentLocale = localeState.locale;
 
     return AlertDialog(
-      title: Text(AppLocalizations.of(context)!.selectLanguage),
+      title: Text(AppLocalizations.of(context).selectLanguage),
       contentPadding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
       content: SizedBox(
         width: double.maxFinite,
@@ -296,7 +296,7 @@ class LanguagePickerDialog extends ConsumerWidget {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: Text(AppLocalizations.of(context)!.cancel),
+          child: Text(AppLocalizations.of(context).cancel),
         ),
       ],
     );

@@ -117,8 +117,9 @@ class SASubscriptionsDatasource {
   }
 
   List<String> _parseFeatures(dynamic raw) {
-    if (raw is List)
+    if (raw is List) {
       return raw.map((e) => e.toString()).toList().cast<String>();
+    }
     if (raw is Map) return raw.keys.map((k) => k.toString()).toList();
     return [];
   }

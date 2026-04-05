@@ -83,7 +83,7 @@ class RecentTransactionsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final isMobile = context.isMobile;
 
     return Container(
@@ -174,7 +174,7 @@ class RecentTransactionsList extends StatelessWidget {
             SizedBox(height: AlhaiSpacing.sm),
             Builder(
               builder: (context) {
-                final l10n = AppLocalizations.of(context)!;
+                final l10n = AppLocalizations.of(context);
                 return Text(
                   l10n.noTransactionsToday,
                   style: TextStyle(

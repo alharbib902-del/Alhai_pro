@@ -261,21 +261,21 @@ void main() {
     group('dequeue order (FIFO)', () {
       test('processQueue should process oldest items first', () async {
         // Arrange - enqueue items at different "times"
-        final item1 = await syncService.enqueue(
+        await syncService.enqueue(
           entityType: SyncEntityType.sale,
           entityId: 'sale-oldest',
           operation: SyncOperationType.create,
           payload: {'order': 1},
         );
 
-        final item2 = await syncService.enqueue(
+        await syncService.enqueue(
           entityType: SyncEntityType.sale,
           entityId: 'sale-middle',
           operation: SyncOperationType.create,
           payload: {'order': 2},
         );
 
-        final item3 = await syncService.enqueue(
+        await syncService.enqueue(
           entityType: SyncEntityType.sale,
           entityId: 'sale-newest',
           operation: SyncOperationType.create,
@@ -390,7 +390,7 @@ void main() {
           payload: {},
         );
 
-        final item2 = await syncService.enqueue(
+        await syncService.enqueue(
           entityType: SyncEntityType.sale,
           entityId: 'sale-2',
           operation: SyncOperationType.create,
@@ -506,7 +506,7 @@ void main() {
     group('summary', () {
       test('should accurately count items by status', () async {
         // Arrange - create items with different statuses
-        final pendingItem = await syncService.enqueue(
+        await syncService.enqueue(
           entityType: SyncEntityType.sale,
           entityId: 'sale-pending',
           operation: SyncOperationType.create,

@@ -25,7 +25,7 @@ class LiteOrderDetailScreen extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final size = MediaQuery.of(context).size;
     final isMobile = size.width < 600;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final dataAsync = ref.watch(liteOrderDetailProvider(orderId));
 
     return Scaffold(
@@ -371,8 +371,9 @@ class LiteOrderDetailScreen extends ConsumerWidget {
 
   Widget _buildActions(BuildContext context, bool isDark, AppLocalizations l10n,
       OrdersTableData order, WidgetRef ref) {
-    if (order.status == 'delivered' || order.status == 'cancelled')
+    if (order.status == 'delivered' || order.status == 'cancelled') {
       return const SizedBox.shrink();
+    }
 
     final nextStatus = switch (order.status) {
       'created' => 'confirmed',

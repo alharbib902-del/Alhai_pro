@@ -25,7 +25,7 @@ void main() {
   late MockProductsRemoteDataSource mockRemote;
 
   // Test data
-  final testProductResponse = ProductResponse(
+  const testProductResponse = ProductResponse(
     id: 'prod-1',
     storeId: 'store-1',
     name: 'Test Product',
@@ -181,7 +181,7 @@ void main() {
     group('createProduct', () {
       test('creates product with correct DTO mapping', () async {
         // Arrange
-        final params = CreateProductParams(
+        const params = CreateProductParams(
           storeId: 'store-1',
           name: 'New Product',
           price: 49.99,
@@ -200,7 +200,7 @@ void main() {
 
       test('throws ValidationException on 400', () async {
         // Arrange
-        final params = CreateProductParams(
+        const params = CreateProductParams(
           storeId: 'store-1',
           name: '',
           price: -1,
@@ -232,7 +232,7 @@ void main() {
     group('updateProduct', () {
       test('updates product with correct DTO mapping', () async {
         // Arrange
-        final params = UpdateProductParams(
+        const params = UpdateProductParams(
           id: 'prod-1',
           name: 'Updated Product',
           price: 79.99,

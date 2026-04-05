@@ -24,7 +24,7 @@ void main() {
   late MockSuppliersRemoteDataSource mockRemote;
 
   // Test data
-  final testSupplierResponse = SupplierResponse(
+  const testSupplierResponse = SupplierResponse(
     id: 'sup-1',
     storeId: 'store-1',
     name: 'Test Supplier',
@@ -125,7 +125,7 @@ void main() {
     group('createSupplier', () {
       test('creates supplier successfully', () async {
         // Arrange
-        final params = CreateSupplierParams(
+        const params = CreateSupplierParams(
           storeId: 'store-1',
           name: 'New Supplier',
           phone: '0500000001',

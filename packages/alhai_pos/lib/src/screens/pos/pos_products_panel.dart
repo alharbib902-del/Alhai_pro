@@ -70,7 +70,7 @@ class _PosProductsPanelState extends ConsumerState<PosProductsPanel> {
     ));
     final categoriesAsync = ref.watch(categoriesProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final isDesktop = widget.showShortcutsBar; // Desktop has shortcuts bar
 
     // Reconstruct a minimal ProductsState for the grid builder

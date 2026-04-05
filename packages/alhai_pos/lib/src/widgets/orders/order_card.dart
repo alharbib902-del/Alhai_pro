@@ -60,7 +60,7 @@ class OrderCard extends StatelessWidget {
 
   Widget _buildHeader(BuildContext context) {
     final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.sm),
@@ -164,7 +164,7 @@ class OrderCard extends StatelessWidget {
                 Icons.person_outline,
                 size: 16,
                 color: theme.colorScheme.outline,
-                semanticLabel: AppLocalizations.of(context)!.customer,
+                semanticLabel: AppLocalizations.of(context).customer,
               ),
               const SizedBox(width: AlhaiSpacing.xxs),
               Flexible(
@@ -182,7 +182,7 @@ class OrderCard extends StatelessWidget {
                 Icons.phone_outlined,
                 size: 16,
                 color: theme.colorScheme.outline,
-                semanticLabel: AppLocalizations.of(context)!.phone,
+                semanticLabel: AppLocalizations.of(context).phone,
               ),
               const SizedBox(width: AlhaiSpacing.xxs),
               Flexible(
@@ -208,7 +208,7 @@ class OrderCard extends StatelessWidget {
                   Icons.location_on_outlined,
                   size: 16,
                   color: theme.colorScheme.outline,
-                  semanticLabel: AppLocalizations.of(context)!.address,
+                  semanticLabel: AppLocalizations.of(context).address,
                 ),
                 const SizedBox(width: AlhaiSpacing.xxs),
                 Expanded(
@@ -259,7 +259,7 @@ class OrderCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      AppLocalizations.of(context)!
+                      AppLocalizations.of(context)
                           .priceSar(item.total.toStringAsFixed(2)),
                       style: theme.textTheme.bodySmall?.copyWith(
                         fontWeight: FontWeight.w500,
@@ -271,7 +271,7 @@ class OrderCard extends StatelessWidget {
 
           if (order.items.length > 3)
             Text(
-              AppLocalizations.of(context)!
+              AppLocalizations.of(context)
                   .moreProductsLabel(order.items.length - 3),
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.primary,
@@ -284,7 +284,7 @@ class OrderCard extends StatelessWidget {
 
   Widget _buildFooter(BuildContext context) {
     final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.sm),
@@ -334,7 +334,7 @@ class OrderCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    AppLocalizations.of(context)!
+                    AppLocalizations.of(context)
                         .priceSar(order.total.toStringAsFixed(2)),
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
@@ -356,7 +356,7 @@ class OrderCard extends StatelessWidget {
   }
 
   Widget _buildActionButtons(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     switch (order.status) {
       case OrderStatus.pending:
@@ -381,7 +381,7 @@ class OrderCard extends StatelessWidget {
                   onPrint?.call();
                 },
                 icon: const Icon(Icons.check, size: 18),
-                label: Text(AppLocalizations.of(context)!.acceptAndPrint),
+                label: Text(AppLocalizations.of(context).acceptAndPrint),
                 style: FilledButton.styleFrom(
                   backgroundColor: AppColors.success,
                 ),
@@ -407,7 +407,7 @@ class OrderCard extends StatelessWidget {
               child: FilledButton.icon(
                 onPressed: onAssignDriver,
                 icon: const Icon(Icons.delivery_dining, size: 18),
-                label: Text(AppLocalizations.of(context)!.deliverToDriver),
+                label: Text(AppLocalizations.of(context).deliverToDriver),
               ),
             ),
           ],
@@ -419,7 +419,7 @@ class OrderCard extends StatelessWidget {
             Icon(
               Icons.delivery_dining,
               color: Theme.of(context).colorScheme.tertiary,
-              semanticLabel: AppLocalizations.of(context)!.onTheWayStatus,
+              semanticLabel: AppLocalizations.of(context).onTheWayStatus,
             ),
             const SizedBox(width: AlhaiSpacing.xs),
             Expanded(
@@ -427,7 +427,7 @@ class OrderCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    AppLocalizations.of(context)!.onTheWayStatus,
+                    AppLocalizations.of(context).onTheWayStatus,
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.tertiary,
                       fontWeight: FontWeight.bold,
@@ -435,7 +435,7 @@ class OrderCard extends StatelessWidget {
                   ),
                   if (order.driverName != null)
                     Text(
-                      AppLocalizations.of(context)!
+                      AppLocalizations.of(context)
                           .driverNameLabel(order.driverName!),
                       style: TextStyle(
                         fontSize: 12,
@@ -454,11 +454,11 @@ class OrderCard extends StatelessWidget {
             Icon(
               Icons.check_circle,
               color: AppColors.success,
-              semanticLabel: AppLocalizations.of(context)!.deliveredStatus,
+              semanticLabel: AppLocalizations.of(context).deliveredStatus,
             ),
             const SizedBox(width: AlhaiSpacing.xs),
             Text(
-              AppLocalizations.of(context)!.deliveredStatus,
+              AppLocalizations.of(context).deliveredStatus,
               style: TextStyle(
                 color: AppColors.success,
                 fontWeight: FontWeight.bold,

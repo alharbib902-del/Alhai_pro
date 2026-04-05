@@ -272,7 +272,7 @@ class _AppScaffoldState extends State<AppScaffold> {
   }
 
   Widget _buildMobileDrawer() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,

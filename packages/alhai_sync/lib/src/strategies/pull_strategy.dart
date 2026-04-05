@@ -155,7 +155,7 @@ class PullStrategy {
                 : DateTime.tryParse(updatedAtRaw.toString());
             if (parsed != null) {
               final utc = parsed.toUtc();
-              if (maxUpdatedAt == null || utc.isAfter(maxUpdatedAt!)) {
+              if (maxUpdatedAt == null || utc.isAfter(maxUpdatedAt)) {
                 maxUpdatedAt = utc;
               }
             }

@@ -78,8 +78,7 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content:
-                Text(AppLocalizations.of(context)?.errorOccurred ?? 'حدث خطأ'),
+            content: Text(AppLocalizations.of(context).errorOccurred),
             backgroundColor: AppColors.error,
           ),
         );

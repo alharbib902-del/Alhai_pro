@@ -193,7 +193,7 @@ class _OfflineBanner extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      AppLocalizations.of(context)!.noInternetConnection,
+                      AppLocalizations.of(context).noInternetConnection,
                       style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -202,7 +202,7 @@ class _OfflineBanner extends StatelessWidget {
                     ),
                     if (pendingCount > 0)
                       Text(
-                        AppLocalizations.of(context)!
+                        AppLocalizations.of(context)
                             .operationsPendingSync(pendingCount),
                         style: TextStyle(
                           color: Colors.white.withValues(alpha: 0.9),
@@ -216,7 +216,7 @@ class _OfflineBanner extends StatelessWidget {
                 TextButton.icon(
                   onPressed: onSyncPressed,
                   icon: const Icon(Icons.sync, size: 16),
-                  label: Text(AppLocalizations.of(context)!.syncLabel),
+                  label: Text(AppLocalizations.of(context).syncLabel),
                   style: TextButton.styleFrom(
                     foregroundColor: Colors.white,
                     padding:
@@ -253,7 +253,7 @@ class _OnlineBanner extends StatelessWidget {
               ),
               SizedBox(width: AlhaiSpacing.xs),
               Text(
-                AppLocalizations.of(context)!.connectionRestored,
+                AppLocalizations.of(context).connectionRestored,
                 style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -324,8 +324,8 @@ class _ConnectionStatusIndicatorState extends State<ConnectionStatusIndicator> {
           SizedBox(width: AlhaiSpacing.xxs),
           Text(
             isOnline
-                ? AppLocalizations.of(context)!.connectedLabel
-                : AppLocalizations.of(context)!.disconnectedLabel,
+                ? AppLocalizations.of(context).connectedLabel
+                : AppLocalizations.of(context).disconnectedLabel,
             style: TextStyle(
               fontSize: 12,
               color: color,

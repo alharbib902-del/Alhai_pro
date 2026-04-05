@@ -57,7 +57,7 @@ class _AiSalesForecastingScreenState
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       children: [
@@ -199,7 +199,7 @@ class _AiSalesForecastingScreenState
   /// بطاقات المؤشرات السريعة
   Widget _buildMetricsRow(
       ForecastResult result, bool isDark, bool isWideScreen) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final cards = [
       _MetricData(
         label: l10n.aiForecastAccuracy,
@@ -359,9 +359,9 @@ class _AiSalesForecastingScreenState
         dividerColor: Colors.transparent,
         labelStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
         tabs: [
-          Tab(text: AppLocalizations.of(context)!.daily),
-          Tab(text: AppLocalizations.of(context)!.weekly),
-          Tab(text: AppLocalizations.of(context)!.monthly),
+          Tab(text: AppLocalizations.of(context).daily),
+          Tab(text: AppLocalizations.of(context).weekly),
+          Tab(text: AppLocalizations.of(context).monthly),
         ],
       ),
     );
@@ -369,7 +369,7 @@ class _AiSalesForecastingScreenState
 
   /// بطاقة الملخص
   Widget _buildSummaryCard(ForecastResult result, bool isDark) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
@@ -489,7 +489,7 @@ class _AiSalesForecastingScreenState
           const SizedBox(width: AlhaiSpacing.xs),
           Expanded(
             child: Text(
-              AppLocalizations.of(context)!.aiErrorOccurred(error),
+              AppLocalizations.of(context).aiErrorOccurred(error),
               style: const TextStyle(color: AppColors.error, fontSize: 13),
             ),
           ),

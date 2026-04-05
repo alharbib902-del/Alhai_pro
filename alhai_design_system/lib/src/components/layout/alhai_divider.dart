@@ -117,7 +117,7 @@ class AlhaiDivider extends StatelessWidget {
     }
 
     // With label
-    if (_label != null && _label!.trim().isNotEmpty) {
+    if (_label != null && _label.trim().isNotEmpty) {
       return _buildWithLabel(context, effectiveColor);
     }
 

@@ -18,7 +18,7 @@ void main() {
   late MockReportsRemoteDataSource mockRemote;
 
   // Test data
-  final testSalesSummaryResponse = SalesSummaryResponse(
+  const testSalesSummaryResponse = SalesSummaryResponse(
     date: '2026-01-19',
     revenue: 10000.0,
     cost: 7000.0,
@@ -27,7 +27,7 @@ void main() {
     itemsSold: 200,
   );
 
-  final testProductSalesResponse = ProductSalesResponse(
+  const testProductSalesResponse = ProductSalesResponse(
     productId: 'prod-1',
     productName: 'Test Product',
     quantitySold: 100,
@@ -36,7 +36,7 @@ void main() {
     profit: 1500.0,
   );
 
-  final testInventoryValueResponse = InventoryValueResponse(
+  const testInventoryValueResponse = InventoryValueResponse(
     costValue: 50000.0,
     retailValue: 75000.0,
     totalProducts: 100,

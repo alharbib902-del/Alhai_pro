@@ -1,7 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'dart:convert';
 
 import 'package:cashier/core/services/offline_queue_service.dart';
 
@@ -14,9 +13,6 @@ class MockFlutterSecureStorage extends Mock implements FlutterSecureStorage {}
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
-
-/// Creates a minimal JSON payload representing a persisted queue.
-String _encodeItems(List<Map<String, dynamic>> items) => jsonEncode(items);
 
 Map<String, dynamic> _salePayload({String? localSaleId}) => {
       'local_sale_id': localSaleId ?? 'sale-001',

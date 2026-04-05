@@ -53,7 +53,7 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
     final isWideScreen = context.isDesktop;
     final isMediumScreen = !context.isMobile;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     // مراقبة ورديات اليوم للحصول على آخر وردية مغلقة
     final todayShiftsAsync = ref.watch(todayShiftsProvider);

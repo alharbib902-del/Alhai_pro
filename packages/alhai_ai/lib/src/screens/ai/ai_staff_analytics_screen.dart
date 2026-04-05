@@ -41,7 +41,7 @@ class _AiStaffAnalyticsScreenState extends ConsumerState<AiStaffAnalyticsScreen>
   Widget build(BuildContext context) {
     final isWideScreen = context.isDesktop;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       children: [
@@ -103,7 +103,7 @@ class _AiStaffAnalyticsScreenState extends ConsumerState<AiStaffAnalyticsScreen>
                   children: [
                     const Icon(Icons.leaderboard_rounded, size: 18),
                     const SizedBox(width: 6),
-                    Text(AppLocalizations.of(context)!.aiLeaderboard),
+                    Text(AppLocalizations.of(context).aiLeaderboard),
                   ],
                 ),
               ),
@@ -113,7 +113,7 @@ class _AiStaffAnalyticsScreenState extends ConsumerState<AiStaffAnalyticsScreen>
                   children: [
                     const Icon(Icons.people_rounded, size: 18),
                     const SizedBox(width: 6),
-                    Text(AppLocalizations.of(context)!.aiIndividualPerformance),
+                    Text(AppLocalizations.of(context).aiIndividualPerformance),
                   ],
                 ),
               ),
@@ -123,7 +123,7 @@ class _AiStaffAnalyticsScreenState extends ConsumerState<AiStaffAnalyticsScreen>
                   children: [
                     const Icon(Icons.calendar_view_week_rounded, size: 18),
                     const SizedBox(width: 6),
-                    Text(AppLocalizations.of(context)!.aiShiftOptimization),
+                    Text(AppLocalizations.of(context).aiShiftOptimization),
                   ],
                 ),
               ),
@@ -148,7 +148,7 @@ class _AiStaffAnalyticsScreenState extends ConsumerState<AiStaffAnalyticsScreen>
 
   Widget _buildSummaryRow(
       TeamPerformanceSummary summary, bool isDark, bool isWideScreen) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final items = [
       _SummaryItem(Icons.grade_rounded, l10n.aiAvgPerformance,
           '${summary.avgScore}%', AppColors.primary),
@@ -259,7 +259,7 @@ class _AiStaffAnalyticsScreenState extends ConsumerState<AiStaffAnalyticsScreen>
                   ),
                   const SizedBox(width: AlhaiSpacing.sm),
                   Text(
-                    AppLocalizations.of(context)!.aiLeaderboardThisWeek,
+                    AppLocalizations.of(context).aiLeaderboardThisWeek,
                     style: TextStyle(
                       fontWeight: FontWeight.w700,
                       fontSize: 16,
@@ -429,7 +429,7 @@ class _AiStaffAnalyticsScreenState extends ConsumerState<AiStaffAnalyticsScreen>
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (e, _) => Center(
           child: Text(
-              AppLocalizations.of(context)!.aiErrorWithMessage(e.toString()))),
+              AppLocalizations.of(context).aiErrorWithMessage(e.toString()))),
       data: (staff) {
         return SingleChildScrollView(
           padding: const EdgeInsets.all(AlhaiSpacing.mdl),
@@ -529,7 +529,7 @@ class _AiStaffAnalyticsScreenState extends ConsumerState<AiStaffAnalyticsScreen>
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
-                        AppLocalizations.of(context)!.aiStaffCurrentSuggested(
+                        AppLocalizations.of(context).aiStaffCurrentSuggested(
                             opt.currentStaff, opt.suggestedStaff),
                         style: const TextStyle(
                           color: AppColors.error,

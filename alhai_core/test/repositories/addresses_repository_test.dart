@@ -17,7 +17,7 @@ void main() {
   late MockAddressesRemoteDataSource mockRemote;
 
   // Test data
-  final testAddressResponse = AddressResponse(
+  const testAddressResponse = AddressResponse(
     id: 'addr-1',
     label: 'Home',
     fullAddress: '123 Main St, Riyadh',
@@ -30,7 +30,7 @@ void main() {
     isDefault: true,
   );
 
-  final testSecondAddressResponse = AddressResponse(
+  const testSecondAddressResponse = AddressResponse(
     id: 'addr-2',
     label: 'Work',
     fullAddress: '456 Office St, Riyadh',
@@ -125,7 +125,7 @@ void main() {
     group('createAddress', () {
       test('creates address with correct params', () async {
         // Arrange
-        final params = CreateAddressParams(
+        const params = CreateAddressParams(
           label: 'New Address',
           fullAddress: '789 New St',
           city: 'Jeddah',
@@ -147,7 +147,7 @@ void main() {
     group('updateAddress', () {
       test('updates address with params', () async {
         // Arrange
-        final params = UpdateAddressParams(label: 'Updated Label');
+        const params = UpdateAddressParams(label: 'Updated Label');
         when(() => mockRemote.updateAddress(any(), any()))
             .thenAnswer((_) async => testAddressResponse);
 

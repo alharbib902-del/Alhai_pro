@@ -129,7 +129,7 @@ class BranchStatusBadge extends StatelessWidget {
   });
 
   String _text(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     switch (status) {
       case BranchStatus.open:
         return 'مفتوح الآن';
@@ -210,7 +210,7 @@ class BranchCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       margin:

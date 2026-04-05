@@ -93,8 +93,9 @@ class Shift with _$Shift {
   String get cashStatusAr {
     if (cashDifference == null) return '-';
     if (cashDifference == 0) return 'متطابق';
-    if (cashDifference! > 0)
+    if (cashDifference! > 0) {
       return 'زيادة ${cashDifference!.abs().toStringAsFixed(2)}';
+    }
     return 'نقص ${cashDifference!.abs().toStringAsFixed(2)}';
   }
 }

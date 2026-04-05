@@ -71,7 +71,7 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
     } catch (e) {
       debugPrint('Error loading user: $e');
       if (mounted) {
-        final l10n = AppLocalizations.of(context)!;
+        final l10n = AppLocalizations.of(context);
         setState(() {
           _error = l10n.errorOccurred;
           _isLoading = false;
@@ -242,7 +242,7 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
       await db.usersDao.updateUser(updated);
       await _loadUser();
       if (mounted) {
-        final l10n = AppLocalizations.of(context)!;
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
               content: Text(l10n.permissionsSaved),
@@ -252,7 +252,7 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
     } catch (e) {
       debugPrint('Error saving role: $e');
       if (mounted) {
-        final l10n = AppLocalizations.of(context)!;
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
               content: Text(l10n.errorOccurred),
@@ -286,7 +286,7 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
       ));
       await _loadUser();
       if (mounted) {
-        final l10n = AppLocalizations.of(context)!;
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content:
@@ -302,7 +302,7 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     if (_isLoading) {
       return Scaffold(
         appBar: AppBar(title: Text(l10n.employeeProfile)),
@@ -372,7 +372,7 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
   }
 
   String _roleLabel(String role) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     switch (role) {
       case 'owner':
         return l10n.ownerRole;
@@ -387,7 +387,7 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
 
   Widget _buildProfileTab(
       UsersTableData user, String initials, Color roleColor) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final displayName = user.name.isNotEmpty
         ? user.name
         : (user.phone ?? l10n.employeeFallback);
@@ -516,7 +516,7 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
   }
 
   Widget _buildSalesTab() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Column(
       children: [
         // Period selector
@@ -628,7 +628,7 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
   }
 
   Widget _buildShiftsTab() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     if (_shiftsLoading) return const Center(child: CircularProgressIndicator());
     if (_shifts.isEmpty) {
       return Center(
@@ -699,7 +699,7 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
   }
 
   Widget _buildPermissionsTab(UsersTableData user) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return SingleChildScrollView(
       padding: const EdgeInsets.all(AlhaiSpacing.md),
       child: Column(
@@ -842,7 +842,7 @@ class _HourlyBarChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (data.isEmpty) return const SizedBox.shrink();
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final maxVal = data.map((d) => d.total).reduce((a, b) => a > b ? a : b);
     return SizedBox(
       height: 80,

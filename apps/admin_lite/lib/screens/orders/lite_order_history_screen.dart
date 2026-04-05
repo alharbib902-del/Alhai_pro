@@ -22,7 +22,7 @@ class LiteOrderHistoryScreen extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final size = MediaQuery.of(context).size;
     final isMobile = size.width < 600;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final dataAsync = ref.watch(liteOrderHistoryProvider);
 
     return Scaffold(
@@ -108,8 +108,9 @@ class LiteOrderHistoryScreen extends ConsumerWidget {
     final orderDay = DateTime(dt.year, dt.month, dt.day);
 
     if (orderDay == today) return l10n.today;
-    if (orderDay == today.subtract(const Duration(days: 1)))
+    if (orderDay == today.subtract(const Duration(days: 1))) {
       return l10n.yesterday;
+    }
     return '${dt.day}/${dt.month}/${dt.year}';
   }
 

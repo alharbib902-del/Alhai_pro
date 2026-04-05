@@ -17,7 +17,6 @@ import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:uuid/uuid.dart';
 import 'package:alhai_database/alhai_database.dart';
-import 'package:drift/drift.dart' show Value;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 import '../../core/services/audit_service.dart';
@@ -87,8 +86,7 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
         setState(() => _isSearching = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text(
-                  AppLocalizations.of(context)?.errorOccurred ?? 'حدث خطأ'),
+              content: Text(AppLocalizations.of(context).errorOccurred),
               backgroundColor: AppColors.error),
         );
       }

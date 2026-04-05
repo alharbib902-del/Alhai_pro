@@ -7,7 +7,6 @@ import 'package:mocktail/mocktail.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_sync/alhai_sync.dart';
 import 'package:alhai_pos/src/services/invoice_service.dart';
-import 'package:alhai_pos/src/services/receipt_pdf_generator.dart';
 
 import '../helpers/pos_test_helpers.dart';
 

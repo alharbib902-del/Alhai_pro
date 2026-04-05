@@ -92,11 +92,12 @@ class _BalanceSheetScreenState extends ConsumerState<BalanceSheetScreen> {
         });
       }
     } catch (e) {
-      if (mounted)
+      if (mounted) {
         setState(() {
           _error = e.toString();
           _isLoading = false;
         });
+      }
     }
   }
 

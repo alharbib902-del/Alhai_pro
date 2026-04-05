@@ -258,7 +258,7 @@ class QuickActionRow extends StatelessWidget {
 class DefaultQuickActions {
   static QuickAction newSale(
       {required BuildContext context, VoidCallback? onTap}) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return QuickAction(
       id: 'new_sale',
       title: l10n.newSale,
@@ -271,7 +271,7 @@ class DefaultQuickActions {
 
   static QuickAction addProduct(
       {required BuildContext context, VoidCallback? onTap}) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return QuickAction(
       id: 'add_product',
       title: l10n.addProduct,
@@ -283,7 +283,7 @@ class DefaultQuickActions {
 
   static QuickAction refund(
       {required BuildContext context, VoidCallback? onTap}) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return QuickAction(
       id: 'refund',
       title: l10n.returnLabel,
@@ -295,7 +295,7 @@ class DefaultQuickActions {
 
   static QuickAction dailyReport(
       {required BuildContext context, VoidCallback? onTap}) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return QuickAction(
       id: 'daily_report',
       title: l10n.dailyReport,
@@ -307,7 +307,7 @@ class DefaultQuickActions {
 
   static QuickAction inventory(
       {required BuildContext context, VoidCallback? onTap, String? badge}) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return QuickAction(
       id: 'inventory',
       title: l10n.inventory,
@@ -320,7 +320,7 @@ class DefaultQuickActions {
 
   static QuickAction customers(
       {required BuildContext context, VoidCallback? onTap}) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return QuickAction(
       id: 'customers',
       title: l10n.customers,
@@ -332,7 +332,7 @@ class DefaultQuickActions {
 
   static QuickAction settings(
       {required BuildContext context, VoidCallback? onTap}) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return QuickAction(
       id: 'settings',
       title: l10n.settings,
@@ -344,7 +344,7 @@ class DefaultQuickActions {
 
   static QuickAction closeDay(
       {required BuildContext context, VoidCallback? onTap}) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return QuickAction(
       id: 'close_day',
       title: l10n.closeDay,
@@ -387,7 +387,7 @@ class QuickActionsSection extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              title ?? AppLocalizations.of(context)!.quickActions,
+              title ?? AppLocalizations.of(context).quickActions,
               style: const TextStyle(
                 color: AppColors.textPrimary,
                 fontSize: 18,
@@ -401,7 +401,7 @@ class QuickActionsSection extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      AppLocalizations.of(context)!.viewAll,
+                      AppLocalizations.of(context).viewAll,
                       style: const TextStyle(
                         color: AppColors.primary,
                         fontSize: 14,

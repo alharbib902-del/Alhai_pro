@@ -110,7 +110,7 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
 
   void _copyReturnId(String id) {
     Clipboard.setData(ClipboardData(text: id));
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -191,7 +191,7 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
   }
 
   void _showSuccessToast() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -221,7 +221,7 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
     final isMediumScreen = !context.isMobile;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final colorScheme = Theme.of(context).colorScheme;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       floatingActionButton: !isWideScreen
@@ -546,7 +546,7 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
       for (final r in currentReturns) {
         final key = r.invoiceNo.isNotEmpty
             ? r.invoiceNo
-            : AppLocalizations.of(context)!.notSpecified;
+            : AppLocalizations.of(context).notSpecified;
         counts[key] = (counts[key] ?? 0) + 1;
       }
       if (counts.isNotEmpty) {

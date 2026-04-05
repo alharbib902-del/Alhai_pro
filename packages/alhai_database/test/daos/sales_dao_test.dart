@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:drift/drift.dart' hide isNotNull, isNull;
 import 'package:alhai_database/alhai_database.dart';
 import '../helpers/database_test_helpers.dart';
 
@@ -14,7 +13,7 @@ void main() {
     await db.close();
   });
 
-  SalesTableCompanion _makeSale({
+  SalesTableCompanion makeSale({
     String id = 'sale-1',
     String storeId = 'store-1',
     String receiptNo = 'REC-001',
@@ -40,7 +39,7 @@ void main() {
 
   group('SalesDao', () {
     test('insertSale and getSaleById', () async {
-      await db.salesDao.insertSale(_makeSale());
+      await db.salesDao.insertSale(makeSale());
 
       final sale = await db.salesDao.getSaleById('sale-1');
       expect(sale, isNotNull);
@@ -55,11 +54,11 @@ void main() {
     });
 
     test('getAllSales returns sales for store ordered by date desc', () async {
-      await db.salesDao.insertSale(_makeSale(
+      await db.salesDao.insertSale(makeSale(
         id: 'sale-1',
         createdAt: DateTime(2025, 6, 15, 10, 0),
       ));
-      await db.salesDao.insertSale(_makeSale(
+      await db.salesDao.insertSale(makeSale(
         id: 'sale-2',
         receiptNo: 'REC-002',
         createdAt: DateTime(2025, 6, 15, 14, 0),
@@ -72,7 +71,7 @@ void main() {
     });
 
     test('getSaleByReceiptNo finds correct sale', () async {
-      await db.salesDao.insertSale(_makeSale());
+      await db.salesDao.insertSale(makeSale());
 
       final sale = await db.salesDao.getSaleByReceiptNo('REC-001', 'store-1');
       expect(sale, isNotNull);
@@ -80,12 +79,12 @@ void main() {
     });
 
     test('getSalesByDateRange filters by date', () async {
-      await db.salesDao.insertSale(_makeSale(
+      await db.salesDao.insertSale(makeSale(
         id: 'sale-jan',
         receiptNo: 'R-JAN',
         createdAt: DateTime(2025, 1, 15),
       ));
-      await db.salesDao.insertSale(_makeSale(
+      await db.salesDao.insertSale(makeSale(
         id: 'sale-jun',
         receiptNo: 'R-JUN',
         createdAt: DateTime(2025, 6, 15),
@@ -101,7 +100,7 @@ void main() {
     });
 
     test('voidSale sets status to voided', () async {
-      await db.salesDao.insertSale(_makeSale());
+      await db.salesDao.insertSale(makeSale());
 
       await db.salesDao.voidSale('sale-1');
 
@@ -110,7 +109,7 @@ void main() {
     });
 
     test('markAsSynced sets syncedAt', () async {
-      await db.salesDao.insertSale(_makeSale());
+      await db.salesDao.insertSale(makeSale());
 
       await db.salesDao.markAsSynced('sale-1');
 
@@ -119,9 +118,9 @@ void main() {
     });
 
     test('getUnsyncedSales returns sales without syncedAt', () async {
-      await db.salesDao.insertSale(_makeSale());
+      await db.salesDao.insertSale(makeSale());
       await db.salesDao
-          .insertSale(_makeSale(id: 'sale-2', receiptNo: 'REC-002'));
+          .insertSale(makeSale(id: 'sale-2', receiptNo: 'REC-002'));
       await db.salesDao.markAsSynced('sale-1');
 
       final unsynced = await db.salesDao.getUnsyncedSales();
@@ -131,7 +130,7 @@ void main() {
 
     test('getSalesPaginated respects limit and offset', () async {
       for (var i = 0; i < 10; i++) {
-        await db.salesDao.insertSale(_makeSale(
+        await db.salesDao.insertSale(makeSale(
           id: 'sale-$i',
           receiptNo: 'REC-$i',
           createdAt: DateTime(2025, 6, 15, i),
@@ -149,7 +148,7 @@ void main() {
 
     test('getSalesCount returns correct count', () async {
       for (var i = 0; i < 5; i++) {
-        await db.salesDao.insertSale(_makeSale(
+        await db.salesDao.insertSale(makeSale(
           id: 'sale-$i',
           receiptNo: 'REC-$i',
         ));
@@ -160,10 +159,9 @@ void main() {
     });
 
     test('getSalesPaginated filters by status', () async {
-      await db.salesDao
-          .insertSale(_makeSale(id: 'sale-1', status: 'completed'));
+      await db.salesDao.insertSale(makeSale(id: 'sale-1', status: 'completed'));
       await db.salesDao.insertSale(
-          _makeSale(id: 'sale-2', receiptNo: 'REC-002', status: 'voided'));
+          makeSale(id: 'sale-2', receiptNo: 'REC-002', status: 'voided'));
 
       final completedSales =
           await db.salesDao.getSalesPaginated('store-1', status: 'completed');
@@ -172,9 +170,9 @@ void main() {
     });
 
     test('getSalesStats returns correct statistics', () async {
-      await db.salesDao.insertSale(_makeSale(id: 'sale-1', total: 50.0));
+      await db.salesDao.insertSale(makeSale(id: 'sale-1', total: 50.0));
       await db.salesDao.insertSale(
-          _makeSale(id: 'sale-2', receiptNo: 'REC-002', total: 150.0));
+          makeSale(id: 'sale-2', receiptNo: 'REC-002', total: 150.0));
 
       final stats = await db.salesDao.getSalesStats('store-1');
       expect(stats.count, 2);

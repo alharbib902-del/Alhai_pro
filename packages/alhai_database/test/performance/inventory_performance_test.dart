@@ -1,12 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:drift/drift.dart' hide isNotNull, isNull;
 import 'package:alhai_database/alhai_database.dart';
 import '../helpers/database_test_helpers.dart';
 
 void main() {
   late AppDatabase db;
 
-  ProductsTableCompanion _makeProduct({
+  ProductsTableCompanion makeProduct({
     required String id,
     String storeId = 'store-1',
     required String name,
@@ -33,7 +32,7 @@ void main() {
 
       // Seed 100 products for stock updates
       for (int i = 0; i < 100; i++) {
-        await db.productsDao.insertProduct(_makeProduct(
+        await db.productsDao.insertProduct(makeProduct(
           id: 'prod_$i',
           name: 'Product $i - منتج $i',
           stockQty: (100 + i).toDouble(),
@@ -94,7 +93,7 @@ void main() {
       // Seed 1000 products: 200 with low stock, 800 with adequate stock
       for (int i = 0; i < 1000; i++) {
         final isLowStock = i < 200;
-        await db.productsDao.insertProduct(_makeProduct(
+        await db.productsDao.insertProduct(makeProduct(
           id: 'prod_$i',
           name: 'Product $i',
           stockQty: isLowStock
@@ -187,7 +186,7 @@ void main() {
         () async {
       // First insert some products so the JOIN can resolve names
       for (int i = 0; i < 20; i++) {
-        await db.productsDao.insertProduct(_makeProduct(
+        await db.productsDao.insertProduct(makeProduct(
           id: 'prod_$i',
           name: 'Product $i',
         ));

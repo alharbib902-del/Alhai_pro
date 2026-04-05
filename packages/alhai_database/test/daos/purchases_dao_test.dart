@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:drift/drift.dart' hide isNotNull, isNull;
 import 'package:alhai_database/alhai_database.dart';
 import '../helpers/database_test_helpers.dart';
 
@@ -14,7 +13,7 @@ void main() {
     await db.close();
   });
 
-  PurchasesTableCompanion _makePurchase({
+  PurchasesTableCompanion makePurchase({
     String id = 'pur-1',
     String storeId = 'store-1',
     String purchaseNumber = 'PO-001',
@@ -34,7 +33,7 @@ void main() {
 
   group('PurchasesDao', () {
     test('insertPurchase and getPurchaseById', () async {
-      await db.purchasesDao.insertPurchase(_makePurchase());
+      await db.purchasesDao.insertPurchase(makePurchase());
 
       final purchase = await db.purchasesDao.getPurchaseById('pur-1');
       expect(purchase, isNotNull);
@@ -44,8 +43,8 @@ void main() {
     });
 
     test('getAllPurchases returns all for store', () async {
-      await db.purchasesDao.insertPurchase(_makePurchase());
-      await db.purchasesDao.insertPurchase(_makePurchase(
+      await db.purchasesDao.insertPurchase(makePurchase());
+      await db.purchasesDao.insertPurchase(makePurchase(
         id: 'pur-2',
         purchaseNumber: 'PO-002',
       ));
@@ -56,8 +55,8 @@ void main() {
 
     test('getPurchasesByStatus filters correctly', () async {
       await db.purchasesDao
-          .insertPurchase(_makePurchase(id: 'pur-1', status: 'draft'));
-      await db.purchasesDao.insertPurchase(_makePurchase(
+          .insertPurchase(makePurchase(id: 'pur-1', status: 'draft'));
+      await db.purchasesDao.insertPurchase(makePurchase(
         id: 'pur-2',
         purchaseNumber: 'PO-002',
         status: 'received',
@@ -70,7 +69,7 @@ void main() {
     });
 
     test('updateStatus changes purchase status', () async {
-      await db.purchasesDao.insertPurchase(_makePurchase());
+      await db.purchasesDao.insertPurchase(makePurchase());
 
       await db.purchasesDao.updateStatus('pur-1', 'confirmed');
 
@@ -79,7 +78,7 @@ void main() {
     });
 
     test('receivePurchase sets status and receivedAt', () async {
-      await db.purchasesDao.insertPurchase(_makePurchase());
+      await db.purchasesDao.insertPurchase(makePurchase());
 
       await db.purchasesDao.receivePurchase('pur-1');
 
@@ -89,14 +88,14 @@ void main() {
     });
 
     test('deletePurchase removes purchase', () async {
-      await db.purchasesDao.insertPurchase(_makePurchase());
+      await db.purchasesDao.insertPurchase(makePurchase());
 
       final deleted = await db.purchasesDao.deletePurchase('pur-1');
       expect(deleted, 1);
     });
 
     test('markAsSynced sets syncedAt', () async {
-      await db.purchasesDao.insertPurchase(_makePurchase());
+      await db.purchasesDao.insertPurchase(makePurchase());
 
       await db.purchasesDao.markAsSynced('pur-1');
 
@@ -106,7 +105,7 @@ void main() {
 
     // Purchase Items
     test('insertPurchaseItems and getPurchaseItems', () async {
-      await db.purchasesDao.insertPurchase(_makePurchase());
+      await db.purchasesDao.insertPurchase(makePurchase());
       await db.purchasesDao.insertPurchaseItems([
         PurchaseItemsTableCompanion.insert(
           id: 'pi-1',
@@ -133,7 +132,7 @@ void main() {
     });
 
     test('deletePurchaseItems removes items for purchase', () async {
-      await db.purchasesDao.insertPurchase(_makePurchase());
+      await db.purchasesDao.insertPurchase(makePurchase());
       await db.purchasesDao.insertPurchaseItems([
         PurchaseItemsTableCompanion.insert(
           id: 'pi-1',

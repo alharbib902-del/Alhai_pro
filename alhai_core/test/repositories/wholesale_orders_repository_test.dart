@@ -8,7 +8,7 @@ import 'package:alhai_core/src/repositories/wholesale_orders_repository.dart';
 void main() {
   group('WholesaleOrderSummary', () {
     test('should construct with all required fields', () {
-      final summary = WholesaleOrderSummary(
+      const summary = WholesaleOrderSummary(
         distributorId: 'dist-1',
         totalOrders: 100,
         pendingOrders: 10,

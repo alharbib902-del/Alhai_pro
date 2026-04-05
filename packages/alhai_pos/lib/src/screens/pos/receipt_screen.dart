@@ -103,7 +103,7 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.receiptTitle),
@@ -114,7 +114,7 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
   }
 
   Widget _buildBody(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -545,7 +545,7 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
   }
 
   String _getPaymentMethodLabel(String method) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     switch (method.toLowerCase()) {
       case 'cash':
         return l10n.cashMethod;
@@ -566,7 +566,7 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
 
   Future<void> _sendWhatsAppReceipt() async {
     if (_sale == null || _customerPhone == null) return;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     setState(() => _isSendingWhatsApp = true);
 
@@ -623,7 +623,7 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
   }
 
   Future<void> _printReceipt() async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     if (widget.saleId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

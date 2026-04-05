@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:drift/drift.dart' hide isNotNull, isNull;
 import 'package:alhai_database/alhai_database.dart';
 import '../helpers/database_test_helpers.dart';
 
@@ -14,7 +13,7 @@ void main() {
     await db.close();
   });
 
-  UsersTableCompanion _makeUser({
+  UsersTableCompanion makeUser({
     String id = 'user-1',
     String? storeId = 'store-1',
     String name = 'محمد الكاشير',
@@ -37,7 +36,7 @@ void main() {
 
   group('UsersDao', () {
     test('insertUser and getUserById', () async {
-      await db.usersDao.insertUser(_makeUser());
+      await db.usersDao.insertUser(makeUser());
 
       final user = await db.usersDao.getUserById('user-1');
       expect(user, isNotNull);
@@ -46,8 +45,8 @@ void main() {
     });
 
     test('getAllUsers returns all for store', () async {
-      await db.usersDao.insertUser(_makeUser());
-      await db.usersDao.insertUser(_makeUser(
+      await db.usersDao.insertUser(makeUser());
+      await db.usersDao.insertUser(makeUser(
         id: 'user-2',
         name: 'علي المدير',
         role: 'admin',
@@ -58,8 +57,8 @@ void main() {
     });
 
     test('getActiveUsers excludes inactive', () async {
-      await db.usersDao.insertUser(_makeUser());
-      await db.usersDao.insertUser(_makeUser(
+      await db.usersDao.insertUser(makeUser());
+      await db.usersDao.insertUser(makeUser(
         id: 'user-2',
         name: 'موظف سابق',
         isActive: false,
@@ -70,7 +69,7 @@ void main() {
     });
 
     test('getUserByPhone finds user', () async {
-      await db.usersDao.insertUser(_makeUser());
+      await db.usersDao.insertUser(makeUser());
 
       final user = await db.usersDao.getUserByPhone('0501112222');
       expect(user, isNotNull);
@@ -78,7 +77,7 @@ void main() {
     });
 
     test('verifyPin finds active user with matching pin', () async {
-      await db.usersDao.insertUser(_makeUser(pin: '5678'));
+      await db.usersDao.insertUser(makeUser(pin: '5678'));
 
       final user = await db.usersDao.verifyPin('store-1', '5678');
       expect(user, isNotNull);
@@ -86,21 +85,21 @@ void main() {
     });
 
     test('verifyPin returns null for wrong pin', () async {
-      await db.usersDao.insertUser(_makeUser(pin: '5678'));
+      await db.usersDao.insertUser(makeUser(pin: '5678'));
 
       final user = await db.usersDao.verifyPin('store-1', '0000');
       expect(user, isNull);
     });
 
     test('verifyPin returns null for inactive user', () async {
-      await db.usersDao.insertUser(_makeUser(pin: '5678', isActive: false));
+      await db.usersDao.insertUser(makeUser(pin: '5678', isActive: false));
 
       final user = await db.usersDao.verifyPin('store-1', '5678');
       expect(user, isNull);
     });
 
     test('updateLastLogin sets lastLoginAt', () async {
-      await db.usersDao.insertUser(_makeUser());
+      await db.usersDao.insertUser(makeUser());
 
       await db.usersDao.updateLastLogin('user-1');
 
@@ -109,14 +108,14 @@ void main() {
     });
 
     test('deleteUser removes user', () async {
-      await db.usersDao.insertUser(_makeUser());
+      await db.usersDao.insertUser(makeUser());
 
       final deleted = await db.usersDao.deleteUser('user-1');
       expect(deleted, 1);
     });
 
     test('markUserAsSynced sets syncedAt', () async {
-      await db.usersDao.insertUser(_makeUser());
+      await db.usersDao.insertUser(makeUser());
 
       await db.usersDao.markUserAsSynced('user-1');
 

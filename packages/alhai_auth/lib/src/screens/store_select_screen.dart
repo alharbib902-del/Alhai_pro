@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:drift/drift.dart' show Value;
 import 'package:supabase_flutter/supabase_flutter.dart' show Supabase;
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
@@ -419,8 +418,8 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
 
   Future<void> _saveCategoriesLocally(
       AppDatabase db, List<dynamic> catList) async {
-    final categories = catList.where((c) => c is Map<String, dynamic>).map((c) {
-      final cat = c as Map<String, dynamic>;
+    final categories = catList.whereType<Map<String, dynamic>>().map((c) {
+      final cat = c;
       return CategoriesTableCompanion.insert(
         id: cat['id'] as String? ?? '',
         storeId: cat['store_id'] as String? ?? '',
@@ -694,7 +693,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
             ),
             const SizedBox(width: AlhaiSpacing.sm),
             Text(
-              l10n?.centralManagement ?? 'إدارة مركزية شاملة',
+              l10n.centralManagement,
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 24,
@@ -705,8 +704,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
         ),
         const SizedBox(height: AlhaiSpacing.md),
         Text(
-          l10n?.centralManagementDesc ??
-              'تحكم في جميع فروعك ومستودعاتك من مكان واحد. احصل على تقارير فورية ومزامنة للمخزون بين جميع نقاط البيع.',
+          l10n.centralManagementDesc,
           textAlign: TextAlign.center,
           style: TextStyle(
             color: Colors.white.withValues(alpha: 0.9),
@@ -722,13 +720,11 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
     final l10n = AppLocalizations.of(context);
     return Row(
       children: [
-        Expanded(child: _buildStatItem('24/7', l10n?.support247 ?? 'دعم فني')),
+        Expanded(child: _buildStatItem('24/7', l10n.support247)),
         const SizedBox(width: AlhaiSpacing.md),
-        Expanded(
-            child:
-                _buildStatItem('50+', l10n?.analyticsTools ?? 'أدوات تحليل')),
+        Expanded(child: _buildStatItem('50+', l10n.analyticsTools)),
         const SizedBox(width: AlhaiSpacing.md),
-        Expanded(child: _buildStatItem('99.9%', l10n?.uptime ?? 'وقت التشغيل')),
+        Expanded(child: _buildStatItem('99.9%', l10n.uptime)),
       ],
     );
   }
@@ -803,8 +799,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
                 ),
                 const SizedBox(height: AlhaiSpacing.xxs),
                 Text(
-                  AppLocalizations.of(context)?.selectYourBranchToContinue ??
-                      'اختر فرعك للمتابعة',
+                  AppLocalizations.of(context).selectYourBranchToContinue,
                   style: TextStyle(
                     color: Colors.white.withValues(alpha: 0.9),
                     fontSize: 14,
@@ -900,7 +895,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
 
           // العنوان
           Text(
-            l10n?.selectBranchToContinue ?? 'اختر الفرع للمتابعة',
+            l10n.selectBranchToContinue,
             style: TextStyle(
               color: isDarkMode ? Colors.white : AppColors.textPrimary,
               fontSize: isMobile ? 22 : 28,
@@ -911,8 +906,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
           const SizedBox(height: AlhaiSpacing.xs),
 
           Text(
-            l10n?.youHaveAccessToBranches ??
-                'لديك صلاحية الوصول إلى الفروع التالية. اختر فرعاً للبدء.',
+            l10n.youHaveAccessToBranches,
             style: TextStyle(
               color: isDarkMode ? Colors.white60 : AppColors.textSecondary,
               fontSize: 14,
@@ -1093,7 +1087,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
           children: [
             if (!isMobile)
               Text(
-                l10n?.loggedInAs ?? 'مسجل الدخول كـ',
+                l10n.loggedInAs,
                 style: TextStyle(
                   color: isDarkMode ? Colors.white54 : AppColors.textTertiary,
                   fontSize: 10,
@@ -1145,7 +1139,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
         color: isDarkMode ? Colors.white : AppColors.textPrimary,
       ),
       decoration: InputDecoration(
-        hintText: l10n?.searchForBranch ?? 'بحث عن فرع...',
+        hintText: l10n.searchForBranch,
         hintStyle: TextStyle(
           color: isDarkMode ? Colors.white38 : AppColors.textTertiary,
         ),
@@ -1200,7 +1194,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
                 color: isDarkMode ? Colors.red.shade300 : Colors.red.shade400),
             const SizedBox(height: AlhaiSpacing.md),
             Text(
-              AppLocalizations.of(context)?.errorOccurred ?? 'حدث خطأ',
+              AppLocalizations.of(context).errorOccurred,
               style: TextStyle(
                 fontSize: 18,
                 color: isDarkMode ? Colors.white70 : AppColors.textSecondary,
@@ -1220,8 +1214,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
             TextButton.icon(
               onPressed: _loadStores,
               icon: const Icon(Icons.refresh),
-              label:
-                  Text(AppLocalizations.of(context)?.retry ?? 'إعادة المحاولة'),
+              label: Text(AppLocalizations.of(context).retry),
             ),
           ],
         ),
@@ -1356,11 +1349,10 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
                   const SizedBox(width: 6),
                   Text(
                     isOpen
-                        ? (l10n?.openNow ?? 'مفتوح الآن')
+                        ? l10n.openNow
                         : (store.closedUntil != null
-                            ? (l10n?.closedOpensAt(store.closedUntil!) ??
-                                'مغلق (يفتح ${store.closedUntil})')
-                            : (l10n?.branchClosed ?? 'مغلق')),
+                            ? l10n.closedOpensAt(store.closedUntil!)
+                            : l10n.branchClosed),
                     style: TextStyle(
                       color: isOpen
                           ? AppColors.success
@@ -1447,7 +1439,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
         onPressed: () {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(l10n?.comingSoon ?? 'سيتم إضافة هذه الميزة قريباً'),
+              content: Text(l10n.comingSoon),
               behavior: SnackBarBehavior.floating,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10)),
@@ -1474,7 +1466,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
             ),
             const SizedBox(width: AlhaiSpacing.xs),
             Text(
-              l10n?.addBranch ?? 'إضافة فرع جديد',
+              l10n.addBranch,
               style: TextStyle(
                 color: isDarkMode ? Colors.white54 : AppColors.textSecondary,
                 fontWeight: FontWeight.w500,
@@ -1498,8 +1490,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
           ),
           const SizedBox(height: AlhaiSpacing.md),
           Text(
-            AppLocalizations.of(context)?.noResultsFoundSearch ??
-                'لا توجد نتائج',
+            AppLocalizations.of(context).noResultsFoundSearch,
             style: TextStyle(
               color: isDarkMode ? Colors.white54 : AppColors.textSecondary,
               fontSize: 18,
@@ -1533,10 +1524,10 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
           Wrap(
             spacing: 12,
             children: [
-              _buildFooterLink(l10n?.technicalSupport ?? 'الدعم الفني',
+              _buildFooterLink(l10n.technicalSupport,
                   Icons.headset_mic_outlined, isDarkMode),
-              _buildFooterLink(l10n?.privacyPolicy ?? 'سياسة الخصوصية',
-                  Icons.shield_outlined, isDarkMode),
+              _buildFooterLink(
+                  l10n.privacyPolicy, Icons.shield_outlined, isDarkMode),
             ],
           ),
           // حقوق النشر

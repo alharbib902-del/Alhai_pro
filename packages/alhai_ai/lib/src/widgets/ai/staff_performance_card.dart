@@ -74,7 +74,7 @@ class _StaffPerformanceCardState extends State<StaffPerformanceCard>
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),

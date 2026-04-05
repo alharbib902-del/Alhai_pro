@@ -24,7 +24,7 @@ class HoldInvoicesScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final heldInvoicesAsync = ref.watch(dbHeldInvoicesListProvider);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -374,7 +374,7 @@ class _HoldInvoiceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final timeDiff = DateTime.now().difference(invoice.createdAt);
     final timeText = _formatTimeDiff(timeDiff, l10n);
     final isDark = Theme.of(context).brightness == Brightness.dark;

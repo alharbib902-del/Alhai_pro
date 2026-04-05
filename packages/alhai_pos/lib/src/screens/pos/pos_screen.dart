@@ -28,9 +28,6 @@ import 'pos_products_panel.dart';
 /// تعرض المنتجات وسلة المشتريات في عرض مقسم مع app shell (sidebar + header)
 /// متجاوبة: على الهواتف السلة في BottomSheet
 
-/// Maximum number of recent searches stored in memory.
-const int _kMaxRecentSearches = 5;
-
 /// Map [UserRole] to a localized label.
 String _localizedRole(UserRole? role, AppLocalizations l10n) {
   switch (role) {
@@ -69,9 +66,6 @@ class _PosScreenState extends ConsumerState<PosScreen> {
 
   /// Bug 3: يمنع مسح الباركود أثناء فتح نافذة الدفع
   bool _isPaymentDialogOpen = false;
-
-  /// L34: In-memory recent search terms (max [_kMaxRecentSearches]).
-  final List<String> _recentSearches = [];
 
   /// L35: Whether the keyboard shortcuts overlay is visible.
   bool _showShortcutsOverlay = false;
@@ -142,7 +136,7 @@ class _PosScreenState extends ConsumerState<PosScreen> {
     await Future.delayed(const Duration(milliseconds: 300));
     if (!mounted) return;
 
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final itemCount = cartNotifier.pendingDraftItemCount;
     final total = cartNotifier.pendingDraftTotal;
 
@@ -151,7 +145,7 @@ class _PosScreenState extends ConsumerState<PosScreen> {
       barrierDismissible: false,
       builder: (ctx) {
         final colorScheme = Theme.of(ctx).colorScheme;
-        final dialogL10n = AppLocalizations.of(ctx)!;
+        final dialogL10n = AppLocalizations.of(ctx);
         return AlertDialog(
           icon: Icon(Icons.shopping_cart_outlined,
               color: colorScheme.primary, size: 36),
@@ -227,37 +221,6 @@ class _PosScreenState extends ConsumerState<PosScreen> {
   }
 
   // ---------------------------------------------------------------------------
-  // L30: AI Invoice fallback helper – uses l10n instead of hardcoded strings
-  // ---------------------------------------------------------------------------
-
-  /// Returns a localized fallback label for AI invoice import.
-  /// Uses [AppLocalizations] so strings are never hardcoded.
-  String _aiInvoiceFallbackLabel(AppLocalizations l10n) {
-    // Uses the existing key "aiInvoiceImport" from all ARB files.
-    return l10n.aiInvoiceImport;
-  }
-
-  // ---------------------------------------------------------------------------
-  // L34: Recent searches helpers
-  // ---------------------------------------------------------------------------
-
-  /// Record a search term (keeps the list at [_kMaxRecentSearches]).
-  void _addRecentSearch(String query) {
-    final trimmed = query.trim();
-    if (trimmed.isEmpty) return;
-    setState(() {
-      _recentSearches.remove(trimmed);
-      _recentSearches.insert(0, trimmed);
-      if (_recentSearches.length > _kMaxRecentSearches) {
-        _recentSearches.removeLast();
-      }
-    });
-  }
-
-  /// A read-only view of the current recent searches.
-  List<String> get recentSearches => List.unmodifiable(_recentSearches);
-
-  // ---------------------------------------------------------------------------
   // L35: Keyboard shortcuts overlay toggle
   // ---------------------------------------------------------------------------
 
@@ -275,7 +238,7 @@ class _PosScreenState extends ConsumerState<PosScreen> {
       final product = products[number - 1];
       ref.read(cartStateProvider.notifier).addProduct(product);
       HapticFeedback.lightImpact();
-      final l10n = AppLocalizations.of(context)!;
+      final l10n = AppLocalizations.of(context);
       _showSnackBar(context, '${l10n.addedToCart}: ${product.name}');
     }
   }
@@ -558,16 +521,15 @@ class _PosScreenState extends ConsumerState<PosScreen> {
           builder: (ctx) => AlertDialog(
             icon: const Icon(Icons.error_outline,
                 color: AppColors.error, size: 40),
-            title: Text(AppLocalizations.of(context)!.saleSaveFailed),
+            title: Text(AppLocalizations.of(context).saleSaveFailed),
             content: Text(
-              AppLocalizations.of(context)!
-                  .errorSavingSaleMessage(e.toString()),
+              AppLocalizations.of(context).errorSavingSaleMessage(e.toString()),
               textDirection: TextDirection.rtl,
             ),
             actions: [
               ElevatedButton(
                 onPressed: () => Navigator.pop(ctx),
-                child: Text(AppLocalizations.of(context)!.ok),
+                child: Text(AppLocalizations.of(context).ok),
               ),
             ],
           ),
@@ -576,15 +538,13 @@ class _PosScreenState extends ConsumerState<PosScreen> {
       }
 
       // 2. طباعة تلقائية بعد الدفع (ESC/POS)
-      if (saleId != null) {
-        final autoPrint = ref.read(autoPrintEnabledProvider);
-        final autoPrintCallback = ref.read(autoPrintCallbackProvider);
-        if (autoPrint && autoPrintCallback != null) {
-          try {
-            await autoPrintCallback(saleId);
-          } catch (e) {
-            debugPrint('Auto-print error: $e');
-          }
+      final autoPrint = ref.read(autoPrintEnabledProvider);
+      final autoPrintCallback = ref.read(autoPrintCallbackProvider);
+      if (autoPrint && autoPrintCallback != null) {
+        try {
+          await autoPrintCallback(saleId);
+        } catch (e) {
+          debugPrint('Auto-print error: $e');
         }
       }
 
@@ -600,7 +560,7 @@ class _PosScreenState extends ConsumerState<PosScreen> {
         receiptNumber: receiptNumber,
         amount: result.amountPaid,
         paymentMethodLabel:
-            result.method.localizedLabel(AppLocalizations.of(context)!),
+            result.method.localizedLabel(AppLocalizations.of(context)),
         customerPhone: result.customerPhone,
         customerName: result.customerName,
         saleId: saleId,
@@ -620,7 +580,7 @@ class _PosScreenState extends ConsumerState<PosScreen> {
     final product = await repository.getByBarcode(barcode);
     if (!mounted) return;
 
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     if (product != null) {
       ref.read(cartStateProvider.notifier).addProduct(product);
       HapticFeedback.lightImpact();
@@ -653,7 +613,7 @@ class _PosScreenState extends ConsumerState<PosScreen> {
       cartStateProvider.select((state) => state.itemCount),
     );
     final isWideScreen = context.isDesktop;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     // L35: Extended keyboard shortcuts via CallbackShortcuts
     return CallbackShortcuts(
@@ -874,7 +834,7 @@ class _PosScreenState extends ConsumerState<PosScreen> {
     final cartState = ref.read(cartStateProvider);
     if (cartState.isEmpty) return;
 
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     String? note;
 
     // حوار إدخال ملاحظة
@@ -883,7 +843,7 @@ class _PosScreenState extends ConsumerState<PosScreen> {
       context: context,
       builder: (ctx) {
         final isDark = Theme.of(ctx).brightness == Brightness.dark;
-        final dialogL10n = AppLocalizations.of(ctx)!;
+        final dialogL10n = AppLocalizations.of(ctx);
         return AlertDialog(
           title: Text(dialogL10n.suspendInvoice),
           content: Column(
@@ -977,7 +937,7 @@ class _PosShortcutsOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
 
     final shortcuts = <_ShortcutEntry>[

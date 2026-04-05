@@ -31,9 +31,6 @@ class _SidebarHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDarkMode = theme.brightness == Brightness.dark;
-
     return Container(
       height: 96,
       padding: EdgeInsets.all(collapsed ? 4 : 20),
@@ -147,7 +144,7 @@ class _SidebarHeader extends StatelessWidget {
                       ),
                       SizedBox(height: AlhaiSpacing.xxxs),
                       Builder(builder: (ctx) {
-                        final l10n = AppLocalizations.of(ctx)!;
+                        final l10n = AppLocalizations.of(ctx);
                         return Text(
                           l10n.posSystem,
                           style: TextStyle(
@@ -189,9 +186,6 @@ class _SidebarItemWidgetState extends State<_SidebarItemWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDarkMode = theme.brightness == Brightness.dark;
-
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
@@ -299,7 +293,7 @@ class _SidebarItemWidgetState extends State<_SidebarItemWidget> {
                         // علامة جديد
                         if (widget.item.isNew)
                           Builder(builder: (ctx) {
-                            final l10n = AppLocalizations.of(ctx)!;
+                            final l10n = AppLocalizations.of(ctx);
                             return Container(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 6,
@@ -531,7 +525,7 @@ class _SidebarFooter extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(collapsed ? 4 : 16),
       child: Builder(builder: (ctx) {
-        final l10n = AppLocalizations.of(ctx)!;
+        final l10n = AppLocalizations.of(ctx);
         return Column(
           children: [
             _FooterButton(
@@ -652,7 +646,7 @@ class _FooterButtonState extends State<_FooterButton> {
 class DefaultSidebarItems {
   /// إنشاء القائمة الافتراضية مع الترجمة
   static List<SidebarGroup> getGroups(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     final dashboard = AppSidebarItem(
       id: 'dashboard',

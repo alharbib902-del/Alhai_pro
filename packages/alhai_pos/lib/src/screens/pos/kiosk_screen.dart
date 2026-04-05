@@ -132,7 +132,7 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
 
   Future<void> _placeOrder() async {
     if (_cart.isEmpty) return;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -261,7 +261,7 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
   }
 
   Widget _buildOrderSuccess() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: AlhaiColors.success.withValues(alpha: 0.08),
       body: SafeArea(
@@ -306,7 +306,7 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
   }
 
   Widget _buildHeader() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Container(
       color: AppColors.primary,
       padding: const EdgeInsets.symmetric(
@@ -361,7 +361,7 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
   }
 
   Widget _buildCategoryBar() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Container(
       height: 56,
       color: Theme.of(context).colorScheme.surface,
@@ -403,7 +403,7 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
   }
 
   Widget _buildProductGrid() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final prods = _filteredProducts;
     if (prods.isEmpty) {
       return Center(
@@ -501,7 +501,7 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
   }
 
   Widget _buildCartPanel() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Column(
       children: [
         Padding(
@@ -569,7 +569,7 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
   }
 
   Widget _buildFooter() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.md),
       color: Theme.of(context).colorScheme.surface,

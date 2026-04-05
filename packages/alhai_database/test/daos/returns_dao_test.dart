@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:drift/drift.dart' hide isNotNull, isNull;
 import 'package:alhai_database/alhai_database.dart';
 import '../helpers/database_test_helpers.dart';
 
@@ -14,7 +13,7 @@ void main() {
     await db.close();
   });
 
-  ReturnsTableCompanion _makeReturn({
+  ReturnsTableCompanion makeReturn({
     String id = 'ret-1',
     String returnNumber = 'RET-001',
     String saleId = 'sale-1',
@@ -37,7 +36,7 @@ void main() {
 
   group('ReturnsDao', () {
     test('insertReturn and getReturnById', () async {
-      await db.returnsDao.insertReturn(_makeReturn());
+      await db.returnsDao.insertReturn(makeReturn());
 
       final ret = await db.returnsDao.getReturnById('ret-1');
       expect(ret, isNotNull);
@@ -52,8 +51,8 @@ void main() {
     });
 
     test('getAllReturns returns all for store', () async {
-      await db.returnsDao.insertReturn(_makeReturn());
-      await db.returnsDao.insertReturn(_makeReturn(
+      await db.returnsDao.insertReturn(makeReturn());
+      await db.returnsDao.insertReturn(makeReturn(
         id: 'ret-2',
         returnNumber: 'RET-002',
         saleId: 'sale-2',
@@ -64,8 +63,8 @@ void main() {
     });
 
     test('getReturnsBySaleId finds returns for a sale', () async {
-      await db.returnsDao.insertReturn(_makeReturn());
-      await db.returnsDao.insertReturn(_makeReturn(
+      await db.returnsDao.insertReturn(makeReturn());
+      await db.returnsDao.insertReturn(makeReturn(
         id: 'ret-other',
         returnNumber: 'RET-OTHER',
         saleId: 'sale-other',
@@ -78,11 +77,11 @@ void main() {
     });
 
     test('getReturnsByDateRange filters by date', () async {
-      await db.returnsDao.insertReturn(_makeReturn(
+      await db.returnsDao.insertReturn(makeReturn(
         id: 'ret-jun',
         createdAt: DateTime(2025, 6, 15),
       ));
-      await db.returnsDao.insertReturn(_makeReturn(
+      await db.returnsDao.insertReturn(makeReturn(
         id: 'ret-jul',
         returnNumber: 'RET-JUL',
         saleId: 'sale-2',
@@ -99,7 +98,7 @@ void main() {
     });
 
     test('markAsSynced sets syncedAt', () async {
-      await db.returnsDao.insertReturn(_makeReturn());
+      await db.returnsDao.insertReturn(makeReturn());
 
       await db.returnsDao.markAsSynced('ret-1');
 
@@ -109,7 +108,7 @@ void main() {
 
     // Return Items
     test('insertReturnItems and getReturnItems', () async {
-      await db.returnsDao.insertReturn(_makeReturn());
+      await db.returnsDao.insertReturn(makeReturn());
       await db.returnsDao.insertReturnItems([
         ReturnItemsTableCompanion.insert(
           id: 'ri-1',

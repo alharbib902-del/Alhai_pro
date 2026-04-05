@@ -326,7 +326,7 @@ void main() {
       // Returning 2 units of Milk at 12 SAR each
       const qty = 2.0;
       const unitPrice = 12.0;
-      final subtotal = qty * unitPrice; // 24.0
+      const subtotal = qty * unitPrice; // 24.0
       final refund = calculateRefundAmountWithVat(subtotal);
 
       expect(subtotal, 24.0);

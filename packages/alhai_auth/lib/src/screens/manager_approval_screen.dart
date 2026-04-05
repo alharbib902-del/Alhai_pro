@@ -127,8 +127,7 @@ class _ManagerApprovalScreenState extends ConsumerState<ManagerApprovalScreen> {
 
   /// محتوى شاشة الإعداد (بدون Scaffold) للاستخدام في Dialog
   Widget _buildSetupContent() {
-    final l10n = AppLocalizations.of(context)!;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context);
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -190,7 +189,7 @@ class _ManagerApprovalScreenState extends ConsumerState<ManagerApprovalScreen> {
   }
 
   Widget _buildSetupScreen() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.managerPinSetup),
@@ -219,8 +218,7 @@ class _ManagerApprovalScreenState extends ConsumerState<ManagerApprovalScreen> {
 
   /// محتوى شاشة التحقق (بدون Scaffold) للاستخدام في Dialog
   Widget _buildVerifyContent() {
-    final l10n = AppLocalizations.of(context)!;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context);
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -280,7 +278,7 @@ class _ManagerApprovalScreenState extends ConsumerState<ManagerApprovalScreen> {
   }
 
   Widget _buildVerifyScreen() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.managerPinSetup),
@@ -450,7 +448,7 @@ class _ManagerApprovalScreenState extends ConsumerState<ManagerApprovalScreen> {
   }
 
   Future<void> _confirmSetup() async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     if (_setupPin != _confirmPin) {
       setState(() {
         _error = l10n.pinsMismatch;
@@ -491,7 +489,7 @@ class _ManagerApprovalScreenState extends ConsumerState<ManagerApprovalScreen> {
   }
 
   Future<void> _verifyPin() async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     setState(() => _isLoading = true);
 
     try {

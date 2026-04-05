@@ -121,7 +121,7 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
               content:
-                  Text('${AppLocalizations.of(context)!.errorOccurred}: $e')),
+                  Text('${AppLocalizations.of(context).errorOccurred}: $e')),
         );
       }
     }
@@ -129,7 +129,7 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     if (_isLoading) {
@@ -421,13 +421,6 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
     }
   }
 
-  void _showMap() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-          content: Text(AppLocalizations.of(context)!.featureNotAvailableNow)),
-    );
-  }
-
   void _showOrderDetails(
     OrdersTableData order,
     List<OrderItemsTableData> items,
@@ -435,8 +428,7 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
     String customerPhone,
     String address,
   ) {
-    final l10n = AppLocalizations.of(context)!;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context);
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -589,7 +581,7 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
 
   /// بناء الخط الزمني لحالات الطلب
   Widget _buildTimeline(OrdersTableData order) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final steps = [
       {'label': l10n.pending, 'done': true},
@@ -694,7 +686,7 @@ class _StatusChip extends StatelessWidget {
   const _StatusChip({required this.status});
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final colors = {
       'created': AlhaiColors.warning,
       'confirmed': AlhaiColors.info,

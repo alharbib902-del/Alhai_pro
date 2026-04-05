@@ -24,7 +24,7 @@ class LiteAlertsSummaryScreen extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final size = MediaQuery.of(context).size;
     final isMobile = size.width < 600;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     final stockAsync = ref.watch(liteStockAlertsProvider);
     final orderAsync = ref.watch(liteOrderAlertsProvider);
@@ -313,10 +313,10 @@ class LiteAlertsSummaryScreen extends ConsumerWidget {
                     color: isDark ? Colors.white : Colors.black87,
                   ),
                 ),
-                if (notif.body != null) ...[
+                ...[
                   const SizedBox(height: AlhaiSpacing.xxxs),
                   Text(
-                    notif.body!,
+                    notif.body,
                     style: TextStyle(
                       fontSize: 12,
                       color: isDark

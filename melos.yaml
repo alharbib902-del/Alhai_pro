@@ -44,7 +44,7 @@ command:
 
 scripts:
   analyze:
-    run: melos exec -c 6 -- flutter analyze
+    run: melos exec -c 6 -- dart analyze
     description: Run analyzer in all packages and apps
 
   test:

@@ -9,12 +9,12 @@ void main() {
       testWidgets('renders with title text', (tester) async {
         // Arrange & Act
         await tester.pumpWidget(
-          MaterialApp(
+          const MaterialApp(
             home: Scaffold(
-              appBar: const AlhaiAppBar(
+              appBar: AlhaiAppBar(
                 title: 'Test Title',
               ),
-              body: const SizedBox(),
+              body: SizedBox(),
             ),
           ),
         );
@@ -26,13 +26,13 @@ void main() {
       testWidgets('renders with subtitle', (tester) async {
         // Arrange & Act
         await tester.pumpWidget(
-          MaterialApp(
+          const MaterialApp(
             home: Scaffold(
-              appBar: const AlhaiAppBar(
+              appBar: AlhaiAppBar(
                 title: 'Main Title',
                 subtitle: 'Subtitle Text',
               ),
-              body: const SizedBox(),
+              body: SizedBox(),
             ),
           ),
         );
@@ -128,13 +128,13 @@ void main() {
       testWidgets('applies custom background color', (tester) async {
         // Arrange & Act
         await tester.pumpWidget(
-          MaterialApp(
+          const MaterialApp(
             home: Scaffold(
-              appBar: const AlhaiAppBar(
+              appBar: AlhaiAppBar(
                 title: 'Blue AppBar',
                 backgroundColor: Colors.blue,
               ),
-              body: const SizedBox(),
+              body: SizedBox(),
             ),
           ),
         );
@@ -146,13 +146,13 @@ void main() {
       testWidgets('applies center title', (tester) async {
         // Arrange & Act
         await tester.pumpWidget(
-          MaterialApp(
+          const MaterialApp(
             home: Scaffold(
-              appBar: const AlhaiAppBar(
+              appBar: AlhaiAppBar(
                 title: 'Centered',
                 centerTitle: true,
               ),
-              body: const SizedBox(),
+              body: SizedBox(),
             ),
           ),
         );

@@ -55,7 +55,7 @@ class _InventoryReportScreenState extends ConsumerState<InventoryReportScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     if (_isLoading) {
       return Scaffold(
@@ -150,7 +150,7 @@ class _InventoryReportScreenState extends ConsumerState<InventoryReportScreen> {
         inventory.where((i) => i.stock > 0 && i.stock <= i.minStock).length;
     final totalValue =
         inventory.fold(0.0, (sum, i) => sum + (i.cost * i.stock));
-    final totalItems = inventory.fold(0, (sum, i) => sum + i.stock);
+    final totalItems = inventory.fold(0, (sum, i) => sum + i.stock.toInt());
 
     return Scaffold(
       appBar: AppBar(

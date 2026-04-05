@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:drift/drift.dart' hide isNotNull, isNull;
 import 'package:alhai_database/alhai_database.dart';
 import '../helpers/database_test_helpers.dart';
 
@@ -14,7 +13,7 @@ void main() {
     await db.close();
   });
 
-  SaleItemsTableCompanion _makeItem({
+  SaleItemsTableCompanion makeItem({
     String id = 'item-1',
     String saleId = 'sale-1',
     String productId = 'prod-1',
@@ -38,8 +37,8 @@ void main() {
 
   group('SaleItemsDao', () {
     test('insertItem and getItemsBySaleId', () async {
-      await db.saleItemsDao.insertItem(_makeItem());
-      await db.saleItemsDao.insertItem(_makeItem(
+      await db.saleItemsDao.insertItem(makeItem());
+      await db.saleItemsDao.insertItem(makeItem(
         id: 'item-2',
         productId: 'prod-2',
         productName: 'عصير برتقال',
@@ -54,7 +53,7 @@ void main() {
     });
 
     test('getItemsBySaleId returns empty for unknown sale', () async {
-      await db.saleItemsDao.insertItem(_makeItem());
+      await db.saleItemsDao.insertItem(makeItem());
 
       final items = await db.saleItemsDao.getItemsBySaleId('unknown-sale');
       expect(items, isEmpty);
@@ -62,9 +61,9 @@ void main() {
 
     test('insertItems batch inserts multiple items', () async {
       final items = [
-        _makeItem(id: 'item-1'),
-        _makeItem(id: 'item-2', productName: 'خبز', productId: 'prod-2'),
-        _makeItem(id: 'item-3', productName: 'جبنة', productId: 'prod-3'),
+        makeItem(id: 'item-1'),
+        makeItem(id: 'item-2', productName: 'خبز', productId: 'prod-2'),
+        makeItem(id: 'item-3', productName: 'جبنة', productId: 'prod-3'),
       ];
 
       await db.saleItemsDao.insertItems(items);
@@ -74,11 +73,11 @@ void main() {
     });
 
     test('deleteItemsBySaleId removes all items for a sale', () async {
-      await db.saleItemsDao.insertItem(_makeItem(id: 'item-1'));
+      await db.saleItemsDao.insertItem(makeItem(id: 'item-1'));
       await db.saleItemsDao
-          .insertItem(_makeItem(id: 'item-2', productId: 'prod-2'));
+          .insertItem(makeItem(id: 'item-2', productId: 'prod-2'));
       await db.saleItemsDao.insertItem(
-          _makeItem(id: 'item-3', saleId: 'sale-2', productId: 'prod-3'));
+          makeItem(id: 'item-3', saleId: 'sale-2', productId: 'prod-3'));
 
       final deleted = await db.saleItemsDao.deleteItemsBySaleId('sale-1');
       expect(deleted, 2);
@@ -114,8 +113,8 @@ void main() {
       ));
 
       await db.saleItemsDao
-          .insertItem(_makeItem(id: 'item-1', qty: 3, productId: 'prod-1'));
-      await db.saleItemsDao.insertItem(_makeItem(
+          .insertItem(makeItem(id: 'item-1', qty: 3, productId: 'prod-1'));
+      await db.saleItemsDao.insertItem(makeItem(
           id: 'item-2', saleId: 'sale-2', qty: 5, productId: 'prod-1'));
 
       final count =

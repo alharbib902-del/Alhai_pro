@@ -76,7 +76,7 @@ class _LiteStockAdjustmentScreenState
       );
       ref.invalidate(liteAllProductsProvider);
       if (mounted) {
-        final l10n = AppLocalizations.of(context)!;
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(l10n.success),
@@ -89,7 +89,7 @@ class _LiteStockAdjustmentScreenState
       }
     } catch (_) {
       if (mounted) {
-        final l10n = AppLocalizations.of(context)!;
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(l10n.errorOccurred),
@@ -108,7 +108,7 @@ class _LiteStockAdjustmentScreenState
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final size = MediaQuery.of(context).size;
     final isMobile = size.width < 600;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final dataAsync = ref.watch(liteAllProductsProvider);
 
     return Scaffold(

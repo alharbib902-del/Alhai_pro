@@ -22,7 +22,7 @@ class LiteEmployeeScheduleScreen extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final size = MediaQuery.of(context).size;
     final isMobile = size.width < 600;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final dataAsync = ref.watch(liteEmployeeScheduleProvider);
 
     return Scaffold(
@@ -98,7 +98,7 @@ class LiteEmployeeScheduleScreen extends ConsumerWidget {
   }
 
   Widget _buildWeekSelector(BuildContext context, bool isDark) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final now = DateTime.now();
     final todayWeekday = now.weekday;
     final daysSinceSat = (todayWeekday + 1) % 7;
@@ -179,7 +179,7 @@ class LiteEmployeeScheduleScreen extends ConsumerWidget {
   Widget _buildScheduleCard(
       BuildContext context, ShiftWithCashier entry, bool isDark, bool isToday) {
     final shift = entry.shift;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final name = entry.cashierName ?? l10n.unknownUser;
     final isOpen = shift.status == 'open';
     final startTime =

@@ -65,8 +65,9 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
     if (action.contains('login')) return Icons.login_rounded;
     if (action.contains('logout')) return Icons.logout_rounded;
     if (action.contains('sale')) return Icons.receipt_long_rounded;
-    if (action.contains('product') || action.contains('price'))
+    if (action.contains('product') || action.contains('price')) {
       return Icons.edit_rounded;
+    }
     if (action.contains('refund')) return Icons.assignment_return_rounded;
     if (action.contains('stock')) return Icons.inventory_rounded;
     if (action.contains('shift')) return Icons.schedule_rounded;
@@ -76,17 +77,23 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
   }
 
   static Color _getActionColor(String action) {
-    if (action.contains('login') || action.contains('backup'))
+    if (action.contains('login') || action.contains('backup')) {
       return AppColors.success;
+    }
     if (action.contains('logout')) return AppColors.textSecondary;
-    if (action.contains('sale') && !action.contains('refund'))
+    if (action.contains('sale') && !action.contains('refund')) {
       return AppColors.primary;
+    }
     if (action.contains('edit') ||
         action.contains('price') ||
-        action.contains('stock')) return AppColors.warning;
+        action.contains('stock')) {
+      return AppColors.warning;
+    }
     if (action.contains('refund') ||
         action.contains('cancel') ||
-        action.contains('delete')) return AppColors.error;
+        action.contains('delete')) {
+      return AppColors.error;
+    }
     return AppColors.info;
   }
 
@@ -95,7 +102,9 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
     if (action.contains('sale') || action.contains('refund')) return 'sales';
     if (action.contains('product') ||
         action.contains('price') ||
-        action.contains('stock')) return 'products';
+        action.contains('stock')) {
+      return 'products';
+    }
     if (action.contains('shift') || action.contains('cash')) return 'system';
     return 'system';
   }
@@ -103,10 +112,12 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
   static String _formatTimeAgo(DateTime dt) {
     final diff = DateTime.now().difference(dt);
     if (diff.inMinutes < 1) return '\u0627\u0644\u0622\u0646';
-    if (diff.inMinutes < 60)
+    if (diff.inMinutes < 60) {
       return '\u0645\u0646\u0630 ${diff.inMinutes} \u062f\u0642\u064a\u0642\u0629';
-    if (diff.inHours < 24)
+    }
+    if (diff.inHours < 24) {
       return '\u0645\u0646\u0630 ${diff.inHours} \u0633\u0627\u0639\u0629';
+    }
     return '\u0645\u0646\u0630 ${diff.inDays} \u064a\u0648\u0645';
   }
 

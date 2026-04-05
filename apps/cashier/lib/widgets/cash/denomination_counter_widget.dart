@@ -6,7 +6,6 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_design_system/alhai_design_system.dart'
     show AlhaiSpacing, AppColors;
 import 'package:alhai_l10n/alhai_l10n.dart';
@@ -109,7 +108,7 @@ class _DenominationCounterWidgetState extends State<DenominationCounterWidget> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       children: [
@@ -295,7 +294,7 @@ Future<double?> showDenominationCounterSheet(
                       const Icon(Icons.calculate_rounded,
                           color: AppColors.denominationAccent),
                       const SizedBox(width: AlhaiSpacing.xs),
-                      Text(AppLocalizations.of(ctx)!.countCurrencyBtn,
+                      Text(AppLocalizations.of(ctx).countCurrencyBtn,
                           style: const TextStyle(
                               fontSize: 18, fontWeight: FontWeight.bold)),
                       const Spacer(),
@@ -332,7 +331,7 @@ Future<double?> showDenominationCounterSheet(
                       Expanded(
                         child: OutlinedButton(
                           onPressed: () => Navigator.pop(ctx),
-                          child: Text(AppLocalizations.of(ctx)!.cancel),
+                          child: Text(AppLocalizations.of(ctx).cancel),
                         ),
                       ),
                       const SizedBox(width: AlhaiSpacing.sm),
@@ -341,9 +340,8 @@ Future<double?> showDenominationCounterSheet(
                         child: FilledButton.icon(
                           onPressed: () => Navigator.pop(ctx, currentTotal),
                           icon: const Icon(Icons.check),
-                          label: Text(AppLocalizations.of(ctx)!
-                              .confirmAmountSar(
-                                  currentTotal.toStringAsFixed(2))),
+                          label: Text(AppLocalizations.of(ctx).confirmAmountSar(
+                              currentTotal.toStringAsFixed(2))),
                         ),
                       ),
                     ],

@@ -85,8 +85,9 @@ class FraudAlertCard extends StatelessWidget {
 
   String _formatTimeAgo(DateTime timestamp) {
     final diff = DateTime.now().difference(timestamp);
-    if (diff.inMinutes < 60)
+    if (diff.inMinutes < 60) {
       return 'منذ ${diff.inMinutes} دقيقة'; // X minutes ago
+    }
     if (diff.inHours < 24) return 'منذ ${diff.inHours} ساعة'; // X hours ago
     return 'منذ ${diff.inDays} يوم'; // X days ago
   }
@@ -94,7 +95,7 @@ class FraudAlertCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final severityColor = _getSeverityColor();
 
     return Material(

@@ -114,7 +114,7 @@ class _PaymentSuccessDialogState extends State<PaymentSuccessDialog>
     if (phone.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(AppLocalizations.of(context)!.enterPhoneNumber),
+          content: Text(AppLocalizations.of(context).enterPhoneNumber),
           backgroundColor: AlhaiColors.warning,
         ),
       );
@@ -152,7 +152,7 @@ class _PaymentSuccessDialogState extends State<PaymentSuccessDialog>
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-                AppLocalizations.of(context)!.whatsappSendError(e.toString())),
+                AppLocalizations.of(context).whatsappSendError(e.toString())),
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
@@ -195,7 +195,7 @@ class _PaymentSuccessDialogState extends State<PaymentSuccessDialog>
 
               // العنوان
               Text(
-                AppLocalizations.of(context)!.paymentSuccessful,
+                AppLocalizations.of(context).paymentSuccessful,
                 style: theme.textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: AppColors.success,
@@ -227,7 +227,7 @@ class _PaymentSuccessDialogState extends State<PaymentSuccessDialog>
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          AppLocalizations.of(context)!.invoiceNumberTitle,
+                          AppLocalizations.of(context).invoiceNumberTitle,
                           style: TextStyle(
                             color:
                                 isDark ? Colors.white60 : AppColors.textMuted,
@@ -244,7 +244,7 @@ class _PaymentSuccessDialogState extends State<PaymentSuccessDialog>
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          AppLocalizations.of(context)!.amountPaidTitle,
+                          AppLocalizations.of(context).amountPaidTitle,
                           style: TextStyle(
                             color:
                                 isDark ? Colors.white60 : AppColors.textMuted,
@@ -270,7 +270,7 @@ class _PaymentSuccessDialogState extends State<PaymentSuccessDialog>
               const SizedBox(height: AlhaiSpacing.sm),
 
               Text(
-                AppLocalizations.of(context)!.sendReceiptViaWhatsapp,
+                AppLocalizations.of(context).sendReceiptViaWhatsapp,
                 style: theme.textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
@@ -319,8 +319,8 @@ class _PaymentSuccessDialogState extends State<PaymentSuccessDialog>
                           size: 18,
                         ),
                   label: Text(_sent
-                      ? AppLocalizations.of(context)!.sentLabel
-                      : AppLocalizations.of(context)!.sendWhatsapp),
+                      ? AppLocalizations.of(context).sentLabel
+                      : AppLocalizations.of(context).sendWhatsapp),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.whatsappGreen,
                     foregroundColor: AppColors.textOnPrimary,
@@ -352,7 +352,7 @@ class _PaymentSuccessDialogState extends State<PaymentSuccessDialog>
                         }
                       },
                       icon: const Icon(Icons.print_outlined, size: 18),
-                      label: Text(AppLocalizations.of(context)!.print),
+                      label: Text(AppLocalizations.of(context).print),
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
                             vertical: AlhaiSpacing.sm),
@@ -371,7 +371,7 @@ class _PaymentSuccessDialogState extends State<PaymentSuccessDialog>
                         Navigator.pop(context, PaymentSuccessAction.newSale);
                       },
                       icon: const Icon(Icons.add_shopping_cart, size: 18),
-                      label: Text(AppLocalizations.of(context)!.newSaleButton),
+                      label: Text(AppLocalizations.of(context).newSaleButton),
                       style: FilledButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
                             vertical: AlhaiSpacing.sm),

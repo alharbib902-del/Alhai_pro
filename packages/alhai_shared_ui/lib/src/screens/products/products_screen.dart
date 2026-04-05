@@ -87,7 +87,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
     final isWideScreen = context.isDesktop;
     final isDesktop = context.screenWidth >= AppSizes.breakpointTablet;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return KeyboardListener(
       focusNode: _keyboardFocusNode,
@@ -823,7 +823,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
     showDialog(
       context: context,
       builder: (ctx) {
-        final l10n = AppLocalizations.of(ctx)!;
+        final l10n = AppLocalizations.of(ctx);
         return AlertDialog(
           title: Text('${l10n.edit}: ${product.name}'),
           content: Text(l10n.featureNotAvailableNow),
@@ -1202,7 +1202,7 @@ class _ProductListCardState extends State<_ProductListCard> {
                       const SizedBox(height: AppSizes.xxs),
                       Text(
                         widget.product.barcode ??
-                            AppLocalizations.of(context)!.noBarcode,
+                            AppLocalizations.of(context).noBarcode,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                               color: colorScheme.onSurfaceVariant,
                             ),
@@ -1223,7 +1223,7 @@ class _ProductListCardState extends State<_ProductListCard> {
                           ),
                           const Spacer(),
                           Text(
-                            AppLocalizations.of(context)!
+                            AppLocalizations.of(context)
                                 .stockCount(widget.product.stockQty.toInt()),
                             style:
                                 Theme.of(context).textTheme.bodySmall?.copyWith(

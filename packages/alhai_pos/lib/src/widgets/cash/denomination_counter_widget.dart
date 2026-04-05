@@ -111,7 +111,7 @@ class _DenominationCounterWidgetState extends State<DenominationCounterWidget> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       children: [
@@ -252,7 +252,7 @@ Future<double?> showDenominationCounterSheet(
   double initialTotal = 0,
 }) {
   double currentTotal = initialTotal;
-  final l10n = AppLocalizations.of(context)!;
+  final l10n = AppLocalizations.of(context);
 
   return showModalBottomSheet<double>(
     context: context,

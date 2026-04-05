@@ -81,11 +81,11 @@ class _DebtsReportScreenState extends ConsumerState<DebtsReportScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.debtsReportTitle),
+        title: Text(AppLocalizations.of(context).debtsReportTitle),
         actions: [
           PopupMenuButton<String>(
             icon: const Icon(Icons.sort),
-            tooltip: AppLocalizations.of(context)!.sortLabel,
+            tooltip: AppLocalizations.of(context).sortLabel,
             onSelected: (value) {
               setState(() {
                 _sortBy = value;
@@ -95,23 +95,23 @@ class _DebtsReportScreenState extends ConsumerState<DebtsReportScreen> {
             itemBuilder: (context) => [
               PopupMenuItem(
                   value: 'amount',
-                  child: Text(AppLocalizations.of(context)!.sortByAmount)),
+                  child: Text(AppLocalizations.of(context).sortByAmount)),
               PopupMenuItem(
                   value: 'name',
-                  child: Text(AppLocalizations.of(context)!.sortByName)),
+                  child: Text(AppLocalizations.of(context).sortByName)),
               PopupMenuItem(
                   value: 'date',
-                  child: Text(AppLocalizations.of(context)!.sortByLastPayment)),
+                  child: Text(AppLocalizations.of(context).sortByLastPayment)),
             ],
           ),
           IconButton(
             icon: const Icon(Icons.share),
-            tooltip: AppLocalizations.of(context)!.shareAction,
+            tooltip: AppLocalizations.of(context).shareAction,
             onPressed: _shareReport,
           ),
           IconButton(
             icon: const Icon(Icons.print),
-            tooltip: AppLocalizations.of(context)!.printAction,
+            tooltip: AppLocalizations.of(context).printAction,
             onPressed: _printReport,
           ),
         ],
@@ -136,11 +136,11 @@ class _DebtsReportScreenState extends ConsumerState<DebtsReportScreen> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(AppLocalizations.of(context)!.totalDebts,
+                          Text(AppLocalizations.of(context).totalDebts,
                               style: const TextStyle(color: Colors.white70)),
                           const SizedBox(height: AlhaiSpacing.xxs),
                           Text(
-                            '${_totalDebts.toStringAsFixed(0)} ${AppLocalizations.of(context)!.sar}',
+                            '${_totalDebts.toStringAsFixed(0)} ${AppLocalizations.of(context).sar}',
                             style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 28,
@@ -151,7 +151,7 @@ class _DebtsReportScreenState extends ConsumerState<DebtsReportScreen> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Text(AppLocalizations.of(context)!.customersCount,
+                          Text(AppLocalizations.of(context).customersCount,
                               style: const TextStyle(color: Colors.white70)),
                           const SizedBox(height: AlhaiSpacing.xxs),
                           Text(
@@ -178,7 +178,7 @@ class _DebtsReportScreenState extends ConsumerState<DebtsReportScreen> {
                                   size: 64, color: Colors.green.shade400),
                               const SizedBox(height: AlhaiSpacing.md),
                               Text(
-                                  AppLocalizations.of(context)!
+                                  AppLocalizations.of(context)
                                       .noOutstandingDebts,
                                   style: TextStyle(
                                       color: Theme.of(context)
@@ -219,7 +219,7 @@ class _DebtsReportScreenState extends ConsumerState<DebtsReportScreen> {
                                                   .colorScheme
                                                   .onSurfaceVariant)),
                                     Text(
-                                      AppLocalizations.of(context)!.lastUpdate(
+                                      AppLocalizations.of(context).lastUpdate(
                                           _formatDate(
                                               debt['lastPayment'] as DateTime)),
                                       style: TextStyle(
@@ -235,7 +235,7 @@ class _DebtsReportScreenState extends ConsumerState<DebtsReportScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
                                     Text(
-                                      '${(debt['balance'] as double).toStringAsFixed(0)} ${AppLocalizations.of(context)!.sar}',
+                                      '${(debt['balance'] as double).toStringAsFixed(0)} ${AppLocalizations.of(context).sar}',
                                       style: const TextStyle(
                                           fontWeight: FontWeight.bold,
                                           color: Colors.red,
@@ -247,7 +247,7 @@ class _DebtsReportScreenState extends ConsumerState<DebtsReportScreen> {
                                           padding: EdgeInsets.zero,
                                           minimumSize: const Size(0, 0)),
                                       child: Text(
-                                          AppLocalizations.of(context)!
+                                          AppLocalizations.of(context)
                                               .recordPayment,
                                           style: const TextStyle(fontSize: 12)),
                                     ),
@@ -276,16 +276,16 @@ class _DebtsReportScreenState extends ConsumerState<DebtsReportScreen> {
       context: context,
       builder: (dialogContext) => StatefulBuilder(
         builder: (dialogContext, setDialogState) => AlertDialog(
-          title: Text(AppLocalizations.of(dialogContext)!
+          title: Text(AppLocalizations.of(dialogContext)
               .recordPaymentFor(debt['name'] as String)),
           content: TextField(
             controller: amountController,
             keyboardType: TextInputType.number,
             autofocus: true,
             decoration: InputDecoration(
-              labelText: AppLocalizations.of(dialogContext)!.paymentAmountField,
-              suffixText: AppLocalizations.of(dialogContext)!.sar,
-              helperText: AppLocalizations.of(dialogContext)!
+              labelText: AppLocalizations.of(dialogContext).paymentAmountField,
+              suffixText: AppLocalizations.of(dialogContext).sar,
+              helperText: AppLocalizations.of(dialogContext)
                   .currentDebt((debt['balance'] as double).toStringAsFixed(0)),
               errorText: errorText,
             ),
@@ -293,7 +293,7 @@ class _DebtsReportScreenState extends ConsumerState<DebtsReportScreen> {
           actions: [
             TextButton(
                 onPressed: () => Navigator.pop(dialogContext),
-                child: Text(AppLocalizations.of(dialogContext)!.cancel)),
+                child: Text(AppLocalizations.of(dialogContext).cancel)),
             FilledButton(
               onPressed: () async {
                 final amount = double.tryParse(amountController.text.trim());
@@ -316,7 +316,7 @@ class _DebtsReportScreenState extends ConsumerState<DebtsReportScreen> {
                   currentBalance: balance,
                 );
               },
-              child: Text(AppLocalizations.of(dialogContext)!.recordAction),
+              child: Text(AppLocalizations.of(dialogContext).recordAction),
             ),
           ],
         ),
@@ -354,7 +354,7 @@ class _DebtsReportScreenState extends ConsumerState<DebtsReportScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(AppLocalizations.of(context)!.paymentRecordedMsg),
+            content: Text(AppLocalizations.of(context).paymentRecordedMsg),
             backgroundColor: Colors.green,
           ),
         );
@@ -492,7 +492,7 @@ class _DebtsReportScreenState extends ConsumerState<DebtsReportScreen> {
   void _showCustomerDetails(Map<String, dynamic> debt) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-          content: Text(AppLocalizations.of(context)!
+          content: Text(AppLocalizations.of(context)
               .showDetails(debt['name'] as String))),
     );
   }

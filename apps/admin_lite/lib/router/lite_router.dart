@@ -181,20 +181,18 @@ final liteRouterProvider = Provider<GoRouter>((ref) {
 Widget _errorBuilder(BuildContext context, GoRouterState state) {
   final l10n = AppLocalizations.of(context);
   return Scaffold(
-    appBar: AppBar(title: Text(l10n?.error ?? 'Error')),
+    appBar: AppBar(title: Text(l10n.error)),
     body: Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Icon(Icons.error_outline, size: 64, color: Colors.red),
           const SizedBox(height: AlhaiSpacing.md),
-          Text(l10n != null
-              ? '${l10n.error}: ${state.uri.path}'
-              : 'Page not found: ${state.uri.path}'),
+          Text('${l10n.error}: ${state.uri.path}'),
           const SizedBox(height: AlhaiSpacing.lg),
           FilledButton(
             onPressed: () => context.go(AppRoutes.dashboard),
-            child: Text(l10n?.home ?? 'Home'),
+            child: Text(l10n.home),
           ),
         ],
       ),

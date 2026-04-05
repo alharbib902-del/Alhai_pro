@@ -101,11 +101,12 @@ class _ZakatReportScreenState extends ConsumerState<ZakatReportScreen> {
         });
       }
     } catch (e) {
-      if (mounted)
+      if (mounted) {
         setState(() {
           _error = e.toString();
           _isLoading = false;
         });
+      }
     }
   }
 

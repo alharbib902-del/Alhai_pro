@@ -17,7 +17,7 @@ class RefundReceiptScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     if (refundId == null || refundId!.isEmpty) {
-      final l10n = AppLocalizations.of(context)!;
+      final l10n = AppLocalizations.of(context);
       return Scaffold(
         appBar: AppBar(
           title: Text(l10n.refundReceiptTitle),
@@ -34,7 +34,7 @@ class RefundReceiptScreen extends ConsumerWidget {
     }
 
     final returnDetailAsync = ref.watch(returnDetailProvider(refundId!));
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -74,7 +74,7 @@ class RefundReceiptScreen extends ConsumerWidget {
     List<ReturnItemsTableData> items,
   ) {
     final totalRefund = returnData.totalRefund;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final screenWidth = MediaQuery.sizeOf(context).width;
     final isMobile = screenWidth < AlhaiBreakpoints.tablet;
     // Responsive receipt width: fill on mobile, constrained on larger screens
@@ -245,7 +245,7 @@ class RefundReceiptScreen extends ConsumerWidget {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content:
-                Text(AppLocalizations.of(context)!.printError(e.toString())),
+                Text(AppLocalizations.of(context).printError(e.toString())),
             backgroundColor: AppColors.error,
           ),
         );
@@ -258,7 +258,7 @@ class RefundReceiptScreen extends ConsumerWidget {
   }
 
   String _getReasonLabel(BuildContext context, String reason) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     switch (reason) {
       case 'damaged':
         return l10n.damagedProduct;
@@ -278,7 +278,7 @@ class RefundReceiptScreen extends ConsumerWidget {
   }
 
   String _getRefundMethodLabel(BuildContext context, String method) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     switch (method) {
       case 'cash':
         return l10n.cashRefundMethod;

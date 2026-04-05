@@ -41,7 +41,7 @@ class _AiBasketAnalysisScreenState extends ConsumerState<AiBasketAnalysisScreen>
   Widget build(BuildContext context) {
     final isWideScreen = context.isDesktop;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       children: [
@@ -95,9 +95,9 @@ class _AiBasketAnalysisScreenState extends ConsumerState<AiBasketAnalysisScreen>
               indicatorSize: TabBarIndicatorSize.label,
               dividerColor: Colors.transparent,
               tabs: [
-                Tab(text: AppLocalizations.of(context)!.aiAssociations),
-                Tab(text: AppLocalizations.of(context)!.aiBundleSuggestions),
-                Tab(text: AppLocalizations.of(context)!.aiCrossSell),
+                Tab(text: AppLocalizations.of(context).aiAssociations),
+                Tab(text: AppLocalizations.of(context).aiBundleSuggestions),
+                Tab(text: AppLocalizations.of(context).aiCrossSell),
               ],
             ),
           ),
@@ -123,7 +123,7 @@ class _AiBasketAnalysisScreenState extends ConsumerState<AiBasketAnalysisScreen>
 
   Widget _buildInsightsSummary(
       bool isDark, BasketInsight insights, bool isWideScreen) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final cards = [
       _InsightCardData(
         title: l10n.aiAvgBasketSize,
@@ -250,9 +250,8 @@ class _AiBasketAnalysisScreenState extends ConsumerState<AiBasketAnalysisScreen>
           // Show pair details
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(AppLocalizations.of(context)!
-                  .aiAssociationFrequency(
-                      pair.productAName, pair.productBName, pair.frequency)),
+              content: Text(AppLocalizations.of(context).aiAssociationFrequency(
+                  pair.productAName, pair.productBName, pair.frequency)),
               backgroundColor: AppColors.primary,
             ),
           );
@@ -284,7 +283,7 @@ class _AiBasketAnalysisScreenState extends ConsumerState<AiBasketAnalysisScreen>
                 onActivate: () {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text(AppLocalizations.of(context)!
+                      content: Text(AppLocalizations.of(context)
                           .aiBundleActivated(bundles[index].name)),
                       backgroundColor: AppColors.success,
                     ),

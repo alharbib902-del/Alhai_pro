@@ -137,7 +137,7 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   Widget _buildBackButton(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return IconButton(
       onPressed: onBackPressed ?? () => Navigator.of(context).pop(),
       icon: const AdaptiveIcon(Icons.arrow_forward),
@@ -148,7 +148,7 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   Widget _buildMenuButton(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return IconButton(
       onPressed: onMenuTap,
       icon: const Icon(Icons.menu),
@@ -201,7 +201,7 @@ class TopBarNotificationButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Stack(
       children: [
         IconButton(
@@ -257,7 +257,7 @@ class TopBarSearchButton extends StatelessWidget {
       icon: const Icon(Icons.search),
       iconSize: AppIconSize.md,
       color: AppColors.textSecondary,
-      tooltip: tooltip ?? AppLocalizations.of(context)!.search,
+      tooltip: tooltip ?? AppLocalizations.of(context).search,
     );
   }
 }
@@ -278,7 +278,7 @@ class TopBarHelpButton extends StatelessWidget {
       icon: const Icon(Icons.help_outline),
       iconSize: AppIconSize.md,
       color: AppColors.textSecondary,
-      tooltip: AppLocalizations.of(context)!.help,
+      tooltip: AppLocalizations.of(context).help,
     );
   }
 }
@@ -417,8 +417,8 @@ class TopBarStatusIndicator extends StatelessWidget {
           Text(
             customText ??
                 (isOnline
-                    ? AppLocalizations.of(context)!.online
-                    : AppLocalizations.of(context)!.offline),
+                    ? AppLocalizations.of(context).online
+                    : AppLocalizations.of(context).offline),
             style: AppTypography.labelSmall.copyWith(
               color: isOnline ? AppColors.success : AppColors.warning,
               fontWeight: FontWeight.w600,

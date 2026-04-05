@@ -164,14 +164,14 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
             child: Row(
               children: [
                 Text(
-                  AppLocalizations.of(context)!.selectCustomerTitle,
+                  AppLocalizations.of(context).selectCustomerTitle,
                   style: AppTypography.headlineSmall,
                 ),
                 const Spacer(),
                 IconButton(
                   onPressed: () => Navigator.pop(context),
                   icon: const Icon(Icons.close),
-                  tooltip: AppLocalizations.of(context)!.close,
+                  tooltip: AppLocalizations.of(context).close,
                 ),
               ],
             ),
@@ -186,7 +186,7 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
               maxLength: 100,
               decoration: InputDecoration(
                 counterText: '',
-                hintText: AppLocalizations.of(context)!.searchByNameOrPhoneHint,
+                hintText: AppLocalizations.of(context).searchByNameOrPhoneHint,
                 prefixIcon: const Icon(Icons.search),
                 suffixIcon: _searchController.text.isNotEmpty
                     ? IconButton(
@@ -194,7 +194,7 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
                         onPressed: () {
                           _searchController.clear();
                         },
-                        tooltip: AppLocalizations.of(context)!.clearField,
+                        tooltip: AppLocalizations.of(context).clearField,
                       )
                     : null,
                 filled: true,
@@ -218,14 +218,14 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
                   child: const Icon(Icons.person_outline,
                       color: AppColors.textMuted),
                 ),
-                title: Text(AppLocalizations.of(context)!.walkInCustomerLabel),
+                title: Text(AppLocalizations.of(context).walkInCustomerLabel),
                 subtitle:
-                    Text(AppLocalizations.of(context)!.continueWithoutCustomer),
+                    Text(AppLocalizations.of(context).continueWithoutCustomer),
                 trailing: const AdaptiveIcon(Icons.arrow_forward_ios, size: 16),
                 onTap: () {
                   widget.onSelect(CustomerSearchResult(
                     id: 'walk-in',
-                    name: AppLocalizations.of(context)!.walkInCustomerLabel,
+                    name: AppLocalizations.of(context).walkInCustomerLabel,
                     phone: '',
                     balance: 0,
                     loyaltyPoints: 0,
@@ -263,7 +263,7 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
                   onPressed: widget.onAddNew,
                   icon: const Icon(Icons.person_add),
                   label:
-                      Text(AppLocalizations.of(context)!.addNewCustomerButton),
+                      Text(AppLocalizations.of(context).addNewCustomerButton),
                   style: OutlinedButton.styleFrom(
                     minimumSize: const Size.fromHeight(48),
                   ),
@@ -293,7 +293,7 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
   Widget _buildCustomerCard(CustomerSearchResult customer) {
     final hasDebt = customer.balance < 0;
     final hasCredit = customer.balance > 0;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Semantics(
       label: '${customer.name}, ${customer.phone}',
@@ -383,7 +383,7 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
                           ),
                           const SizedBox(width: AlhaiSpacing.xxs),
                           Text(
-                            AppLocalizations.of(context)!
+                            AppLocalizations.of(context)
                                 .loyaltyPointsCountLabel(
                                     customer.loyaltyPoints.toString()),
                             style: AppTypography.bodySmall.copyWith(
@@ -407,7 +407,7 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
                       ),
                     ),
                     Text(
-                      AppLocalizations.of(context)!.customerBalanceAmount(
+                      AppLocalizations.of(context).customerBalanceAmount(
                           customer.balance.abs().toStringAsFixed(2)),
                       style: AppTypography.titleSmall.copyWith(
                         color: hasDebt
@@ -455,14 +455,14 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
           ),
           const SizedBox(height: AppSizes.md),
           Text(
-            AppLocalizations.of(context)!.noResultsFoundTitle,
+            AppLocalizations.of(context).noResultsFoundTitle,
             style: AppTypography.titleMedium.copyWith(
               color: AppColors.textMuted,
             ),
           ),
           const SizedBox(height: AppSizes.xs),
           Text(
-            AppLocalizations.of(context)!.tryAnotherSearch,
+            AppLocalizations.of(context).tryAnotherSearch,
             style: AppTypography.bodySmall.copyWith(
               color: AppColors.textMuted,
             ),

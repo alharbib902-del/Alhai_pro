@@ -30,7 +30,7 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
   @override
   Widget build(BuildContext context) {
     final favoritesAsync = ref.watch(favoritesListProvider);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -220,7 +220,7 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
                           overflow: TextOverflow.ellipsis,
                         ),
                         Text(
-                          '${favoriteData.price.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
+                          '${favoriteData.price.toStringAsFixed(2)} ${AppLocalizations.of(context).sar}',
                           style: AppTypography.labelMedium.copyWith(
                             color: AppColors.primary,
                             fontWeight: FontWeight.bold,
@@ -286,7 +286,7 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
 
   void _addToCart(FavoriteProductData favoriteData) {
     HapticFeedback.lightImpact();
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     // إضافة المنتج للسلة
     final product = _toProduct(favoriteData);
@@ -303,7 +303,7 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
 
   void _showProductOptions(FavoriteProductData favoriteData, int index) {
     HapticFeedback.mediumImpact();
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -359,7 +359,7 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
   }
 
   void _removeFromFavorites(FavoriteProductData favoriteData, int index) async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     // حذف من قاعدة البيانات
     await removeFavoriteById(ref, favoriteData.id);

@@ -16,7 +16,7 @@ void main() {
   late MockCategoriesRemoteDataSource mockRemote;
 
   // Test data
-  final testCategoryResponse = CategoryResponse(
+  const testCategoryResponse = CategoryResponse(
     id: 'cat-1',
     name: 'Fruits',
     imageUrl: 'https://example.com/fruits.jpg',
@@ -25,7 +25,7 @@ void main() {
     isActive: true,
   );
 
-  final testChildCategoryResponse = CategoryResponse(
+  const testChildCategoryResponse = CategoryResponse(
     id: 'cat-2',
     name: 'Apples',
     imageUrl: 'https://example.com/apples.jpg',

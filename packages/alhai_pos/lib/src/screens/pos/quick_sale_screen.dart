@@ -4,7 +4,6 @@
 library;
 
 import 'dart:convert';
-import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -143,7 +142,7 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
 
   /// Get display name for a product's category
   String _getCategoryDisplayName(ProductsTableData product) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     if (product.categoryId == null) return l10n.otherCategory;
     return _categoryMap[product.categoryId] ??
         product.categoryId ??
@@ -160,7 +159,7 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     if (_isLoading) {
       return Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -243,7 +242,7 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
   }
 
   Widget _buildSearchBar() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
@@ -436,7 +435,7 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
   }
 
   Widget _buildCartHeader() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return SplitPanelHeader(
       title: l10n.cartTitle,
       icon: Icons.shopping_cart,
@@ -474,7 +473,7 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
   }
 
   Widget _buildCartSummary() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
@@ -557,7 +556,7 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
   }
 
   Widget _buildSummaryLine(String label, double amount) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -590,7 +589,7 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
   }
 
   void _addByBarcode(String barcode) async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     if (barcode.isEmpty) return;
 
     // Try to find in already-loaded products first
@@ -658,7 +657,7 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
   }
 
   void _clearCart() async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     if (_cartItems.isEmpty) return;
 
     final confirmed = await AppDialog.confirm(
@@ -675,7 +674,7 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
   }
 
   Future<void> _holdOrder() async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     if (_cartItems.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -687,7 +686,7 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
     }
 
     final now = DateTime.now();
-    final defaultName = AppLocalizations.of(context)!.quickSaleHold(
+    final defaultName = AppLocalizations.of(context).quickSaleHold(
         '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}');
 
     final name = await showDialog<String>(
@@ -835,7 +834,7 @@ class _ProductTileState extends State<_ProductTile> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final categoryColor = AppColors.getCategoryColor(widget.categoryName);
 
     return MouseRegion(
@@ -973,7 +972,7 @@ class _CartItemTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(

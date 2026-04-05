@@ -248,7 +248,9 @@ class _SAStoreSettingsScreenState extends ConsumerState<SAStoreSettingsScreen> {
                                           ),
                                         );
                                         if (confirmed != true ||
-                                            !context.mounted) return;
+                                            !context.mounted) {
+                                          return;
+                                        }
 
                                         final ds = ref
                                             .read(saStoresDatasourceProvider);

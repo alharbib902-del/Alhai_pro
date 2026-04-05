@@ -13,7 +13,7 @@ void main() {
   // Helper to create a test order
   // =====================================================
 
-  Order _createTestOrder({
+  Order createTestOrder({
     String id = 'order-123',
     String? orderNumber,
     List<OrderItem>? items,
@@ -49,7 +49,7 @@ void main() {
     );
   }
 
-  Store _createTestStore({
+  Store createTestStore({
     String name = 'Al-HAI Store',
     String address = 'Riyadh, Saudi Arabia',
     String? phone = '0500000000',
@@ -71,8 +71,8 @@ void main() {
     group('generateReceiptText', () {
       test('should include store name in header', () {
         // Arrange
-        final order = _createTestOrder();
-        final store = _createTestStore(name: 'My Test Store');
+        final order = createTestOrder();
+        final store = createTestStore(name: 'My Test Store');
 
         // Act
         final receipt = receiptService.generateReceiptText(
@@ -85,8 +85,8 @@ void main() {
       });
 
       test('should include store address and phone', () {
-        final order = _createTestOrder();
-        final store = _createTestStore(
+        final order = createTestOrder();
+        final store = createTestStore(
           address: 'شارع العليا، الرياض',
           phone: '0551234567',
         );
@@ -101,8 +101,8 @@ void main() {
       });
 
       test('should include order number', () {
-        final order = _createTestOrder(orderNumber: 'POS-20260315-0001');
-        final store = _createTestStore();
+        final order = createTestOrder(orderNumber: 'POS-20260315-0001');
+        final store = createTestStore();
 
         final receipt = receiptService.generateReceiptText(
           order: order,
@@ -113,8 +113,8 @@ void main() {
       });
 
       test('should include date and time', () {
-        final order = _createTestOrder();
-        final store = _createTestStore();
+        final order = createTestOrder();
+        final store = createTestStore();
 
         final receipt = receiptService.generateReceiptText(
           order: order,
@@ -126,7 +126,7 @@ void main() {
       });
 
       test('should include item details', () {
-        final order = _createTestOrder(
+        final order = createTestOrder(
           items: [
             const OrderItem(
               productId: 'prod-1',
@@ -137,7 +137,7 @@ void main() {
             ),
           ],
         );
-        final store = _createTestStore();
+        final store = createTestStore();
 
         final receipt = receiptService.generateReceiptText(
           order: order,
@@ -151,12 +151,12 @@ void main() {
       });
 
       test('should show subtotal, tax, and total', () {
-        final order = _createTestOrder(
+        final order = createTestOrder(
           subtotal: 200.0,
           tax: 30.0,
           total: 230.0,
         );
-        final store = _createTestStore();
+        final store = createTestStore();
 
         final receipt = receiptService.generateReceiptText(
           order: order,
@@ -169,13 +169,13 @@ void main() {
       });
 
       test('should show discount when present', () {
-        final order = _createTestOrder(
+        final order = createTestOrder(
           subtotal: 200.0,
           discount: 20.0,
           tax: 27.0,
           total: 207.0,
         );
-        final store = _createTestStore();
+        final store = createTestStore();
 
         final receipt = receiptService.generateReceiptText(
           order: order,
@@ -187,8 +187,8 @@ void main() {
       });
 
       test('should not show discount when zero', () {
-        final order = _createTestOrder(discount: 0.0);
-        final store = _createTestStore();
+        final order = createTestOrder(discount: 0.0);
+        final store = createTestStore();
 
         final receipt = receiptService.generateReceiptText(
           order: order,
@@ -199,8 +199,8 @@ void main() {
       });
 
       test('should show cashier name when provided', () {
-        final order = _createTestOrder();
-        final store = _createTestStore();
+        final order = createTestOrder();
+        final store = createTestStore();
 
         final receipt = receiptService.generateReceiptText(
           order: order,
@@ -213,8 +213,8 @@ void main() {
       });
 
       test('should show payment method in Arabic', () {
-        final order = _createTestOrder(paymentMethod: PaymentMethod.cash);
-        final store = _createTestStore();
+        final order = createTestOrder(paymentMethod: PaymentMethod.cash);
+        final store = createTestStore();
 
         final receipt = receiptService.generateReceiptText(
           order: order,
@@ -225,8 +225,8 @@ void main() {
       });
 
       test('should show card payment method', () {
-        final order = _createTestOrder(paymentMethod: PaymentMethod.card);
-        final store = _createTestStore();
+        final order = createTestOrder(paymentMethod: PaymentMethod.card);
+        final store = createTestStore();
 
         final receipt = receiptService.generateReceiptText(
           order: order,
@@ -237,8 +237,8 @@ void main() {
       });
 
       test('should include custom receipt header when set', () {
-        final order = _createTestOrder();
-        final store = _createTestStore();
+        final order = createTestOrder();
+        final store = createTestStore();
         const settings = StoreSettings(
           id: 'settings-1',
           storeId: 'store-1',
@@ -255,8 +255,8 @@ void main() {
       });
 
       test('should include custom receipt footer when set', () {
-        final order = _createTestOrder();
-        final store = _createTestStore();
+        final order = createTestOrder();
+        final store = createTestStore();
         const settings = StoreSettings(
           id: 'settings-1',
           storeId: 'store-1',
@@ -273,8 +273,8 @@ void main() {
       });
 
       test('should show default footer when no settings', () {
-        final order = _createTestOrder();
-        final store = _createTestStore();
+        final order = createTestOrder();
+        final store = createTestStore();
 
         final receipt = receiptService.generateReceiptText(
           order: order,
@@ -285,7 +285,7 @@ void main() {
       });
 
       test('should handle multiple items', () {
-        final order = _createTestOrder(
+        final order = createTestOrder(
           items: [
             const OrderItem(
               productId: 'prod-1',
@@ -313,7 +313,7 @@ void main() {
           tax: 10.5,
           total: 80.5,
         );
-        final store = _createTestStore();
+        final store = createTestStore();
 
         final receipt = receiptService.generateReceiptText(
           order: order,
@@ -328,8 +328,8 @@ void main() {
 
     group('generateReceiptHtml', () {
       test('should generate valid HTML structure', () {
-        final order = _createTestOrder();
-        final store = _createTestStore();
+        final order = createTestOrder();
+        final store = createTestStore();
 
         final html = receiptService.generateReceiptHtml(
           order: order,
@@ -344,8 +344,8 @@ void main() {
       });
 
       test('should escape HTML special characters in store name', () {
-        final order = _createTestOrder();
-        final store = _createTestStore(name: '<script>alert("xss")</script>');
+        final order = createTestOrder();
+        final store = createTestStore(name: '<script>alert("xss")</script>');
 
         final html = receiptService.generateReceiptHtml(
           order: order,
@@ -357,7 +357,7 @@ void main() {
       });
 
       test('should escape HTML special characters in item names', () {
-        final order = _createTestOrder(
+        final order = createTestOrder(
           items: [
             const OrderItem(
               productId: 'prod-1',
@@ -368,7 +368,7 @@ void main() {
             ),
           ],
         );
-        final store = _createTestStore();
+        final store = createTestStore();
 
         final html = receiptService.generateReceiptHtml(
           order: order,
@@ -382,8 +382,8 @@ void main() {
       });
 
       test('should include store info in HTML', () {
-        final order = _createTestOrder();
-        final store = _createTestStore(
+        final order = createTestOrder();
+        final store = createTestStore(
           name: 'متجر الهاي',
           address: 'الرياض',
         );
@@ -398,13 +398,13 @@ void main() {
       });
 
       test('should include totals in HTML', () {
-        final order = _createTestOrder(
+        final order = createTestOrder(
           subtotal: 100.0,
           discount: 10.0,
           tax: 13.5,
           total: 103.5,
         );
-        final store = _createTestStore();
+        final store = createTestStore();
 
         final html = receiptService.generateReceiptHtml(
           order: order,
@@ -418,8 +418,8 @@ void main() {
       });
 
       test('should include CSS styles', () {
-        final order = _createTestOrder();
-        final store = _createTestStore();
+        final order = createTestOrder();
+        final store = createTestStore();
 
         final html = receiptService.generateReceiptHtml(
           order: order,
@@ -431,8 +431,8 @@ void main() {
       });
 
       test('should show custom footer in HTML', () {
-        final order = _createTestOrder();
-        final store = _createTestStore();
+        final order = createTestOrder();
+        final store = createTestStore();
         const settings = StoreSettings(
           id: 's1',
           storeId: 'store-1',

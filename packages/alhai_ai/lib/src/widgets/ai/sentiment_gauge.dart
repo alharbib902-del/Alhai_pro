@@ -57,7 +57,7 @@ class _SentimentGaugeState extends State<SentimentGauge>
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final label = AiSentimentAnalysisService.getSentimentLabel(widget.score);
 
     return Container(

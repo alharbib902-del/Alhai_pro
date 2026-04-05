@@ -56,11 +56,12 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
         });
       }
     } catch (e) {
-      if (mounted)
+      if (mounted) {
         setState(() {
           _isLoading = false;
           _error = e.toString();
         });
+      }
     }
   }
 
@@ -75,7 +76,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
     final isWideScreen = context.isDesktop;
     final isMediumScreen = !context.isMobile;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final unread = _notifications.where((n) => !n.isRead).length;
 
     return Scaffold(
@@ -114,8 +115,9 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
                 onSelected: (v) {
-                  if (v == 'settings')
+                  if (v == 'settings') {
                     context.push(AppRoutes.settingsNotifications);
+                  }
                   if (v == 'clear') {
                     setState(() => _notifications = []);
                   }
@@ -300,7 +302,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
       Icons.notifications;
 
   String _formatTime(DateTime d) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final diff = DateTime.now().difference(d);
     if (diff.inMinutes < 60) return l10n.minutesAgo(diff.inMinutes);
     if (diff.inHours < 24) return l10n.hoursAgo(diff.inHours);
@@ -326,7 +328,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
       }
     } catch (_) {}
     if (mounted) {
-      final l10n = AppLocalizations.of(context)!;
+      final l10n = AppLocalizations.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('${l10n.openedNotification}: ${n.title}')));
     }

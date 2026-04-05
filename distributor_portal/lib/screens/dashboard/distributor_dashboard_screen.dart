@@ -35,10 +35,10 @@ class DistributorDashboardScreen extends ConsumerWidget {
       body: kpisAsync.when(
         loading: () => const DashboardSkeleton(),
         error: (e, _) => ErrorStateWidget(
-          message: l10n?.distributorLoadError ?? 'Error loading data',
+          message: l10n.distributorLoadError,
           onRetry: () => ref.invalidate(dashboardKpisProvider),
           isDark: isDark,
-          retryLabel: l10n?.distributorRetry ?? 'Retry',
+          retryLabel: l10n.distributorRetry,
         ),
         data: (kpis) => RefreshIndicator(
           onRefresh: () async => ref.invalidate(dashboardKpisProvider),
@@ -53,7 +53,7 @@ class DistributorDashboardScreen extends ConsumerWidget {
                   children: [
                     // Title
                     Text(
-                      l10n?.distributorDashboard ?? 'Dashboard',
+                      l10n.distributorDashboard,
                       style: TextStyle(
                         fontSize: responsiveHeaderFontSize(width),
                         fontWeight: FontWeight.bold,
@@ -62,8 +62,7 @@ class DistributorDashboardScreen extends ConsumerWidget {
                     ),
                     const SizedBox(height: AlhaiSpacing.xs),
                     Text(
-                      l10n?.distributorDashboardSubtitle ??
-                          'Distribution performance overview',
+                      l10n.distributorDashboardSubtitle,
                       style: TextStyle(
                         fontSize: 14,
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -88,30 +87,30 @@ class DistributorDashboardScreen extends ConsumerWidget {
                       physics: const NeverScrollableScrollPhysics(),
                       children: [
                         _SummaryCard(
-                          title: l10n?.distributorTotalOrders ?? 'Total Orders',
+                          title: l10n.distributorTotalOrders,
                           value: '${kpis.totalOrders}',
                           icon: Icons.shopping_bag_outlined,
                           color: AppColors.primary,
                           isDark: isDark,
                         ),
                         _SummaryCard(
-                          title: l10n?.distributorPendingOrders ?? 'Pending',
+                          title: l10n.distributorPendingOrders,
                           value: '${kpis.pendingOrders}',
                           icon: Icons.pending_outlined,
                           color: AppColors.warning,
                           isDark: isDark,
                         ),
                         _SummaryCard(
-                          title: l10n?.distributorApprovedOrders ?? 'Approved',
+                          title: l10n.distributorApprovedOrders,
                           value: '${kpis.approvedOrders}',
                           icon: Icons.check_circle_outline,
                           color: AppColors.success,
                           isDark: isDark,
                         ),
                         _SummaryCard(
-                          title: l10n?.distributorRevenue ?? 'Revenue',
+                          title: l10n.distributorRevenue,
                           value:
-                              '${NumberFormat('#,##0').format(kpis.totalRevenue)} ${l10n?.distributorSar ?? 'SAR'}',
+                              '${NumberFormat('#,##0').format(kpis.totalRevenue)} ${l10n.distributorSar}',
                           icon: Icons.payments_outlined,
                           color: AppColors.credit,
                           isDark: isDark,
@@ -127,8 +126,7 @@ class DistributorDashboardScreen extends ConsumerWidget {
                         label:
                             'Monthly sales bar chart showing sales amounts per month',
                         child: _ChartCard(
-                          title:
-                              l10n?.distributorMonthlySales ?? 'Monthly Sales',
+                          title: l10n.distributorMonthlySales,
                           monthlySales: kpis.monthlySales,
                           isDark: isDark,
                         ),
@@ -139,7 +137,7 @@ class DistributorDashboardScreen extends ConsumerWidget {
                     // Recent orders section
                     if (kpis.recentOrders.isNotEmpty)
                       _RecentOrdersCard(
-                        title: l10n?.distributorRecentOrders ?? 'Recent Orders',
+                        title: l10n.distributorRecentOrders,
                         orders: kpis.recentOrders,
                         isDark: isDark,
                         l10n: l10n,
@@ -550,7 +548,7 @@ class _ChartCard extends StatelessWidget {
               ),
               const SizedBox(width: AlhaiSpacing.xs),
               Text(
-                l10n?.distributorMonthlySalesSar ?? 'Monthly Sales (SAR)',
+                l10n.distributorMonthlySalesSar,
                 style: TextStyle(
                   fontSize: 12,
                   color: AppColors.getTextSecondary(isDark),

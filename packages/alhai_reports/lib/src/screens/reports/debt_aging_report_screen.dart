@@ -108,9 +108,9 @@ class _DebtAgingReportScreenState extends ConsumerState<DebtAgingReportScreen> {
 
       double t0 = 0, t30 = 0, t60 = 0, t90 = 0;
       for (final e in entries) {
-        if (e.days <= 30)
+        if (e.days <= 30) {
           t0 += e.balance;
-        else if (e.days <= 60)
+        } else if (e.days <= 60)
           t30 += e.balance;
         else if (e.days <= 90)
           t60 += e.balance;
@@ -129,11 +129,12 @@ class _DebtAgingReportScreenState extends ConsumerState<DebtAgingReportScreen> {
         });
       }
     } catch (e) {
-      if (mounted)
+      if (mounted) {
         setState(() {
           _error = e.toString();
           _isLoading = false;
         });
+      }
     }
   }
 

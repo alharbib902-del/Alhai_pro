@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:alhai_database/alhai_database.dart';
-import 'package:drift/drift.dart' show Value;
 import 'package:cashier/screens/products/edit_price_screen.dart';
 
 import '../../helpers/test_helpers.dart';

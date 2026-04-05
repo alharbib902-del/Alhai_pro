@@ -26,7 +26,7 @@ void main() {
   late MockPurchasesRemoteDataSource mockRemote;
 
   // Test data - using 'name' and 'lineTotal' which match domain model
-  final testPurchaseOrderResponse = PurchaseOrderResponse(
+  const testPurchaseOrderResponse = PurchaseOrderResponse(
     id: 'po-1',
     storeId: 'store-1',
     supplierId: 'sup-1',
@@ -106,7 +106,7 @@ void main() {
     group('createPurchaseOrder', () {
       test('creates purchase order successfully', () async {
         // Arrange
-        final params = CreatePurchaseOrderParams(
+        const params = CreatePurchaseOrderParams(
           storeId: 'store-1',
           supplierId: 'sup-1',
           items: [
@@ -137,7 +137,7 @@ void main() {
     group('receiveItems', () {
       test('receives items successfully', () async {
         // Arrange
-        final items = [ReceivedItem(productId: 'prod-1', quantity: 10)];
+        final items = [const ReceivedItem(productId: 'prod-1', quantity: 10)];
 
         when(() => mockRemote.receiveItems(any(), any()))
             .thenAnswer((_) async => testPurchaseOrderResponse);

@@ -174,7 +174,7 @@ class _TopProductsReportScreenState
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.products),
@@ -244,7 +244,7 @@ class _TopProductsReportScreenState
   }
 
   Widget _buildTopProductsTab() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Column(
       children: [
         // أدوات الفلترة
@@ -268,7 +268,7 @@ class _TopProductsReportScreenState
   }
 
   Widget _buildFilterBar() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.all(AppSizes.md),
       decoration: BoxDecoration(
@@ -353,7 +353,7 @@ class _TopProductsReportScreenState
   }
 
   Widget _buildProductCard(ProductReport product, int rank) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Card(
       margin: const EdgeInsets.only(bottom: AppSizes.md),
       child: Padding(
@@ -518,7 +518,7 @@ class _TopProductsReportScreenState
   }
 
   Widget _buildCategoryTab() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     // حساب إحصائيات الفئات
     final categoryStats = <String, CategoryStats>{};
     for (final product in _products) {
@@ -623,7 +623,7 @@ class _TopProductsReportScreenState
   }
 
   Widget _buildCategoryCard(CategoryStats category) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final categoryProducts = _products
         .where((p) =>
             (p.category.isEmpty ? l10n.unclassified : p.category) ==
@@ -699,7 +699,7 @@ class _TopProductsReportScreenState
   }
 
   Widget _buildKPICards() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final totalRevenue = _products.fold(0.0, (sum, p) => sum + p.revenue);
     final totalUnits = _products.fold(0, (sum, p) => sum + p.unitsSold);
     final totalProfit = _products.fold(0.0, (sum, p) => sum + p.profit);
@@ -794,7 +794,7 @@ class _TopProductsReportScreenState
   }
 
   Widget _buildPerformanceOverview() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final upCount = _products.where((p) => p.trend == 'up').length;
     final stableCount = _products.where((p) => p.trend == 'stable').length;
     final downCount = _products.where((p) => p.trend == 'down').length;
@@ -881,7 +881,7 @@ class _TopProductsReportScreenState
   }
 
   Widget _buildSlowMovingProducts() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     // المنتجات التي لم تُباع أو مبيعاتها منخفضة جداً
     final slowMoving = _products
         .where((p) => p.unitsSold == 0 && p.stockLevel > 0)
@@ -943,7 +943,7 @@ class _TopProductsReportScreenState
 
   /// منتجات مبيعاتها عالية ولكن مخزونها منخفض - تحتاج إعادة طلب
   Widget _buildLowStockHighSales() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final needsReorder = _products
         .where((p) => p.unitsSold > 10 && p.stockLevel < 20)
         .toList()
@@ -1063,7 +1063,7 @@ class _TopProductsReportScreenState
   }
 
   void _exportReport() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(l10n.exportingReport),

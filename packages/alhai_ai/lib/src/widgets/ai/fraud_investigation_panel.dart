@@ -78,7 +78,7 @@ class _FraudInvestigationPanelState extends State<FraudInvestigationPanel> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),

@@ -168,7 +168,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
   Widget build(BuildContext context) {
     final isDesktop =
         MediaQuery.of(context).size.width >= AppSizes.breakpointTablet;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return KeyboardListener(
       focusNode: _keyboardFocusNode,
@@ -539,7 +539,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
   }
 
   void _showReportDialog(_ReportData report) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -732,7 +732,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
   }
 
   void _exportReport(String reportId) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Row(
@@ -752,7 +752,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
   }
 
   String _getPeriodLabel() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     switch (_selectedPeriod) {
       case 'today':
         return l10n.today;
@@ -948,7 +948,7 @@ class _ReportCardState extends State<_ReportCard> {
                       AppIconButton(
                         icon: Icons.download_rounded,
                         onPressed: widget.onExport,
-                        tooltip: AppLocalizations.of(context)!.exportAction,
+                        tooltip: AppLocalizations.of(context).exportAction,
                       ),
                   ],
                 ),
@@ -994,7 +994,7 @@ class _ReportCardState extends State<_ReportCard> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        AppLocalizations.of(context)!.viewReport,
+                        AppLocalizations.of(context).viewReport,
                         style: TextStyle(
                           color: widget.report.color,
                           fontWeight: FontWeight.w600,

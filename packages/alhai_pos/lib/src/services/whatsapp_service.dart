@@ -11,7 +11,6 @@
 /// - إمكانية الإرسال الجماعي بدون تدخل المستخدم
 library;
 
-import 'package:drift/drift.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:alhai_core/alhai_core.dart' show StoreSettings;

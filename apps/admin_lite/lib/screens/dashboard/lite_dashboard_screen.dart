@@ -28,7 +28,7 @@ class LiteDashboardScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final statsAsync = ref.watch(liteStatsProvider);
 
     return Scaffold(
@@ -822,10 +822,8 @@ class _ActivityTile extends StatelessWidget {
 
 class _SkeletonBox extends StatefulWidget {
   final double height;
-  final double? width;
   final Color baseColor;
-  const _SkeletonBox(
-      {required this.height, this.width, required this.baseColor});
+  const _SkeletonBox({required this.height, required this.baseColor});
 
   @override
   State<_SkeletonBox> createState() => _SkeletonBoxState();
@@ -857,7 +855,7 @@ class _SkeletonBoxState extends State<_SkeletonBox>
       builder: (context, child) {
         return Container(
           height: widget.height,
-          width: widget.width ?? double.infinity,
+          width: double.infinity,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
             gradient: LinearGradient(

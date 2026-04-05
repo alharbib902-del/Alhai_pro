@@ -369,7 +369,7 @@ class _CountryPickerSheet extends StatelessWidget {
   });
 
   String _localizedCountryName(BuildContext context, CountryData country) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     switch (country.code) {
       case 'SA':
         return l10n.saudiArabia;
@@ -390,7 +390,6 @@ class _CountryPickerSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final colorScheme = Theme.of(context).colorScheme;
     final bgColor = colorScheme.surface;
     final handleColor = colorScheme.outlineVariant;

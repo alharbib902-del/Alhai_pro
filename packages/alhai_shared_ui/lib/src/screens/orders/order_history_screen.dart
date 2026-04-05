@@ -169,7 +169,7 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     if (_isLoading) {
       return Scaffold(
@@ -485,7 +485,7 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
   }
 
   void _showFilterSheet() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     showModalBottomSheet(
       context: context,
       builder: (context) => StatefulBuilder(
@@ -625,7 +625,7 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
               content:
-                  Text('${AppLocalizations.of(context)!.status}: $newStatus')),
+                  Text('${AppLocalizations.of(context).status}: $newStatus')),
         );
       }
     } catch (e) {
@@ -633,15 +633,14 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
               content:
-                  Text('${AppLocalizations.of(context)!.errorOccurred}: $e')),
+                  Text('${AppLocalizations.of(context).errorOccurred}: $e')),
         );
       }
     }
   }
 
   void _showOrderDetails(OrdersTableData order) {
-    final l10n = AppLocalizations.of(context)!;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context);
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -941,7 +940,7 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
   }
 
   void _exportOrders() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -980,8 +979,7 @@ class _OrderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context);
     final subtleColor = Theme.of(context).colorScheme.onSurfaceVariant;
     return Card(
       margin: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
@@ -1224,7 +1222,6 @@ class _DetailRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final subtleColor = Theme.of(context).colorScheme.onSurfaceVariant;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs),

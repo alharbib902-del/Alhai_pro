@@ -202,7 +202,7 @@ class OtpInputFieldState extends State<OtpInputField>
                   ),
                   const SizedBox(width: 6),
                   Text(
-                    l10n?.pasteCode ?? 'لصق الرمز',
+                    l10n.pasteCode,
                     style: const TextStyle(
                       color: AppColors.primary,
                       fontSize: 13,

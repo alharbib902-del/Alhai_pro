@@ -9,7 +9,7 @@ import 'package:alhai_core/src/repositories/refunds_repository.dart';
 void main() {
   group('RefundsSummary', () {
     test('should construct with all required fields', () {
-      final summary = RefundsSummary(
+      const summary = RefundsSummary(
         storeId: 'store-1',
         totalRefundedAmount: 1500.0,
         totalRefundCount: 10,

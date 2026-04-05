@@ -30,7 +30,7 @@ class DashboardScreen extends ConsumerWidget {
     final isWideScreen = context.isDesktop;
     final isMediumScreen = !context.isMobile;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     // Watch the dashboard data provider reactively
     final dashboardAsync = ref.watch(dashboardDataProvider);

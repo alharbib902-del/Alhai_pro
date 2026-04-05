@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('Cart Model', () {
     test('should calculate total correctly', () {
-      final cart = Cart(
+      const cart = Cart(
         items: [
           CartItem(productId: '1', name: 'Item 1', unitPrice: 10.0, qty: 2),
           CartItem(productId: '2', name: 'Item 2', unitPrice: 25.0, qty: 1),
@@ -15,7 +15,7 @@ void main() {
     });
 
     test('should calculate item count correctly', () {
-      final cart = Cart(
+      const cart = Cart(
         items: [
           CartItem(productId: '1', name: 'Item 1', unitPrice: 10.0, qty: 2),
           CartItem(productId: '2', name: 'Item 2', unitPrice: 25.0, qty: 3),
@@ -33,7 +33,7 @@ void main() {
     });
 
     test('should detect non-empty cart correctly', () {
-      final cart = Cart(
+      const cart = Cart(
         items: [
           CartItem(productId: '1', name: 'Item 1', unitPrice: 10.0, qty: 1),
         ],

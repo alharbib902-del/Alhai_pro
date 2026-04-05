@@ -53,7 +53,7 @@ class FavoritesRow extends ConsumerWidget {
                 ),
                 const SizedBox(width: AlhaiSpacing.xxs),
                 Text(
-                  AppLocalizations.of(context)!.bestSellingPress19,
+                  AppLocalizations.of(context).bestSellingPress19,
                   style: theme.textTheme.labelMedium?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
@@ -153,7 +153,7 @@ class _FavoriteProductCard extends StatelessWidget {
                 const SizedBox(height: 2),
                 // السعر
                 Text(
-                  AppLocalizations.of(context)!
+                  AppLocalizations.of(context)
                       .priceSar(product.price.toStringAsFixed(0)),
                   style: theme.textTheme.labelSmall?.copyWith(
                     color: theme.colorScheme.primary,

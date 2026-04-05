@@ -39,7 +39,7 @@ class _CustomerPurchasesTabState extends State<CustomerPurchasesTab> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final isDark = widget.isDark;
     final isMobile = widget.isMobile;
     final invoiceTxns = widget.invoiceTransactions;

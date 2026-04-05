@@ -267,8 +267,9 @@ class BluetoothPrintService implements ThermalPrintService {
           return true;
         }
       } on PlatformException catch (e) {
-        if (kDebugMode)
+        if (kDebugMode) {
           debugPrint('BT reconnect attempt $attempt failed: ${e.message}');
+        }
       } on MissingPluginException {
         _status = PrinterStatus.disconnected;
         return false;

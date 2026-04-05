@@ -8,7 +8,6 @@
 /// - استبدال نقاط الولاء
 library;
 
-import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -45,7 +44,7 @@ class PaymentScreen extends ConsumerStatefulWidget {
 
 class _PaymentScreenState extends ConsumerState<PaymentScreen>
     with SingleTickerProviderStateMixin {
-  AppLocalizations get l10n => AppLocalizations.of(context)!;
+  AppLocalizations get l10n => AppLocalizations.of(context);
 
   PaymentMethod _selectedMethod = PaymentMethod.cash;
   final _cashReceivedController = TextEditingController();
@@ -111,7 +110,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final cartState = ref.watch(cartStateProvider);
     // Watch online status to trigger rebuilds on connectivity changes
     final isOnlineAsync = ref.watch(isOnlineProvider);
@@ -202,8 +201,9 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
           }
         },
         const SingleActivator(LogicalKeyboardKey.digit3): () {
-          if (!isOffline)
+          if (!isOffline) {
             setState(() => _selectedMethod = PaymentMethod.wallet);
+          }
         },
       },
       child: Focus(
@@ -263,7 +263,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
     LoyaltyPointsTableData? loyaltyAccount,
     double loyaltyDiscount = 0.0,
   ]) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final isDesktop = AppBreakpoints.isDesktop(context);
     final isMobile = context.isMobile;
     final theme = Theme.of(context);
@@ -428,7 +428,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
   }
 
   Widget _buildHeader() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     return Container(
       height: AppTopBarSize.height,
@@ -493,7 +493,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
     bool isOffline = false,
     PaymentDeviceSettings settings = const PaymentDeviceSettings(),
   }) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final cardDisabled = isOffline || !settings.hasCardPayment;
 
     return Column(
@@ -652,9 +652,9 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
                   },
             icon: const Icon(Icons.call_split_rounded),
             label: _isSplitPayment
-                ? Text(AppLocalizations.of(context)!
+                ? Text(AppLocalizations.of(context)
                     .splitPaymentDone(_splitPayments.length))
-                : Text(AppLocalizations.of(context)!.splitPaymentLabel),
+                : Text(AppLocalizations.of(context).splitPaymentLabel),
             style: OutlinedButton.styleFrom(
               foregroundColor:
                   _isSplitPayment ? AppColors.success : AppColors.primary,
@@ -793,7 +793,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
                 if (loyaltyDiscount > 0) ...[
                   const SizedBox(height: AppSpacing.md),
                   PaymentSummaryRow(
-                    label: AppLocalizations.of(context)!
+                    label: AppLocalizations.of(context)
                         .loyaltyPointsDiscountLabel(_pointsToRedeem),
                     value: -loyaltyDiscount,
                     valueColor: AppColors.success,

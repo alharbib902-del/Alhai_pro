@@ -34,8 +34,8 @@ class _AiSmartPricingScreenState extends ConsumerState<AiSmartPricingScreen> {
     return Column(
       children: [
         AppHeader(
-          title: AppLocalizations.of(context)!.aiSmartPricingTitle,
-          subtitle: AppLocalizations.of(context)!.aiSmartPricingSubtitle,
+          title: AppLocalizations.of(context).aiSmartPricingTitle,
+          subtitle: AppLocalizations.of(context).aiSmartPricingSubtitle,
           // AI-based price suggestions
           onMenuTap:
               isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
@@ -140,7 +140,7 @@ class _AiSmartPricingScreenState extends ConsumerState<AiSmartPricingScreen> {
     final totalImpact = suggestions.fold<double>(
         0, (sum, s) => sum + s.expectedImpact.monthlyRevenueDelta);
 
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final cards = [
       _SummaryData(
         label: l10n.totalSuggestionsLabel,
@@ -268,7 +268,7 @@ class _AiSmartPricingScreenState extends ConsumerState<AiSmartPricingScreen> {
 
   /// فلتر الأسعار
   Widget _buildFilterChips(PriceFilterType current, bool isDark) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final filters = [
       (PriceFilterType.all, l10n.filterAllLabel, Icons.list_rounded),
       (
@@ -355,7 +355,7 @@ class _AiSmartPricingScreenState extends ConsumerState<AiSmartPricingScreen> {
             ),
             const SizedBox(height: AlhaiSpacing.sm),
             Text(
-              AppLocalizations.of(context)!.noSuggestionsInFilter,
+              AppLocalizations.of(context).noSuggestionsInFilter,
               style: TextStyle(
                 fontSize: 14,
                 color: isDark ? Colors.white54 : AppColors.textSecondary,
@@ -407,7 +407,7 @@ class _AiSmartPricingScreenState extends ConsumerState<AiSmartPricingScreen> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
-                  AppLocalizations.of(context)!.priceApplied(
+                  AppLocalizations.of(context).priceApplied(
                       sliderPrice.toStringAsFixed(2), selected.name),
                 ),
                 backgroundColor: AppColors.primary,
@@ -464,7 +464,7 @@ class _AiSmartPricingScreenState extends ConsumerState<AiSmartPricingScreen> {
           ),
           const SizedBox(height: AlhaiSpacing.md),
           Text(
-            AppLocalizations.of(context)!.selectProductForDetails,
+            AppLocalizations.of(context).selectProductForDetails,
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,
@@ -473,7 +473,7 @@ class _AiSmartPricingScreenState extends ConsumerState<AiSmartPricingScreen> {
           ),
           const SizedBox(height: AlhaiSpacing.xs),
           Text(
-            AppLocalizations.of(context)!.selectProductHint,
+            AppLocalizations.of(context).selectProductHint,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 12,
@@ -513,7 +513,7 @@ class _AiSmartPricingScreenState extends ConsumerState<AiSmartPricingScreen> {
           const SizedBox(width: AlhaiSpacing.xs),
           Expanded(
             child: Text(
-              AppLocalizations.of(context)!.errorOccurredShort(error),
+              AppLocalizations.of(context).errorOccurredShort(error),
               style: const TextStyle(color: AppColors.error, fontSize: 13),
             ),
           ),

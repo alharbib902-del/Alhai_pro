@@ -62,7 +62,7 @@ Color _parseColor(String? hex) {
 }
 
 String _colorToHex(Color color) {
-  return '#${color.toARGB32().toRadixString(16).substring(2).toUpperCase()}';
+  return '#${color.value.toRadixString(16).substring(2).toUpperCase()}';
 }
 
 IconData _parseIcon(String? iconStr) {

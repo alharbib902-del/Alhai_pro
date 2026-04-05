@@ -445,9 +445,10 @@ class _SecuritySettingsScreenState
                             await _saveSecuritySetting(
                                 'security_pin_enabled', 'true');
                             _loadSecuritySettings();
-                            if (mounted)
+                            if (mounted) {
                               ScaffoldMessenger.of(this.context).showSnackBar(
                                   SnackBar(content: Text(l10n.pinCreated)));
+                            }
                           } else {
                             setDialogState(() => error = result.error);
                           }
@@ -522,10 +523,11 @@ class _SecuritySettingsScreenState
                             if (result.isSuccess) {
                               PinAttemptTracker.reset();
                               if (context.mounted) Navigator.pop(context);
-                              if (mounted)
+                              if (mounted) {
                                 ScaffoldMessenger.of(this.context).showSnackBar(
                                     SnackBar(
                                         content: Text(l10n.pinChangedSuccess)));
+                              }
                             } else {
                               PinAttemptTracker.recordFailedAttempt();
                               setDialogState(() {
@@ -565,9 +567,10 @@ class _SecuritySettingsScreenState
       await PinService.removePin();
       await _saveSecuritySetting('security_pin_enabled', 'false');
       _loadSecuritySettings();
-      if (mounted)
+      if (mounted) {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text(l10n.pinRemovedSuccess)));
+      }
     }
   }
 
@@ -578,21 +581,24 @@ class _SecuritySettingsScreenState
       if (success) {
         setState(() => _biometricEnabled = true);
         await _saveSecuritySetting('security_biometric_enabled', 'true');
-        if (mounted)
+        if (mounted) {
           ScaffoldMessenger.of(context)
               .showSnackBar(SnackBar(content: Text(l10n.fingerprintDesc)));
+        }
       } else {
-        if (mounted)
+        if (mounted) {
           ScaffoldMessenger.of(context)
               .showSnackBar(SnackBar(content: Text(l10n.fingerprintDesc)));
+        }
       }
     } else {
       await BiometricService.disable();
       setState(() => _biometricEnabled = false);
       await _saveSecuritySetting('security_biometric_enabled', 'false');
-      if (mounted)
+      if (mounted) {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text(l10n.fingerprintDesc)));
+      }
     }
   }
 

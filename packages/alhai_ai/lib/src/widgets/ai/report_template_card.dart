@@ -29,7 +29,7 @@ class _ReportTemplateCardState extends State<ReportTemplateCard> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     IconData chartIcon;
     Color chartColor;

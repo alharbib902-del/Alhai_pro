@@ -106,14 +106,14 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
                 child: Row(
                   children: [
                     Text(
-                      AppLocalizations.of(context)!.splitPaymentTitle,
+                      AppLocalizations.of(context).splitPaymentTitle,
                       style: AppTypography.headlineSmall,
                     ),
                     const Spacer(),
                     IconButton(
                       onPressed: () => Navigator.pop(context),
                       icon: const Icon(Icons.close),
-                      tooltip: AppLocalizations.of(context)!.close,
+                      tooltip: AppLocalizations.of(context).close,
                     ),
                   ],
                 ),
@@ -179,11 +179,11 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                AppLocalizations.of(context)!.total,
+                AppLocalizations.of(context).total,
                 style: const TextStyle(color: Colors.white70),
               ),
               Text(
-                AppLocalizations.of(context)!
+                AppLocalizations.of(context)
                     .priceSar(widget.totalAmount.toStringAsFixed(2)),
                 style: AppTypography.titleLarge.copyWith(
                   color: Colors.white,
@@ -197,11 +197,11 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                AppLocalizations.of(context)!.paidLabel,
+                AppLocalizations.of(context).paidLabel,
                 style: const TextStyle(color: Colors.white70),
               ),
               Text(
-                AppLocalizations.of(context)!
+                AppLocalizations.of(context)
                     .priceSar(_totalPaid.toStringAsFixed(2)),
                 style: const TextStyle(color: Colors.white),
               ),
@@ -213,8 +213,8 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
             children: [
               Text(
                 _isComplete
-                    ? AppLocalizations.of(context)!.completeLabel
-                    : AppLocalizations.of(context)!.remainingLabel,
+                    ? AppLocalizations.of(context).completeLabel
+                    : AppLocalizations.of(context).remainingLabel,
                 style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -223,7 +223,7 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
               Text(
                 _isComplete
                     ? '✓'
-                    : AppLocalizations.of(context)!
+                    : AppLocalizations.of(context)
                         .priceSar(_remaining.toStringAsFixed(2)),
                 style: AppTypography.titleMedium.copyWith(
                   color: Colors.white,
@@ -242,7 +242,7 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          AppLocalizations.of(context)!.paymentMethodTitle,
+          AppLocalizations.of(context).paymentMethodTitle,
           style: AppTypography.titleSmall.copyWith(
             fontWeight: FontWeight.w600,
           ),
@@ -276,7 +276,7 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          AppLocalizations.of(context)!.amount,
+          AppLocalizations.of(context).amount,
           style: AppTypography.titleSmall.copyWith(
             fontWeight: FontWeight.w600,
           ),
@@ -290,7 +290,7 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
             fontWeight: FontWeight.bold,
           ),
           decoration: InputDecoration(
-            suffixText: AppLocalizations.of(context)!.sarCurrency,
+            suffixText: AppLocalizations.of(context).sarCurrency,
             filled: true,
             fillColor: AppColors.grey100,
             border: OutlineInputBorder(
@@ -319,7 +319,7 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
       runSpacing: AppSizes.sm,
       children: quickAmounts.map((amount) {
         return ActionChip(
-          label: Text(AppLocalizations.of(context)!
+          label: Text(AppLocalizations.of(context)
               .amountSar(amount.toStringAsFixed(0))),
           onPressed: () {
             _amountController.text = amount.toStringAsFixed(2);
@@ -333,7 +333,7 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
     return ElevatedButton.icon(
       onPressed: _addSplit,
       icon: const Icon(Icons.add),
-      label: Text(AppLocalizations.of(context)!.addPaymentEntry),
+      label: Text(AppLocalizations.of(context).addPaymentEntry),
       style: ElevatedButton.styleFrom(
         backgroundColor: AppColors.secondary,
         minimumSize: const Size.fromHeight(48),
@@ -342,7 +342,7 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
   }
 
   Widget _buildSplitsList() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -367,7 +367,7 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    AppLocalizations.of(context)!
+                    AppLocalizations.of(context)
                         .priceSar(split.amount.toStringAsFixed(2)),
                     style: AppTypography.titleSmall.copyWith(
                       fontWeight: FontWeight.bold,
@@ -377,7 +377,7 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
                     icon: const Icon(Icons.close,
                         color: AppColors.error, size: 20),
                     onPressed: () => _removeSplit(index),
-                    tooltip: AppLocalizations.of(context)!.delete,
+                    tooltip: AppLocalizations.of(context).delete,
                   ),
                 ],
               ),
@@ -400,8 +400,8 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
           ),
           child: Text(
             _isComplete
-                ? AppLocalizations.of(context)!.confirmSplitPayment
-                : AppLocalizations.of(context)!.completePaymentToConfirm,
+                ? AppLocalizations.of(context).confirmSplitPayment
+                : AppLocalizations.of(context).completePaymentToConfirm,
             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
         ),
@@ -414,7 +414,7 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
     if (amount <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text(AppLocalizations.of(context)!.enterValidAmountSplit)),
+            content: Text(AppLocalizations.of(context).enterValidAmountSplit)),
       );
       return;
     }
@@ -422,7 +422,7 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
     if (amount > _remaining) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text(AppLocalizations.of(context)!.amountExceedsSplit)),
+            content: Text(AppLocalizations.of(context).amountExceedsSplit)),
       );
       return;
     }
@@ -501,7 +501,7 @@ class _PaymentMethodCard extends StatelessWidget {
                   ),
                   const SizedBox(height: AlhaiSpacing.xxs),
                   Text(
-                    method.localizedLabel(AppLocalizations.of(context)!),
+                    method.localizedLabel(AppLocalizations.of(context)),
                     style: AppTypography.labelSmall.copyWith(
                       color:
                           isSelected ? method.color : AppColors.textSecondary,

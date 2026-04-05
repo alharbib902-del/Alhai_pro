@@ -61,7 +61,7 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
     final total = subtotal + tax - cartState.discount;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final colorScheme = Theme.of(context).colorScheme;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     // Sync the AnimatedList with the new items list
     _syncAnimatedList(items);
@@ -987,7 +987,7 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
   void _showDiscountDialog(
       BuildContext context, WidgetRef ref, double subtotal) {
     final discountController = TextEditingController();
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     showDialog(
       context: context,
@@ -1140,7 +1140,7 @@ class PosCartItemTile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final colorScheme = Theme.of(context).colorScheme;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,

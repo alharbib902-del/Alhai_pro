@@ -21,8 +21,6 @@ class QuantityInputDialog extends StatefulWidget {
 
   /// عرض النافذة وإرجاع الكمية المحددة (أو null إذا تم الإلغاء)
   static Future<int?> show(BuildContext context, Product product) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return showDialog<int>(
       context: context,
       builder: (ctx) => Dialog(
@@ -100,7 +98,7 @@ class _QuantityInputDialogState extends State<QuantityInputDialog> {
                       ),
                       const SizedBox(height: AlhaiSpacing.xxs),
                       Text(
-                        AppLocalizations.of(context)!
+                        AppLocalizations.of(context)
                             .priceSar(product.price.toStringAsFixed(2)),
                         style: const TextStyle(
                           fontSize: 16,
@@ -112,7 +110,7 @@ class _QuantityInputDialogState extends State<QuantityInputDialog> {
                         Padding(
                           padding: const EdgeInsets.only(top: AlhaiSpacing.xxs),
                           child: Text(
-                            AppLocalizations.of(context)!
+                            AppLocalizations.of(context)
                                 .availableStock(product.stockQty.toString()),
                             style: TextStyle(
                               fontSize: 12,
@@ -131,7 +129,7 @@ class _QuantityInputDialogState extends State<QuantityInputDialog> {
                     Icons.close,
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
-                  tooltip: AppLocalizations.of(context)!.close,
+                  tooltip: AppLocalizations.of(context).close,
                 ),
               ],
             ),
@@ -249,14 +247,14 @@ class _QuantityInputDialogState extends State<QuantityInputDialog> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    AppLocalizations.of(context)!.total,
+                    AppLocalizations.of(context).total,
                     style: TextStyle(
                       fontSize: 14,
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
                   Text(
-                    AppLocalizations.of(context)!.priceSar(
+                    AppLocalizations.of(context).priceSar(
                         (product.price * _quantity).toStringAsFixed(2)),
                     style: const TextStyle(
                       fontSize: 20,
@@ -280,7 +278,7 @@ class _QuantityInputDialogState extends State<QuantityInputDialog> {
                     : null,
                 icon: const Icon(Icons.add_shopping_cart),
                 label: Text(
-                  AppLocalizations.of(context)!.addQtyToCart(_quantity),
+                  AppLocalizations.of(context).addQtyToCart(_quantity),
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -318,7 +316,7 @@ class _QuantityButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final enabled = onTap != null;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Semantics(
       label: icon == Icons.add ? l10n.increaseQuantity : l10n.decreaseQuantity,
       button: true,

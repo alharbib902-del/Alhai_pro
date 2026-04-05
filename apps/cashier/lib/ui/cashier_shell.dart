@@ -240,7 +240,9 @@ class _CashierShellState extends ConsumerState<CashierShell> {
     if (location.startsWith('/products')) return 'products';
     if (location.startsWith('/inventory')) return 'inventory';
     if (location.startsWith('/cashier-receiving') ||
-        location.startsWith('/purchase-request')) return 'purchases';
+        location.startsWith('/purchase-request')) {
+      return 'purchases';
+    }
     if (location.startsWith('/returns')) return 'returns';
     if (location.startsWith('/invoices')) return 'invoices';
     if (location.startsWith('/reports')) return 'reports';

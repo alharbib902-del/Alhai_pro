@@ -28,7 +28,7 @@ class _AiProductRecognitionScreenState
     final size = MediaQuery.of(context).size;
     final isWideScreen = size.width > 900;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       children: [
@@ -93,7 +93,7 @@ class _AiProductRecognitionScreenState
                           onSave: () {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text(AppLocalizations.of(context)!
+                                content: Text(AppLocalizations.of(context)
                                     .aiProductSaved),
                                 backgroundColor: AppColors.success,
                                 behavior: SnackBarBehavior.floating,
@@ -139,7 +139,7 @@ class _AiProductRecognitionScreenState
   }
 
   Widget _buildModeSelector(ScanMode mode, bool isDark) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final modes = [
       _ModeOption(ScanMode.singleProduct, Icons.center_focus_strong_rounded,
           l10n.aiSingleProduct),
@@ -216,7 +216,7 @@ class _AiProductRecognitionScreenState
   }
 
   Widget _buildCameraArea(bool isDark, ScanMode mode) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Container(
       height: 220,
       decoration: BoxDecoration(
@@ -408,7 +408,7 @@ class _AiProductRecognitionScreenState
               ),
               const SizedBox(height: AlhaiSpacing.sm),
               Text(
-                AppLocalizations.of(context)!.aiAnalyzingImage,
+                AppLocalizations.of(context).aiAnalyzingImage,
                 style: TextStyle(
                   color: isDark
                       ? Colors.white.withValues(alpha: 0.6)
@@ -421,7 +421,7 @@ class _AiProductRecognitionScreenState
       ),
       error: (e, _) => Center(
           child: Text(
-              AppLocalizations.of(context)!.aiErrorWithMessage(e.toString()))),
+              AppLocalizations.of(context).aiErrorWithMessage(e.toString()))),
       data: (data) {
         if (data == null) {
           return Container(
@@ -444,7 +444,7 @@ class _AiProductRecognitionScreenState
                           : AppColors.textMuted),
                   const SizedBox(height: AlhaiSpacing.sm),
                   Text(
-                    AppLocalizations.of(context)!.aiStartScanToSeeResults,
+                    AppLocalizations.of(context).aiStartScanToSeeResults,
                     style: TextStyle(
                       color: isDark
                           ? Colors.white.withValues(alpha: 0.5)
@@ -474,7 +474,7 @@ class _AiProductRecognitionScreenState
                 child: Row(
                   children: [
                     Text(
-                      AppLocalizations.of(context)!.aiScanResults,
+                      AppLocalizations.of(context).aiScanResults,
                       style: TextStyle(
                         fontWeight: FontWeight.w700,
                         fontSize: 15,
@@ -483,19 +483,19 @@ class _AiProductRecognitionScreenState
                     ),
                     const Spacer(),
                     _buildResultBadge(
-                        AppLocalizations.of(context)!
+                        AppLocalizations.of(context)
                             .aiDetectedCount(data.totalDetected),
                         AppColors.info,
                         isDark),
                     const SizedBox(width: AlhaiSpacing.xs),
                     _buildResultBadge(
-                        AppLocalizations.of(context)!
+                        AppLocalizations.of(context)
                             .aiMatchedCount(data.totalMatched),
                         AppColors.success,
                         isDark),
                     const SizedBox(width: AlhaiSpacing.xs),
                     _buildResultBadge(
-                        AppLocalizations.of(context)!.aiAccuracyPercent(
+                        AppLocalizations.of(context).aiAccuracyPercent(
                             '${(data.avgConfidence * 100).toInt()}'),
                         AppColors.primary,
                         isDark),
@@ -523,7 +523,7 @@ class _AiProductRecognitionScreenState
                               .acceptProduct(product.matchedId!);
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text(AppLocalizations.of(context)!
+                              content: Text(AppLocalizations.of(context)
                                   .aiProductAccepted(product.nameAr)),
                               backgroundColor: AppColors.success,
                               behavior: SnackBarBehavior.floating,
@@ -571,13 +571,13 @@ class _AiProductRecognitionScreenState
   String _getModeLabel(ScanMode mode) {
     switch (mode) {
       case ScanMode.singleProduct:
-        return AppLocalizations.of(context)!.aiSingleProduct;
+        return AppLocalizations.of(context).aiSingleProduct;
       case ScanMode.shelfScan:
-        return AppLocalizations.of(context)!.aiShelfScan;
+        return AppLocalizations.of(context).aiShelfScan;
       case ScanMode.barcodeOcr:
-        return AppLocalizations.of(context)!.aiBarcodeOcr;
+        return AppLocalizations.of(context).aiBarcodeOcr;
       case ScanMode.priceTag:
-        return AppLocalizations.of(context)!.aiPriceTag;
+        return AppLocalizations.of(context).aiPriceTag;
     }
   }
 }

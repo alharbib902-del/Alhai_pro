@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:drift/drift.dart' hide isNotNull, isNull;
 import 'package:alhai_database/alhai_database.dart';
 import '../helpers/database_test_helpers.dart';
 
@@ -14,7 +13,7 @@ void main() {
     await db.close();
   });
 
-  CategoriesTableCompanion _makeCategory({
+  CategoriesTableCompanion makeCategory({
     String id = 'cat-1',
     String storeId = 'store-1',
     String name = 'مشروبات',
@@ -35,7 +34,7 @@ void main() {
 
   group('CategoriesDao', () {
     test('insertCategory and getCategoryById', () async {
-      await db.categoriesDao.insertCategory(_makeCategory());
+      await db.categoriesDao.insertCategory(makeCategory());
 
       final category = await db.categoriesDao.getCategoryById('cat-1');
       expect(category, isNotNull);
@@ -49,17 +48,17 @@ void main() {
     });
 
     test('getAllCategories returns active categories sorted', () async {
-      await db.categoriesDao.insertCategory(_makeCategory(
+      await db.categoriesDao.insertCategory(makeCategory(
         id: 'cat-1',
         name: 'حلويات',
         sortOrder: 2,
       ));
-      await db.categoriesDao.insertCategory(_makeCategory(
+      await db.categoriesDao.insertCategory(makeCategory(
         id: 'cat-2',
         name: 'مشروبات',
         sortOrder: 1,
       ));
-      await db.categoriesDao.insertCategory(_makeCategory(
+      await db.categoriesDao.insertCategory(makeCategory(
         id: 'cat-3',
         name: 'معلبات',
         sortOrder: 3,
@@ -72,11 +71,11 @@ void main() {
     });
 
     test('getRootCategories returns only top-level', () async {
-      await db.categoriesDao.insertCategory(_makeCategory(
+      await db.categoriesDao.insertCategory(makeCategory(
         id: 'cat-1',
         name: 'مشروبات',
       ));
-      await db.categoriesDao.insertCategory(_makeCategory(
+      await db.categoriesDao.insertCategory(makeCategory(
         id: 'cat-2',
         name: 'عصائر',
         parentId: 'cat-1',
@@ -88,17 +87,17 @@ void main() {
     });
 
     test('getSubCategories returns children', () async {
-      await db.categoriesDao.insertCategory(_makeCategory(
+      await db.categoriesDao.insertCategory(makeCategory(
         id: 'cat-parent',
         name: 'مشروبات',
       ));
-      await db.categoriesDao.insertCategory(_makeCategory(
+      await db.categoriesDao.insertCategory(makeCategory(
         id: 'cat-child-1',
         name: 'عصائر',
         parentId: 'cat-parent',
         sortOrder: 1,
       ));
-      await db.categoriesDao.insertCategory(_makeCategory(
+      await db.categoriesDao.insertCategory(makeCategory(
         id: 'cat-child-2',
         name: 'مشروبات غازية',
         parentId: 'cat-parent',
@@ -112,7 +111,7 @@ void main() {
     });
 
     test('updateCategory modifies data', () async {
-      await db.categoriesDao.insertCategory(_makeCategory());
+      await db.categoriesDao.insertCategory(makeCategory());
       final category = await db.categoriesDao.getCategoryById('cat-1');
       final updated = category!.copyWith(name: 'مشروبات باردة');
 
@@ -123,7 +122,7 @@ void main() {
     });
 
     test('deleteCategory removes category', () async {
-      await db.categoriesDao.insertCategory(_makeCategory());
+      await db.categoriesDao.insertCategory(makeCategory());
 
       final deleted = await db.categoriesDao.deleteCategory('cat-1');
       expect(deleted, 1);
@@ -133,10 +132,10 @@ void main() {
     });
 
     test('deleteAllCategories removes all for store', () async {
-      await db.categoriesDao.insertCategory(_makeCategory(id: 'cat-1'));
+      await db.categoriesDao.insertCategory(makeCategory(id: 'cat-1'));
       await db.categoriesDao
-          .insertCategory(_makeCategory(id: 'cat-2', name: 'حلويات'));
-      await db.categoriesDao.insertCategory(_makeCategory(
+          .insertCategory(makeCategory(id: 'cat-2', name: 'حلويات'));
+      await db.categoriesDao.insertCategory(makeCategory(
         id: 'cat-other',
         name: 'أخرى',
         storeId: 'store-2',
@@ -153,20 +152,20 @@ void main() {
     });
 
     test('upsertCategory inserts or updates', () async {
-      await db.categoriesDao.upsertCategory(_makeCategory(name: 'أصلي'));
+      await db.categoriesDao.upsertCategory(makeCategory(name: 'أصلي'));
 
       var cat = await db.categoriesDao.getCategoryById('cat-1');
       expect(cat!.name, 'أصلي');
 
-      await db.categoriesDao.upsertCategory(_makeCategory(name: 'محدّث'));
+      await db.categoriesDao.upsertCategory(makeCategory(name: 'محدّث'));
       cat = await db.categoriesDao.getCategoryById('cat-1');
       expect(cat!.name, 'محدّث');
     });
 
     test('getCategoriesCount returns correct count', () async {
-      await db.categoriesDao.insertCategory(_makeCategory(id: 'cat-1'));
+      await db.categoriesDao.insertCategory(makeCategory(id: 'cat-1'));
       await db.categoriesDao
-          .insertCategory(_makeCategory(id: 'cat-2', name: 'حلويات'));
+          .insertCategory(makeCategory(id: 'cat-2', name: 'حلويات'));
 
       final count = await db.categoriesDao.getCategoriesCount('store-1');
       expect(count, 2);
@@ -174,9 +173,9 @@ void main() {
 
     test('insertCategories batch inserts', () async {
       await db.categoriesDao.insertCategories([
-        _makeCategory(id: 'cat-1', name: 'مشروبات'),
-        _makeCategory(id: 'cat-2', name: 'حلويات'),
-        _makeCategory(id: 'cat-3', name: 'معلبات'),
+        makeCategory(id: 'cat-1', name: 'مشروبات'),
+        makeCategory(id: 'cat-2', name: 'حلويات'),
+        makeCategory(id: 'cat-3', name: 'معلبات'),
       ]);
 
       final count = await db.categoriesDao.getCategoriesCount('store-1');

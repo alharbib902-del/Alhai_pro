@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:drift/drift.dart' hide isNotNull, isNull;
 import 'package:alhai_database/alhai_database.dart';
 import '../helpers/database_test_helpers.dart';
 
@@ -14,7 +13,7 @@ void main() {
     await db.close();
   });
 
-  ShiftsTableCompanion _makeShift({
+  ShiftsTableCompanion makeShift({
     String id = 'shift-1',
     String storeId = 'store-1',
     String cashierId = 'cashier-1',
@@ -36,7 +35,7 @@ void main() {
 
   group('ShiftsDao', () {
     test('openShift and getShiftById', () async {
-      await db.shiftsDao.openShift(_makeShift());
+      await db.shiftsDao.openShift(makeShift());
 
       final shift = await db.shiftsDao.getShiftById('shift-1');
       expect(shift, isNotNull);
@@ -46,7 +45,7 @@ void main() {
     });
 
     test('getOpenShift finds open shift for cashier', () async {
-      await db.shiftsDao.openShift(_makeShift());
+      await db.shiftsDao.openShift(makeShift());
 
       final shift = await db.shiftsDao.getOpenShift('store-1', 'cashier-1');
       expect(shift, isNotNull);
@@ -54,21 +53,21 @@ void main() {
     });
 
     test('getOpenShift returns null when no open shift', () async {
-      await db.shiftsDao.openShift(_makeShift(status: 'closed'));
+      await db.shiftsDao.openShift(makeShift(status: 'closed'));
 
       final shift = await db.shiftsDao.getOpenShift('store-1', 'cashier-1');
       expect(shift, isNull);
     });
 
     test('getAnyOpenShift finds any open shift for store', () async {
-      await db.shiftsDao.openShift(_makeShift());
+      await db.shiftsDao.openShift(makeShift());
 
       final shift = await db.shiftsDao.getAnyOpenShift('store-1');
       expect(shift, isNotNull);
     });
 
     test('closeShift updates all closing fields', () async {
-      await db.shiftsDao.openShift(_makeShift());
+      await db.shiftsDao.openShift(makeShift());
 
       await db.shiftsDao.closeShift(
         id: 'shift-1',
@@ -94,7 +93,7 @@ void main() {
     });
 
     test('markAsSynced sets syncedAt', () async {
-      await db.shiftsDao.openShift(_makeShift());
+      await db.shiftsDao.openShift(makeShift());
 
       await db.shiftsDao.markAsSynced('shift-1');
 
@@ -104,7 +103,7 @@ void main() {
 
     // Cash Movements
     test('insertCashMovement and getShiftMovements', () async {
-      await db.shiftsDao.openShift(_makeShift());
+      await db.shiftsDao.openShift(makeShift());
       await db.shiftsDao.insertCashMovement(
         CashMovementsTableCompanion.insert(
           id: 'cm-1',
@@ -124,11 +123,11 @@ void main() {
     });
 
     test('getShiftsByDateRange filters by date', () async {
-      await db.shiftsDao.openShift(_makeShift(
+      await db.shiftsDao.openShift(makeShift(
         id: 'shift-1',
         openedAt: DateTime(2025, 6, 15, 8, 0),
       ));
-      await db.shiftsDao.openShift(_makeShift(
+      await db.shiftsDao.openShift(makeShift(
         id: 'shift-2',
         cashierId: 'cashier-2',
         cashierName: 'علي',

@@ -152,7 +152,7 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final screenWidth = context.screenWidth;
     final isDesktop = screenWidth >= AppBreakpoints.laptop;
     final isMobile = screenWidth < AppBreakpoints.tablet;
@@ -617,7 +617,7 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
     switch (action) {
       case 'edit':
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${AppLocalizations.of(context)!.edit}...')),
+          SnackBar(content: Text('${AppLocalizations.of(context).edit}...')),
         );
         break;
       case 'whatsapp':
@@ -632,15 +632,14 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                     content:
-                        Text(AppLocalizations.of(context)!.messageSendFailed)),
+                        Text(AppLocalizations.of(context).messageSendFailed)),
               );
             }
           }
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-                content:
-                    Text(AppLocalizations.of(context)!.noPhoneForCustomer)),
+                content: Text(AppLocalizations.of(context).noPhoneForCustomer)),
           );
         }
         break;

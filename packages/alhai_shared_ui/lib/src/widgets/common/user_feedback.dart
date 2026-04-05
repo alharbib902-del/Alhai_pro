@@ -152,7 +152,7 @@ class QuickFeedbackWidget extends ConsumerWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              AppLocalizations.of(context)!.howWasOperation,
+              AppLocalizations.of(context).howWasOperation,
               style: theme.textTheme.titleMedium,
             ),
             SizedBox(height: AlhaiSpacing.md),
@@ -161,7 +161,7 @@ class QuickFeedbackWidget extends ConsumerWidget {
               children: [
                 _FeedbackButton(
                   icon: Icons.thumb_up,
-                  label: AppLocalizations.of(context)!.fastLabel,
+                  label: AppLocalizations.of(context).fastLabel,
                   color: AlhaiColors.success,
                   onTap: () {
                     ref.read(feedbackProvider.notifier).addFeedback(
@@ -173,7 +173,7 @@ class QuickFeedbackWidget extends ConsumerWidget {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content:
-                            Text(AppLocalizations.of(context)!.thanksFeedback),
+                            Text(AppLocalizations.of(context).thanksFeedback),
                         duration: const Duration(seconds: 1),
                       ),
                     );
@@ -181,7 +181,7 @@ class QuickFeedbackWidget extends ConsumerWidget {
                 ),
                 _FeedbackButton(
                   icon: Icons.thumb_down,
-                  label: AppLocalizations.of(context)!.slow,
+                  label: AppLocalizations.of(context).slow,
                   color: AlhaiColors.warning,
                   onTap: () {
                     ref.read(feedbackProvider.notifier).addFeedback(
@@ -195,7 +195,7 @@ class QuickFeedbackWidget extends ConsumerWidget {
                 ),
                 TextButton(
                   onPressed: onFeedbackSubmitted,
-                  child: Text(AppLocalizations.of(context)!.skip),
+                  child: Text(AppLocalizations.of(context).skip),
                 ),
               ],
             ),
@@ -212,17 +212,17 @@ class QuickFeedbackWidget extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(AppLocalizations.of(context)!.whatToImprove),
+        title: Text(AppLocalizations.of(context).whatToImprove),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(AppLocalizations.of(context)!.helpUsImprove),
+            Text(AppLocalizations.of(context).helpUsImprove),
             SizedBox(height: AlhaiSpacing.md),
             TextField(
               controller: controller,
               maxLines: 3,
               decoration: InputDecoration(
-                hintText: AppLocalizations.of(context)!.writeNoteOptional,
+                hintText: AppLocalizations.of(context).writeNoteOptional,
                 border: OutlineInputBorder(),
               ),
             ),
@@ -231,7 +231,7 @@ class QuickFeedbackWidget extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(AppLocalizations.of(context)!.cancel),
+            child: Text(AppLocalizations.of(context).cancel),
           ),
           FilledButton(
             onPressed: () {
@@ -246,13 +246,12 @@ class QuickFeedbackWidget extends ConsumerWidget {
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content:
-                      Text(AppLocalizations.of(context)!.thanksWillImprove),
+                  content: Text(AppLocalizations.of(context).thanksWillImprove),
                   duration: const Duration(seconds: 2),
                 ),
               );
             },
-            child: Text(AppLocalizations.of(context)!.send),
+            child: Text(AppLocalizations.of(context).send),
           ),
         ],
       ),
@@ -316,14 +315,14 @@ class FeedbackStatsWidget extends ConsumerWidget {
     final theme = Theme.of(context);
 
     if (feedbacks.isEmpty) {
-      return Center(child: Text(AppLocalizations.of(context)!.noRatingsYet));
+      return Center(child: Text(AppLocalizations.of(context).noRatingsYet));
     }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          AppLocalizations.of(context)!.customerRatings,
+          AppLocalizations.of(context).customerRatings,
           style: theme.textTheme.titleMedium,
         ),
         SizedBox(height: AlhaiSpacing.sm),
@@ -331,7 +330,7 @@ class FeedbackStatsWidget extends ConsumerWidget {
           children: [
             Expanded(
               child: _StatCard(
-                label: AppLocalizations.of(context)!.fastOperations,
+                label: AppLocalizations.of(context).fastOperations,
                 value: '${notifier.quickPercentage.toStringAsFixed(0)}%',
                 icon: Icons.flash_on,
                 color: AlhaiColors.success,
@@ -340,7 +339,7 @@ class FeedbackStatsWidget extends ConsumerWidget {
             SizedBox(width: AlhaiSpacing.sm),
             Expanded(
               child: _StatCard(
-                label: AppLocalizations.of(context)!.averageRating,
+                label: AppLocalizations.of(context).averageRating,
                 value: notifier.avgRating.toStringAsFixed(1),
                 icon: Icons.star,
                 color: Colors.amber,
@@ -349,7 +348,7 @@ class FeedbackStatsWidget extends ConsumerWidget {
             SizedBox(width: AlhaiSpacing.sm),
             Expanded(
               child: _StatCard(
-                label: AppLocalizations.of(context)!.totalRatings,
+                label: AppLocalizations.of(context).totalRatings,
                 value: '${feedbacks.length}',
                 icon: Icons.thumb_up,
                 color: AlhaiColors.info,

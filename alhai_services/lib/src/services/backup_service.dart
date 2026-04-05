@@ -120,7 +120,7 @@ class BackupService {
     try {
       final gzipBytes = gzip_helper.gzipEncode(rawBytes);
       final compressed = 'gz:${base64Encode(gzipBytes)}';
-      final ratio = rawBytes.length > 0
+      final ratio = rawBytes.isNotEmpty
           ? (1 - gzipBytes.length / rawBytes.length) * 100
           : 0;
       // Log compression ratio in debug mode

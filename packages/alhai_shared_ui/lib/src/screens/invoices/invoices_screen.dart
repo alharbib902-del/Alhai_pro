@@ -119,7 +119,7 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
 
   void _copyInvoiceId(String id) {
     Clipboard.setData(ClipboardData(text: id));
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('${l10n.copiedSuccess}: $id'),
@@ -143,7 +143,7 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
       builder: (ctx) => DeleteInvoiceDialog(
         onConfirm: () {
           Navigator.pop(ctx);
-          final l10n = AppLocalizations.of(context)!;
+          final l10n = AppLocalizations.of(context);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
                 content: Text(l10n.invoiceDeleted),
@@ -161,7 +161,7 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
     final isWideScreen = context.isDesktop;
     final isMediumScreen = !context.isMobile;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     // جلب البيانات من قاعدة البيانات
     final invoicesAsync = ref.watch(invoicesListProvider);

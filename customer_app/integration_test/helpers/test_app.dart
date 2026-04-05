@@ -16,8 +16,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 
-import 'test_data.dart';
-
 // ============================================================================
 // TEST APP BUILDER
 // ============================================================================

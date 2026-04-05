@@ -55,7 +55,7 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
   Widget build(BuildContext context) {
     final isWideScreen = context.isDesktop;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       children: [
@@ -72,7 +72,7 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
   }
 
   Widget _buildContent(bool isDark, bool isWideScreen) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final alertsAsync = ref.watch(fraudAlertsProvider);
     final scoresAsync = ref.watch(behaviorScoresProvider);
     final summaryAsync = ref.watch(fraudSummaryProvider);
@@ -82,7 +82,7 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
           child: CircularProgressIndicator(color: AppColors.primary)),
       error: (e, _) => Center(
           child: Text(
-              AppLocalizations.of(context)!.aiErrorWithMessage(e.toString()))),
+              AppLocalizations.of(context).aiErrorWithMessage(e.toString()))),
       data: (alerts) {
         return SingleChildScrollView(
           padding: const EdgeInsets.all(AlhaiSpacing.mdl),
@@ -165,7 +165,7 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
 
   Widget _buildSummaryCards(
       bool isDark, FraudDetectionSummary summary, bool isWideScreen) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final cards = [
       _SummaryCardData(
         title: l10n.aiTotalAlerts,
@@ -271,7 +271,7 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
   }
 
   Widget _buildRiskMeter(bool isDark, FraudDetectionSummary summary) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
@@ -381,7 +381,7 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
   }
 
   String _patternName(FraudPattern pattern) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     switch (pattern) {
       case FraudPattern.unusualRefund:
         return l10n.aiPatternRefund;
@@ -408,7 +408,7 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
                 size: 64, color: AppColors.success),
             const SizedBox(height: AlhaiSpacing.md),
             Text(
-              AppLocalizations.of(context)!.aiNoFraudAlerts,
+              AppLocalizations.of(context).aiNoFraudAlerts,
               style: TextStyle(
                 color: isDark ? Colors.white : AppColors.textPrimary,
                 fontSize: 18,
@@ -486,7 +486,7 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
             ),
             const SizedBox(height: AlhaiSpacing.md),
             Text(
-              AppLocalizations.of(context)!.aiSelectAlertToInvestigate,
+              AppLocalizations.of(context).aiSelectAlertToInvestigate,
               style: TextStyle(
                 color: isDark
                     ? Colors.white.withValues(alpha: 0.5)

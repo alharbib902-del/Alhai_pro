@@ -60,8 +60,7 @@ class _DistributorReportsScreenState
     if (report == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content:
-              Text(l10n?.distributorNoDataToExport ?? 'لا توجد بيانات للتصدير'),
+          content: Text(l10n.distributorNoDataToExport),
           backgroundColor: AppColors.warning,
         ),
       );
@@ -105,16 +104,14 @@ class _DistributorReportsScreenState
       csv_export.downloadCsv(csvString, filename);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content:
-              Text(l10n?.distributorReportExported ?? 'تم تصدير التقرير بنجاح'),
+          content: Text(l10n.distributorReportExported),
           backgroundColor: AppColors.success,
         ),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-              l10n?.distributorExportWebOnly ?? 'التصدير متاح فقط على الويب'),
+          content: Text(l10n.distributorExportWebOnly),
           backgroundColor: AppColors.warning,
         ),
       );
@@ -128,8 +125,7 @@ class _DistributorReportsScreenState
       final l10n = AppLocalizations.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-              l10n?.distributorPrintWebOnly ?? 'الطباعة متاحة فقط على الويب'),
+          content: Text(l10n.distributorPrintWebOnly),
           backgroundColor: AppColors.warning,
         ),
       );
@@ -152,27 +148,27 @@ class _DistributorReportsScreenState
       backgroundColor: AppColors.getBackground(isDark),
       appBar: AppBar(
         title: Text(
-          l10n?.distributorReports ?? 'التقارير',
+          l10n.distributorReports,
           style: TextStyle(fontWeight: FontWeight.bold, color: cs.onSurface),
         ),
         centerTitle: false,
         actions: [
           Semantics(
             button: true,
-            label: l10n?.distributorPrintReport ?? 'طباعة التقرير',
+            label: l10n.distributorPrintReport,
             child: IconButton(
               onPressed: _printReport,
               icon: const Icon(Icons.print_rounded),
-              tooltip: l10n?.distributorPrint ?? 'طباعة',
+              tooltip: l10n.distributorPrint,
             ),
           ),
           Semantics(
             button: true,
-            label: l10n?.distributorExportCsv ?? 'تصدير التقرير كملف CSV',
+            label: l10n.distributorExportCsv,
             child: IconButton(
               onPressed: () => _exportCsv(reportAsync),
               icon: const Icon(Icons.download_rounded),
-              tooltip: l10n?.distributorExportCsvShort ?? 'تصدير CSV',
+              tooltip: l10n.distributorExportCsvShort,
             ),
           ),
           const SizedBox(width: AlhaiSpacing.xs),
@@ -203,7 +199,7 @@ class _DistributorReportsScreenState
                         size: 48, color: AppColors.getTextMuted(isDark)),
                     const SizedBox(height: AlhaiSpacing.md),
                     Text(
-                      l10n?.distributorLoadError ?? 'حدث خطأ في تحميل التقارير',
+                      l10n.distributorLoadError,
                       style: TextStyle(
                         fontSize: 16,
                         color: AppColors.getTextSecondary(isDark),
@@ -214,7 +210,7 @@ class _DistributorReportsScreenState
                       onPressed: () =>
                           ref.invalidate(reportDataProvider(_apiPeriod)),
                       icon: const Icon(Icons.refresh, size: 18),
-                      label: Text(l10n?.distributorRetry ?? 'إعادة المحاولة'),
+                      label: Text(l10n.distributorRetry),
                       style: FilledButton.styleFrom(
                         backgroundColor: AppColors.primary,
                         foregroundColor: AppColors.textOnPrimary,
@@ -233,7 +229,7 @@ class _DistributorReportsScreenState
                             size: 64, color: AppColors.getTextMuted(isDark)),
                         const SizedBox(height: AlhaiSpacing.md),
                         Text(
-                          l10n?.distributorNoDataToExport ?? 'لا توجد بيانات',
+                          l10n.distributorNoDataToExport,
                           style: TextStyle(
                             fontSize: 16,
                             color: AppColors.getTextSecondary(isDark),
@@ -316,12 +312,12 @@ class _DistributorReportsScreenState
     final l10n = AppLocalizations.of(context);
     final fmt = NumberFormat('#,##0', 'ar');
     final fmtDec = NumberFormat('#,##0.00', 'ar');
-    final sar = l10n?.distributorSar ?? 'ر.س';
+    final sar = l10n.distributorSar;
 
     final cards = [
       _statCard(
         Icons.payments_rounded,
-        l10n?.distributorRevenue ?? 'إجمالي المبيعات',
+        l10n.distributorRevenue,
         '${fmt.format(report.totalSales)} $sar',
         '', // No comparison data yet
         AppColors.primary,
@@ -329,7 +325,7 @@ class _DistributorReportsScreenState
       ),
       _statCard(
         Icons.receipt_long_rounded,
-        l10n?.distributorOrderCount ?? 'عدد الطلبات',
+        l10n.distributorOrderCount,
         '${report.orderCount}',
         '',
         AppColors.info,
@@ -337,7 +333,7 @@ class _DistributorReportsScreenState
       ),
       _statCard(
         Icons.trending_up_rounded,
-        l10n?.distributorAvgOrderValue ?? 'متوسط قيمة الطلب',
+        l10n.distributorAvgOrderValue,
         '${fmtDec.format(report.avgOrderValue)} $sar',
         '',
         AppColors.secondary,
@@ -345,9 +341,9 @@ class _DistributorReportsScreenState
       ),
       _statCard(
         Icons.star_rounded,
-        l10n?.distributorTopProduct ?? 'أفضل منتج',
+        l10n.distributorTopProduct,
         report.topProduct,
-        '${report.topProductOrders} ${l10n?.distributorOrdersUnit ?? 'طلب'}',
+        '${report.topProductOrders} ${l10n.distributorOrdersUnit}',
         AppColors.warning,
         isDark,
       ),

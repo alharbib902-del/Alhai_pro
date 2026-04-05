@@ -63,10 +63,11 @@ class _PriceListsScreenState extends ConsumerState<PriceListsScreen> {
       final db = GetIt.I<AppDatabase>();
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) {
-        if (mounted)
+        if (mounted) {
           setState(() {
             _isLoadingEntries = false;
           });
+        }
         return;
       }
 
@@ -121,10 +122,11 @@ class _PriceListsScreenState extends ConsumerState<PriceListsScreen> {
         });
       }
     } catch (e) {
-      if (mounted)
+      if (mounted) {
         setState(() {
           _isLoadingEntries = false;
         });
+      }
     }
   }
 

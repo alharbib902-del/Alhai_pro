@@ -17,7 +17,7 @@ void main() {
   late MockStoresRemoteDataSource mockRemote;
 
   // Test data
-  final testStoreResponse = StoreResponse(
+  const testStoreResponse = StoreResponse(
     id: 'store-1',
     name: 'Test Store',
     address: '123 Main St',
@@ -154,7 +154,7 @@ void main() {
     group('updateStore', () {
       test('updates store with params', () async {
         // Arrange
-        final params = UpdateStoreParams(name: 'Updated Store');
+        const params = UpdateStoreParams(name: 'Updated Store');
         when(() => mockRemote.updateStore(any(), any()))
             .thenAnswer((_) async => testStoreResponse);
 

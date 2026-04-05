@@ -84,7 +84,7 @@ const Map<String, Map<String, String>> _localToRemoteColumnMap = {};
 
 /// Reverse map: Supabase remote name -> local Drift name.
 /// Built lazily from [_localToRemoteColumnMap].
-late final Map<String, Map<String, String>> _remoteToLocalColumnMap = () {
+final Map<String, Map<String, String>> _remoteToLocalColumnMap = () {
   final result = <String, Map<String, String>>{};
   for (final entry in _localToRemoteColumnMap.entries) {
     final reversed = <String, String>{};

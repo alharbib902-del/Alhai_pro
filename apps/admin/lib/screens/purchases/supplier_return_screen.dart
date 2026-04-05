@@ -79,11 +79,12 @@ class _SupplierReturnScreenState extends ConsumerState<SupplierReturnScreen> {
         });
       }
     } catch (e) {
-      if (mounted)
+      if (mounted) {
         setState(() {
           _error = e.toString();
           _isLoading = false;
         });
+      }
     }
   }
 

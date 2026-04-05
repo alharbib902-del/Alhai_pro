@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('Paginated Model', () {
     test('should calculate totalPages correctly', () {
-      final paginated = Paginated<String>(
+      const paginated = Paginated<String>(
         items: ['a', 'b', 'c'],
         page: 1,
         limit: 10,
@@ -15,7 +15,7 @@ void main() {
     });
 
     test('should detect first page correctly', () {
-      final paginated = Paginated<String>(
+      const paginated = Paginated<String>(
         items: ['a', 'b', 'c'],
         page: 1,
         limit: 10,
@@ -27,7 +27,7 @@ void main() {
     });
 
     test('should detect last page correctly when hasMore is false', () {
-      final paginated = Paginated<String>(
+      const paginated = Paginated<String>(
         items: ['a', 'b', 'c'],
         page: 3,
         limit: 10,
@@ -38,7 +38,7 @@ void main() {
     });
 
     test('should calculate nextPage correctly', () {
-      final paginated = Paginated<String>(
+      const paginated = Paginated<String>(
         items: ['a', 'b', 'c'],
         page: 2,
         limit: 10,
@@ -49,7 +49,7 @@ void main() {
     });
 
     test('should return null nextPage when on last page', () {
-      final paginated = Paginated<String>(
+      const paginated = Paginated<String>(
         items: ['a', 'b', 'c'],
         page: 3,
         limit: 10,
@@ -60,7 +60,7 @@ void main() {
     });
 
     test('should calculate previousPage correctly', () {
-      final paginated = Paginated<String>(
+      const paginated = Paginated<String>(
         items: ['a', 'b', 'c'],
         page: 2,
         limit: 10,
@@ -70,7 +70,7 @@ void main() {
     });
 
     test('should return null previousPage when on first page', () {
-      final paginated = Paginated<String>(
+      const paginated = Paginated<String>(
         items: ['a', 'b', 'c'],
         page: 1,
         limit: 10,

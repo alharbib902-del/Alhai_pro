@@ -331,7 +331,7 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final stockStatus = _getStockStatus(l10n);
 
     return AppCard(
@@ -551,7 +551,7 @@ class CustomerCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final displayInitials = initials ?? _getInitials(name);
     final balanceColor = AppColors.getBalanceColor(balance ?? 0);
 

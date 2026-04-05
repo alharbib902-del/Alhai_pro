@@ -153,11 +153,12 @@ class _CashFlowScreenState extends ConsumerState<CashFlowScreen> {
         });
       }
     } catch (e) {
-      if (mounted)
+      if (mounted) {
         setState(() {
           _error = e.toString();
           _isLoading = false;
         });
+      }
     }
   }
 

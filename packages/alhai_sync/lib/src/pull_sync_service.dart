@@ -164,8 +164,9 @@ class PullSyncService {
       since: lastPullAt,
     );
 
-    if (records.isEmpty)
+    if (records.isEmpty) {
       return _PullTableResult(pulled: 0, skippedConflicts: 0);
+    }
 
     // تصفية السجلات التي لها عمليات معلقة في طابور الدفع
     // لمنع الكتابة فوق تغييرات محلية لم تُدفع بعد

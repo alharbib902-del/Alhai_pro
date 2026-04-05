@@ -1,12 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:drift/drift.dart' hide isNotNull, isNull;
 import 'package:alhai_database/alhai_database.dart';
 import '../helpers/database_test_helpers.dart';
 
 void main() {
   late AppDatabase db;
 
-  SalesTableCompanion _makeSale({
+  SalesTableCompanion makeSale({
     required String id,
     String storeId = 'store-1',
     required String receiptNo,
@@ -30,7 +29,7 @@ void main() {
     );
   }
 
-  SaleItemsTableCompanion _makeSaleItem({
+  SaleItemsTableCompanion makeSaleItem({
     required String id,
     required String saleId,
     required String productId,
@@ -79,7 +78,7 @@ void main() {
         final saleId = 'sale_$i';
         final baseDate = DateTime(2025, 6, 1).add(Duration(hours: i));
 
-        await db.salesDao.insertSale(_makeSale(
+        await db.salesDao.insertSale(makeSale(
           id: saleId,
           receiptNo: 'REC-${i.toString().padLeft(4, '0')}',
           total: 50.0 + (i % 100),
@@ -89,7 +88,7 @@ void main() {
 
         // Each sale has 2 items
         await db.saleItemsDao.insertItems([
-          _makeSaleItem(
+          makeSaleItem(
             id: 'item_${i}_0',
             saleId: saleId,
             productId: 'prod_${i % 10}',
@@ -99,7 +98,7 @@ void main() {
             subtotal: 20.0 * (1 + (i % 3)),
             total: 20.0 * (1 + (i % 3)),
           ),
-          _makeSaleItem(
+          makeSaleItem(
             id: 'item_${i}_1',
             saleId: saleId,
             productId: 'prod_${(i + 5) % 10}',
@@ -132,7 +131,7 @@ void main() {
       for (int i = 0; i < 500; i++) {
         final day = (i % 30) + 1;
         final hour = i % 24;
-        await db.salesDao.insertSale(_makeSale(
+        await db.salesDao.insertSale(makeSale(
           id: 'sale_$i',
           receiptNo: 'REC-${i.toString().padLeft(4, '0')}',
           total: 50.0 + (i % 200),
@@ -207,7 +206,7 @@ void main() {
 
       // Seed 500 completed sales for aggregation testing
       for (int i = 0; i < 500; i++) {
-        await db.salesDao.insertSale(_makeSale(
+        await db.salesDao.insertSale(makeSale(
           id: 'sale_$i',
           receiptNo: 'REC-${i.toString().padLeft(4, '0')}',
           total: 25.0 + (i % 300),

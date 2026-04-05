@@ -48,7 +48,7 @@ final liteOrderAlertsProvider =
     ]);
     final all = <OrderWithCustomer>[];
     for (final list in results) {
-      all.addAll(list as List<OrderWithCustomer>);
+      all.addAll(list);
     }
     all.sort((a, b) => b.orderDate.compareTo(a.orderDate));
     return all;

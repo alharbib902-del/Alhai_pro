@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:drift/drift.dart' hide isNotNull, isNull;
 import 'package:alhai_database/alhai_database.dart';
 import '../helpers/database_test_helpers.dart';
 
@@ -14,7 +13,7 @@ void main() {
     await db.close();
   });
 
-  ProductsTableCompanion _makeProduct({
+  ProductsTableCompanion makeProduct({
     required String id,
     String storeId = 'store-1',
     required String name,
@@ -35,7 +34,7 @@ void main() {
     );
   }
 
-  SalesTableCompanion _makeSale({
+  SalesTableCompanion makeSale({
     String id = 'sale-1',
     String storeId = 'store-1',
     String receiptNo = 'REC-001',
@@ -59,7 +58,7 @@ void main() {
     );
   }
 
-  SaleItemsTableCompanion _makeSaleItem({
+  SaleItemsTableCompanion makeSaleItem({
     required String id,
     required String saleId,
     required String productId,
@@ -116,14 +115,14 @@ void main() {
     test('sale creates sale record, items, and updates stock correctly',
         () async {
       // Step 1: Insert products into database
-      await db.productsDao.insertProduct(_makeProduct(
+      await db.productsDao.insertProduct(makeProduct(
         id: 'prod-A',
         name: 'حليب طازج',
         price: 5.5,
         barcode: 'BC-001',
         stockQty: 50,
       ));
-      await db.productsDao.insertProduct(_makeProduct(
+      await db.productsDao.insertProduct(makeProduct(
         id: 'prod-B',
         name: 'عصير برتقال',
         price: 3.0,
@@ -133,14 +132,14 @@ void main() {
 
       // Step 2: Create sale with items
       await performSaleTransaction(
-        sale: _makeSale(
+        sale: makeSale(
           id: 'sale-tx-1',
           receiptNo: 'TX-REC-001',
           total: 19.0,
           subtotal: 19.0,
         ),
         items: [
-          _makeSaleItem(
+          makeSaleItem(
             id: 'item-1',
             saleId: 'sale-tx-1',
             productId: 'prod-A',
@@ -150,7 +149,7 @@ void main() {
             subtotal: 11.0,
             total: 11.0,
           ),
-          _makeSaleItem(
+          makeSaleItem(
             id: 'item-2',
             saleId: 'sale-tx-1',
             productId: 'prod-B',
@@ -202,7 +201,7 @@ void main() {
 
     test('void sale sets status to voided and restores stock', () async {
       // Setup: insert product and create a sale
-      await db.productsDao.insertProduct(_makeProduct(
+      await db.productsDao.insertProduct(makeProduct(
         id: 'prod-V1',
         name: 'منتج للإلغاء',
         price: 20.0,
@@ -210,14 +209,14 @@ void main() {
       ));
 
       await performSaleTransaction(
-        sale: _makeSale(
+        sale: makeSale(
           id: 'sale-void-1',
           receiptNo: 'VOID-REC-001',
           total: 60.0,
           subtotal: 60.0,
         ),
         items: [
-          _makeSaleItem(
+          makeSaleItem(
             id: 'void-item-1',
             saleId: 'sale-void-1',
             productId: 'prod-V1',
@@ -257,7 +256,7 @@ void main() {
         () async {
       // Setup: 5 products
       for (int i = 0; i < 5; i++) {
-        await db.productsDao.insertProduct(_makeProduct(
+        await db.productsDao.insertProduct(makeProduct(
           id: 'multi-prod-$i',
           name: 'Multi Product $i',
           price: 10.0 + i,
@@ -276,7 +275,7 @@ void main() {
         final itemTotal = unitPrice * qty;
         totalAmount += itemTotal;
 
-        saleItems.add(_makeSaleItem(
+        saleItems.add(makeSaleItem(
           id: 'multi-item-$i',
           saleId: 'multi-sale-1',
           productId: 'multi-prod-$i',
@@ -290,7 +289,7 @@ void main() {
       }
 
       await performSaleTransaction(
-        sale: _makeSale(
+        sale: makeSale(
           id: 'multi-sale-1',
           receiptNo: 'MULTI-REC-001',
           total: totalAmount,
@@ -319,7 +318,7 @@ void main() {
     });
 
     test('void and re-sale cycle maintains stock consistency', () async {
-      await db.productsDao.insertProduct(_makeProduct(
+      await db.productsDao.insertProduct(makeProduct(
         id: 'cycle-prod',
         name: 'Cycle Product',
         price: 15.0,
@@ -328,14 +327,14 @@ void main() {
 
       // First sale: sell 10 units
       await performSaleTransaction(
-        sale: _makeSale(
+        sale: makeSale(
           id: 'cycle-sale-1',
           receiptNo: 'CYCLE-REC-001',
           total: 150.0,
           subtotal: 150.0,
         ),
         items: [
-          _makeSaleItem(
+          makeSaleItem(
             id: 'cycle-item-1',
             saleId: 'cycle-sale-1',
             productId: 'cycle-prod',
@@ -364,14 +363,14 @@ void main() {
 
       // Second sale: sell 5 units
       await performSaleTransaction(
-        sale: _makeSale(
+        sale: makeSale(
           id: 'cycle-sale-2',
           receiptNo: 'CYCLE-REC-002',
           total: 75.0,
           subtotal: 75.0,
         ),
         items: [
-          _makeSaleItem(
+          makeSaleItem(
             id: 'cycle-item-2',
             saleId: 'cycle-sale-2',
             productId: 'cycle-prod',
@@ -402,7 +401,7 @@ void main() {
 
     test('sale items are queryable with product details after transaction',
         () async {
-      await db.productsDao.insertProduct(_makeProduct(
+      await db.productsDao.insertProduct(makeProduct(
         id: 'detail-prod-1',
         name: 'منتج مفصل',
         price: 25.0,
@@ -411,14 +410,14 @@ void main() {
       ));
 
       await performSaleTransaction(
-        sale: _makeSale(
+        sale: makeSale(
           id: 'detail-sale-1',
           receiptNo: 'DET-REC-001',
           total: 75.0,
           subtotal: 75.0,
         ),
         items: [
-          _makeSaleItem(
+          makeSaleItem(
             id: 'detail-item-1',
             saleId: 'detail-sale-1',
             productId: 'detail-prod-1',

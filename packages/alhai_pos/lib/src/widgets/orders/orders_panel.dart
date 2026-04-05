@@ -68,7 +68,7 @@ class OrdersPanel extends ConsumerWidget {
   Widget _buildHeader(
       BuildContext context, WidgetRef ref, OnlineOrdersState state) {
     final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.md),
@@ -125,7 +125,7 @@ class OrdersPanel extends ConsumerWidget {
   }
 
   Widget _buildStatusTabs(BuildContext context, OnlineOrdersState state) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Container(
       padding: const EdgeInsets.symmetric(
@@ -166,7 +166,7 @@ class OrdersPanel extends ConsumerWidget {
 
   Widget _buildEmptyState(BuildContext context) {
     final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Center(
       child: Column(
@@ -233,7 +233,7 @@ class OrdersPanel extends ConsumerWidget {
 
   void _showRejectDialog(
       BuildContext context, WidgetRef ref, OnlineOrder order) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     showDialog(
       context: context,
@@ -263,7 +263,7 @@ class OrdersPanel extends ConsumerWidget {
   }
 
   void _printOrder(BuildContext context, OnlineOrder order) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     // TODO: طباعة الفاتورة
     ScaffoldMessenger.of(context).showSnackBar(
@@ -293,7 +293,7 @@ class OrdersPanel extends ConsumerWidget {
               ..orderBy([(d) => OrderingTerm.asc(d.name)]))
             .get(),
         builder: (ctx, snapshot) {
-          final l10n = AppLocalizations.of(ctx)!;
+          final l10n = AppLocalizations.of(ctx);
 
           if (snapshot.connectionState == ConnectionState.waiting) {
             return AlertDialog(

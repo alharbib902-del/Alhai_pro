@@ -63,7 +63,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
     final productsState = ref.watch(productsStateProvider);
     final products = productsState.products;
     final isDesktop = context.screenWidth >= AppSizes.breakpointTablet;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     // Calculate stats once per build
     final totalProducts = products.length;
@@ -1208,7 +1208,7 @@ class _InventoryCardState extends State<_InventoryCard> {
             ? AppColors.stockLow
             : AppColors.stockAvailable;
     final colorScheme = Theme.of(context).colorScheme;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),

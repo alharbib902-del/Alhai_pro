@@ -135,8 +135,8 @@ final liteWeeklyComparisonProvider =
         startDate: startOfLastWeek, endDate: startOfThisWeek),
   ]);
 
-  final thisWeekStats = results[0] as SalesStats;
-  final lastWeekStats = results[1] as SalesStats;
+  final thisWeekStats = results[0];
+  final lastWeekStats = results[1];
 
   // Build daily breakdown — batch all 14 queries in parallel
   final dayNames = ['Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri'];

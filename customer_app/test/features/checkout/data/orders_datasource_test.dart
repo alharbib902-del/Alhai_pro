@@ -1,8 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:alhai_core/alhai_core.dart';
 
-import 'package:customer_app/features/checkout/data/orders_datasource.dart';
-
 /// Tests for the OrdersDatasource helper method and data parsing logic.
 ///
 /// The Supabase query builder chain is deeply intertwined with its internal
@@ -307,8 +305,8 @@ void main() {
       const limit = 20;
 
       // Act - same calculation as in getOrders
-      final from = (page - 1) * limit;
-      final to = from + limit - 1;
+      const from = (page - 1) * limit;
+      const to = from + limit - 1;
 
       // Assert
       expect(from, equals(40));

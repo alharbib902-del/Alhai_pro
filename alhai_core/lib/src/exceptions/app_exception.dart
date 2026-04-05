@@ -35,8 +35,7 @@ class ServerException extends AppException {
 
 /// Resource not found (404)
 class NotFoundException extends AppException {
-  const NotFoundException(String message, {String? code})
-      : super(message, code: code, statusCode: 404);
+  const NotFoundException(super.message, {super.code}) : super(statusCode: 404);
 }
 
 /// Unknown/unexpected errors (fallback)
@@ -45,11 +44,11 @@ class UnknownException extends AppException {
   final StackTrace? stackTrace;
 
   const UnknownException(
-    String message, {
+    super.message, {
     String? code,
     this.cause,
     this.stackTrace,
-  }) : super(message, code: code ?? 'UNKNOWN');
+  }) : super(code: code ?? 'UNKNOWN');
 
   @override
   String toString() => 'UnknownException: $message (cause: $cause)';

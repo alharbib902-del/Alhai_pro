@@ -122,8 +122,8 @@ class SyncApiService {
   bool _isForeignKeyError(PostgrestException e) {
     // PostgreSQL error code 23503 = foreign_key_violation
     return e.code == '23503' ||
-        (e.message?.contains('foreign key') ?? false) ||
-        (e.message?.contains('violates foreign key') ?? false);
+        e.message.contains('foreign key') ||
+        e.message.contains('violates foreign key');
   }
 
   /// حذف سجل

@@ -24,7 +24,7 @@ class _CustomerGroupsScreenState extends ConsumerState<CustomerGroupsScreen> {
   bool _isLoadingCustomers = false;
 
   List<_CustomerGroup> _buildDefaultGroups() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return [
       _CustomerGroup(
           id: 'all',
@@ -113,7 +113,7 @@ class _CustomerGroupsScreenState extends ConsumerState<CustomerGroupsScreen> {
       final vipCount = (total * 0.1).round();
 
       if (mounted) {
-        final l10n = AppLocalizations.of(context)!;
+        final l10n = AppLocalizations.of(context);
         setState(() {
           _groups = [
             _CustomerGroup(
@@ -243,7 +243,7 @@ class _CustomerGroupsScreenState extends ConsumerState<CustomerGroupsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.customerGroups),

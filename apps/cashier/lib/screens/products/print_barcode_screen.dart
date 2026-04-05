@@ -65,8 +65,7 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
         setState(() => _isSearching = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content:
-                Text(AppLocalizations.of(context)?.errorOccurred ?? 'حدث خطأ'),
+            content: Text(AppLocalizations.of(context).errorOccurred),
             backgroundColor: AppColors.error,
           ),
         );

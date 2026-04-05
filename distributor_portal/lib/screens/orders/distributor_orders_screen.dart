@@ -126,8 +126,8 @@ class _DistributorOrdersScreenState
 
     final l10n = AppLocalizations.of(context);
     final actionLabel = newStatus == 'approved'
-        ? (l10n?.distributorAcceptSendQuote ?? 'Accept')
-        : (l10n?.distributorRejectOrder ?? 'Reject');
+        ? l10n.distributorAcceptSendQuote
+        : l10n.distributorRejectOrder;
     final count = _selectedOrderIds.length;
 
     final confirmed = await showDialog<bool>(
@@ -139,7 +139,7 @@ class _DistributorOrdersScreenState
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text(l10n?.cancel ?? 'Cancel'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.of(ctx).pop(true),
@@ -183,7 +183,7 @@ class _DistributorOrdersScreenState
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(l10n?.distributorLoadError ?? 'Error'),
+          content: Text(l10n.distributorLoadError),
           backgroundColor: AppColors.error,
         ),
       );
@@ -211,7 +211,7 @@ class _DistributorOrdersScreenState
             padding:
                 EdgeInsetsDirectional.fromSTEB(padding, padding, padding, 0),
             child: Text(
-              l10n?.distributorOrders ?? 'Incoming Orders',
+              l10n.distributorOrders,
               style: TextStyle(
                 fontSize: responsiveHeaderFontSize(width),
                 fontWeight: FontWeight.bold,
@@ -225,7 +225,7 @@ class _DistributorOrdersScreenState
           Padding(
             padding: EdgeInsets.symmetric(horizontal: padding),
             child: Semantics(
-              label: l10n?.search ?? 'Search orders',
+              label: l10n.search,
               textField: true,
               child: TextField(
                 controller: _searchController,
@@ -301,28 +301,28 @@ class _DistributorOrdersScreenState
               tabs: [
                 Tab(
                   child: _buildTabWithCount(
-                    l10n?.distributorAllOrders ?? 'All',
+                    l10n.distributorAllOrders,
                     ordersAsync.valueOrNull?.length,
                     0,
                   ),
                 ),
                 Tab(
                   child: _buildTabWithCount(
-                    l10n?.distributorPendingTab ?? 'Pending',
+                    l10n.distributorPendingTab,
                     null,
                     1,
                   ),
                 ),
                 Tab(
                   child: _buildTabWithCount(
-                    l10n?.distributorApprovedTab ?? 'Approved',
+                    l10n.distributorApprovedTab,
                     null,
                     2,
                   ),
                 ),
                 Tab(
                   child: _buildTabWithCount(
-                    l10n?.distributorRejectedTab ?? 'Rejected',
+                    l10n.distributorRejectedTab,
                     null,
                     3,
                   ),
@@ -347,13 +347,13 @@ class _DistributorOrdersScreenState
                               Theme.of(context).colorScheme.onSurfaceVariant),
                     ),
                     const SizedBox(height: AlhaiSpacing.md),
-                    Text(l10n?.distributorLoadError ?? 'Error loading data'),
+                    Text(l10n.distributorLoadError),
                     const SizedBox(height: AlhaiSpacing.md),
                     FilledButton.icon(
                       onPressed: () =>
                           ref.invalidate(ordersProvider(statusFilter)),
                       icon: const Icon(Icons.refresh, size: 18),
-                      label: Text(l10n?.distributorRetry ?? 'Retry'),
+                      label: Text(l10n.distributorRetry),
                     ),
                   ],
                 ),
@@ -379,8 +379,7 @@ class _DistributorOrdersScreenState
                         Text(
                           _searchQuery.isNotEmpty
                               ? 'No orders match your search'
-                              : (l10n?.distributorNoOrders ??
-                                  'No orders found'),
+                              : l10n.distributorNoOrders,
                           style: TextStyle(
                             fontSize: 16,
                             color:
@@ -393,7 +392,7 @@ class _DistributorOrdersScreenState
                             onPressed: () =>
                                 ref.invalidate(ordersProvider(statusFilter)),
                             icon: const Icon(Icons.refresh, size: 18),
-                            label: Text(l10n?.distributorRetry ?? 'Refresh'),
+                            label: Text(l10n.distributorRetry),
                             style: FilledButton.styleFrom(
                               backgroundColor: AppColors.primary,
                               foregroundColor: AppColors.textOnPrimary,

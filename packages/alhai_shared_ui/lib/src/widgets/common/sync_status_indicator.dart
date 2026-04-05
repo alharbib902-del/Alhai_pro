@@ -102,7 +102,7 @@ class _SyncIndicatorButtonState extends State<_SyncIndicatorButton>
 
   /// تحديد الأيقونة واللون بناءً على الحالة
   ({IconData icon, Color color, String tooltip}) _resolveState() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     if (!widget.isOnline) {
       return (
         icon: Icons.cloud_off_rounded,
@@ -222,7 +222,7 @@ class _SyncIndicatorButtonState extends State<_SyncIndicatorButton>
                       child: Icon(
                         state.icon,
                         key: ValueKey(
-                            '${state.icon.codePoint}_${state.color.toARGB32()}'),
+                            '${state.icon.codePoint}_${state.color.value}'),
                         color: state.color,
                         size: 18,
                       ),
@@ -422,7 +422,7 @@ class _SyncIndicatorButtonState extends State<_SyncIndicatorButton>
   }
 
   String _getStatusTitle() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     if (!widget.isOnline) return l10n.disconnectedLabel;
     if (widget.syncStatus == SyncStatus.syncing) return l10n.syncing;
     if (widget.syncStatus == SyncStatus.error) return l10n.syncErrorMessage('');
@@ -431,7 +431,7 @@ class _SyncIndicatorButtonState extends State<_SyncIndicatorButton>
   }
 
   String _getStatusDescription() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     if (!widget.isOnline) {
       return l10n.dataSavedLocally;
     }

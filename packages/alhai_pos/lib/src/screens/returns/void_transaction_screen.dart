@@ -11,7 +11,6 @@
 library;
 
 import 'package:flutter/material.dart';
-import 'package:alhai_auth/alhai_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
@@ -206,7 +205,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
 
   Future<void> _confirmVoid() async {
     if (!_isFormValid || _invoiceData == null) return;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     // طلب موافقة المشرف عبر PIN قبل تنفيذ الإلغاء
     final approved = await ManagerApprovalService.requestPinApproval(
@@ -283,9 +282,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
             children: [
               const Icon(Icons.error_outline, color: Colors.white, size: 20),
               const SizedBox(width: AlhaiSpacing.xs),
-              Expanded(
-                  child: Text(AppLocalizations.of(context)?.errorOccurred ??
-                      'حدث خطأ')),
+              Expanded(child: Text(AppLocalizations.of(context).errorOccurred)),
             ],
           ),
           backgroundColor: AppColors.error,
@@ -299,7 +296,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
 
   void _copyToClipboard(String text) {
     Clipboard.setData(ClipboardData(text: text));
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Row(
@@ -342,7 +339,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
     final isWideScreen = context.isDesktop;
     final isMediumScreen = !context.isMobile;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       children: [

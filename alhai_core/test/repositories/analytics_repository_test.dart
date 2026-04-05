@@ -19,7 +19,7 @@ void main() {
   late MockAnalyticsRemoteDataSource mockRemote;
 
   // Test data
-  final testSlowMovingResponse = SlowMovingProductResponse(
+  const testSlowMovingResponse = SlowMovingProductResponse(
     productId: 'prod-1',
     productName: 'Slow Product',
     stockQty: 50,
@@ -27,14 +27,14 @@ void main() {
     stockValue: 2500.0,
   );
 
-  final testForecastResponse = SalesForecastResponse(
+  const testForecastResponse = SalesForecastResponse(
     date: '2026-01-20',
     predictedRevenue: 8000.0,
     predictedOrders: 40,
     confidence: 0.85,
   );
 
-  final testAlertResponse = SmartAlertResponse(
+  const testAlertResponse = SmartAlertResponse(
     id: 'alert-1',
     type: 'lowStock',
     title: 'Low Stock Alert',
@@ -43,7 +43,7 @@ void main() {
     createdAt: '2026-01-19T10:00:00Z',
   );
 
-  final testReorderResponse = ReorderSuggestionResponse(
+  const testReorderResponse = ReorderSuggestionResponse(
     productId: 'prod-1',
     productName: 'Test Product',
     currentStock: 10,

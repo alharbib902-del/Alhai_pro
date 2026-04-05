@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:drift/drift.dart' hide isNotNull, isNull;
 import 'package:alhai_database/alhai_database.dart';
 import '../helpers/database_test_helpers.dart';
 
@@ -14,7 +13,7 @@ void main() {
     await db.close();
   });
 
-  CustomersTableCompanion _makeCustomer({
+  CustomersTableCompanion makeCustomer({
     String id = 'cust-1',
     String storeId = 'store-1',
     String name = 'أحمد محمد',
@@ -33,7 +32,7 @@ void main() {
 
   group('CustomersDao', () {
     test('insertCustomer and getCustomerById', () async {
-      await db.customersDao.insertCustomer(_makeCustomer());
+      await db.customersDao.insertCustomer(makeCustomer());
 
       final customer = await db.customersDao.getCustomerById('cust-1');
       expect(customer, isNotNull);
@@ -47,8 +46,8 @@ void main() {
     });
 
     test('getAllCustomers returns all for store', () async {
-      await db.customersDao.insertCustomer(_makeCustomer());
-      await db.customersDao.insertCustomer(_makeCustomer(
+      await db.customersDao.insertCustomer(makeCustomer());
+      await db.customersDao.insertCustomer(makeCustomer(
         id: 'cust-2',
         name: 'فاطمة علي',
         phone: '0509876543',
@@ -59,8 +58,8 @@ void main() {
     });
 
     test('getActiveCustomers excludes inactive', () async {
-      await db.customersDao.insertCustomer(_makeCustomer());
-      await db.customersDao.insertCustomer(_makeCustomer(
+      await db.customersDao.insertCustomer(makeCustomer());
+      await db.customersDao.insertCustomer(makeCustomer(
         id: 'cust-2',
         name: 'خالد سعيد',
         isActive: false,
@@ -72,8 +71,8 @@ void main() {
     });
 
     test('searchCustomers finds by name', () async {
-      await db.customersDao.insertCustomer(_makeCustomer());
-      await db.customersDao.insertCustomer(_makeCustomer(
+      await db.customersDao.insertCustomer(makeCustomer());
+      await db.customersDao.insertCustomer(makeCustomer(
         id: 'cust-2',
         name: 'سارة أحمد',
         phone: '0507777777',
@@ -84,7 +83,7 @@ void main() {
     });
 
     test('searchCustomers finds by phone', () async {
-      await db.customersDao.insertCustomer(_makeCustomer());
+      await db.customersDao.insertCustomer(makeCustomer());
 
       final results =
           await db.customersDao.searchCustomers('0501234567', 'store-1');
@@ -92,7 +91,7 @@ void main() {
     });
 
     test('getCustomerByPhone returns correct customer', () async {
-      await db.customersDao.insertCustomer(_makeCustomer());
+      await db.customersDao.insertCustomer(makeCustomer());
 
       final customer =
           await db.customersDao.getCustomerByPhone('0501234567', 'store-1');
@@ -101,7 +100,7 @@ void main() {
     });
 
     test('updateCustomer modifies data', () async {
-      await db.customersDao.insertCustomer(_makeCustomer());
+      await db.customersDao.insertCustomer(makeCustomer());
       final customer = await db.customersDao.getCustomerById('cust-1');
       final updated = customer!.copyWith(name: 'أحمد محمد الشهري');
 
@@ -112,7 +111,7 @@ void main() {
     });
 
     test('deleteCustomer removes customer', () async {
-      await db.customersDao.insertCustomer(_makeCustomer());
+      await db.customersDao.insertCustomer(makeCustomer());
 
       final deleted = await db.customersDao.deleteCustomer('cust-1');
       expect(deleted, 1);
@@ -122,7 +121,7 @@ void main() {
     });
 
     test('markAsSynced sets syncedAt', () async {
-      await db.customersDao.insertCustomer(_makeCustomer());
+      await db.customersDao.insertCustomer(makeCustomer());
 
       await db.customersDao.markAsSynced('cust-1');
 
@@ -132,7 +131,7 @@ void main() {
 
     // Customer Addresses
     test('insertAddress and getCustomerAddresses', () async {
-      await db.customersDao.insertCustomer(_makeCustomer());
+      await db.customersDao.insertCustomer(makeCustomer());
       await db.customersDao.insertAddress(
         CustomerAddressesTableCompanion.insert(
           id: 'addr-1',
@@ -150,7 +149,7 @@ void main() {
     });
 
     test('deleteAddress removes address', () async {
-      await db.customersDao.insertCustomer(_makeCustomer());
+      await db.customersDao.insertCustomer(makeCustomer());
       await db.customersDao.insertAddress(
         CustomerAddressesTableCompanion.insert(
           id: 'addr-1',

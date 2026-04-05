@@ -63,17 +63,19 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen>
                 createdAt: p.updatedAt ?? p.createdAt,
               ))
           .toList();
-      if (mounted)
+      if (mounted) {
         setState(() {
           _alerts = alerts;
           _isLoading = false;
         });
+      }
     } catch (e) {
-      if (mounted)
+      if (mounted) {
         setState(() {
           _isLoading = false;
           _loadError = e.toString();
         });
+      }
     }
   }
 
@@ -85,7 +87,7 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen>
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
 
     if (_isLoading) {
@@ -202,7 +204,7 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen>
   }
 
   Widget _buildAlertList(List<_AlertItem> alerts) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
     if (alerts.isEmpty) {
       return Center(
@@ -367,7 +369,7 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen>
   }
 
   String _getAlertMessage(_AlertItem alert) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     if (alert.type == 'low_stock') {
       return l10n.stockAlertMessage(
           alert.currentStock.toInt(), alert.threshold.toInt());
@@ -377,7 +379,7 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen>
   }
 
   String _formatTimeAgo(DateTime date) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final diff = DateTime.now().difference(date);
     if (diff.inMinutes < 60) {
       return l10n.minutesAgoTime(diff.inMinutes);
@@ -389,7 +391,7 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen>
   }
 
   void _showAlertDetails(_AlertItem alert) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
     showModalBottomSheet(
       context: context,
@@ -463,7 +465,7 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen>
   }
 
   void _showSettings() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     showModalBottomSheet(
       context: context,
       builder: (context) => StatefulBuilder(
@@ -519,7 +521,7 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen>
   }
 
   void _acknowledgeAll() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -546,7 +548,7 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen>
   }
 
   void _createPurchaseOrder(_AlertItem alert) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(

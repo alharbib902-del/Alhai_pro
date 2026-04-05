@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:drift/drift.dart' hide isNotNull, isNull;
 import 'package:alhai_database/alhai_database.dart';
 import '../helpers/database_test_helpers.dart';
 
@@ -14,7 +13,7 @@ void main() {
     await db.close();
   });
 
-  OrganizationsTableCompanion _makeOrg({
+  OrganizationsTableCompanion makeOrg({
     String id = 'org-1',
     String name = 'مؤسسة الألهاي التجارية',
     bool isActive = true,
@@ -31,7 +30,7 @@ void main() {
 
   group('OrganizationsDao', () {
     test('insertOrganization and getOrganizationById', () async {
-      await db.organizationsDao.insertOrganization(_makeOrg());
+      await db.organizationsDao.insertOrganization(makeOrg());
 
       final org = await db.organizationsDao.getOrganizationById('org-1');
       expect(org, isNotNull);
@@ -44,8 +43,8 @@ void main() {
     });
 
     test('getAllOrganizations returns all orgs', () async {
-      await db.organizationsDao.insertOrganization(_makeOrg());
-      await db.organizationsDao.insertOrganization(_makeOrg(
+      await db.organizationsDao.insertOrganization(makeOrg());
+      await db.organizationsDao.insertOrganization(makeOrg(
         id: 'org-2',
         name: 'مؤسسة أخرى',
       ));
@@ -55,18 +54,18 @@ void main() {
     });
 
     test('upsertOrganization inserts or replaces', () async {
-      await db.organizationsDao.upsertOrganization(_makeOrg());
+      await db.organizationsDao.upsertOrganization(makeOrg());
 
       var org = await db.organizationsDao.getOrganizationById('org-1');
       expect(org!.name, 'مؤسسة الألهاي التجارية');
 
-      await db.organizationsDao.upsertOrganization(_makeOrg(name: 'اسم محدّث'));
+      await db.organizationsDao.upsertOrganization(makeOrg(name: 'اسم محدّث'));
       org = await db.organizationsDao.getOrganizationById('org-1');
       expect(org!.name, 'اسم محدّث');
     });
 
     test('deleteOrganization removes org', () async {
-      await db.organizationsDao.insertOrganization(_makeOrg());
+      await db.organizationsDao.insertOrganization(makeOrg());
 
       final deleted = await db.organizationsDao.deleteOrganization('org-1');
       expect(deleted, 1);
@@ -76,7 +75,7 @@ void main() {
     });
 
     test('markOrgAsSynced sets syncedAt', () async {
-      await db.organizationsDao.insertOrganization(_makeOrg());
+      await db.organizationsDao.insertOrganization(makeOrg());
 
       await db.organizationsDao.markOrgAsSynced('org-1');
 
@@ -86,7 +85,7 @@ void main() {
 
     // Subscriptions
     test('upsertSubscription and getSubscription', () async {
-      await db.organizationsDao.insertOrganization(_makeOrg());
+      await db.organizationsDao.insertOrganization(makeOrg());
       await db.organizationsDao.upsertSubscription(
         SubscriptionsTableCompanion.insert(
           id: 'sub-1',
@@ -107,7 +106,7 @@ void main() {
     });
 
     test('getActiveSubscription finds active subscription', () async {
-      await db.organizationsDao.insertOrganization(_makeOrg());
+      await db.organizationsDao.insertOrganization(makeOrg());
       await db.organizationsDao.upsertSubscription(
         SubscriptionsTableCompanion.insert(
           id: 'sub-1',
@@ -126,7 +125,7 @@ void main() {
     });
 
     test('getActiveSubscription returns null for cancelled', () async {
-      await db.organizationsDao.insertOrganization(_makeOrg());
+      await db.organizationsDao.insertOrganization(makeOrg());
       await db.organizationsDao.upsertSubscription(
         SubscriptionsTableCompanion.insert(
           id: 'sub-1',
@@ -145,7 +144,7 @@ void main() {
     });
 
     test('deleteSubscription removes subscription', () async {
-      await db.organizationsDao.insertOrganization(_makeOrg());
+      await db.organizationsDao.insertOrganization(makeOrg());
       await db.organizationsDao.upsertSubscription(
         SubscriptionsTableCompanion.insert(
           id: 'sub-1',

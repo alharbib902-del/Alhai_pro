@@ -24,7 +24,7 @@ class RoiForecastChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final textColor = isDark ? Colors.white : AppColors.textPrimary;
     final subtextColor = isDark ? Colors.white70 : AppColors.textSecondary;
 

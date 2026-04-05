@@ -102,7 +102,7 @@ class _InstantSearchFieldState extends ConsumerState<InstantSearchField> {
           maxLength: 100,
           decoration: InputDecoration(
             hintText: widget.hintText ??
-                AppLocalizations.of(context)!.quickSearchHintFull,
+                AppLocalizations.of(context).quickSearchHintFull,
             prefixIcon: const Icon(Icons.search),
             suffixIcon: _controller.text.isNotEmpty
                 ? IconButton(
@@ -112,7 +112,7 @@ class _InstantSearchFieldState extends ConsumerState<InstantSearchField> {
                       ref.read(instantSearchQueryProvider.notifier).state = '';
                       setState(() => _showResults = false);
                     },
-                    tooltip: AppLocalizations.of(context)!.clearField,
+                    tooltip: AppLocalizations.of(context).clearField,
                   )
                 : null,
             border: OutlineInputBorder(
@@ -149,8 +149,7 @@ class _InstantSearchFieldState extends ConsumerState<InstantSearchField> {
                             color: Theme.of(context).colorScheme.outline),
                         const SizedBox(width: AlhaiSpacing.xs),
                         Text(
-                          AppLocalizations.of(context)!
-                              .noResultsForQuery(query),
+                          AppLocalizations.of(context).noResultsForQuery(query),
                           style: TextStyle(
                               color: Theme.of(context)
                                   .colorScheme
@@ -230,7 +229,7 @@ class _SearchResultItem extends StatelessWidget {
             const SizedBox(width: AlhaiSpacing.xs),
           ],
           Text(
-            AppLocalizations.of(context)!
+            AppLocalizations.of(context)
                 .priceSar(product.price.toStringAsFixed(2)),
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.primary,
@@ -242,7 +241,7 @@ class _SearchResultItem extends StatelessWidget {
       trailing: IconButton(
         icon: const Icon(Icons.add_circle, color: AlhaiColors.success),
         onPressed: onTap,
-        tooltip: AppLocalizations.of(context)!.addToCart,
+        tooltip: AppLocalizations.of(context).addToCart,
       ),
     );
   }

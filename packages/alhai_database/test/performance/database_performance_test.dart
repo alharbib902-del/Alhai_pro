@@ -1,12 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:drift/drift.dart' hide isNotNull, isNull;
 import 'package:alhai_database/alhai_database.dart';
 import '../helpers/database_test_helpers.dart';
 
 void main() {
   late AppDatabase db;
 
-  ProductsTableCompanion _makeProduct({
+  ProductsTableCompanion makeProduct({
     required String id,
     String storeId = 'store-1',
     required String name,
@@ -37,7 +36,7 @@ void main() {
 
       // Seed 1000 products with Arabic and English names, barcodes, and SKUs
       for (int i = 0; i < 1000; i++) {
-        await db.productsDao.insertProduct(_makeProduct(
+        await db.productsDao.insertProduct(makeProduct(
           id: 'prod_$i',
           name: 'Product $i - منتج ${i % 50}',
           price: 10.0 + (i * 0.1),
@@ -97,7 +96,7 @@ void main() {
       db = createTestDatabase();
 
       for (int i = 0; i < 1000; i++) {
-        await db.productsDao.insertProduct(_makeProduct(
+        await db.productsDao.insertProduct(makeProduct(
           id: 'prod_$i',
           name: 'Product $i',
           barcode: '69000${i.toString().padLeft(5, '0')}',
@@ -161,7 +160,7 @@ void main() {
       db = createTestDatabase();
 
       for (int i = 0; i < 1000; i++) {
-        await db.productsDao.insertProduct(_makeProduct(
+        await db.productsDao.insertProduct(makeProduct(
           id: 'prod_$i',
           name: 'Product $i',
           stockQty: 100,

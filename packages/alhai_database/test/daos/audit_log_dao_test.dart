@@ -81,7 +81,7 @@ void main() {
     });
 
     test('getLogs respects limit', () async {
-      final actions = AuditAction.values;
+      const actions = AuditAction.values;
       for (var i = 0; i < 10; i++) {
         await db.auditLogDao.log(
           storeId: 'store-1',

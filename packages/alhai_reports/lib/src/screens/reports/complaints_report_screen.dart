@@ -76,7 +76,7 @@ class _ComplaintsReportScreenState
                 const Icon(Icons.feedback_outlined,
                     color: AppColors.primary, size: 28),
                 const SizedBox(width: AlhaiSpacing.sm),
-                Text(AppLocalizations.of(context)!.complaintsReport,
+                Text(AppLocalizations.of(context).complaintsReport,
                     style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
@@ -103,7 +103,7 @@ class _ComplaintsReportScreenState
                                       .onSurfaceVariant),
                               const SizedBox(height: AlhaiSpacing.md),
                               Text(
-                                AppLocalizations.of(context)!
+                                AppLocalizations.of(context)
                                     .errorLoadingComplaints,
                                 style: TextStyle(
                                     fontSize: 16,
@@ -116,8 +116,7 @@ class _ComplaintsReportScreenState
                               FilledButton.icon(
                                 onPressed: _loadData,
                                 icon: const Icon(Icons.refresh_rounded),
-                                label:
-                                    Text(AppLocalizations.of(context)!.retry),
+                                label: Text(AppLocalizations.of(context).retry),
                               ),
                             ],
                           ),
@@ -135,7 +134,7 @@ class _ComplaintsReportScreenState
                               children: [
                                 _buildStatCard(
                                     context,
-                                    AppLocalizations.of(context)!
+                                    AppLocalizations.of(context)
                                         .totalComplaintsLabel,
                                     '0',
                                     Icons.list_alt,
@@ -143,15 +142,14 @@ class _ComplaintsReportScreenState
                                     isDark),
                                 _buildStatCard(
                                     context,
-                                    AppLocalizations.of(context)!
-                                        .openComplaints,
+                                    AppLocalizations.of(context).openComplaints,
                                     '0',
                                     Icons.hourglass_empty,
                                     Colors.orange,
                                     isDark),
                                 _buildStatCard(
                                     context,
-                                    AppLocalizations.of(context)!
+                                    AppLocalizations.of(context)
                                         .closedComplaints,
                                     '0',
                                     Icons.check_circle,
@@ -159,9 +157,9 @@ class _ComplaintsReportScreenState
                                     isDark),
                                 _buildStatCard(
                                     context,
-                                    AppLocalizations.of(context)!
+                                    AppLocalizations.of(context)
                                         .avgResolutionTime,
-                                    AppLocalizations.of(context)!.daysUnit('0'),
+                                    AppLocalizations.of(context).daysUnit('0'),
                                     Icons.timer,
                                     AppColors.primary,
                                     isDark),
@@ -178,7 +176,7 @@ class _ComplaintsReportScreenState
                                     child: TextField(
                                         decoration: InputDecoration(
                                             labelText:
-                                                AppLocalizations.of(context)!
+                                                AppLocalizations.of(context)
                                                     .fromDate,
                                             prefixIcon: const Icon(
                                                 Icons.calendar_today,
@@ -192,7 +190,7 @@ class _ComplaintsReportScreenState
                                     child: TextField(
                                         decoration: InputDecoration(
                                             labelText:
-                                                AppLocalizations.of(context)!
+                                                AppLocalizations.of(context)
                                                     .toDate,
                                             prefixIcon: const Icon(
                                                 Icons.calendar_today,
@@ -206,7 +204,7 @@ class _ComplaintsReportScreenState
                                     child: DropdownButtonFormField<String>(
                                         decoration: InputDecoration(
                                             labelText:
-                                                AppLocalizations.of(context)!
+                                                AppLocalizations.of(context)
                                                     .statusFilter,
                                             border: OutlineInputBorder(
                                                 borderRadius:
@@ -216,17 +214,17 @@ class _ComplaintsReportScreenState
                                           DropdownMenuItem(
                                               value: 'all',
                                               child: Text(
-                                                  AppLocalizations.of(context)!
+                                                  AppLocalizations.of(context)
                                                       .allFilter)),
                                           DropdownMenuItem(
                                               value: 'open',
                                               child: Text(
-                                                  AppLocalizations.of(context)!
+                                                  AppLocalizations.of(context)
                                                       .openComplaints)),
                                           DropdownMenuItem(
                                               value: 'closed',
                                               child: Text(
-                                                  AppLocalizations.of(context)!
+                                                  AppLocalizations.of(context)
                                                       .closedComplaints))
                                         ],
                                         onChanged: (_) {})),
@@ -235,7 +233,7 @@ class _ComplaintsReportScreenState
                                     child: DropdownButtonFormField<String>(
                                         decoration: InputDecoration(
                                             labelText:
-                                                AppLocalizations.of(context)!
+                                                AppLocalizations.of(context)
                                                     .departmentFilter,
                                             border: OutlineInputBorder(
                                                 borderRadius:
@@ -245,22 +243,22 @@ class _ComplaintsReportScreenState
                                           DropdownMenuItem(
                                               value: 'all',
                                               child: Text(
-                                                  AppLocalizations.of(context)!
+                                                  AppLocalizations.of(context)
                                                       .allFilter)),
                                           DropdownMenuItem(
                                               value: 'payment',
                                               child: Text(
-                                                  AppLocalizations.of(context)!
+                                                  AppLocalizations.of(context)
                                                       .paymentDepartment)),
                                           DropdownMenuItem(
                                               value: 'technical',
                                               child: Text(
-                                                  AppLocalizations.of(context)!
+                                                  AppLocalizations.of(context)
                                                       .technicalDepartment)),
                                           DropdownMenuItem(
                                               value: 'other',
                                               child: Text(
-                                                  AppLocalizations.of(context)!
+                                                  AppLocalizations.of(context)
                                                       .otherDepartment))
                                         ],
                                         onChanged: (_) {})),
@@ -283,7 +281,7 @@ class _ComplaintsReportScreenState
                                                 .onSurfaceVariant
                                                 .withValues(alpha: 0.3)),
                                     const SizedBox(height: AlhaiSpacing.md),
-                                    Text(AppLocalizations.of(context)!.noData,
+                                    Text(AppLocalizations.of(context).noData,
                                         style: TextStyle(
                                             fontSize: 16,
                                             color: isDark
@@ -293,7 +291,7 @@ class _ComplaintsReportScreenState
                                                     .onSurfaceVariant)),
                                     const SizedBox(height: AlhaiSpacing.xs),
                                     Text(
-                                        AppLocalizations.of(context)!
+                                        AppLocalizations.of(context)
                                             .noComplaintsRecorded,
                                         style: TextStyle(
                                             fontSize: 13,

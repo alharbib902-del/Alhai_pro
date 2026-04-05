@@ -55,7 +55,7 @@ class _AiCustomerRecommendationsScreenState
   }
 
   String _getSegmentLabel(CustomerSegment segment) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     switch (segment) {
       case CustomerSegment.vip:
         return l10n.segmentVip;
@@ -93,7 +93,7 @@ class _AiCustomerRecommendationsScreenState
     return Column(
       children: [
         AppHeader(
-          title: AppLocalizations.of(context)!.aiCustomerRecommendationsTitle,
+          title: AppLocalizations.of(context).aiCustomerRecommendationsTitle,
           onMenuTap:
               !isWideScreen ? () => Scaffold.of(context).openDrawer() : null,
         ),
@@ -147,9 +147,9 @@ class _AiCustomerRecommendationsScreenState
               indicatorSize: TabBarIndicatorSize.label,
               dividerColor: Colors.transparent,
               tabs: [
-                Tab(text: AppLocalizations.of(context)!.tabRecommendations),
-                Tab(text: AppLocalizations.of(context)!.tabRepurchase),
-                Tab(text: AppLocalizations.of(context)!.tabSegments),
+                Tab(text: AppLocalizations.of(context).tabRecommendations),
+                Tab(text: AppLocalizations.of(context).tabRepurchase),
+                Tab(text: AppLocalizations.of(context).tabSegments),
               ],
             ),
           ),
@@ -230,7 +230,7 @@ class _AiCustomerRecommendationsScreenState
                             ),
                           ),
                           Text(
-                            AppLocalizations.of(context)!
+                            AppLocalizations.of(context)
                                 .customerCount(seg.count),
                             style: TextStyle(
                               color:
@@ -240,7 +240,7 @@ class _AiCustomerRecommendationsScreenState
                             ),
                           ),
                           Text(
-                            AppLocalizations.of(context)!.revenueK(
+                            AppLocalizations.of(context).revenueK(
                                 (seg.totalRevenue / 1000).toStringAsFixed(1)),
                             style: TextStyle(
                               color: color,
@@ -273,7 +273,7 @@ class _AiCustomerRecommendationsScreenState
             padding: const EdgeInsetsDirectional.only(start: AlhaiSpacing.xs),
             child: FilterChip(
               selected: currentFilter == null,
-              label: Text(AppLocalizations.of(context)!.filterAllLabel),
+              label: Text(AppLocalizations.of(context).filterAllLabel),
               onSelected: (_) =>
                   ref.read(segmentFilterProvider.notifier).state = null,
               selectedColor: AppColors.primary.withValues(alpha: 0.15),
@@ -373,8 +373,8 @@ class _AiCustomerRecommendationsScreenState
               productName: reminder.productName,
               initialPhone: reminder.phone,
               offerMessage: reminder.isOverdue
-                  ? AppLocalizations.of(context)!.specialOfferMissYou
-                  : AppLocalizations.of(context)!
+                  ? AppLocalizations.of(context).specialOfferMissYou
+                  : AppLocalizations.of(context)
                       .friendlyReminderPurchase(reminder.productName),
             );
           },
@@ -432,8 +432,7 @@ class _AiCustomerRecommendationsScreenState
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(
-                          AppLocalizations.of(context)!
-                              .customerCount(seg.count),
+                          AppLocalizations.of(context).customerCount(seg.count),
                           style: TextStyle(
                               color: color,
                               fontSize: 12,
@@ -446,15 +445,15 @@ class _AiCustomerRecommendationsScreenState
                   Row(
                     children: [
                       _SegmentStat(
-                        label: AppLocalizations.of(context)!.totalRevenueLabel,
-                        value: AppLocalizations.of(context)!.revenueK(
+                        label: AppLocalizations.of(context).totalRevenueLabel,
+                        value: AppLocalizations.of(context).revenueK(
                             (seg.totalRevenue / 1000).toStringAsFixed(1)),
                         isDark: isDark,
                       ),
                       const SizedBox(width: AlhaiSpacing.lg),
                       _SegmentStat(
-                        label: AppLocalizations.of(context)!.avgSpendStat,
-                        value: AppLocalizations.of(context)!
+                        label: AppLocalizations.of(context).avgSpendStat,
+                        value: AppLocalizations.of(context)
                             .amountSar(seg.avgSpend.toStringAsFixed(0)),
                         isDark: isDark,
                       ),
@@ -521,7 +520,7 @@ class _CustomerRecommendationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(

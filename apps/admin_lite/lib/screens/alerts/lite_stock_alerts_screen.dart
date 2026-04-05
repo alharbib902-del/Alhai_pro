@@ -31,7 +31,7 @@ class _LiteStockAlertsScreenState extends ConsumerState<LiteStockAlertsScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final size = MediaQuery.of(context).size;
     final isMobile = size.width < 600;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final dataAsync = ref.watch(liteStockAlertsProvider);
 
     return Scaffold(
@@ -218,7 +218,7 @@ class _LiteStockAlertsScreenState extends ConsumerState<LiteStockAlertsScreen> {
 
   Widget _buildAlertTile(
       BuildContext context, ProductsTableData product, bool isDark) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final stock = product.stockQty.toInt();
     final isOutOfStock = stock <= 0;
     final color = isOutOfStock ? AlhaiColors.error : AlhaiColors.warning;

@@ -66,7 +66,7 @@ class _RefundRequestScreenState extends ConsumerState<RefundRequestScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.refundRequestTitle),
+        title: Text(AppLocalizations.of(context).refundRequestTitle),
       ),
       body: SafeArea(
         top: false,
@@ -82,7 +82,7 @@ class _RefundRequestScreenState extends ConsumerState<RefundRequestScreen> {
                       controller: _orderIdController,
                       decoration: InputDecoration(
                         hintText:
-                            AppLocalizations.of(context)!.invoiceNumberHint,
+                            AppLocalizations.of(context).invoiceNumberHint,
                         prefixIcon: const Icon(Icons.receipt),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12)),
@@ -100,7 +100,7 @@ class _RefundRequestScreenState extends ConsumerState<RefundRequestScreen> {
                                 strokeWidth: 2,
                                 color: Theme.of(context).colorScheme.surface))
                         : const Icon(Icons.search),
-                    label: Text(AppLocalizations.of(context)!.searchAction),
+                    label: Text(AppLocalizations.of(context).searchAction),
                   ),
                 ],
               ),
@@ -124,12 +124,12 @@ class _RefundRequestScreenState extends ConsumerState<RefundRequestScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                              AppLocalizations.of(context)!
+                              AppLocalizations.of(context)
                                   .invoiceFieldLabel(_saleData!.receiptNo),
                               style:
                                   const TextStyle(fontWeight: FontWeight.bold)),
                           Text(
-                              '${_saleData!.createdAt.toString().split('.').first} - ${_saleData!.total.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}'),
+                              '${_saleData!.createdAt.toString().split('.').first} - ${_saleData!.total.toStringAsFixed(2)} ${AppLocalizations.of(context).sar}'),
                         ],
                       ),
                     ),
@@ -145,11 +145,11 @@ class _RefundRequestScreenState extends ConsumerState<RefundRequestScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(AppLocalizations.of(context)!.selectProductsForRefund,
+                    Text(AppLocalizations.of(context).selectProductsForRefund,
                         style: const TextStyle(fontWeight: FontWeight.bold)),
                     TextButton(
                       onPressed: _selectAll,
-                      child: Text(AppLocalizations.of(context)!.selectAll),
+                      child: Text(AppLocalizations.of(context).selectAll),
                     ),
                   ],
                 ),
@@ -171,7 +171,7 @@ class _RefundRequestScreenState extends ConsumerState<RefundRequestScreen> {
                         value: isSelected,
                         onChanged: (v) => _toggleItem(item, v ?? false),
                         title: Text(item.productName),
-                        subtitle: Text(AppLocalizations.of(context)!
+                        subtitle: Text(AppLocalizations.of(context)
                             .quantityTimesPrice(item.qty.toInt(),
                                 item.unitPrice.toStringAsFixed(2))),
                         secondary: CircleAvatar(
@@ -217,10 +217,10 @@ class _RefundRequestScreenState extends ConsumerState<RefundRequestScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(AppLocalizations.of(context)!
+                            Text(AppLocalizations.of(context)
                                 .productsSelected(_selectedItems.length)),
                             Text(
-                              AppLocalizations.of(context)!.refundAmountValue(
+                              AppLocalizations.of(context).refundAmountValue(
                                   _calculateRefundAmount().toStringAsFixed(0)),
                               style: const TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 16),
@@ -231,7 +231,7 @@ class _RefundRequestScreenState extends ConsumerState<RefundRequestScreen> {
                       FilledButton.icon(
                         onPressed: _proceedToReason,
                         icon: const AdaptiveIcon(Icons.arrow_forward),
-                        label: Text(AppLocalizations.of(context)!.nextAction),
+                        label: Text(AppLocalizations.of(context).nextAction),
                       ),
                     ],
                   ),
@@ -247,7 +247,7 @@ class _RefundRequestScreenState extends ConsumerState<RefundRequestScreen> {
                           color:
                               Theme.of(context).colorScheme.onSurfaceVariant),
                       const SizedBox(height: AlhaiSpacing.md),
-                      Text(AppLocalizations.of(context)!.enterInvoiceToSearch,
+                      Text(AppLocalizations.of(context).enterInvoiceToSearch,
                           style: TextStyle(
                               color: Theme.of(context)
                                   .colorScheme
@@ -290,8 +290,7 @@ class _RefundRequestScreenState extends ConsumerState<RefundRequestScreen> {
           });
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-                content:
-                    Text(AppLocalizations.of(context)!.invoiceNotFoundMsg)),
+                content: Text(AppLocalizations.of(context).invoiceNotFoundMsg)),
           );
         }
         return;
@@ -308,7 +307,7 @@ class _RefundRequestScreenState extends ConsumerState<RefundRequestScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content:
-                  Text(AppLocalizations.of(context)!.invoiceVoidedCannotRefund),
+                  Text(AppLocalizations.of(context).invoiceVoidedCannotRefund),
               backgroundColor: AppColors.error,
               duration: const Duration(seconds: 4),
             ),
@@ -355,7 +354,7 @@ class _RefundRequestScreenState extends ConsumerState<RefundRequestScreen> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content:
-                    Text(AppLocalizations.of(context)!.invoiceAlreadyRefunded),
+                    Text(AppLocalizations.of(context).invoiceAlreadyRefunded),
                 backgroundColor: AppColors.error,
                 duration: const Duration(seconds: 4),
               ),
@@ -369,7 +368,7 @@ class _RefundRequestScreenState extends ConsumerState<RefundRequestScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content:
-                  Text(AppLocalizations.of(context)!.invoicePartiallyRefunded),
+                  Text(AppLocalizations.of(context).invoicePartiallyRefunded),
               backgroundColor: AppColors.warning,
               duration: const Duration(seconds: 3),
             ),
@@ -396,9 +395,7 @@ class _RefundRequestScreenState extends ConsumerState<RefundRequestScreen> {
       if (mounted) {
         setState(() => _isSearching = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text(
-                  AppLocalizations.of(context)?.errorOccurred ?? 'حدث خطأ')),
+          SnackBar(content: Text(AppLocalizations.of(context).errorOccurred)),
         );
       }
     }

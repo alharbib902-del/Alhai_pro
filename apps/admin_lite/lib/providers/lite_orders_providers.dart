@@ -35,7 +35,7 @@ final liteActiveOrdersProvider =
 
     final all = <OrderWithCustomer>[];
     for (final list in results) {
-      all.addAll(list as List<OrderWithCustomer>);
+      all.addAll(list);
     }
     all.sort((a, b) => b.orderDate.compareTo(a.orderDate));
     return all;
@@ -78,7 +78,7 @@ final liteDeliveryOrdersProvider =
     ]);
     final all = <OrderWithCustomer>[];
     for (final list in results) {
-      all.addAll(list as List<OrderWithCustomer>);
+      all.addAll(list);
     }
     all.sort((a, b) => b.orderDate.compareTo(a.orderDate));
     return all;
@@ -103,7 +103,7 @@ final liteOrderHistoryProvider =
     ]);
     final all = <OrderWithCustomer>[];
     for (final list in results) {
-      all.addAll(list as List<OrderWithCustomer>);
+      all.addAll(list);
     }
     all.sort((a, b) => b.orderDate.compareTo(a.orderDate));
     return all;

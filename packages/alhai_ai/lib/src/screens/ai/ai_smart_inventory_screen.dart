@@ -47,7 +47,7 @@ class _AiSmartInventoryScreenState extends ConsumerState<AiSmartInventoryScreen>
     return Column(
       children: [
         AppHeader(
-          title: AppLocalizations.of(context)!.aiSmartInventoryTitle,
+          title: AppLocalizations.of(context).aiSmartInventoryTitle,
           onMenuTap:
               !isWideScreen ? () => Scaffold.of(context).openDrawer() : null,
         ),
@@ -98,9 +98,9 @@ class _AiSmartInventoryScreenState extends ConsumerState<AiSmartInventoryScreen>
               isScrollable: !isWideScreen,
               tabs: [
                 const Tab(text: 'EOQ'),
-                Tab(text: AppLocalizations.of(context)!.tabAbcAnalysis),
-                Tab(text: AppLocalizations.of(context)!.tabWastePrediction),
-                Tab(text: AppLocalizations.of(context)!.tabReorder),
+                Tab(text: AppLocalizations.of(context).tabAbcAnalysis),
+                Tab(text: AppLocalizations.of(context).tabWastePrediction),
+                Tab(text: AppLocalizations.of(context).tabReorder),
               ],
             ),
           ),
@@ -127,7 +127,7 @@ class _AiSmartInventoryScreenState extends ConsumerState<AiSmartInventoryScreen>
 
   Widget _buildSummaryCards(
       bool isDark, SmartInventorySummary summary, bool isWideScreen) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final cards = [
       _SummaryData(
         title: l10n.totalProductsTitle,
@@ -265,7 +265,7 @@ class _AiSmartInventoryScreenState extends ConsumerState<AiSmartInventoryScreen>
                 onOrderNow: () {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text(AppLocalizations.of(context)!
+                      content: Text(AppLocalizations.of(context)
                           .orderUnitsSnack(
                               results[index].eoq, results[index].name)),
                       backgroundColor: AppColors.primary,
@@ -286,7 +286,7 @@ class _AiSmartInventoryScreenState extends ConsumerState<AiSmartInventoryScreen>
               onOrderNow: () {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(AppLocalizations.of(context)!.orderUnitsSnack(
+                    content: Text(AppLocalizations.of(context).orderUnitsSnack(
                         results[index].eoq, results[index].name)),
                     backgroundColor: AppColors.primary,
                   ),
@@ -315,13 +315,13 @@ class _AiSmartInventoryScreenState extends ConsumerState<AiSmartInventoryScreen>
                 child: Row(
                   children: [
                     _buildAbcFilterChip(null,
-                        AppLocalizations.of(context)!.filterAllLabel, isDark),
+                        AppLocalizations.of(context).filterAllLabel, isDark),
                     _buildAbcFilterChip(AbcCategory.a,
-                        AppLocalizations.of(context)!.categoryALabel, isDark),
+                        AppLocalizations.of(context).categoryALabel, isDark),
                     _buildAbcFilterChip(AbcCategory.b,
-                        AppLocalizations.of(context)!.categoryBLabel, isDark),
+                        AppLocalizations.of(context).categoryBLabel, isDark),
                     _buildAbcFilterChip(AbcCategory.c,
-                        AppLocalizations.of(context)!.categoryCLabel, isDark),
+                        AppLocalizations.of(context).categoryCLabel, isDark),
                   ],
                 ),
               ),
@@ -399,7 +399,7 @@ class _AiSmartInventoryScreenState extends ConsumerState<AiSmartInventoryScreen>
               return WastePredictionCard(
                 prediction: sorted[index],
                 onActionTap: () {
-                  final l10n = AppLocalizations.of(context)!;
+                  final l10n = AppLocalizations.of(context);
                   final action = sorted[index].suggestedAction ==
                           WasteSuggestedAction.discount
                       ? l10n.actionDiscount
@@ -428,7 +428,7 @@ class _AiSmartInventoryScreenState extends ConsumerState<AiSmartInventoryScreen>
               onActionTap: () {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(AppLocalizations.of(context)!
+                    content: Text(AppLocalizations.of(context)
                         .actionOnProduct(sorted[index].name)),
                     backgroundColor: AppColors.primary,
                   ),
@@ -518,7 +518,7 @@ class _ReorderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final urgencyColor = _getUrgencyColor();
 
     return Container(

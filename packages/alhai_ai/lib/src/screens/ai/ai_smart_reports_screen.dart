@@ -33,7 +33,7 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
     return Column(
       children: [
         AppHeader(
-          title: AppLocalizations.of(context)!.aiSmartReportsTitle,
+          title: AppLocalizations.of(context).aiSmartReportsTitle,
           onMenuTap:
               !isWideScreen ? () => Scaffold.of(context).openDrawer() : null,
         ),
@@ -48,7 +48,7 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
     final templates = ref.watch(reportTemplatesProvider);
     final categoryFilter = ref.watch(templateCategoryFilterProvider);
 
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final categories = [
       kAllCategoryFilter,
       ...templates.map((t) => t.category).toSet()
@@ -188,7 +188,7 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
             ),
             const SizedBox(height: AlhaiSpacing.mdl),
             Text(
-              AppLocalizations.of(context)!.askAboutStore,
+              AppLocalizations.of(context).askAboutStore,
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
@@ -197,7 +197,7 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
             ),
             const SizedBox(height: AlhaiSpacing.xs),
             Text(
-              AppLocalizations.of(context)!.writeQuestionHint,
+              AppLocalizations.of(context).writeQuestionHint,
               style: TextStyle(
                 fontSize: 14,
                 color: isDark
@@ -212,15 +212,13 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
               alignment: WrapAlignment.center,
               children: [
                 _buildQuickAction(
-                    AppLocalizations.of(context)!.quickActionTodaySales,
+                    AppLocalizations.of(context).quickActionTodaySales,
                     Icons.receipt_long_rounded,
                     isDark),
+                _buildQuickAction(AppLocalizations.of(context).quickActionTop10,
+                    Icons.star_rounded, isDark),
                 _buildQuickAction(
-                    AppLocalizations.of(context)!.quickActionTop10,
-                    Icons.star_rounded,
-                    isDark),
-                _buildQuickAction(
-                    AppLocalizations.of(context)!.quickActionMonthlyCompare,
+                    AppLocalizations.of(context).quickActionMonthlyCompare,
                     Icons.compare_arrows_rounded,
                     isDark),
               ],
@@ -294,7 +292,7 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
             ),
             const SizedBox(height: AlhaiSpacing.md),
             Text(
-              AppLocalizations.of(context)!.analyzingData,
+              AppLocalizations.of(context).analyzingData,
               style: TextStyle(
                 fontSize: 14,
                 color: isDark
@@ -322,7 +320,7 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
             const Icon(Icons.error_outline_rounded,
                 size: 48, color: AppColors.error),
             const SizedBox(height: AlhaiSpacing.sm),
-            Text(AppLocalizations.of(context)!.errorOccurredShort(error),
+            Text(AppLocalizations.of(context).errorOccurredShort(error),
                 style: TextStyle(
                     color: isDark
                         ? Colors.white.withValues(alpha: 0.7)
@@ -359,7 +357,7 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
                     size: 18, color: Color(0xFF8B5CF6)),
                 const SizedBox(width: AlhaiSpacing.xs),
                 Text(
-                  AppLocalizations.of(context)!.readyTemplates,
+                  AppLocalizations.of(context).readyTemplates,
                   style: TextStyle(
                     fontWeight: FontWeight.w700,
                     fontSize: 15,
@@ -384,7 +382,7 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
                   child: FilterChip(
                     selected: isSelected,
                     label: Text(cat == kAllCategoryFilter
-                        ? AppLocalizations.of(context)!.filterAllLabel
+                        ? AppLocalizations.of(context).filterAllLabel
                         : cat),
                     labelStyle: TextStyle(
                       color: isSelected

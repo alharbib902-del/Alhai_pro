@@ -17,8 +17,9 @@ class TransactionsDao extends DatabaseAccessor<AppDatabase>
     return (select(transactionsTable)
           ..where((t) {
             var condition = t.accountId.equals(accountId);
-            if (storeId != null)
+            if (storeId != null) {
               condition = condition & t.storeId.equals(storeId);
+            }
             return condition;
           })
           ..orderBy([(t) => OrderingTerm.desc(t.createdAt)])
@@ -35,8 +36,9 @@ class TransactionsDao extends DatabaseAccessor<AppDatabase>
     return (select(transactionsTable)
           ..where((t) {
             var condition = t.accountId.equals(accountId) & t.type.equals(type);
-            if (storeId != null)
+            if (storeId != null) {
               condition = condition & t.storeId.equals(storeId);
+            }
             return condition;
           })
           ..orderBy([(t) => OrderingTerm.desc(t.createdAt)])
@@ -56,8 +58,9 @@ class TransactionsDao extends DatabaseAccessor<AppDatabase>
             var condition = t.accountId.equals(accountId) &
                 t.createdAt.isBiggerOrEqualValue(start) &
                 t.createdAt.isSmallerOrEqualValue(end);
-            if (storeId != null)
+            if (storeId != null) {
               condition = condition & t.storeId.equals(storeId);
+            }
             return condition;
           })
           ..orderBy([(t) => OrderingTerm.desc(t.createdAt)])

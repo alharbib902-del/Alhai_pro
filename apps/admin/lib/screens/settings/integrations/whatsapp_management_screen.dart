@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
@@ -626,8 +625,9 @@ class _WhatsAppManagementScreenState
                       children: [
                         IconButton(
                           onPressed: () {
-                            if (_dailyLimit > 10)
+                            if (_dailyLimit > 10) {
                               setState(() => _dailyLimit -= 10);
+                            }
                           },
                           icon: const Icon(Icons.remove_circle_outline),
                         ),
@@ -636,8 +636,9 @@ class _WhatsAppManagementScreenState
                                 fontSize: 16, fontWeight: FontWeight.bold)),
                         IconButton(
                           onPressed: () {
-                            if (_dailyLimit < 500)
+                            if (_dailyLimit < 500) {
                               setState(() => _dailyLimit += 10);
+                            }
                           },
                           icon: const Icon(Icons.add_circle_outline),
                         ),

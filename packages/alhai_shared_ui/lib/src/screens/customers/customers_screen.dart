@@ -230,7 +230,7 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
     // Show filter panel on desktop OR on landscape tablet
     final showFilterPanel = isDesktop || (isLandscape && !context.isMobile);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return KeyboardListener(
       focusNode: _keyboardFocusNode,
@@ -839,7 +839,7 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
     if (event.logicalKey == LogicalKeyboardKey.keyN &&
         HardwareKeyboard.instance.isControlPressed) {
       final isDark = Theme.of(context).brightness == Brightness.dark;
-      final l10n = AppLocalizations.of(context)!;
+      final l10n = AppLocalizations.of(context);
       _showAddCustomerDialog(context, isDark, l10n);
       return;
     }

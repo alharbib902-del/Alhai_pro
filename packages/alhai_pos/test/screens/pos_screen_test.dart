@@ -10,15 +10,10 @@ import 'package:mocktail/mocktail.dart';
 import 'package:get_it/get_it.dart';
 
 import 'package:alhai_l10n/alhai_l10n.dart';
-import 'package:alhai_core/alhai_core.dart' hide CartItem, SyncStatus;
-import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_sync/alhai_sync.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
-import 'package:alhai_pos/src/providers/cart_providers.dart';
 import 'package:alhai_pos/src/screens/pos/pos_screen.dart';
-
-import '../helpers/pos_test_helpers.dart';
 
 // ---------------------------------------------------------------------------
 // Mocks
@@ -92,8 +87,9 @@ void main() {
   setUp(() {
     FlutterError.onError = (details) {
       final msg = details.toString();
-      if (msg.contains('overflowed') || msg.contains('Multiple exceptions'))
+      if (msg.contains('overflowed') || msg.contains('Multiple exceptions')) {
         return;
+      }
       originalOnError?.call(details);
     };
   });

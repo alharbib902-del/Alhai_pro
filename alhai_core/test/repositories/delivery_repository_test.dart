@@ -16,7 +16,7 @@ void main() {
   late MockDeliveryRemoteDataSource mockRemote;
 
   // Test address data using AddressResponse (from dto/addresses)
-  final testPickupAddress = AddressResponse(
+  const testPickupAddress = AddressResponse(
     id: 'pickup-1',
     label: 'Store',
     fullAddress: 'Store Address',
@@ -25,7 +25,7 @@ void main() {
     lng: 46.6753,
   );
 
-  final testDeliveryAddress = AddressResponse(
+  const testDeliveryAddress = AddressResponse(
     id: 'delivery-1',
     label: 'Customer',
     fullAddress: 'Customer Address',

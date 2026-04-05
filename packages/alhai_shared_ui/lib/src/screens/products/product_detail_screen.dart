@@ -132,7 +132,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
             children: [
               const Icon(Icons.check_circle, color: Colors.white, size: 20),
               SizedBox(width: AlhaiSpacing.xs),
-              Text(AppLocalizations.of(context)!.copiedToClipboard(label)),
+              Text(AppLocalizations.of(context).copiedToClipboard(label)),
             ],
           ),
           backgroundColor: AppColors.success,
@@ -151,7 +151,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
     final isWideScreen = context.isDesktop;
     final isMediumScreen = !context.isMobile;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       children: [
@@ -1561,7 +1561,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
   }
 
   void _showMoreOptions(BuildContext ctx) {
-    final l10n = AppLocalizations.of(ctx)!;
+    final l10n = AppLocalizations.of(ctx);
     showModalBottomSheet(
       context: ctx,
       shape: const RoundedRectangleBorder(
