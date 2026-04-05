@@ -24998,6 +24998,48 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'النهاية'**
   String get endDate;
+
+  /// No description provided for @customerPhoneNumber.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم جوال العميل'**
+  String get customerPhoneNumber;
+
+  /// No description provided for @continueAction.
+  ///
+  /// In ar, this message translates to:
+  /// **'متابعة'**
+  String get continueAction;
+
+  /// No description provided for @continueWithCustomer.
+  ///
+  /// In ar, this message translates to:
+  /// **'متابعة مع العميل'**
+  String get continueWithCustomer;
+
+  /// No description provided for @existingCustomers.
+  ///
+  /// In ar, this message translates to:
+  /// **'عملاء موجودون'**
+  String get existingCustomers;
+
+  /// No description provided for @digitsRemaining.
+  ///
+  /// In ar, this message translates to:
+  /// **'أرقام متبقية'**
+  String get digitsRemaining;
+
+  /// No description provided for @phoneNumberTooLong.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرقم طويل جداً'**
+  String get phoneNumberTooLong;
+
+  /// No description provided for @enterValidPhoneNumber.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدخل رقم هاتف صحيح'**
+  String get enterValidPhoneNumber;
 }
 
 class _AppLocalizationsDelegate

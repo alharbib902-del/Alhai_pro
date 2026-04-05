@@ -68,6 +68,7 @@ import '../screens/offers/bundle_deals_screen.dart';
 import '../screens/reports/payment_reports_screen.dart';
 import '../screens/reports/custom_report_screen.dart';
 import '../screens/onboarding/onboarding_screen.dart';
+import '../screens/settings/devices/cashier_features_settings_screen.dart';
 
 /// Route parameter extraction helper
 extension GoRouterStateX on GoRouterState {
@@ -291,6 +292,15 @@ final List<RouteBase> _routes = [
     pageBuilder: (context, state) => CustomTransitionPage(
       key: state.pageKey,
       child: const KioskScreen(),
+      transitionsBuilder: _fadeTransition,
+    ),
+  ),
+  GoRoute(
+    path: '/customer-display',
+    name: 'customer-display',
+    pageBuilder: (context, state) => CustomTransitionPage(
+      key: state.pageKey,
+      child: const CustomerDisplayScreen(),
       transitionsBuilder: _fadeTransition,
     ),
   ),
@@ -1002,6 +1012,15 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const PrivacyPolicyScreen(),
+          transitionsBuilder: _fadeTransition,
+        ),
+      ),
+      GoRoute(
+        path: '/settings/features',
+        name: 'features-settings',
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const CashierFeaturesSettingsScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),

@@ -109,6 +109,8 @@ class PaymentDeviceSettings {
   final bool enableApplePay;
   final String terminalType;
   final bool autoSettle;
+  final bool enableNfcSoftPos;
+  final String softPosMode;
 
   const PaymentDeviceSettings({
     this.enableMada = true,
@@ -117,6 +119,8 @@ class PaymentDeviceSettings {
     this.enableApplePay = false,
     this.terminalType = 'ingenico',
     this.autoSettle = true,
+    this.enableNfcSoftPos = false,
+    this.softPosMode = 'mock',
   });
 
   /// Whether any card-based payment method is enabled
@@ -124,6 +128,9 @@ class PaymentDeviceSettings {
 
   /// Whether any digital wallet is enabled
   bool get hasDigitalWallet => enableStcPay || enableApplePay;
+
+  /// Whether NFC SoftPOS is enabled
+  bool get hasSoftPos => enableNfcSoftPos;
 }
 
 /// مزود إعدادات أجهزة الدفع
@@ -150,6 +157,9 @@ final paymentDeviceSettingsProvider =
       enableApplePay: settingsMap['payment_enable_apple_pay'] == 'true',
       terminalType: settingsMap['payment_terminal_type'] ?? 'ingenico',
       autoSettle: settingsMap['payment_auto_settle'] != 'false',
+      enableNfcSoftPos:
+          settingsMap['payment_enable_nfc_softpos'] == 'true',
+      softPosMode: settingsMap['payment_softpos_mode'] ?? 'mock',
     );
   } catch (_) {
     return const PaymentDeviceSettings();

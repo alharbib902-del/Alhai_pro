@@ -13461,4 +13461,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get endDate => 'End';
+
+  @override
+  String get customerPhoneNumber => 'Customer Phone Number';
+
+  @override
+  String get continueAction => 'Continue';
+
+  @override
+  String get continueWithCustomer => 'Continue with Customer';
+
+  @override
+  String get existingCustomers => 'Existing Customers';
+
+  @override
+  String get digitsRemaining => 'digits remaining';
+
+  @override
+  String get phoneNumberTooLong => 'Number is too long';
+
+  @override
+  String get enterValidPhoneNumber => 'Enter a valid phone number';
 }

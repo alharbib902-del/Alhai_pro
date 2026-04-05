@@ -90,6 +90,13 @@ class _CashierSettingsScreenState extends ConsumerState<CashierSettingsScreen> {
         route: AppRoutes.settingsPaymentDevices,
       ),
       _SettingsItem(
+        icon: Icons.devices_other,
+        title: 'الميزات والأجهزة',
+        subtitle: 'شاشة العميل، NFC، إعدادات متقدمة',
+        color: AppColors.info,
+        route: '/settings/features',
+      ),
+      _SettingsItem(
         icon: Icons.print_rounded,
         title: l10n.printerSettings,
         subtitle: l10n.printerSettingsSubtitle,

@@ -6363,5 +6363,12 @@
   "currentPlan": "Current Plan",
   "noPlansAvailable": "No plans available",
   "alreadyOnHighestPlan": "Already on the highest plan",
-  "alreadyOnLowestPlan": "Already on the lowest plan"
+  "alreadyOnLowestPlan": "Already on the lowest plan",
+  "customerPhoneNumber": "Customer Phone Number",
+  "continueAction": "Continue",
+  "continueWithCustomer": "Continue with Customer",
+  "existingCustomers": "Existing Customers",
+  "digitsRemaining": "digits remaining",
+  "phoneNumberTooLong": "Number is too long",
+  "enterValidPhoneNumber": "Enter a valid phone number"
 }

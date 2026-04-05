@@ -26,6 +26,11 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_zatca/alhai_zatca.dart' show VatCalculator;
 import '../../widgets/pos/split_payment_dialog.dart' as split_dlg
     show SplitPaymentDialog, PaymentSplit;
+import '../../providers/customer_display_providers.dart';
+import '../../services/customer_display/customer_display_service.dart';
+import '../../services/customer_display/customer_display_state.dart';
+import '../../services/payment/nfc_listener_service.dart';
+import 'phone_entry_dialog.dart';
 import 'payment_sub_widgets.dart';
 import 'payment_details_widgets.dart';
 import 'payment_loyalty_widget.dart';
@@ -70,6 +75,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
   void initState() {
     super.initState();
     _focusNode.requestFocus();
+    // تفعيل NFC listener عند فتح شاشة الدفع
+    _startNfcListenerIfEnabled();
     _animationController = AnimationController(
       vsync: this,
       duration: AlhaiDurations.extraSlow,
@@ -95,7 +102,52 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
     _loyaltyPointsController.dispose();
     _focusNode.dispose();
     _animationController.dispose();
+    // إيقاف NFC listener
+    try {
+      ref.read(nfcListenerServiceProvider).stopListening();
+    } catch (_) {}
     super.dispose();
+  }
+
+  /// بدء الاستماع لـ NFC إذا كانت الميزة مفعّلة
+  void _startNfcListenerIfEnabled() {
+    final featureSettings = ref.read(cashierFeatureSettingsProvider).valueOrNull;
+    if (featureSettings?.enableNfcPayment != true) return;
+
+    final nfcService = ref.read(nfcListenerServiceProvider);
+    final cartState = ref.read(cartStateProvider);
+    final subtotal = cartState.subtotal;
+    final tax = VatCalculator.vatFromNet(netAmount: subtotal);
+    final total = subtotal + tax - cartState.discount;
+
+    if (total > 0) {
+      nfcService.startListening(total);
+    }
+  }
+
+  /// تحديث شاشة العميل بحالة السلة
+  void _updateCustomerDisplay(CartState cartState, double subtotal, double tax, double discount) {
+    try {
+      final displayService = ref.read(customerDisplayServiceProvider);
+      if (!displayService.isEnabled) return;
+
+      if (cartState.isEmpty) {
+        displayService.showIdle();
+      } else {
+        final items = cartState.items
+            .map((e) => DisplayCartItem.fromPosCartItem(e))
+            .toList();
+        displayService.showCart(
+          items: items,
+          subtotal: subtotal,
+          discount: discount,
+          tax: tax,
+          total: subtotal + tax - discount,
+        );
+      }
+    } catch (_) {
+      // Customer display not available - ignore
+    }
   }
 
   /// Whether the device is currently offline
@@ -177,6 +229,42 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
     final discount = cartState.discount;
     final total = subtotal + tax - discount - loyaltyDiscount;
     final change = _cashReceived - total;
+
+    // تحديث شاشة العميل
+    _updateCustomerDisplay(cartState, subtotal, tax, cartState.discount);
+
+    // الاستماع لأحداث NFC
+    ref.listen<AsyncValue<NfcListenerEvent>>(nfcListenerStreamProvider, (prev, next) {
+      next.whenData((event) {
+        switch (event) {
+          case NfcCompleted(:final result):
+            if (result.success) {
+              // NFC payment succeeded - process as card payment
+              setState(() => _selectedMethod = PaymentMethod.card);
+              _confirmPayment(
+                total,
+                storeId: ref.read(currentStoreIdProvider) ?? '',
+                cashierId: ref.read(currentUserProvider)?.id ?? '',
+              );
+            } else {
+              // NFC payment failed - show error
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(result.errorMessage ?? 'فشل الدفع اللاتلامسي'),
+                  backgroundColor: AppColors.error,
+                ),
+              );
+            }
+          case NfcTimeout():
+            // Timeout silently - user can still pay normally
+            debugPrint('[PaymentScreen] NFC timeout - user can pay manually');
+          case NfcError(:final message):
+            debugPrint('[PaymentScreen] NFC error: $message');
+          default:
+            break;
+        }
+      });
+    });
 
     return CallbackShortcuts(
       bindings: {
@@ -665,6 +753,39 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
             ),
           ),
         ),
+        // مؤشر NFC (إذا كانت الميزة مفعّلة)
+        Builder(builder: (context) {
+          final featureSettings = ref.watch(cashierFeatureSettingsProvider).valueOrNull;
+          if (featureSettings?.enableNfcPayment != true) return const SizedBox.shrink();
+
+          return Container(
+            width: double.infinity,
+            margin: const EdgeInsets.only(top: AppSpacing.md),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.lg,
+              vertical: AppSpacing.sm,
+            ),
+            decoration: BoxDecoration(
+              color: AlhaiColors.info.withValues(alpha: 0.06),
+              borderRadius: BorderRadius.circular(AppRadius.md),
+              border: Border.all(color: AlhaiColors.info.withValues(alpha: 0.3)),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.contactless_rounded, size: 20, color: AlhaiColors.info),
+                const SizedBox(width: AppSpacing.sm),
+                Expanded(
+                  child: Text(
+                    'الدفع اللاتلامسي مفعّل — يمكن للعميل تقريب البطاقة',
+                    style: AppTypography.bodySmall.copyWith(
+                      color: AlhaiColors.info,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }),
       ],
     );
   }
@@ -1025,6 +1146,15 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
   }) async {
     setState(() => _isProcessing = true);
 
+    // تحديث شاشة العميل - جاري الدفع
+    try {
+      final displayService = ref.read(customerDisplayServiceProvider);
+      displayService.showPayment(
+        total: total,
+        paymentMethodName: _getMethodLabel(),
+      );
+    } catch (_) {}
+
     try {
       final cartState = ref.read(cartStateProvider);
       final resolvedStoreId =
@@ -1084,6 +1214,10 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
         _isProcessing = false;
         _showSuccess = true;
       });
+      // تحديث شاشة العميل - نجاح
+      try {
+        ref.read(customerDisplayServiceProvider).showSuccess(total: total);
+      } catch (_) {}
       _animationController.forward();
 
       // Wait and navigate
@@ -1100,11 +1234,20 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
         }
       }
 
+      // إعادة شاشة العميل للانتظار بعد 3 ثوان
+      Future.delayed(const Duration(seconds: 3), () {
+        try { ref.read(customerDisplayServiceProvider).showIdle(); } catch (_) {}
+      });
+
       // الانتقال لشاشة الإيصال
       if (mounted) {
         context.go('${AppRoutes.posReceipt}?saleId=$saleId');
       }
     } catch (e) {
+      // تحديث شاشة العميل - فشل
+      try {
+        ref.read(customerDisplayServiceProvider).showFailure(message: e.toString());
+      } catch (_) {}
       if (mounted) {
         setState(() => _isProcessing = false);
         ScaffoldMessenger.of(context).showSnackBar(

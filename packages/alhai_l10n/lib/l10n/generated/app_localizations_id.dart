@@ -13430,4 +13430,25 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get endDate => 'النهاية';
+
+  @override
+  String get customerPhoneNumber => 'رقم جوال العميل';
+
+  @override
+  String get continueAction => 'متابعة';
+
+  @override
+  String get continueWithCustomer => 'متابعة مع العميل';
+
+  @override
+  String get existingCustomers => 'عملاء موجودون';
+
+  @override
+  String get digitsRemaining => 'أرقام متبقية';
+
+  @override
+  String get phoneNumberTooLong => 'الرقم طويل جداً';
+
+  @override
+  String get enterValidPhoneNumber => 'أدخل رقم هاتف صحيح';
 }

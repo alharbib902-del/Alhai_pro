@@ -5748,5 +5748,12 @@
   "currentPlan": "الخطة الحالية",
   "noPlansAvailable": "لا توجد خطط متاحة",
   "alreadyOnHighestPlan": "أنت على أعلى خطة بالفعل",
-  "alreadyOnLowestPlan": "أنت على أدنى خطة بالفعل"
+  "alreadyOnLowestPlan": "أنت على أدنى خطة بالفعل",
+  "customerPhoneNumber": "رقم جوال العميل",
+  "continueAction": "متابعة",
+  "continueWithCustomer": "متابعة مع العميل",
+  "existingCustomers": "عملاء موجودون",
+  "digitsRemaining": "أرقام متبقية",
+  "phoneNumberTooLong": "الرقم طويل جداً",
+  "enterValidPhoneNumber": "أدخل رقم هاتف صحيح"
 }

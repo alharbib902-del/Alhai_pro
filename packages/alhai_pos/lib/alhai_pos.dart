@@ -8,6 +8,8 @@ export 'src/screens/pos/quick_sale_screen.dart';
 export 'src/screens/pos/favorites_screen.dart';
 export 'src/screens/pos/hold_invoices_screen.dart';
 export 'src/screens/pos/kiosk_screen.dart';
+export 'src/screens/pos/customer_display_screen.dart';
+export 'src/screens/pos/phone_entry_dialog.dart';
 
 // ─── Screens: Returns ───────────────────────────────────────────
 export 'src/screens/returns/returns_screen.dart';
@@ -26,6 +28,7 @@ export 'src/providers/sale_providers.dart';
 export 'src/providers/favorites_providers.dart';
 export 'src/providers/held_invoices_providers.dart';
 export 'src/providers/returns_providers.dart';
+export 'src/providers/customer_display_providers.dart';
 
 // ─── Services ───────────────────────────────────────────────────
 export 'src/services/sale_service.dart';
@@ -37,6 +40,9 @@ export 'src/services/manager_approval_service.dart';
 export 'src/services/zatca_service.dart';
 export 'src/services/whatsapp_service.dart';
 export 'src/services/whatsapp_receipt_service.dart';
+export 'src/services/customer_display/customer_display_service.dart';
+export 'src/services/customer_display/customer_display_state.dart';
+export 'src/services/payment/nfc_listener_service.dart';
 
 // ─── Widgets: Cash ──────────────────────────────────────────────
 export 'src/widgets/cash/denomination_counter_widget.dart';
