@@ -126,8 +126,7 @@ class LiteSettingsScreen extends ConsumerWidget {
               _ToggleTile(
                 icon: Icons.access_time,
                 title: l10n.shiftsTitle,
-                // TODO(l10n): add key for "Shift open/close reminders"
-                subtitle: 'Shift open/close reminders',
+                subtitle: l10n.shiftOpenCloseReminders,
                 isDark: isDark,
                 value: ref.watch(_shiftRemindersProvider),
                 onChanged: (v) =>
@@ -212,8 +211,7 @@ class LiteSettingsScreen extends ConsumerWidget {
               _SettingsTile(
                 icon: Icons.lock_outline,
                 title: l10n.managerPinSetup,
-                // TODO(l10n): add key for "Set or change manager PIN"
-                subtitle: l10n.managerPinSetup,
+                subtitle: l10n.setOrChangeManagerPin,
                 isDark: isDark,
                 onTap: () {
                   Navigator.of(context).push(
@@ -229,8 +227,7 @@ class LiteSettingsScreen extends ConsumerWidget {
               _SettingsTile(
                 icon: Icons.sync,
                 title: l10n.syncStatusTitle,
-                // TODO(l10n): add key for "Data synchronization status"
-                subtitle: l10n.syncStatusTitle,
+                subtitle: l10n.dataSynchronizationStatus,
                 isDark: isDark,
                 onTap: () => context.go(AppRoutes.syncStatus),
               ),
@@ -577,7 +574,7 @@ class _ToggleTile extends StatelessWidget {
             value: value,
             onChanged: onChanged,
             activeTrackColor: AlhaiColors.primary,
-            activeColor: isDark ? Colors.black : Colors.white,
+            activeThumbColor: isDark ? Colors.black : Colors.white,
           ),
         ],
       ),

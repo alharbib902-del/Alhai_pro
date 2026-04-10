@@ -11,6 +11,8 @@ import 'package:get_it/get_it.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 
+import '../core/services/sentry_service.dart' as sentry;
+
 // =============================================================================
 // MANAGEMENT PROVIDERS
 // =============================================================================
@@ -112,7 +114,10 @@ final litePendingApprovalsProvider =
         createdAt: p.createdAt,
       ));
     }
-  } catch (_) {}
+  } catch (e, st) {
+    sentry.reportError(e,
+        stackTrace: st, hint: 'litePendingApprovalsProvider');
+  }
 
   items.sort((a, b) => b.createdAt.compareTo(a.createdAt));
   return items;

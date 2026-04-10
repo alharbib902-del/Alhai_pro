@@ -11,6 +11,8 @@ import 'package:get_it/get_it.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 
+import '../core/services/sentry_service.dart' as sentry;
+
 // =============================================================================
 // REPORTS PROVIDERS
 // =============================================================================
@@ -73,7 +75,9 @@ final liteDailySalesProvider =
       maxSale: 0,
       minSale: 0,
     );
-  } catch (_) {
+  } catch (e, st) {
+    sentry.reportError(e,
+        stackTrace: st, hint: 'liteDailySalesProvider.refundStats');
     refundStats = const SalesStats(
         count: 0, total: 0, average: 0, maxSale: 0, minSale: 0);
   }
@@ -188,7 +192,10 @@ final liteWeeklyComparisonProvider =
       ],
     ).getSingle();
     lastWeekCustomers = cLast.data['count'] as int? ?? 0;
-  } catch (_) {}
+  } catch (e, st) {
+    sentry.reportError(e,
+        stackTrace: st, hint: 'liteWeeklyComparisonProvider.customerCounts');
+  }
 
   return WeeklyComparisonData(
     thisWeek: thisWeekStats,
@@ -251,7 +258,8 @@ final liteTopProductsProvider =
               productId: row.data['product_id'] as String? ?? '',
             ))
         .toList();
-  } catch (_) {
+  } catch (e, st) {
+    sentry.reportError(e, stackTrace: st, hint: 'liteTopProductsProvider');
     return [];
   }
 });
@@ -318,7 +326,9 @@ final liteEmployeePerformanceProvider =
               transactionCount: row.data['txn_count'] as int? ?? 0,
             ))
         .toList();
-  } catch (_) {
+  } catch (e, st) {
+    sentry.reportError(e,
+        stackTrace: st, hint: 'liteEmployeePerformanceProvider');
     return [];
   }
 });
@@ -381,7 +391,10 @@ final liteCashFlowProvider =
       ],
     ).getSingle();
     refundTotal = _toDouble(refundResult.data['total']);
-  } catch (_) {}
+  } catch (e, st) {
+    sentry.reportError(e,
+        stackTrace: st, hint: 'liteCashFlowProvider.refundTotal');
+  }
 
   final totalOutflow = refundTotal + expenseTotal;
 

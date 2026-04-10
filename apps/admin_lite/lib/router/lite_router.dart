@@ -456,79 +456,73 @@ final List<RouteBase> _routes = [
         path: AppRoutes.reports,
         name: 'reports',
         builder: (context, state) =>
-            LazyScreen(screenBuilder: () async => const ReportsScreen()),
+            const ReportsScreen(),
       ),
       GoRoute(
         path: '/reports/daily-sales',
         name: 'daily-sales-report',
-        builder: (context, state) => LazyScreen(
-            screenBuilder: () async => const DailySalesReportScreen()),
+        builder: (context, state) => const DailySalesReportScreen(),
       ),
       GoRoute(
         path: '/reports/profit',
         name: 'profit-report',
         builder: (context, state) =>
-            LazyScreen(screenBuilder: () async => const ProfitReportScreen()),
+            const ProfitReportScreen(),
       ),
       GoRoute(
         path: '/reports/tax',
         name: 'tax-report',
         builder: (context, state) =>
-            LazyScreen(screenBuilder: () async => const TaxReportScreen()),
+            const TaxReportScreen(),
       ),
       GoRoute(
         path: '/reports/vat',
         name: 'vat-report',
         builder: (context, state) =>
-            LazyScreen(screenBuilder: () async => const VatReportScreen()),
+            const VatReportScreen(),
       ),
       GoRoute(
         path: '/reports/inventory',
         name: 'inventory-report',
-        builder: (context, state) => LazyScreen(
-            screenBuilder: () async => const InventoryReportScreen()),
+        builder: (context, state) => const InventoryReportScreen(),
       ),
       GoRoute(
         path: '/reports/customers',
         name: 'customer-report',
         builder: (context, state) =>
-            LazyScreen(screenBuilder: () async => const CustomerReportScreen()),
+            const CustomerReportScreen(),
       ),
       GoRoute(
         path: '/reports/top-products',
         name: 'top-products-report',
-        builder: (context, state) => LazyScreen(
-            screenBuilder: () async => const TopProductsReportScreen()),
+        builder: (context, state) => const TopProductsReportScreen(),
       ),
       GoRoute(
         path: '/reports/sales-analytics',
         name: 'sales-analytics',
         builder: (context, state) =>
-            LazyScreen(screenBuilder: () async => const SalesAnalyticsScreen()),
+            const SalesAnalyticsScreen(),
       ),
       GoRoute(
         path: '/reports/staff-performance',
         name: 'staff-performance',
-        builder: (context, state) => LazyScreen(
-            screenBuilder: () async => const StaffPerformanceScreen()),
+        builder: (context, state) => const StaffPerformanceScreen(),
       ),
       GoRoute(
         path: '/reports/peak-hours',
         name: 'peak-hours-report',
-        builder: (context, state) => LazyScreen(
-            screenBuilder: () async => const PeakHoursReportScreen()),
+        builder: (context, state) => const PeakHoursReportScreen(),
       ),
       GoRoute(
         path: '/reports/debts',
         name: 'debts-report',
         builder: (context, state) =>
-            LazyScreen(screenBuilder: () async => const DebtsReportScreen()),
+            const DebtsReportScreen(),
       ),
       GoRoute(
         path: AppRoutes.complaintsReport,
         name: 'complaints-report',
-        builder: (context, state) => LazyScreen(
-            screenBuilder: () async => const ComplaintsReportScreen()),
+        builder: (context, state) => const ComplaintsReportScreen(),
       ),
 
       // ======================================================================
@@ -538,91 +532,80 @@ final List<RouteBase> _routes = [
         path: AppRoutes.aiAssistant,
         name: 'ai-assistant',
         builder: (context, state) =>
-            LazyScreen(screenBuilder: () async => const AiAssistantScreen()),
+            const AiAssistantScreen(),
       ),
       GoRoute(
         path: AppRoutes.aiSalesForecasting,
         name: 'ai-sales-forecasting',
-        builder: (context, state) => LazyScreen(
-            screenBuilder: () async => const AiSalesForecastingScreen()),
+        builder: (context, state) => const AiSalesForecastingScreen(),
       ),
       GoRoute(
         path: AppRoutes.aiSmartPricing,
         name: 'ai-smart-pricing',
         builder: (context, state) =>
-            LazyScreen(screenBuilder: () async => const AiSmartPricingScreen()),
+            const AiSmartPricingScreen(),
       ),
       GoRoute(
         path: AppRoutes.aiFraudDetection,
         name: 'ai-fraud-detection',
-        builder: (context, state) => LazyScreen(
-            screenBuilder: () async => const AiFraudDetectionScreen()),
+        builder: (context, state) => const AiFraudDetectionScreen(),
       ),
       GoRoute(
         path: AppRoutes.aiBasketAnalysis,
         name: 'ai-basket-analysis',
-        builder: (context, state) => LazyScreen(
-            screenBuilder: () async => const AiBasketAnalysisScreen()),
+        builder: (context, state) => const AiBasketAnalysisScreen(),
       ),
       GoRoute(
         path: AppRoutes.aiCustomerRecommendations,
         name: 'ai-customer-recommendations',
-        builder: (context, state) => LazyScreen(
-            screenBuilder: () async => const AiCustomerRecommendationsScreen()),
+        builder: (context, state) => const AiCustomerRecommendationsScreen(),
       ),
       GoRoute(
         path: AppRoutes.aiSmartInventory,
         name: 'ai-smart-inventory',
-        builder: (context, state) => LazyScreen(
-            screenBuilder: () async => const AiSmartInventoryScreen()),
+        builder: (context, state) => const AiSmartInventoryScreen(),
       ),
       GoRoute(
         path: AppRoutes.aiCompetitorAnalysis,
         name: 'ai-competitor-analysis',
-        builder: (context, state) => LazyScreen(
-            screenBuilder: () async => const AiCompetitorAnalysisScreen()),
+        builder: (context, state) => const AiCompetitorAnalysisScreen(),
       ),
       GoRoute(
         path: AppRoutes.aiSmartReports,
         name: 'ai-smart-reports',
         builder: (context, state) =>
-            LazyScreen(screenBuilder: () async => const AiSmartReportsScreen()),
+            const AiSmartReportsScreen(),
       ),
       GoRoute(
         path: AppRoutes.aiStaffAnalytics,
         name: 'ai-staff-analytics',
-        builder: (context, state) => LazyScreen(
-            screenBuilder: () async => const AiStaffAnalyticsScreen()),
+        builder: (context, state) => const AiStaffAnalyticsScreen(),
       ),
       GoRoute(
         path: AppRoutes.aiProductRecognition,
         name: 'ai-product-recognition',
-        builder: (context, state) => LazyScreen(
-            screenBuilder: () async => const AiProductRecognitionScreen()),
+        builder: (context, state) => const AiProductRecognitionScreen(),
       ),
       GoRoute(
         path: AppRoutes.aiSentimentAnalysis,
         name: 'ai-sentiment-analysis',
-        builder: (context, state) => LazyScreen(
-            screenBuilder: () async => const AiSentimentAnalysisScreen()),
+        builder: (context, state) => const AiSentimentAnalysisScreen(),
       ),
       GoRoute(
         path: AppRoutes.aiReturnPrediction,
         name: 'ai-return-prediction',
-        builder: (context, state) => LazyScreen(
-            screenBuilder: () async => const AiReturnPredictionScreen()),
+        builder: (context, state) => const AiReturnPredictionScreen(),
       ),
       GoRoute(
         path: AppRoutes.aiPromotionDesigner,
         name: 'ai-promotion-designer',
-        builder: (context, state) => LazyScreen(
-            screenBuilder: () async => const AiPromotionDesignerScreen()),
+        builder: (context, state) => const AiPromotionDesignerScreen(),
       ),
       GoRoute(
         path: AppRoutes.aiChatWithData,
         name: 'ai-chat-with-data',
         builder: (context, state) =>
-            LazyScreen(screenBuilder: () async => const AiChatWithDataScreen()),
+            const AiChatWithDataScreen(),
       ),
 
       // ======================================================================
@@ -636,46 +619,44 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: '/monitoring/inventory-alerts',
         name: 'inventory-alerts',
-        builder: (context, state) => LazyScreen(
-            screenBuilder: () async => const InventoryAlertsScreen()),
+        builder: (context, state) => const InventoryAlertsScreen(),
       ),
       GoRoute(
         path: AppRoutes.inventory,
         name: 'inventory',
         builder: (context, state) =>
-            LazyScreen(screenBuilder: () async => const InventoryScreen()),
+            const InventoryScreen(),
       ),
       GoRoute(
         path: AppRoutes.expiryTracking,
         name: 'expiry-tracking',
         builder: (context, state) =>
-            LazyScreen(screenBuilder: () async => const ExpiryTrackingScreen()),
+            const ExpiryTrackingScreen(),
       ),
       GoRoute(
         path: AppRoutes.shifts,
         name: 'shifts',
         builder: (context, state) =>
-            LazyScreen(screenBuilder: () async => const ShiftsScreen()),
+            const ShiftsScreen(),
       ),
       GoRoute(
         path: AppRoutes.shiftSummary,
         name: 'shift-summary',
         builder: (context, state) =>
-            LazyScreen(screenBuilder: () async => const ShiftSummaryScreen()),
+            const ShiftSummaryScreen(),
       ),
       GoRoute(
         path: AppRoutes.products,
         name: 'products',
         builder: (context, state) =>
-            LazyScreen(screenBuilder: () async => const ProductsScreen()),
+            const ProductsScreen(),
       ),
       GoRoute(
         path: AppRoutes.productDetail,
         name: 'product-detail',
         builder: (context, state) {
           final id = state.pathId();
-          return LazyScreen(
-              screenBuilder: () async => ProductDetailScreen(productId: id));
+          return ProductDetailScreen(productId: id);
         },
       ),
 
@@ -691,100 +672,96 @@ final List<RouteBase> _routes = [
         path: AppRoutes.customers,
         name: 'customers',
         builder: (context, state) =>
-            LazyScreen(screenBuilder: () async => const CustomersScreen()),
+            const CustomersScreen(),
       ),
       GoRoute(
         path: AppRoutes.customerDetail,
         name: 'customer-detail',
         builder: (context, state) {
           final id = state.pathId();
-          return LazyScreen(
-              screenBuilder: () async => CustomerDetailScreen(customerId: id));
+          return CustomerDetailScreen(customerId: id);
         },
       ),
       GoRoute(
         path: AppRoutes.suppliers,
         name: 'suppliers',
         builder: (context, state) =>
-            LazyScreen(screenBuilder: () async => const SuppliersScreen()),
+            const SuppliersScreen(),
       ),
       GoRoute(
         path: AppRoutes.supplierDetail,
         name: 'supplier-detail',
         builder: (context, state) {
           final id = state.pathId();
-          return LazyScreen(
-              screenBuilder: () async => SupplierDetailScreen(supplierId: id));
+          return SupplierDetailScreen(supplierId: id);
         },
       ),
       GoRoute(
         path: AppRoutes.orders,
         name: 'orders',
         builder: (context, state) =>
-            LazyScreen(screenBuilder: () async => const OrdersScreen()),
+            const OrdersScreen(),
       ),
       GoRoute(
         path: AppRoutes.invoices,
         name: 'invoices',
         builder: (context, state) =>
-            LazyScreen(screenBuilder: () async => const InvoicesScreen()),
+            const InvoicesScreen(),
       ),
       GoRoute(
         path: AppRoutes.invoiceDetail,
         name: 'invoice-detail',
         builder: (context, state) {
           final id = state.pathId();
-          return LazyScreen(
-              screenBuilder: () async => InvoiceDetailScreen(invoiceId: id));
+          return InvoiceDetailScreen(invoiceId: id);
         },
       ),
       GoRoute(
         path: AppRoutes.expenses,
         name: 'expenses',
         builder: (context, state) =>
-            LazyScreen(screenBuilder: () async => const ExpensesScreen()),
+            const ExpensesScreen(),
       ),
       GoRoute(
         path: AppRoutes.expenseCategories,
         name: 'expense-categories',
-        builder: (context, state) => LazyScreen(
-            screenBuilder: () async => const ExpenseCategoriesScreen()),
+        builder: (context, state) => const ExpenseCategoriesScreen(),
       ),
       GoRoute(
         path: AppRoutes.profile,
         name: 'profile',
         builder: (context, state) =>
-            LazyScreen(screenBuilder: () async => const ProfileScreen()),
+            const ProfileScreen(),
       ),
       GoRoute(
         path: AppRoutes.settings,
         name: 'settings',
         builder: (context, state) =>
-            LazyScreen(screenBuilder: () async => const LiteSettingsScreen()),
+            const LiteSettingsScreen(),
       ),
       GoRoute(
         path: AppRoutes.settingsLanguage,
         name: 'settings-language',
         builder: (context, state) =>
-            LazyScreen(screenBuilder: () async => const LanguageScreen()),
+            const LanguageScreen(),
       ),
       GoRoute(
         path: AppRoutes.settingsTheme,
         name: 'settings-theme',
         builder: (context, state) =>
-            LazyScreen(screenBuilder: () async => const ThemeScreen()),
+            const ThemeScreen(),
       ),
       GoRoute(
         path: AppRoutes.syncStatus,
         name: 'sync-status',
         builder: (context, state) =>
-            LazyScreen(screenBuilder: () async => const SyncStatusScreen()),
+            const SyncStatusScreen(),
       ),
       GoRoute(
         path: AppRoutes.notificationsCenter,
         name: 'notifications',
         builder: (context, state) =>
-            LazyScreen(screenBuilder: () async => const NotificationsScreen()),
+            const NotificationsScreen(),
       ),
     ],
   ),

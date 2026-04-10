@@ -11,6 +11,8 @@ import 'package:get_it/get_it.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 
+import '../core/services/sentry_service.dart' as sentry;
+
 // =============================================================================
 // FILTER STATE
 // =============================================================================
@@ -69,7 +71,9 @@ final pendingApprovalsCountProvider =
       variables: [Variable.withString(storeId)],
     ).getSingle();
     return result.data['count'] as int? ?? 0;
-  } catch (_) {
+  } catch (e, st) {
+    sentry.reportError(e,
+        stackTrace: st, hint: 'pendingApprovalsCountProvider');
     return 0;
   }
 });
@@ -106,7 +110,8 @@ Future<bool> approveRefund({
     );
 
     return true;
-  } catch (_) {
+  } catch (e, st) {
+    sentry.reportError(e, stackTrace: st, hint: 'approveRefund');
     return false;
   }
 }
@@ -141,7 +146,8 @@ Future<bool> rejectRefund({
     );
 
     return true;
-  } catch (_) {
+  } catch (e, st) {
+    sentry.reportError(e, stackTrace: st, hint: 'rejectRefund');
     return false;
   }
 }

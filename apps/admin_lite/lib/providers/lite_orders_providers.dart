@@ -10,6 +10,8 @@ import 'package:get_it/get_it.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 
+import '../core/services/sentry_service.dart' as sentry;
+
 // =============================================================================
 // ORDERS PROVIDERS
 // =============================================================================
@@ -39,7 +41,8 @@ final liteActiveOrdersProvider =
     }
     all.sort((a, b) => b.orderDate.compareTo(a.orderDate));
     return all;
-  } catch (_) {
+  } catch (e, st) {
+    sentry.reportError(e, stackTrace: st, hint: 'liteActiveOrdersProvider');
     return [];
   }
 });
@@ -82,7 +85,8 @@ final liteDeliveryOrdersProvider =
     }
     all.sort((a, b) => b.orderDate.compareTo(a.orderDate));
     return all;
-  } catch (_) {
+  } catch (e, st) {
+    sentry.reportError(e, stackTrace: st, hint: 'liteDeliveryOrdersProvider');
     return [];
   }
 });
@@ -107,7 +111,8 @@ final liteOrderHistoryProvider =
     }
     all.sort((a, b) => b.orderDate.compareTo(a.orderDate));
     return all;
-  } catch (_) {
+  } catch (e, st) {
+    sentry.reportError(e, stackTrace: st, hint: 'liteOrderHistoryProvider');
     return [];
   }
 });

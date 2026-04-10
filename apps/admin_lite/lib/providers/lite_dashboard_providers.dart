@@ -10,6 +10,8 @@ import 'package:get_it/get_it.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 
+import '../core/services/sentry_service.dart' as sentry;
+
 // =============================================================================
 // LITE STATS DATA MODEL
 // =============================================================================
@@ -133,7 +135,8 @@ final recentActivityProvider =
               timestamp: log.createdAt,
             ))
         .toList();
-  } catch (_) {
+  } catch (e, st) {
+    sentry.reportError(e, stackTrace: st, hint: 'recentActivityProvider');
     return [];
   }
 });
@@ -152,7 +155,8 @@ Future<int> _getPendingApprovalsCount(AppDatabase db, String storeId) async {
       variables: [Variable.withString(storeId)],
     ).getSingle();
     return result.data['count'] as int? ?? 0;
-  } catch (_) {
+  } catch (e, st) {
+    sentry.reportError(e, stackTrace: st, hint: '_getPendingApprovalsCount');
     return 0;
   }
 }
@@ -167,7 +171,8 @@ Future<int> _getActiveShiftsCount(AppDatabase db, String storeId) async {
       variables: [Variable.withString(storeId)],
     ).getSingle();
     return result.data['count'] as int? ?? 0;
-  } catch (_) {
+  } catch (e, st) {
+    sentry.reportError(e, stackTrace: st, hint: '_getActiveShiftsCount');
     return 0;
   }
 }

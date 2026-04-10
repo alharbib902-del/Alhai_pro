@@ -390,8 +390,7 @@ class LiteOrderDetailScreen extends ConsumerWidget {
           child: OutlinedButton.icon(
             onPressed: () async {
               final db = GetIt.I<AppDatabase>();
-              // TODO(l10n): add key for "Cancelled by admin"
-              await db.ordersDao.cancelOrder(order.id, 'Cancelled by admin');
+              await db.ordersDao.cancelOrder(order.id, l10n.cancelledByAdmin);
               if (context.mounted) {
                 ref.invalidate(liteOrderDetailProvider(orderId));
                 ref.invalidate(liteActiveOrdersProvider);
