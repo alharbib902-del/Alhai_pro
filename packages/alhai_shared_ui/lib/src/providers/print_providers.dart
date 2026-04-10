@@ -6,6 +6,13 @@ library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+/// Sentinel for nullable copyWith fields
+const _undefined = _Undefined();
+
+class _Undefined {
+  const _Undefined();
+}
+
 /// نموذج مهمة الطباعة
 class PrintJob {
   final String id;
@@ -52,7 +59,7 @@ class PrintJob {
 
   PrintJob copyWith({
     String? status,
-    String? errorMessage,
+    Object? errorMessage = _undefined,
     int? retryCount,
   }) =>
       PrintJob(
@@ -61,7 +68,9 @@ class PrintJob {
         receiptNo: receiptNo,
         type: type,
         status: status ?? this.status,
-        errorMessage: errorMessage ?? this.errorMessage,
+        errorMessage: errorMessage == _undefined
+            ? this.errorMessage
+            : errorMessage as String?,
         retryCount: retryCount ?? this.retryCount,
         createdAt: createdAt,
       );

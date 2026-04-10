@@ -101,7 +101,7 @@ class _CustomerQuickInfoState extends State<CustomerQuickInfo> {
 
     return _CustomerSummary(
       name: stats.customer.name,
-      type: stats.customer.type ?? 'individual',
+      type: stats.customer.type,
       visitCount: stats.totalPurchases,
       totalSpent: stats.totalSpent,
       balance: balance,

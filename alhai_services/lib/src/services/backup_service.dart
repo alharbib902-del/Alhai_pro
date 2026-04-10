@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
+
 import 'gzip_helper_stub.dart' if (dart.library.io) 'gzip_helper_native.dart'
     as gzip_helper;
 
@@ -123,13 +125,13 @@ class BackupService {
       final ratio = rawBytes.isNotEmpty
           ? (1 - gzipBytes.length / rawBytes.length) * 100
           : 0;
-      // Log compression ratio in debug mode
-      assert(() {
-        // ignore: avoid_print
-        print(
-            '[Backup] Compressed: ${rawBytes.length} -> ${gzipBytes.length} bytes (${ratio.toStringAsFixed(1)}% reduction)');
-        return true;
-      }());
+      // Log compression ratio in debug mode.
+      // TODO: migrate to the shared AppLogger from alhai_core once it is
+      // exported from the package barrel (currently only ProductionLogger is
+      // re-exported). debugPrint is a minimal upgrade from print() because it
+      // is a no-op in release mode.
+      debugPrint(
+          '[Backup] Compressed: ${rawBytes.length} -> ${gzipBytes.length} bytes (${ratio.toStringAsFixed(1)}% reduction)');
       return compressed;
     } catch (_) {
       // Fallback to plain base64 if gzip is unavailable (e.g., web platform)

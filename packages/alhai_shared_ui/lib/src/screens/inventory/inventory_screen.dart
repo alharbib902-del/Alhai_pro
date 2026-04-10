@@ -970,7 +970,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
               const SizedBox(height: AppSizes.lg),
               // Reason Dropdown
               DropdownButtonFormField<String>(
-                value: reason,
+                initialValue: reason,
                 decoration: InputDecoration(
                   labelText: l10n.adjustmentReason,
                   prefixIcon: const Icon(Icons.note_rounded),

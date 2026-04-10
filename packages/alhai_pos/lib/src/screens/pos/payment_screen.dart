@@ -28,10 +28,8 @@ import 'package:alhai_zatca/alhai_zatca.dart' show VatCalculator;
 import '../../widgets/pos/split_payment_dialog.dart' as split_dlg
     show SplitPaymentDialog, PaymentSplit;
 import '../../providers/customer_display_providers.dart';
-import '../../services/customer_display/customer_display_service.dart';
 import '../../services/customer_display/customer_display_state.dart';
 import '../../services/payment/nfc_listener_service.dart';
-import 'phone_entry_dialog.dart';
 import 'payment_sub_widgets.dart';
 import 'payment_details_widgets.dart';
 import 'payment_loyalty_widget.dart';

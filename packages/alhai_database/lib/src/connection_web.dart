@@ -38,7 +38,7 @@ QueryExecutor openNativeConnection({String? dbName, String? encryptionKey}) {
     final result = await WasmDatabase.open(
       databaseName: name,
       sqlite3Uri: Uri.parse('sqlite3.wasm'),
-      driftWorkerUri: Uri.parse('drift_worker.js'),
+      driftWorkerUri: Uri.parse('drift_worker.dart.js'),
       // Note: moveExistingIndexedDbToOpfs was removed in drift 2.x.
       // Drift now handles IndexedDB-to-OPFS migration automatically.
     );

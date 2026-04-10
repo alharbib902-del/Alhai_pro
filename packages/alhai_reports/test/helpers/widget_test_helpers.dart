@@ -23,6 +23,8 @@ class MockExpensesDao extends Mock implements ExpensesDao {}
 
 class MockUsersDao extends Mock implements UsersDao {}
 
+class MockAccountsDao extends Mock implements AccountsDao {}
+
 class MockSelectable<T> extends Mock implements Selectable<T> {}
 
 // =============================================================================
@@ -74,6 +76,7 @@ Widget buildTestableWidget(
   MockProductsDao productsDao,
   MockExpensesDao expensesDao,
   MockUsersDao usersDao,
+  MockAccountsDao accountsDao,
 }) setupMockGetIt() {
   final mockDb = MockAppDatabase();
   final mockSalesDao = MockSalesDao();
@@ -81,12 +84,14 @@ Widget buildTestableWidget(
   final mockProductsDao = MockProductsDao();
   final mockExpensesDao = MockExpensesDao();
   final mockUsersDao = MockUsersDao();
+  final mockAccountsDao = MockAccountsDao();
 
   when(() => mockDb.salesDao).thenReturn(mockSalesDao);
   when(() => mockDb.saleItemsDao).thenReturn(mockSaleItemsDao);
   when(() => mockDb.productsDao).thenReturn(mockProductsDao);
   when(() => mockDb.expensesDao).thenReturn(mockExpensesDao);
   when(() => mockDb.usersDao).thenReturn(mockUsersDao);
+  when(() => mockDb.accountsDao).thenReturn(mockAccountsDao);
 
   // Default stubs returning empty data
   when(() => mockSalesDao.getSalesByDate(any(), any()))
@@ -114,6 +119,9 @@ Widget buildTestableWidget(
   when(() => mockUsersDao.getAllUsers(any()))
       .thenAnswer((_) async => <UsersTableData>[]);
 
+  when(() => mockAccountsDao.getReceivableAccounts(any()))
+      .thenAnswer((_) async => <AccountsTableData>[]);
+
   // Register in GetIt
   final getIt = GetIt.instance;
   if (getIt.isRegistered<AppDatabase>()) {
@@ -128,6 +136,7 @@ Widget buildTestableWidget(
     productsDao: mockProductsDao,
     expensesDao: mockExpensesDao,
     usersDao: mockUsersDao,
+    accountsDao: mockAccountsDao,
   );
 }
 

@@ -9,6 +9,7 @@ export 'src/screens/manager_approval_screen.dart';
 // Providers
 export 'src/providers/auth_providers.dart';
 export 'src/providers/theme_provider.dart';
+export 'src/providers/user_role_resolver.dart';
 
 // Security Services
 export 'src/security/secure_storage_service.dart';

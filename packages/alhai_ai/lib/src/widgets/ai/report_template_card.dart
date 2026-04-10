@@ -154,13 +154,16 @@ class _ReportTemplateCardState extends State<ReportTemplateCard> {
                           ? Colors.white.withValues(alpha: 0.3)
                           : AppColors.textMuted),
                   const SizedBox(width: AlhaiSpacing.xxs),
-                  Text(
-                    _formatLastRun(widget.template.lastRun!),
-                    style: TextStyle(
-                      fontSize: 10,
-                      color: isDark
-                          ? Colors.white.withValues(alpha: 0.3)
-                          : AppColors.textMuted,
+                  Flexible(
+                    child: Text(
+                      _formatLastRun(widget.template.lastRun!),
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.3)
+                            : AppColors.textMuted,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   const SizedBox(width: 10),

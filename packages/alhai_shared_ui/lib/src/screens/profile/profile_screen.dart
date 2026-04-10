@@ -283,7 +283,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               _InfoTile(
                 icon: Icons.badge,
                 label: l10n.employeeNumberLabel,
-                value: user?.id.substring(0, 8) ?? l10n.notSpecified,
+                value: user != null
+                    ? user.id
+                        .substring(0, user.id.length < 8 ? user.id.length : 8)
+                    : l10n.notSpecified,
                 isDark: isDark,
               ),
             ],

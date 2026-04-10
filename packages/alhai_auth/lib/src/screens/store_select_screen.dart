@@ -74,7 +74,11 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
       }
 
       // fallback نهائي: فحص سريع بـ LIMIT 1 بدلاً من تحميل 5000 منتج
-      if (stores.isEmpty) {
+      // Only attempts the dev-seed recovery path when DEFAULT_STORE_ID is
+      // actually configured. In production builds without the define,
+      // kDefaultStoreId is empty and this path is skipped — the user must
+      // select a real store.
+      if (stores.isEmpty && kDefaultStoreId.isNotEmpty) {
         final hasProds = await db.productsDao.hasProducts(kDefaultStoreId);
         if (hasProds) {
           debugPrint(

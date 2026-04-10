@@ -18,6 +18,7 @@ import 'package:uuid/uuid.dart';
 import '../security/secure_storage_service.dart';
 import '../security/session_manager.dart';
 import '../services/whatsapp_otp_service.dart';
+import 'user_role_resolver.dart';
 
 // ============================================================================
 // STORE ID PROVIDER
@@ -25,11 +26,17 @@ import '../services/whatsapp_otp_service.dart';
 
 /// معرّف المتجر الافتراضي (يستخدم فقط عند CSV seeding ولا يُعيّن تلقائياً)
 ///
-/// SECURITY TODO: This value is hardcoded for development convenience.
-/// In production, it should come from environment configuration
-/// (e.g. --dart-define=DEFAULT_STORE_ID=...) or a remote config service.
-/// Never commit production store IDs in source code.
-const String kDefaultStoreId = 'b10f215e-2c70-4832-a37e-a42a74406a8d';
+/// Reads from --dart-define=DEFAULT_STORE_ID=... at compile time.
+///
+/// IMPORTANT: Production builds MUST pass
+/// `--dart-define=DEFAULT_STORE_ID=<uuid>` or the app will fail-safe with
+/// an empty string. Consumers that require a non-empty value must guard
+/// with a clear error at the consumption point — never silently fall back
+/// to a hardcoded development UUID.
+const String kDefaultStoreId = String.fromEnvironment(
+  'DEFAULT_STORE_ID',
+  defaultValue: '',
+);
 
 /// مزود معرّف المتجر الحالي
 /// يبدأ بـ null ويُعيّن ديناميكياً:
@@ -252,50 +259,92 @@ class AuthNotifier extends StateNotifier<AuthState> {
             '🔄 Supabase auth event: $event, session: ${session != null}');
       }
 
-      // استعادة الجلسة الأولية أو تجديد التوكن → تحديث الحالة إذا لم نكن مصادقين
-      if ((event == AuthChangeEvent.initialSession ||
+      // AUTH-GUARD FIX: resolve role from public.users on EVERY relevant
+      // event (initialSession, signedIn, tokenRefreshed) so promotions /
+      // demotions take effect after a refresh. Previously role was
+      // hardcoded to UserRole.employee which made super-admin login
+      // impossible and broke the router guard.
+      final shouldHandle = (event == AuthChangeEvent.initialSession ||
               event == AuthChangeEvent.tokenRefreshed ||
               event == AuthChangeEvent.signedIn) &&
-          session != null &&
-          state.status != AuthStatus.authenticated) {
+          session != null;
+
+      if (shouldHandle) {
         final expiry = session.expiresAt != null
             ? DateTime.fromMillisecondsSinceEpoch(session.expiresAt! * 1000)
             : DateTime.now().add(kSessionDuration);
 
-        state = AuthState(
-          status: AuthStatus.authenticated,
-          user: User(
-            id: session.user.id,
-            phone: session.user.phone ?? '',
-            name: session.user.userMetadata?['name'] as String? ??
-                session.user.phone ??
-                '',
-            email: session.user.email,
-            role: UserRole.employee,
-            createdAt: DateTime.now(),
-          ),
-          sessionExpiry: expiry,
-        );
-        _startSessionMonitor();
+        // Resolve role from DB asynchronously, then commit to state.
+        // On tokenRefreshed we still re-resolve to pick up role changes.
+        _resolveUserRole(session.user.id).then((resolvedRole) {
+          // If signedOut raced us, bail out.
+          if (state.status == AuthStatus.unauthenticated) return;
 
-        // تحديث tokens في SecureStorage
-        SecureStorageService.saveTokens(
-          accessToken: session.accessToken,
-          refreshToken: session.refreshToken ?? '',
-          expiry: expiry,
-        );
+          state = AuthState(
+            status: AuthStatus.authenticated,
+            user: User(
+              id: session.user.id,
+              phone: session.user.phone ?? '',
+              name: session.user.userMetadata?['name'] as String? ??
+                  session.user.phone ??
+                  '',
+              email: session.user.email,
+              role: resolvedRole,
+              createdAt: DateTime.now(),
+            ),
+            sessionExpiry: expiry,
+          );
+          _startSessionMonitor();
 
-        // نسخ احتياطي / استعادة مفتاح تشفير قاعدة البيانات
-        SecureStorageService.ensureEncryptionKeyBackup();
+          // تحديث tokens في SecureStorage
+          SecureStorageService.saveTokens(
+            accessToken: session.accessToken,
+            refreshToken: session.refreshToken ?? '',
+            expiry: expiry,
+          );
 
-        if (!_initCompleter.isCompleted) {
-          _initCompleter.complete();
-        }
+          // نسخ احتياطي / استعادة مفتاح تشفير قاعدة البيانات
+          SecureStorageService.ensureEncryptionKeyBackup();
+
+          if (!_initCompleter.isCompleted) {
+            _initCompleter.complete();
+          }
+        });
       } else if (event == AuthChangeEvent.signedOut) {
         _stopSessionMonitor();
         state = const AuthState(status: AuthStatus.unauthenticated);
       }
     });
+  }
+
+  /// Resolve the current user's role from the `public.users` table
+  /// (the server-side source of truth). Falls back to
+  /// [kDefaultUserRole] (employee) on any failure, missing row, or
+  /// unknown value — this is a safe default because employee has the
+  /// fewest privileges and any super-admin gating will still refuse.
+  ///
+  /// SECURITY NOTE: This is only the client-side hint used to pick the
+  /// correct navigation shell. Real enforcement must be performed
+  /// server-side by RLS policies that gate mutations on
+  /// `public.is_super_admin()`.
+  Future<UserRole> _resolveUserRole(String userId) async {
+    if (_supabaseClient == null || userId.isEmpty) {
+      return kDefaultUserRole;
+    }
+    try {
+      final row = await _supabaseClient
+          .from('users')
+          .select('role')
+          .eq('id', userId)
+          .maybeSingle();
+      if (row == null) return kDefaultUserRole;
+      return parseUserRoleFromDb(row['role']);
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('⚠️ _resolveUserRole failed for $userId: $e');
+      }
+      return kDefaultUserRole;
+    }
   }
 
   /// التحقق من حالة المصادقة عند بدء التطبيق
@@ -333,6 +382,9 @@ class AuthNotifier extends StateNotifier<AuthState> {
             }
           }
 
+          // AUTH-GUARD FIX: resolve role from public.users instead of
+          // hardcoding employee — see _listenToSupabaseAuth().
+          final resolvedRole = await _resolveUserRole(session.user.id);
           state = AuthState(
             status: AuthStatus.authenticated,
             user: User(
@@ -342,13 +394,16 @@ class AuthNotifier extends StateNotifier<AuthState> {
                   session.user.phone ??
                   '',
               email: session.user.email,
-              role: UserRole.employee,
+              role: resolvedRole,
               createdAt: DateTime.now(),
             ),
             sessionExpiry: expiry,
           );
           _startSessionMonitor();
-          if (kDebugMode) debugPrint('✅ Auth restored from Supabase session');
+          if (kDebugMode) {
+            debugPrint(
+                '✅ Auth restored from Supabase session (role=$resolvedRole)');
+          }
           return;
         }
 
@@ -672,10 +727,36 @@ class AuthNotifier extends StateNotifier<AuthState> {
           refreshToken: response.session!.refreshToken ?? '',
           expiry: expiry,
         );
+        final userId = response.user?.id ?? '';
         await SecureStorageService.saveUserData(
-          userId: response.user?.id ?? '',
+          userId: userId,
           storeId: '',
         );
+
+        // AUTH-GUARD FIX: resolve role from public.users and reflect
+        // it in AuthState immediately. Previously this method only
+        // wrote tokens to secure storage and left AuthState untouched,
+        // which meant the super-admin router guard always rejected
+        // password-based logins.
+        if (userId.isNotEmpty) {
+          final resolvedRole = await _resolveUserRole(userId);
+          state = AuthState(
+            status: AuthStatus.authenticated,
+            user: User(
+              id: userId,
+              phone: response.user?.phone ?? '',
+              name: response.user?.userMetadata?['name'] as String? ??
+                  response.user?.email ??
+                  email,
+              email: response.user?.email ?? email,
+              role: resolvedRole,
+              createdAt: DateTime.now(),
+            ),
+            sessionExpiry: expiry,
+          );
+          _startSessionMonitor();
+          SecureStorageService.ensureEncryptionKeyBackup();
+        }
         return (success: true, error: null);
       }
 

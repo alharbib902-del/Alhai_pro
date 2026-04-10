@@ -13,9 +13,21 @@ class OrdersDao extends DatabaseAccessor<AppDatabase> with _$OrdersDaoMixin {
   // ==================== الطلبات ====================
 
   /// جلب جميع الطلبات لمتجر معين
-  Future<List<OrdersTableData>> getOrders(String storeId) {
+  ///
+  /// [channel] - optional filter by channel (e.g. 'app' for customer-app
+  /// orders, 'pos' for POS orders). When null, returns all channels.
+  Future<List<OrdersTableData>> getOrders(
+    String storeId, {
+    String? channel,
+  }) {
     return (select(ordersTable)
-          ..where((o) => o.storeId.equals(storeId))
+          ..where((o) {
+            var condition = o.storeId.equals(storeId);
+            if (channel != null) {
+              condition = condition & o.channel.equals(channel);
+            }
+            return condition;
+          })
           ..orderBy([(o) => OrderingTerm.desc(o.orderDate)])
           ..limit(500))
         .get();

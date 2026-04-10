@@ -667,6 +667,10 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
                         final db = ref.read(appDatabaseProvider);
                         final storeId =
                             ref.read(currentStoreIdProvider) ?? kDefaultStoreId;
+                        if (storeId.isEmpty) {
+                          throw StateError(
+                              'DEFAULT_STORE_ID is not configured. Pass --dart-define=DEFAULT_STORE_ID at build time.');
+                        }
                         try {
                           final customerId =
                               'cust_${DateTime.now().millisecondsSinceEpoch}';

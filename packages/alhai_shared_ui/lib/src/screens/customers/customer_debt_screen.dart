@@ -600,7 +600,7 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
               ),
               SizedBox(height: AlhaiSpacing.sm),
               DropdownButtonFormField<String>(
-                value: paymentMethod,
+                initialValue: paymentMethod,
                 decoration: InputDecoration(
                   labelText: l10n.paymentMethodLabel2,
                   prefixIcon: const Icon(Icons.payment),
