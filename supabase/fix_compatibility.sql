@@ -6,6 +6,21 @@
 -- التاريخ: 2026-03-04
 -- ================================================================
 
+-- =====================================================
+-- WARNING - DO NOT RUN THIS FILE IN PRODUCTION
+-- =====================================================
+-- This file contains blanket "Allow authenticated full access"
+-- policies that have since been REPLACED by migrations v26, v32, v33.
+-- Running this file will UNDO those security fixes and reopen
+-- cross-tenant data leaks.
+--
+-- This file is preserved only for historical reference.
+-- =====================================================
+DO $$
+BEGIN
+  RAISE EXCEPTION 'fix_compatibility.sql has been superseded by migrations v26/v32/v33. Running this file would revert critical RLS fixes. Aborting.';
+END $$;
+
 -- ############################################################
 -- الجزء 0: حذف كل سياسات RLS من الجداول المتأثرة (تلقائي)
 -- ############################################################

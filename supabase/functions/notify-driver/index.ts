@@ -1,11 +1,16 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import { corsHeaders } from '../_shared/cors.ts'
+import { getCorsHeaders } from '../_shared/cors.ts'
 
 /**
  * notify-driver: Send FCM push notification to driver on new delivery assignment
  *
  * Called via database webhook when a delivery is inserted/updated with status='assigned'
  * OR called directly via POST with { delivery_id, driver_id }
+ *
+ * Security: requires a shared secret header (x-webhook-secret) that must match
+ * the WEBHOOK_SHARED_SECRET env var. This function uses the service role key
+ * to read driver FCM tokens and delivery details, so it must not be callable
+ * by unauthenticated clients.
  */
 
 interface NotifyRequest {
@@ -18,8 +23,22 @@ interface NotifyRequest {
 }
 
 Deno.serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req)
+
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
+  }
+
+  // Shared-secret authentication: reject any request that doesn't carry the
+  // correct x-webhook-secret header. This MUST run before anything that uses
+  // the service role key so the function cannot be invoked anonymously.
+  const webhookSecret = Deno.env.get('WEBHOOK_SHARED_SECRET')
+  const providedSecret = req.headers.get('x-webhook-secret')
+  if (!webhookSecret || providedSecret !== webhookSecret) {
+    return new Response(
+      JSON.stringify({ code: 'UNAUTHORIZED', error: 'Unauthorized' }),
+      { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
   }
 
   const supabaseUrl = Deno.env.get('SUPABASE_URL')

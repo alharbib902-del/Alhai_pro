@@ -1,12 +1,21 @@
-// Allowed origins - update with actual production domains
-const ALLOWED_ORIGINS = [
+// Production origins - always allowed
+const PROD_ORIGINS = [
     'https://app.alhai.sa',
     'https://admin.alhai.sa',
     'https://cashier.alhai.sa',
     'https://portal.alhai.sa',
-    'http://localhost:3000',  // dev only - remove in production
-    'http://localhost:5173',  // dev only - remove in production
 ];
+
+// Dev-only origins (localhost). Merged into ALLOWED_ORIGINS only when
+// ENVIRONMENT === "development" so production deployments never accept them.
+const DEV_ORIGINS = [
+    'http://localhost:3000',
+    'http://localhost:5173',
+];
+
+const ALLOWED_ORIGINS = Deno.env.get('ENVIRONMENT') === 'development'
+    ? [...PROD_ORIGINS, ...DEV_ORIGINS]
+    : PROD_ORIGINS;
 
 export function getCorsHeaders(req?: Request): Record<string, string> {
     const origin = req?.headers.get('Origin') || '';

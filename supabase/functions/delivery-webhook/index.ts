@@ -1,5 +1,5 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import { corsHeaders } from '../_shared/cors.ts'
+import { getCorsHeaders } from '../_shared/cors.ts'
 
 /**
  * delivery-webhook: Handle delivery lifecycle events
@@ -7,6 +7,10 @@ import { corsHeaders } from '../_shared/cors.ts'
  * Triggered by Supabase database webhooks on deliveries table changes.
  * Handles: driver notification on assignment, customer notification on status changes,
  * shift stats updates on completion.
+ *
+ * Security: requires a shared secret header (x-webhook-secret) that must match
+ * the WEBHOOK_SHARED_SECRET env var. This function uses the service role key
+ * to bypass RLS, so it must not be callable by unauthenticated clients.
  */
 
 interface WebhookPayload {
@@ -18,8 +22,22 @@ interface WebhookPayload {
 }
 
 Deno.serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req)
+
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
+  }
+
+  // Shared-secret authentication: reject any request that doesn't carry the
+  // correct x-webhook-secret header. This MUST run before anything that uses
+  // the service role key so the function cannot be invoked anonymously.
+  const webhookSecret = Deno.env.get('WEBHOOK_SHARED_SECRET')
+  const providedSecret = req.headers.get('x-webhook-secret')
+  if (!webhookSecret || providedSecret !== webhookSecret) {
+    return new Response(
+      JSON.stringify({ code: 'UNAUTHORIZED', error: 'Unauthorized' }),
+      { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
   }
 
   const supabaseUrl = Deno.env.get('SUPABASE_URL')
@@ -42,7 +60,7 @@ Deno.serve(async (req) => {
     // --- INSERT: New delivery created (assign to driver) ---
     if (type === 'INSERT' && record.driver_id && record.status === 'assigned') {
       // Notify driver about new assignment
-      await notifyDriver(supabaseUrl, supabaseKey, {
+      await notifyDriver(supabaseUrl, supabaseKey, webhookSecret, {
         delivery_id: record.id,
         driver_id: record.driver_id,
         type: 'new_delivery',
@@ -57,7 +75,7 @@ Deno.serve(async (req) => {
 
       // Driver assignment changed
       if (record.driver_id !== old_record.driver_id && record.driver_id) {
-        await notifyDriver(supabaseUrl, supabaseKey, {
+        await notifyDriver(supabaseUrl, supabaseKey, webhookSecret, {
           delivery_id: record.id,
           driver_id: record.driver_id,
           type: 'new_delivery',
@@ -143,6 +161,7 @@ Deno.serve(async (req) => {
 async function notifyDriver(
   supabaseUrl: string,
   supabaseKey: string,
+  webhookSecret: string,
   payload: { delivery_id: string; driver_id: string; type: string }
 ) {
   try {
@@ -151,6 +170,7 @@ async function notifyDriver(
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${supabaseKey}`,
+        'x-webhook-secret': webhookSecret,
       },
       body: JSON.stringify(payload),
     })
