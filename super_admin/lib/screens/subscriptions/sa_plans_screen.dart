@@ -241,19 +241,19 @@ class SAPlansScreen extends ConsumerWidget {
               if (updates.isNotEmpty) {
                 await ds.updatePlan(plan.id, updates);
                 await ref.read(auditLogServiceProvider).log(
-                  action: 'plan.update',
-                  targetType: 'plan',
-                  targetId: plan.id,
-                  before: {
-                    'name': plan.name,
-                    'monthly_price': plan.monthlyPrice,
-                    'yearly_price': plan.yearlyPrice,
-                    'max_branches': plan.maxBranches,
-                    'max_products': plan.maxProducts,
-                    'max_users': plan.maxUsers,
-                  },
-                  after: updates,
-                );
+                      action: 'plan.update',
+                      targetType: 'plan',
+                      targetId: plan.id,
+                      before: {
+                        'name': plan.name,
+                        'monthly_price': plan.monthlyPrice,
+                        'yearly_price': plan.yearlyPrice,
+                        'max_branches': plan.maxBranches,
+                        'max_products': plan.maxProducts,
+                        'max_users': plan.maxUsers,
+                      },
+                      after: updates,
+                    );
                 ref.invalidate(saPlansListProvider);
               }
               if (ctx.mounted) Navigator.pop(ctx);

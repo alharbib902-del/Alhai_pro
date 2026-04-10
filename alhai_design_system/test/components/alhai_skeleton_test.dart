@@ -27,8 +27,7 @@ void main() {
         AlhaiSkeleton.circle(size: 48),
       ));
 
-      expect(
-          find.byWidgetPredicate((w) => w is AlhaiSkeleton), findsOneWidget);
+      expect(find.byWidgetPredicate((w) => w is AlhaiSkeleton), findsOneWidget);
     });
 
     testWidgets('text renders with single line', (tester) async {
@@ -36,8 +35,7 @@ void main() {
         AlhaiSkeleton.text(width: 150),
       ));
 
-      expect(
-          find.byWidgetPredicate((w) => w is AlhaiSkeleton), findsOneWidget);
+      expect(find.byWidgetPredicate((w) => w is AlhaiSkeleton), findsOneWidget);
     });
 
     testWidgets('text renders with multiple lines', (tester) async {
@@ -45,8 +43,7 @@ void main() {
         AlhaiSkeleton.text(lines: 3),
       ));
 
-      expect(
-          find.byWidgetPredicate((w) => w is AlhaiSkeleton), findsOneWidget);
+      expect(find.byWidgetPredicate((w) => w is AlhaiSkeleton), findsOneWidget);
     });
 
     testWidgets('accepts custom border radius', (tester) async {

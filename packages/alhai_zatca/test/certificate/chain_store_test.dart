@@ -126,8 +126,7 @@ void main() {
       expect(InvoiceChainService.seedHash.length, 44);
     });
 
-    test('returns the stored hash after an invoice was registered',
-        () async {
+    test('returns the stored hash after an invoice was registered', () async {
       await service.updateLastHash(
         storeId: 'store-1',
         invoiceHash: 'INV-HASH-1',

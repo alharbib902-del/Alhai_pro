@@ -295,7 +295,8 @@ void main() {
 
     group('getLastSequence', () {
       test('returns 0 when no invoices exist', () async {
-        final seq = await db.invoicesDao.getLastSequence('store-1', 'INV', 2026);
+        final seq =
+            await db.invoicesDao.getLastSequence('store-1', 'INV', 2026);
         expect(seq, 0);
       });
 
@@ -305,7 +306,8 @@ void main() {
           invoiceNumber: 'INV-2026-00005',
         ));
 
-        final seq = await db.invoicesDao.getLastSequence('store-1', 'INV', 2026);
+        final seq =
+            await db.invoicesDao.getLastSequence('store-1', 'INV', 2026);
         expect(seq, 5);
       });
     });
@@ -314,8 +316,7 @@ void main() {
       test('emits initial list', () async {
         await db.invoicesDao.upsertInvoice(makeInvoice());
 
-        final invoices =
-            await db.invoicesDao.watchByStore('store-1').first;
+        final invoices = await db.invoicesDao.watchByStore('store-1').first;
         expect(invoices, hasLength(1));
       });
     });
@@ -335,8 +336,7 @@ void main() {
           status: 'paid',
         ));
 
-        final count =
-            await db.invoicesDao.watchUnpaidCount('store-1').first;
+        final count = await db.invoicesDao.watchUnpaidCount('store-1').first;
         expect(count, 1);
       });
     });

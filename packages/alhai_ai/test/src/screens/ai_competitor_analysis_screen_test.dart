@@ -31,8 +31,7 @@ Widget _buildTestableWidget(Widget child,
       currentStoreIdProvider.overrideWith((ref) => 'test-store'),
       isOnlineProvider.overrideWith((ref) => Stream.value(true)),
       pendingSyncCountProvider.overrideWith((ref) => Stream.value(0)),
-      syncStatusProvider
-          .overrideWith((ref) => Stream.value(SyncStatus.idle)),
+      syncStatusProvider.overrideWith((ref) => Stream.value(SyncStatus.idle)),
       syncManagerProvider.overrideWithValue(MockSyncManager()),
       ...overrides,
     ],
@@ -83,8 +82,7 @@ void main() {
       expect(find.byType(AiCompetitorAnalysisScreen), findsOneWidget);
     });
 
-    testWidgets('has three tabs for price, market, and alerts',
-        (tester) async {
+    testWidgets('has three tabs for price, market, and alerts', (tester) async {
       _setLargeViewport(tester);
       await tester.pumpWidget(
         _buildTestableWidget(const AiCompetitorAnalysisScreen()),

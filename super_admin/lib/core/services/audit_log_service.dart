@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../providers/sa_dashboard_providers.dart' show saSupabaseClientProvider;
+import '../../providers/sa_dashboard_providers.dart'
+    show saSupabaseClientProvider;
 import 'sentry_service.dart';
 
 /// Resolved actor for a single audit_log insert.

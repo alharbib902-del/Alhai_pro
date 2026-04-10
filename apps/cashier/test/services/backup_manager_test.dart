@@ -106,8 +106,7 @@ void main() {
       expect(report.restoredTables, equals(0));
     });
 
-    test('returns RestoreReport(success=false) for missing data key',
-        () async {
+    test('returns RestoreReport(success=false) for missing data key', () async {
       final jsonStr = jsonEncode({'version': '1.0.0'});
       final report = await manager.importFromJson(jsonStr);
 
@@ -235,4 +234,3 @@ void main() {
     });
   });
 }
-

@@ -24,13 +24,11 @@ void main() {
       });
 
       test('should validate Saudi international format (966XXXXXXXXX)', () {
-        expect(
-            whatsAppService.isValidWhatsAppNumber('966512345678'), isTrue);
+        expect(whatsAppService.isValidWhatsAppNumber('966512345678'), isTrue);
       });
 
       test('should validate +966 format', () {
-        expect(
-            whatsAppService.isValidWhatsAppNumber('+966512345678'), isTrue);
+        expect(whatsAppService.isValidWhatsAppNumber('+966512345678'), isTrue);
       });
 
       test('should reject too short numbers', () {
@@ -55,7 +53,8 @@ void main() {
       });
 
       test('should handle number starting with 0', () {
-        final formatted = whatsAppService.formatPhoneNumber('05xxxxxxxx'.replaceAll('x', '1'));
+        final formatted = whatsAppService
+            .formatPhoneNumber('05xxxxxxxx'.replaceAll('x', '1'));
         expect(formatted, startsWith('966'));
       });
     });
@@ -100,8 +99,7 @@ void main() {
           ),
         );
 
-        final status =
-            await whatsAppService.checkStatus(response.messageId);
+        final status = await whatsAppService.checkStatus(response.messageId);
         expect(status, equals(WhatsAppMessageStatus.sent));
       });
 
@@ -121,8 +119,7 @@ void main() {
 
     group('isConfigured', () {
       test('should return true when token is set', () async {
-        final configured =
-            await whatsAppService.isConfigured('store-1');
+        final configured = await whatsAppService.isConfigured('store-1');
         expect(configured, isTrue);
       });
 
@@ -139,8 +136,7 @@ void main() {
           phoneNumberId: 'phone-456',
         );
 
-        final configured =
-            await whatsAppService.isConfigured('store-1');
+        final configured = await whatsAppService.isConfigured('store-1');
         expect(configured, isTrue);
       });
     });
@@ -154,8 +150,7 @@ void main() {
           dailyLimit: 500,
         );
 
-        final configured =
-            await whatsAppService.isConfigured('store-1');
+        final configured = await whatsAppService.isConfigured('store-1');
         expect(configured, isTrue);
       });
 
@@ -168,8 +163,7 @@ void main() {
 
         whatsAppService.disableStore('store-1');
 
-        final configured =
-            await whatsAppService.isConfigured('store-1');
+        final configured = await whatsAppService.isConfigured('store-1');
         expect(configured, isFalse);
       });
     });

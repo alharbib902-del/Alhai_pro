@@ -49,13 +49,11 @@ void main() {
           // Catch all navigation destinations from SplashScreen
           GoRoute(
             path: '/login',
-            builder: (context, state) =>
-                const Scaffold(body: Text('Login')),
+            builder: (context, state) => const Scaffold(body: Text('Login')),
           ),
           GoRoute(
             path: '/pos',
-            builder: (context, state) =>
-                const Scaffold(body: Text('POS')),
+            builder: (context, state) => const Scaffold(body: Text('POS')),
           ),
           GoRoute(
             path: '/store-select',

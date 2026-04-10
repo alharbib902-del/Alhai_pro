@@ -58,12 +58,12 @@ class FakeShiftsRepository implements ShiftsRepository {
 
   @override
   Future<Paginated<Shift>> getStoreShifts(String storeId,
-      {int page = 1,
-      int limit = 20,
-      ShiftStatus? status,
-      String? cashierId,
-      DateTime? startDate,
-      DateTime? endDate}) async =>
+          {int page = 1,
+          int limit = 20,
+          ShiftStatus? status,
+          String? cashierId,
+          DateTime? startDate,
+          DateTime? endDate}) async =>
       Paginated(items: [], total: 0, page: page, limit: limit);
 
   @override
@@ -123,9 +123,12 @@ class FakeCashMovementsRepository implements CashMovementsRepository {
 
   @override
   Future<Paginated<CashMovement>> getStoreMovements(String storeId,
-      {int page = 1, int limit = 20, CashMovementType? type,
-      String? cashierId,
-      DateTime? startDate, DateTime? endDate}) async =>
+          {int page = 1,
+          int limit = 20,
+          CashMovementType? type,
+          String? cashierId,
+          DateTime? startDate,
+          DateTime? endDate}) async =>
       Paginated(items: [], total: 0, page: page, limit: limit);
 }
 
@@ -158,9 +161,9 @@ class FakeOrderPaymentsRepo implements OrderPaymentsRepository {
       throw UnimplementedError();
   @override
   Future<List<OrderPayment>> getPaymentsByMethod(String storeId,
-      {required DateTime startDate,
-      required DateTime endDate,
-      PaymentMethod? method}) async =>
+          {required DateTime startDate,
+          required DateTime endDate,
+          PaymentMethod? method}) async =>
       [];
 }
 
@@ -251,13 +254,13 @@ void main() {
       });
 
       test('validateSupervisorPin should validate correct pin', () async {
-        expect(
-            await paymentService.validateSupervisorPin('sup-1', '1234'), isTrue);
+        expect(await paymentService.validateSupervisorPin('sup-1', '1234'),
+            isTrue);
       });
 
       test('validateSupervisorPin should reject wrong pin', () async {
-        expect(
-            await paymentService.validateSupervisorPin('sup-1', '0000'), isFalse);
+        expect(await paymentService.validateSupervisorPin('sup-1', '0000'),
+            isFalse);
       });
     });
   });

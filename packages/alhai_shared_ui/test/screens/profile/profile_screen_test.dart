@@ -84,7 +84,8 @@ void main() {
 
     when(() => mockDb.syncQueueDao).thenReturn(mockSyncQueueDao);
     when(() => mockDb.salesDao).thenReturn(mockSalesDao);
-    when(() => mockSalesDao.getSalesStats(any(), cashierId: any(named: 'cashierId')))
+    when(() => mockSalesDao.getSalesStats(any(),
+            cashierId: any(named: 'cashierId')))
         .thenAnswer((_) async => const SalesStats(
               count: 10,
               total: 5000,

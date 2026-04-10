@@ -103,8 +103,8 @@ void main() {
 
     test('AlhaiListTileVariant has expected values', () {
       expect(AlhaiListTileVariant.values.length, 2);
-      expect(AlhaiListTileVariant.values,
-          contains(AlhaiListTileVariant.standard));
+      expect(
+          AlhaiListTileVariant.values, contains(AlhaiListTileVariant.standard));
       expect(
           AlhaiListTileVariant.values, contains(AlhaiListTileVariant.compact));
     });

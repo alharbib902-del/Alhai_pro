@@ -35,7 +35,8 @@ class FakeStoresRepository implements StoresRepository {
   @override
   Future<Store> updateStore(String id, UpdateStoreParams params) async {
     final idx = _stores.indexWhere((s) => s.id == id);
-    _stores[idx] = _stores[idx].copyWith(name: params.name ?? _stores[idx].name);
+    _stores[idx] =
+        _stores[idx].copyWith(name: params.name ?? _stores[idx].name);
     return _stores[idx];
   }
 

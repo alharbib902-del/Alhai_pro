@@ -59,8 +59,8 @@ void main() {
               fileOptions: any(named: 'fileOptions'),
             )).thenAnswer((_) async => '');
 
-        when(() => mockFileApi.getPublicUrl(any())).thenReturn(
-            'https://storage.example.com/test.webp');
+        when(() => mockFileApi.getPublicUrl(any()))
+            .thenReturn('https://storage.example.com/test.webp');
 
         when(() => mockProductsDao.updateProductImages(
               any(),
@@ -127,8 +127,8 @@ void main() {
               fileOptions: any(named: 'fileOptions'),
             )).thenAnswer((_) async => '');
 
-        when(() => mockFileApi.getPublicUrl(any())).thenReturn(
-            'https://storage.example.com/org.webp');
+        when(() => mockFileApi.getPublicUrl(any()))
+            .thenReturn('https://storage.example.com/org.webp');
 
         when(() => mockOrgProductsDao.updateOrgProduct(
               any(),
@@ -188,8 +188,8 @@ void main() {
               fileOptions: any(named: 'fileOptions'),
             )).thenAnswer((_) async => '');
 
-        when(() => mockFileApi.getPublicUrl(any())).thenReturn(
-            'https://storage.example.com/logo.webp');
+        when(() => mockFileApi.getPublicUrl(any()))
+            .thenReturn('https://storage.example.com/logo.webp');
 
         final url = await service.uploadStoreLogo(
           storeId: 'store-1',
@@ -226,8 +226,8 @@ void main() {
               fileOptions: any(named: 'fileOptions'),
             )).thenAnswer((_) async => '');
 
-        when(() => mockFileApi.getPublicUrl(any())).thenReturn(
-            'https://storage.example.com/invoice.pdf');
+        when(() => mockFileApi.getPublicUrl(any()))
+            .thenReturn('https://storage.example.com/invoice.pdf');
 
         final url = await service.archiveInvoicePdf(
           storeId: 'store-1',
@@ -273,8 +273,7 @@ void main() {
                   ),
                 ]);
 
-        when(() => mockFileApi.remove(any()))
-            .thenAnswer((_) async => []);
+        when(() => mockFileApi.remove(any())).thenAnswer((_) async => []);
 
         await service.deleteProductImages(
           storeId: 'store-1',

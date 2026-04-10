@@ -455,8 +455,7 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.reports,
         name: 'reports',
-        builder: (context, state) =>
-            const ReportsScreen(),
+        builder: (context, state) => const ReportsScreen(),
       ),
       GoRoute(
         path: '/reports/daily-sales',
@@ -466,20 +465,17 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: '/reports/profit',
         name: 'profit-report',
-        builder: (context, state) =>
-            const ProfitReportScreen(),
+        builder: (context, state) => const ProfitReportScreen(),
       ),
       GoRoute(
         path: '/reports/tax',
         name: 'tax-report',
-        builder: (context, state) =>
-            const TaxReportScreen(),
+        builder: (context, state) => const TaxReportScreen(),
       ),
       GoRoute(
         path: '/reports/vat',
         name: 'vat-report',
-        builder: (context, state) =>
-            const VatReportScreen(),
+        builder: (context, state) => const VatReportScreen(),
       ),
       GoRoute(
         path: '/reports/inventory',
@@ -489,8 +485,7 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: '/reports/customers',
         name: 'customer-report',
-        builder: (context, state) =>
-            const CustomerReportScreen(),
+        builder: (context, state) => const CustomerReportScreen(),
       ),
       GoRoute(
         path: '/reports/top-products',
@@ -500,8 +495,7 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: '/reports/sales-analytics',
         name: 'sales-analytics',
-        builder: (context, state) =>
-            const SalesAnalyticsScreen(),
+        builder: (context, state) => const SalesAnalyticsScreen(),
       ),
       GoRoute(
         path: '/reports/staff-performance',
@@ -516,8 +510,7 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: '/reports/debts',
         name: 'debts-report',
-        builder: (context, state) =>
-            const DebtsReportScreen(),
+        builder: (context, state) => const DebtsReportScreen(),
       ),
       GoRoute(
         path: AppRoutes.complaintsReport,
@@ -531,8 +524,7 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.aiAssistant,
         name: 'ai-assistant',
-        builder: (context, state) =>
-            const AiAssistantScreen(),
+        builder: (context, state) => const AiAssistantScreen(),
       ),
       GoRoute(
         path: AppRoutes.aiSalesForecasting,
@@ -542,8 +534,7 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.aiSmartPricing,
         name: 'ai-smart-pricing',
-        builder: (context, state) =>
-            const AiSmartPricingScreen(),
+        builder: (context, state) => const AiSmartPricingScreen(),
       ),
       GoRoute(
         path: AppRoutes.aiFraudDetection,
@@ -573,8 +564,7 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.aiSmartReports,
         name: 'ai-smart-reports',
-        builder: (context, state) =>
-            const AiSmartReportsScreen(),
+        builder: (context, state) => const AiSmartReportsScreen(),
       ),
       GoRoute(
         path: AppRoutes.aiStaffAnalytics,
@@ -604,8 +594,7 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.aiChatWithData,
         name: 'ai-chat-with-data',
-        builder: (context, state) =>
-            const AiChatWithDataScreen(),
+        builder: (context, state) => const AiChatWithDataScreen(),
       ),
 
       // ======================================================================
@@ -624,32 +613,27 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.inventory,
         name: 'inventory',
-        builder: (context, state) =>
-            const InventoryScreen(),
+        builder: (context, state) => const InventoryScreen(),
       ),
       GoRoute(
         path: AppRoutes.expiryTracking,
         name: 'expiry-tracking',
-        builder: (context, state) =>
-            const ExpiryTrackingScreen(),
+        builder: (context, state) => const ExpiryTrackingScreen(),
       ),
       GoRoute(
         path: AppRoutes.shifts,
         name: 'shifts',
-        builder: (context, state) =>
-            const ShiftsScreen(),
+        builder: (context, state) => const ShiftsScreen(),
       ),
       GoRoute(
         path: AppRoutes.shiftSummary,
         name: 'shift-summary',
-        builder: (context, state) =>
-            const ShiftSummaryScreen(),
+        builder: (context, state) => const ShiftSummaryScreen(),
       ),
       GoRoute(
         path: AppRoutes.products,
         name: 'products',
-        builder: (context, state) =>
-            const ProductsScreen(),
+        builder: (context, state) => const ProductsScreen(),
       ),
       GoRoute(
         path: AppRoutes.productDetail,
@@ -671,8 +655,7 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.customers,
         name: 'customers',
-        builder: (context, state) =>
-            const CustomersScreen(),
+        builder: (context, state) => const CustomersScreen(),
       ),
       GoRoute(
         path: AppRoutes.customerDetail,
@@ -685,8 +668,7 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.suppliers,
         name: 'suppliers',
-        builder: (context, state) =>
-            const SuppliersScreen(),
+        builder: (context, state) => const SuppliersScreen(),
       ),
       GoRoute(
         path: AppRoutes.supplierDetail,
@@ -699,14 +681,12 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.orders,
         name: 'orders',
-        builder: (context, state) =>
-            const OrdersScreen(),
+        builder: (context, state) => const OrdersScreen(),
       ),
       GoRoute(
         path: AppRoutes.invoices,
         name: 'invoices',
-        builder: (context, state) =>
-            const InvoicesScreen(),
+        builder: (context, state) => const InvoicesScreen(),
       ),
       GoRoute(
         path: AppRoutes.invoiceDetail,
@@ -719,8 +699,7 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.expenses,
         name: 'expenses',
-        builder: (context, state) =>
-            const ExpensesScreen(),
+        builder: (context, state) => const ExpensesScreen(),
       ),
       GoRoute(
         path: AppRoutes.expenseCategories,
@@ -730,38 +709,32 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.profile,
         name: 'profile',
-        builder: (context, state) =>
-            const ProfileScreen(),
+        builder: (context, state) => const ProfileScreen(),
       ),
       GoRoute(
         path: AppRoutes.settings,
         name: 'settings',
-        builder: (context, state) =>
-            const LiteSettingsScreen(),
+        builder: (context, state) => const LiteSettingsScreen(),
       ),
       GoRoute(
         path: AppRoutes.settingsLanguage,
         name: 'settings-language',
-        builder: (context, state) =>
-            const LanguageScreen(),
+        builder: (context, state) => const LanguageScreen(),
       ),
       GoRoute(
         path: AppRoutes.settingsTheme,
         name: 'settings-theme',
-        builder: (context, state) =>
-            const ThemeScreen(),
+        builder: (context, state) => const ThemeScreen(),
       ),
       GoRoute(
         path: AppRoutes.syncStatus,
         name: 'sync-status',
-        builder: (context, state) =>
-            const SyncStatusScreen(),
+        builder: (context, state) => const SyncStatusScreen(),
       ),
       GoRoute(
         path: AppRoutes.notificationsCenter,
         name: 'notifications',
-        builder: (context, state) =>
-            const NotificationsScreen(),
+        builder: (context, state) => const NotificationsScreen(),
       ),
     ],
   ),

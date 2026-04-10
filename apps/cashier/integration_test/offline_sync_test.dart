@@ -193,8 +193,7 @@ void main() {
       );
     });
 
-    testWidgets('queue count matches number of enqueued items',
-        (tester) async {
+    testWidgets('queue count matches number of enqueued items', (tester) async {
       final sync = SyncService(db.syncQueueDao);
 
       const n = 5;

@@ -30,8 +30,7 @@ void main() {
     });
 
     test('each has a unique name used for preference serialization', () {
-      final names =
-          PrinterConnectionType.values.map((e) => e.name).toSet();
+      final names = PrinterConnectionType.values.map((e) => e.name).toSet();
       expect(names, hasLength(4));
     });
   });

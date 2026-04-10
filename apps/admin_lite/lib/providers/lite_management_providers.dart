@@ -115,8 +115,7 @@ final litePendingApprovalsProvider =
       ));
     }
   } catch (e, st) {
-    sentry.reportError(e,
-        stackTrace: st, hint: 'litePendingApprovalsProvider');
+    sentry.reportError(e, stackTrace: st, hint: 'litePendingApprovalsProvider');
   }
 
   items.sort((a, b) => b.createdAt.compareTo(a.createdAt));

@@ -5,25 +5,45 @@ import 'package:alhai_services/alhai_services.dart';
 class FakeAnalyticsRepository implements AnalyticsRepository {
   @override
   Future<List<SlowMovingProduct>> getSlowMovingProducts(String storeId,
-      {int daysThreshold = 30, int limit = 20}) async => [
-    SlowMovingProduct(productId: 'p1', productName: 'Slow', daysSinceLastSale: 45, stockQty: 50, stockValue: 500.0),
-  ];
+          {int daysThreshold = 30, int limit = 20}) async =>
+      [
+        SlowMovingProduct(
+            productId: 'p1',
+            productName: 'Slow',
+            daysSinceLastSale: 45,
+            stockQty: 50,
+            stockValue: 500.0),
+      ];
 
   @override
-  Future<List<ReorderSuggestion>> getReorderSuggestions(String storeId, {int daysAhead = 7}) async => [];
+  Future<List<ReorderSuggestion>> getReorderSuggestions(String storeId,
+          {int daysAhead = 7}) async =>
+      [];
 
   @override
-  Future<List<SalesForecast>> getSalesForecast(String storeId, {int days = 7}) async => [];
+  Future<List<SalesForecast>> getSalesForecast(String storeId,
+          {int days = 7}) async =>
+      [];
 
   @override
-  Future<PeakHoursAnalysis> getPeakHoursAnalysis(String storeId, {DateTime? startDate, DateTime? endDate}) async =>
-      PeakHoursAnalysis(peakHour: 14, slowestHour: 6, peakHourRevenue: 1200.0, hourlyRevenue: {14: 1200.0}, hourlyOrders: {14: 15});
+  Future<PeakHoursAnalysis> getPeakHoursAnalysis(String storeId,
+          {DateTime? startDate, DateTime? endDate}) async =>
+      PeakHoursAnalysis(
+          peakHour: 14,
+          slowestHour: 6,
+          peakHourRevenue: 1200.0,
+          hourlyRevenue: {14: 1200.0},
+          hourlyOrders: {14: 15});
 
   @override
-  Future<List<CustomerPattern>> getCustomerPatterns(String storeId, {int limit = 20}) async => [];
+  Future<List<CustomerPattern>> getCustomerPatterns(String storeId,
+          {int limit = 20}) async =>
+      [];
 
   @override
-  Future<List<SmartAlert>> getSmartAlerts(String storeId, {bool unreadOnly = false, int limit = 50}) async => [];
+  Future<List<SmartAlert>> getSmartAlerts(String storeId,
+          {bool unreadOnly = false, int limit = 50}) async =>
+      [];
 
   @override
   Future<void> markAlertRead(String alertId) async {}
@@ -32,23 +52,34 @@ class FakeAnalyticsRepository implements AnalyticsRepository {
   Future<void> markAllAlertsRead(String storeId) async {}
 
   @override
-  Future<DashboardSummary> getDashboardSummary(String storeId) async => DashboardSummary(
-    todaySales: SalesSummary(date: DateTime.now(), ordersCount: 25, itemsSold: 100, revenue: 5000.0, cost: 3000.0, profit: 2000.0),
-    alertsCount: 3,
-    lowStockCount: 5,
-    slowMovingCount: 2,
-    revenueChange: 10.0,
-    pendingOrdersCount: 3,
-    totalDebtsAmount: 1000.0,
-  );
+  Future<DashboardSummary> getDashboardSummary(String storeId) async =>
+      DashboardSummary(
+        todaySales: SalesSummary(
+            date: DateTime.now(),
+            ordersCount: 25,
+            itemsSold: 100,
+            revenue: 5000.0,
+            cost: 3000.0,
+            profit: 2000.0),
+        alertsCount: 3,
+        lowStockCount: 5,
+        slowMovingCount: 2,
+        revenueChange: 10.0,
+        pendingOrdersCount: 3,
+        totalDebtsAmount: 1000.0,
+      );
 }
 
 void main() {
   late AnalyticsService analyticsService;
-  setUp(() { analyticsService = AnalyticsService(FakeAnalyticsRepository()); });
+  setUp(() {
+    analyticsService = AnalyticsService(FakeAnalyticsRepository());
+  });
 
   group('AnalyticsService', () {
-    test('should be created', () { expect(analyticsService, isNotNull); });
+    test('should be created', () {
+      expect(analyticsService, isNotNull);
+    });
 
     test('getSlowMovingProducts should return list', () async {
       final products = await analyticsService.getSlowMovingProducts('store-1');
@@ -57,7 +88,8 @@ void main() {
     });
 
     test('getReorderSuggestions should return list', () async {
-      final suggestions = await analyticsService.getReorderSuggestions('store-1');
+      final suggestions =
+          await analyticsService.getReorderSuggestions('store-1');
       expect(suggestions, isA<List<ReorderSuggestion>>());
     });
 

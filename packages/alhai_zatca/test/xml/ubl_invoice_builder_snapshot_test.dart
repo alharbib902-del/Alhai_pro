@@ -90,8 +90,7 @@ void main() {
     buyer: buyer,
     lines: const [line1],
     invoiceCounterValue: 1,
-    previousInvoiceHash:
-        'NWZlY2ViNjZmZmM4NmYzOGQ5NTI3ODZjNmQ2OTZjNzljMmRiYzk=',
+    previousInvoiceHash: 'NWZlY2ViNjZmZmM4NmYzOGQ5NTI3ODZjNmQ2OTZjNzljMmRiYzk=',
   );
 
   final standardB2bFullWithDiscount = ZatcaInvoice(
@@ -109,8 +108,7 @@ void main() {
     paymentMeansCode: '42',
     paymentNote: 'Bank transfer within 30 days',
     invoiceCounterValue: 42,
-    previousInvoiceHash:
-        'NWZlY2ViNjZmZmM4NmYzOGQ5NTI3ODZjNmQ2OTZjNzljMmRiYzk=',
+    previousInvoiceHash: 'NWZlY2ViNjZmZmM4NmYzOGQ5NTI3ODZjNmQ2OTZjNzljMmRiYzk=',
     qrCode: 'AQNBTEhBSQIPMzEwMTIyMzkzNTAwMDAzAxMyMDI2LTA0LTAxVDE0OjMwOjAw',
   );
 
@@ -149,8 +147,7 @@ void main() {
     buyer: buyer,
     lines: const [line1],
     invoiceCounterValue: 10,
-    previousInvoiceHash:
-        'NWZlY2ViNjZmZmM4NmYzOGQ5NTI3ODZjNmQ2OTZjNzljMmRiYzk=',
+    previousInvoiceHash: 'NWZlY2ViNjZmZmM4NmYzOGQ5NTI3ODZjNmQ2OTZjNzljMmRiYzk=',
   );
 
   final standardExport = ZatcaInvoice(
@@ -171,8 +168,7 @@ void main() {
     ),
     lines: const [lineExportZero],
     invoiceCounterValue: 11,
-    previousInvoiceHash:
-        'NWZlY2ViNjZmZmM4NmYzOGQ5NTI3ODZjNmQ2OTZjNzljMmRiYzk=',
+    previousInvoiceHash: 'NWZlY2ViNjZmZmM4NmYzOGQ5NTI3ODZjNmQ2OTZjNzljMmRiYzk=',
   );
 
   final standardThirdParty = ZatcaInvoice(
@@ -188,8 +184,7 @@ void main() {
     purchaseOrderId: 'PO-2026-9001',
     contractId: 'CONTRACT-2026-42',
     invoiceCounterValue: 12,
-    previousInvoiceHash:
-        'NWZlY2ViNjZmZmM4NmYzOGQ5NTI3ODZjNmQ2OTZjNzljMmRiYzk=',
+    previousInvoiceHash: 'NWZlY2ViNjZmZmM4NmYzOGQ5NTI3ODZjNmQ2OTZjNzljMmRiYzk=',
   );
 
   final creditNote = ZatcaInvoice(
@@ -204,8 +199,7 @@ void main() {
     lines: const [line1],
     billingReferenceId: 'INV-2026-001',
     invoiceCounterValue: 3,
-    previousInvoiceHash:
-        'NWZlY2ViNjZmZmM4NmYzOGQ5NTI3ODZjNmQ2OTZjNzljMmRiYzk=',
+    previousInvoiceHash: 'NWZlY2ViNjZmZmM4NmYzOGQ5NTI3ODZjNmQ2OTZjNzljMmRiYzk=',
   );
 
   // ─── Snapshot plumbing ──────────────────────────────────

@@ -109,8 +109,7 @@ Future<void> _appMain() async {
     ProviderScope(
       overrides: [
         themeProvider.overrideWith((ref) => ThemeNotifier(initialThemeMode)),
-        liteOnboardingSeenProvider
-            .overrideWith((ref) => hasSeenOnboardingFlag),
+        liteOnboardingSeenProvider.overrideWith((ref) => hasSeenOnboardingFlag),
       ],
       child: const AdminLiteApp(),
     ),

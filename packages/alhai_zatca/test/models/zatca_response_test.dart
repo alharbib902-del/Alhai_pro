@@ -174,8 +174,7 @@ void main() {
 
     group('failure factory', () {
       test('creates a failed response with the given message', () {
-        final response =
-            ZatcaResponse.failure(message: 'Connection timed out');
+        final response = ZatcaResponse.failure(message: 'Connection timed out');
 
         expect(response.isSuccess, isFalse);
         expect(response.statusCode, 0);

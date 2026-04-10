@@ -46,8 +46,8 @@ void main() {
     });
 
     testWidgets('renders with UAE country', (tester) async {
-      await tester.pumpWidget(
-          buildTestableWidget(initialCountry: CountryData.uae));
+      await tester
+          .pumpWidget(buildTestableWidget(initialCountry: CountryData.uae));
       await tester.pumpAndSettle();
 
       expect(find.text('+971'), findsOneWidget);
@@ -61,8 +61,8 @@ void main() {
     });
 
     testWidgets('shows error text when provided', (tester) async {
-      await tester.pumpWidget(
-          buildTestableWidget(errorText: 'Invalid phone number'));
+      await tester
+          .pumpWidget(buildTestableWidget(errorText: 'Invalid phone number'));
       await tester.pumpAndSettle();
 
       expect(find.text('Invalid phone number'), findsOneWidget);
@@ -80,8 +80,7 @@ void main() {
       await tester.pumpWidget(buildTestableWidget());
       await tester.pumpAndSettle();
 
-      expect(
-          find.byIcon(Icons.keyboard_arrow_down_rounded), findsOneWidget);
+      expect(find.byIcon(Icons.keyboard_arrow_down_rounded), findsOneWidget);
     });
 
     testWidgets('calls onChanged when text changes', (tester) async {

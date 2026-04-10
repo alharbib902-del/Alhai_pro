@@ -104,8 +104,7 @@ void main() {
   // screen (or its stub, for routes not under test).
   // ==========================================================================
   group('Critical Flow: Navigation', () {
-    testWidgets('can navigate from POS to inventory and back',
-        (tester) async {
+    testWidgets('can navigate from POS to inventory and back', (tester) async {
       await tester.pumpWidget(buildTestApp(
         initialRoute: '/pos',
         isAuthenticated: true,
@@ -345,8 +344,7 @@ void main() {
       expect(find.byType(PosScreen), findsOneWidget);
     });
 
-    testWidgets('payment screen accepts a cash amount entry',
-        (tester) async {
+    testWidgets('payment screen accepts a cash amount entry', (tester) async {
       await tester.pumpWidget(buildTestApp(
         initialRoute: '/pos/payment',
         isAuthenticated: true,

@@ -88,13 +88,18 @@ Widget _buildAdminTestApp({
   final router = GoRouter(
     initialLocation: initialRoute,
     routes: [
-      GoRoute(path: '/splash', builder: (_, __) => const _StubScreen(label: 'Splash')),
-      GoRoute(path: '/login', builder: (_, __) => const _StubScreen(label: 'Login')),
+      GoRoute(
+          path: '/splash',
+          builder: (_, __) => const _StubScreen(label: 'Splash')),
+      GoRoute(
+          path: '/login',
+          builder: (_, __) => const _StubScreen(label: 'Login')),
       GoRoute(
         path: '/store-select',
         builder: (_, __) => const _StubScreen(label: 'Store Select'),
       ),
-      GoRoute(path: '/home', builder: (_, __) => const _StubScreen(label: 'Home')),
+      GoRoute(
+          path: '/home', builder: (_, __) => const _StubScreen(label: 'Home')),
       GoRoute(
         path: '/dashboard',
         builder: (_, __) => const _StubScreen(label: 'Dashboard'),

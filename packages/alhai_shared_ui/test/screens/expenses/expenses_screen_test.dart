@@ -76,8 +76,7 @@ Widget _buildTestWidget({
         (ref) =>
             categoriesValue?.when(
               data: (d) => Future.value(d),
-              loading: () => Future.delayed(
-                  const Duration(days: 1),
+              loading: () => Future.delayed(const Duration(days: 1),
                   () => <ExpenseCategoriesTableData>[]),
               error: (e, _) => Future.error(e),
             ) ??

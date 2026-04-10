@@ -37,7 +37,8 @@ void main() {
       });
 
       test('should generate unique barcodes', () {
-        final barcodes = List.generate(100, (_) => barcodeService.generateEan13());
+        final barcodes =
+            List.generate(100, (_) => barcodeService.generateEan13());
         expect(barcodes.toSet().length, equals(100));
       });
     });

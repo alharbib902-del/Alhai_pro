@@ -126,11 +126,10 @@ void main() {
       );
       final after = DateTime.now().toUtc();
 
-      expect(event.timestamp.isAfter(before.subtract(const Duration(seconds: 1))),
-          isTrue);
       expect(
-          event.timestamp
-              .isBefore(after.add(const Duration(seconds: 1))),
+          event.timestamp.isAfter(before.subtract(const Duration(seconds: 1))),
+          isTrue);
+      expect(event.timestamp.isBefore(after.add(const Duration(seconds: 1))),
           isTrue);
     });
   });

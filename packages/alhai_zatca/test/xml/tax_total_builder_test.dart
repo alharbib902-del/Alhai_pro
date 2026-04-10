@@ -399,8 +399,7 @@ void main() {
 
         final taxTotals = builder.buildTaxTotals(invoice);
         final taxCategory = findFirst(taxTotals[1], 'TaxCategory');
-        final reasonCode =
-            findFirst(taxCategory!, 'TaxExemptionReasonCode');
+        final reasonCode = findFirst(taxCategory!, 'TaxExemptionReasonCode');
         final reason = findFirst(taxCategory, 'TaxExemptionReason');
 
         expect(reasonCode!.innerText, 'VATEX-SA-29');
@@ -468,7 +467,8 @@ void main() {
         final taxTotals = builder.buildTaxTotals(invoice);
         for (final taxTotal in taxTotals) {
           for (final e in taxTotal.descendants.whereType<XmlElement>()) {
-            if (e.name.local == 'TaxAmount' || e.name.local == 'TaxableAmount') {
+            if (e.name.local == 'TaxAmount' ||
+                e.name.local == 'TaxableAmount') {
               expect(e.getAttribute('currencyID'), isNotNull,
                   reason: '${e.name.local} missing currencyID');
             }

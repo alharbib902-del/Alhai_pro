@@ -78,8 +78,10 @@ void main() {
   }
 
   final sampleCertificate = CertificateInfo(
-    certificatePem: '-----BEGIN CERTIFICATE-----\nFAKE\n-----END CERTIFICATE-----',
-    privateKeyPem: '-----BEGIN EC PRIVATE KEY-----\nFAKE\n-----END EC PRIVATE KEY-----',
+    certificatePem:
+        '-----BEGIN CERTIFICATE-----\nFAKE\n-----END CERTIFICATE-----',
+    privateKeyPem:
+        '-----BEGIN EC PRIVATE KEY-----\nFAKE\n-----END EC PRIVATE KEY-----',
     csid: 'test-csid',
     secret: 'test-secret',
     isProduction: true,
@@ -180,8 +182,7 @@ void main() {
               invoiceHash: any(named: 'invoiceHash'),
               digitalSignature: any(named: 'digitalSignature'),
               publicKey: any(named: 'publicKey'),
-              certificateSignature:
-                  captureAny(named: 'certificateSignature'),
+              certificateSignature: captureAny(named: 'certificateSignature'),
             )).captured;
         expect(captured.single, isNotNull);
         expect(captured.single, isA<String>());
@@ -197,9 +198,8 @@ void main() {
           certificate: sampleCertificate,
         );
 
-        verify(() =>
-                mockCertParser.extractPublicKey(sampleCertificate.certificatePem))
-            .called(1);
+        verify(() => mockCertParser
+            .extractPublicKey(sampleCertificate.certificatePem)).called(1);
 
         final captured = verify(() => mockEncoder.encode(
               sellerName: any(named: 'sellerName'),
@@ -486,9 +486,12 @@ void main() {
       final encoder = ZatcaTlvEncoder();
 
       test('returns null for a valid Phase 2 QR with tags 1-8', () {
-        final fakeHash = base64Encode(Uint8List.fromList(List.generate(32, (i) => i)));
-        final fakeSig = base64Encode(Uint8List.fromList(List.generate(64, (i) => i)));
-        final fakeKey = base64Encode(Uint8List.fromList(List.generate(33, (i) => i)));
+        final fakeHash =
+            base64Encode(Uint8List.fromList(List.generate(32, (i) => i)));
+        final fakeSig =
+            base64Encode(Uint8List.fromList(List.generate(64, (i) => i)));
+        final fakeKey =
+            base64Encode(Uint8List.fromList(List.generate(33, (i) => i)));
 
         final qr = encoder.encode(
           sellerName: 'Valid Seller',
@@ -522,9 +525,12 @@ void main() {
       });
 
       test('returns error when VAT number has wrong format', () {
-        final fakeHash = base64Encode(Uint8List.fromList(List.generate(32, (i) => i)));
-        final fakeSig = base64Encode(Uint8List.fromList(List.generate(64, (i) => i)));
-        final fakeKey = base64Encode(Uint8List.fromList(List.generate(33, (i) => i)));
+        final fakeHash =
+            base64Encode(Uint8List.fromList(List.generate(32, (i) => i)));
+        final fakeSig =
+            base64Encode(Uint8List.fromList(List.generate(64, (i) => i)));
+        final fakeKey =
+            base64Encode(Uint8List.fromList(List.generate(33, (i) => i)));
 
         // VAT number not starting with 3
         final qr = encoder.encode(

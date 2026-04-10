@@ -42,7 +42,9 @@ void main() {
       await tester.pump();
 
       // Arabic: "Settings"
-      expect(find.text('\u0627\u0644\u0625\u0639\u062f\u0627\u062f\u0627\u062a'), findsOneWidget);
+      expect(
+          find.text('\u0627\u0644\u0625\u0639\u062f\u0627\u062f\u0627\u062a'),
+          findsOneWidget);
     });
 
     testWidgets('shows language setting', (tester) async {
@@ -52,7 +54,8 @@ void main() {
       // Arabic: "Language"
       expect(find.text('\u0627\u0644\u0644\u063a\u0629'), findsOneWidget);
       // Arabic: "Arabic"
-      expect(find.text('\u0627\u0644\u0639\u0631\u0628\u064a\u0629'), findsOneWidget);
+      expect(find.text('\u0627\u0644\u0639\u0631\u0628\u064a\u0629'),
+          findsOneWidget);
     });
 
     testWidgets('shows notifications setting', (tester) async {
@@ -60,7 +63,9 @@ void main() {
       await tester.pump();
 
       // Arabic: "Notifications"
-      expect(find.text('\u0627\u0644\u0625\u0634\u0639\u0627\u0631\u0627\u062a'), findsOneWidget);
+      expect(
+          find.text('\u0627\u0644\u0625\u0634\u0639\u0627\u0631\u0627\u062a'),
+          findsOneWidget);
     });
 
     testWidgets('shows about section', (tester) async {
@@ -68,7 +73,9 @@ void main() {
       await tester.pump();
 
       // Arabic: "About the App"
-      expect(find.text('\u0639\u0646 \u0627\u0644\u062a\u0637\u0628\u064a\u0642'), findsOneWidget);
+      expect(
+          find.text('\u0639\u0646 \u0627\u0644\u062a\u0637\u0628\u064a\u0642'),
+          findsOneWidget);
     });
 
     testWidgets('has language icon', (tester) async {

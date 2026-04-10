@@ -116,8 +116,7 @@ void main() {
       expect(items.first.recordId, equals('order-persist'));
     });
 
-    testWidgets('reading directly from DAO finds queued items',
-        (tester) async {
+    testWidgets('reading directly from DAO finds queued items', (tester) async {
       final s = SyncService(db.syncQueueDao);
       await s.enqueueUpdate(
         tableName: 'orders',

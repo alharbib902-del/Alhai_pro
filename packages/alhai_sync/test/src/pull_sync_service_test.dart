@@ -138,8 +138,7 @@ void main() {
 
         when(() => mockMetadataDao.getLastPullAt('products'))
             .thenAnswer((_) async => lastPull);
-        when(() => mockMetadataDao.getLastPullAt(
-                any(that: isNot('products'))))
+        when(() => mockMetadataDao.getLastPullAt(any(that: isNot('products'))))
             .thenAnswer((_) async => null);
 
         when(() => mockSyncApi.fetchUpdates(

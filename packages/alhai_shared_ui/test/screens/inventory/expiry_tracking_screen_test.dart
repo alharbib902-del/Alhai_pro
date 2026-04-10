@@ -97,8 +97,7 @@ void main() {
       addTearDown(() => tester.view.resetPhysicalSize());
 
       await tester.pumpWidget(_buildTestWidget(
-        expiryValue:
-            AsyncValue.error(Exception('Failed'), StackTrace.current),
+        expiryValue: AsyncValue.error(Exception('Failed'), StackTrace.current),
       ));
       await tester.pumpAndSettle(const Duration(seconds: 2));
 

@@ -37,7 +37,10 @@ void main() {
       await tester.pump();
 
       // Arabic: "Delivery Proof"
-      expect(find.text('\u0625\u062b\u0628\u0627\u062a \u0627\u0644\u062a\u0633\u0644\u064a\u0645'), findsOneWidget);
+      expect(
+          find.text(
+              '\u0625\u062b\u0628\u0627\u062a \u0627\u0644\u062a\u0633\u0644\u064a\u0645'),
+          findsOneWidget);
     });
 
     testWidgets('shows photo capture section', (tester) async {
@@ -45,7 +48,10 @@ void main() {
       await tester.pump();
 
       // Arabic: "Delivery Photo"
-      expect(find.text('\u0635\u0648\u0631\u0629 \u0627\u0644\u062a\u0633\u0644\u064a\u0645'), findsOneWidget);
+      expect(
+          find.text(
+              '\u0635\u0648\u0631\u0629 \u0627\u0644\u062a\u0633\u0644\u064a\u0645'),
+          findsOneWidget);
     });
 
     testWidgets('shows signature section', (tester) async {
@@ -53,7 +59,10 @@ void main() {
       await tester.pump();
 
       // Arabic: "Recipient Signature"
-      expect(find.text('\u062a\u0648\u0642\u064a\u0639 \u0627\u0644\u0645\u0633\u062a\u0644\u0645'), findsOneWidget);
+      expect(
+          find.text(
+              '\u062a\u0648\u0642\u064a\u0639 \u0627\u0644\u0645\u0633\u062a\u0644\u0645'),
+          findsOneWidget);
     });
 
     testWidgets('shows capture photo prompt', (tester) async {
@@ -61,7 +70,10 @@ void main() {
       await tester.pump();
 
       // Arabic: "Tap to capture photo"
-      expect(find.text('\u0627\u0636\u063a\u0637 \u0644\u0627\u0644\u062a\u0642\u0627\u0637 \u0635\u0648\u0631\u0629'), findsOneWidget);
+      expect(
+          find.text(
+              '\u0627\u0636\u063a\u0637 \u0644\u0627\u0644\u062a\u0642\u0627\u0637 \u0635\u0648\u0631\u0629'),
+          findsOneWidget);
     });
 
     testWidgets('has camera icon', (tester) async {
@@ -84,7 +96,10 @@ void main() {
       await tester.pump();
 
       // Arabic: "Confirm Delivery"
-      expect(find.text('\u062a\u0623\u0643\u064a\u062f \u0627\u0644\u062a\u0633\u0644\u064a\u0645'), findsOneWidget);
+      expect(
+          find.text(
+              '\u062a\u0623\u0643\u064a\u062f \u0627\u0644\u062a\u0633\u0644\u064a\u0645'),
+          findsOneWidget);
     });
 
     testWidgets('accepts deliveryId parameter', (tester) async {

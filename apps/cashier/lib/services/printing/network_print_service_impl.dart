@@ -267,7 +267,8 @@ class NetworkPrintService implements ThermalPrintService {
       _socket?.destroy();
     } catch (e) {
       if (kDebugMode) {
-        debugPrint('TCP close-before-reconnect failed (expected if socket is already broken): $e');
+        debugPrint(
+            'TCP close-before-reconnect failed (expected if socket is already broken): $e');
       }
     }
     _socket = null;

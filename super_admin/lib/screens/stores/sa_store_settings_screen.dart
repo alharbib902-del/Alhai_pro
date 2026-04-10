@@ -96,17 +96,14 @@ class _SAStoreSettingsScreenState extends ConsumerState<SAStoreSettingsScreen> {
                                   final ds =
                                       ref.read(saStoresDatasourceProvider);
                                   await ds.updateStoreStatus(widget.storeId, v);
-                                  await ref
-                                      .read(auditLogServiceProvider)
-                                      .log(
-                                        action: v
-                                            ? 'store.activate'
-                                            : 'store.suspend',
-                                        targetType: 'store',
-                                        targetId: widget.storeId,
-                                        before: {'is_active': previousActive},
-                                        after: {'is_active': v},
-                                      );
+                                  await ref.read(auditLogServiceProvider).log(
+                                    action:
+                                        v ? 'store.activate' : 'store.suspend',
+                                    targetType: 'store',
+                                    targetId: widget.storeId,
+                                    before: {'is_active': previousActive},
+                                    after: {'is_active': v},
+                                  );
                                   ref.invalidate(
                                       saStoreDetailProvider(widget.storeId));
                                   ref.invalidate(saStoresListProvider);
@@ -168,17 +165,13 @@ class _SAStoreSettingsScreenState extends ConsumerState<SAStoreSettingsScreen> {
                                               await ref
                                                   .read(auditLogServiceProvider)
                                                   .log(
-                                                    action:
-                                                        'subscription.plan_change',
-                                                    targetType: 'store',
-                                                    targetId: widget.storeId,
-                                                    before: {
-                                                      'plan': previousPlan
-                                                    },
-                                                    after: {
-                                                      'plan': currentPlan
-                                                    },
-                                                  );
+                                                action:
+                                                    'subscription.plan_change',
+                                                targetType: 'store',
+                                                targetId: widget.storeId,
+                                                before: {'plan': previousPlan},
+                                                after: {'plan': currentPlan},
+                                              );
                                               ref.invalidate(
                                                   saStoreDetailProvider(
                                                       widget.storeId));
@@ -285,8 +278,7 @@ class _SAStoreSettingsScreenState extends ConsumerState<SAStoreSettingsScreen> {
 
                                         final ds = ref
                                             .read(saStoresDatasourceProvider);
-                                        final storeSnapshot =
-                                            <String, dynamic>{
+                                        final storeSnapshot = <String, dynamic>{
                                           'id': widget.storeId,
                                           'name': store.name,
                                           'is_active': true,
@@ -300,15 +292,15 @@ class _SAStoreSettingsScreenState extends ConsumerState<SAStoreSettingsScreen> {
                                             await ref
                                                 .read(auditLogServiceProvider)
                                                 .log(
-                                                  action: 'store.suspend',
-                                                  targetType: 'store',
-                                                  targetId: widget.storeId,
-                                                  before: storeSnapshot,
-                                                  after: {
-                                                    ...storeSnapshot,
-                                                    'is_active': false,
-                                                  },
-                                                );
+                                              action: 'store.suspend',
+                                              targetType: 'store',
+                                              targetId: widget.storeId,
+                                              before: storeSnapshot,
+                                              after: {
+                                                ...storeSnapshot,
+                                                'is_active': false,
+                                              },
+                                            );
                                             setState(() => _isActive = false);
                                             ref.invalidate(
                                                 saStoreDetailProvider(

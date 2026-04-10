@@ -36,8 +36,10 @@ void main() {
     DateTime? validTo,
   }) {
     return CertificateInfo(
-      certificatePem: '-----BEGIN CERTIFICATE-----\nCERT\n-----END CERTIFICATE-----',
-      privateKeyPem: '-----BEGIN EC PRIVATE KEY-----\nKEY\n-----END EC PRIVATE KEY-----',
+      certificatePem:
+          '-----BEGIN CERTIFICATE-----\nCERT\n-----END CERTIFICATE-----',
+      privateKeyPem:
+          '-----BEGIN EC PRIVATE KEY-----\nKEY\n-----END EC PRIVATE KEY-----',
       csid: csid,
       secret: 'secret-value',
       serialNumber: 'SN-001',
@@ -155,7 +157,8 @@ void main() {
       });
 
       test('savePrivateKey stores the private key', () async {
-        const pk = '-----BEGIN EC PRIVATE KEY-----\nDATA\n-----END EC PRIVATE KEY-----';
+        const pk =
+            '-----BEGIN EC PRIVATE KEY-----\nDATA\n-----END EC PRIVATE KEY-----';
         await storage.savePrivateKey(storeId: storeId, privateKeyPem: pk);
         expect(await storage.getPrivateKey(storeId: storeId), pk);
       });

@@ -22,7 +22,8 @@ class _MockProductsNotifier extends StateNotifier<ProductsState>
       : super(initial ?? const ProductsState());
 
   @override
-  Future<void> loadProducts({required String storeId, bool refresh = false}) async {}
+  Future<void> loadProducts(
+      {required String storeId, bool refresh = false}) async {}
 }
 
 // ---------------------------------------------------------------------------

@@ -71,8 +71,7 @@ void main() {
     final mockReturnsDao = MockReturnsDao();
     when(() => mockDb.syncQueueDao).thenReturn(mockSyncQueueDao);
     when(() => mockDb.returnsDao).thenReturn(mockReturnsDao);
-    when(() => mockReturnsDao.getAllReturns(any()))
-        .thenAnswer((_) async => []);
+    when(() => mockReturnsDao.getAllReturns(any())).thenAnswer((_) async => []);
 
     final getIt = GetIt.instance;
     if (getIt.isRegistered<AppDatabase>()) {

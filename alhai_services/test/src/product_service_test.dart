@@ -238,8 +238,7 @@ void main() {
 
     group('getLowStockProducts', () {
       test('should return low stock products', () async {
-        final products =
-            await productService.getLowStockProducts('store-1');
+        final products = await productService.getLowStockProducts('store-1');
         expect(products, isNotEmpty);
         expect(products.first.currentQty, lessThan(products.first.minQty));
       });

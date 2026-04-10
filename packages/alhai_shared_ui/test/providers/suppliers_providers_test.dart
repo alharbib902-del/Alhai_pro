@@ -131,8 +131,7 @@ void main() {
       ]);
       addTearDown(container.dispose);
 
-      final result =
-          await container.read(supplierSearchProvider('').future);
+      final result = await container.read(supplierSearchProvider('').future);
       expect(result, isEmpty);
     });
   });

@@ -33,9 +33,7 @@ void main() {
 
   // Only the DIRECT children of an element (not nested descendants)
   List<XmlElement> directChildren(XmlElement root, String name) {
-    return root.childElements
-        .where((e) => e.name.local == name)
-        .toList();
+    return root.childElements.where((e) => e.name.local == name).toList();
   }
 
   // ─── Basic line construction ─────────────────────────────
@@ -247,8 +245,7 @@ void main() {
       final el = builder.buildLine(line, 'SAR');
       final taxCategory = firstElement(el, 'ClassifiedTaxCategory');
       final reasonEl = firstElement(taxCategory, 'TaxExemptionReason');
-      final reasonCodeEl =
-          firstElement(taxCategory, 'TaxExemptionReasonCode');
+      final reasonCodeEl = firstElement(taxCategory, 'TaxExemptionReasonCode');
 
       expect(reasonEl.innerText, 'Financial services');
       expect(reasonCodeEl.innerText, 'VATEX-SA-29');
@@ -280,8 +277,7 @@ void main() {
       final chargeIndicator = firstElement(allowance, 'ChargeIndicator');
       expect(chargeIndicator.innerText, 'false');
 
-      final reasonCode =
-          firstElement(allowance, 'AllowanceChargeReasonCode');
+      final reasonCode = firstElement(allowance, 'AllowanceChargeReasonCode');
       expect(reasonCode.innerText, '95');
 
       final reason = firstElement(allowance, 'AllowanceChargeReason');
@@ -569,14 +565,16 @@ void main() {
       final directLocalNames =
           el.childElements.map((e) => e.name.local).toList();
 
-      expect(directLocalNames, containsAll(<String>[
-        'ID',
-        'InvoicedQuantity',
-        'LineExtensionAmount',
-        'TaxTotal',
-        'Item',
-        'Price',
-      ]));
+      expect(
+          directLocalNames,
+          containsAll(<String>[
+            'ID',
+            'InvoicedQuantity',
+            'LineExtensionAmount',
+            'TaxTotal',
+            'Item',
+            'Price',
+          ]));
     });
 
     test('uses cac: namespace prefix for InvoiceLine root', () {

@@ -490,8 +490,8 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
                             title: Text(product.name),
                             subtitle: Text(product.price.toStringAsFixed(2)),
                             trailing: Icon(Icons.add_photo_alternate,
-                                color: AppColors.primary
-                                    .withValues(alpha: 0.4)),
+                                color:
+                                    AppColors.primary.withValues(alpha: 0.4)),
                             onTap: null,
                           );
                         },

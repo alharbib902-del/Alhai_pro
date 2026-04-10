@@ -34,8 +34,7 @@ void main() {
         saleId: 'sale-1',
         startTime: DateTime(2026, 1, 1, 10, 0),
       );
-      final updated =
-          sale.copyWith(endTime: DateTime(2026, 1, 1, 10, 5));
+      final updated = sale.copyWith(endTime: DateTime(2026, 1, 1, 10, 5));
       expect(updated.isCompleted, isTrue);
       expect(updated.saleId, 'sale-1');
     });

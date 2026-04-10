@@ -152,7 +152,8 @@ void main() {
         expect(result1, result2);
       });
 
-      test('equivalent XML with different self-closing styles produce same output',
+      test(
+          'equivalent XML with different self-closing styles produce same output',
           () {
         const xml1 = '<root><empty/></root>';
         const xml2 = '<root><empty></empty></root>';

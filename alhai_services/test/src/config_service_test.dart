@@ -20,8 +20,7 @@ void main() {
       });
 
       test('should return default for missing key', () {
-        final result =
-            configService.get<int>('missing', defaultValue: 42);
+        final result = configService.get<int>('missing', defaultValue: 42);
         expect(result, equals(42));
       });
 

@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -51,8 +50,7 @@ void main() {
       await tester.pumpWidget(buildTestWidget());
       await tester.pumpAndSettle();
 
-      errors.removeWhere(
-          (e) => e.toString().contains('overflowed'));
+      errors.removeWhere((e) => e.toString().contains('overflowed'));
       for (final e in errors) {
         fail(e.toString());
       }
@@ -72,8 +70,7 @@ void main() {
       await tester.pumpWidget(buildTestWidget());
       await tester.pumpAndSettle();
 
-      errors.removeWhere(
-          (e) => e.toString().contains('overflowed'));
+      errors.removeWhere((e) => e.toString().contains('overflowed'));
       for (final e in errors) {
         fail(e.toString());
       }
@@ -93,8 +90,7 @@ void main() {
       await tester.pumpWidget(buildTestWidget());
       await tester.pumpAndSettle();
 
-      errors.removeWhere(
-          (e) => e.toString().contains('overflowed'));
+      errors.removeWhere((e) => e.toString().contains('overflowed'));
       for (final e in errors) {
         fail(e.toString());
       }

@@ -77,8 +77,7 @@ void main() {
 
     when(() => mockDb.syncQueueDao).thenReturn(mockSyncQueueDao);
     when(() => mockSyncQueueDao.getPendingCount()).thenAnswer((_) async => 0);
-    when(() => mockSyncQueueDao.getConflictItems())
-        .thenAnswer((_) async => []);
+    when(() => mockSyncQueueDao.getConflictItems()).thenAnswer((_) async => []);
 
     final getIt = GetIt.instance;
     if (getIt.isRegistered<AppDatabase>()) {

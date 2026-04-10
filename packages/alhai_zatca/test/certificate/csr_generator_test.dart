@@ -65,8 +65,7 @@ void main() {
         expect(pk, endsWith('-----END PRIVATE KEY-----'));
       });
 
-      test('CSR base64 content decodes to valid DER (SEQUENCE tag)',
-          () async {
+      test('CSR base64 content decodes to valid DER (SEQUENCE tag)', () async {
         final result = await generateTestCsr();
         final csrPem = result['csr']!;
         final b64 = _stripPem(csrPem);
@@ -330,9 +329,8 @@ String _dnToString(ASN1Sequence dn) {
         if (atv is ASN1Sequence && atv.elements.length >= 2) {
           final oid = atv.elements[0];
           final value = atv.elements[1];
-          final oidStr = oid is ASN1ObjectIdentifier
-              ? (oid.identifier ?? '')
-              : '';
+          final oidStr =
+              oid is ASN1ObjectIdentifier ? (oid.identifier ?? '') : '';
           String valueStr = '';
           if (value is ASN1UTF8String) {
             valueStr = value.utf8StringValue;

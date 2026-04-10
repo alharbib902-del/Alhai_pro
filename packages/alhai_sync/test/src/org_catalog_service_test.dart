@@ -124,8 +124,8 @@ void main() {
         final rpcBuilder = MockPostgrestFilterBuilderDynamic();
         when(() => mockClient.rpc(any(), params: any(named: 'params')))
             .thenAnswer((_) => rpcBuilder);
-        when(() => rpcBuilder
-                .then<dynamic>(any(), onError: any(named: 'onError')))
+        when(() =>
+                rpcBuilder.then<dynamic>(any(), onError: any(named: 'onError')))
             .thenThrow(Exception('RPC failed'));
         when(() =>
                 rpcBuilder.timeout(any(), onTimeout: any(named: 'onTimeout')))
@@ -203,13 +203,24 @@ void main() {
         String? orgImageLarge,
       }) {
         return ProductsTableData(
-          id: 'p-1', storeId: 'store-1', name: 'Test', price: 10.0,
-          stockQty: 0, minQty: 0, onlineAvailable: false,
-          onlineReservedQty: 0, isActive: true, trackInventory: true,
-          autoReorder: false, createdAt: DateTime(2026),
-          imageThumbnail: imageThumbnail, imageMedium: imageMedium,
-          imageLarge: imageLarge, orgImageThumbnail: orgImageThumbnail,
-          orgImageMedium: orgImageMedium, orgImageLarge: orgImageLarge,
+          id: 'p-1',
+          storeId: 'store-1',
+          name: 'Test',
+          price: 10.0,
+          stockQty: 0,
+          minQty: 0,
+          onlineAvailable: false,
+          onlineReservedQty: 0,
+          isActive: true,
+          trackInventory: true,
+          autoReorder: false,
+          createdAt: DateTime(2026),
+          imageThumbnail: imageThumbnail,
+          imageMedium: imageMedium,
+          imageLarge: imageLarge,
+          orgImageThumbnail: orgImageThumbnail,
+          orgImageMedium: orgImageMedium,
+          orgImageLarge: orgImageLarge,
         );
       }
 

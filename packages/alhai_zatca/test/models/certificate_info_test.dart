@@ -4,8 +4,10 @@ import 'package:alhai_zatca/src/models/certificate_info.dart';
 
 void main() {
   group('CertificateInfo', () {
-    const basePem = '-----BEGIN CERTIFICATE-----\nMIIB\n-----END CERTIFICATE-----';
-    const baseKey = '-----BEGIN PRIVATE KEY-----\nMIIC\n-----END PRIVATE KEY-----';
+    const basePem =
+        '-----BEGIN CERTIFICATE-----\nMIIB\n-----END CERTIFICATE-----';
+    const baseKey =
+        '-----BEGIN PRIVATE KEY-----\nMIIC\n-----END PRIVATE KEY-----';
 
     // ── Construction ─────────────────────────────────────
 

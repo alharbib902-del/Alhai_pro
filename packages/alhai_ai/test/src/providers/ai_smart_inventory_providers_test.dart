@@ -25,8 +25,7 @@ void main() {
       );
       addTearDown(container.dispose);
 
-      container.read(abcCategoryFilterProvider.notifier).state =
-          AbcCategory.a;
+      container.read(abcCategoryFilterProvider.notifier).state = AbcCategory.a;
       expect(container.read(abcCategoryFilterProvider), AbcCategory.a);
     });
 
@@ -38,8 +37,7 @@ void main() {
       );
       addTearDown(container.dispose);
 
-      container.read(abcCategoryFilterProvider.notifier).state =
-          AbcCategory.b;
+      container.read(abcCategoryFilterProvider.notifier).state = AbcCategory.b;
       expect(container.read(abcCategoryFilterProvider), AbcCategory.b);
     });
 
@@ -51,8 +49,7 @@ void main() {
       );
       addTearDown(container.dispose);
 
-      container.read(abcCategoryFilterProvider.notifier).state =
-          AbcCategory.a;
+      container.read(abcCategoryFilterProvider.notifier).state = AbcCategory.a;
       container.read(abcCategoryFilterProvider.notifier).state = null;
       expect(container.read(abcCategoryFilterProvider), isNull);
     });

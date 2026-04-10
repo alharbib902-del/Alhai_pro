@@ -198,8 +198,10 @@ void main() {
         expect(sigBytes, isNotEmpty);
         // First byte should not be the padding-bits count (0x00)
         // because extractSignatureBytes strips it
-        expect(sigBytes, isNot(predicate<List<int>>((bytes) =>
-            bytes.isNotEmpty && bytes[0] == 0 && bytes.length == 65)));
+        expect(
+            sigBytes,
+            isNot(predicate<List<int>>((bytes) =>
+                bytes.isNotEmpty && bytes[0] == 0 && bytes.length == 65)));
       });
 
       test('is deterministic for the same certificate', () {
@@ -243,7 +245,10 @@ void main() {
           ],
           subject: const [
             ['2.5.4.6', 'SA'],
-            ['2.5.4.97', '300000000000003'], // organizationIdentifier (ZATCA VAT)
+            [
+              '2.5.4.97',
+              '300000000000003'
+            ], // organizationIdentifier (ZATCA VAT)
             ['2.5.4.3', 'EGS-Unit'],
           ],
           validFrom: DateTime.utc(2026, 1, 1),

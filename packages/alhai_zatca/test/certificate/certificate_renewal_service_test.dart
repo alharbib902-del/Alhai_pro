@@ -10,8 +10,7 @@ import 'package:alhai_zatca/src/models/certificate_info.dart';
 
 class MockCertificateStorage extends Mock implements CertificateStorage {}
 
-class MockCsidOnboardingService extends Mock
-    implements CsidOnboardingService {}
+class MockCsidOnboardingService extends Mock implements CsidOnboardingService {}
 
 // ── Fakes ──────────────────────────────────────────────────
 

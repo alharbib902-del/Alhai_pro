@@ -100,8 +100,7 @@ void main() {
       expect(container.read(printServiceProvider), isNull);
     });
 
-    test('loadSavedPrinter does not throw when no preferences exist',
-        () async {
+    test('loadSavedPrinter does not throw when no preferences exist', () async {
       SharedPreferences.setMockInitialValues({});
       final container = ProviderContainer();
       addTearDown(container.dispose);

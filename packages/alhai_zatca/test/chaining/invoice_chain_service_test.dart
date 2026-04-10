@@ -175,7 +175,8 @@ void main() {
       expect(pih, returnedHash);
     });
 
-    test('computeAndStore result matches direct InvoiceHasher output', () async {
+    test('computeAndStore result matches direct InvoiceHasher output',
+        () async {
       const storeId = 'store-1';
       const xml = '<Invoice><cbc:ID xmlns:cbc="urn:cbc">42</cbc:ID></Invoice>';
 

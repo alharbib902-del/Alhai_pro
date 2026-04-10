@@ -8,14 +8,19 @@ class FakeNotificationsRepository implements NotificationsRepository {
   final _controller = StreamController<AppNotification>.broadcast();
 
   @override
-  Future<Paginated<AppNotification>> getNotifications({bool? isRead, int page = 1, int limit = 20}) async =>
+  Future<Paginated<AppNotification>> getNotifications(
+          {bool? isRead, int page = 1, int limit = 20}) async =>
       Paginated(items: [], total: 0, page: page, limit: limit);
 
   @override
-  Future<void> markAsRead(String notificationId) async { _unreadCount--; }
+  Future<void> markAsRead(String notificationId) async {
+    _unreadCount--;
+  }
 
   @override
-  Future<void> markAllAsRead() async { _unreadCount = 0; }
+  Future<void> markAllAsRead() async {
+    _unreadCount = 0;
+  }
 
   @override
   Future<void> deleteNotification(String notificationId) async {}
@@ -26,7 +31,9 @@ class FakeNotificationsRepository implements NotificationsRepository {
   @override
   Stream<AppNotification> watchNotifications() => _controller.stream;
 
-  void dispose() { _controller.close(); }
+  void dispose() {
+    _controller.close();
+  }
 }
 
 void main() {
@@ -38,10 +45,14 @@ void main() {
     notificationService = NotificationService(fakeRepo);
   });
 
-  tearDown(() { fakeRepo.dispose(); });
+  tearDown(() {
+    fakeRepo.dispose();
+  });
 
   group('NotificationService', () {
-    test('should be created', () { expect(notificationService, isNotNull); });
+    test('should be created', () {
+      expect(notificationService, isNotNull);
+    });
 
     test('getNotifications should return paginated', () async {
       final result = await notificationService.getNotifications();
@@ -67,7 +78,8 @@ void main() {
     });
 
     test('watchNotifications should return stream', () {
-      expect(notificationService.watchNotifications(), isA<Stream<AppNotification>>());
+      expect(notificationService.watchNotifications(),
+          isA<Stream<AppNotification>>());
     });
   });
 }

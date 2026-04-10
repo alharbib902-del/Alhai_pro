@@ -151,8 +151,7 @@ void main() {
       expect(find.byIcon(Icons.more_horiz), findsOneWidget);
     });
 
-    testWidgets('shows refund summary banner when data exists',
-        (tester) async {
+    testWidgets('shows refund summary banner when data exists', (tester) async {
       final pendingRefund = PendingRefundData(
         saleId: 'sale-1',
         receiptNo: 'POS-001',

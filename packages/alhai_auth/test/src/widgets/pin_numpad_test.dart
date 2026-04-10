@@ -39,8 +39,7 @@ void main() {
     });
 
     testWidgets('shows filled indicator for entered digits', (tester) async {
-      await tester
-          .pumpWidget(buildPinDisplay(length: 4, filledCount: 2));
+      await tester.pumpWidget(buildPinDisplay(length: 4, filledCount: 2));
       await tester.pump();
 
       // When obscure is true, filled dots have a Container with circle shape

@@ -348,8 +348,7 @@ void main() {
         expect(callCount, 2);
       }, timeout: const Timeout(Duration(seconds: 30)));
 
-      test('gives up after max retries on persistent server errors',
-          () async {
+      test('gives up after max retries on persistent server errors', () async {
         when(() => mockClient.clearInvoice(
               signedXmlBase64: any(named: 'signedXmlBase64'),
               invoiceHash: any(named: 'invoiceHash'),

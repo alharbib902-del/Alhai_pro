@@ -24,8 +24,7 @@ import 'package:alhai_zatca/src/services/zatca_offline_queue.dart';
 
 class MockZatcaInvoiceService extends Mock implements ZatcaInvoiceService {}
 
-class MockCsidOnboardingService extends Mock
-    implements CsidOnboardingService {}
+class MockCsidOnboardingService extends Mock implements CsidOnboardingService {}
 
 class MockCertificateRenewalService extends Mock
     implements CertificateRenewalService {}
@@ -177,8 +176,7 @@ void main() {
   group('certificateStorageProvider', () {
     test('resolves CertificateStorage from GetIt', () {
       final mockStorage = MockCertificateStorage();
-      GetIt.instance
-          .registerSingleton<CertificateStorage>(mockStorage);
+      GetIt.instance.registerSingleton<CertificateStorage>(mockStorage);
 
       final container = ProviderContainer();
       addTearDown(container.dispose);
@@ -232,14 +230,13 @@ void main() {
       final mockRenewal = MockCertificateRenewalService();
       when(() => mockRenewal.getStatus(storeId: any(named: 'storeId')))
           .thenAnswer((_) async => CertificateStatus.valid);
-      GetIt.instance
-          .registerSingleton<CertificateRenewalService>(mockRenewal);
+      GetIt.instance.registerSingleton<CertificateRenewalService>(mockRenewal);
 
       final container = ProviderContainer();
       addTearDown(container.dispose);
 
-      final status = await container
-          .read(certificateStatusProvider('store-abc').future);
+      final status =
+          await container.read(certificateStatusProvider('store-abc').future);
       expect(status, equals(CertificateStatus.valid));
       verify(() => mockRenewal.getStatus(storeId: 'store-abc')).called(1);
     });
@@ -250,8 +247,7 @@ void main() {
           .thenAnswer((_) async => CertificateStatus.valid);
       when(() => mockRenewal.getStatus(storeId: 'store-b'))
           .thenAnswer((_) async => CertificateStatus.expired);
-      GetIt.instance
-          .registerSingleton<CertificateRenewalService>(mockRenewal);
+      GetIt.instance.registerSingleton<CertificateRenewalService>(mockRenewal);
 
       final container = ProviderContainer();
       addTearDown(container.dispose);
@@ -270,10 +266,8 @@ void main() {
     test('delegates to CsidOnboardingService with storeId', () async {
       final mockOnboarding = MockCsidOnboardingService();
       when(() => mockOnboarding.hasValidProductionCertificate(
-              storeId: any(named: 'storeId')))
-          .thenAnswer((_) async => true);
-      GetIt.instance
-          .registerSingleton<CsidOnboardingService>(mockOnboarding);
+          storeId: any(named: 'storeId'))).thenAnswer((_) async => true);
+      GetIt.instance.registerSingleton<CsidOnboardingService>(mockOnboarding);
 
       final container = ProviderContainer();
       addTearDown(container.dispose);
@@ -321,8 +315,7 @@ void main() {
       final mockChecker = MockZatcaComplianceChecker();
       const result = ComplianceResult(isValid: true, errors: []);
       when(() => mockChecker.check(any())).thenReturn(result);
-      GetIt.instance
-          .registerSingleton<ZatcaComplianceChecker>(mockChecker);
+      GetIt.instance.registerSingleton<ZatcaComplianceChecker>(mockChecker);
 
       final container = ProviderContainer();
       addTearDown(container.dispose);
@@ -348,8 +341,7 @@ void main() {
         ],
       );
       when(() => mockChecker.check(any())).thenReturn(result);
-      GetIt.instance
-          .registerSingleton<ZatcaComplianceChecker>(mockChecker);
+      GetIt.instance.registerSingleton<ZatcaComplianceChecker>(mockChecker);
 
       final container = ProviderContainer();
       addTearDown(container.dispose);
@@ -380,8 +372,8 @@ void main() {
 
       expect(container.read(zatcaInvoiceServiceProvider),
           isA<ZatcaInvoiceService>());
-      expect(container.read(zatcaOfflineQueueProvider),
-          isA<ZatcaOfflineQueue>());
+      expect(
+          container.read(zatcaOfflineQueueProvider), isA<ZatcaOfflineQueue>());
       expect(container.read(zatcaComplianceCheckerProvider),
           isA<ZatcaComplianceChecker>());
       expect(container.read(certificateStorageProvider),

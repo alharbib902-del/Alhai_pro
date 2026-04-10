@@ -169,8 +169,7 @@ void main() {
         await db.orgProductsDao.upsertOrgProduct(
             makeOrgProduct(id: 'op-2', name: 'Chips', categoryId: null));
 
-        final results =
-            await db.orgProductsDao.getByCategory('org-1', 'cat-1');
+        final results = await db.orgProductsDao.getByCategory('org-1', 'cat-1');
         expect(results, hasLength(1));
         expect(results.first.name, 'Cola');
       });
@@ -286,8 +285,7 @@ void main() {
       test('emits active products', () async {
         await db.orgProductsDao.upsertOrgProduct(makeOrgProduct());
 
-        final products =
-            await db.orgProductsDao.watchByOrgId('org-1').first;
+        final products = await db.orgProductsDao.watchByOrgId('org-1').first;
         expect(products, hasLength(1));
       });
     });

@@ -79,8 +79,7 @@ void main() {
       ]);
       addTearDown(container.dispose);
 
-      final result =
-          await container.read(pendingOrdersCountProvider.future);
+      final result = await container.read(pendingOrdersCountProvider.future);
       expect(result, 0);
     });
 
@@ -93,8 +92,7 @@ void main() {
       ]);
       addTearDown(container.dispose);
 
-      final result =
-          await container.read(pendingOrdersCountProvider.future);
+      final result = await container.read(pendingOrdersCountProvider.future);
       expect(result, 5);
     });
   });
@@ -106,8 +104,7 @@ void main() {
       ]);
       addTearDown(container.dispose);
 
-      final result =
-          await container.read(todayOrdersTotalProvider.future);
+      final result = await container.read(todayOrdersTotalProvider.future);
       expect(result, 0.0);
     });
   });

@@ -260,8 +260,7 @@ class _SAUserDetailScreenState extends ConsumerState<SAUserDetailScreen> {
                                       return;
                                     }
 
-                                    final priorUserSnapshot =
-                                        <String, dynamic>{
+                                    final priorUserSnapshot = <String, dynamic>{
                                       'id': widget.userId,
                                       'name': name,
                                       'email': email,
@@ -276,15 +275,15 @@ class _SAUserDetailScreenState extends ConsumerState<SAUserDetailScreen> {
                                         await ref
                                             .read(auditLogServiceProvider)
                                             .log(
-                                              action: 'user.suspend',
-                                              targetType: 'user',
-                                              targetId: widget.userId,
-                                              before: priorUserSnapshot,
-                                              after: {
-                                                ...priorUserSnapshot,
-                                                'is_active': false,
-                                              },
-                                            );
+                                          action: 'user.suspend',
+                                          targetType: 'user',
+                                          targetId: widget.userId,
+                                          before: priorUserSnapshot,
+                                          after: {
+                                            ...priorUserSnapshot,
+                                            'is_active': false,
+                                          },
+                                        );
                                         ref.invalidate(saUserDetailProvider(
                                             widget.userId));
                                         ref.invalidate(saUsersListProvider);
@@ -397,13 +396,12 @@ class _SAUserDetailScreenState extends ConsumerState<SAUserDetailScreen> {
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     FilledButton(
-                                      onPressed: _saving ||
-                                              _selectedRole == role
-                                          ? null
-                                          : () => _saveRole(
-                                              widget.userId,
-                                              _selectedRole!,
-                                              previousRole: role),
+                                      onPressed:
+                                          _saving || _selectedRole == role
+                                              ? null
+                                              : () => _saveRole(
+                                                  widget.userId, _selectedRole!,
+                                                  previousRole: role),
                                       child: _saving
                                           ? const SizedBox(
                                               width: 16,

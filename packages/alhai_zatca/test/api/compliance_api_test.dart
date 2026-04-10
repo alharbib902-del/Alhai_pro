@@ -410,8 +410,7 @@ void main() {
         expect(result.errorMessage, 'Server unavailable');
       });
 
-      test('catches generic exception and returns descriptive error',
-          () async {
+      test('catches generic exception and returns descriptive error', () async {
         when(() => mockClient.requestProductionCsid(
               complianceRequestId: any(named: 'complianceRequestId'),
               complianceCertificate: any(named: 'complianceCertificate'),

@@ -209,8 +209,7 @@ void main() {
       ));
       await tester.pumpAndSettle();
 
-      expect(
-          find.byIcon(Icons.check_circle_outline_rounded), findsOneWidget);
+      expect(find.byIcon(Icons.check_circle_outline_rounded), findsOneWidget);
     });
   });
 }

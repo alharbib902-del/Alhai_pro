@@ -80,8 +80,7 @@ void main() {
           toStoreId: 'store-2',
         ));
 
-        final transfers =
-            await db.stockTransfersDao.getByStore('test-store');
+        final transfers = await db.stockTransfersDao.getByStore('test-store');
         expect(transfers, isEmpty);
       });
 

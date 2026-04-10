@@ -85,7 +85,9 @@ void main() {
         // Create a backup first
         final createResult = await backupService.createBackup(
           storeId: 'store-1',
-          data: {'products': [1, 2, 3]},
+          data: {
+            'products': [1, 2, 3]
+          },
         );
 
         // Export to JSON, then encode as base64 (simulating the backup format)

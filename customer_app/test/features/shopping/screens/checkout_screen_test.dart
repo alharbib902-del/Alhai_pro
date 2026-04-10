@@ -37,7 +37,10 @@ void main() {
       await tester.pump();
 
       // Arabic: "Complete Order"
-      expect(find.text('\u0625\u062a\u0645\u0627\u0645 \u0627\u0644\u0637\u0644\u0628'), findsOneWidget);
+      expect(
+          find.text(
+              '\u0625\u062a\u0645\u0627\u0645 \u0627\u0644\u0637\u0644\u0628'),
+          findsOneWidget);
     });
 
     testWidgets('shows delivery address section', (tester) async {
@@ -45,7 +48,10 @@ void main() {
       await tester.pump();
 
       // Arabic: "Delivery Address"
-      expect(find.text('\u0639\u0646\u0648\u0627\u0646 \u0627\u0644\u062a\u0648\u0635\u064a\u0644'), findsOneWidget);
+      expect(
+          find.text(
+              '\u0639\u0646\u0648\u0627\u0646 \u0627\u0644\u062a\u0648\u0635\u064a\u0644'),
+          findsOneWidget);
     });
 
     testWidgets('shows payment method section', (tester) async {
@@ -53,7 +59,10 @@ void main() {
       await tester.pump();
 
       // Arabic: "Payment Method"
-      expect(find.text('\u0637\u0631\u064a\u0642\u0629 \u0627\u0644\u062f\u0641\u0639'), findsOneWidget);
+      expect(
+          find.text(
+              '\u0637\u0631\u064a\u0642\u0629 \u0627\u0644\u062f\u0641\u0639'),
+          findsOneWidget);
     });
 
     testWidgets('shows order summary section', (tester) async {
@@ -61,7 +70,9 @@ void main() {
       await tester.pump();
 
       // Arabic: "Order Summary"
-      expect(find.text('\u0645\u0644\u062e\u0635 \u0627\u0644\u0637\u0644\u0628'), findsOneWidget);
+      expect(
+          find.text('\u0645\u0644\u062e\u0635 \u0627\u0644\u0637\u0644\u0628'),
+          findsOneWidget);
     });
 
     testWidgets('shows payment options', (tester) async {
@@ -69,11 +80,18 @@ void main() {
       await tester.pump();
 
       // Arabic: "Cash on Delivery"
-      expect(find.text('\u0627\u0644\u062f\u0641\u0639 \u0639\u0646\u062f \u0627\u0644\u0627\u0633\u062a\u0644\u0627\u0645'), findsOneWidget);
+      expect(
+          find.text(
+              '\u0627\u0644\u062f\u0641\u0639 \u0639\u0646\u062f \u0627\u0644\u0627\u0633\u062a\u0644\u0627\u0645'),
+          findsOneWidget);
       // Arabic: "Credit Card"
-      expect(find.text('\u0628\u0637\u0627\u0642\u0629 \u0627\u0626\u062a\u0645\u0627\u0646'), findsOneWidget);
+      expect(
+          find.text(
+              '\u0628\u0637\u0627\u0642\u0629 \u0627\u0626\u062a\u0645\u0627\u0646'),
+          findsOneWidget);
       // Arabic: "Wallet"
-      expect(find.text('\u0627\u0644\u0645\u062d\u0641\u0638\u0629'), findsOneWidget);
+      expect(find.text('\u0627\u0644\u0645\u062d\u0641\u0638\u0629'),
+          findsOneWidget);
     });
 
     testWidgets('has back button in app bar', (tester) async {

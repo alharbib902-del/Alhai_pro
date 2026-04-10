@@ -47,7 +47,10 @@ void main() {
       await tester.pump();
 
       // With no selected store, should prompt user to choose a store
-      expect(find.text('\u0627\u062e\u062a\u0631 \u0645\u062a\u062c\u0631 \u0623\u0648\u0644\u0627\u064b'), findsOneWidget);
+      expect(
+          find.text(
+              '\u0627\u062e\u062a\u0631 \u0645\u062a\u062c\u0631 \u0623\u0648\u0644\u0627\u064b'),
+          findsOneWidget);
     });
 
     testWidgets('has search icon in app bar', (tester) async {
@@ -55,7 +58,8 @@ void main() {
       await tester.pump();
 
       // The products title should be shown
-      expect(find.text('\u0627\u0644\u0645\u0646\u062a\u062c\u0627\u062a'), findsOneWidget);
+      expect(find.text('\u0627\u0644\u0645\u0646\u062a\u062c\u0627\u062a'),
+          findsOneWidget);
     });
 
     testWidgets('is a ConsumerStatefulWidget', (tester) async {

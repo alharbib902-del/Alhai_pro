@@ -31,8 +31,7 @@ Widget _buildTestableWidget(Widget child,
       currentStoreIdProvider.overrideWith((ref) => 'test-store'),
       isOnlineProvider.overrideWith((ref) => Stream.value(true)),
       pendingSyncCountProvider.overrideWith((ref) => Stream.value(0)),
-      syncStatusProvider
-          .overrideWith((ref) => Stream.value(SyncStatus.idle)),
+      syncStatusProvider.overrideWith((ref) => Stream.value(SyncStatus.idle)),
       syncManagerProvider.overrideWithValue(MockSyncManager()),
       ...overrides,
     ],
@@ -94,8 +93,7 @@ void main() {
       expect(find.byType(AiCustomerRecommendationsScreen), findsOneWidget);
     });
 
-    testWidgets(
-        'has three tabs for recommendations, repurchase, and segments',
+    testWidgets('has three tabs for recommendations, repurchase, and segments',
         (tester) async {
       _setLargeViewport(tester);
       await tester.pumpWidget(

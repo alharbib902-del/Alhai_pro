@@ -54,8 +54,7 @@ void main() {
       ]);
       addTearDown(container.dispose);
 
-      final result =
-          await container.read(dbNotificationsListProvider.future);
+      final result = await container.read(dbNotificationsListProvider.future);
       expect(result, isEmpty);
     });
 
@@ -68,8 +67,7 @@ void main() {
       ]);
       addTearDown(container.dispose);
 
-      final result =
-          await container.read(dbNotificationsListProvider.future);
+      final result = await container.read(dbNotificationsListProvider.future);
       expect(result, isEmpty);
     });
   });
@@ -81,8 +79,7 @@ void main() {
       ]);
       addTearDown(container.dispose);
 
-      final result =
-          await container.read(dbUnreadNotificationsProvider.future);
+      final result = await container.read(dbUnreadNotificationsProvider.future);
       expect(result, isEmpty);
     });
   });

@@ -183,8 +183,7 @@ void main() {
       expect(shift.expectedCash, 450);
     });
 
-    testWidgets('multiple cash movements accumulate correctly',
-        (tester) async {
+    testWidgets('multiple cash movements accumulate correctly', (tester) async {
       final shift = _FakeShift(
         id: 'shift-004',
         cashierId: kTestCashierId,

@@ -41,7 +41,8 @@ void main() {
       });
 
       test('base URLs are distinct across environments', () {
-        expect(ZatcaEndpoints.sandboxBase, isNot(ZatcaEndpoints.productionBase));
+        expect(
+            ZatcaEndpoints.sandboxBase, isNot(ZatcaEndpoints.productionBase));
         expect(ZatcaEndpoints.simulationBase,
             isNot(ZatcaEndpoints.productionBase));
         expect(

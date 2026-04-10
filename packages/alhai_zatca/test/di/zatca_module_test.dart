@@ -92,8 +92,7 @@ void main() {
       expect(getIt.isRegistered<ZatcaComplianceChecker>(), isTrue);
     });
 
-    test('uses InMemoryChainStore by default when no chainStore provided',
-        () {
+    test('uses InMemoryChainStore by default when no chainStore provided', () {
       ZatcaModule.register(getIt: getIt);
       final store = getIt<ChainStore>();
       expect(store, isA<InMemoryChainStore>());
@@ -162,7 +161,8 @@ void main() {
       expect(client.environment, equals(ZatcaEnvironment.simulation));
     });
 
-    test('all dependent services can be resolved without throwing '
+    test(
+        'all dependent services can be resolved without throwing '
         '(no circular deps)', () {
       ZatcaModule.register(getIt: getIt);
 
