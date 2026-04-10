@@ -80,9 +80,9 @@
   "paymentFailed": "فشلت العملية",
   "price": "السعر",
   "quantity": "الكمية",
-  "total": "الإجمالي",
+  "total": "إجمالي",
   "subtotal": "المجموع الفرعي",
-  "discount": "الخصم",
+  "discount": "خصم",
   "tax": "الضريبة",
   "vat": "ضريبة القيمة المضافة",
   "grandTotal": "الإجمالي الكلي",
@@ -93,7 +93,7 @@
   "sku": "رمز SKU",
   "stock": "المخزون",
   "lowStock": "مخزون منخفض",
-  "outOfStock": "نفذ المخزون",
+  "outOfStock": "نفذ",
   "inStock": "متوفر",
   "customer": "العميل",
   "customerName": "اسم العميل",
@@ -272,7 +272,7 @@
     }
   },
   "addBranch": "إضافة فرع جديد",
-  "comingSoon": "سيتم إضافة هذه الميزة قريباً",
+  "comingSoon": "قريباً",
   "tryDifferentSearch": "جرب البحث بكلمات مختلفة",
   "selectLanguage": "اختر اللغة",
   "languageChangeInfo": "اختر لغة العرض المفضلة لديك. سيتم تطبيق التغيير فوراً.",
@@ -331,7 +331,7 @@
   "action": "إجراء",
   "completed": "مكتمل",
   "returned": "مرتجع",
-  "pending": "قيد الانتظار",
+  "pending": "معلق",
   "cancelled": "ملغي",
   "guestCustomer": "عميل زائر",
   "minutesAgo": "{count, plural, one{منذ دقيقة} two{منذ دقيقتين} few{منذ {count} دقائق} many{منذ {count} دقيقة} other{منذ {count} دقيقة}}",
@@ -343,7 +343,7 @@
     }
   },
   "posSystem": "نظام نقاط البيع",
-  "branchManager": "مدير الفرع",
+  "branchManager": "المدير",
   "settingsSection": "الإعدادات",
   "systemSettings": "إعدادات النظام",
   "sar": "ر.س",
@@ -354,7 +354,7 @@
   "noTransactionsToday": "لا توجد معاملات اليوم",
   "comparedToYesterday": "مقارنة بالأمس",
   "ordersText": "طلب اليوم",
-  "storeManagement": "إدارة المتجر",
+  "storeManagement": "إدارة المتاجر",
   "finance": "المالية",
   "teamSection": "الفريق",
   "fullscreen": "ملء الشاشة",
@@ -397,21 +397,31 @@
   "undoneRemoved": "تراجع: حُذف {name}",
   "@undoneRemoved": {
     "placeholders": {
-      "name": {"type": "String"}
+      "name": {
+        "type": "String"
+      }
     }
   },
   "undoneAdded": "تراجع: أُعيد {name}",
   "@undoneAdded": {
     "placeholders": {
-      "name": {"type": "String"}
+      "name": {
+        "type": "String"
+      }
     }
   },
-  "undoneQtyChanged": "تراجع: {name} الكمية {from} \u2192 {to}",
+  "undoneQtyChanged": "تراجع: {name} الكمية {from} → {to}",
   "@undoneQtyChanged": {
     "placeholders": {
-      "name": {"type": "String"},
-      "from": {"type": "int"},
-      "to": {"type": "int"}
+      "name": {
+        "type": "String"
+      },
+      "from": {
+        "type": "int"
+      },
+      "to": {
+        "type": "int"
+      }
     }
   },
   "nothingToUndo": "لا يوجد شيء للتراجع",
@@ -446,7 +456,7 @@
   "costPrice": "سعر التكلفة",
   "description": "الوصف",
   "noDescription": "لا يوجد وصف",
-  "productNotFound": "المنتج غير موجود",
+  "productNotFound": "لم يتم العثور على المنتج",
   "stockStatus": "حالة المخزون",
   "currentStock": "المخزون الحالي",
   "unit": "وحدة",
@@ -475,7 +485,7 @@
   "searchByNameOrBarcode": "بحث بالاسم أو الباركود...",
   "hideFilters": "إخفاء الفلاتر",
   "showFilters": "إظهار الفلاتر",
-  "sortByName": "الاسم",
+  "sortByName": "حسب الاسم",
   "sortByPrice": "السعر",
   "sortByStock": "المخزون",
   "sortByRecent": "الأحدث",
@@ -583,15 +593,15 @@
   "thisMonthPeriod": "هذا الشهر",
   "thisYearPeriod": "هذا العام",
   "paymentMethods": "طرق الدفع",
-  "cashPayment": "نقداً",
+  "cashPayment": "نقدا",
   "cardPayment": "بطاقة",
   "walletPayment": "محفظة",
   "saveCurrentFilter": "حفظ الفلتر الحالي",
-  "statusAll": "الحالة: الكل",
+  "statusAll": "الكل",
   "statusPaid": "مدفوعة",
   "statusPending": "معلقة",
   "statusOverdue": "متأخرة",
-  "statusCancelled": "ملغاة",
+  "statusCancelled": "ملغي",
   "resetFilters": "إعادة تعيين",
   "createInvoice": "إنشاء فاتورة",
   "invoiceNumberCol": "رقم الفاتورة",
@@ -603,7 +613,7 @@
   "actionsCol": "الإجراءات",
   "viewInvoice": "عرض",
   "printInvoice": "طباعة",
-  "exportPdf": "PDF",
+  "exportPdf": "تصدير PDF",
   "sendWhatsapp": "واتساب",
   "deleteInvoice": "حذف",
   "reminder": "تذكير",
@@ -783,7 +793,7 @@
   "defectiveProduct": "تلف في المنتج",
   "wrongProduct": "منتج خاطئ",
   "customerRequest": "رغبة العميل",
-  "otherReason": "أخرى",
+  "otherReason": "سبب آخر",
   "quickSearch": "بحث سريع...",
   "exportData": "تصدير",
   "printData": "طباعة",
@@ -869,9 +879,9 @@
   "paidSuccessfully": "تم الدفع بنجاح",
   "amountReceivedFull": "تم استلام المبلغ بالكامل",
   "completedStatus": "مكتملة",
-  "pendingStatus": "معلقة",
+  "pendingStatus": "انتظار",
   "voidedStatus": "ملغاة",
-  "storeName": "سوبرماركت الحي",
+  "storeName": "اسم المتجر",
   "storeAddress": "الرياض، حي الملز، شارع التخصصي",
   "simplifiedTaxInvoice": "فاتورة ضريبية مبسطة",
   "dateAndTime": "التاريخ والوقت",
@@ -998,13 +1008,13 @@
   "totalCredit": "إجمالي الدائن",
   "finalBalance": "الرصيد النهائي",
   "manualAdjustment": "تسوية يدوية",
-  "adjustmentType": "نوع التسوية",
+  "adjustmentType": "نوع التعديل",
   "debitAdjustment": "تسوية مدينة",
   "creditAdjustment": "تسوية دائنة",
   "adjustmentAmount": "مبلغ التسوية",
-  "adjustmentReason": "سبب التسوية",
+  "adjustmentReason": "سبب التعديل",
   "adjustmentDate": "تاريخ التسوية",
-  "saveAdjustment": "حفظ التسوية",
+  "saveAdjustment": "حفظ التعديل",
   "adjustmentSaved": "تم حفظ التسوية بنجاح",
   "enterValidAmount": "أدخل مبلغاً صحيحاً",
   "dueOnCustomer": "مستحق على العميل",
@@ -1038,7 +1048,7 @@
   "salesInvoice": "فاتورة مبيعات",
   "invoiceCompleted": "مكتملة",
   "paidCash": "تم الدفع: نقداً",
-  "customerLabel": "العميل",
+  "customerLabel": "عميل",
   "dateAndTimeLabel": "التاريخ والوقت",
   "voidImpactSummary": "ملخص أثر الإلغاء",
   "voidImpactItemsReturn": "سيتم إعادة {count} أصناف للمخزون تلقائياً.",
@@ -1050,7 +1060,7 @@
     }
   },
   "voidImpactRefund": "سيتم خصم/إرجاع مبلغ {amount} {currency}.",
-  "returnedItems": "الأصناف المرتجعة ({count})",
+  "returnedItems": "الأصناف المرتجعة",
   "viewAllItems": "عرض الكل",
   "moreItemsHint": "+ {count} أصناف أخرى (مجموع: {amount} {currency})",
   "voidReason": "سبب الإلغاء",
@@ -1072,18 +1082,11 @@
   "confirmVoidDesc": "لقد اطلعت على التفاصيل وأتحمل المسؤولية الكاملة.",
   "cancelAction": "إلغاء",
   "confirmFinalVoid": "تأكيد الإلغاء النهائي",
-  "invoiceNotFound": "لم يتم العثور على الفاتورة",
+  "invoiceNotFound": "الفاتورة غير موجودة",
   "invoiceNotFoundDesc": "تأكد من صحة الرقم المدخل أو حاول البحث باستخدام الباركود.",
   "trySearchAgain": "محاولة البحث مرة أخرى",
   "voidSuccess": "تم إلغاء العملية بنجاح",
   "qtyLabel": "الكمية: {count}",
-  "@voidImpactItemsReturn": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
   "@voidImpactRefund": {
     "placeholders": {
       "amount": {
@@ -1173,7 +1176,7 @@
       }
     }
   },
-  "customerAddedSuccess": "تم إضافة العميل بنجاح",
+  "customerAddedSuccess": "تم إضافة {name}",
   "customerNameRequired": "اسم العميل *",
   "owedLabel": "عليه",
   "hasBalanceLabel": "له",
@@ -1192,7 +1195,6 @@
   "drawerStatus": "حالة الدرج",
   "drawerOpen": "مفتوح",
   "drawerClosed": "مغلق",
-  "currentBalance": "الرصيد الحالي",
   "cashIn": "إيداع نقدي",
   "cashOut": "سحب نقدي",
   "expectedAmount": "المبلغ المتوقع",
@@ -1215,7 +1217,7 @@
   "shiftTotalSales": "إجمالي المبيعات",
   "shiftTotalOrders": "إجمالي الطلبات",
   "startingCash": "النقد الابتدائي",
-  "cashierName": "الكاشير",
+  "cashierName": "اسم الكاشير",
   "shiftDuration": "المدة",
   "noShifts": "لا توجد ورديات مسجلة",
   "purchasesTitle": "المشتريات",
@@ -1293,7 +1295,6 @@
   "branchesTitle": "الفروع",
   "addBranchAction": "إضافة فرع",
   "branchName": "اسم الفرع",
-  "branchManager": "المدير",
   "branchEmployees": "الموظفين",
   "branchSales": "مبيعات اليوم",
   "profileTitle": "الملف الشخصي",
@@ -1311,7 +1312,7 @@
   "paymentDevicesSettings": "أجهزة الدفع",
   "barcodeSettings": "إعدادات الباركود",
   "receiptTemplate": "قالب الإيصال",
-  "taxSettings": "إعدادات الضريبة",
+  "taxSettings": "إعدادات الضرائب",
   "discountSettings": "إعدادات الخصومات",
   "interestSettings": "إعدادات الفوائد",
   "languageSettings": "اللغة",
@@ -1343,7 +1344,7 @@
   "changePin": "تغيير رمز PIN",
   "twoFactorAuth": "المصادقة الثنائية",
   "addUser": "إضافة مستخدم",
-  "userName": "اسم المستخدم",
+  "userName": "الاسم",
   "userEmail": "البريد الإلكتروني",
   "userPhone": "الهاتف",
   "addRole": "إضافة دور",
@@ -1357,7 +1358,7 @@
   "eInvoicing": "الفوترة الإلكترونية",
   "qrCode": "رمز QR",
   "vatNumber": "الرقم الضريبي",
-  "taxNumber": "رقم الضريبة",
+  "taxNumber": "الرقم الضريبي",
   "pushNotifications": "إشعارات الدفع",
   "emailNotifications": "إشعارات البريد",
   "smsNotifications": "إشعارات SMS",
@@ -1385,13 +1386,12 @@
   "registrationInfo": "معلومات التسجيل",
   "businessName": "اسم المنشأة",
   "branchCode": "رمز الفرع",
-  "qrCodeOnInvoice": "رمز QR على الفاتورة",
+  "qrCodeOnInvoice": "يظهر رمز QR على كل فاتورة",
   "certificates": "الشهادات",
   "csidCertificate": "شهادة CSID",
   "valid": "صالحة",
   "privateKey": "المفتاح الخاص",
   "configured": "مهيأ",
-
   "aiSection": "الذكاء الاصطناعي",
   "aiAssistantTitle": "المساعد الذكي",
   "aiAssistantSubtitle": "اسأل مساعدك الذكي أي شيء عن متجرك",
@@ -1441,7 +1441,7 @@
   "aiRecommendation": "توصية",
   "aiAlert": "تنبيه",
   "aiWarning": "تحذير",
-  "aiTrend": "اتجاه",
+  "aiTrend": "الاتجاه",
   "aiPositive": "إيجابي",
   "aiNegative": "سلبي",
   "aiNeutral": "محايد",
@@ -1471,7 +1471,7 @@
   "aiWastePrediction": "التنبؤ بالهدر",
   "aiReorderPoint": "نقطة إعادة الطلب",
   "aiCompetitorPrices": "أسعار المنافسين",
-  "aiMarketPosition": "التموضع السوقي",
+  "aiMarketPosition": "الموقع السوقي",
   "aiQueryInput": "اسأل أي شيء عن بياناتك...",
   "aiReportTemplate": "قالب التقرير",
   "aiStaffPerformance": "أداء الموظفين",
@@ -1516,7 +1516,6 @@
       }
     }
   },
-
   "connectedToServer": "متصل بالسيرفر",
   "lastSyncAt": "آخر مزامنة: {time}",
   "@lastSyncAt": {
@@ -1541,7 +1540,7 @@
   "appVersion": "إصدار التطبيق",
   "lastFullSync": "آخر مزامنة كاملة",
   "databaseStatus": "حالة قاعدة البيانات",
-  "healthy": "سليمة",
+  "healthy": "سليم",
   "syncSuccessful": "تمت المزامنة بنجاح",
   "justNow": "الآن",
   "allOperationsSynced": "جميع العمليات متزامنة",
@@ -1632,10 +1631,9 @@
       }
     }
   },
-
   "manageDiscounts": "إدارة الخصومات",
   "newDiscount": "خصم جديد",
-  "totalLabel": "إجمالي",
+  "totalLabel": "الإجمالي",
   "stopped": "متوقف",
   "allProducts": "جميع المنتجات",
   "specificCategory": "تصنيف محدد",
@@ -1659,10 +1657,9 @@
       }
     }
   },
-
   "manageCoupons": "إدارة الكوبونات",
   "newCoupon": "كوبون جديد",
-  "expired": "منتهي",
+  "expired": "منتهي الصلاحية",
   "deactivated": "معطل",
   "usageCount": "{used}/{max} استخدام",
   "@usageCount": {
@@ -1696,13 +1693,12 @@
   "percentageRate": "النسبة %",
   "minimumOrder": "الحد الأدنى للطلب",
   "expiryDate": "تاريخ الانتهاء",
-  "copyCode": "نسخ الكود",
+  "copyCode": "نسخ",
   "usages": "الاستخدامات",
   "percentageDiscountOption": "خصم نسبة",
   "fixedDiscountOption": "خصم ثابت",
   "freeDeliveryOption": "توصيل مجاني",
   "percentageField": "النسبة %",
-
   "manageSpecialOffers": "إدارة العروض الخاصة",
   "newOffer": "عرض جديد",
   "expiringSoon": "ينتهي قريباً",
@@ -1733,13 +1729,12 @@
     }
   },
   "bundleLabel": "باقة",
-  "buyAndGet": "اشتري واحصل",
+  "buyAndGet": "اشترِ واحصل",
   "startDateLabel": "البداية",
   "endDateLabel": "النهاية",
   "productsLabel": "المنتجات",
   "offerType": "النوع",
   "theDiscount": "الخصم:",
-
   "smartSuggestions": "اقتراحات ذكية",
   "suggestionsBasedOnAnalysis": "عروض مقترحة بناءً على تحليل المبيعات والمخزون",
   "suggestedDiscountPercent": "{percent}% خصم مقترح",
@@ -1758,7 +1753,7 @@
       }
     }
   },
-  "validityDays": "الصلاحية: {days} يوم",
+  "validityDays": "صلاحية (أيام)",
   "@validityDays": {
     "placeholders": {
       "days": {
@@ -1820,7 +1815,6 @@
   "buyXGetYType": "اشتري واحصل",
   "fixedAmountType": "مبلغ ثابت",
   "closeAction": "إغلاق",
-
   "holdInvoices": "الفواتير المعلقة",
   "clearAll": "مسح الكل",
   "noHoldInvoices": "لا توجد فواتير معلقة",
@@ -1897,12 +1891,10 @@
       }
     }
   },
-
   "debtManagement": "إدارة الديون",
   "sortLabel": "ترتيب",
   "sortByAmount": "حسب المبلغ",
   "sortByDate": "حسب التاريخ",
-  "sortByName": "حسب الاسم",
   "sendReminders": "إرسال تذكيرات",
   "allTab": "الكل",
   "overdueTab": "متأخرة",
@@ -1954,7 +1946,7 @@
     }
   },
   "paidAmount": "المبلغ المدفوع",
-  "cashMethod": "نقدي",
+  "cashMethod": "نقداً",
   "cardMethod": "بطاقة",
   "transferMethod": "تحويل",
   "paymentRecordedSuccess": "تم تسجيل الدفعة بنجاح",
@@ -1988,7 +1980,6 @@
   "tabAiSuggestions": "اقتراحات AI",
   "tabActivePromotions": "العروض النشطة",
   "tabHistory": "السجل",
-
   "fruitYogurt": "زبادي فواكه",
   "buttermilk": "لبن رايب",
   "appleJuice": "عصير تفاح",
@@ -2025,14 +2016,20 @@
   "resetSettings": "إعادة ضبط الإعدادات",
   "resetSettingsDesc": "إعادة جميع الإعدادات للقيم الافتراضية",
   "resetSettingsConfirm": "هل أنت متأكد من إعادة جميع إعدادات نقطة البيع للقيم الافتراضية؟",
-  "resetAction": "إعادة ضبط",
+  "resetAction": "إعادة تعيين",
   "posSettingsSubtitle": "العرض، السلة، الدفع، الإيصال",
   "displaySettings": "إعدادات العرض",
   "productDisplayMode": "طريقة عرض المنتجات",
   "productDisplayModeDesc": "كيفية عرض المنتجات في شاشة POS",
   "gridColumns": "عدد الأعمدة",
   "nColumns": "{count} أعمدة",
-  "@nColumns": { "placeholders": { "count": { "type": "int" } } },
+  "@nColumns": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "showProductImages": "عرض صور المنتجات",
   "showProductImagesDesc": "إظهار الصور في بطاقات المنتجات",
   "showPrices": "عرض الأسعار",
@@ -2048,7 +2045,6 @@
   "confirmBeforeDeleteDesc": "طلب تأكيد عند حذف منتج من السلة",
   "showItemNotes": "عرض ملاحظات المنتج",
   "showItemNotesDesc": "إمكانية إضافة ملاحظات لكل منتج",
-  "paymentMethods": "طرق الدفع",
   "cashPaymentOption": "الدفع نقداً",
   "cardPaymentOption": "الدفع بالبطاقة",
   "creditPaymentOption": "الدفع الآجل",
@@ -2108,7 +2104,6 @@
   "thermalUsbPrinter": "طابعة حرارية USB",
   "bluetoothPortablePrinter": "طابعة بلوتوث محمولة",
   "saveAsPdf": "حفظ كملف PDF",
-  "receiptTemplate": "قالب الإيصال",
   "compactTemplate": "مختصر",
   "basicInfoOnly": "معلومات أساسية فقط",
   "detailedTemplate": "تفصيلي",
@@ -2142,13 +2137,11 @@
   "pointCameraAtBarcode": "وجه الكاميرا نحو الباركود",
   "scanArea": "منطقة المسح",
   "barcodeSettingsSubtitle": "الماسح الضوئي، التنبيهات، الصيغ",
-  "taxSettings": "إعدادات الضرائب",
   "taxSettingsSubtitle": "VAT, ZATCA, الفوترة الإلكترونية",
   "vatSettings": "ضريبة القيمة المضافة",
   "enableVat": "تفعيل ضريبة القيمة المضافة",
   "enableVatDesc": "تطبيق VAT على جميع المبيعات",
   "taxRate": "نسبة الضريبة",
-  "taxNumber": "الرقم الضريبي",
   "taxNumberHint": "15 رقم يبدأ بـ 3",
   "pricesIncludeTax": "الأسعار شاملة الضريبة",
   "pricesIncludeTaxDesc": "الأسعار المعروضة تتضمن الضريبة",
@@ -2192,7 +2185,13 @@
   "gracePeriod": "فترة السماح",
   "graceDays": "أيام السماح",
   "graceDaysLabel": "{days} يوم قبل احتساب الفائدة",
-  "@graceDaysLabel": { "placeholders": { "days": { "type": "int" } } },
+  "@graceDaysLabel": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
   "compoundInterest": "الفائدة المركبة",
   "compoundInterestDesc": "احتساب فائدة على الفائدة",
   "calculationAndAlerts": "الحساب والتنبيهات",
@@ -2208,12 +2207,9 @@
   "footerText": "نص التذييل",
   "displayedFields": "الحقول المعروضة",
   "storeLogo": "شعار المتجر",
-  "storeName": "اسم المتجر",
   "addressField": "العنوان",
   "phoneNumberField": "رقم الهاتف",
   "vatNumberField": "الرقم الضريبي",
-  "dateAndTime": "التاريخ والوقت",
-  "cashierName": "اسم الكاشير",
   "invoiceBarcode": "باركود الفاتورة",
   "qrCodeField": "رمز QR",
   "qrCodeEInvoice": "رمز QR للفاتورة الإلكترونية",
@@ -2231,7 +2227,6 @@
   "reportAlertsDesc": "تقارير يومية وأسبوعية",
   "contactSupportDesc": "متاح 24/7",
   "systemGuide": "دليل استخدام النظام",
-  "videoTutorials": "فيديوهات تعليمية",
   "changeLog": "سجل التحديثات",
   "faqQuestion1": "كيف أضيف منتج جديد؟",
   "faqAnswer1": "اذهب إلى المنتجات > إضافة منتج واملأ التفاصيل",
@@ -2244,7 +2239,6 @@
   "faqQuestion5": "كيف أشاهد التقارير؟",
   "faqAnswer5": "من القائمة الرئيسية > التقارير، اختر نوع التقرير المطلوب",
   "businessNameValue": "مؤسسة الهاي",
-  "qrCodeOnInvoice": "يظهر رمز QR على كل فاتورة",
   "disabledLabel": "معطل",
   "allFilter": "الكل",
   "loginLogoutFilter": "الدخول/الخروج",
@@ -2294,7 +2288,13 @@
   "clearDataAction": "مسح البيانات",
   "dataCleared": "تم مسح جميع البيانات",
   "afterMinutes": "بعد {count} دقيقة",
-  "@afterMinutes": { "placeholders": { "count": { "type": "int" } } },
+  "@afterMinutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "storeInfo": "معلومات المتجر",
   "storeNameField": "اسم المتجر",
   "addressLabel": "العنوان",
@@ -2316,7 +2316,7 @@
   "managerRole": "مدير",
   "supervisorRole": "مشرف",
   "cashierRole": "كاشير",
-  "disabledStatus": "معطل",
+  "disabledStatus": "معطّل",
   "editMenuAction": "تعديل",
   "disableMenuAction": "تعطيل",
   "enableMenuAction": "تفعيل",
@@ -2330,9 +2330,21 @@
   "newRoleButton": "دور جديد",
   "systemBadge": "نظام",
   "userCountLabel": "{count} مستخدم",
-  "@userCountLabel": { "placeholders": { "count": { "type": "int" } } },
+  "@userCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "permissionCountLabel": "{count} صلاحية",
-  "@permissionCountLabel": { "placeholders": { "count": { "type": "int" } } },
+  "@permissionCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "editRoleMenu": "تعديل",
   "duplicateRoleMenu": "نسخ",
   "deleteRoleMenu": "حذف",
@@ -2418,8 +2430,6 @@
       }
     }
   },
-  "copyCode": "نسخ",
-
   "orderHistory": "سجل الطلبات",
   "history": "السجل",
   "selectDateRange": "تحديد فترة",
@@ -2444,20 +2454,47 @@
   "alertSettings": "إعدادات التنبيهات",
   "acknowledgeAll": "تأكيد الكل",
   "allWithCount": "الكل ({count})",
-  "@allWithCount": { "placeholders": { "count": { "type": "int" } } },
+  "@allWithCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "lowStockWithCount": "نفاد مخزون ({count})",
-  "@lowStockWithCount": { "placeholders": { "count": { "type": "int" } } },
+  "@lowStockWithCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "expiryWithCount": "انتهاء صلاحية ({count})",
-  "@expiryWithCount": { "placeholders": { "count": { "type": "int" } } },
+  "@expiryWithCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "urgentAlerts": "تنبيهات عاجلة",
-  "nearExpiry": "قريب الانتهاء",
+  "nearExpiry": "قرب الانتهاء",
   "noAlerts": "لا توجد تنبيهات",
   "alertDismissed": "تم إخفاء التنبيه",
   "undo": "تراجع",
   "criticalPriority": "حرج",
   "highPriority": "عاجل",
   "stockAlertMessage": "الكمية: {current} (الحد الأدنى: {threshold})",
-  "@stockAlertMessage": { "placeholders": { "current": { "type": "int" }, "threshold": { "type": "int" } } },
+  "@stockAlertMessage": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "threshold": {
+        "type": "int"
+      }
+    }
+  },
   "expiryAlertLabel": "تنبيه صلاحية",
   "currentQuantity": "الكمية الحالية",
   "minimumThreshold": "الحد الأدنى",
@@ -2466,29 +2503,73 @@
   "expiryNotifications": "تنبيهات انتهاء الصلاحية",
   "minimumStockLevel": "الحد الأدنى للمخزون",
   "thresholdUnits": "{count} وحدة",
-  "@thresholdUnits": { "placeholders": { "count": { "type": "int" } } },
+  "@thresholdUnits": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "acknowledgeAllAlerts": "تأكيد جميع التنبيهات",
   "willDismissAlerts": "سيتم إخفاء {count} تنبيه",
-  "@willDismissAlerts": { "placeholders": { "count": { "type": "int" } } },
+  "@willDismissAlerts": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "allAlertsAcknowledged": "تم تأكيد جميع التنبيهات",
   "createPurchaseOrder": "إنشاء طلب شراء",
   "productLabelName": "المنتج: {name}",
-  "@productLabelName": { "placeholders": { "name": { "type": "String" } } },
+  "@productLabelName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "requiredQuantity": "الكمية المطلوبة",
   "createAction": "إنشاء",
   "purchaseOrderCreated": "تم إنشاء طلب الشراء",
   "newCategory": "فئة جديدة",
   "productCountUnit": "{count, plural, =0{لا توجد منتجات} one{منتج واحد} two{منتجان} few{{count} منتجات} many{{count} منتجاً} other{{count} منتج}}",
-  "@productCountUnit": { "placeholders": { "count": { "type": "int" } } },
+  "@productCountUnit": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "iconLabel": "الأيقونة:",
   "colorLabel": "اللون:",
   "deleteCategoryMessage": "هل تريد حذف فئة \"{name}\"؟\nسيتم نقل {count} منتج إلى \"بدون فئة\".",
-  "@deleteCategoryMessage": { "placeholders": { "name": { "type": "String" }, "count": { "type": "int" } } },
+  "@deleteCategoryMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "productNumber": "منتج {number}",
-  "@productNumber": { "placeholders": { "number": { "type": "int" } } },
+  "@productNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
   "priceWithCurrency": "{price} ر.س",
-  "@priceWithCurrency": { "placeholders": { "price": { "type": "String" } } },
-
+  "@priceWithCurrency": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
   "currentlyOpenShift": "وردية مفتوحة حالياً",
   "since": "منذ",
   "transaction": "عملية",
@@ -2498,7 +2579,6 @@
   "shiftsLog": "سجل الورديات",
   "noShiftsToday": "لا توجد ورديات اليوم",
   "open": "مفتوحة",
-
   "customPeriod": "فترة مخصصة",
   "salesReport": "تقرير المبيعات",
   "salesReportDesc": "تفاصيل المبيعات والفواتير",
@@ -2512,11 +2592,8 @@
   "customerReportDesc": "نشاط العملاء والديون",
   "purchasesReport": "تقرير المشتريات",
   "purchasesReportDesc": "فواتير الشراء والموردين",
-  "revenue": "الإيرادات",
   "costs": "التكاليف",
   "netProfit": "صافي الربح",
-  "lowStock": "مخزون منخفض",
-  "outOfStock": "نفذ",
   "salesTax": "ضريبة المبيعات",
   "purchasesTax": "ضريبة المشتريات",
   "taxDue": "المستحق",
@@ -2524,13 +2601,11 @@
   "paidDebts": "المسددة",
   "averageAmount": "المتوسط",
   "suppliers": "الموردين",
-
   "todayExpenses": "مصروفات اليوم",
   "transactionCount": "عدد العمليات",
   "salaries": "رواتب",
   "rent": "إيجار",
   "purchases": "المشتريات",
-
   "noDriversRegistered": "لا يوجد سائقون مسجلون",
   "addDriversForDelivery": "أضف سائقين لإدارة التوصيل",
   "onDelivery": "في توصيلة",
@@ -2541,29 +2616,28 @@
   "excellentRating": "تقييم ممتاز",
   "delivery": "توصيلة",
   "track": "تتبع",
-
   "percentage": "نسبة مئوية",
-  "buyAndGet": "اشترِ واحصل",
   "totalSavings": "إجمالي التوفير",
-
   "totalUsage": "إجمالي الاستخدام",
   "times": "مرات",
-
   "activeOffers": "عروض فعالة",
   "upcomingOffers": "عروض قادمة",
   "expiredOffers": "عروض منتهية",
   "bundle": "باقة",
-
   "dueDebts": "ديون مستحقة",
   "collected": "تم التحصيل",
-
   "newNotification": "إشعار جديد",
   "oneHourAgo": "قبل ساعة",
   "twoHoursAgo": "قبل ساعتين",
-
   "trackingMap": "خريطة التتبع",
   "deliveriesToday": "{count} توصيلة اليوم",
-  "@deliveriesToday": { "placeholders": { "count": { "type": "int" } } },
+  "@deliveriesToday": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "assignOrder": "تعيين طلب",
   "driversTrackingMap": "خريطة تتبع السائقين",
   "gpsSubscriptionRequired": "(يتطلب اشتراك GPS)",
@@ -2571,36 +2645,103 @@
   "vehicleHint": "مثال: هايلكس - أبيض",
   "plateNumberLabel": "رقم اللوحة",
   "assignOrderTo": "تعيين طلب لـ {name}",
-  "@assignOrderTo": { "placeholders": { "name": { "type": "String" } } },
+  "@assignOrderTo": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "orderLabel": "طلب",
   "orderAssignedTo": "تم تعيين الطلب لـ {name}",
-  "@orderAssignedTo": { "placeholders": { "name": { "type": "String" } } },
-
+  "@orderAssignedTo": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "closingPeriod": "فترة الإقفال: {period}",
-  "@closingPeriod": { "placeholders": { "period": { "type": "String" } } },
+  "@closingPeriod": {
+    "placeholders": {
+      "period": {
+        "type": "String"
+      }
+    }
+  },
   "lastClosing": "آخر إقفال: {date}",
-  "@lastClosing": { "placeholders": { "date": { "type": "String" } } },
+  "@lastClosing": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
   "interestRateAndGrace": "نسبة الفائدة: {rate}% | فترة السماح: {days} يوم",
-  "@interestRateAndGrace": { "placeholders": { "rate": { "type": "String" }, "days": { "type": "String" } } },
-  "selectedCustomers": "العملاء المختارين",
+  "@interestRateAndGrace": {
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      },
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "selectedCustomers": "العملاء المحددون",
   "expectedInterests": "الفوائد المتوقعة",
   "noDebtsNeedClosing": "لا توجد ديون تحتاج إقفال",
   "allCustomersWithinGrace": "جميع العملاء ضمن فترة السماح",
   "debtLabel": "الدين: {amount} ر.س",
-  "@debtLabel": { "placeholders": { "amount": { "type": "String" } } },
+  "@debtLabel": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "expectedInterestLabel": "الفائدة المتوقعة: {amount} ر.س",
-  "@expectedInterestLabel": { "placeholders": { "amount": { "type": "String" } } },
+  "@expectedInterestLabel": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "selectedCustomerCount": "{count} عميل مختار",
-  "@selectedCustomerCount": { "placeholders": { "count": { "type": "int" } } },
+  "@selectedCustomerCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "processingClose": "جاري المعالجة...",
   "executeClose": "تنفيذ الإقفال",
   "interestWillBeAdded": "سيتم إضافة فوائد على {count} عميل",
-  "@interestWillBeAdded": { "placeholders": { "count": { "type": "int" } } },
+  "@interestWillBeAdded": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "totalInterestsLabel": "إجمالي الفوائد: {amount} ر.س",
-  "@totalInterestsLabel": { "placeholders": { "amount": { "type": "String" } } },
+  "@totalInterestsLabel": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "monthCloseSuccess": "تم إقفال الشهر لـ {count} عميل",
-  "@monthCloseSuccess": { "placeholders": { "count": { "type": "int" } } },
-
+  "@monthCloseSuccess": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "readAll": "قراءة الكل",
   "averageExpense": "متوسط المصروف",
   "expensesList": "قائمة المصروفات",
@@ -2620,110 +2761,145 @@
   "exportingReport": "جاري تصدير التقرير...",
   "chartsUnderDev": "الرسوم البيانية قيد التطوير...",
   "reportsAnalysis": "تحليل الأداء والمبيعات",
-
   "aiAssociationFrequency": "{productA} + {productB}: تكرار {frequency} مرة",
   "@aiAssociationFrequency": {
     "placeholders": {
-      "productA": {"type": "String"},
-      "productB": {"type": "String"},
-      "frequency": {"type": "int"}
+      "productA": {
+        "type": "String"
+      },
+      "productB": {
+        "type": "String"
+      },
+      "frequency": {
+        "type": "int"
+      }
     }
   },
   "aiBundleActivated": "تم تفعيل حزمة: {name}",
   "@aiBundleActivated": {
     "placeholders": {
-      "name": {"type": "String"}
+      "name": {
+        "type": "String"
+      }
     }
   },
   "aiPromotionsGeneratedCount": "تم توليد {count} عرض ترويجي بناءً على تحليل بيانات المتجر",
   "@aiPromotionsGeneratedCount": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "aiPromotionApplied": "تم تطبيق: {title}",
   "@aiPromotionApplied": {
     "placeholders": {
-      "title": {"type": "String"}
+      "title": {
+        "type": "String"
+      }
     }
   },
   "aiConfidencePercent": "ثقة: {percent}%",
   "@aiConfidencePercent": {
     "placeholders": {
-      "percent": {"type": "String"}
+      "percent": {
+        "type": "String"
+      }
     }
   },
   "aiAlertsWithCount": "التنبيهات ({count})",
   "@aiAlertsWithCount": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "aiStaffCurrentSuggested": "{current} موظف حالياً → {suggested} مقترح",
   "@aiStaffCurrentSuggested": {
     "placeholders": {
-      "current": {"type": "int"},
-      "suggested": {"type": "int"}
+      "current": {
+        "type": "int"
+      },
+      "suggested": {
+        "type": "int"
+      }
     }
   },
   "aiMinutesAgo": "منذ {minutes} دقيقة",
   "@aiMinutesAgo": {
     "placeholders": {
-      "minutes": {"type": "int"}
+      "minutes": {
+        "type": "int"
+      }
     }
   },
   "aiHoursAgo": "منذ {hours} ساعة",
   "@aiHoursAgo": {
     "placeholders": {
-      "hours": {"type": "int"}
+      "hours": {
+        "type": "int"
+      }
     }
   },
   "aiDaysAgo": "منذ {days} يوم",
   "@aiDaysAgo": {
     "placeholders": {
-      "days": {"type": "int"}
+      "days": {
+        "type": "int"
+      }
     }
   },
   "aiDetectedCount": "تم الكشف: {count}",
   "@aiDetectedCount": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "aiMatchedCount": "مطابق: {count}",
   "@aiMatchedCount": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "aiAccuracyPercent": "دقة: {percent}%",
   "@aiAccuracyPercent": {
     "placeholders": {
-      "percent": {"type": "String"}
+      "percent": {
+        "type": "String"
+      }
     }
   },
   "aiProductAccepted": "تم قبول {name}",
   "@aiProductAccepted": {
     "placeholders": {
-      "name": {"type": "String"}
+      "name": {
+        "type": "String"
+      }
     }
   },
   "aiErrorOccurred": "حدث خطأ: {error}",
   "@aiErrorOccurred": {
     "placeholders": {
-      "error": {"type": "String"}
+      "error": {
+        "type": "String"
+      }
     }
   },
   "aiErrorWithMessage": "خطأ: {error}",
   "@aiErrorWithMessage": {
     "placeholders": {
-      "error": {"type": "String"}
+      "error": {
+        "type": "String"
+      }
     }
   },
-
   "aiBasketAnalysis": "تحليل السلة بالذكاء الاصطناعي",
   "aiAssociations": "الارتباطات",
-  "aiBundleSuggestions": "اقتراحات الحزم",
   "aiCrossSell": "البيع المتقاطع",
   "aiAvgBasketSize": "متوسط حجم السلة",
   "aiProductUnit": "منتج",
@@ -2739,7 +2915,6 @@
   "aiAskAboutSalesStock": "اسأل عن المبيعات، المخزون، العملاء، أو أي شيء عن متجرك",
   "aiCompetitorAnalysis": "تحليل المنافسين",
   "aiPriceComparison": "مقارنة الأسعار",
-  "aiMarketPosition": "الموقع السوقي",
   "aiTrackedProducts": "منتجات تحت المراقبة",
   "aiCheaperThanCompetitors": "أرخص من المنافسين",
   "aiMoreExpensive": "أغلى من المنافسين",
@@ -2760,7 +2935,6 @@
   "aiNeedsReview": "بحاجة مراجعة",
   "aiRiskLevel": "مستوى المخاطر",
   "aiBehaviorScores": "درجات السلوك",
-  "aiInvestigation": "التحقيق",
   "aiRiskMeter": "مقياس المخاطر",
   "aiHighRisk": "مخاطر عالية",
   "aiLowRisk": "مخاطر منخفضة",
@@ -2775,7 +2949,6 @@
   "aiStaffAnalytics": "تحليلات الموظفين",
   "aiLeaderboard": "لوحة الترتيب",
   "aiIndividualPerformance": "أداء فردي",
-  "aiShiftOptimization": "تحسين الورديات",
   "aiAvgPerformance": "متوسط الأداء",
   "aiTotalSalesLabel": "إجمالي المبيعات",
   "aiTotalTransactions": "إجمالي العمليات",
@@ -2785,7 +2958,6 @@
   "aiSalesForecasting": "توقع المبيعات",
   "aiSmartForecastSubtitle": "تحليل ذكي لتوقع المبيعات المستقبلية",
   "aiForecastAccuracy": "دقة التوقع",
-  "aiTrend": "الاتجاه",
   "aiTrendUp": "صاعد",
   "aiTrendDown": "هابط",
   "aiTrendStable": "مستقر",
@@ -2826,13 +2998,11 @@
   "aiTrySampleQuestions": "جرّب أحد هذه الأسئلة",
   "aiTip": "نصيحة",
   "aiTipDescription": "يمكنك السؤال بالعربي أو الإنجليزي. AI يفهم السياق ويختار أفضل طريقة لعرض النتائج: أرقام، جداول، أو رسوم بيانية.",
-
   "loadingApp": "جاري التحميل...",
   "initializingSearch": "تهيئة البحث...",
   "loadingData": "تحميل البيانات...",
   "initializingDemoData": "تهيئة البيانات التجريبية...",
   "pointOfSale": "نقاط البيع",
-
   "managerPinSetup": "إعداد رمز المشرف",
   "confirmPin": "تأكيد الرمز",
   "createNewPin": "إنشاء رمز جديد",
@@ -2859,7 +3029,6 @@
       }
     }
   },
-
   "selectYourBranchToContinue": "اختر فرعك للمتابعة",
   "branchClosed": "مغلق",
   "noResultsFoundSearch": "لا توجد نتائج",
@@ -2871,7 +3040,6 @@
       }
     }
   },
-
   "shiftIsClosed": "الوردية مغلقة",
   "noOpenShiftCurrently": "لا توجد وردية مفتوحة حالياً",
   "shiftIsOpen": "الوردية مفتوحة",
@@ -2893,7 +3061,6 @@
   "withdrawalDone": "تم السحب",
   "amPeriod": "ص",
   "pmPeriod": "م",
-
   "newPurchaseInvoice": "فاتورة شراء جديدة",
   "supplierData": "بيانات المورد",
   "selectSupplierRequired": "اختر المورد *",
@@ -2913,20 +3080,19 @@
       }
     }
   },
-
   "smartReorderAi": "الطلب الذكي بالـ AI",
   "smartReorderDescription": "حدد ميزانيتك ودع الذكاء الاصطناعي يوزع المشتريات بأفضل طريقة",
   "orderSettings": "إعدادات الطلب",
   "availableBudget": "الميزانية المتاحة",
   "enterAvailableAmount": "أدخل المبلغ المتاح للشراء",
-  "supplierLabel": "المورد",
+  "supplierLabel": "المورد: {name}",
   "calculating": "جاري الحساب...",
   "calculateSmartDistribution": "حساب التوزيع الذكي",
   "setBudgetAndCalculate": "حدد الميزانية واضغط حساب",
   "numberOfProducts": "عدد المنتجات",
   "suggestedProducts": "المنتجات المقترحة",
   "sendOrder": "إرسال الطلب",
-  "emailLabel": "البريد",
+  "emailLabel": "البريد الإلكتروني",
   "confirmSending": "تأكيد الإرسال",
   "sendOrderToSupplier": "إرسال الطلب إلى {supplier}؟",
   "@sendOrderToSupplier": {
@@ -2936,7 +3102,7 @@
       }
     }
   },
-  "orderSentSuccess": "تم إرسال الطلب بنجاح",
+  "orderSentSuccess": "تم إرسال الطلب للموزع بنجاح",
   "turnoverRate": "الدوران: {rate}%",
   "@turnoverRate": {
     "placeholders": {
@@ -2945,7 +3111,6 @@
       }
     }
   },
-
   "editSupplier": "تعديل المورد",
   "addNewSupplier": "إضافة مورد جديد",
   "basicInfo": "المعلومات الأساسية",
@@ -2985,7 +3150,6 @@
   "supplierDeletedSuccess": "تم حذف المورد",
   "deleteSupplierConfirmTitle": "حذف المورد",
   "deleteSupplierConfirmMessage": "هل أنت متأكد من حذف هذا المورد؟ لا يمكن التراجع عن هذا الإجراء.",
-
   "supplierDetailsTitle": "تفاصيل المورد",
   "backButton": "رجوع",
   "editButton": "تعديل",
@@ -3004,7 +3168,6 @@
   "pendingLabel": "معلق",
   "deleteSupplierDialogTitle": "حذف المورد",
   "deleteSupplierDialogMessage": "سيتم حذف جميع بيانات المورد. هل تريد المتابعة؟",
-
   "unknownUser": "غير معروف",
   "employeeRole": "موظف",
   "operationCount": "عملية",
@@ -3020,11 +3183,9 @@
   "activityLogLink": "سجل النشاط",
   "logoutButton": "تسجيل الخروج",
   "systemAdminRole": "مدير النظام",
-
   "noBranchesRegistered": "لا توجد فروع مسجلة",
   "branchEmailLabel": "البريد",
   "branchCityLabel": "المدينة",
-
   "importSupplierInvoice": "استيراد فاتورة المورد",
   "captureOrSelectPhoto": "التقط صورة أو اختر من المعرض\nسيتم استخراج البيانات تلقائياً",
   "captureImage": "التقاط صورة",
@@ -3035,7 +3196,6 @@
   "extractingDataWithAi": "يتم استخراج البيانات بالذكاء الاصطناعي",
   "dataExtracted": "تم استخراج البيانات",
   "purchaseInvoiceCreated": "تم إنشاء فاتورة الشراء",
-
   "reviewInvoice": "مراجعة الفاتورة",
   "confirmAllItems": "تأكيد الكل",
   "unknownSupplier": "مورد غير معروف",
@@ -3046,7 +3206,7 @@
       }
     }
   },
-  "itemCount": "{count, plural, =0{لا توجد عناصر} one{عنصر واحد} two{عنصران} few{{count} عناصر} many{{count} عنصراً} other{{count} عنصر}}",
+  "itemCount": "عدد الأصناف: {count}",
   "@itemCount": {
     "placeholders": {
       "count": {
@@ -3088,7 +3248,6 @@
   "createNewProduct": "إنشاء منتج جديد",
   "savingInvoice": "جاري الحفظ...",
   "invoiceSavedSuccess": "تم حفظ فاتورة الشراء بنجاح",
-
   "customerAnalytics": "تحليل العملاء",
   "weekPeriod": "أسبوع",
   "monthPeriod": "شهر",
@@ -3114,7 +3273,6 @@
   "activeLabel": "نشط",
   "dormantLabel": "خامل",
   "inactiveLabel": "غير نشط",
-
   "noPrintJobsPending": "لا توجد مهام طباعة معلقة",
   "printerConnected": "الطابعة متصلة",
   "totalPrintLabel": "إجمالي",
@@ -3143,7 +3301,6 @@
   "clearPrintQueueTitle": "مسح قائمة الطباعة",
   "clearPrintQueueConfirm": "هل تريد مسح جميع مهام الطباعة المعلقة؟",
   "clearBtn": "مسح",
-
   "gotIt": "فهمت",
   "print": "طباعة",
   "display": "عرض",
@@ -3179,7 +3336,7 @@
   "slow": "بطيئة",
   "myGrocery": "بقالتي",
   "cashier": "كاشير",
-  "goBack": "رجوع",
+  "goBack": "العودة",
   "menuLabel": "القائمة",
   "gold": "ذهبي",
   "silver": "فضي",
@@ -3246,14 +3403,19 @@
   "cartIsEmpty": "السلة فارغة",
   "browseProducts": "تصفح المنتجات",
   "noResultsFor": "لم يتم العثور على نتائج لـ \"{query}\"",
-  "@noResultsFor": { "placeholders": { "query": { "type": "String" } } },
+  "@noResultsFor": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
   "paidLabel": "المدفوع",
   "remainingLabel": "المتبقي",
   "completeLabel": "مكتمل ✓",
   "addPayment": "إضافة",
   "payments": "الدفعات",
   "now": "الآن",
-
   "ecommerce": "المتجر الإلكتروني",
   "ecommerceSection": "التجارة الإلكترونية",
   "wallet": "المحفظة",
@@ -3263,11 +3425,8 @@
   "deviceLog": "سجل الأجهزة",
   "shippingGateways": "بوابات الشحن",
   "systemSection": "النظام",
-
-  "cashCustomer": "عميل نقدي",
   "averageInvoice": "متوسط الفاتورة",
-  "errorPrefix": "خطأ: {error}",
-  "customerLabel": "عميل",
+  "errorPrefix": "خطأ: {message}",
   "vipMember": "عضو VIP",
   "activeSuppliers": "موردين نشطين",
   "duePayments": "المستحقات",
@@ -3279,9 +3438,6 @@
   "completedLabel": "مكتمل",
   "pendingStatusLabel": "معلق",
   "registerPayment": "تسجيل دفعة للمورد",
-  "productsLabel": "المنتجات",
-  "addProduct": "إضافة منتج",
-  "totalLabel": "الإجمالي",
   "errorLoadingSuppliers": "خطأ في تحميل الموردين: {error}",
   "cancelLabel": "إلغاء",
   "addLabel": "إضافة",
@@ -3330,7 +3486,7 @@
   "budgetLabel": "الميزانية",
   "monthlyBudgetLabel": "الميزانية الشهرية",
   "categoryNameHint": "مثال: رواتب الموظفين",
-  "productNameLabel": "اسم المنتج *",
+  "productNameLabel": "اسم المنتج",
   "quantityLabel": "الكمية",
   "purchasePriceLabel": "سعر الشراء",
   "saveInvoiceBtn": "حفظ الفاتورة",
@@ -3342,13 +3498,10 @@
   "savingLabel": "جاري الحفظ...",
   "supplierDetailTitle": "تفاصيل المورد",
   "supplierNotFoundMsg": "لم يتم العثور على المورد",
-  "totalPurchasesLabel": "إجمالي المشتريات",
   "lastPurchaseLabel": "آخر عملية شراء",
   "recentPurchasesLabel": "آخر المشتريات",
   "noPurchasesLabel": "لا توجد مشتريات بعد",
-  "sarCurrency": "ر.س",
   "supplierAddedMsg": "تم إضافة المورد",
-
   "openingCashLabel": "النقدية الافتتاحية",
   "importantNotes": "ملاحظات مهمة",
   "countCashBeforeShift": "تأكد من عد النقدية في الصندوق قبل فتح الوردية",
@@ -3356,7 +3509,16 @@
   "oneShiftAtATime": "لا يمكن فتح أكثر من وردية في نفس الوقت",
   "pleaseEnterOpeningCash": "يرجى إدخال مبلغ النقدية الافتتاحية (أكبر من صفر)",
   "shiftOpenedWithAmount": "تم فتح الوردية بمبلغ {amount} {currency}",
-  "@shiftOpenedWithAmount": { "placeholders": { "amount": { "type": "String" }, "currency": { "type": "String" } } },
+  "@shiftOpenedWithAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
   "errorOpeningShift": "خطأ في فتح الوردية",
   "noOpenShift": "لا توجد وردية مفتوحة",
   "shiftInfoLabel": "معلومات الوردية",
@@ -3370,14 +3532,50 @@
   "surplusStatus": "فائض",
   "deficitStatus": "عجز",
   "expectedAmountCurrency": "المتوقع: {amount} {currency}",
-  "@expectedAmountCurrency": { "placeholders": { "amount": { "type": "String" }, "currency": { "type": "String" } } },
+  "@expectedAmountCurrency": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
   "actualAmountCurrency": "الفعلي: {amount} {currency}",
-  "@actualAmountCurrency": { "placeholders": { "amount": { "type": "String" }, "currency": { "type": "String" } } },
+  "@actualAmountCurrency": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
   "drawerMatchedMessage": "الصندوق متطابق",
   "surplusAmount": "فائض: +{amount} {currency}",
-  "@surplusAmount": { "placeholders": { "amount": { "type": "String" }, "currency": { "type": "String" } } },
+  "@surplusAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
   "deficitAmount": "عجز: {amount} {currency}",
-  "@deficitAmount": { "placeholders": { "amount": { "type": "String" }, "currency": { "type": "String" } } },
+  "@deficitAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
   "confirmCloseShift": "هل تريد إغلاق الوردية؟",
   "errorClosingShift": "خطأ في إغلاق الوردية",
   "shiftClosedSuccessfully": "تم إغلاق الوردية بنجاح",
@@ -3395,23 +3593,45 @@
   "sharingInProgress": "جاري المشاركة...",
   "openNewShift": "فتح وردية جديدة",
   "hoursAndMinutes": "{hours} ساعات {minutes} دقيقة",
-  "@hoursAndMinutes": { "placeholders": { "hours": { "type": "int" }, "minutes": { "type": "int" } } },
+  "@hoursAndMinutes": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
   "hoursOnly": "{hours} ساعات",
-  "@hoursOnly": { "placeholders": { "hours": { "type": "int" } } },
+  "@hoursOnly": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
   "minutesOnly": "{minutes} دقيقة",
-  "@minutesOnly": { "placeholders": { "minutes": { "type": "int" } } },
-  "amPeriod": "ص",
-  "pmPeriod": "م",
+  "@minutesOnly": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
   "rejectedNotApproved": "تم رفض العملية - لم تتم الموافقة",
   "errorWithDetails": "خطأ: {error}",
-  "@errorWithDetails": { "placeholders": { "error": { "type": "String" } } },
-
+  "@errorWithDetails": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "inventoryManagement": "إدارة ومتابعة المخزون",
   "bulkEdit": "تعديل جماعي",
   "totalProducts": "إجمالي المنتجات",
   "inventoryValue": "قيمة المخزون",
-  "stockStatus": "حالة المخزون",
-  "quickActions": "إجراءات سريعة",
   "exportInventoryReport": "تصدير تقرير المخزون",
   "printOrderList": "طباعة قائمة الطلب",
   "inventoryMovementLog": "سجل حركة المخزون",
@@ -3420,51 +3640,34 @@
   "noOutOfStockProducts": "لا يوجد منتجات نفذت",
   "allProductsAvailable": "جميع المنتجات متوفرة في المخزون",
   "editStock": "تعديل المخزون",
-  "currentQuantity": "الكمية الحالية",
   "newQuantity": "الكمية الجديدة",
-  "adjustmentReason": "سبب التعديل",
-  "receiveGoods": "استلام بضاعة",
+  "receiveGoods": "استلام البضاعة",
   "damaged": "تالف",
-  "returned": "مرتجع",
   "correction": "تصحيح",
   "stockUpdatedTo": "تم تعديل مخزون",
   "featureUnderDevelopment": "هذه الميزة قيد التطوير...",
-  "noBarcode": "بدون باركود",
   "newest": "الأحدث",
-
   "adjustStock": "تعديل المخزون",
   "adjustmentHistory": "سجل التعديلات",
   "errorLoadingProducts": "حدث خطأ أثناء تحميل المنتجات",
   "selectProduct": "اختيار المنتج",
-  "currentStock": "المخزون الحالي",
-  "adjustmentType": "نوع التعديل",
-  "add": "إضافة",
   "subtract": "خصم",
   "setQuantity": "تعيين",
   "enterQuantity": "أدخل الكمية",
   "enterValidQuantity": "أدخل كمية صحيحة",
-  "unit": "وحدة",
   "notesOptional": "ملاحظات (اختياري)",
   "enterAdditionalNotes": "أدخل أي ملاحظات إضافية...",
   "adjustmentSummary": "ملخص التعديل",
   "newStock": "المخزون الجديد",
   "warningNegativeStock": "تحذير: المخزون سيصبح سالباً!",
   "saving": "جاري الحفظ...",
-  "saveAdjustment": "حفظ التعديل",
-  "medium": "متوسط",
-  "good": "جيد",
   "storeNotSelected": "لم يتم تحديد المتجر",
   "noInventoryMovements": "لا توجد حركات مخزون",
   "adjustmentSavedSuccess": "تم حفظ التعديل بنجاح",
   "errorSaving": "حدث خطأ أثناء الحفظ",
   "enterBarcode": "أدخل الباركود",
-  "productNotFound": "لم يتم العثور على المنتج",
-  "expired": "منتهي الصلاحية",
   "theft": "سرقة",
-  "noProducts": "لا توجد منتجات",
   "noMatchingProducts": "لا توجد منتجات مطابقة",
-  "stock": "المخزون",
-
   "stockTransfer": "تحويل المخزون",
   "newTransfer": "تحويل جديد",
   "fromBranch": "من فرع",
@@ -3476,11 +3679,8 @@
   "createTransferRequest": "إنشاء طلب التحويل",
   "errorLoadingTransfers": "خطأ في تحميل التحويلات",
   "noPreviousTransfers": "لا توجد تحويلات سابقة",
-  "completed": "مكتمل",
-  "cancelled": "ملغي",
   "approved": "موافق عليه",
   "inTransit": "قيد النقل",
-  "pending": "معلق",
   "complete": "إكمال",
   "completeTransfer": "إكمال التحويل",
   "completeTransferConfirm": "هل تريد إكمال هذا التحويل؟ سيتم خصم الكميات من الفرع المصدر وإضافتها للفرع الهدف.",
@@ -3488,16 +3688,11 @@
   "errorCompletingTransfer": "خطأ في إكمال التحويل",
   "transferCreatedSuccess": "تم إنشاء طلب التحويل بنجاح",
   "errorCreatingTransfer": "خطأ في إنشاء التحويل",
-
   "stockTake": "الجرد",
   "startStockTake": "بدء الجرد",
-  "total": "إجمالي",
   "counted": "تم عدها",
   "variances": "فروقات",
-  "yes": "نعم",
-  "no": "لا",
   "of_": "من",
-  "product": "منتج",
   "system": "النظام",
   "count": "العدد",
   "finishStockTake": "إنهاء الجرد",
@@ -3512,23 +3707,24 @@
   "errorLoadingHistory": "خطأ في تحميل السجل",
   "noStockTakeHistory": "لا يوجد سجل جرد سابق",
   "inProgress": "قيد التنفيذ",
-
   "expiryTracking": "تتبع الصلاحية",
   "errorLoadingExpiryData": "خطأ في تحميل بيانات الصلاحية",
   "withinMonth": "خلال شهر",
   "noProductsExpiringIn7Days": "لا توجد منتجات تنتهي خلال 7 أيام",
   "noProductsExpiringInMonth": "لا توجد منتجات تنتهي خلال شهر",
   "noExpiredProducts": "لا توجد منتجات منتهية الصلاحية",
-  "addProduct": "إضافة منتج",
   "batch": "باتش",
   "expiredSinceDays": "منتهي منذ {days} يوم",
-  "@expiredSinceDays": { "placeholders": { "days": { "type": "int" } } },
-  "expiryDate": "تاريخ الانتهاء",
-  "discount": "خصم",
+  "@expiredSinceDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
   "remove": "إزالة",
   "pressToAddExpiryTracking": "اضغط + لإضافة تتبع صلاحية جديد",
   "applyDiscountTo": "تطبيق خصم على",
-  "comingSoon": "قريباً",
   "confirmRemoval": "تأكيد الإزالة",
   "removeExpiryTrackingFor": "هل تريد إزالة تتبع صلاحية",
   "expiryTrackingRemoved": "تم إزالة تتبع الصلاحية",
@@ -3539,7 +3735,6 @@
   "batchNumberOptional": "رقم الباتش (اختياري)",
   "expiryTrackingAdded": "تم إضافة تتبع الصلاحية بنجاح",
   "errorAddingExpiryTracking": "خطأ في إضافة تتبع الصلاحية",
-
   "barcodeScanner2": "ماسح الباركود",
   "scanning": "جاري المسح...",
   "pressToStart": "اضغط للبدء",
@@ -3548,9 +3743,6 @@
   "enterBarcodeManually": "أدخل الباركود يدوياً",
   "noScannedProducts": "لم يتم مسح أي منتج",
   "enterBarcodeToSearch": "أدخل باركود للبحث في قاعدة البيانات",
-  "barcode": "الباركود",
-  "clearAll": "مسح الكل",
-  "addToCart": "إضافة للسلة",
   "useManualInputToSearch": "استخدم الإدخال اليدوي للبحث عن المنتجات",
   "found": "تم العثور على",
   "productNotFoundForBarcode": "لم يتم العثور على المنتج",
@@ -3558,7 +3750,6 @@
   "willOpenAddProductScreen": "سيتم فتح شاشة إضافة منتج جديد",
   "scanHistory": "سجل المسح",
   "addedToCart": "تمت إضافة",
-
   "barcodePrint": "طباعة الباركود",
   "noProductsWithBarcode": "لا توجد منتجات بباركود",
   "addBarcodeFirst": "أضف باركود للمنتجات أولاً",
@@ -3569,54 +3760,116 @@
   "selectProductsToPrint": "اختر منتجات للطباعة",
   "willPrint": "سيتم طباعة",
   "label": "ملصق",
-  "print": "طباعة",
   "printing": "جاري الطباعة...",
-
   "messageAddedToQueue": "تم إضافة الرسالة لطابور الإرسال",
   "messageSendFailed": "تعذر إرسال الرسالة",
   "noPhoneForCustomer": "لا يوجد رقم هاتف للعميل",
   "inputContainsDangerousContent": "المدخل يحتوي على محتوى غير مسموح",
   "whatsappGreeting": "مرحباً {name}\nكيف يمكننا مساعدتك؟",
-  "@whatsappGreeting": { "placeholders": { "name": { "type": "String" } } },
-
+  "@whatsappGreeting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "segmentVip": "VIP",
   "segmentRegular": "منتظم",
   "segmentAtRisk": "معرض للخسارة",
   "segmentLost": "مفقود",
   "segmentNewCustomer": "جديد",
   "customerCount": "{count} عميل",
-  "@customerCount": { "placeholders": { "count": { "type": "int" } } },
+  "@customerCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "revenueK": "{amount}K ر.س",
-  "@revenueK": { "placeholders": { "amount": { "type": "String" } } },
+  "@revenueK": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "tabRecommendations": "التوصيات",
   "tabRepurchase": "إعادة الشراء",
   "tabSegments": "الشرائح",
   "lastVisitLabel": "آخر زيارة: {time}",
-  "@lastVisitLabel": { "placeholders": { "time": { "type": "String" } } },
+  "@lastVisitLabel": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "visitCountLabel": "{count} زيارة",
-  "@visitCountLabel": { "placeholders": { "count": { "type": "int" } } },
+  "@visitCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "avgSpendLabel": "متوسط: {amount} ر.س",
-  "@avgSpendLabel": { "placeholders": { "amount": { "type": "String" } } },
+  "@avgSpendLabel": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "totalSpentLabel": "إجمالي: {amount}K ر.س",
-  "@totalSpentLabel": { "placeholders": { "amount": { "type": "String" } } },
+  "@totalSpentLabel": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "recommendedProducts": "المنتجات الموصى بها",
   "sendWhatsAppOffer": "إرسال عرض واتساب",
   "totalRevenueLabel": "إجمالي الإيراد",
   "avgSpendStat": "متوسط الإنفاق",
   "amountSar": "{amount} ر.س",
-  "@amountSar": { "placeholders": { "amount": { "type": "String" } } },
+  "@amountSar": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "specialOfferMissYou": "عرض خاص لك! اشتقنا لزيارتك",
   "friendlyReminderPurchase": "تذكير ودي بموعد شراء {product}",
-  "@friendlyReminderPurchase": { "placeholders": { "product": { "type": "String" } } },
+  "@friendlyReminderPurchase": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      }
+    }
+  },
   "timeAgoToday": "اليوم",
   "timeAgoYesterday": "أمس",
   "timeAgoDays": "منذ {days} يوم",
-  "@timeAgoDays": { "placeholders": { "days": { "type": "int" } } },
-
+  "@timeAgoDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
   "riskAnalysisTab": "تحليل المخاطر",
   "preventiveActionsTab": "إجراءات وقائية",
   "errorOccurredDetail": "حدث خطأ: {error}",
-  "@errorOccurredDetail": { "placeholders": { "error": { "type": "String" } } },
+  "@errorOccurredDetail": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "returnRateTitle": "معدل الإرجاع",
   "avgLast6Months": "متوسط آخر 6 أشهر",
   "amountAtRiskTitle": "مبلغ معرض للخطر",
@@ -3624,7 +3877,13 @@
   "needsImmediateAction": "تحتاج تدخل فوري",
   "returnTrendTitle": "اتجاه المرتجعات",
   "operationsAtRiskCount": "العمليات المعرضة للإرجاع ({count})",
-  "@operationsAtRiskCount": { "placeholders": { "count": { "type": "int" } } },
+  "@operationsAtRiskCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "riskFilterAll": "الكل",
   "riskFilterVeryHigh": "عالي جداً",
   "riskFilterHigh": "عالي",
@@ -3632,14 +3891,31 @@
   "riskFilterLow": "منخفض",
   "totalExpectedSavings": "إجمالي التوفير المتوقع",
   "fromPreventiveActions": "من {count} إجراء وقائي",
-  "@fromPreventiveActions": { "placeholders": { "count": { "type": "int" } } },
+  "@fromPreventiveActions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "suggestedPreventiveActions": "الإجراءات الوقائية المقترحة",
   "applyPreventiveHint": "طبّق هذه الإجراءات لتقليل المرتجعات وزيادة رضا العملاء",
   "actionApplied": "تم تطبيق: {action}",
-  "@actionApplied": { "placeholders": { "action": { "type": "String" } } },
+  "@actionApplied": {
+    "placeholders": {
+      "action": {
+        "type": "String"
+      }
+    }
+  },
   "actionDismissed": "تم تجاهل: {action}",
-  "@actionDismissed": { "placeholders": { "action": { "type": "String" } } },
-
+  "@actionDismissed": {
+    "placeholders": {
+      "action": {
+        "type": "String"
+      }
+    }
+  },
   "veryPositiveSentiment": "إيجابي جداً",
   "positiveSentiment": "إيجابي",
   "neutralSentiment": "محايد",
@@ -3649,20 +3925,42 @@
   "sentimentTrendTitle": "اتجاه المشاعر",
   "sentimentIndicator": "مؤشر المشاعر",
   "minutesAgoSentiment": "منذ {count} دقيقة",
-  "@minutesAgoSentiment": { "placeholders": { "count": { "type": "int" } } },
+  "@minutesAgoSentiment": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "hoursAgoSentiment": "منذ {count} ساعة",
-  "@hoursAgoSentiment": { "placeholders": { "count": { "type": "int" } } },
+  "@hoursAgoSentiment": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "daysAgoSentiment": "منذ {count} يوم",
-  "@daysAgoSentiment": { "placeholders": { "count": { "type": "int" } } },
-
+  "@daysAgoSentiment": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "totalProductsTitle": "إجمالي المنتجات",
   "categoryATitle": "فئة أ",
   "mostImportant": "الأكثر أهمية",
-  "nearExpiry": "قرب الانتهاء",
   "withinDays": "خلال 7 أيام",
   "needReorder": "بحاجة لطلب",
   "estimatedLossSar": "{amount} ر.س خسائر متوقعة",
-  "@estimatedLossSar": { "placeholders": { "amount": { "type": "String" } } },
+  "@estimatedLossSar": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "tabAbcAnalysis": "تحليل ABC",
   "tabWastePrediction": "توقع الهدر",
   "tabReorder": "إعادة الطلب",
@@ -3671,7 +3969,16 @@
   "categoryBLabel": "فئة ب",
   "categoryCLabel": "فئة ج",
   "orderUnitsSnack": "طلب {qty} وحدة من {name}",
-  "@orderUnitsSnack": { "placeholders": { "qty": { "type": "int" }, "name": { "type": "String" } } },
+  "@orderUnitsSnack": {
+    "placeholders": {
+      "qty": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "urgencyCritical": "حرج",
   "urgencyHigh": "عالي",
   "urgencyMedium": "متوسط",
@@ -3681,17 +3988,40 @@
   "suggestedQtyLabel": "الكمية المقترحة",
   "daysOfStockLabel": "أيام المخزون",
   "estimatedCostLabel": "التكلفة التقديرية: {amount} ر.س",
-  "@estimatedCostLabel": { "placeholders": { "amount": { "type": "String" } } },
+  "@estimatedCostLabel": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "purchaseOrderCreatedFor": "تم إنشاء طلب شراء: {name}",
-  "@purchaseOrderCreatedFor": { "placeholders": { "name": { "type": "String" } } },
+  "@purchaseOrderCreatedFor": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "orderUnitsButton": "طلب {qty} وحدة",
-  "@orderUnitsButton": { "placeholders": { "qty": { "type": "int" } } },
+  "@orderUnitsButton": {
+    "placeholders": {
+      "qty": {
+        "type": "int"
+      }
+    }
+  },
   "actionDiscount": "تخفيض",
   "actionTransfer": "نقل",
   "actionDonate": "تبرع",
   "actionOnProduct": "إجراء على: {name}",
-  "@actionOnProduct": { "placeholders": { "name": { "type": "String" } } },
-
+  "@actionOnProduct": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "totalSuggestionsLabel": "إجمالي الاقتراحات",
   "canIncreaseLabel": "يمكن زيادتها",
   "shouldDecreaseLabel": "يُنصح بخفضها",
@@ -3700,10 +4030,24 @@
   "selectProductForDetails": "اختر منتجاً لعرض التفاصيل",
   "selectProductHint": "انقر على أحد المنتجات من القائمة لعرض حاسبة التأثير ومرونة الطلب",
   "priceApplied": "تم تطبيق السعر {price} ر.س على {product}",
-  "@priceApplied": { "placeholders": { "price": { "type": "String" }, "product": { "type": "String" } } },
+  "@priceApplied": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      },
+      "product": {
+        "type": "String"
+      }
+    }
+  },
   "errorOccurredShort": "حدث خطأ: {error}",
-  "@errorOccurredShort": { "placeholders": { "error": { "type": "String" } } },
-
+  "@errorOccurredShort": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "readyTemplates": "القوالب الجاهزة",
   "hideTemplates": "إخفاء القوالب",
   "showTemplates": "عرض القوالب",
@@ -3713,7 +4057,6 @@
   "quickActionTop10": "أفضل 10 منتجات",
   "quickActionMonthlyCompare": "مقارنة شهرية",
   "analyzingData": "جاري تحليل البيانات وتوليد التقرير...",
-
   "profileScreenTitle": "الملف الشخصي",
   "unknownUserName": "غير معروف",
   "defaultEmployeeRole": "موظف",
@@ -3724,10 +4067,8 @@
   "branchFieldLabel": "الفرع",
   "mainBranchName": "الفرع الرئيسي",
   "employeeNumberLabel": "الرقم الوظيفي",
-  "securitySection": "الأمان",
   "changePasswordLabel": "تغيير كلمة المرور",
   "activityLogLabel": "سجل النشاط",
-  "logoutButton": "تسجيل الخروج",
   "logoutDialogTitle": "تسجيل الخروج",
   "logoutDialogBody": "هل تريد تسجيل الخروج من النظام؟",
   "cancelButton": "إلغاء",
@@ -3738,8 +4079,6 @@
   "roleManager": "مدير",
   "roleCashier": "كاشير",
   "roleEmployee": "موظف",
-  "personalInfoSection": "المعلومات الشخصية",
-
   "onboardingTitle1": "نقطة بيع سريعة",
   "onboardingDesc1": "أتمم عمليات البيع بسرعة وسهولة مع واجهة بسيطة ومريحة",
   "onboardingTitle2": "العمل بدون إنترنت",
@@ -3749,7 +4088,6 @@
   "onboardingTitle4": "تقارير ذكية",
   "onboardingDesc4": "احصل على تقارير مفصلة وتحليلات لأداء متجرك",
   "startNow": "ابدأ الآن",
-
   "favorites": "المفضلة",
   "editMode": "تعديل",
   "doneMode": "تم",
@@ -3758,24 +4096,32 @@
   "addFavoritesFromProducts": "أضف منتجات للمفضلة من شاشة المنتجات",
   "tapProductToAddToCart": "اضغط على المنتج لإضافته للسلة",
   "addedProductToCart": "تمت إضافة {name} للسلة",
-  "@addedProductToCart": { "placeholders": { "name": { "type": "String" } } },
+  "@addedProductToCart": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "addToCartAction": "إضافة للسلة",
   "removeFromFavorites": "إزالة من المفضلة",
   "removedProductFromFavorites": "تمت إزالة {name} من المفضلة",
-  "@removedProductFromFavorites": { "placeholders": { "name": { "type": "String" } } },
-
+  "@removedProductFromFavorites": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "paymentMethodTitle": "طريقة الدفع",
   "backEsc": "رجوع (Esc)",
   "completePayment": "إتمام الدفع",
   "enterToConfirm": "Enter للتأكيد",
   "cashOnlyOffline": "نقد فقط في وضع عدم الاتصال",
   "cardsDisabledInSettings": "البطاقات معطلة من الاعدادات",
-  "cashPayment": "نقدا",
-  "cardPayment": "بطاقة",
   "creditPayment": "آجل",
   "unavailableOffline": "غير متاح بدون اتصال",
   "disabledInSettings": "معطل من الاعدادات",
-  "unavailable": "غير متاح",
   "amountReceived": "المبلغ المستلم",
   "quickAmounts": "مبالغ سريعة",
   "requiredAmount": "المبلغ المطلوب",
@@ -3787,14 +4133,12 @@
   "creditSale": "البيع الآجل",
   "creditSaleWarning": "سيتم تسجيل هذا المبلغ كدين على العميل. تأكد من تحديد العميل قبل إتمام العملية.",
   "orderSummary": "ملخص الطلب",
-  "subtotalLabel": "المجموع الفرعي",
   "taxLabel": "الضريبة (15%)",
-  "discountLabel": "الخصم",
+  "discountLabel": "نسبة الخصم: {value}%",
   "payCash": "الدفع نقداً",
   "payCard": "الدفع بالبطاقة",
   "payCreditSale": "البيع الآجل",
   "confirmPayment": "تأكيد الدفع",
-  "cancelAction": "إلغاء",
   "processingPayment": "جاري معالجة الدفع...",
   "pleaseWait": "يرجى الانتظار",
   "paymentSuccessful": "تمت العملية بنجاح!",
@@ -3802,39 +4146,46 @@
   "whatsappReceipt": "إيصال واتساب",
   "storeOrUserNotSet": "لم يتم تحديد المتجر أو المستخدم",
   "errorWithMessage": "خطأ: {message}",
-  "@errorWithMessage": { "placeholders": { "message": { "type": "String" } } },
-
+  "@errorWithMessage": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
   "receiptTitle": "الإيصال",
   "invoiceNotSpecified": "لم يتم تحديد رقم الفاتورة",
-  "invoiceNotFound": "الفاتورة غير موجودة",
   "pendingSync": "في انتظار المزامنة",
-  "simplifiedTaxInvoice": "فاتورة ضريبية مبسطة",
   "notSynced": "غير مزامنة",
   "receiptNumberLabel": "رقم: {number}",
-  "@receiptNumberLabel": { "placeholders": { "number": { "type": "String" } } },
+  "@receiptNumberLabel": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
   "itemColumnHeader": "الصنف",
-  "quantityLabel": "الكمية",
-  "totalLabel": "المجموع",
-  "vatLabel": "ضريبة القيمة المضافة (15%)",
-  "totalAmount": "الإجمالي",
+  "totalAmount": "الإجمالي: {amount} ر.س",
   "paymentMethodField": "طريقة الدفع",
   "zatcaQrCode": "رمز ZATCA الضريبي",
-  "includesVat15": "يشمل ضريبة القيمة المضافة 15%",
-  "printAction": "طباعة",
-  "whatsappSentLabel": "تم الإرسال \u2713",
+  "whatsappSentLabel": "تم الإرسال ✓",
   "whatsappLabel": "واتساب",
-  "whatsappReceiptSent": "تم إرسال الإيصال عبر واتساب \u2713",
+  "whatsappReceiptSent": "تم إرسال الإيصال عبر واتساب ✓",
   "whatsappSendFailed": "فشل الإرسال: {error}",
-  "@whatsappSendFailed": { "placeholders": { "error": { "type": "String" } } },
+  "@whatsappSendFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "cannotPrintNoInvoice": "لا يمكن الطباعة - رقم الفاتورة غير متوفر",
   "invoiceAddedToPrintQueue": "تمت إضافة الفاتورة لقائمة الطباعة",
-  "cashMethod": "نقداً",
-  "cardMethod": "بطاقة",
   "mixedMethod": "مختلط",
   "creditMethod": "آجل",
   "walletMethod": "محفظة",
   "bankTransferMethod": "تحويل بنكي",
-
   "scanBarcodeHint": "امسح الباركود أو أدخله (F1)",
   "openCamera": "فتح الكاميرا",
   "searchProductHint": "بحث عن منتج (F2)",
@@ -3852,20 +4203,32 @@
   "payActionLabel": "الدفع",
   "f12QuickPay": "F12 للدفع السريع",
   "productNotFoundBarcode": "لم يتم العثور على منتج بالباركود: {barcode}",
-  "@productNotFoundBarcode": { "placeholders": { "barcode": { "type": "String" } } },
+  "@productNotFoundBarcode": {
+    "placeholders": {
+      "barcode": {
+        "type": "String"
+      }
+    }
+  },
   "clearCartTitle": "مسح السلة",
   "clearCartMessage": "هل تريد مسح جميع المنتجات من السلة؟",
   "orderOnHold": "تم تعليق الطلب",
   "deleteItem": "حذف",
   "itemsCountPrice": "{count} عنصر - {price} ر.س",
-  "@itemsCountPrice": { "placeholders": { "count": { "type": "int" }, "price": { "type": "String" } } },
-
+  "@itemsCountPrice": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "price": {
+        "type": "String"
+      }
+    }
+  },
   "taxReportTitle": "تقرير الضرائب",
   "exportReportAction": "تصدير التقرير",
   "printReportAction": "طباعة التقرير",
-  "monthly": "شهري",
   "quarterly": "ربع سنوي",
-  "yearly": "سنوي",
   "netTaxDue": "صافي الضريبة المستحقة",
   "salesTaxCollected": "ضريبة المبيعات",
   "salesTaxSubtitle": "المحصلة",
@@ -3873,12 +4236,16 @@
   "purchasesTaxSubtitle": "المدفوعة",
   "taxByPaymentMethod": "الضريبة حسب طريقة الدفع",
   "invoiceCount": "{count} فاتورة",
-  "@invoiceCount": { "placeholders": { "count": { "type": "int" } } },
+  "@invoiceCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "taxDetailsTitle": "تفاصيل الضريبة",
-  "totalSales": "إجمالي المبيعات",
   "taxableSales": "المبيعات الخاضعة للضريبة",
   "salesTax15": "ضريبة المبيعات (15%)",
-  "totalPurchases": "إجمالي المشتريات",
   "taxablePurchases": "المشتريات الخاضعة للضريبة",
   "purchasesTax15": "ضريبة المشتريات (15%)",
   "netTax": "صافي الضريبة",
@@ -3890,9 +4257,7 @@
   "cardPaymentMethod": "بطاقة",
   "mixedPaymentMethod": "مختلط",
   "creditPaymentMethod": "آجل",
-
   "vatReportTitle": "تقرير الضريبة (VAT)",
-  "exportPdf": "تصدير PDF",
   "selectPeriod": "اختر الفترة",
   "salesVat": "ضريبة المبيعات",
   "totalSalesIncVat": "إجمالي المبيعات (شامل الضريبة)",
@@ -3904,93 +4269,146 @@
   "dueToAuthority": "مستحق للهيئة",
   "dueFromAuthority": "مستحق من الهيئة",
   "exportingPdfReport": "جاري تصدير التقرير...",
-
   "debtsReportTitle": "تقرير الديون",
-  "sortLabel": "ترتيب",
-  "sortByAmount": "حسب المبلغ",
-  "sortByName": "حسب الاسم",
   "sortByLastPayment": "حسب آخر دفعة",
-  "shareAction": "مشاركة",
-  "totalDebts": "إجمالي الديون",
   "customersCount": "عدد العملاء",
   "noOutstandingDebts": "لا توجد ديون مستحقة",
   "lastUpdate": "آخر تحديث: {date}",
-  "@lastUpdate": { "placeholders": { "date": { "type": "String" } } },
-  "recordPayment": "تسجيل دفعة",
-  "recordPaymentFor": "تسجيل دفعة - {name}",
-  "@recordPaymentFor": { "placeholders": { "name": { "type": "String" } } },
+  "@lastUpdate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
   "paymentAmountField": "مبلغ الدفعة",
-  "currentDebt": "الدين الحالي: {amount} ر.س",
-  "@currentDebt": { "placeholders": { "amount": { "type": "String" } } },
   "recordAction": "تسجيل",
   "paymentRecordedMsg": "تم تسجيل الدفعة",
   "showDetails": "عرض تفاصيل: {name}",
-  "@showDetails": { "placeholders": { "name": { "type": "String" } } },
+  "@showDetails": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "debtsReportPdf": "تقرير الديون",
   "dateFieldLabel": "التاريخ: {date}",
-  "@dateFieldLabel": { "placeholders": { "date": { "type": "String" } } },
+  "@dateFieldLabel": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
   "debtsDetails": "تفاصيل الديون:",
   "customerCol": "العميل",
   "phoneCol": "الهاتف",
-  "amountCol": "المبلغ",
-
   "refundReceiptTitle": "إيصال الإرجاع",
   "noRefundId": "لا يوجد معرّف إرجاع",
   "refundNotFound": "لم يتم العثور على بيانات الإرجاع",
   "refundSuccessful": "تم الإرجاع بنجاح",
   "refundNumberLabel": "رقم الإرجاع: {number}",
-  "@refundNumberLabel": { "placeholders": { "number": { "type": "String" } } },
+  "@refundNumberLabel": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
   "refundReceipt": "إيصال إرجاع",
   "originalInvoiceNumber": "رقم الفاتورة الأصلية",
   "refundDate": "تاريخ الإرجاع",
-  "cashierLabel": "الكاشير",
   "refundMethodField": "طريقة الاسترداد",
   "returnedProducts": "المنتجات المرتجعة",
   "totalRefund": "إجمالي الإرجاع",
   "reasonLabel": "السبب",
-  "notesLabel": "ملاحظات",
   "homeAction": "الرئيسية",
   "printError": "خطأ في الطباعة: {error}",
-  "@printError": { "placeholders": { "error": { "type": "String" } } },
+  "@printError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "damagedProduct": "منتج تالف",
   "wrongOrder": "خطأ في الطلب",
   "customerChangedMind": "تغيير رأي العميل",
-  "expiredProduct": "منتج منتهي الصلاحية",
+  "expiredProduct": "منتهي الصلاحية",
   "unsatisfactoryQuality": "جودة غير مرضية",
-  "otherReason": "سبب آخر",
   "cashRefundMethod": "نقدي",
   "cardRefundMethod": "بطاقة",
   "walletRefundMethod": "محفظة",
-
   "refundReasonTitle": "سبب الإرجاع",
   "noRefundData": "لا توجد بيانات إرجاع. يرجى العودة واختيار المنتجات.",
   "invoiceFieldLabel": "فاتورة: {receiptNo}",
-  "@invoiceFieldLabel": { "placeholders": { "receiptNo": { "type": "String" } } },
+  "@invoiceFieldLabel": {
+    "placeholders": {
+      "receiptNo": {
+        "type": "String"
+      }
+    }
+  },
   "productsCountAmount": "{count} منتج - {amount} ر.س",
-  "@productsCountAmount": { "placeholders": { "count": { "type": "int" }, "amount": { "type": "String" } } },
+  "@productsCountAmount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "selectRefundReason": "اختر سبب الإرجاع",
   "additionalNotesOptional": "ملاحظات إضافية (اختياري)",
   "addNotesHint": "أضف أي ملاحظات إضافية...",
   "processingAction": "جاري المعالجة...",
   "nextSupervisorApproval": "التالي - موافقة المشرف",
   "refundCreationError": "خطأ في إنشاء الإرجاع: {error}",
-  "@refundCreationError": { "placeholders": { "error": { "type": "String" } } },
-
+  "@refundCreationError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "refundRequestTitle": "طلب إرجاع",
   "invoiceNumberHint": "رقم الفاتورة",
   "searchAction": "بحث",
   "selectProductsForRefund": "اختر المنتجات للإرجاع",
   "selectAll": "تحديد الكل",
   "quantityTimesPrice": "الكمية: {qty} × {price} ر.س",
-  "@quantityTimesPrice": { "placeholders": { "qty": { "type": "int" }, "price": { "type": "String" } } },
+  "@quantityTimesPrice": {
+    "placeholders": {
+      "qty": {
+        "type": "int"
+      },
+      "price": {
+        "type": "String"
+      }
+    }
+  },
   "productsSelected": "{count} منتج محدد",
-  "@productsSelected": { "placeholders": { "count": { "type": "int" } } },
+  "@productsSelected": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "refundAmountValue": "المبلغ: {amount} ر.س",
-  "@refundAmountValue": { "placeholders": { "amount": { "type": "String" } } },
+  "@refundAmountValue": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "nextAction": "التالي",
   "enterInvoiceToSearch": "أدخل رقم الفاتورة للبحث",
   "invoiceNotFoundMsg": "لم يتم العثور على الفاتورة",
-
   "shippingGatewaysTitle": "بوابات الشحن",
   "availableShippingGateways": "بوابات الشحن المتاحة",
   "activateShippingGateways": "قم بتفعيل وإعداد بوابات الشحن لتوصيل الطلبات",
@@ -4004,12 +4422,17 @@
   "customDeliveryName": "توصيل خاص",
   "customDeliveryDesc": "إدارة التوصيل بسائقيك الخاصين",
   "settingsAction": "إعدادات",
-
   "hourlyView": "ساعي",
   "dailyView": "يومي",
   "peakHourLabel": "ساعة الذروة",
   "transactionsWithCount": "{count} معاملة",
-  "@transactionsWithCount": { "placeholders": { "count": { "type": "int" } } },
+  "@transactionsWithCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "peakDayLabel": "يوم الذروة",
   "avgPerHour": "متوسط/ساعة",
   "transactionWord": "معاملة",
@@ -4027,7 +4450,6 @@
   "inventoryRecommendationDesc": "تجهيز المخزون قبل يومي الخميس والجمعة (أعلى أيام المبيعات)",
   "shiftsRecommendation": "الورديات",
   "shiftsRecommendationDesc": "توزيع الورديات: صباحية 8-15، مسائية 15-22 مع تداخل في الذروة",
-
   "topProductsTab": "أفضل المنتجات",
   "byCategoryTab": "حسب الفئة",
   "performanceAnalysisTab": "تحليل الأداء",
@@ -4056,38 +4478,67 @@
   "stableProducts": "منتجات مستقرة",
   "trendingDownProducts": "منتجات متراجعة",
   "noSalesProducts": "منتجات بدون مبيعات ({count})",
-  "@noSalesProducts": { "placeholders": { "count": { "type": "int" } } },
+  "@noSalesProducts": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "inStockCount": "{count} في المخزون",
-  "@inStockCount": { "placeholders": { "count": { "type": "int" } } },
+  "@inStockCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "slowMovingLabel": "بطيء",
   "needsReorder": "تحتاج إعادة طلب ({count})",
-  "@needsReorder": { "placeholders": { "count": { "type": "int" } } },
+  "@needsReorder": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "soldUnitsStock": "بيع: {sold} وحدة | مخزون: {stock}",
-  "@soldUnitsStock": { "placeholders": { "sold": { "type": "int" }, "stock": { "type": "int" } } },
+  "@soldUnitsStock": {
+    "placeholders": {
+      "sold": {
+        "type": "int"
+      },
+      "stock": {
+        "type": "int"
+      }
+    }
+  },
   "reorderLabel": "أعد الطلب",
-
   "totalComplaintsLabel": "إجمالي الشكاوى",
   "openComplaints": "مفتوحة",
   "closedComplaints": "مغلقة",
   "avgResolutionTime": "متوسط وقت الحل",
   "daysUnit": "{count} يوم",
-  "@daysUnit": { "placeholders": { "count": { "type": "String" } } },
+  "@daysUnit": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "fromDate": "من تاريخ",
   "toDate": "إلى تاريخ",
   "statusFilter": "الحالة",
-  "allFilter": "الكل",
   "departmentFilter": "القسم",
   "paymentDepartment": "الدفع",
   "technicalDepartment": "تقني",
   "otherDepartment": "أخرى",
   "noComplaintsRecorded": "لم يتم تسجيل أي شكاوى حتى الآن",
-
   "overviewTab": "نظرة عامة",
   "topCustomersTab": "أفضل العملاء",
   "growthAnalysisTab": "تحليل النمو",
   "loyaltyTab": "الولاء",
   "totalCustomersLabel": "إجمالي العملاء",
-  "newCustomersLabel": "عملاء جدد",
   "activeCustomersLabel": "عملاء نشطين",
   "avgOrderValueLabel": "متوسط قيمة الطلب",
   "tierDistribution": "توزيع العملاء حسب المستوى",
@@ -4097,12 +4548,24 @@
   "activeCustomersLast30": "عملاء نشطين (آخر 30 يوم)",
   "newCustomersLast30": "عملاء جدد (آخر 30 يوم)",
   "topCustomersTitle": "أفضل {count} عملاء",
-  "@topCustomersTitle": { "placeholders": { "count": { "type": "int" } } },
+  "@topCustomersTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "bySpending": "حسب الإنفاق",
   "byOrders": "حسب الطلبات",
   "byPoints": "حسب النقاط",
   "ordersCount": "{count} طلب",
-  "@ordersCount": { "placeholders": { "count": { "type": "int" } } },
+  "@ordersCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "avgOrderStat": "متوسط الطلب",
   "loyaltyPointsStat": "نقاط الولاء",
   "lastOrderStat": "آخر طلب",
@@ -4120,7 +4583,6 @@
   "month3": "شهر 3",
   "loyaltyProgramStats": "إحصائيات برنامج الولاء",
   "totalPointsGranted": "إجمالي النقاط الممنوحة",
-  "pointsRedeemed": "النقاط المستبدلة",
   "remainingPoints": "النقاط المتبقية",
   "pointsValue": "قيمة النقاط",
   "pointsByTier": "توزيع النقاط حسب المستوى",
@@ -4135,12 +4597,25 @@
   "bronzeTier": "برونزي",
   "todayDate": "اليوم",
   "yesterdayDate": "أمس",
-  "daysAgo": "{count, plural, one{منذ يوم} two{منذ يومين} few{منذ {count} أيام} many{منذ {count} يوماً} other{منذ {count} يوم}}",
-  "@daysAgo": { "placeholders": { "count": { "type": "int" } } },
   "daysCountLabel": "{count} يوم",
-  "@daysCountLabel": { "placeholders": { "count": { "type": "int" } } },
+  "@daysCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "ofTotalLabel": "{active} من {total}",
-  "@ofTotalLabel": { "placeholders": { "active": { "type": "String" }, "total": { "type": "String" } } },
+  "@ofTotalLabel": {
+    "placeholders": {
+      "active": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
   "exportingReportMsg": "جاري تصدير التقرير...",
   "januaryMonth": "يناير",
   "februaryMonth": "فبراير",
@@ -4149,7 +4624,13 @@
   "mayMonth": "مايو",
   "juneMonth": "يونيو",
   "errorLabel": "خطأ: {error}",
-  "@errorLabel": { "placeholders": { "error": { "type": "String" } } },
+  "@errorLabel": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "saturdayDay": "السبت",
   "sundayDay": "الأحد",
   "mondayDay": "الاثنين",
@@ -4167,9 +4648,6 @@
   "errorLoadingVatReport": "حدث خطأ في تحميل تقرير الضريبة",
   "errorLoadingComplaints": "حدث خطأ في تحميل الشكاوى",
   "errorLoadingCustomerReport": "حدث خطأ في تحميل تقرير العملاء",
-  "printError": "خطأ في الطباعة: {error}",
-  "@printError": { "placeholders": { "error": { "type": "String" } } },
-
   "reprintReceipt": "إعادة طباعة الفاتورة",
   "searchByInvoiceOrCustomer": "بحث برقم الفاتورة أو اسم العميل...",
   "selectInvoiceToPrint": "اختر فاتورة لإعادة الطباعة",
@@ -4197,50 +4675,113 @@
   "orderBeingPrepared": "سيتم تحضير طلبك في أقرب وقت ممكن",
   "redirectingToHome": "سيتم الانتقال للصفحة الرئيسية تلقائياً...",
   "kioskOrderNote": "طلب كشك",
-  "pricePerUnit": "{price} ر.س للوحدة",
-  "@pricePerUnit": { "placeholders": { "price": { "type": "String" } } },
-  "itemCount": "{count, plural, =0{لا توجد عناصر} one{عنصر واحد} two{عنصران} few{{count} عناصر} many{{count} عنصراً} other{{count} عنصر}}",
-  "@itemCount": { "placeholders": { "count": { "type": "int" } } },
+  "pricePerUnit": "{price} ر.س/وحدة",
+  "@pricePerUnit": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
   "selectFromMenu": "اختر من القائمة",
   "orderCartWithCount": "سلة الطلب ({count} صنف)",
-  "@orderCartWithCount": { "placeholders": { "count": { "type": "int" } } },
+  "@orderCartWithCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "amountWithSar": "{amount} ر.س",
-  "@amountWithSar": { "placeholders": { "amount": { "type": "String" } } },
+  "@amountWithSar": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "qtyTimesPrice": "{qty} × {price} ر.س",
-  "@qtyTimesPrice": { "placeholders": { "qty": { "type": "int" }, "price": { "type": "String" } } },
+  "@qtyTimesPrice": {
+    "placeholders": {
+      "qty": {
+        "type": "int"
+      },
+      "price": {
+        "type": "String"
+      }
+    }
+  },
   "applyCoupon": "تطبيق كوبون",
   "enterCouponCode": "أدخل كود الكوبون",
   "invalidCoupon": "كوبون غير صالح أو غير موجود",
   "couponExpired": "انتهت صلاحية الكوبون",
   "minimumPurchaseRequired": "الحد الأدنى {amount} ريال",
-  "@minimumPurchaseRequired": { "placeholders": { "amount": { "type": "String" } } },
+  "@minimumPurchaseRequired": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "couponDiscountApplied": "تم خصم {amount} ريال",
-  "@couponDiscountApplied": { "placeholders": { "amount": { "type": "String" } } },
+  "@couponDiscountApplied": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "couponInvalid": "كوبون غير صالح",
-  "noteLabel": "ملاحظة",
-  "customerAddedSuccess": "تم إضافة {name}",
-  "@customerAddedSuccess": { "placeholders": { "name": { "type": "String" } } },
+  "@customerAddedSuccess": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "customerAddFailed": "فشل في إضافة العميل",
   "quantityColon": "الكمية:",
   "riyal": "ريال",
   "mobileNumber": "رقم الجوال",
   "banknotes": "أوراق نقدية",
   "coins": "عملات معدنية",
-  "resetAction": "إعادة تعيين",
   "totalAmountLabel": "إجمالي المبلغ",
   "denominationRiyal": "{amount} ريال",
-  "@denominationRiyal": { "placeholders": { "amount": { "type": "String" } } },
+  "@denominationRiyal": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "denominationHalala": "{amount} هللة",
-  "@denominationHalala": { "placeholders": { "amount": { "type": "String" } } },
+  "@denominationHalala": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "countCurrency": "عد العملات",
   "confirmAmountSar": "تأكيد: {amount} ر.س",
-  "@confirmAmountSar": { "placeholders": { "amount": { "type": "String" } } },
+  "@confirmAmountSar": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "amountRiyal": "{amount} ريال",
-  "@amountRiyal": { "placeholders": { "amount": { "type": "String" } } },
+  "@amountRiyal": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "itemDeletedMsg": "تم الحذف",
   "pressBackAgainToExit": "اضغط مرة أخرى للخروج",
   "deleteHeldInvoiceConfirm": "حذف هذه الفاتورة المعلقة؟",
-
   "clearSearch": "مسح البحث",
   "addCustomer": "إضافة عميل",
   "noInvoices": "لا توجد فواتير",
@@ -4263,7 +4804,6 @@
   "errorServerError": "خطأ في الخادم",
   "errorServerConnectionFailed": "حدث خطأ أثناء الاتصال بالخادم",
   "errorUnexpectedError": "حدث خطأ غير متوقع",
-
   "customerGroups": "مجموعات العملاء",
   "allCustomersGroup": "كل العملاء",
   "vipCustomersGroup": "عملاء VIP",
@@ -4274,13 +4814,16 @@
   "haveDebts": "لديهم ديون",
   "inactive90Days": "غير نشطين (90+ يوم)",
   "customerCountLabel": "{count} عميل",
-  "@customerCountLabel": { "placeholders": { "count": { "type": "int" } } },
+  "@customerCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "selectGroupToViewCustomers": "اختر مجموعة لعرض العملاء",
   "noCustomersInGroup": "لا يوجد عملاء في هذه المجموعة",
   "debtWord": "دين",
-  "amountSar": "{amount} ر.س",
-  "@amountSar": { "placeholders": { "amount": { "type": "String" } } },
-
   "employeeProfile": "ملف الموظف",
   "employeeNotFound": "الموظف غير موجود",
   "profileTab": "الملف",
@@ -4288,7 +4831,6 @@
   "shiftsTab": "الورديات",
   "permissionsTab2": "الصلاحيات",
   "mobilePhone": "الجوال",
-  "emailLabel": "البريد الإلكتروني",
   "joinDate": "تاريخ الانضمام",
   "lastLogin": "آخر دخول",
   "neverLoggedIn": "لم يدخل بعد",
@@ -4302,17 +4844,42 @@
   "invoiceCountLabel2": "عدد الفواتير",
   "hourlySalesDistribution": "توزيع المبيعات بالساعة",
   "shiftOpenTime": "فتح: {time}",
-  "@shiftOpenTime": { "placeholders": { "time": { "type": "String" } } },
+  "@shiftOpenTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "shiftCloseTime": "إغلاق: {time}",
-  "@shiftCloseTime": { "placeholders": { "time": { "type": "String" } } },
+  "@shiftCloseTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "hoursMinutes": "{hours}س {minutes}د",
-  "@hoursMinutes": { "placeholders": { "hours": { "type": "int" }, "minutes": { "type": "int" } } },
+  "@hoursMinutes": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
   "shiftOpenStatus": "مفتوح",
   "invoiceCountWithNum": "{count} فاتورة",
-  "@invoiceCountWithNum": { "placeholders": { "count": { "type": "int" } } },
+  "@invoiceCountWithNum": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "permissionsSaved": "تم حفظ الصلاحيات",
-  "errorWithMessage": "خطأ: {message}",
-  "@errorWithMessage": { "placeholders": { "message": { "type": "String" } } },
   "jobRole": "الدور الوظيفي",
   "manageProducts": "إدارة المنتجات",
   "viewReports": "عرض التقارير",
@@ -4323,14 +4890,25 @@
   "deactivateAccount": "تعطيل الحساب",
   "activateAccount": "تفعيل الحساب",
   "confirmDeactivateAccount": "هل تريد تعطيل حساب {name}؟",
-  "@confirmDeactivateAccount": { "placeholders": { "name": { "type": "String" } } },
+  "@confirmDeactivateAccount": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "confirmActivateAccount": "هل تريد تفعيل حساب {name}؟",
-  "@confirmActivateAccount": { "placeholders": { "name": { "type": "String" } } },
+  "@confirmActivateAccount": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "deactivate": "تعطيل",
   "activate": "تفعيل",
   "accountActivated": "تم تفعيل الحساب",
   "accountDeactivated": "تم تعطيل الحساب",
-
   "employeeAttendance": "حضور وانصراف الموظفين",
   "presentLabel": "حاضر",
   "absentLabel": "غائب",
@@ -4339,14 +4917,27 @@
   "lateCount": "متأخر",
   "totalEmployees": "إجمالي الموظفين",
   "noAttendanceRecordsForDay": "لا يوجد سجلات حضور ليوم {day}/{month}",
-  "@noAttendanceRecordsForDay": { "placeholders": { "day": { "type": "int" }, "month": { "type": "int" } } },
+  "@noAttendanceRecordsForDay": {
+    "placeholders": {
+      "day": {
+        "type": "int"
+      },
+      "month": {
+        "type": "int"
+      }
+    }
+  },
   "workingNow": "يعمل الآن",
-
   "loyaltyTierCustomizeHint": "يمكنك تخصيص مستويات برنامج الولاء وتحديد النقاط والمزايا لكل مستوى.",
   "memberCount": "{count} عضو",
-  "@memberCount": { "placeholders": { "count": { "type": "int" } } },
+  "@memberCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "pointsRequired": "النقاط المطلوبة",
-  "pointsUnit": "نقطة",
   "discountPercentage": "نسبة الخصم",
   "pointsMultiplier": "مضاعف النقاط",
   "addTier": "إضافة مستوى",
@@ -4355,90 +4946,138 @@
   "nameEnglish": "Name (English)",
   "minPoints": "الحد الأدنى من النقاط",
   "maxPointsHint": "الحد الأقصى (اتركه فارغاً = غير محدود)",
-  "discountLabel": "نسبة الخصم: {value}%",
-  "@discountLabel": { "placeholders": { "value": { "type": "String" } } },
+  "@discountLabel": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
   "multiplierLabel": "مضاعف النقاط: {value}x",
-  "@multiplierLabel": { "placeholders": { "value": { "type": "String" } } },
+  "@multiplierLabel": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
   "tierBenefits": "مزايا مستوى {tier}",
-  "@tierBenefits": { "placeholders": { "tier": { "type": "String" } } },
+  "@tierBenefits": {
+    "placeholders": {
+      "tier": {
+        "type": "String"
+      }
+    }
+  },
   "discountOnPurchases": "• خصم {value}% على المشتريات",
-  "@discountOnPurchases": { "placeholders": { "value": { "type": "String" } } },
+  "@discountOnPurchases": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
   "pointsPerPurchase": "• {value}x نقاط على كل عملية شراء",
-  "@pointsPerPurchase": { "placeholders": { "value": { "type": "String" } } },
-
+  "@pointsPerPurchase": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
   "whatsappManagement": "إدارة WhatsApp",
   "messageQueue": "قائمة الانتظار",
   "templates": "القوالب",
-  "pendingStatus": "انتظار",
   "sentStatus": "مُرسل",
   "failedStatus": "فشل",
   "noMessages": "لا توجد رسائل",
   "retrySend": "إعادة الإرسال",
   "requeuedMessage": "تمت إعادة الإرسال إلى قائمة الانتظار",
   "templateCount": "{count} قالب",
-  "@templateCount": { "placeholders": { "count": { "type": "int" } } },
+  "@templateCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "newTemplate": "قالب جديد",
   "editTemplate": "تعديل القالب",
   "templateName": "اسم القالب",
   "messageText": "نص الرسالة",
   "templateVariablesHint": "استخدم {store_name} {customer_name} {total} كمتغيرات",
-  "activeStatus": "نشط",
-  "disabledStatus": "معطّل",
   "apiSettings": "إعدادات API",
   "apiKey": "مفتاح API",
-  "testConnection": "اختبار الاتصال",
   "testingConnection": "جاري اختبار الاتصال...",
   "sendSettings": "إعدادات الإرسال",
   "autoSend": "الإرسال التلقائي",
   "autoSendDescription": "إرسال الرسائل تلقائياً بعد كل عملية",
   "dailyMessageLimit": "الحد اليومي للرسائل",
   "messagesPerDay": "{count} رسالة/يوم",
-  "@messagesPerDay": { "placeholders": { "count": { "type": "int" } } },
-  "saveSettings": "حفظ الإعدادات",
-  "settingsSaved": "تم حفظ الإعدادات",
+  "@messagesPerDay": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "salesInvoiceTemplate": "فاتورة البيع",
   "debtReminderTemplate": "تذكير الدين",
   "newCustomerWelcomeTemplate": "ترحيب بالعميل الجديد",
-
   "supplierReturns": "مرتجعات المشتريات",
-  "storeNotSelected": "لم يتم تحديد المتجر",
   "addItemForReturn": "إضافة صنف للإرجاع",
   "itemName": "اسم الصنف",
-  "quantityLabel": "الكمية",
   "unitPrice": "سعر الوحدة",
   "sarSuffix": "ر.س",
-  "pleaseSelectSupplier": "يرجى اختيار المورد",
   "pleaseAddItems": "يرجى إضافة أصناف للإرجاع",
-  "confirmReturn": "تأكيد الإرجاع",
-  "supplierLabel": "المورد: {name}",
-  "@supplierLabel": { "placeholders": { "name": { "type": "String" } } },
-  "itemCount": "عدد الأصناف: {count}",
-  "@itemCount": { "placeholders": { "count": { "type": "int" } } },
-  "totalAmount": "الإجمالي: {amount} ر.س",
-  "@totalAmount": { "placeholders": { "amount": { "type": "String" } } },
+  "@supplierLabel": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@totalAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "creditNoteWillBeRecorded": "سيتم تسجيل إشعار خصم وتعديل المخزون.",
   "issueCreditNote": "إصدار إشعار خصم",
   "returnRecordedSuccess": "تم تسجيل المرتجع بنجاح - إشعار خصم: {amount} ر.س",
-  "@returnRecordedSuccess": { "placeholders": { "amount": { "type": "String" } } },
-  "errorPrefix": "خطأ: {message}",
-  "@errorPrefix": { "placeholders": { "message": { "type": "String" } } },
-  "retryAction": "إعادة المحاولة",
+  "@returnRecordedSuccess": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "@errorPrefix": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
   "selectSupplier": "اختر المورد",
-  "returnReason": "سبب الإرجاع",
   "damagedDefective": "تالف / معيب",
   "wrongItem": "صنف خاطئ",
-  "expiredProduct": "منتهي الصلاحية",
   "overstockExcess": "فائض عن الحاجة",
-  "otherReason": "سبب آخر",
-  "returnedItems": "الأصناف المرتجعة",
   "addItem": "إضافة صنف",
   "noItemsAddedYet": "لم تتم إضافة أصناف بعد",
   "notes": "ملاحظات",
   "additionalNotesHint": "أي ملاحظات إضافية...",
   "totalReturn": "إجمالي المرتجع",
   "issueCreditNoteWithAmount": "إصدار إشعار خصم ({amount} ر.س)",
-  "@issueCreditNoteWithAmount": { "placeholders": { "amount": { "type": "String" } } },
-
+  "@issueCreditNoteWithAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "deliveryZones": "مناطق التوصيل",
   "addDeliveryZone": "إضافة منطقة",
   "editDeliveryZone": "تعديل منطقة التوصيل",
@@ -4462,21 +5101,31 @@
   "addDeliveryZonesDescription": "أضف مناطق التوصيل لتحديد أسعار ونطاقات التوصيل",
   "deliveryTime": "وقت التوصيل",
   "minuteAbbr": "د",
-
   "giftCards": "بطاقات الهدايا",
   "redeemCard": "صرف بطاقة",
   "issueGiftCard": "إصدار بطاقة هدية",
   "cardValue": "قيمة البطاقة (ر.س)",
-  "validityDays": "صلاحية (أيام)",
   "giftCardIssued": "تم إصدار بطاقة هدية بقيمة {amount} ر.س",
-  "@giftCardIssued": { "placeholders": { "amount": { "type": "String" } } },
+  "@giftCardIssued": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "issueCard": "إصدار البطاقة",
   "redeemGiftCard": "صرف بطاقة هدية",
   "cardCode": "كود البطاقة",
   "noCardWithCode": "لا توجد بطاقة بهذا الكود",
   "cardBalanceZero": "رصيد البطاقة صفر",
   "cardBalance": "رصيد البطاقة: {amount} ر.س",
-  "@cardBalance": { "placeholders": { "amount": { "type": "String" } } },
+  "@cardBalance": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "verify": "تحقق",
   "cardsTab": "البطاقات",
   "statisticsTab": "الإحصائيات",
@@ -4495,30 +5144,51 @@
   "giftCardStatusFullyUsed": "مستخدمة بالكامل",
   "giftCardStatusExpired": "منتهية الصلاحية",
   "balanceDisplay": "الرصيد: {balance}/{total} ر.س",
-  "@balanceDisplay": { "placeholders": { "balance": { "type": "String" }, "total": { "type": "String" } } },
+  "@balanceDisplay": {
+    "placeholders": {
+      "balance": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
   "expiresOn": "ينتهي: {date}",
-  "@expiresOn": { "placeholders": { "date": { "type": "String" } } },
-
+  "@expiresOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
   "onlineOrders": "الطلبات الإلكترونية",
-  "statusAll": "الكل",
   "statusNew": "جديد",
   "statusPreparing": "قيد التجهيز",
   "statusReady": "جاهز",
   "statusShipped": "تم الشحن",
   "statusDelivered": "تم التسليم",
-  "statusCancelled": "ملغي",
   "statusReadyForPickup": "جاهز للاستلام",
   "nextStatusAcceptOrder": "قبول الطلب",
   "nextStatusReady": "جاهز",
   "nextStatusShipped": "تم الشحن",
   "nextStatusDelivered": "تم التسليم",
   "timeAgoMinutes": "منذ {minutes} دقيقة",
-  "@timeAgoMinutes": { "placeholders": { "minutes": { "type": "int" } } },
+  "@timeAgoMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
   "timeAgoHours": "منذ {hours} ساعة",
-  "@timeAgoHours": { "placeholders": { "hours": { "type": "int" } } },
-  "timeAgoDays": "منذ {days} يوم",
-  "@timeAgoDays": { "placeholders": { "days": { "type": "int" } } },
-
+  "@timeAgoHours": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
   "damagedAndLostGoods": "البضاعة التالفة والمفقودة",
   "damagedDefectiveShort": "تالف / معيب",
   "expiredShort": "منتهي الصلاحية",
@@ -4526,24 +5196,22 @@
   "wasteBreakage": "هدر / كسر",
   "unknownProduct": "منتج غير محدد",
   "recordDamagedGoods": "تسجيل بضاعة تالفة",
-  "productNameLabel": "اسم المنتج",
   "costPerUnit": "التكلفة/وحدة",
   "lossType": "نوع الخسارة",
-  "recordAction": "تسجيل",
   "damagedGoodsRecorded": "تم تسجيل البضاعة التالفة بنجاح",
-  "thisWeek": "هذا الأسبوع",
-  "thisMonth": "هذا الشهر",
-  "thisYear": "هذه السنة",
   "periodLabel": "الفترة",
   "totalLosses": "إجمالي الخسائر",
   "noDamagedGoods": "لا توجد بضاعة تالفة",
   "noDamagedGoodsInPeriod": "لا توجد بضاعة تالفة في هذه الفترة",
   "recordDamagedGoodsFab": "تسجيل بضاعة تالفة",
   "quantityWithValue": "الكمية: {qty}",
-  "@quantityWithValue": { "placeholders": { "qty": { "type": "String" } } },
-  "amountSar": "{amount} ر.س",
-  "@amountSar": { "placeholders": { "amount": { "type": "String" } } },
-
+  "@quantityWithValue": {
+    "placeholders": {
+      "qty": {
+        "type": "String"
+      }
+    }
+  },
   "purchaseDetails": "تفاصيل طلب الشراء",
   "purchaseNotFound": "لم يتم العثور على طلب الشراء",
   "backToList": "العودة للقائمة",
@@ -4554,86 +5222,139 @@
   "statusCompleted": "مكتمل",
   "supplierInfoLabel": "المورد",
   "dateLabel": "التاريخ",
-  "totalLabel": "الإجمالي",
-  "notesLabel": "ملاحظات",
   "orderTimeline": "مسار الطلب",
   "actionsLabel": "الإجراءات",
   "sendToDistributor": "إرسال للموزع",
   "awaitingDistributorResponse": "في انتظار رد الموزع",
-  "receiveGoods": "استلام البضاعة",
   "goodsReceived": "تم استلام البضاعة",
   "orderItems": "أصناف الطلب",
   "itemCountLabel": "{count} صنف",
-  "@itemCountLabel": { "placeholders": { "count": { "type": "int" } } },
+  "@itemCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "productColumn": "المنتج",
   "quantityColumn": "الكمية",
   "receivedColumn": "المستلم",
   "unitPriceColumn": "سعر الوحدة",
   "totalColumn": "الإجمالي",
   "quantityInfo": "الكمية: {qty}  |  المستلم: {received}  |  {price} ر.س",
-  "@quantityInfo": { "placeholders": { "qty": { "type": "int" }, "received": { "type": "int" }, "price": { "type": "String" } } },
-
+  "@quantityInfo": {
+    "placeholders": {
+      "qty": {
+        "type": "int"
+      },
+      "received": {
+        "type": "int"
+      },
+      "price": {
+        "type": "String"
+      }
+    }
+  },
   "receivingGoods": "استلام البضاعة",
   "unsavedChanges": "تغييرات غير محفوظة",
   "leaveWithoutSaving": "هل تريد المغادرة بدون حفظ التغييرات؟",
   "leave": "مغادرة",
-  "goBack": "العودة",
   "receivingGoodsTitle": "استلام البضاعة - {number}",
-  "@receivingGoodsTitle": { "placeholders": { "number": { "type": "String" } } },
+  "@receivingGoodsTitle": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
   "orderData": "بيانات الطلب",
-  "orderNumber": "رقم الطلب",
   "receivedItems": "الأصناف المستلمة",
   "orderedQty": "الطلب: {qty}",
-  "@orderedQty": { "placeholders": { "qty": { "type": "int" } } },
+  "@orderedQty": {
+    "placeholders": {
+      "qty": {
+        "type": "int"
+      }
+    }
+  },
   "receivedQtyLabel": "المستلم",
-  "pricePerUnit": "{price} ر.س/وحدة",
-  "@pricePerUnit": { "placeholders": { "price": { "type": "String" } } },
   "receivingInfo": "بيانات الاستلام",
   "receiverName": "اسم المستلم *",
   "receivingNotes": "ملاحظات الاستلام",
   "confirmingReceipt": "جاري التأكيد...",
   "confirmReceipt": "تأكيد الاستلام",
-
   "purchaseOrders": "طلبات الشراء",
   "statusApprovedShort": "موافق",
-  "newPurchaseOrder": "طلب شراء جديد",
   "orderNumberColumn": "رقم الطلب",
   "statusColumn": "الحالة",
   "noPurchaseOrders": "لا توجد طلبات شراء",
   "createPurchaseToStart": "أنشئ طلب شراء جديد للبدء",
-  "createPurchaseOrder": "إنشاء طلب شراء",
   "errorLoadingData": "حدث خطأ في تحميل البيانات",
-
   "sendToDistributorTitle": "إرسال الطلب للموزع",
   "orderInfo": "معلومات الطلب",
   "currentSupplier": "المورد الحالي",
-  "unspecified": "غير محدد",
   "itemsSummary": "ملخص الأصناف",
   "distributorSupplier": "الموزع / المورد",
   "additionalMessage": "رسالة إضافية",
   "addNotesForDistributor": "أضف ملاحظات أو رسالة للموزع...",
   "sending": "جاري الإرسال...",
   "pleaseSelectDistributor": "يرجى اختيار الموزع",
-  "orderSentSuccess": "تم إرسال الطلب للموزع بنجاح",
   "errorSendingOrder": "خطأ في إرسال الطلب: {message}",
-  "@errorSendingOrder": { "placeholders": { "message": { "type": "String" } } },
-
+  "@errorSendingOrder": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
   "employeeCommissions": "عمولات الموظفين",
   "totalDueCommissions": "إجمالي العمولات المستحقة",
   "forEmployees": "لـ {count} موظف",
-  "@forEmployees": { "placeholders": { "count": { "type": "int" } } },
+  "@forEmployees": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "noCommissions": "لا توجد عمولات",
   "noSalesInPeriod": "لا توجد مبيعات في هذه الفترة",
   "invoicesSales": "{count} فاتورة - مبيعات: {amount} ر.س",
-  "@invoicesSales": { "placeholders": { "count": { "type": "int" }, "amount": { "type": "String" } } },
+  "@invoicesSales": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "commissionLabel": "عمولة",
   "targetLabel": "الهدف: {amount} ر.س",
-  "@targetLabel": { "placeholders": { "amount": { "type": "String" } } },
+  "@targetLabel": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "achievedPercent": "{percent}% مُحقق",
-  "@achievedPercent": { "placeholders": { "percent": { "type": "String" } } },
+  "@achievedPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
   "commissionRate": "نسبة العمولة: {percent}%",
-  "@commissionRate": { "placeholders": { "percent": { "type": "String" } } },
-
+  "@commissionRate": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
   "priceLists": "قوائم الأسعار",
   "retailPrice": "سعر التجزئة",
   "retailPriceDesc": "السعر العادي للعملاء الأفراد",
@@ -4644,25 +5365,74 @@
   "costPriceList": "سعر التكلفة",
   "costPriceDesc": "للاستخدام الداخلي فقط",
   "editPrice": "تعديل السعر - {name}",
-  "@editPrice": { "placeholders": { "name": { "type": "String" } } },
+  "@editPrice": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "basePriceLabel": "السعر الأساسي: {price} ر.س",
-  "@basePriceLabel": { "placeholders": { "price": { "type": "String" } } },
+  "@basePriceLabel": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
   "costPriceLabel": "سعر التكلفة: {price} ر.س",
-  "@costPriceLabel": { "placeholders": { "price": { "type": "String" } } },
+  "@costPriceLabel": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
   "newPriceLabel": "السعر الجديد ({listName})",
-  "@newPriceLabel": { "placeholders": { "listName": { "type": "String" } } },
-  "save": "حفظ",
+  "@newPriceLabel": {
+    "placeholders": {
+      "listName": {
+        "type": "String"
+      }
+    }
+  },
   "priceUpdated": "تم تحديث سعر \"{name}\" إلى {price} ر.س",
-  "@priceUpdated": { "placeholders": { "name": { "type": "String" }, "price": { "type": "String" } } },
+  "@priceUpdated": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "price": {
+        "type": "String"
+      }
+    }
+  },
   "productCount": "{count} منتج",
-  "@productCount": { "placeholders": { "count": { "type": "int" } } },
+  "@productCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "baseLabel": "أساسي: {price} ر.س",
-  "@baseLabel": { "placeholders": { "price": { "type": "String" } } },
-
+  "@baseLabel": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
   "errorLoadingHeldInvoices": "خطأ في تحميل الفواتير المعلقة",
   "saleSaveFailed": "فشل حفظ البيع",
   "errorSavingSaleMessage": "حدث خطأ أثناء حفظ عملية البيع. السلة لم تُمسح.\n\n{error}",
-  "@errorSavingSaleMessage": { "placeholders": { "error": { "type": "String" } } },
+  "@errorSavingSaleMessage": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "ok": "حسناً",
   "invoiceNote": "ملاحظة على الفاتورة",
   "addNoteHint": "أضف ملاحظة...",
@@ -4674,7 +5444,13 @@
   "quickNoteReservation": "حجز",
   "enterPhoneNumber": "أدخل رقم الجوال",
   "whatsappSendError": "تعذر إرسال واتساب: {error}",
-  "@whatsappSendError": { "placeholders": { "error": { "type": "String" } } },
+  "@whatsappSendError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "sendReceiptViaWhatsapp": "إرسال الفاتورة عبر واتساب",
   "invoiceNumberTitle": "رقم الفاتورة",
   "amountPaidTitle": "المبلغ المدفوع",
@@ -4691,8 +5467,6 @@
   "completePaymentLabel": "إتمام الدفع",
   "receivedAmountLabel": "المبلغ المستلم",
   "sarPrefix": "ر.س ",
-  "amountSar": "{amount} ر.س",
-  "@amountSar": { "placeholders": { "amount": { "type": "String" } } },
   "selectCustomerLabel": "اختر العميل",
   "currentBalanceTitle": "الرصيد الحالي",
   "creditLimitTitle": "حد الائتمان",
@@ -4701,7 +5475,13 @@
   "selectCustomerFirstButton": "اختر العميل أولاً",
   "splitPaymentTitle": "الدفع المقسم",
   "splitPaymentDone": "دفع مقسم ✅ ({count} طرق)",
-  "@splitPaymentDone": { "placeholders": { "count": { "type": "int" } } },
+  "@splitPaymentDone": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "splitPaymentLabel": "دفع مقسم",
   "addPaymentEntry": "إضافة دفعة",
   "confirmSplitPayment": "تأكيد الدفع",
@@ -4711,50 +5491,161 @@
   "bestSellingPress19": "الأكثر مبيعاً (اضغط 1-9)",
   "quickSearchHintFull": "بحث سريع (اسم / كود / باركود)...",
   "noResultsForQuery": "لا توجد نتائج لـ \"{query}\"",
-  "@noResultsForQuery": { "placeholders": { "query": { "type": "String" } } },
+  "@noResultsForQuery": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
   "addQtyToCart": "إضافة {qty} للسلة",
-  "@addQtyToCart": { "placeholders": { "qty": { "type": "int" } } },
+  "@addQtyToCart": {
+    "placeholders": {
+      "qty": {
+        "type": "int"
+      }
+    }
+  },
   "availableStock": "المتوفر: {qty}",
-  "@availableStock": { "placeholders": { "qty": { "type": "String" } } },
+  "@availableStock": {
+    "placeholders": {
+      "qty": {
+        "type": "String"
+      }
+    }
+  },
   "priceSar": "{price} ر.س",
-  "@priceSar": { "placeholders": { "price": { "type": "String" } } },
+  "@priceSar": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
   "loyaltyPointsDiscountLabel": "خصم نقاط الولاء ({points} نقطة)",
-  "@loyaltyPointsDiscountLabel": { "placeholders": { "points": { "type": "int" } } },
+  "@loyaltyPointsDiscountLabel": {
+    "placeholders": {
+      "points": {
+        "type": "int"
+      }
+    }
+  },
   "pointsRedemptionInvoice": "استبدال نقاط - فاتورة {id}",
-  "@pointsRedemptionInvoice": { "placeholders": { "id": { "type": "String" } } },
+  "@pointsRedemptionInvoice": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
   "pointsEarnedInvoice": "نقاط مكتسبة - فاتورة {id}",
-  "@pointsEarnedInvoice": { "placeholders": { "id": { "type": "String" } } },
+  "@pointsEarnedInvoice": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
   "availableLoyaltyPoints": "نقاط الولاء المتاحة: {points} نقطة (تساوي {amount} ريال)",
-  "@availableLoyaltyPoints": { "placeholders": { "points": { "type": "String" }, "amount": { "type": "String" } } },
+  "@availableLoyaltyPoints": {
+    "placeholders": {
+      "points": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "useLoyaltyPoints": "استخدام نقاط الولاء",
   "pointsCountHint": "عدد النقاط (الحد الأقصى {max})",
-  "@pointsCountHint": { "placeholders": { "max": { "type": "String" } } },
+  "@pointsCountHint": {
+    "placeholders": {
+      "max": {
+        "type": "String"
+      }
+    }
+  },
   "pointsUnitLabel": "نقطة",
   "discountAmountSar": "خصم: {amount} ريال",
-  "@discountAmountSar": { "placeholders": { "amount": { "type": "String" } } },
+  "@discountAmountSar": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "allPointsLabel": "كل النقاط",
   "pointsCountLabel": "{count} نقطة",
-  "@pointsCountLabel": { "placeholders": { "count": { "type": "String" } } },
+  "@pointsCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "newOrderNotification": "طلب جديد #{id}",
-  "@newOrderNotification": { "placeholders": { "id": { "type": "String" } } },
+  "@newOrderNotification": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
   "onlineOrdersTooltip": "الطلبات الأونلاين",
   "productCountItems": "{count} منتج",
-  "@productCountItems": { "placeholders": { "count": { "type": "int" } } },
+  "@productCountItems": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "acceptAndPrint": "قبول وطباعة",
   "deliverToDriver": "تسليم للسائق",
   "onTheWayStatus": "في الطريق",
   "driverNameLabel": "السائق: {name}",
-  "@driverNameLabel": { "placeholders": { "name": { "type": "String" } } },
+  "@driverNameLabel": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "deliveredStatus": "تم التسليم",
   "agoMinutes": "منذ {count} دقيقة",
-  "@agoMinutes": { "placeholders": { "count": { "type": "int" } } },
+  "@agoMinutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "agoHours": "منذ {count} ساعة",
-  "@agoHours": { "placeholders": { "count": { "type": "int" } } },
+  "@agoHours": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "moreProductsLabel": "+ {count} منتجات أخرى",
-  "@moreProductsLabel": { "placeholders": { "count": { "type": "int" } } },
+  "@moreProductsLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "onlineOrdersTitle": "الطلبات الأونلاين",
   "pendingOrdersCount": "{count} طلب بانتظار القبول",
-  "@pendingOrdersCount": { "placeholders": { "count": { "type": "int" } } },
+  "@pendingOrdersCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "inPreparationTab": "قيد التجهيز",
   "inDeliveryTab": "في التوصيل",
   "noOrdersMessage": "لا توجد طلبات",
@@ -4763,45 +5654,106 @@
   "rejectOrderConfirm": "هل أنت متأكد من رفض هذا الطلب؟",
   "rejectedBySeller": "رفض من البائع",
   "printingOrderMessage": "طباعة الطلب {id}...",
-  "@printingOrderMessage": { "placeholders": { "id": { "type": "String" } } },
+  "@printingOrderMessage": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
   "selectDriverTitle": "اختر السائق",
   "orderDeliveredToDriver": "تم تسليم الطلب للسائق {name}",
-  "@orderDeliveredToDriver": { "placeholders": { "name": { "type": "String" } } },
+  "@orderDeliveredToDriver": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "walkInCustomerLabel": "عميل عابر",
   "continueWithoutCustomer": "متابعة بدون تحديد عميل",
   "addNewCustomerButton": "إضافة عميل جديد",
   "loyaltyPointsCountLabel": "{count} نقطة",
-  "@loyaltyPointsCountLabel": { "placeholders": { "count": { "type": "String" } } },
+  "@loyaltyPointsCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "customerBalanceAmount": "{amount} ر.س",
-  "@customerBalanceAmount": { "placeholders": { "amount": { "type": "String" } } },
+  "@customerBalanceAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "noResultsFoundTitle": "لا توجد نتائج",
   "tryAnotherSearch": "جرب البحث بكلمة أخرى",
   "selectCustomerTitle": "اختيار عميل",
   "searchByNameOrPhoneHint": "البحث بالاسم أو رقم الهاتف...",
   "quickSaleHold": "بيع سريع {time}",
-  "@quickSaleHold": { "placeholders": { "time": { "type": "String" } } },
+  "@quickSaleHold": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "holdInvoiceTitle": "تعليق الفاتورة",
   "holdInvoiceNameLabel": "اسم الفاتورة المعلقة",
   "holdAction": "تعليق",
   "heldMessage": "تم تعليق: {name}",
-  "@heldMessage": { "placeholders": { "name": { "type": "String" } } },
+  "@heldMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "holdError": "خطأ في التعليق: {error}",
-  "@holdError": { "placeholders": { "error": { "type": "String" } } },
-  "notSpecified": "غير محدد",
+  "@holdError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "storeLabel": "المتجر",
-
   "featureNotAvailableNow": "هذه الميزة غير متاحة حالياً",
   "cancelInvoiceError": "حدث خطأ أثناء إلغاء الفاتورة",
   "invoiceLoadError": "حدث خطأ في تحميل الفاتورة",
   "syncConflicts": "تعارضات المزامنة",
   "itemsNeedReview": "{count} عنصر يحتاج مراجعة",
-  "@itemsNeedReview": { "placeholders": { "count": { "type": "int" } } },
+  "@itemsNeedReview": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "needsAttention": "يحتاج اهتمام",
   "seriousProblems": "مشاكل خطيرة",
   "syncPartialSuccess": "تمت مزامنة {success} عنصر، فشل {failed}",
-  "@syncPartialSuccess": { "placeholders": { "success": { "type": "int" }, "failed": { "type": "int" } } },
+  "@syncPartialSuccess": {
+    "placeholders": {
+      "success": {
+        "type": "int"
+      },
+      "failed": {
+        "type": "int"
+      }
+    }
+  },
   "syncErrorMessage": "خطأ في المزامنة: {error}",
-  "@syncErrorMessage": { "placeholders": { "error": { "type": "String" } } },
+  "@syncErrorMessage": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "networkError": "خطأ في الاتصال بالخادم",
   "dataLoadFailed": "فشل تحميل البيانات",
   "unexpectedError": "حدث خطأ غير متوقع",
@@ -4814,18 +5766,48 @@
   "completedOperations": "عمليات مكتملة",
   "noInternetConnection": "لا يوجد اتصال بالإنترنت",
   "operationsPendingSync": "{count} عملية في انتظار المزامنة",
-  "@operationsPendingSync": { "placeholders": { "count": { "type": "int" } } },
+  "@operationsPendingSync": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "connectionRestored": "تم استعادة الاتصال",
   "connectedLabel": "متصل",
   "disconnectedLabel": "غير متصل",
   "offlineWithPending": "غير متصل - {count} عمليات في الانتظار",
-  "@offlineWithPending": { "placeholders": { "count": { "type": "int" } } },
+  "@offlineWithPending": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "syncingWithCount": "جاري المزامنة... ({count} عمليات)",
-  "@syncingWithCount": { "placeholders": { "count": { "type": "int" } } },
+  "@syncingWithCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "syncErrorWithCount": "خطأ في المزامنة - {count} عمليات معلقة",
-  "@syncErrorWithCount": { "placeholders": { "count": { "type": "int" } } },
+  "@syncErrorWithCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "pendingSyncWithCount": "{count} عمليات في انتظار المزامنة",
-  "@pendingSyncWithCount": { "placeholders": { "count": { "type": "int" } } },
+  "@pendingSyncWithCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "connectedAllSynced": "متصل - كل البيانات مزامنة",
   "dataSavedLocally": "البيانات محفوظة محلياً وستتم مزامنتها عند الاتصال",
   "uploadingData": "يتم رفع البيانات إلى السيرفر...",
@@ -4852,7 +5834,13 @@
   "averageRating": "متوسط التقييم",
   "totalRatings": "إجمالي التقييمات",
   "undoCompleted": "تم التراجع: {description}",
-  "@undoCompleted": { "placeholders": { "description": { "type": "String" } } },
+  "@undoCompleted": {
+    "placeholders": {
+      "description": {
+        "type": "String"
+      }
+    }
+  },
   "payables": "المستحقات",
   "notAvailableLabel": "غير متاح",
   "browseSupplierCatalogNotAvailable": "تصفح كتالوج الموردين - هذه الميزة غير متاحة حالياً",
@@ -4861,11 +5849,15 @@
   "doubleTapToToggle": "انقر مرتين لتغيير الحالة",
   "loadingPleaseWait": "جاري التحميل...",
   "posSystemLabel": "نظام نقطة البيع",
-
   "pageNotFoundTitle": "خطأ",
   "pageNotFoundMessage": "الصفحة غير موجودة: {path}",
-  "@pageNotFoundMessage": { "placeholders": { "path": { "type": "String" } } },
-
+  "@pageNotFoundMessage": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
   "noShipmentsToReceive": "لا توجد شحنات للاستلام",
   "approvedOrdersAppearHere": "ستظهر هنا الطلبات المعتمدة الجاهزة للاستلام",
   "unspecifiedSupplier": "مورد غير محدد",
@@ -4873,16 +5865,31 @@
   "receivingInProgress": "جارٍ الاستلام...",
   "confirmReceivingBtn": "تأكيد الاستلام",
   "orderItemsTitle": "بنود الطلب {number}",
-  "@orderItemsTitle": { "placeholders": { "number": { "type": "String" } } },
-  "productCountItems": "{count} منتج",
-  "@productCountItems": { "placeholders": { "count": { "type": "int" } } },
+  "@orderItemsTitle": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
   "noOrderItems": "لا توجد بنود",
   "confirmReceiveGoodsTitle": "تأكيد استلام البضاعة",
   "confirmReceiveGoodsBody": "هل أنت متأكد من استلام الطلب {number}؟\nسيتم تحديث المخزون تلقائياً.",
-  "@confirmReceiveGoodsBody": { "placeholders": { "number": { "type": "String" } } },
+  "@confirmReceiveGoodsBody": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
   "orderReceivedSuccess": "تم استلام الطلب {number} بنجاح",
-  "@orderReceivedSuccess": { "placeholders": { "number": { "type": "String" } } },
-
+  "@orderReceivedSuccess": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
   "quickPurchaseRequest": "طلب شراء سريع",
   "searchAndAddProducts": "ابحث عن منتجات وأضفها للطلب",
   "requestedProducts": "المنتجات المطلوبة",
@@ -4892,18 +5899,35 @@
   "sendRequestBtn": "إرسال الطلب",
   "validQuantityRequired": "يرجى إدخال كمية صحيحة لجميع المنتجات",
   "requestSentToManager": "تم إرسال الطلب للمدير",
-
   "connectionSuccessMsg": "تم الاتصال بنجاح",
   "connectionFailedMsgErr": "فشل الاتصال: {error}",
-  "@connectionFailedMsgErr": { "placeholders": { "error": { "type": "String" } } },
+  "@connectionFailedMsgErr": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "deviceSavedMsg": "تم حفظ الجهاز",
   "saveErrorMsg": "خطأ في حفظ الإعدادات: {error}",
-  "@saveErrorMsg": { "placeholders": { "error": { "type": "String" } } },
+  "@saveErrorMsg": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "addPaymentDeviceTitle": "إضافة جهاز دفع",
   "setupNewDeviceSubtitle": "إعداد جهاز جديد",
   "quickAccessKeysSubtitle": "مفاتيح الوصول السريع",
   "devicesAddedCount": "{count} أجهزة مضافة",
-  "@devicesAddedCount": { "placeholders": { "count": { "type": "int" } } },
+  "@devicesAddedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "managePreferencesSubtitle": "إدارة التفضيلات",
   "storeNameAddressLogo": "الاسم، العنوان والشعار",
   "receiptHeaderFooterLogo": "رأس وتذييل الفاتورة والشعار",
@@ -4919,28 +5943,69 @@
   "clearCacheDialogBody": "سيتم مسح جميع البيانات المؤقتة وإعادة تحميلها من السيرفر.\n\nسيتم تسجيل خروجك وإعادة تشغيل التطبيق.\n\nهل تريد المتابعة؟",
   "clearAndRestart": "مسح وإعادة التشغيل",
   "clearingCacheProgress": "جاري مسح الذاكرة المؤقتة...",
-
   "printerInitFailed": "فشل تهيئة خدمة الطباعة",
   "noPrintersFound": "لم يتم العثور على طابعات",
   "searchErrorMsg": "خطأ في البحث: {error}",
-  "@searchErrorMsg": { "placeholders": { "error": { "type": "String" } } },
+  "@searchErrorMsg": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "connectedToPrinterName": "تم الاتصال بـ {name}",
-  "@connectedToPrinterName": { "placeholders": { "name": { "type": "String" } } },
+  "@connectedToPrinterName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "connectionFailedToPrinter": "فشل الاتصال بـ {name}",
-  "@connectionFailedToPrinter": { "placeholders": { "name": { "type": "String" } } },
+  "@connectionFailedToPrinter": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "enterPrinterIpAddress": "أدخل عنوان IP للطابعة",
   "printerNotConnectedMsg": "الطابعة غير متصلة",
   "testPageSentSuccess": "تم إرسال صفحة الاختبار بنجاح",
   "testFailedMsg": "فشل الاختبار: {error}",
-  "@testFailedMsg": { "placeholders": { "error": { "type": "String" } } },
+  "@testFailedMsg": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "errorMsgGeneric": "خطأ: {error}",
-  "@errorMsgGeneric": { "placeholders": { "error": { "type": "String" } } },
+  "@errorMsgGeneric": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "cashDrawerOpened": "تم فتح درج النقود",
   "cashDrawerFailed": "فشل: {error}",
-  "@cashDrawerFailed": { "placeholders": { "error": { "type": "String" } } },
+  "@cashDrawerFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "disconnectedMsg": "تم قطع الاتصال",
   "connectedPrinterStatus": "متصل: {name}",
-  "@connectedPrinterStatus": { "placeholders": { "name": { "type": "String" } } },
+  "@connectedPrinterStatus": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "notConnectedStatus": "غير متصل",
   "connectedToPrinterMsg": "متصل بالطابعة",
   "noPrinterConnectedMsg": "لا توجد طابعة متصلة",
@@ -4955,7 +6020,13 @@
   "searchingPrintersLabel": "جاري البحث...",
   "searchPrintersBtn": "بحث عن طابعات",
   "discoveredPrintersTitle": "الطابعات المكتشفة ({count})",
-  "@discoveredPrintersTitle": { "placeholders": { "count": { "type": "int" } } },
+  "@discoveredPrintersTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "connectedBadge": "متصل",
   "printSettingsTitle": "إعدادات الطباعة",
   "autoPrintTitle": "طباعة تلقائية",
@@ -4965,35 +6036,62 @@
   "viewStoreDetailsSubtitle": "عرض تفاصيل المتجر",
   "usersAndPermissionsTitle": "المستخدمين والصلاحيات",
   "usersCountLabel": "{count} مستخدم",
-  "@usersCountLabel": { "placeholders": { "count": { "type": "int" } } },
-
+  "@usersCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "noPrinterSetup": "لم يتم إعداد طابعة",
   "printerNotConnectedErr": "الطابعة غير متصلة",
-
   "transactionRecordedSuccess": "تم تسجيل المعاملة بنجاح",
   "productSearchFailed": "فشل البحث عن المنتج: {error}",
-  "@productSearchFailed": { "placeholders": { "error": { "type": "String" } } },
+  "@productSearchFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "customerSearchFailed": "فشل البحث عن العميل: {error}",
-  "@customerSearchFailed": { "placeholders": { "error": { "type": "String" } } },
+  "@customerSearchFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "inventoryUpdatedMsg": "تم تحديث المخزون",
   "scanOrEnterBarcode": "امسح أو أدخل الباركود",
   "priceUpdatedMsg": "تم تحديث السعر",
   "exchangeSuccessMsg": "تم الاستبدال بنجاح",
   "refundProcessedSuccess": "تمت معالجة الاسترجاع بنجاح",
-  "enterBarcodeManually": "أدخل الباركود يدوياً",
-
   "backupCompletedTitle": "اكتمل النسخ الاحتياطي",
   "backupCompletedBody": "اكتمل النسخ الاحتياطي — {rows} صف، {size} ميجابايت",
-  "@backupCompletedBody": { "placeholders": { "rows": { "type": "int" }, "size": { "type": "String" } } },
+  "@backupCompletedBody": {
+    "placeholders": {
+      "rows": {
+        "type": "int"
+      },
+      "size": {
+        "type": "String"
+      }
+    }
+  },
   "backupFailedMsg": "فشل النسخ الاحتياطي: {error}",
-  "@backupFailedMsg": { "placeholders": { "error": { "type": "String" } } },
+  "@backupFailedMsg": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "copyBackupInstructions": "انسخ بيانات النسخ الاحتياطي للحافظة لحفظها أو مشاركتها.",
   "closeBtn": "إغلاق",
   "backupCopiedToClipboard": "تم نسخ النسخة الاحتياطية للحافظة",
   "copyToClipboardBtn": "نسخ للحافظة",
-
   "countDenominationsBtn": "عد العملات بالفئات",
-
   "privacyPolicyTitle": "سياسة الخصوصية",
   "privacyPolicySubtitle": "الخصوصية وحقوق البيانات",
   "privacyIntroTitle": "مقدمة",
@@ -5041,19 +6139,14 @@
   "privacyContactIntro": "إذا كان لديك أي أسئلة حول سياسة الخصوصية أو ترغب في ممارسة حقوقك، يمكنك التواصل معنا عبر:",
   "privacyContactEmail": "البريد الإلكتروني: privacy@alhai.app",
   "privacyContactSupport": "الدعم الفني داخل التطبيق",
-
   "onboardingPrivacyPolicy": "سياسة الخصوصية | Privacy Policy",
-
   "cashierDefaultName": "كاشير",
   "defaultAddress": "الرياض - المملكة العربية السعودية",
-
   "loadMoreBtn": "تحميل المزيد",
   "countCurrencyBtn": "عد العملات",
-
   "searchLogsHint": "بحث في السجلات...",
   "noSearchResultsForQuery": "لا توجد نتائج للبحث",
   "noLogsToDisplay": "لا توجد سجلات للعرض",
-
   "auditActionLogin": "تسجيل دخول",
   "auditActionLogout": "تسجيل خروج",
   "auditActionSale": "بيع",
@@ -5069,7 +6162,6 @@
   "auditActionCloseShift": "إغلاق وردية",
   "auditActionSettingsChange": "تغيير إعدادات",
   "auditActionCashDrawer": "درج النقد",
-
   "permCategoryPosLabel": "نقطة البيع",
   "permCategoryProductsLabel": "المنتجات",
   "permCategoryInventoryLabel": "المخزون",
@@ -5078,7 +6170,6 @@
   "permCategoryReportsLabel": "التقارير",
   "permCategorySettingsLabel": "الإعدادات",
   "permCategoryStaffLabel": "الموظفين",
-
   "permPosAccess": "الوصول لنقطة البيع",
   "permPosAccessDesc": "الوصول إلى شاشة نقطة البيع",
   "permPosHold": "تعليق الفواتير",
@@ -5123,47 +6214,82 @@
   "permStaffViewDesc": "عرض قائمة الموظفين",
   "permStaffManage": "إدارة الموظفين",
   "permStaffManageDesc": "إضافة وتعديل الموظفين",
-
   "roleSystemAdmin": "مدير النظام",
   "roleSystemAdminDesc": "صلاحيات كاملة للنظام",
   "roleStoreManager": "مدير المتجر",
   "roleStoreManagerDesc": "إدارة المتجر والموظفين",
-  "roleCashier": "كاشير",
   "roleCashierDesc": "عمليات البيع والدفع",
   "roleWarehouseKeeper": "أمين مخزن",
   "roleWarehouseKeeperDesc": "إدارة المخزون والمنتجات",
   "roleAccountant": "محاسب",
   "roleAccountantDesc": "التقارير المالية والحسابات",
-
-  "connectionSuccessMsg": "تم الاتصال بنجاح",
   "connectionFailedMsg": "فشل الاتصال: {error}",
-  "@connectionFailedMsg": { "placeholders": { "error": { "type": "String" } } },
-  "deviceSavedMsg": "تم حفظ الجهاز",
+  "@connectionFailedMsg": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "settingsSaveErrorMsg": "خطأ في حفظ الإعدادات: {error}",
-  "@settingsSaveErrorMsg": { "placeholders": { "error": { "type": "String" } } },
+  "@settingsSaveErrorMsg": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "cutPaperBtn": "قطع",
-  "connectBtn": "اتصال",
   "upgradeToPlan": "الترقية إلى {name}",
-  "@upgradeToPlan": { "placeholders": { "name": { "type": "String" } } },
+  "@upgradeToPlan": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "manageDeliveryZonesAndPricing": "إدارة مناطق التوصيل وأسعارها",
   "settingsForName": "إعدادات {name}",
-  "@settingsForName": { "placeholders": { "name": { "type": "String" } } },
+  "@settingsForName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "settingsSavedForName": "تم حفظ إعدادات {name}",
-  "@settingsSavedForName": { "placeholders": { "name": { "type": "String" } } },
+  "@settingsSavedForName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "jobProfile": "الملف الوظيفي",
   "submitToZatcaAuthority": "إرسال للهيئة الزكاة والضريبة",
   "submitBtn": "إرسال",
   "submitToAuthority": "إرسال للهيئة",
   "shareError": "خطأ في المشاركة: {error}",
-  "@shareError": { "placeholders": { "error": { "type": "String" } } },
+  "@shareError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "upgradePlanPriceBody": "سعر الخطة: {price} ريال/شهر\n\nهل تريد المتابعة؟",
-  "@upgradePlanPriceBody": { "placeholders": { "price": { "type": "String" } } },
+  "@upgradePlanPriceBody": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
   "upgradeContactMsg": "سيتم التواصل معك لإتمام عملية الترقية",
   "zatcaSubmitBody": "سيتم إرسال بيانات الفوترة الإلكترونية للهيئة. تأكد من صحة بياناتك أولاً.",
   "zatcaLinkComingSoon": "سيتم الربط بنظام ZATCA قريباً - تأكد من إعداد الشهادة الرقمية",
   "enterApiKey": "أدخل مفتاح API",
   "accountNumber": "رقم الحساب",
-
   "superAdmin": "المشرف العام",
   "platformOverview": "نظرة عامة على المنصة",
   "activeStores": "المتاجر النشطة",
@@ -5175,12 +6301,9 @@
   "newSignups": "اشتراكات جديدة",
   "monthlyRecurringRevenue": "الإيرادات الشهرية المتكررة",
   "annualRecurringRevenue": "الإيرادات السنوية المتكررة",
-
-  "storeManagement": "إدارة المتاجر",
   "storesList": "المتاجر",
   "storeDetail": "تفاصيل المتجر",
   "createStore": "إنشاء متجر",
-  "storeSettings": "إعدادات المتجر",
   "storeOwner": "مالك المتجر",
   "storeStatus": "الحالة",
   "storeCreatedAt": "تاريخ الإنشاء",
@@ -5199,7 +6322,6 @@
   "ownerEmail": "بريد المالك",
   "businessType": "نوع النشاط",
   "branchCountLabel": "عدد الفروع",
-
   "subscriptionManagement": "إدارة الاشتراكات",
   "plansManagement": "إدارة الخطط",
   "subscriptionList": "الاشتراكات",
@@ -5219,34 +6341,26 @@
   "editPlan": "تعديل الخطة",
   "selectPlan": "اختر الخطة",
   "currentPlan": "الخطة الحالية",
-  "noPlansAvailable": "لا توجد خطط متاحة. أنشئ خططاً أولاً.",
-  "alreadyOnHighestPlan": "هذا المتجر على أعلى خطة بالفعل.",
-  "alreadyOnLowestPlan": "هذا المتجر على أدنى خطة بالفعل.",
+  "noPlansAvailable": "لا توجد خطط متاحة",
+  "alreadyOnHighestPlan": "أنت على أعلى خطة بالفعل",
+  "alreadyOnLowestPlan": "أنت على أدنى خطة بالفعل",
   "activeSubscriptions": "الاشتراكات النشطة",
   "expiredSubscriptions": "الاشتراكات المنتهية",
   "trialSubscriptions": "الاشتراكات التجريبية",
   "billingHistory": "سجل الفوترة",
-  "invoiceNumber": "رقم الفاتورة",
   "invoiceDate": "التاريخ",
   "invoiceAmount": "المبلغ",
   "invoiceStatus": "الحالة",
-  "paid": "مدفوعة",
   "unpaid": "غير مدفوعة",
-  "overdue": "متأخرة",
-
-  "usersManagement": "إدارة المستخدمين",
   "platformUsers": "مستخدمو المنصة",
   "userDetail": "تفاصيل المستخدم",
   "roleManagement": "إدارة الأدوار",
-  "userName": "الاسم",
-  "userEmail": "البريد الإلكتروني",
   "userRole": "الدور",
   "userLastActive": "آخر نشاط",
   "superAdminRole": "مشرف عام",
   "supportRole": "دعم فني",
   "viewerRole": "مشاهد",
   "assignRole": "تعيين دور",
-
   "analytics": "التحليلات",
   "revenueAnalytics": "تحليلات الإيرادات",
   "usageAnalytics": "تحليلات الاستخدام",
@@ -5259,54 +6373,41 @@
   "avgTransactionsPerDay": "متوسط المعاملات/يوم",
   "topStoresByRevenue": "أفضل المتاجر حسب الإيرادات",
   "topStoresByTransactions": "أفضل المتاجر حسب المعاملات",
-
   "platformSettings": "إعدادات المنصة",
   "zatcaConfig": "إعدادات ZATCA",
   "paymentGateways": "بوابات الدفع",
   "systemHealth": "صحة النظام",
   "systemMonitoring": "مراقبة النظام",
   "serverStatus": "حالة الخادم",
-  "databaseStatus": "حالة قاعدة البيانات",
   "apiLatency": "زمن استجابة API",
   "errorRate": "معدل الأخطاء",
-  "uptime": "وقت التشغيل",
   "cpuUsage": "استخدام المعالج",
   "memoryUsage": "استخدام الذاكرة",
   "diskUsage": "استخدام القرص",
-  "healthy": "سليم",
   "degraded": "متدهور",
   "down": "متوقف",
   "lastChecked": "آخر فحص",
-
   "filterByStatus": "تصفية حسب الحالة",
   "filterByPlan": "تصفية حسب الخطة",
   "allStatuses": "جميع الحالات",
   "allPlans": "جميع الخطط",
-  "active": "نشط",
   "suspended": "معلق",
   "trial": "تجريبي",
   "searchStores": "البحث في المتاجر...",
   "searchUsers": "البحث في المستخدمين...",
   "noStoresFound": "لا توجد متاجر",
   "noUsersFound": "لا يوجد مستخدمون",
-  "viewDetails": "عرض التفاصيل",
   "confirmSuspend": "هل أنت متأكد من تعليق هذا المتجر؟",
   "confirmActivate": "هل أنت متأكد من تفعيل هذا المتجر؟",
   "storeCreatedSuccess": "تم إنشاء المتجر بنجاح",
   "storeSuspendedSuccess": "تم تعليق المتجر بنجاح",
   "storeActivatedSuccess": "تم تفعيل المتجر بنجاح",
-  "sar": "ر.س",
   "perMonth": "/شهر",
   "perYear": "/سنة",
-  "last30Days": "آخر 30 يوم",
   "last90Days": "آخر 90 يوم",
   "last12Months": "آخر 12 شهر",
-  "thisMonth": "هذا الشهر",
-  "thisYear": "هذا العام",
   "growth": "النمو",
-  "revenue": "الإيرادات",
   "stores": "المتاجر",
-
   "distributorPortal": "بوابة الموزع",
   "distributorDashboard": "لوحة التحكم",
   "distributorDashboardSubtitle": "نظرة عامة على أداء التوزيع",
@@ -5348,7 +6449,9 @@
   "distributorEditProduct": "تعديل {name}",
   "@distributorEditProduct": {
     "placeholders": {
-      "name": { "type": "String" }
+      "name": {
+        "type": "String"
+      }
     }
   },
   "distributorCurrentPrice": "السعر الحالي",
@@ -5360,7 +6463,9 @@
   "distributorProductsWillUpdate": "{count} منتج سيتم تحديث سعره",
   "@distributorProductsWillUpdate": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "distributorSaveChanges": "حفظ التغييرات",
@@ -5368,7 +6473,9 @@
   "distributorChangesCount": "{count} تغيير",
   "@distributorChangesCount": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "distributorExport": "تصدير",
@@ -5409,7 +6516,9 @@
   "distributorPurchaseOrder": "طلب شراء #{number}",
   "@distributorPurchaseOrder": {
     "placeholders": {
-      "number": { "type": "String" }
+      "number": {
+        "type": "String"
+      }
     }
   },
   "distributorProposedAmount": "المبلغ المقترح:",
@@ -5417,7 +6526,9 @@
   "distributorProductCount": "{count} منتجات",
   "@distributorProductCount": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "distributorSuggestedPrice": "السعر المقترح",
@@ -5431,19 +6542,25 @@
   "distributorOrderAccepted": "تم قبول الطلب وإرسال العرض بمبلغ {amount} ريال",
   "@distributorOrderAccepted": {
     "placeholders": {
-      "amount": { "type": "String" }
+      "amount": {
+        "type": "String"
+      }
     }
   },
   "distributorLowerThanProposed": "{percent}% أقل من المقترح",
   "@distributorLowerThanProposed": {
     "placeholders": {
-      "percent": { "type": "String" }
+      "percent": {
+        "type": "String"
+      }
     }
   },
   "distributorHigherThanProposed": "+{percent}% أعلى من المقترح",
   "@distributorHigherThanProposed": {
     "placeholders": {
-      "percent": { "type": "String" }
+      "percent": {
+        "type": "String"
+      }
     }
   },
   "distributorComingSoon": "قريباً",
@@ -5486,7 +6603,6 @@
   "distributorExportCsv": "تصدير التقرير كملف CSV",
   "distributorExportCsvShort": "تصدير CSV",
   "distributorSaveCtrlS": "حفظ التغييرات (Ctrl+S)",
-
   "scanCouponBarcode": "مسح باركود الكوبون",
   "validateCoupon": "تحقق",
   "couponValid": "الكوبون صالح",
@@ -5495,7 +6611,6 @@
   "noExpiry": "بدون انتهاء",
   "invalidCouponCode": "كود كوبون غير صالح",
   "percentageOff": "خصم نسبة مئوية",
-
   "bundleDeals": "عروض الباقات",
   "includedProducts": "المنتجات المشمولة",
   "individualTotal": "المجموع الفردي",
@@ -5506,19 +6621,21 @@
   "validUntilDate": "صالح حتى: {date}",
   "@validUntilDate": {
     "placeholders": {
-      "date": { "type": "String" }
+      "date": {
+        "type": "String"
+      }
     }
   },
   "validFromDate": "صالح من: {date}",
   "@validFromDate": {
     "placeholders": {
-      "date": { "type": "String" }
+      "date": {
+        "type": "String"
+      }
     }
   },
-
   "autoApplied": "تطبيق تلقائي",
   "noActiveOffers": "لا توجد عروض نشطة",
-
   "wastage": "الهدر والتالف",
   "quantityWasted": "الكمية المهدرة",
   "photoLabel": "صورة",
@@ -5527,26 +6644,21 @@
   "optionalLabel": "اختياري",
   "recordWastage": "تسجيل الهدر",
   "spillage": "انسكاب",
-
   "transferInventory": "نقل المخزون",
   "transferDetails": "تفاصيل النقل",
   "fromStore": "من الفرع",
   "toStore": "إلى الفرع",
-  "currentLabel": "الحالي",
   "selectStore": "اختر الفرع",
   "submitTransfer": "إرسال النقل",
   "optionalNote": "ملاحظة اختيارية",
-
   "addInventory": "إضافة مخزون",
   "scanLabel": "مسح",
   "quantityToAdd": "الكمية المراد إضافتها",
   "supplierReference": "مرجع المورد",
-
   "removeInventory": "سحب مخزون",
   "quantityToRemove": "الكمية المراد سحبها",
   "sold": "مباع",
   "transferred": "منقول",
-
   "fieldRequired": "الحقل مطلوب",
   "deviceInfo": "معلومات الجهاز",
   "deviceName": "اسم الجهاز",
@@ -5557,7 +6669,6 @@
   "port": "المنفذ",
   "connectionTestPassed": "نجح اختبار الاتصال",
   "saveDevice": "حفظ الجهاز",
-
   "addDevice": "إضافة جهاز",
   "noPaymentDevices": "لا توجد أجهزة دفع",
   "addFirstPaymentDevice": "أضف أول جهاز دفع",
@@ -5566,49 +6677,53 @@
   "testingConnectionName": "جاري اختبار الاتصال {name}...",
   "@testingConnectionName": {
     "placeholders": {
-      "name": { "type": "String" }
+      "name": {
+        "type": "String"
+      }
     }
   },
   "connectionSuccessful": "{name} - تم الاتصال بنجاح",
   "@connectionSuccessful": {
     "placeholders": {
-      "name": { "type": "String" }
+      "name": {
+        "type": "String"
+      }
     }
   },
-
   "pasteFromClipboard": "لصق من الحافظة",
   "confirmRestore": "تأكيد الاستعادة",
-
   "saleNotFound": "لم يتم العثور على البيع",
   "noItems": "لا توجد عناصر",
-
   "customerPaysExtra": "العميل يدفع إضافي",
   "submitExchange": "تأكيد الاستبدال",
-
   "applyInterest": "تطبيق الفائدة",
-
   "reportSettings": "إعدادات التقرير",
   "reportType": "نوع التقرير",
   "paymentDistribution": "توزيع المدفوعات",
-
   "allAccountsSettled": "جميع حسابات العملاء مسددة",
   "confirmInterest": "تأكيد الفائدة",
   "confirmInterestMessage": "تطبيق {rate}% فائدة على {count} حسابات؟\nإجمالي الفائدة: {amount} {currency}",
   "@confirmInterestMessage": {
     "placeholders": {
-      "rate": { "type": "String" },
-      "count": { "type": "int" },
-      "amount": { "type": "String" },
-      "currency": { "type": "String" }
+      "rate": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      },
+      "amount": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      }
     }
   },
   "selectCustomers": "اختيار العملاء",
   "deselectAll": "إلغاء تحديد الكل",
   "preview": "معاينة",
-  "selectedCustomers": "العملاء المحددون",
   "totalDebt": "إجمالي الديون",
   "totalInterest": "إجمالي الفائدة",
-
   "finalizeInvoice": "إنهاء الفاتورة",
   "saveAsDraft": "حفظ كمسودة",
   "saveDraft": "حفظ المسودة",
@@ -5616,7 +6731,6 @@
   "adjustQuantity": "تعديل الكمية",
   "totalItems": "إجمالي العناصر",
   "variance": "الفرق",
-
   "orderNotFound": "لم يتم العثور على الطلب",
   "share": "مشاركة",
   "full": "كامل",
@@ -5626,10 +6740,11 @@
   "nTransactions": "{count} معاملات",
   "@nTransactions": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
-
   "customReport": "تقرير مخصص",
   "reportBuilder": "منشئ التقارير",
   "groupBy": "تجميع حسب",
@@ -5639,33 +6754,36 @@
   "generateReport": "إنشاء التقرير",
   "lastMonth": "الشهر الماضي",
   "periods": "الفترات",
-  "periodLabel": "الفترة",
   "valueLabel": "القيمة",
   "tryDifferentFilters": "جرّب فلاتر مختلفة",
-
   "scan": "مسح",
   "selectProductFirst": "اختر منتج أولاً",
   "selectProductsForLabels": "اختر منتجات للملصقات",
   "printJobSentForLabels": "تم إرسال طباعة {count} ملصق",
   "@printJobSentForLabels": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
-
   "test": "اختبار",
   "paperSize58mm": "58مم",
   "paperSize80mm": "80مم",
   "errorSavingSettings": "خطأ في حفظ الإعدادات: {error}",
   "@errorSavingSettings": {
     "placeholders": {
-      "error": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   },
   "restoreFailed": "فشل الاستعادة: {error}",
   "@restoreFailed": {
     "placeholders": {
-      "error": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   },
   "address": "العنوان",
@@ -5744,16 +6862,15 @@
   "saReportsTitle": "التقارير",
   "startDate": "البداية",
   "endDate": "النهاية",
-  "selectPlan": "اختر الخطة",
-  "currentPlan": "الخطة الحالية",
-  "noPlansAvailable": "لا توجد خطط متاحة",
-  "alreadyOnHighestPlan": "أنت على أعلى خطة بالفعل",
-  "alreadyOnLowestPlan": "أنت على أدنى خطة بالفعل",
   "customerPhoneNumber": "رقم جوال العميل",
   "continueAction": "متابعة",
   "continueWithCustomer": "متابعة مع العميل",
   "existingCustomers": "عملاء موجودون",
   "digitsRemaining": "أرقام متبقية",
   "phoneNumberTooLong": "الرقم طويل جداً",
-  "enterValidPhoneNumber": "أدخل رقم هاتف صحيح"
+  "enterValidPhoneNumber": "أدخل رقم هاتف صحيح",
+  "cancelledByAdmin": "ألغاه المسؤول",
+  "shiftOpenCloseReminders": "تنبيهات فتح/إغلاق الورديات",
+  "setOrChangeManagerPin": "تعيين أو تغيير رمز PIN للمدير",
+  "dataSynchronizationStatus": "حالة مزامنة البيانات"
 }

@@ -304,11 +304,11 @@ class AppLocalizationsFil extends AppLocalizations {
 
   @override
   String pageNotFoundPath(String path) {
-    return 'الصفحة غير موجودة: $path';
+    return 'Page not found: $path';
   }
 
   @override
-  String get noInvoiceDataAvailable => 'لا تتوفر بيانات الفاتورة';
+  String get noInvoiceDataAvailable => 'No invoice data available';
 
   @override
   String get errorOccurred => 'May naganap na error';
@@ -869,21 +869,21 @@ class AppLocalizationsFil extends AppLocalizations {
 
   @override
   String undoneRemoved(String name) {
-    return 'تراجع: حُذف $name';
+    return 'Undone: removed $name';
   }
 
   @override
   String undoneAdded(String name) {
-    return 'تراجع: أُعيد $name';
+    return 'Undone: restored $name';
   }
 
   @override
   String undoneQtyChanged(String name, int from, int to) {
-    return 'تراجع: $name الكمية $from → $to';
+    return 'Undone: $name qty $from → $to';
   }
 
   @override
-  String get nothingToUndo => 'لا يوجد شيء للتراجع';
+  String get nothingToUndo => 'Nothing to undo';
 
   @override
   String get employees => 'Empleyado';
@@ -9700,3583 +9700,3605 @@ class AppLocalizationsFil extends AppLocalizations {
   String get deleteHeldInvoiceConfirm => 'I-delete ang naka-hold na invoice?';
 
   @override
-  String get clearSearch => 'مسح البحث';
+  String get clearSearch => 'Clear search';
 
   @override
-  String get addCustomer => 'إضافة عميل';
+  String get addCustomer => 'Add Customer';
 
   @override
-  String get noInvoices => 'لا توجد فواتير';
+  String get noInvoices => 'No invoices';
 
   @override
-  String get noReports => 'لا توجد تقارير';
+  String get noReports => 'No reports';
 
   @override
-  String get noOffers => 'لا توجد عروض';
+  String get noOffers => 'No offers';
 
   @override
-  String get emptyStateStartAddProducts => 'ابدأ بإضافة منتجاتك الآن';
+  String get emptyStateStartAddProducts => 'Start adding your products now';
 
   @override
-  String get emptyStateStartAddCustomers => 'ابدأ بإضافة عملائك الآن';
+  String get emptyStateStartAddCustomers => 'Start adding your customers now';
 
   @override
-  String get emptyStateAddProductsToCart => 'أضف منتجات للسلة لبدء البيع';
+  String get emptyStateAddProductsToCart =>
+      'Add products to cart to start selling';
 
   @override
   String get emptyStateInvoicesAppearAfterSale =>
-      'ستظهر الفواتير هنا بعد إتمام عمليات البيع';
+      'Invoices will appear here after completing sales';
 
   @override
-  String get emptyStateNewOrdersAppearHere => 'ستظهر الطلبات الجديدة هنا';
+  String get emptyStateNewOrdersAppearHere => 'New orders will appear here';
 
   @override
   String get emptyStateNewNotificationsAppearHere =>
-      'ستظهر الإشعارات الجديدة هنا';
+      'New notifications will appear here';
 
   @override
-  String get emptyStateCheckYourConnection => 'تحقق من اتصالك بالإنترنت';
+  String get emptyStateCheckYourConnection => 'Check your internet connection';
 
   @override
   String get emptyStateReportsAppearAfterSale =>
-      'ستظهر التقارير بعد إتمام عمليات البيع';
+      'Reports will appear after completing sales';
 
   @override
-  String get emptyStateNoNeedToRestock => 'لا توجد منتجات تحتاج إعادة تعبئة';
+  String get emptyStateNoNeedToRestock => 'No products need restocking';
 
   @override
-  String get emptyStateAllCustomersPaid => 'جميع العملاء قاموا بالسداد';
+  String get emptyStateAllCustomersPaid => 'All customers have paid';
 
   @override
-  String get emptyStateReturnsAppearHere => 'ستظهر المرتجعات هنا';
+  String get emptyStateReturnsAppearHere => 'Returns will appear here';
 
   @override
   String get emptyStateAddOffersToAttract =>
-      'أضف عروضاً لجذب المزيد من العملاء';
+      'Add offers to attract more customers';
 
   @override
-  String get errorNoInternetConnection => 'لا يوجد اتصال بالإنترنت';
+  String get errorNoInternetConnection => 'No internet connection';
 
   @override
   String get errorCheckConnectionAndRetry =>
-      'تحقق من اتصالك بالإنترنت وحاول مرة أخرى';
+      'Check your internet connection and try again';
 
   @override
-  String get errorServerError => 'خطأ في الخادم';
+  String get errorServerError => 'Server error';
 
   @override
-  String get errorServerConnectionFailed => 'حدث خطأ أثناء الاتصال بالخادم';
+  String get errorServerConnectionFailed =>
+      'An error occurred while connecting to the server';
 
   @override
-  String get errorUnexpectedError => 'حدث خطأ غير متوقع';
+  String get errorUnexpectedError => 'An unexpected error occurred';
 
   @override
-  String get customerGroups => 'مجموعات العملاء';
+  String get customerGroups => 'Customer Groups';
 
   @override
-  String get allCustomersGroup => 'كل العملاء';
+  String get allCustomersGroup => 'All Customers';
 
   @override
-  String get vipCustomersGroup => 'عملاء VIP';
+  String get vipCustomersGroup => 'VIP Customers';
 
   @override
-  String get regularCustomersGroup => 'عملاء منتظمون';
+  String get regularCustomersGroup => 'Regular Customers';
 
   @override
-  String get newCustomersGroup => 'عملاء جدد';
+  String get newCustomersGroup => 'New Customers';
 
   @override
-  String get newCustomers30Days => 'عملاء جدد (30 يوم)';
+  String get newCustomers30Days => 'New Customers (30 days)';
 
   @override
-  String get customersWithDebt => 'عملاء لديهم ديون';
+  String get customersWithDebt => 'Customers with Debts';
 
   @override
-  String get haveDebts => 'لديهم ديون';
+  String get haveDebts => 'Have Debts';
 
   @override
-  String get inactive90Days => 'غير نشطين (90+ يوم)';
+  String get inactive90Days => 'Inactive (90+ days)';
 
   @override
   String customerCountLabel(int count) {
-    return '$count عميل';
+    return '$count customer';
   }
 
   @override
-  String get selectGroupToViewCustomers => 'اختر مجموعة لعرض العملاء';
+  String get selectGroupToViewCustomers => 'Select a group to view customers';
 
   @override
-  String get noCustomersInGroup => 'لا يوجد عملاء في هذه المجموعة';
+  String get noCustomersInGroup => 'No customers in this group';
 
   @override
-  String get debtWord => 'دين';
+  String get debtWord => 'Debt';
 
   @override
-  String get employeeProfile => 'ملف الموظف';
+  String get employeeProfile => 'Employee Profile';
 
   @override
-  String get employeeNotFound => 'الموظف غير موجود';
+  String get employeeNotFound => 'Employee not found';
 
   @override
-  String get profileTab => 'الملف';
+  String get profileTab => 'Profile';
 
   @override
-  String get salesTab => 'المبيعات';
+  String get salesTab => 'Sales';
 
   @override
-  String get shiftsTab => 'الورديات';
+  String get shiftsTab => 'Shifts';
 
   @override
-  String get permissionsTab2 => 'الصلاحيات';
+  String get permissionsTab2 => 'Permissions';
 
   @override
-  String get mobilePhone => 'الجوال';
+  String get mobilePhone => 'Mobile';
 
   @override
-  String get joinDate => 'تاريخ الانضمام';
+  String get joinDate => 'Join Date';
 
   @override
-  String get lastLogin => 'آخر دخول';
+  String get lastLogin => 'Last Login';
 
   @override
-  String get neverLoggedIn => 'لم يدخل بعد';
+  String get neverLoggedIn => 'Never logged in';
 
   @override
-  String get accountActive => 'الحساب نشط';
+  String get accountActive => 'Account Active';
 
   @override
-  String get canLogin => 'يمكنه تسجيل الدخول';
+  String get canLogin => 'Can log in';
 
   @override
-  String get blockedFromLogin => 'محظور من الدخول';
+  String get blockedFromLogin => 'Blocked from login';
 
   @override
-  String get employeeFallback => 'موظف';
+  String get employeeFallback => 'Employee';
 
   @override
-  String get weekLabel => 'أسبوع';
+  String get weekLabel => 'Week';
 
   @override
-  String get monthLabel => 'شهر';
+  String get monthLabel => 'Month';
 
   @override
-  String get loadSalesData => 'تحميل بيانات المبيعات';
+  String get loadSalesData => 'Load Sales Data';
 
   @override
-  String get invoiceCountLabel2 => 'عدد الفواتير';
+  String get invoiceCountLabel2 => 'Invoice Count';
 
   @override
-  String get hourlySalesDistribution => 'توزيع المبيعات بالساعة';
+  String get hourlySalesDistribution => 'Hourly Sales Distribution';
 
   @override
   String shiftOpenTime(String time) {
-    return 'فتح: $time';
+    return 'Open: $time';
   }
 
   @override
   String shiftCloseTime(String time) {
-    return 'إغلاق: $time';
+    return 'Close: $time';
   }
 
   @override
   String hoursMinutes(int hours, int minutes) {
-    return '$hoursس $minutesد';
+    return '${hours}h ${minutes}m';
   }
 
   @override
-  String get shiftOpenStatus => 'مفتوح';
+  String get shiftOpenStatus => 'Open';
 
   @override
   String invoiceCountWithNum(int count) {
-    return '$count فاتورة';
+    return '$count invoice';
   }
 
   @override
-  String get permissionsSaved => 'تم حفظ الصلاحيات';
+  String get permissionsSaved => 'Permissions saved';
 
   @override
-  String get jobRole => 'الدور الوظيفي';
+  String get jobRole => 'Job Role';
 
   @override
-  String get manageProducts => 'إدارة المنتجات';
+  String get manageProducts => 'Manage Products';
 
   @override
-  String get viewReports => 'عرض التقارير';
+  String get viewReports => 'View Reports';
 
   @override
-  String get refundOperations => 'عمليات الاسترداد';
+  String get refundOperations => 'Refund Operations';
 
   @override
-  String get manageCustomersPermission => 'إدارة العملاء';
+  String get manageCustomersPermission => 'Manage Customers';
 
   @override
-  String get manageOffers => 'إدارة العروض';
+  String get manageOffers => 'Manage Offers';
 
   @override
-  String get savePermissions => 'حفظ الصلاحيات';
+  String get savePermissions => 'Save Permissions';
 
   @override
-  String get deactivateAccount => 'تعطيل الحساب';
+  String get deactivateAccount => 'Deactivate Account';
 
   @override
-  String get activateAccount => 'تفعيل الحساب';
+  String get activateAccount => 'Activate Account';
 
   @override
   String confirmDeactivateAccount(String name) {
-    return 'هل تريد تعطيل حساب $name؟';
+    return 'Do you want to deactivate $name\'s account?';
   }
 
   @override
   String confirmActivateAccount(String name) {
-    return 'هل تريد تفعيل حساب $name؟';
+    return 'Do you want to activate $name\'s account?';
   }
 
   @override
-  String get deactivate => 'تعطيل';
+  String get deactivate => 'Deactivate';
 
   @override
-  String get activate => 'تفعيل';
+  String get activate => 'Activate';
 
   @override
-  String get accountActivated => 'تم تفعيل الحساب';
+  String get accountActivated => 'Account activated';
 
   @override
-  String get accountDeactivated => 'تم تعطيل الحساب';
+  String get accountDeactivated => 'Account deactivated';
 
   @override
-  String get employeeAttendance => 'حضور وانصراف الموظفين';
+  String get employeeAttendance => 'Employee Attendance';
 
   @override
-  String get presentLabel => 'حاضر';
+  String get presentLabel => 'Present';
 
   @override
-  String get absentLabel => 'غائب';
+  String get absentLabel => 'Absent';
 
   @override
-  String get attendanceCount => 'الحضور';
+  String get attendanceCount => 'Attendance';
 
   @override
-  String get absencesCount => 'الغياب';
+  String get absencesCount => 'Absences';
 
   @override
-  String get lateCount => 'متأخر';
+  String get lateCount => 'Late';
 
   @override
-  String get totalEmployees => 'إجمالي الموظفين';
+  String get totalEmployees => 'Total Employees';
 
   @override
   String noAttendanceRecordsForDay(int day, int month) {
-    return 'لا يوجد سجلات حضور ليوم $day/$month';
+    return 'No attendance records for $day/$month';
   }
 
   @override
-  String get workingNow => 'يعمل الآن';
+  String get workingNow => 'Working Now';
 
   @override
   String get loyaltyTierCustomizeHint =>
-      'يمكنك تخصيص مستويات برنامج الولاء وتحديد النقاط والمزايا لكل مستوى.';
+      'You can customize loyalty program tiers and define points and benefits for each tier.';
 
   @override
   String memberCount(int count) {
-    return '$count عضو';
+    return '$count member';
   }
 
   @override
-  String get pointsRequired => 'النقاط المطلوبة';
+  String get pointsRequired => 'Points Required';
 
   @override
-  String get discountPercentage => 'نسبة الخصم';
+  String get discountPercentage => 'Discount Percentage';
 
   @override
-  String get pointsMultiplier => 'مضاعف النقاط';
+  String get pointsMultiplier => 'Points Multiplier';
 
   @override
-  String get addTier => 'إضافة مستوى';
+  String get addTier => 'Add Tier';
 
   @override
-  String get addNewTier => 'إضافة مستوى جديد';
+  String get addNewTier => 'Add New Tier';
 
   @override
-  String get nameArabic => 'الاسم (عربي)';
+  String get nameArabic => 'Name (Arabic)';
 
   @override
   String get nameEnglish => 'Name (English)';
 
   @override
-  String get minPoints => 'الحد الأدنى من النقاط';
+  String get minPoints => 'Minimum Points';
 
   @override
-  String get maxPointsHint => 'الحد الأقصى (اتركه فارغاً = غير محدود)';
+  String get maxPointsHint => 'Maximum (leave empty = unlimited)';
 
   @override
   String multiplierLabel(String value) {
-    return 'مضاعف النقاط: ${value}x';
+    return 'Points Multiplier: ${value}x';
   }
 
   @override
   String tierBenefits(String tier) {
-    return 'مزايا مستوى $tier';
+    return 'Benefits of $tier tier';
   }
 
   @override
   String discountOnPurchases(String value) {
-    return '• خصم $value% على المشتريات';
+    return '• $value% discount on purchases';
   }
 
   @override
   String pointsPerPurchase(String value) {
-    return '• ${value}x نقاط على كل عملية شراء';
+    return '• ${value}x points on every purchase';
   }
 
   @override
-  String get whatsappManagement => 'إدارة WhatsApp';
+  String get whatsappManagement => 'WhatsApp Management';
 
   @override
-  String get messageQueue => 'قائمة الانتظار';
+  String get messageQueue => 'Message Queue';
 
   @override
-  String get templates => 'القوالب';
+  String get templates => 'Templates';
 
   @override
-  String get sentStatus => 'مُرسل';
+  String get sentStatus => 'Sent';
 
   @override
-  String get failedStatus => 'فشل';
+  String get failedStatus => 'Failed';
 
   @override
-  String get noMessages => 'لا توجد رسائل';
+  String get noMessages => 'No messages';
 
   @override
-  String get retrySend => 'إعادة الإرسال';
+  String get retrySend => 'Retry Send';
 
   @override
-  String get requeuedMessage => 'تمت إعادة الإرسال إلى قائمة الانتظار';
+  String get requeuedMessage => 'Message re-queued for sending';
 
   @override
   String templateCount(int count) {
-    return '$count قالب';
+    return '$count template';
   }
 
   @override
-  String get newTemplate => 'قالب جديد';
+  String get newTemplate => 'New Template';
 
   @override
-  String get editTemplate => 'تعديل القالب';
+  String get editTemplate => 'Edit Template';
 
   @override
-  String get templateName => 'اسم القالب';
+  String get templateName => 'Template Name';
 
   @override
-  String get messageText => 'نص الرسالة';
+  String get messageText => 'Message Text';
 
   @override
   String templateVariablesHint(
       Object customer_name, Object store_name, Object total) {
-    return 'استخدم $store_name $customer_name $total كمتغيرات';
+    return 'Use $store_name $customer_name $total as variables';
   }
 
   @override
-  String get apiSettings => 'إعدادات API';
+  String get apiSettings => 'API Settings';
 
   @override
-  String get apiKey => 'مفتاح API';
+  String get apiKey => 'API Key';
 
   @override
-  String get testingConnection => 'جاري اختبار الاتصال...';
+  String get testingConnection => 'Testing connection...';
 
   @override
-  String get sendSettings => 'إعدادات الإرسال';
+  String get sendSettings => 'Send Settings';
 
   @override
-  String get autoSend => 'الإرسال التلقائي';
+  String get autoSend => 'Auto Send';
 
   @override
-  String get autoSendDescription => 'إرسال الرسائل تلقائياً بعد كل عملية';
+  String get autoSendDescription =>
+      'Automatically send messages after each transaction';
 
   @override
-  String get dailyMessageLimit => 'الحد اليومي للرسائل';
+  String get dailyMessageLimit => 'Daily Message Limit';
 
   @override
   String messagesPerDay(int count) {
-    return '$count رسالة/يوم';
+    return '$count messages/day';
   }
 
   @override
-  String get salesInvoiceTemplate => 'فاتورة البيع';
+  String get salesInvoiceTemplate => 'Sales Invoice';
 
   @override
-  String get debtReminderTemplate => 'تذكير الدين';
+  String get debtReminderTemplate => 'Debt Reminder';
 
   @override
-  String get newCustomerWelcomeTemplate => 'ترحيب بالعميل الجديد';
+  String get newCustomerWelcomeTemplate => 'New Customer Welcome';
 
   @override
-  String get supplierReturns => 'مرتجعات المشتريات';
+  String get supplierReturns => 'Purchase Returns';
 
   @override
-  String get addItemForReturn => 'إضافة صنف للإرجاع';
+  String get addItemForReturn => 'Add Item for Return';
 
   @override
-  String get itemName => 'اسم الصنف';
+  String get itemName => 'Item Name';
 
   @override
-  String get unitPrice => 'سعر الوحدة';
+  String get unitPrice => 'Unit Price';
 
   @override
-  String get sarSuffix => 'ر.س';
+  String get sarSuffix => 'SAR';
 
   @override
-  String get pleaseAddItems => 'يرجى إضافة أصناف للإرجاع';
+  String get pleaseAddItems => 'Please add items for return';
 
   @override
-  String get creditNoteWillBeRecorded => 'سيتم تسجيل إشعار خصم وتعديل المخزون.';
+  String get creditNoteWillBeRecorded =>
+      'A credit note will be recorded and inventory adjusted.';
 
   @override
-  String get issueCreditNote => 'إصدار إشعار خصم';
+  String get issueCreditNote => 'Issue Credit Note';
 
   @override
   String returnRecordedSuccess(String amount) {
-    return 'تم تسجيل المرتجع بنجاح - إشعار خصم: $amount ر.س';
+    return 'Return recorded successfully - Credit note: $amount SAR';
   }
 
   @override
-  String get selectSupplier => 'اختر المورد';
+  String get selectSupplier => 'Select Supplier';
 
   @override
-  String get damagedDefective => 'تالف / معيب';
+  String get damagedDefective => 'Damaged / Defective';
 
   @override
-  String get wrongItem => 'صنف خاطئ';
+  String get wrongItem => 'Wrong Item';
 
   @override
-  String get overstockExcess => 'فائض عن الحاجة';
+  String get overstockExcess => 'Overstock';
 
   @override
-  String get addItem => 'إضافة صنف';
+  String get addItem => 'Add Item';
 
   @override
-  String get noItemsAddedYet => 'لم تتم إضافة أصناف بعد';
+  String get noItemsAddedYet => 'No items added yet';
 
   @override
-  String get notes => 'ملاحظات';
+  String get notes => 'Notes';
 
   @override
-  String get additionalNotesHint => 'أي ملاحظات إضافية...';
+  String get additionalNotesHint => 'Any additional notes...';
 
   @override
-  String get totalReturn => 'إجمالي المرتجع';
+  String get totalReturn => 'Total Return';
 
   @override
   String issueCreditNoteWithAmount(String amount) {
-    return 'إصدار إشعار خصم ($amount ر.س)';
+    return 'Issue Credit Note ($amount SAR)';
   }
 
   @override
-  String get deliveryZones => 'مناطق التوصيل';
+  String get deliveryZones => 'Delivery Zones';
 
   @override
-  String get addDeliveryZone => 'إضافة منطقة';
+  String get addDeliveryZone => 'Add Zone';
 
   @override
-  String get editDeliveryZone => 'تعديل منطقة التوصيل';
+  String get editDeliveryZone => 'Edit Delivery Zone';
 
   @override
-  String get addDeliveryZoneTitle => 'إضافة منطقة توصيل';
+  String get addDeliveryZoneTitle => 'Add Delivery Zone';
 
   @override
-  String get zoneName => 'اسم المنطقة';
+  String get zoneName => 'Zone Name';
 
   @override
-  String get fromKm => 'من (كم)';
+  String get fromKm => 'From (km)';
 
   @override
-  String get toKm => 'إلى (كم)';
+  String get toKm => 'To (km)';
 
   @override
-  String get kmUnit => 'كم';
+  String get kmUnit => 'km';
 
   @override
-  String get deliveryFee => 'رسوم التوصيل';
+  String get deliveryFee => 'Delivery Fee';
 
   @override
-  String get minOrderAmount => 'حد أدنى للطلب';
+  String get minOrderAmount => 'Minimum Order';
 
   @override
-  String get estimatedDeliveryTime => 'وقت التوصيل التقديري';
+  String get estimatedDeliveryTime => 'Estimated Delivery Time';
 
   @override
-  String get minuteUnit => 'دقيقة';
+  String get minuteUnit => 'min';
 
   @override
-  String get zoneUpdated => 'تم تحديث المنطقة';
+  String get zoneUpdated => 'Zone updated';
 
   @override
-  String get zoneAdded => 'تمت إضافة المنطقة';
+  String get zoneAdded => 'Zone added';
 
   @override
-  String get deleteZone => 'حذف المنطقة';
+  String get deleteZone => 'Delete Zone';
 
   @override
-  String get deleteZoneConfirm => 'هل تريد حذف هذه المنطقة؟';
+  String get deleteZoneConfirm => 'Do you want to delete this zone?';
 
   @override
-  String get activeZones => 'مناطق نشطة';
+  String get activeZones => 'Active Zones';
 
   @override
-  String get lowestFee => 'أقل رسوم';
+  String get lowestFee => 'Lowest Fee';
 
   @override
-  String get highestFee => 'أعلى رسوم';
+  String get highestFee => 'Highest Fee';
 
   @override
-  String get noDeliveryZones => 'لا توجد مناطق توصيل';
+  String get noDeliveryZones => 'No delivery zones';
 
   @override
   String get addDeliveryZonesDescription =>
-      'أضف مناطق التوصيل لتحديد أسعار ونطاقات التوصيل';
+      'Add delivery zones to define delivery prices and ranges';
 
   @override
-  String get deliveryTime => 'وقت التوصيل';
+  String get deliveryTime => 'Delivery Time';
 
   @override
-  String get minuteAbbr => 'د';
+  String get minuteAbbr => 'm';
 
   @override
-  String get giftCards => 'بطاقات الهدايا';
+  String get giftCards => 'Gift Cards';
 
   @override
-  String get redeemCard => 'صرف بطاقة';
+  String get redeemCard => 'Redeem Card';
 
   @override
-  String get issueGiftCard => 'إصدار بطاقة هدية';
+  String get issueGiftCard => 'Issue Gift Card';
 
   @override
-  String get cardValue => 'قيمة البطاقة (ر.س)';
+  String get cardValue => 'Card Value (SAR)';
 
   @override
   String giftCardIssued(String amount) {
-    return 'تم إصدار بطاقة هدية بقيمة $amount ر.س';
+    return 'Gift card issued worth $amount SAR';
   }
 
   @override
-  String get issueCard => 'إصدار البطاقة';
+  String get issueCard => 'Issue Card';
 
   @override
-  String get redeemGiftCard => 'صرف بطاقة هدية';
+  String get redeemGiftCard => 'Redeem Gift Card';
 
   @override
-  String get cardCode => 'كود البطاقة';
+  String get cardCode => 'Card Code';
 
   @override
-  String get noCardWithCode => 'لا توجد بطاقة بهذا الكود';
+  String get noCardWithCode => 'No card found with this code';
 
   @override
-  String get cardBalanceZero => 'رصيد البطاقة صفر';
+  String get cardBalanceZero => 'Card balance is zero';
 
   @override
   String cardBalance(String amount) {
-    return 'رصيد البطاقة: $amount ر.س';
+    return 'Card balance: $amount SAR';
   }
 
   @override
-  String get verify => 'تحقق';
+  String get verify => 'Verify';
 
   @override
-  String get cardsTab => 'البطاقات';
+  String get cardsTab => 'Cards';
 
   @override
-  String get statisticsTab => 'الإحصائيات';
+  String get statisticsTab => 'Statistics';
 
   @override
-  String get searchByCode => 'بحث بالكود...';
+  String get searchByCode => 'Search by code...';
 
   @override
-  String get activeFilter => 'نشطة';
+  String get activeFilter => 'Active';
 
   @override
-  String get usedFilter => 'مستخدمة';
+  String get usedFilter => 'Used';
 
   @override
-  String get expiredFilter => 'منتهية';
+  String get expiredFilter => 'Expired';
 
   @override
-  String get noGiftCards => 'لا توجد بطاقات هدايا';
+  String get noGiftCards => 'No gift cards';
 
   @override
-  String get issueGiftCardsDescription => 'أصدر بطاقات هدايا لعملائك';
+  String get issueGiftCardsDescription => 'Issue gift cards for your customers';
 
   @override
-  String get totalActiveBalance => 'إجمالي الرصيد النشط';
+  String get totalActiveBalance => 'Total Active Balance';
 
   @override
-  String get totalIssuedValue => 'إجمالي القيمة المصدرة';
+  String get totalIssuedValue => 'Total Issued Value';
 
   @override
-  String get activeCards => 'البطاقات النشطة';
+  String get activeCards => 'Active Cards';
 
   @override
-  String get usedCards => 'البطاقات المستخدمة';
+  String get usedCards => 'Used Cards';
 
   @override
-  String get giftCardStatusActive => 'نشطة';
+  String get giftCardStatusActive => 'Active';
 
   @override
-  String get giftCardStatusPartiallyUsed => 'مستخدمة جزئياً';
+  String get giftCardStatusPartiallyUsed => 'Partially Used';
 
   @override
-  String get giftCardStatusFullyUsed => 'مستخدمة بالكامل';
+  String get giftCardStatusFullyUsed => 'Fully Used';
 
   @override
-  String get giftCardStatusExpired => 'منتهية الصلاحية';
+  String get giftCardStatusExpired => 'Expired';
 
   @override
   String balanceDisplay(String balance, String total) {
-    return 'الرصيد: $balance/$total ر.س';
+    return 'Balance: $balance/$total SAR';
   }
 
   @override
   String expiresOn(String date) {
-    return 'ينتهي: $date';
+    return 'Expires: $date';
   }
 
   @override
-  String get onlineOrders => 'الطلبات الإلكترونية';
+  String get onlineOrders => 'Online Orders';
 
   @override
-  String get statusNew => 'جديد';
+  String get statusNew => 'New';
 
   @override
-  String get statusPreparing => 'قيد التجهيز';
+  String get statusPreparing => 'Preparing';
 
   @override
-  String get statusReady => 'جاهز';
+  String get statusReady => 'Ready';
 
   @override
-  String get statusShipped => 'تم الشحن';
+  String get statusShipped => 'Shipped';
 
   @override
-  String get statusDelivered => 'تم التسليم';
+  String get statusDelivered => 'Delivered';
 
   @override
-  String get statusReadyForPickup => 'جاهز للاستلام';
+  String get statusReadyForPickup => 'Ready for Pickup';
 
   @override
-  String get nextStatusAcceptOrder => 'قبول الطلب';
+  String get nextStatusAcceptOrder => 'Accept Order';
 
   @override
-  String get nextStatusReady => 'جاهز';
+  String get nextStatusReady => 'Ready';
 
   @override
-  String get nextStatusShipped => 'تم الشحن';
+  String get nextStatusShipped => 'Shipped';
 
   @override
-  String get nextStatusDelivered => 'تم التسليم';
+  String get nextStatusDelivered => 'Delivered';
 
   @override
   String timeAgoMinutes(int minutes) {
-    return 'منذ $minutes دقيقة';
+    return '$minutes min ago';
   }
 
   @override
   String timeAgoHours(int hours) {
-    return 'منذ $hours ساعة';
+    return '$hours hr ago';
   }
 
   @override
-  String get damagedAndLostGoods => 'البضاعة التالفة والمفقودة';
+  String get damagedAndLostGoods => 'Damaged & Lost Goods';
 
   @override
-  String get damagedDefectiveShort => 'تالف / معيب';
+  String get damagedDefectiveShort => 'Damaged';
 
   @override
-  String get expiredShort => 'منتهي الصلاحية';
+  String get expiredShort => 'Expired';
 
   @override
-  String get theftLoss => 'سرقة / فقدان';
+  String get theftLoss => 'Theft / Loss';
 
   @override
-  String get wasteBreakage => 'هدر / كسر';
+  String get wasteBreakage => 'Waste / Breakage';
 
   @override
-  String get unknownProduct => 'منتج غير محدد';
+  String get unknownProduct => 'Unknown product';
 
   @override
-  String get recordDamagedGoods => 'تسجيل بضاعة تالفة';
+  String get recordDamagedGoods => 'Record Damaged Goods';
 
   @override
-  String get costPerUnit => 'التكلفة/وحدة';
+  String get costPerUnit => 'Cost/Unit';
 
   @override
-  String get lossType => 'نوع الخسارة';
+  String get lossType => 'Loss Type';
 
   @override
-  String get damagedGoodsRecorded => 'تم تسجيل البضاعة التالفة بنجاح';
+  String get damagedGoodsRecorded => 'Damaged goods recorded successfully';
 
   @override
-  String get periodLabel => 'الفترة';
+  String get periodLabel => 'Period';
 
   @override
-  String get totalLosses => 'إجمالي الخسائر';
+  String get totalLosses => 'Total Losses';
 
   @override
-  String get noDamagedGoods => 'لا توجد بضاعة تالفة';
+  String get noDamagedGoods => 'No damaged goods';
 
   @override
-  String get noDamagedGoodsInPeriod => 'لا توجد بضاعة تالفة في هذه الفترة';
+  String get noDamagedGoodsInPeriod => 'No damaged goods in this period';
 
   @override
-  String get recordDamagedGoodsFab => 'تسجيل بضاعة تالفة';
+  String get recordDamagedGoodsFab => 'Record Damaged Goods';
 
   @override
   String quantityWithValue(String qty) {
-    return 'الكمية: $qty';
+    return 'Qty: $qty';
   }
 
   @override
-  String get purchaseDetails => 'تفاصيل طلب الشراء';
+  String get purchaseDetails => 'Purchase Details';
 
   @override
-  String get purchaseNotFound => 'لم يتم العثور على طلب الشراء';
+  String get purchaseNotFound => 'Purchase order not found';
 
   @override
-  String get backToList => 'العودة للقائمة';
+  String get backToList => 'Back to List';
 
   @override
-  String get statusDraft => 'مسودة';
+  String get statusDraft => 'Draft';
 
   @override
-  String get statusSent => 'مُرسل';
+  String get statusSent => 'Sent';
 
   @override
-  String get statusApproved => 'موافق عليه';
+  String get statusApproved => 'Approved';
 
   @override
-  String get statusReceived => 'مستلم';
+  String get statusReceived => 'Received';
 
   @override
-  String get statusCompleted => 'مكتمل';
+  String get statusCompleted => 'Completed';
 
   @override
-  String get supplierInfoLabel => 'المورد';
+  String get supplierInfoLabel => 'Supplier';
 
   @override
-  String get dateLabel => 'التاريخ';
+  String get dateLabel => 'Date';
 
   @override
-  String get orderTimeline => 'مسار الطلب';
+  String get orderTimeline => 'Order Timeline';
 
   @override
-  String get actionsLabel => 'الإجراءات';
+  String get actionsLabel => 'Actions';
 
   @override
-  String get sendToDistributor => 'إرسال للموزع';
+  String get sendToDistributor => 'Send to Distributor';
 
   @override
-  String get awaitingDistributorResponse => 'في انتظار رد الموزع';
+  String get awaitingDistributorResponse => 'Awaiting distributor response';
 
   @override
-  String get goodsReceived => 'تم استلام البضاعة';
+  String get goodsReceived => 'Goods received';
 
   @override
-  String get orderItems => 'أصناف الطلب';
+  String get orderItems => 'Order Items';
 
   @override
   String itemCountLabel(int count) {
-    return '$count صنف';
+    return '$count item';
   }
 
   @override
-  String get productColumn => 'المنتج';
+  String get productColumn => 'Product';
 
   @override
-  String get quantityColumn => 'الكمية';
+  String get quantityColumn => 'Quantity';
 
   @override
-  String get receivedColumn => 'المستلم';
+  String get receivedColumn => 'Received';
 
   @override
-  String get unitPriceColumn => 'سعر الوحدة';
+  String get unitPriceColumn => 'Unit Price';
 
   @override
-  String get totalColumn => 'الإجمالي';
+  String get totalColumn => 'Total';
 
   @override
   String quantityInfo(int qty, int received, String price) {
-    return 'الكمية: $qty  |  المستلم: $received  |  $price ر.س';
+    return 'Qty: $qty  |  Received: $received  |  $price SAR';
   }
 
   @override
-  String get receivingGoods => 'استلام البضاعة';
+  String get receivingGoods => 'Receiving Goods';
 
   @override
-  String get unsavedChanges => 'تغييرات غير محفوظة';
+  String get unsavedChanges => 'Unsaved Changes';
 
   @override
-  String get leaveWithoutSaving => 'هل تريد المغادرة بدون حفظ التغييرات؟';
+  String get leaveWithoutSaving =>
+      'Do you want to leave without saving changes?';
 
   @override
-  String get leave => 'مغادرة';
+  String get leave => 'Leave';
 
   @override
   String receivingGoodsTitle(String number) {
-    return 'استلام البضاعة - $number';
+    return 'Receiving Goods - $number';
   }
 
   @override
-  String get orderData => 'بيانات الطلب';
+  String get orderData => 'Order Data';
 
   @override
-  String get receivedItems => 'الأصناف المستلمة';
+  String get receivedItems => 'Received Items';
 
   @override
   String orderedQty(int qty) {
-    return 'الطلب: $qty';
+    return 'Ordered: $qty';
   }
 
   @override
-  String get receivedQtyLabel => 'المستلم';
+  String get receivedQtyLabel => 'Received';
 
   @override
-  String get receivingInfo => 'بيانات الاستلام';
+  String get receivingInfo => 'Receiving Info';
 
   @override
-  String get receiverName => 'اسم المستلم *';
+  String get receiverName => 'Receiver Name *';
 
   @override
-  String get receivingNotes => 'ملاحظات الاستلام';
+  String get receivingNotes => 'Receiving Notes';
 
   @override
-  String get confirmingReceipt => 'جاري التأكيد...';
+  String get confirmingReceipt => 'Confirming...';
 
   @override
-  String get confirmReceipt => 'تأكيد الاستلام';
+  String get confirmReceipt => 'Confirm Receipt';
 
   @override
-  String get purchaseOrders => 'طلبات الشراء';
+  String get purchaseOrders => 'Purchase Orders';
 
   @override
-  String get statusApprovedShort => 'موافق';
+  String get statusApprovedShort => 'Approved';
 
   @override
-  String get orderNumberColumn => 'رقم الطلب';
+  String get orderNumberColumn => 'Order Number';
 
   @override
-  String get statusColumn => 'الحالة';
+  String get statusColumn => 'Status';
 
   @override
-  String get noPurchaseOrders => 'لا توجد طلبات شراء';
+  String get noPurchaseOrders => 'No purchase orders';
 
   @override
-  String get createPurchaseToStart => 'أنشئ طلب شراء جديد للبدء';
+  String get createPurchaseToStart =>
+      'Create a new purchase order to get started';
 
   @override
-  String get errorLoadingData => 'حدث خطأ في تحميل البيانات';
+  String get errorLoadingData => 'An error occurred while loading data';
 
   @override
-  String get sendToDistributorTitle => 'إرسال الطلب للموزع';
+  String get sendToDistributorTitle => 'Send Order to Distributor';
 
   @override
-  String get orderInfo => 'معلومات الطلب';
+  String get orderInfo => 'Order Information';
 
   @override
-  String get currentSupplier => 'المورد الحالي';
+  String get currentSupplier => 'Current Supplier';
 
   @override
-  String get itemsSummary => 'ملخص الأصناف';
+  String get itemsSummary => 'Items Summary';
 
   @override
-  String get distributorSupplier => 'الموزع / المورد';
+  String get distributorSupplier => 'Distributor / Supplier';
 
   @override
-  String get additionalMessage => 'رسالة إضافية';
+  String get additionalMessage => 'Additional Message';
 
   @override
-  String get addNotesForDistributor => 'أضف ملاحظات أو رسالة للموزع...';
+  String get addNotesForDistributor =>
+      'Add notes or a message for the distributor...';
 
   @override
-  String get sending => 'جاري الإرسال...';
+  String get sending => 'Sending...';
 
   @override
-  String get pleaseSelectDistributor => 'يرجى اختيار الموزع';
+  String get pleaseSelectDistributor => 'Please select the distributor';
 
   @override
   String errorSendingOrder(String message) {
-    return 'خطأ في إرسال الطلب: $message';
+    return 'Error sending order: $message';
   }
 
   @override
-  String get employeeCommissions => 'عمولات الموظفين';
+  String get employeeCommissions => 'Employee Commissions';
 
   @override
-  String get totalDueCommissions => 'إجمالي العمولات المستحقة';
+  String get totalDueCommissions => 'Total Due Commissions';
 
   @override
   String forEmployees(int count) {
-    return 'لـ $count موظف';
+    return 'For $count employee';
   }
 
   @override
-  String get noCommissions => 'لا توجد عمولات';
+  String get noCommissions => 'No commissions';
 
   @override
-  String get noSalesInPeriod => 'لا توجد مبيعات في هذه الفترة';
+  String get noSalesInPeriod => 'No sales in this period';
 
   @override
   String invoicesSales(int count, String amount) {
-    return '$count فاتورة - مبيعات: $amount ر.س';
+    return '$count invoice - Sales: $amount SAR';
   }
 
   @override
-  String get commissionLabel => 'عمولة';
+  String get commissionLabel => 'Commission';
 
   @override
   String targetLabel(String amount) {
-    return 'الهدف: $amount ر.س';
+    return 'Target: $amount SAR';
   }
 
   @override
   String achievedPercent(String percent) {
-    return '$percent% مُحقق';
+    return '$percent% achieved';
   }
 
   @override
   String commissionRate(String percent) {
-    return 'نسبة العمولة: $percent%';
+    return 'Commission rate: $percent%';
   }
 
   @override
-  String get priceLists => 'قوائم الأسعار';
+  String get priceLists => 'Price Lists';
 
   @override
-  String get retailPrice => 'سعر التجزئة';
+  String get retailPrice => 'Retail Price';
 
   @override
-  String get retailPriceDesc => 'السعر العادي للعملاء الأفراد';
+  String get retailPriceDesc => 'Standard price for individual customers';
 
   @override
-  String get wholesalePrice => 'سعر الجملة';
+  String get wholesalePrice => 'Wholesale Price';
 
   @override
-  String get wholesalePriceDesc => 'أسعار مخفضة لكميات كبيرة';
+  String get wholesalePriceDesc => 'Discounted prices for bulk quantities';
 
   @override
-  String get vipPrice => 'أسعار VIP';
+  String get vipPrice => 'VIP Price';
 
   @override
-  String get vipPriceDesc => 'أسعار خاصة للعملاء المميزين';
+  String get vipPriceDesc => 'Special prices for VIP customers';
 
   @override
-  String get costPriceList => 'سعر التكلفة';
+  String get costPriceList => 'Cost Price';
 
   @override
-  String get costPriceDesc => 'للاستخدام الداخلي فقط';
+  String get costPriceDesc => 'For internal use only';
 
   @override
   String editPrice(String name) {
-    return 'تعديل السعر - $name';
+    return 'Edit Price - $name';
   }
 
   @override
   String basePriceLabel(String price) {
-    return 'السعر الأساسي: $price ر.س';
+    return 'Base price: $price SAR';
   }
 
   @override
   String costPriceLabel(String price) {
-    return 'سعر التكلفة: $price ر.س';
+    return 'Cost price: $price SAR';
   }
 
   @override
   String newPriceLabel(String listName) {
-    return 'السعر الجديد ($listName)';
+    return 'New Price ($listName)';
   }
 
   @override
   String priceUpdated(String name, String price) {
-    return 'تم تحديث سعر \"$name\" إلى $price ر.س';
+    return 'Price of \"$name\" updated to $price SAR';
   }
 
   @override
   String productCount(int count) {
-    return '$count منتج';
+    return '$count product';
   }
 
   @override
   String baseLabel(String price) {
-    return 'أساسي: $price ر.س';
+    return 'Base: $price SAR';
   }
 
   @override
-  String get errorLoadingHeldInvoices => 'خطأ في تحميل الفواتير المعلقة';
+  String get errorLoadingHeldInvoices => 'Error loading held invoices';
 
   @override
-  String get saleSaveFailed => 'فشل حفظ البيع';
+  String get saleSaveFailed => 'Sale save failed';
 
   @override
   String errorSavingSaleMessage(String error) {
-    return 'حدث خطأ أثناء حفظ عملية البيع. السلة لم تُمسح.\n\n$error';
+    return 'An error occurred while saving the sale. Cart was not cleared.\n\n$error';
   }
 
   @override
-  String get ok => 'حسناً';
+  String get ok => 'OK';
 
   @override
-  String get invoiceNote => 'ملاحظة على الفاتورة';
+  String get invoiceNote => 'Invoice Note';
 
   @override
-  String get addNoteHint => 'أضف ملاحظة...';
+  String get addNoteHint => 'Add a note...';
 
   @override
-  String get clearNote => 'مسح';
+  String get clearNote => 'Clear';
 
   @override
-  String get quickNoteDelivery => 'توصيل';
+  String get quickNoteDelivery => 'Delivery';
 
   @override
-  String get quickNoteGiftWrap => 'تغليف هدية';
+  String get quickNoteGiftWrap => 'Gift wrapping';
 
   @override
-  String get quickNoteFragile => 'هش - حساس';
+  String get quickNoteFragile => 'Fragile';
 
   @override
-  String get quickNoteUrgent => 'عاجل';
+  String get quickNoteUrgent => 'Urgent';
 
   @override
-  String get quickNoteReservation => 'حجز';
+  String get quickNoteReservation => 'Reservation';
 
   @override
-  String get enterPhoneNumber => 'أدخل رقم الجوال';
+  String get enterPhoneNumber => 'Enter phone number';
 
   @override
   String whatsappSendError(String error) {
-    return 'تعذر إرسال واتساب: $error';
+    return 'Could not send WhatsApp: $error';
   }
 
   @override
-  String get sendReceiptViaWhatsapp => 'إرسال الفاتورة عبر واتساب';
+  String get sendReceiptViaWhatsapp => 'Send receipt via WhatsApp';
 
   @override
-  String get invoiceNumberTitle => 'رقم الفاتورة';
+  String get invoiceNumberTitle => 'Invoice Number';
 
   @override
-  String get amountPaidTitle => 'المبلغ المدفوع';
+  String get amountPaidTitle => 'Amount Paid';
 
   @override
-  String get sentLabel => 'تم الإرسال';
+  String get sentLabel => 'Sent';
 
   @override
-  String get newSaleButton => 'بيع جديدة';
+  String get newSaleButton => 'New Sale';
 
   @override
-  String get enterValidAmountError => 'أدخل مبلغ صحيح';
+  String get enterValidAmountError => 'Enter a valid amount';
 
   @override
-  String get amountExceedsMaxError => 'المبلغ يجب أن لا يتجاوز 999,999.99';
+  String get amountExceedsMaxError => 'Amount must not exceed 999,999.99';
 
   @override
-  String get amountExceedsRemainingError => 'المبلغ أكبر من المتبقي';
+  String get amountExceedsRemainingError => 'Amount exceeds remaining';
 
   @override
-  String get amountBetweenZeroAndMax => 'المبلغ يجب أن يكون بين 0 و 999,999.99';
+  String get amountBetweenZeroAndMax =>
+      'Amount must be between 0 and 999,999.99';
 
   @override
-  String get amountLessThanTotal => 'المبلغ المستلم أقل من الإجمالي';
+  String get amountLessThanTotal => 'Amount received is less than total';
 
   @override
-  String get selectCustomerFirstError => 'يجب اختيار العميل أولاً';
+  String get selectCustomerFirstError => 'Select a customer first';
 
   @override
-  String get debtLimitExceededError => 'تم تجاوز حد الدين للعميل';
+  String get debtLimitExceededError => 'Customer debt limit exceeded';
 
   @override
-  String get completePaymentFirstError => 'أكمل الدفع أولاً';
+  String get completePaymentFirstError => 'Complete payment first';
 
   @override
-  String get completePaymentLabel => 'إتمام الدفع';
+  String get completePaymentLabel => 'Complete Payment';
 
   @override
-  String get receivedAmountLabel => 'المبلغ المستلم';
+  String get receivedAmountLabel => 'Amount Received';
 
   @override
-  String get sarPrefix => 'ر.س ';
+  String get sarPrefix => 'SAR ';
 
   @override
-  String get selectCustomerLabel => 'اختر العميل';
+  String get selectCustomerLabel => 'Select Customer';
 
   @override
-  String get currentBalanceTitle => 'الرصيد الحالي';
+  String get currentBalanceTitle => 'Current Balance';
 
   @override
-  String get creditLimitTitle => 'حد الائتمان';
+  String get creditLimitTitle => 'Credit Limit';
 
   @override
-  String get creditLimitAmount => '500.00 ر.س';
+  String get creditLimitAmount => '500.00 SAR';
 
   @override
-  String get debtLimitExceededWarning => 'تجاوز حد الدين!';
+  String get debtLimitExceededWarning => 'Debt limit exceeded!';
 
   @override
-  String get selectCustomerFirstButton => 'اختر العميل أولاً';
+  String get selectCustomerFirstButton => 'Select customer first';
 
   @override
-  String get splitPaymentTitle => 'الدفع المقسم';
+  String get splitPaymentTitle => 'Split Payment';
 
   @override
   String splitPaymentDone(int count) {
-    return 'دفع مقسم ✅ ($count طرق)';
+    return 'Split Payment done ($count methods)';
   }
 
   @override
-  String get splitPaymentLabel => 'دفع مقسم';
+  String get splitPaymentLabel => 'Split Payment';
 
   @override
-  String get addPaymentEntry => 'إضافة دفعة';
+  String get addPaymentEntry => 'Add Payment';
 
   @override
-  String get confirmSplitPayment => 'تأكيد الدفع';
+  String get confirmSplitPayment => 'Confirm Payment';
 
   @override
-  String get completePaymentToConfirm => 'أكمل الدفع أولاً';
+  String get completePaymentToConfirm => 'Complete payment first';
 
   @override
-  String get enterValidAmountSplit => 'أدخل مبلغ صحيح';
+  String get enterValidAmountSplit => 'Enter a valid amount';
 
   @override
-  String get amountExceedsSplit => 'المبلغ أكبر من المتبقي';
+  String get amountExceedsSplit => 'Amount exceeds remaining';
 
   @override
-  String get bestSellingPress19 => 'الأكثر مبيعاً (اضغط 1-9)';
+  String get bestSellingPress19 => 'Best Selling (Press 1-9)';
 
   @override
-  String get quickSearchHintFull => 'بحث سريع (اسم / كود / باركود)...';
+  String get quickSearchHintFull => 'Quick search (name / code / barcode)...';
 
   @override
   String noResultsForQuery(String query) {
-    return 'لا توجد نتائج لـ \"$query\"';
+    return 'No results for \"$query\"';
   }
 
   @override
   String addQtyToCart(int qty) {
-    return 'إضافة $qty للسلة';
+    return 'Add $qty to cart';
   }
 
   @override
   String availableStock(String qty) {
-    return 'المتوفر: $qty';
+    return 'Available: $qty';
   }
 
   @override
   String priceSar(String price) {
-    return '$price ر.س';
+    return '$price SAR';
   }
 
   @override
   String loyaltyPointsDiscountLabel(int points) {
-    return 'خصم نقاط الولاء ($points نقطة)';
+    return 'Loyalty points discount ($points points)';
   }
 
   @override
   String pointsRedemptionInvoice(String id) {
-    return 'استبدال نقاط - فاتورة $id';
+    return 'Points redemption - Invoice $id';
   }
 
   @override
   String pointsEarnedInvoice(String id) {
-    return 'نقاط مكتسبة - فاتورة $id';
+    return 'Points earned - Invoice $id';
   }
 
   @override
   String availableLoyaltyPoints(String points, String amount) {
-    return 'نقاط الولاء المتاحة: $points نقطة (تساوي $amount ريال)';
+    return 'Available loyalty points: $points points (equals $amount SAR)';
   }
 
   @override
-  String get useLoyaltyPoints => 'استخدام نقاط الولاء';
+  String get useLoyaltyPoints => 'Use Loyalty Points';
 
   @override
   String pointsCountHint(String max) {
-    return 'عدد النقاط (الحد الأقصى $max)';
+    return 'Number of points (max $max)';
   }
 
   @override
-  String get pointsUnitLabel => 'نقطة';
+  String get pointsUnitLabel => 'points';
 
   @override
   String discountAmountSar(String amount) {
-    return 'خصم: $amount ريال';
+    return 'Discount: $amount SAR';
   }
 
   @override
-  String get allPointsLabel => 'كل النقاط';
+  String get allPointsLabel => 'All Points';
 
   @override
   String pointsCountLabel(String count) {
-    return '$count نقطة';
+    return '$count points';
   }
 
   @override
   String newOrderNotification(String id) {
-    return 'طلب جديد #$id';
+    return 'New order #$id';
   }
 
   @override
-  String get onlineOrdersTooltip => 'الطلبات الأونلاين';
+  String get onlineOrdersTooltip => 'Online Orders';
 
   @override
   String productCountItems(int count) {
-    return '$count منتج';
+    return '$count product';
   }
 
   @override
-  String get acceptAndPrint => 'قبول وطباعة';
+  String get acceptAndPrint => 'Accept & Print';
 
   @override
-  String get deliverToDriver => 'تسليم للسائق';
+  String get deliverToDriver => 'Deliver to Driver';
 
   @override
-  String get onTheWayStatus => 'في الطريق';
+  String get onTheWayStatus => 'On the way';
 
   @override
   String driverNameLabel(String name) {
-    return 'السائق: $name';
+    return 'Driver: $name';
   }
 
   @override
-  String get deliveredStatus => 'تم التسليم';
+  String get deliveredStatus => 'Delivered';
 
   @override
   String agoMinutes(int count) {
-    return 'منذ $count دقيقة';
+    return '$count minutes ago';
   }
 
   @override
   String agoHours(int count) {
-    return 'منذ $count ساعة';
+    return '$count hours ago';
   }
 
   @override
   String moreProductsLabel(int count) {
-    return '+ $count منتجات أخرى';
+    return '+ $count more products';
   }
 
   @override
-  String get onlineOrdersTitle => 'الطلبات الأونلاين';
+  String get onlineOrdersTitle => 'Online Orders';
 
   @override
   String pendingOrdersCount(int count) {
-    return '$count طلب بانتظار القبول';
+    return '$count orders pending acceptance';
   }
 
   @override
-  String get inPreparationTab => 'قيد التجهيز';
+  String get inPreparationTab => 'In Preparation';
 
   @override
-  String get inDeliveryTab => 'في التوصيل';
+  String get inDeliveryTab => 'In Delivery';
 
   @override
-  String get noOrdersMessage => 'لا توجد طلبات';
+  String get noOrdersMessage => 'No orders';
 
   @override
-  String get newOrdersAppearHere => 'الطلبات الجديدة ستظهر هنا';
+  String get newOrdersAppearHere => 'New orders will appear here';
 
   @override
-  String get rejectOrderTitle => 'رفض الطلب';
+  String get rejectOrderTitle => 'Reject Order';
 
   @override
-  String get rejectOrderConfirm => 'هل أنت متأكد من رفض هذا الطلب؟';
+  String get rejectOrderConfirm =>
+      'Are you sure you want to reject this order?';
 
   @override
-  String get rejectedBySeller => 'رفض من البائع';
+  String get rejectedBySeller => 'Rejected by seller';
 
   @override
   String printingOrderMessage(String id) {
-    return 'طباعة الطلب $id...';
+    return 'Printing order $id...';
   }
 
   @override
-  String get selectDriverTitle => 'اختر السائق';
+  String get selectDriverTitle => 'Select Driver';
 
   @override
   String orderDeliveredToDriver(String name) {
-    return 'تم تسليم الطلب للسائق $name';
+    return 'Order delivered to driver $name';
   }
 
   @override
-  String get walkInCustomerLabel => 'عميل عابر';
+  String get walkInCustomerLabel => 'Walk-in Customer';
 
   @override
-  String get continueWithoutCustomer => 'متابعة بدون تحديد عميل';
+  String get continueWithoutCustomer => 'Continue without selecting a customer';
 
   @override
-  String get addNewCustomerButton => 'إضافة عميل جديد';
+  String get addNewCustomerButton => 'Add New Customer';
 
   @override
   String loyaltyPointsCountLabel(String count) {
-    return '$count نقطة';
+    return '$count points';
   }
 
   @override
   String customerBalanceAmount(String amount) {
-    return '$amount ر.س';
+    return '$amount SAR';
   }
 
   @override
-  String get noResultsFoundTitle => 'لا توجد نتائج';
+  String get noResultsFoundTitle => 'No results found';
 
   @override
-  String get tryAnotherSearch => 'جرب البحث بكلمة أخرى';
+  String get tryAnotherSearch => 'Try searching with another keyword';
 
   @override
-  String get selectCustomerTitle => 'اختيار عميل';
+  String get selectCustomerTitle => 'Select Customer';
 
   @override
-  String get searchByNameOrPhoneHint => 'البحث بالاسم أو رقم الهاتف...';
+  String get searchByNameOrPhoneHint => 'Search by name or phone number...';
 
   @override
   String quickSaleHold(String time) {
-    return 'بيع سريع $time';
+    return 'Quick sale $time';
   }
 
   @override
-  String get holdInvoiceTitle => 'تعليق الفاتورة';
+  String get holdInvoiceTitle => 'Hold Invoice';
 
   @override
-  String get holdInvoiceNameLabel => 'اسم الفاتورة المعلقة';
+  String get holdInvoiceNameLabel => 'Held invoice name';
 
   @override
-  String get holdAction => 'تعليق';
+  String get holdAction => 'Hold';
 
   @override
   String heldMessage(String name) {
-    return 'تم تعليق: $name';
+    return 'Held: $name';
   }
 
   @override
   String holdError(String error) {
-    return 'خطأ في التعليق: $error';
+    return 'Hold error: $error';
   }
 
   @override
-  String get storeLabel => 'المتجر';
+  String get storeLabel => 'Store';
 
   @override
-  String get featureNotAvailableNow => 'هذه الميزة غير متاحة حالياً';
+  String get featureNotAvailableNow => 'This feature is not available yet';
 
   @override
-  String get cancelInvoiceError => 'حدث خطأ أثناء إلغاء الفاتورة';
+  String get cancelInvoiceError =>
+      'An error occurred while canceling the invoice';
 
   @override
-  String get invoiceLoadError => 'حدث خطأ في تحميل الفاتورة';
+  String get invoiceLoadError => 'An error occurred while loading the invoice';
 
   @override
-  String get syncConflicts => 'تعارضات المزامنة';
+  String get syncConflicts => 'Sync conflicts';
 
   @override
   String itemsNeedReview(int count) {
-    return '$count عنصر يحتاج مراجعة';
+    return '$count items need review';
   }
 
   @override
-  String get needsAttention => 'يحتاج اهتمام';
+  String get needsAttention => 'Needs attention';
 
   @override
-  String get seriousProblems => 'مشاكل خطيرة';
+  String get seriousProblems => 'Serious problems';
 
   @override
   String syncPartialSuccess(int success, int failed) {
-    return 'تمت مزامنة $success عنصر، فشل $failed';
+    return 'Synced $success items, $failed failed';
   }
 
   @override
   String syncErrorMessage(String error) {
-    return 'خطأ في المزامنة: $error';
+    return 'Sync error: $error';
   }
 
   @override
-  String get networkError => 'خطأ في الاتصال بالخادم';
+  String get networkError => 'Server connection error';
 
   @override
-  String get dataLoadFailed => 'فشل تحميل البيانات';
+  String get dataLoadFailed => 'Failed to load data';
 
   @override
-  String get unexpectedError => 'حدث خطأ غير متوقع';
+  String get unexpectedError => 'An unexpected error occurred';
 
   @override
-  String get cashierPerformance => 'أداء الكاشير';
+  String get cashierPerformance => 'Cashier Performance';
 
   @override
-  String get resetStatsAction => 'إعادة تعيين';
+  String get resetStatsAction => 'Reset';
 
   @override
-  String get statsReset => 'تم إعادة تعيين الإحصائيات';
+  String get statsReset => 'Statistics have been reset';
 
   @override
-  String get averageSaleTime => 'متوسط وقت البيع';
+  String get averageSaleTime => 'Average sale time';
 
   @override
-  String get operationsPerHour => 'عمليات/ساعة';
+  String get operationsPerHour => 'Operations/hour';
 
   @override
-  String get errorRateLabel => 'نسبة الأخطاء';
+  String get errorRateLabel => 'Error rate';
 
   @override
-  String get completedOperations => 'عمليات مكتملة';
+  String get completedOperations => 'Completed operations';
 
   @override
-  String get noInternetConnection => 'لا يوجد اتصال بالإنترنت';
+  String get noInternetConnection => 'No internet connection';
 
   @override
   String operationsPendingSync(int count) {
-    return '$count عملية في انتظار المزامنة';
+    return '$count operations pending sync';
   }
 
   @override
-  String get connectionRestored => 'تم استعادة الاتصال';
+  String get connectionRestored => 'Connection restored';
 
   @override
-  String get connectedLabel => 'متصل';
+  String get connectedLabel => 'Connected';
 
   @override
-  String get disconnectedLabel => 'غير متصل';
+  String get disconnectedLabel => 'Disconnected';
 
   @override
   String offlineWithPending(int count) {
-    return 'غير متصل - $count عمليات في الانتظار';
+    return 'Offline - $count operations pending';
   }
 
   @override
   String syncingWithCount(int count) {
-    return 'جاري المزامنة... ($count عمليات)';
+    return 'Syncing... ($count operations)';
   }
 
   @override
   String syncErrorWithCount(int count) {
-    return 'خطأ في المزامنة - $count عمليات معلقة';
+    return 'Sync error - $count operations pending';
   }
 
   @override
   String pendingSyncWithCount(int count) {
-    return '$count عمليات في انتظار المزامنة';
+    return '$count operations pending sync';
   }
 
   @override
-  String get connectedAllSynced => 'متصل - كل البيانات مزامنة';
+  String get connectedAllSynced => 'Connected - all data synced';
 
   @override
   String get dataSavedLocally =>
-      'البيانات محفوظة محلياً وستتم مزامنتها عند الاتصال';
+      'Data saved locally and will sync when connected';
 
   @override
-  String get uploadingData => 'يتم رفع البيانات إلى السيرفر...';
+  String get uploadingData => 'Uploading data to server...';
 
   @override
-  String get errorWillRetry => 'حدث خطأ، ستتم إعادة المحاولة تلقائياً';
+  String get errorWillRetry => 'An error occurred, will retry automatically';
 
   @override
-  String get syncSoon => 'ستتم المزامنة خلال ثوان';
+  String get syncSoon => 'Will sync in seconds';
 
   @override
-  String get allDataSynced => 'كل البيانات محدثة ومزامنة';
+  String get allDataSynced => 'All data is up to date and synced';
 
   @override
-  String get cashierMode => 'وضع الكاشير';
+  String get cashierMode => 'Cashier mode';
 
   @override
-  String get collapseMenu => 'طي القائمة';
+  String get collapseMenu => 'Collapse menu';
 
   @override
-  String get expandMenu => 'توسيع القائمة';
+  String get expandMenu => 'Expand menu';
 
   @override
-  String get screenLoadError => 'حدث خطأ أثناء تحميل الشاشة';
+  String get screenLoadError => 'An error occurred while loading the screen';
 
   @override
-  String get screenLoadTimeout => 'تجاوز وقت تحميل الشاشة';
+  String get screenLoadTimeout => 'Screen loading timed out';
 
   @override
   String get timeoutCheckConnection =>
-      'انتهى وقت الانتظار. تحقق من اتصالك بالإنترنت.';
+      'Timed out. Check your internet connection.';
 
   @override
-  String get retryLaterMessage => 'يرجى المحاولة مرة أخرى لاحقاً.';
+  String get retryLaterMessage => 'Please try again later.';
 
   @override
-  String get howWasOperation => 'كيف كانت هذه العملية؟';
+  String get howWasOperation => 'How was this operation?';
 
   @override
-  String get fastLabel => 'سريعة ✓';
+  String get fastLabel => 'Fast';
 
   @override
-  String get whatToImprove => 'ما الذي يمكن تحسينه؟';
+  String get whatToImprove => 'What can be improved?';
 
   @override
-  String get helpUsImprove => 'مساعدتك تفيدنا في تحسين التطبيق';
+  String get helpUsImprove => 'Your help improves the app';
 
   @override
-  String get writeNoteOptional => 'اكتب ملاحظتك (اختياري)...';
+  String get writeNoteOptional => 'Write your note (optional)...';
 
   @override
-  String get thanksFeedback => 'شكراً لتقييمك! 👍';
+  String get thanksFeedback => 'Thanks for your feedback!';
 
   @override
-  String get thanksWillImprove => 'شكراً! سنعمل على التحسين 🙏';
+  String get thanksWillImprove => 'Thanks! We will work on improving';
 
   @override
-  String get noRatingsYet => 'لا توجد تقييمات بعد';
+  String get noRatingsYet => 'No ratings yet';
 
   @override
-  String get customerRatings => 'تقييمات العملاء';
+  String get customerRatings => 'Customer ratings';
 
   @override
-  String get fastOperations => 'عمليات سريعة';
+  String get fastOperations => 'Fast operations';
 
   @override
-  String get averageRating => 'متوسط التقييم';
+  String get averageRating => 'Average rating';
 
   @override
-  String get totalRatings => 'إجمالي التقييمات';
+  String get totalRatings => 'Total ratings';
 
   @override
   String undoCompleted(String description) {
-    return 'تم التراجع: $description';
+    return 'Undone: $description';
   }
 
   @override
-  String get payables => 'المستحقات';
+  String get payables => 'Payables';
 
   @override
-  String get notAvailableLabel => 'غير متاح';
+  String get notAvailableLabel => 'Not available';
 
   @override
   String get browseSupplierCatalogNotAvailable =>
-      'تصفح كتالوج الموردين - هذه الميزة غير متاحة حالياً';
+      'Browse supplier catalog - not available yet';
 
   @override
-  String get selectedSuffix => '، محدد';
+  String get selectedSuffix => ', selected';
 
   @override
-  String get disabledSuffix => '، معطل';
+  String get disabledSuffix => ', disabled';
 
   @override
-  String get doubleTapToToggle => 'انقر مرتين لتغيير الحالة';
+  String get doubleTapToToggle => 'Double tap to toggle';
 
   @override
-  String get loadingPleaseWait => 'جاري التحميل...';
+  String get loadingPleaseWait => 'Loading...';
 
   @override
-  String get posSystemLabel => 'نظام نقطة البيع';
+  String get posSystemLabel => 'POS System';
 
   @override
-  String get pageNotFoundTitle => 'خطأ';
+  String get pageNotFoundTitle => 'Error';
 
   @override
   String pageNotFoundMessage(String path) {
-    return 'الصفحة غير موجودة: $path';
+    return 'Page not found: $path';
   }
 
   @override
-  String get noShipmentsToReceive => 'لا توجد شحنات للاستلام';
+  String get noShipmentsToReceive => 'No shipments to receive';
 
   @override
   String get approvedOrdersAppearHere =>
-      'ستظهر هنا الطلبات المعتمدة الجاهزة للاستلام';
+      'Approved orders ready for receiving will appear here';
 
   @override
-  String get unspecifiedSupplier => 'مورد غير محدد';
+  String get unspecifiedSupplier => 'Unspecified supplier';
 
   @override
-  String get viewItems => 'عرض البنود';
+  String get viewItems => 'View Items';
 
   @override
-  String get receivingInProgress => 'جارٍ الاستلام...';
+  String get receivingInProgress => 'Receiving...';
 
   @override
-  String get confirmReceivingBtn => 'تأكيد الاستلام';
+  String get confirmReceivingBtn => 'Confirm Receiving';
 
   @override
   String orderItemsTitle(String number) {
-    return 'بنود الطلب $number';
+    return 'Order Items $number';
   }
 
   @override
-  String get noOrderItems => 'لا توجد بنود';
+  String get noOrderItems => 'No items';
 
   @override
-  String get confirmReceiveGoodsTitle => 'تأكيد استلام البضاعة';
+  String get confirmReceiveGoodsTitle => 'Confirm Receiving Goods';
 
   @override
   String confirmReceiveGoodsBody(String number) {
-    return 'هل أنت متأكد من استلام الطلب $number؟\nسيتم تحديث المخزون تلقائياً.';
+    return 'Are you sure you want to receive order $number?\nInventory will be updated automatically.';
   }
 
   @override
   String orderReceivedSuccess(String number) {
-    return 'تم استلام الطلب $number بنجاح';
+    return 'Order $number received successfully';
   }
 
   @override
-  String get quickPurchaseRequest => 'طلب شراء سريع';
+  String get quickPurchaseRequest => 'Quick Purchase Request';
 
   @override
-  String get searchAndAddProducts => 'ابحث عن منتجات وأضفها للطلب';
+  String get searchAndAddProducts =>
+      'Search for products and add them to the request';
 
   @override
-  String get requestedProducts => 'المنتجات المطلوبة';
+  String get requestedProducts => 'Requested Products';
 
   @override
-  String get productCountSummary => 'عدد المنتجات';
+  String get productCountSummary => 'Product Count';
 
   @override
-  String get totalQuantitySummary => 'إجمالي الكمية';
+  String get totalQuantitySummary => 'Total Quantity';
 
   @override
-  String get addNotesForManager => 'أضف ملاحظات للمدير (اختياري)...';
+  String get addNotesForManager => 'Add notes for manager (optional)...';
 
   @override
-  String get sendRequestBtn => 'إرسال الطلب';
+  String get sendRequestBtn => 'Send Request';
 
   @override
-  String get validQuantityRequired => 'يرجى إدخال كمية صحيحة لجميع المنتجات';
+  String get validQuantityRequired =>
+      'Please enter a valid quantity for all products';
 
   @override
-  String get requestSentToManager => 'تم إرسال الطلب للمدير';
+  String get requestSentToManager => 'Request sent to manager';
 
   @override
-  String get connectionSuccessMsg => 'تم الاتصال بنجاح';
+  String get connectionSuccessMsg => 'Connected successfully';
 
   @override
   String connectionFailedMsgErr(String error) {
-    return 'فشل الاتصال: $error';
+    return 'Connection failed: $error';
   }
 
   @override
-  String get deviceSavedMsg => 'تم حفظ الجهاز';
+  String get deviceSavedMsg => 'Device saved';
 
   @override
   String saveErrorMsg(String error) {
-    return 'خطأ في حفظ الإعدادات: $error';
+    return 'Error saving settings: $error';
   }
 
   @override
-  String get addPaymentDeviceTitle => 'إضافة جهاز دفع';
+  String get addPaymentDeviceTitle => 'Add Payment Device';
 
   @override
-  String get setupNewDeviceSubtitle => 'إعداد جهاز جديد';
+  String get setupNewDeviceSubtitle => 'Set up a new device';
 
   @override
-  String get quickAccessKeysSubtitle => 'مفاتيح الوصول السريع';
+  String get quickAccessKeysSubtitle => 'Quick access keys';
 
   @override
   String devicesAddedCount(int count) {
-    return '$count أجهزة مضافة';
+    return '$count devices added';
   }
 
   @override
-  String get managePreferencesSubtitle => 'إدارة التفضيلات';
+  String get managePreferencesSubtitle => 'Manage preferences';
 
   @override
-  String get storeNameAddressLogo => 'الاسم، العنوان والشعار';
+  String get storeNameAddressLogo => 'Name, address and logo';
 
   @override
-  String get receiptHeaderFooterLogo => 'رأس وتذييل الفاتورة والشعار';
+  String get receiptHeaderFooterLogo => 'Receipt header, footer and logo';
 
   @override
-  String get posPaymentNavSubtitle => 'نقطة البيع، الدفع والتنقل';
+  String get posPaymentNavSubtitle => 'POS, payment and navigation';
 
   @override
-  String get usersAndPermissions => 'المستخدمين والصلاحيات';
+  String get usersAndPermissions => 'Users & Permissions';
 
   @override
-  String get rolesAndAccess => 'الأدوار والوصول';
+  String get rolesAndAccess => 'Roles and access';
 
   @override
-  String get backupAutoRestore => 'نسخ احتياطي واستعادة تلقائية';
+  String get backupAutoRestore => 'Automatic backup and restore';
 
   @override
-  String get privacyAndDataRights => 'الخصوصية وحقوق البيانات';
+  String get privacyAndDataRights => 'Privacy and data rights';
 
   @override
-  String get arabicEnglish => 'عربي/إنجليزي';
+  String get arabicEnglish => 'Arabic/English';
 
   @override
-  String get darkLightMode => 'الوضع الداكن/الفاتح';
+  String get darkLightMode => 'Dark/Light mode';
 
   @override
-  String get clearCacheTitle => 'مسح الذاكرة المؤقتة';
+  String get clearCacheTitle => 'Clear Cache';
 
   @override
-  String get clearCacheSubtitle => 'حل مشاكل التحميل والبيانات';
+  String get clearCacheSubtitle => 'Fix loading and data issues';
 
   @override
   String get clearCacheDialogBody =>
-      'سيتم مسح جميع البيانات المؤقتة وإعادة تحميلها من السيرفر.\n\nسيتم تسجيل خروجك وإعادة تشغيل التطبيق.\n\nهل تريد المتابعة؟';
+      'All temporary data will be cleared and reloaded from the server.\n\nYou will be logged out and the app will restart.\n\nDo you want to continue?';
 
   @override
-  String get clearAndRestart => 'مسح وإعادة التشغيل';
+  String get clearAndRestart => 'Clear & Restart';
 
   @override
-  String get clearingCacheProgress => 'جاري مسح الذاكرة المؤقتة...';
+  String get clearingCacheProgress => 'Clearing cache...';
 
   @override
-  String get printerInitFailed => 'فشل تهيئة خدمة الطباعة';
+  String get printerInitFailed => 'Failed to initialize print service';
 
   @override
-  String get noPrintersFound => 'لم يتم العثور على طابعات';
+  String get noPrintersFound => 'No printers found';
 
   @override
   String searchErrorMsg(String error) {
-    return 'خطأ في البحث: $error';
+    return 'Search error: $error';
   }
 
   @override
   String connectedToPrinterName(String name) {
-    return 'تم الاتصال بـ $name';
+    return 'Connected to $name';
   }
 
   @override
   String connectionFailedToPrinter(String name) {
-    return 'فشل الاتصال بـ $name';
+    return 'Connection failed to $name';
   }
 
   @override
-  String get enterPrinterIpAddress => 'أدخل عنوان IP للطابعة';
+  String get enterPrinterIpAddress => 'Enter the printer IP address';
 
   @override
-  String get printerNotConnectedMsg => 'الطابعة غير متصلة';
+  String get printerNotConnectedMsg => 'Printer not connected';
 
   @override
-  String get testPageSentSuccess => 'تم إرسال صفحة الاختبار بنجاح';
+  String get testPageSentSuccess => 'Test page sent successfully';
 
   @override
   String testFailedMsg(String error) {
-    return 'فشل الاختبار: $error';
+    return 'Test failed: $error';
   }
 
   @override
   String errorMsgGeneric(String error) {
-    return 'خطأ: $error';
+    return 'Error: $error';
   }
 
   @override
-  String get cashDrawerOpened => 'تم فتح درج النقود';
+  String get cashDrawerOpened => 'Cash drawer opened';
 
   @override
   String cashDrawerFailed(String error) {
-    return 'فشل: $error';
+    return 'Failed: $error';
   }
 
   @override
-  String get disconnectedMsg => 'تم قطع الاتصال';
+  String get disconnectedMsg => 'Disconnected';
 
   @override
   String connectedPrinterStatus(String name) {
-    return 'متصل: $name';
+    return 'Connected: $name';
   }
 
   @override
-  String get notConnectedStatus => 'غير متصل';
+  String get notConnectedStatus => 'Not connected';
 
   @override
-  String get connectedToPrinterMsg => 'متصل بالطابعة';
+  String get connectedToPrinterMsg => 'Connected to printer';
 
   @override
-  String get noPrinterConnectedMsg => 'لا توجد طابعة متصلة';
+  String get noPrinterConnectedMsg => 'No printer connected';
 
   @override
-  String get openDrawerBtn => 'فتح الدرج';
+  String get openDrawerBtn => 'Open Drawer';
 
   @override
-  String get disconnectBtn => 'قطع';
+  String get disconnectBtn => 'Disconnect';
 
   @override
-  String get connectPrinterTitle => 'اتصال بطابعة';
+  String get connectPrinterTitle => 'Connect Printer';
 
   @override
-  String get connectionTypeLabel => 'نوع الاتصال';
+  String get connectionTypeLabel => 'Connection Type';
 
   @override
-  String get bluetoothLabel => 'بلوتوث';
+  String get bluetoothLabel => 'Bluetooth';
 
   @override
-  String get networkLabel => 'شبكة';
+  String get networkLabel => 'Network';
 
   @override
-  String get printerIpAddressLabel => 'عنوان IP للطابعة';
+  String get printerIpAddressLabel => 'Printer IP Address';
 
   @override
-  String get connectBtn => 'اتصال';
+  String get connectBtn => 'Connect';
 
   @override
-  String get searchingPrintersLabel => 'جاري البحث...';
+  String get searchingPrintersLabel => 'Searching...';
 
   @override
-  String get searchPrintersBtn => 'بحث عن طابعات';
+  String get searchPrintersBtn => 'Search for printers';
 
   @override
   String discoveredPrintersTitle(int count) {
-    return 'الطابعات المكتشفة ($count)';
+    return 'Discovered Printers ($count)';
   }
 
   @override
-  String get connectedBadge => 'متصل';
+  String get connectedBadge => 'Connected';
 
   @override
-  String get printSettingsTitle => 'إعدادات الطباعة';
+  String get printSettingsTitle => 'Print Settings';
 
   @override
-  String get autoPrintTitle => 'طباعة تلقائية';
+  String get autoPrintTitle => 'Auto Print';
 
   @override
-  String get autoPrintSubtitle => 'طباعة الفاتورة تلقائياً بعد كل عملية بيع';
+  String get autoPrintSubtitle => 'Automatically print receipt after each sale';
 
   @override
-  String get paperSizeSubtitle => 'عرض ورق الطباعة الحرارية';
+  String get paperSizeSubtitle => 'Thermal printer paper width';
 
   @override
-  String get customizeReceiptSubtitle => 'تخصيص الإيصال';
+  String get customizeReceiptSubtitle => 'Customize receipt';
 
   @override
-  String get viewStoreDetailsSubtitle => 'عرض تفاصيل المتجر';
+  String get viewStoreDetailsSubtitle => 'View store details';
 
   @override
-  String get usersAndPermissionsTitle => 'المستخدمين والصلاحيات';
+  String get usersAndPermissionsTitle => 'Users & Permissions';
 
   @override
   String usersCountLabel(int count) {
-    return '$count مستخدم';
+    return '$count user';
   }
 
   @override
-  String get noPrinterSetup => 'لم يتم إعداد طابعة';
+  String get noPrinterSetup => 'No printer set up';
 
   @override
-  String get printerNotConnectedErr => 'الطابعة غير متصلة';
+  String get printerNotConnectedErr => 'Printer not connected';
 
   @override
-  String get transactionRecordedSuccess => 'تم تسجيل المعاملة بنجاح';
+  String get transactionRecordedSuccess => 'Transaction recorded successfully';
 
   @override
   String productSearchFailed(String error) {
-    return 'فشل البحث عن المنتج: $error';
+    return 'Product search failed: $error';
   }
 
   @override
   String customerSearchFailed(String error) {
-    return 'فشل البحث عن العميل: $error';
+    return 'Customer search failed: $error';
   }
 
   @override
-  String get inventoryUpdatedMsg => 'تم تحديث المخزون';
+  String get inventoryUpdatedMsg => 'Inventory updated';
 
   @override
-  String get scanOrEnterBarcode => 'امسح أو أدخل الباركود';
+  String get scanOrEnterBarcode => 'Scan or enter barcode';
 
   @override
-  String get priceUpdatedMsg => 'تم تحديث السعر';
+  String get priceUpdatedMsg => 'Price updated';
 
   @override
-  String get exchangeSuccessMsg => 'تم الاستبدال بنجاح';
+  String get exchangeSuccessMsg => 'Exchange completed successfully';
 
   @override
-  String get refundProcessedSuccess => 'تمت معالجة الاسترجاع بنجاح';
+  String get refundProcessedSuccess => 'Refund processed successfully';
 
   @override
-  String get backupCompletedTitle => 'اكتمل النسخ الاحتياطي';
+  String get backupCompletedTitle => 'Backup Completed';
 
   @override
   String backupCompletedBody(int rows, String size) {
-    return 'اكتمل النسخ الاحتياطي — $rows صف، $size ميجابايت';
+    return 'Backup completed - $rows rows, $size MB';
   }
 
   @override
   String backupFailedMsg(String error) {
-    return 'فشل النسخ الاحتياطي: $error';
+    return 'Backup failed: $error';
   }
 
   @override
   String get copyBackupInstructions =>
-      'انسخ بيانات النسخ الاحتياطي للحافظة لحفظها أو مشاركتها.';
+      'Copy backup data to clipboard to save or share it.';
 
   @override
-  String get closeBtn => 'إغلاق';
+  String get closeBtn => 'Close';
 
   @override
-  String get backupCopiedToClipboard => 'تم نسخ النسخة الاحتياطية للحافظة';
+  String get backupCopiedToClipboard => 'Backup copied to clipboard';
 
   @override
-  String get copyToClipboardBtn => 'نسخ للحافظة';
+  String get copyToClipboardBtn => 'Copy to Clipboard';
 
   @override
-  String get countDenominationsBtn => 'عد العملات بالفئات';
+  String get countDenominationsBtn => 'Count by denominations';
 
   @override
-  String get privacyPolicyTitle => 'سياسة الخصوصية';
+  String get privacyPolicyTitle => 'Privacy Policy';
 
   @override
-  String get privacyPolicySubtitle => 'الخصوصية وحقوق البيانات';
+  String get privacyPolicySubtitle => 'Privacy and data rights';
 
   @override
-  String get privacyIntroTitle => 'مقدمة';
+  String get privacyIntroTitle => 'Introduction';
 
   @override
   String get privacyIntroBody =>
-      'نحن في الحي نلتزم بحماية خصوصيتك وبياناتك الشخصية. توضح هذه السياسة كيف نجمع ونستخدم ونحمي بياناتك عند استخدام تطبيق نقطة البيع.';
+      'At Alhai, we are committed to protecting your privacy and personal data. This policy explains how we collect, use, and protect your data when using the Point of Sale application.';
 
   @override
-  String get privacyLastUpdated => 'آخر تحديث: مارس 2026';
+  String get privacyLastUpdated => 'Last updated: March 2026';
 
   @override
-  String get privacyDataCollectedTitle => 'البيانات التي نجمعها';
+  String get privacyDataCollectedTitle => 'Data We Collect';
 
   @override
   String get privacyStoreData =>
-      'بيانات المتجر: اسم المتجر، العنوان، الرقم الضريبي، الشعار.';
+      'Store data: store name, address, tax number, logo.';
 
   @override
   String get privacyProductData =>
-      'بيانات المنتجات: أسماء المنتجات، الأسعار، الباركود، المخزون.';
+      'Product data: product names, prices, barcodes, stock.';
 
   @override
   String get privacySalesData =>
-      'بيانات المبيعات: الفواتير، طرق الدفع، المبالغ، التاريخ والوقت.';
+      'Sales data: invoices, payment methods, amounts, date and time.';
 
   @override
   String get privacyCustomerData =>
-      'بيانات العملاء: الاسم، رقم الهاتف، البريد الإلكتروني (اختياري)، سجل المشتريات.';
+      'Customer data: name, phone number, email (optional), purchase history.';
 
   @override
   String get privacyEmployeeData =>
-      'بيانات الموظفين: اسم المستخدم، الدور، سجل الورديات.';
+      'Employee data: username, role, shift history.';
 
   @override
   String get privacyDeviceData =>
-      'بيانات الجهاز: نوع الجهاز، نظام التشغيل (لأغراض الدعم الفني فقط).';
+      'Device data: device type, operating system (for technical support only).';
 
   @override
-  String get privacyHowWeUseTitle => 'كيف نستخدم بياناتك';
+  String get privacyHowWeUseTitle => 'How We Use Your Data';
 
   @override
   String get privacyUsePOS =>
-      'تشغيل نظام نقطة البيع ومعالجة المبيعات والمدفوعات.';
+      'Operating the POS system and processing sales and payments.';
 
   @override
   String get privacyUseReports =>
-      'إنشاء التقارير والإحصائيات لمساعدتك في إدارة متجرك.';
+      'Creating reports and statistics to help you manage your store.';
 
   @override
-  String get privacyUseAccounts => 'إدارة حسابات العملاء والديون والولاء.';
+  String get privacyUseAccounts =>
+      'Managing customer accounts, debts, and loyalty.';
 
   @override
-  String get privacyUseInventory => 'إدارة المخزون وتتبع المنتجات.';
+  String get privacyUseInventory => 'Managing inventory and tracking products.';
 
   @override
-  String get privacyUseBackup => 'النسخ الاحتياطي واستعادة البيانات.';
+  String get privacyUseBackup => 'Backup and data restoration.';
 
   @override
-  String get privacyUsePerformance => 'تحسين أداء التطبيق وإصلاح الأخطاء.';
+  String get privacyUsePerformance =>
+      'Improving app performance and fixing bugs.';
 
   @override
   String get privacyNoSellData =>
-      'لا نبيع بياناتك لأطراف ثالثة. لا نستخدم بياناتك لأغراض إعلانية.';
+      'We do not sell your data to third parties. We do not use your data for advertising purposes.';
 
   @override
-  String get privacyProtectionTitle => 'كيف نحمي بياناتك';
+  String get privacyProtectionTitle => 'How We Protect Your Data';
 
   @override
   String get privacyLocalStorage =>
-      'التخزين المحلي: جميع بيانات المبيعات والعملاء تُخزن محلياً على جهازك.';
+      'Local storage: All sales and customer data is stored locally on your device.';
 
   @override
   String get privacyEncryption =>
-      'التشفير: البيانات الحساسة مشفرة باستخدام تقنيات التشفير الحديثة.';
+      'Encryption: Sensitive data is encrypted using modern encryption technologies.';
 
   @override
   String get privacyBackupProtection =>
-      'النسخ الاحتياطي: يمكنك إنشاء نسخ احتياطية مشفرة من بياناتك.';
+      'Backup: You can create encrypted backups of your data.';
 
   @override
   String get privacyAuthentication =>
-      'المصادقة: الوصول محمي بكلمة مرور وصلاحيات المستخدمين.';
+      'Authentication: Access is protected by password and user permissions.';
 
   @override
   String get privacyOffline =>
-      'العمل بدون إنترنت: التطبيق يعمل 100% بدون اتصال، بياناتك لا تُرسل لخوادم خارجية.';
+      'Offline operation: The app works 100% offline; your data is not sent to external servers.';
 
   @override
-  String get privacyRightsTitle => 'حقوقك';
+  String get privacyRightsTitle => 'Your Rights';
 
   @override
-  String get privacyRightAccess => 'حق الوصول';
+  String get privacyRightAccess => 'Right of Access';
 
   @override
   String get privacyRightAccessDesc =>
-      'يحق لك الاطلاع على جميع بياناتك المخزنة في التطبيق في أي وقت.';
+      'You have the right to view all your data stored in the app at any time.';
 
   @override
-  String get privacyRightCorrection => 'حق التصحيح';
+  String get privacyRightCorrection => 'Right of Correction';
 
   @override
   String get privacyRightCorrectionDesc =>
-      'يحق لك تعديل أو تصحيح أي بيانات غير دقيقة.';
+      'You have the right to modify or correct any inaccurate data.';
 
   @override
-  String get privacyRightDeletion => 'حق الحذف';
+  String get privacyRightDeletion => 'Right of Deletion';
 
   @override
   String get privacyRightDeletionDesc =>
-      'يحق لك طلب حذف بياناتك الشخصية. يمكنك حذف بيانات العملاء من شاشة إدارة العملاء.';
+      'You have the right to request deletion of your personal data. You can delete customer data from the customer management screen.';
 
   @override
-  String get privacyRightExport => 'حق التصدير';
+  String get privacyRightExport => 'Right of Export';
 
   @override
   String get privacyRightExportDesc =>
-      'يحق لك تصدير نسخة من بياناتك بصيغة JSON.';
+      'You have the right to export a copy of your data in JSON format.';
 
   @override
-  String get privacyRightWithdrawal => 'حق الإلغاء';
+  String get privacyRightWithdrawal => 'Right of Withdrawal';
 
   @override
   String get privacyRightWithdrawalDesc =>
-      'يحق لك إلغاء أي موافقة سابقة على معالجة بياناتك.';
+      'You have the right to withdraw any previous consent to process your data.';
 
   @override
-  String get privacyDataDeletionTitle => 'حذف البيانات';
+  String get privacyDataDeletionTitle => 'Data Deletion';
 
   @override
   String get privacyDataDeletionIntro =>
-      'يمكنك حذف بيانات العملاء من خلال إعدادات التطبيق. عند حذف بيانات عميل:';
+      'You can delete customer data through the app settings. When deleting customer data:';
 
   @override
   String get privacyDataDeletionPersonal =>
-      'يتم حذف المعلومات الشخصية (الاسم، الهاتف، البريد) بشكل نهائي.';
+      'Personal information (name, phone, email) is permanently deleted.';
 
   @override
   String get privacyDataDeletionAnonymize =>
-      'يتم إخفاء هوية العميل في سجلات المبيعات السابقة (تظهر كـ \"عميل محذوف\").';
+      'Customer identity in previous sales records is anonymized (shown as \"Deleted Customer\").';
 
   @override
   String get privacyDataDeletionAccounts =>
-      'يتم حذف حسابات الديون والعناوين المرتبطة.';
+      'Associated debt accounts and addresses are deleted.';
 
   @override
   String get privacyDataDeletionWarning =>
-      'ملاحظة: لا يمكن التراجع عن حذف البيانات بعد تنفيذه.';
+      'Note: Data deletion cannot be undone after execution.';
 
   @override
-  String get privacyContactTitle => 'التواصل معنا';
+  String get privacyContactTitle => 'Contact Us';
 
   @override
   String get privacyContactIntro =>
-      'إذا كان لديك أي أسئلة حول سياسة الخصوصية أو ترغب في ممارسة حقوقك، يمكنك التواصل معنا عبر:';
+      'If you have any questions about the privacy policy or wish to exercise your rights, you can contact us via:';
 
   @override
-  String get privacyContactEmail => 'البريد الإلكتروني: privacy@alhai.app';
+  String get privacyContactEmail => 'Email: privacy@alhai.app';
 
   @override
-  String get privacyContactSupport => 'الدعم الفني داخل التطبيق';
+  String get privacyContactSupport => 'In-app technical support';
 
   @override
-  String get onboardingPrivacyPolicy => 'سياسة الخصوصية | Privacy Policy';
+  String get onboardingPrivacyPolicy => 'Privacy Policy | Privacy Policy';
 
   @override
-  String get cashierDefaultName => 'كاشير';
+  String get cashierDefaultName => 'Cashier';
 
   @override
-  String get defaultAddress => 'الرياض - المملكة العربية السعودية';
+  String get defaultAddress => 'Riyadh - Kingdom of Saudi Arabia';
 
   @override
-  String get loadMoreBtn => 'تحميل المزيد';
+  String get loadMoreBtn => 'Load More';
 
   @override
-  String get countCurrencyBtn => 'عد العملات';
+  String get countCurrencyBtn => 'Count Currency';
 
   @override
-  String get searchLogsHint => 'بحث في السجلات...';
+  String get searchLogsHint => 'Search logs...';
 
   @override
-  String get noSearchResultsForQuery => 'لا توجد نتائج للبحث';
+  String get noSearchResultsForQuery => 'No results for search';
 
   @override
-  String get noLogsToDisplay => 'لا توجد سجلات للعرض';
+  String get noLogsToDisplay => 'No logs to display';
 
   @override
-  String get auditActionLogin => 'تسجيل دخول';
+  String get auditActionLogin => 'Login';
 
   @override
-  String get auditActionLogout => 'تسجيل خروج';
+  String get auditActionLogout => 'Logout';
 
   @override
-  String get auditActionSale => 'بيع';
+  String get auditActionSale => 'Sale';
 
   @override
-  String get auditActionCancelSale => 'إلغاء بيع';
+  String get auditActionCancelSale => 'Cancel Sale';
 
   @override
-  String get auditActionRefund => 'استرجاع';
+  String get auditActionRefund => 'Refund';
 
   @override
-  String get auditActionAddProduct => 'إضافة منتج';
+  String get auditActionAddProduct => 'Add Product';
 
   @override
-  String get auditActionEditProduct => 'تعديل منتج';
+  String get auditActionEditProduct => 'Edit Product';
 
   @override
-  String get auditActionDeleteProduct => 'حذف منتج';
+  String get auditActionDeleteProduct => 'Delete Product';
 
   @override
-  String get auditActionPriceChange => 'تغيير سعر';
+  String get auditActionPriceChange => 'Price Change';
 
   @override
-  String get auditActionStockAdjust => 'تعديل مخزون';
+  String get auditActionStockAdjust => 'Stock Adjust';
 
   @override
-  String get auditActionStockReceive => 'استلام مخزون';
+  String get auditActionStockReceive => 'Stock Receive';
 
   @override
-  String get auditActionOpenShift => 'فتح وردية';
+  String get auditActionOpenShift => 'Open Shift';
 
   @override
-  String get auditActionCloseShift => 'إغلاق وردية';
+  String get auditActionCloseShift => 'Close Shift';
 
   @override
-  String get auditActionSettingsChange => 'تغيير إعدادات';
+  String get auditActionSettingsChange => 'Settings Change';
 
   @override
-  String get auditActionCashDrawer => 'درج النقد';
+  String get auditActionCashDrawer => 'Cash Drawer';
 
   @override
-  String get permCategoryPosLabel => 'نقطة البيع';
+  String get permCategoryPosLabel => 'Point of Sale';
 
   @override
-  String get permCategoryProductsLabel => 'المنتجات';
+  String get permCategoryProductsLabel => 'Products';
 
   @override
-  String get permCategoryInventoryLabel => 'المخزون';
+  String get permCategoryInventoryLabel => 'Inventory';
 
   @override
-  String get permCategoryCustomersLabel => 'العملاء';
+  String get permCategoryCustomersLabel => 'Customers';
 
   @override
-  String get permCategorySalesLabel => 'المبيعات';
+  String get permCategorySalesLabel => 'Sales';
 
   @override
-  String get permCategoryReportsLabel => 'التقارير';
+  String get permCategoryReportsLabel => 'Reports';
 
   @override
-  String get permCategorySettingsLabel => 'الإعدادات';
+  String get permCategorySettingsLabel => 'Settings';
 
   @override
-  String get permCategoryStaffLabel => 'الموظفين';
+  String get permCategoryStaffLabel => 'Staff';
 
   @override
-  String get permPosAccess => 'الوصول لنقطة البيع';
+  String get permPosAccess => 'POS Access';
 
   @override
-  String get permPosAccessDesc => 'الوصول إلى شاشة نقطة البيع';
+  String get permPosAccessDesc => 'Access the point of sale screen';
 
   @override
-  String get permPosHold => 'تعليق الفواتير';
+  String get permPosHold => 'Hold Invoices';
 
   @override
-  String get permPosHoldDesc => 'تعليق الفواتير واستكمالها لاحقاً';
+  String get permPosHoldDesc => 'Hold invoices and complete later';
 
   @override
-  String get permPosSplitPayment => 'تقسيم الدفع';
+  String get permPosSplitPayment => 'Split Payment';
 
   @override
-  String get permPosSplitPaymentDesc => 'تقسيم الدفع بين طرق مختلفة';
+  String get permPosSplitPaymentDesc =>
+      'Split payment between different methods';
 
   @override
-  String get permProductsView => 'عرض المنتجات';
+  String get permProductsView => 'View Products';
 
   @override
-  String get permProductsViewDesc => 'عرض قائمة المنتجات وتفاصيلها';
+  String get permProductsViewDesc => 'View product list and details';
 
   @override
-  String get permProductsManage => 'إدارة المنتجات';
+  String get permProductsManage => 'Manage Products';
 
   @override
-  String get permProductsManageDesc => 'إضافة وتعديل المنتجات';
+  String get permProductsManageDesc => 'Add and edit products';
 
   @override
-  String get permProductsDelete => 'حذف المنتجات';
+  String get permProductsDelete => 'Delete Products';
 
   @override
-  String get permProductsDeleteDesc => 'حذف المنتجات من النظام';
+  String get permProductsDeleteDesc => 'Delete products from the system';
 
   @override
-  String get permInventoryView => 'عرض المخزون';
+  String get permInventoryView => 'View Inventory';
 
   @override
-  String get permInventoryViewDesc => 'عرض كميات المخزون';
+  String get permInventoryViewDesc => 'View stock quantities';
 
   @override
-  String get permInventoryManage => 'إدارة المخزون';
+  String get permInventoryManage => 'Manage Inventory';
 
   @override
-  String get permInventoryManageDesc => 'إدارة المخزون والنقل';
+  String get permInventoryManageDesc => 'Manage stock and transfers';
 
   @override
-  String get permInventoryAdjust => 'تعديل المخزون';
+  String get permInventoryAdjust => 'Adjust Inventory';
 
   @override
-  String get permInventoryAdjustDesc => 'تعديل كميات المخزون يدوياً';
+  String get permInventoryAdjustDesc => 'Manually adjust stock quantities';
 
   @override
-  String get permCustomersView => 'عرض العملاء';
+  String get permCustomersView => 'View Customers';
 
   @override
-  String get permCustomersViewDesc => 'عرض بيانات العملاء';
+  String get permCustomersViewDesc => 'View customer data';
 
   @override
-  String get permCustomersManage => 'إدارة العملاء';
+  String get permCustomersManage => 'Manage Customers';
 
   @override
-  String get permCustomersManageDesc => 'إضافة وتعديل العملاء';
+  String get permCustomersManageDesc => 'Add and edit customers';
 
   @override
-  String get permCustomersDelete => 'حذف العملاء';
+  String get permCustomersDelete => 'Delete Customers';
 
   @override
-  String get permCustomersDeleteDesc => 'حذف العملاء من النظام';
+  String get permCustomersDeleteDesc => 'Delete customers from the system';
 
   @override
-  String get permDiscountsApply => 'تطبيق الخصومات';
+  String get permDiscountsApply => 'Apply Discounts';
 
   @override
-  String get permDiscountsApplyDesc => 'تطبيق خصومات موجودة';
+  String get permDiscountsApplyDesc => 'Apply existing discounts';
 
   @override
-  String get permDiscountsCreate => 'إنشاء الخصومات';
+  String get permDiscountsCreate => 'Create Discounts';
 
   @override
-  String get permDiscountsCreateDesc => 'إنشاء خصومات جديدة';
+  String get permDiscountsCreateDesc => 'Create new discounts';
 
   @override
-  String get permRefundsRequest => 'طلب استرجاع';
+  String get permRefundsRequest => 'Request Refund';
 
   @override
-  String get permRefundsRequestDesc => 'طلب استرجاع للمنتجات';
+  String get permRefundsRequestDesc => 'Request product refunds';
 
   @override
-  String get permRefundsApprove => 'الموافقة على استرجاع';
+  String get permRefundsApprove => 'Approve Refund';
 
   @override
-  String get permRefundsApproveDesc => 'الموافقة على طلبات الاسترجاع';
+  String get permRefundsApproveDesc => 'Approve refund requests';
 
   @override
-  String get permReportsView => 'عرض التقارير';
+  String get permReportsView => 'View Reports';
 
   @override
-  String get permReportsViewDesc => 'عرض التقارير والإحصائيات';
+  String get permReportsViewDesc => 'View reports and statistics';
 
   @override
-  String get permReportsExport => 'تصدير التقارير';
+  String get permReportsExport => 'Export Reports';
 
   @override
-  String get permReportsExportDesc => 'تصدير التقارير بصيغ مختلفة';
+  String get permReportsExportDesc => 'Export reports in various formats';
 
   @override
-  String get permSettingsView => 'عرض الإعدادات';
+  String get permSettingsView => 'View Settings';
 
   @override
-  String get permSettingsViewDesc => 'عرض إعدادات النظام';
+  String get permSettingsViewDesc => 'View system settings';
 
   @override
-  String get permSettingsManage => 'إدارة الإعدادات';
+  String get permSettingsManage => 'Manage Settings';
 
   @override
-  String get permSettingsManageDesc => 'تعديل إعدادات النظام';
+  String get permSettingsManageDesc => 'Modify system settings';
 
   @override
-  String get permStaffView => 'عرض الموظفين';
+  String get permStaffView => 'View Staff';
 
   @override
-  String get permStaffViewDesc => 'عرض قائمة الموظفين';
+  String get permStaffViewDesc => 'View staff list';
 
   @override
-  String get permStaffManage => 'إدارة الموظفين';
+  String get permStaffManage => 'Manage Staff';
 
   @override
-  String get permStaffManageDesc => 'إضافة وتعديل الموظفين';
+  String get permStaffManageDesc => 'Add and edit staff';
 
   @override
-  String get roleSystemAdmin => 'مدير النظام';
+  String get roleSystemAdmin => 'System Admin';
 
   @override
-  String get roleSystemAdminDesc => 'صلاحيات كاملة للنظام';
+  String get roleSystemAdminDesc => 'Full system permissions';
 
   @override
-  String get roleStoreManager => 'مدير المتجر';
+  String get roleStoreManager => 'Store Manager';
 
   @override
-  String get roleStoreManagerDesc => 'إدارة المتجر والموظفين';
+  String get roleStoreManagerDesc => 'Manage store and employees';
 
   @override
-  String get roleCashierDesc => 'عمليات البيع والدفع';
+  String get roleCashierDesc => 'Sales and payment operations';
 
   @override
-  String get roleWarehouseKeeper => 'أمين مخزن';
+  String get roleWarehouseKeeper => 'Warehouse Keeper';
 
   @override
-  String get roleWarehouseKeeperDesc => 'إدارة المخزون والمنتجات';
+  String get roleWarehouseKeeperDesc => 'Manage inventory and products';
 
   @override
-  String get roleAccountant => 'محاسب';
+  String get roleAccountant => 'Accountant';
 
   @override
-  String get roleAccountantDesc => 'التقارير المالية والحسابات';
+  String get roleAccountantDesc => 'Financial reports and accounts';
 
   @override
   String connectionFailedMsg(String error) {
-    return 'فشل الاتصال: $error';
+    return 'Connection failed: $error';
   }
 
   @override
   String settingsSaveErrorMsg(String error) {
-    return 'خطأ في حفظ الإعدادات: $error';
+    return 'Error saving settings: $error';
   }
 
   @override
-  String get cutPaperBtn => 'قطع';
+  String get cutPaperBtn => 'Cut';
 
   @override
   String upgradeToPlan(String name) {
-    return 'الترقية إلى $name';
+    return 'Upgrade to $name';
   }
 
   @override
-  String get manageDeliveryZonesAndPricing => 'إدارة مناطق التوصيل وأسعارها';
+  String get manageDeliveryZonesAndPricing =>
+      'Manage delivery zones and pricing';
 
   @override
   String settingsForName(String name) {
-    return 'إعدادات $name';
+    return 'Settings for $name';
   }
 
   @override
   String settingsSavedForName(String name) {
-    return 'تم حفظ إعدادات $name';
+    return 'Settings for $name saved';
   }
 
   @override
-  String get jobProfile => 'الملف الوظيفي';
+  String get jobProfile => 'Job Profile';
 
   @override
-  String get submitToZatcaAuthority => 'إرسال للهيئة الزكاة والضريبة';
+  String get submitToZatcaAuthority => 'Submit to ZATCA Authority';
 
   @override
-  String get submitBtn => 'إرسال';
+  String get submitBtn => 'Submit';
 
   @override
-  String get submitToAuthority => 'إرسال للهيئة';
+  String get submitToAuthority => 'Submit to Authority';
 
   @override
   String shareError(String error) {
-    return 'خطأ في المشاركة: $error';
+    return 'Sharing error: $error';
   }
 
   @override
   String upgradePlanPriceBody(String price) {
-    return 'سعر الخطة: $price ريال/شهر\n\nهل تريد المتابعة؟';
+    return 'Plan price: $price SAR/month\n\nDo you want to continue?';
   }
 
   @override
-  String get upgradeContactMsg => 'سيتم التواصل معك لإتمام عملية الترقية';
+  String get upgradeContactMsg =>
+      'We will contact you to complete the upgrade process';
 
   @override
   String get zatcaSubmitBody =>
-      'سيتم إرسال بيانات الفوترة الإلكترونية للهيئة. تأكد من صحة بياناتك أولاً.';
+      'Electronic invoicing data will be sent to the authority. Make sure your data is correct first.';
 
   @override
   String get zatcaLinkComingSoon =>
-      'سيتم الربط بنظام ZATCA قريباً - تأكد من إعداد الشهادة الرقمية';
+      'ZATCA system integration coming soon - make sure to set up the digital certificate';
 
   @override
-  String get enterApiKey => 'أدخل مفتاح API';
+  String get enterApiKey => 'Enter API key';
 
   @override
-  String get accountNumber => 'رقم الحساب';
+  String get accountNumber => 'Account Number';
 
   @override
-  String get superAdmin => 'المشرف العام';
+  String get superAdmin => 'Super Admin';
 
   @override
-  String get platformOverview => 'نظرة عامة على المنصة';
+  String get platformOverview => 'Platform Overview';
 
   @override
-  String get activeStores => 'المتاجر النشطة';
+  String get activeStores => 'Active Stores';
 
   @override
-  String get totalRevenue => 'إجمالي الإيرادات';
+  String get totalRevenue => 'Total Revenue';
 
   @override
-  String get subscriptionStats => 'إحصائيات الاشتراكات';
+  String get subscriptionStats => 'Subscription Stats';
 
   @override
-  String get churnRate => 'معدل التسرب';
+  String get churnRate => 'Churn Rate';
 
   @override
-  String get conversionRate => 'معدل التحويل';
+  String get conversionRate => 'Conversion Rate';
 
   @override
-  String get trialConversion => 'تحويل التجربة';
+  String get trialConversion => 'Trial Conversion';
 
   @override
-  String get newSignups => 'اشتراكات جديدة';
+  String get newSignups => 'New Signups';
 
   @override
-  String get monthlyRecurringRevenue => 'الإيرادات الشهرية المتكررة';
+  String get monthlyRecurringRevenue => 'Monthly Recurring Revenue';
 
   @override
-  String get annualRecurringRevenue => 'الإيرادات السنوية المتكررة';
+  String get annualRecurringRevenue => 'Annual Recurring Revenue';
 
   @override
-  String get storesList => 'المتاجر';
+  String get storesList => 'Stores';
 
   @override
-  String get storeDetail => 'تفاصيل المتجر';
+  String get storeDetail => 'Store Detail';
 
   @override
-  String get createStore => 'إنشاء متجر';
+  String get createStore => 'Create Store';
 
   @override
-  String get storeOwner => 'مالك المتجر';
+  String get storeOwner => 'Store Owner';
 
   @override
-  String get storeStatus => 'الحالة';
+  String get storeStatus => 'Status';
 
   @override
-  String get storeCreatedAt => 'تاريخ الإنشاء';
+  String get storeCreatedAt => 'Created At';
 
   @override
-  String get storePlan => 'الخطة';
+  String get storePlan => 'Plan';
 
   @override
-  String get suspendStore => 'تعليق المتجر';
+  String get suspendStore => 'Suspend Store';
 
   @override
-  String get activateStore => 'تفعيل المتجر';
+  String get activateStore => 'Activate Store';
 
   @override
-  String get upgradePlan => 'ترقية الخطة';
+  String get upgradePlan => 'Upgrade Plan';
 
   @override
-  String get downgradePlan => 'تخفيض الخطة';
+  String get downgradePlan => 'Downgrade Plan';
 
   @override
-  String get storeUsageStats => 'إحصائيات الاستخدام';
+  String get storeUsageStats => 'Usage Stats';
 
   @override
-  String get storeTransactions => 'المعاملات';
+  String get storeTransactions => 'Transactions';
 
   @override
-  String get storeProducts => 'عدد المنتجات';
+  String get storeProducts => 'Products Count';
 
   @override
-  String get storeEmployees => 'الموظفين';
+  String get storeEmployees => 'Employees';
 
   @override
-  String get onboardingForm => 'نموذج التسجيل';
+  String get onboardingForm => 'Onboarding Form';
 
   @override
-  String get ownerName => 'اسم المالك';
+  String get ownerName => 'Owner Name';
 
   @override
-  String get ownerPhone => 'هاتف المالك';
+  String get ownerPhone => 'Owner Phone';
 
   @override
-  String get ownerEmail => 'بريد المالك';
+  String get ownerEmail => 'Owner Email';
 
   @override
-  String get businessType => 'نوع النشاط';
+  String get businessType => 'Business Type';
 
   @override
-  String get branchCountLabel => 'عدد الفروع';
+  String get branchCountLabel => 'Branch Count';
 
   @override
-  String get subscriptionManagement => 'إدارة الاشتراكات';
+  String get subscriptionManagement => 'Subscription Management';
 
   @override
-  String get plansManagement => 'إدارة الخطط';
+  String get plansManagement => 'Plans Management';
 
   @override
-  String get subscriptionList => 'الاشتراكات';
+  String get subscriptionList => 'Subscriptions';
 
   @override
-  String get billingAndInvoices => 'الفوترة والفواتير';
+  String get billingAndInvoices => 'Billing & Invoices';
 
   @override
-  String get planName => 'اسم الخطة';
+  String get planName => 'Plan Name';
 
   @override
-  String get planPrice => 'السعر';
+  String get planPrice => 'Price';
 
   @override
-  String get planFeatures => 'المميزات';
+  String get planFeatures => 'Features';
 
   @override
-  String get basicPlan => 'أساسي';
+  String get basicPlan => 'Basic';
 
   @override
-  String get advancedPlan => 'متقدم';
+  String get advancedPlan => 'Advanced';
 
   @override
-  String get professionalPlan => 'احترافي';
+  String get professionalPlan => 'Professional';
 
   @override
-  String get monthlyPrice => 'السعر الشهري';
+  String get monthlyPrice => 'Monthly Price';
 
   @override
-  String get yearlyPrice => 'السعر السنوي';
+  String get yearlyPrice => 'Yearly Price';
 
   @override
-  String get maxBranches => 'أقصى عدد فروع';
+  String get maxBranches => 'Max Branches';
 
   @override
-  String get maxProducts => 'أقصى عدد منتجات';
+  String get maxProducts => 'Max Products';
 
   @override
-  String get maxUsers => 'أقصى عدد مستخدمين';
+  String get maxUsers => 'Max Users';
 
   @override
-  String get createPlan => 'إنشاء خطة';
+  String get createPlan => 'Create Plan';
 
   @override
-  String get editPlan => 'تعديل الخطة';
+  String get editPlan => 'Edit Plan';
 
   @override
-  String get selectPlan => 'اختر الخطة';
+  String get selectPlan => 'Select Plan';
 
   @override
-  String get currentPlan => 'الخطة الحالية';
+  String get currentPlan => 'Current Plan';
 
   @override
-  String get noPlansAvailable => 'لا توجد خطط متاحة';
+  String get noPlansAvailable => 'No plans available';
 
   @override
-  String get alreadyOnHighestPlan => 'أنت على أعلى خطة بالفعل';
+  String get alreadyOnHighestPlan => 'Already on the highest plan';
 
   @override
-  String get alreadyOnLowestPlan => 'أنت على أدنى خطة بالفعل';
+  String get alreadyOnLowestPlan => 'Already on the lowest plan';
 
   @override
-  String get activeSubscriptions => 'الاشتراكات النشطة';
+  String get activeSubscriptions => 'Active Subscriptions';
 
   @override
-  String get expiredSubscriptions => 'الاشتراكات المنتهية';
+  String get expiredSubscriptions => 'Expired Subscriptions';
 
   @override
-  String get trialSubscriptions => 'الاشتراكات التجريبية';
+  String get trialSubscriptions => 'Trial Subscriptions';
 
   @override
-  String get billingHistory => 'سجل الفوترة';
+  String get billingHistory => 'Billing History';
 
   @override
-  String get invoiceDate => 'التاريخ';
+  String get invoiceDate => 'Date';
 
   @override
-  String get invoiceAmount => 'المبلغ';
+  String get invoiceAmount => 'Amount';
 
   @override
-  String get invoiceStatus => 'الحالة';
+  String get invoiceStatus => 'Status';
 
   @override
-  String get unpaid => 'غير مدفوعة';
+  String get unpaid => 'Unpaid';
 
   @override
-  String get platformUsers => 'مستخدمو المنصة';
+  String get platformUsers => 'Platform Users';
 
   @override
-  String get userDetail => 'تفاصيل المستخدم';
+  String get userDetail => 'User Detail';
 
   @override
-  String get roleManagement => 'إدارة الأدوار';
+  String get roleManagement => 'Role Management';
 
   @override
-  String get userRole => 'الدور';
+  String get userRole => 'Role';
 
   @override
-  String get userLastActive => 'آخر نشاط';
+  String get userLastActive => 'Last Active';
 
   @override
-  String get superAdminRole => 'مشرف عام';
+  String get superAdminRole => 'Super Admin';
 
   @override
-  String get supportRole => 'دعم فني';
+  String get supportRole => 'Support';
 
   @override
-  String get viewerRole => 'مشاهد';
+  String get viewerRole => 'Viewer';
 
   @override
-  String get assignRole => 'تعيين دور';
+  String get assignRole => 'Assign Role';
 
   @override
-  String get analytics => 'التحليلات';
+  String get analytics => 'Analytics';
 
   @override
-  String get revenueAnalytics => 'تحليلات الإيرادات';
+  String get revenueAnalytics => 'Revenue Analytics';
 
   @override
-  String get usageAnalytics => 'تحليلات الاستخدام';
+  String get usageAnalytics => 'Usage Analytics';
 
   @override
-  String get mrrGrowth => 'نمو الإيرادات الشهرية';
+  String get mrrGrowth => 'MRR Growth';
 
   @override
-  String get arrGrowth => 'نمو الإيرادات السنوية';
+  String get arrGrowth => 'ARR Growth';
 
   @override
-  String get revenueByPlan => 'الإيرادات حسب الخطة';
+  String get revenueByPlan => 'Revenue by Plan';
 
   @override
-  String get revenueByMonth => 'الإيرادات حسب الشهر';
+  String get revenueByMonth => 'Revenue by Month';
 
   @override
-  String get activeUsersPerStore => 'المستخدمون النشطون لكل متجر';
+  String get activeUsersPerStore => 'Active Users per Store';
 
   @override
-  String get transactionsPerStore => 'المعاملات لكل متجر';
+  String get transactionsPerStore => 'Transactions per Store';
 
   @override
-  String get avgTransactionsPerDay => 'متوسط المعاملات/يوم';
+  String get avgTransactionsPerDay => 'Avg Transactions/Day';
 
   @override
-  String get topStoresByRevenue => 'أفضل المتاجر حسب الإيرادات';
+  String get topStoresByRevenue => 'Top Stores by Revenue';
 
   @override
-  String get topStoresByTransactions => 'أفضل المتاجر حسب المعاملات';
+  String get topStoresByTransactions => 'Top Stores by Transactions';
 
   @override
-  String get platformSettings => 'إعدادات المنصة';
+  String get platformSettings => 'Platform Settings';
 
   @override
-  String get zatcaConfig => 'إعدادات ZATCA';
+  String get zatcaConfig => 'ZATCA Configuration';
 
   @override
-  String get paymentGateways => 'بوابات الدفع';
+  String get paymentGateways => 'Payment Gateways';
 
   @override
-  String get systemHealth => 'صحة النظام';
+  String get systemHealth => 'System Health';
 
   @override
-  String get systemMonitoring => 'مراقبة النظام';
+  String get systemMonitoring => 'System Monitoring';
 
   @override
-  String get serverStatus => 'حالة الخادم';
+  String get serverStatus => 'Server Status';
 
   @override
-  String get apiLatency => 'زمن استجابة API';
+  String get apiLatency => 'API Latency';
 
   @override
-  String get errorRate => 'معدل الأخطاء';
+  String get errorRate => 'Error Rate';
 
   @override
-  String get cpuUsage => 'استخدام المعالج';
+  String get cpuUsage => 'CPU Usage';
 
   @override
-  String get memoryUsage => 'استخدام الذاكرة';
+  String get memoryUsage => 'Memory Usage';
 
   @override
-  String get diskUsage => 'استخدام القرص';
+  String get diskUsage => 'Disk Usage';
 
   @override
-  String get degraded => 'متدهور';
+  String get degraded => 'Degraded';
 
   @override
-  String get down => 'متوقف';
+  String get down => 'Down';
 
   @override
-  String get lastChecked => 'آخر فحص';
+  String get lastChecked => 'Last Checked';
 
   @override
-  String get filterByStatus => 'تصفية حسب الحالة';
+  String get filterByStatus => 'Filter by Status';
 
   @override
-  String get filterByPlan => 'تصفية حسب الخطة';
+  String get filterByPlan => 'Filter by Plan';
 
   @override
-  String get allStatuses => 'جميع الحالات';
+  String get allStatuses => 'All Statuses';
 
   @override
-  String get allPlans => 'جميع الخطط';
+  String get allPlans => 'All Plans';
 
   @override
-  String get suspended => 'معلق';
+  String get suspended => 'Suspended';
 
   @override
-  String get trial => 'تجريبي';
+  String get trial => 'Trial';
 
   @override
-  String get searchStores => 'البحث في المتاجر...';
+  String get searchStores => 'Search stores...';
 
   @override
-  String get searchUsers => 'البحث في المستخدمين...';
+  String get searchUsers => 'Search users...';
 
   @override
-  String get noStoresFound => 'لا توجد متاجر';
+  String get noStoresFound => 'No stores found';
 
   @override
-  String get noUsersFound => 'لا يوجد مستخدمون';
+  String get noUsersFound => 'No users found';
 
   @override
-  String get confirmSuspend => 'هل أنت متأكد من تعليق هذا المتجر؟';
+  String get confirmSuspend => 'Are you sure you want to suspend this store?';
 
   @override
-  String get confirmActivate => 'هل أنت متأكد من تفعيل هذا المتجر؟';
+  String get confirmActivate => 'Are you sure you want to activate this store?';
 
   @override
-  String get storeCreatedSuccess => 'تم إنشاء المتجر بنجاح';
+  String get storeCreatedSuccess => 'Store created successfully';
 
   @override
-  String get storeSuspendedSuccess => 'تم تعليق المتجر بنجاح';
+  String get storeSuspendedSuccess => 'Store suspended successfully';
 
   @override
-  String get storeActivatedSuccess => 'تم تفعيل المتجر بنجاح';
+  String get storeActivatedSuccess => 'Store activated successfully';
 
   @override
-  String get perMonth => '/شهر';
+  String get perMonth => '/month';
 
   @override
-  String get perYear => '/سنة';
+  String get perYear => '/year';
 
   @override
-  String get last90Days => 'آخر 90 يوم';
+  String get last90Days => 'Last 90 Days';
 
   @override
-  String get last12Months => 'آخر 12 شهر';
+  String get last12Months => 'Last 12 Months';
 
   @override
-  String get growth => 'النمو';
+  String get growth => 'Growth';
 
   @override
-  String get stores => 'المتاجر';
+  String get stores => 'Stores';
 
   @override
-  String get distributorPortal => 'بوابة الموزع';
+  String get distributorPortal => 'Distributor Portal';
 
   @override
-  String get distributorDashboard => 'لوحة التحكم';
+  String get distributorDashboard => 'Dashboard';
 
   @override
-  String get distributorDashboardSubtitle => 'نظرة عامة على أداء التوزيع';
+  String get distributorDashboardSubtitle =>
+      'Distribution performance overview';
 
   @override
-  String get distributorOrders => 'الطلبات الواردة';
+  String get distributorOrders => 'Incoming Orders';
 
   @override
-  String get distributorProducts => 'كتالوج المنتجات';
+  String get distributorProducts => 'Product Catalog';
 
   @override
-  String get distributorPricing => 'إدارة الأسعار';
+  String get distributorPricing => 'Price Management';
 
   @override
-  String get distributorReports => 'التقارير';
+  String get distributorReports => 'Reports';
 
   @override
-  String get distributorSettings => 'الإعدادات';
+  String get distributorSettings => 'Settings';
 
   @override
-  String get distributorTotalOrders => 'إجمالي الطلبات';
+  String get distributorTotalOrders => 'Total Orders';
 
   @override
-  String get distributorPendingOrders => 'طلبات منتظرة';
+  String get distributorPendingOrders => 'Pending Orders';
 
   @override
-  String get distributorApprovedOrders => 'تمت الموافقة';
+  String get distributorApprovedOrders => 'Approved';
 
   @override
-  String get distributorRevenue => 'الإيرادات';
+  String get distributorRevenue => 'Revenue';
 
   @override
-  String get distributorMonthlySales => 'المبيعات الشهرية';
+  String get distributorMonthlySales => 'Monthly Sales';
 
   @override
-  String get distributorRecentOrders => 'آخر الطلبات';
+  String get distributorRecentOrders => 'Recent Orders';
 
   @override
-  String get distributorOrderNumber => 'رقم الطلب';
+  String get distributorOrderNumber => 'Order Number';
 
   @override
-  String get distributorStore => 'المتجر';
+  String get distributorStore => 'Store';
 
   @override
-  String get distributorDate => 'التاريخ';
+  String get distributorDate => 'Date';
 
   @override
-  String get distributorAmount => 'المبلغ';
+  String get distributorAmount => 'Amount';
 
   @override
-  String get distributorStatusPending => 'منتظر';
+  String get distributorStatusPending => 'Pending';
 
   @override
-  String get distributorStatusApproved => 'موافق';
+  String get distributorStatusApproved => 'Approved';
 
   @override
-  String get distributorStatusReceived => 'مستلم';
+  String get distributorStatusReceived => 'Received';
 
   @override
-  String get distributorStatusRejected => 'مرفوض';
+  String get distributorStatusRejected => 'Rejected';
 
   @override
-  String get distributorStatusDraft => 'مسودة';
+  String get distributorStatusDraft => 'Draft';
 
   @override
-  String get distributorNoOrders => 'لا توجد طلبات';
+  String get distributorNoOrders => 'No orders found';
 
   @override
-  String get distributorAllOrders => 'الكل';
+  String get distributorAllOrders => 'All';
 
   @override
-  String get distributorPendingTab => 'منتظرة';
+  String get distributorPendingTab => 'Pending';
 
   @override
-  String get distributorApprovedTab => 'موافق عليها';
+  String get distributorApprovedTab => 'Approved';
 
   @override
-  String get distributorRejectedTab => 'مرفوضة';
+  String get distributorRejectedTab => 'Rejected';
 
   @override
-  String get distributorAddProduct => 'إضافة منتج';
+  String get distributorAddProduct => 'Add Product';
 
   @override
-  String get distributorSearchHint => 'ابحث بالاسم أو الباركود...';
+  String get distributorSearchHint => 'Search by name or barcode...';
 
   @override
-  String get distributorNoProducts => 'لا توجد منتجات';
+  String get distributorNoProducts => 'No products found';
 
   @override
-  String get distributorChangeSearch => 'جرب تغيير معايير البحث';
+  String get distributorChangeSearch => 'Try changing your search criteria';
 
   @override
-  String get distributorBarcode => 'الباركود';
+  String get distributorBarcode => 'Barcode';
 
   @override
-  String get distributorCategory => 'التصنيف';
+  String get distributorCategory => 'Category';
 
   @override
-  String get distributorStock => 'المخزون';
+  String get distributorStock => 'Stock';
 
   @override
-  String get distributorStockEmpty => 'نفذ';
+  String get distributorStockEmpty => 'Out';
 
   @override
-  String get distributorStockLow => 'منخفض';
+  String get distributorStockLow => 'Low';
 
   @override
-  String get distributorActions => 'إجراءات';
+  String get distributorActions => 'Actions';
 
   @override
   String distributorEditProduct(String name) {
-    return 'تعديل $name';
+    return 'Edit $name';
   }
 
   @override
-  String get distributorCurrentPrice => 'السعر الحالي';
+  String get distributorCurrentPrice => 'Current Price';
 
   @override
-  String get distributorNewPrice => 'السعر الجديد';
+  String get distributorNewPrice => 'New Price';
 
   @override
-  String get distributorLastUpdated => 'آخر تحديث';
+  String get distributorLastUpdated => 'Last Updated';
 
   @override
-  String get distributorDifference => 'الفرق';
+  String get distributorDifference => 'Diff';
 
   @override
-  String get distributorTotalProducts => 'إجمالي المنتجات';
+  String get distributorTotalProducts => 'Total Products';
 
   @override
-  String get distributorPendingChanges => 'تغييرات معلقة';
+  String get distributorPendingChanges => 'Pending Changes';
 
   @override
   String distributorProductsWillUpdate(int count) {
-    return '$count منتج سيتم تحديث سعره';
+    return '$count products will be updated';
   }
 
   @override
-  String get distributorSaveChanges => 'حفظ التغييرات';
+  String get distributorSaveChanges => 'Save Changes';
 
   @override
-  String get distributorChangesSaved => 'تم حفظ التغييرات بنجاح';
+  String get distributorChangesSaved => 'Changes saved successfully';
 
   @override
   String distributorChangesCount(int count) {
-    return '$count تغيير';
+    return '$count changes';
   }
 
   @override
-  String get distributorExport => 'تصدير';
+  String get distributorExport => 'Export';
 
   @override
-  String get distributorExportReport => 'تصدير التقرير';
+  String get distributorExportReport => 'Export Report';
 
   @override
-  String get distributorDailySales => 'المبيعات اليومية';
+  String get distributorDailySales => 'Daily Sales';
 
   @override
-  String get distributorOrderCount => 'عدد الطلبات';
+  String get distributorOrderCount => 'Order Count';
 
   @override
-  String get distributorAvgOrderValue => 'متوسط قيمة الطلب';
+  String get distributorAvgOrderValue => 'Avg Order Value';
 
   @override
-  String get distributorTopProduct => 'أفضل منتج';
+  String get distributorTopProduct => 'Top Product';
 
   @override
-  String get distributorTopProducts => 'أفضل المنتجات';
+  String get distributorTopProducts => 'Top Products';
 
   @override
-  String get distributorOrdersUnit => 'طلب';
+  String get distributorOrdersUnit => 'orders';
 
   @override
-  String get distributorPeriodDay => 'يوم';
+  String get distributorPeriodDay => 'Day';
 
   @override
-  String get distributorPeriodWeek => 'أسبوع';
+  String get distributorPeriodWeek => 'Week';
 
   @override
-  String get distributorPeriodMonth => 'شهر';
+  String get distributorPeriodMonth => 'Month';
 
   @override
-  String get distributorPeriodYear => 'سنة';
+  String get distributorPeriodYear => 'Year';
 
   @override
-  String get distributorCompanyInfo => 'معلومات الشركة';
+  String get distributorCompanyInfo => 'Company Info';
 
   @override
-  String get distributorCompanyName => 'اسم الشركة';
+  String get distributorCompanyName => 'Company Name';
 
   @override
-  String get distributorPhone => 'رقم الهاتف';
+  String get distributorPhone => 'Phone';
 
   @override
-  String get distributorEmail => 'البريد الإلكتروني';
+  String get distributorEmail => 'Email';
 
   @override
-  String get distributorAddress => 'العنوان';
+  String get distributorAddress => 'Address';
 
   @override
-  String get distributorNotificationSettings => 'إعدادات الإشعارات';
+  String get distributorNotificationSettings => 'Notification Settings';
 
   @override
-  String get distributorNotificationChannels => 'قنوات الإشعارات';
+  String get distributorNotificationChannels => 'Notification Channels';
 
   @override
-  String get distributorEmailNotifications => 'البريد الإلكتروني';
+  String get distributorEmailNotifications => 'Email';
 
   @override
-  String get distributorPushNotifications => 'إشعارات الجوال';
+  String get distributorPushNotifications => 'Push Notifications';
 
   @override
-  String get distributorSmsNotifications => 'رسائل SMS';
+  String get distributorSmsNotifications => 'SMS';
 
   @override
-  String get distributorNotificationTypes => 'أنواع الإشعارات';
+  String get distributorNotificationTypes => 'Notification Types';
 
   @override
-  String get distributorNewOrderNotification => 'طلبات جديدة';
+  String get distributorNewOrderNotification => 'New Orders';
 
   @override
-  String get distributorOrderStatusNotification => 'تحديث حالة الطلب';
+  String get distributorOrderStatusNotification => 'Order Status Updates';
 
   @override
-  String get distributorPaymentNotification => 'إشعارات الدفع';
+  String get distributorPaymentNotification => 'Payment Notifications';
 
   @override
-  String get distributorDeliverySettings => 'إعدادات التسليم';
+  String get distributorDeliverySettings => 'Delivery Settings';
 
   @override
-  String get distributorDeliveryZones => 'مناطق التوصيل';
+  String get distributorDeliveryZones => 'Delivery Zones';
 
   @override
-  String get distributorDeliveryZonesHint => 'أدخل المدن مفصولة بفاصلة';
+  String get distributorDeliveryZonesHint => 'Enter cities separated by commas';
 
   @override
-  String get distributorMinOrder => 'الحد الأدنى للطلب (ر.س)';
+  String get distributorMinOrder => 'Min Order Amount (SAR)';
 
   @override
-  String get distributorDeliveryFee => 'رسوم التوصيل (ر.س)';
+  String get distributorDeliveryFee => 'Delivery Fee (SAR)';
 
   @override
-  String get distributorFreeDelivery => 'توصيل مجاني';
+  String get distributorFreeDelivery => 'Free Delivery';
 
   @override
-  String get distributorFreeDeliveryMin => 'الحد الأدنى للتوصيل المجاني (ر.س)';
+  String get distributorFreeDeliveryMin => 'Free Delivery Minimum (SAR)';
 
   @override
-  String get distributorSaveSettings => 'حفظ الإعدادات';
+  String get distributorSaveSettings => 'Save Settings';
 
   @override
-  String get distributorSettingsSaved => 'تم حفظ الإعدادات بنجاح';
+  String get distributorSettingsSaved => 'Settings saved successfully';
 
   @override
   String distributorPurchaseOrder(String number) {
-    return 'طلب شراء #$number';
+    return 'Purchase Order #$number';
   }
 
   @override
-  String get distributorProposedAmount => 'المبلغ المقترح:';
+  String get distributorProposedAmount => 'Proposed Amount:';
 
   @override
-  String get distributorOrderItems => 'بنود الطلب';
+  String get distributorOrderItems => 'Order Items';
 
   @override
   String distributorProductCount(int count) {
-    return '$count منتجات';
+    return '$count products';
   }
 
   @override
-  String get distributorSuggestedPrice => 'السعر المقترح';
+  String get distributorSuggestedPrice => 'Suggested Price';
 
   @override
-  String get distributorYourPrice => 'سعرك';
+  String get distributorYourPrice => 'Your Price';
 
   @override
-  String get distributorYourTotal => 'إجمالي سعرك';
+  String get distributorYourTotal => 'Your Total';
 
   @override
-  String get distributorNotesForStore => 'ملاحظات للمتجر';
+  String get distributorNotesForStore => 'Notes for Store';
 
   @override
-  String get distributorNotesHint => 'أضف ملاحظات حول العرض (اختياري)...';
+  String get distributorNotesHint => 'Add notes about the offer (optional)...';
 
   @override
-  String get distributorRejectOrder => 'رفض الطلب';
+  String get distributorRejectOrder => 'Reject Order';
 
   @override
-  String get distributorAcceptSendQuote => 'قبول وإرسال العرض';
+  String get distributorAcceptSendQuote => 'Accept & Send Quote';
 
   @override
-  String get distributorOrderRejected => 'تم رفض الطلب بنجاح';
+  String get distributorOrderRejected => 'Order rejected successfully';
 
   @override
   String distributorOrderAccepted(String amount) {
-    return 'تم قبول الطلب وإرسال العرض بمبلغ $amount ريال';
+    return 'Order accepted and quote sent for $amount SAR';
   }
 
   @override
   String distributorLowerThanProposed(String percent) {
-    return '$percent% أقل من المقترح';
+    return '$percent% lower than proposed';
   }
 
   @override
   String distributorHigherThanProposed(String percent) {
-    return '+$percent% أعلى من المقترح';
+    return '+$percent% higher than proposed';
   }
 
   @override
-  String get distributorComingSoon => 'قريباً';
+  String get distributorComingSoon => 'Coming soon';
 
   @override
-  String get distributorLoadError => 'حدث خطأ في تحميل البيانات';
+  String get distributorLoadError => 'Error loading data';
 
   @override
-  String get distributorRetry => 'إعادة المحاولة';
+  String get distributorRetry => 'Retry';
 
   @override
-  String get distributorLogin => 'تسجيل دخول الموزع';
+  String get distributorLogin => 'Distributor Login';
 
   @override
-  String get distributorLoginSubtitle => 'أدخل بريدك الإلكتروني وكلمة المرور';
+  String get distributorLoginSubtitle => 'Enter your email and password';
 
   @override
-  String get distributorEmailLabel => 'البريد الإلكتروني';
+  String get distributorEmailLabel => 'Email';
 
   @override
-  String get distributorPasswordLabel => 'كلمة المرور';
+  String get distributorPasswordLabel => 'Password';
 
   @override
-  String get distributorLoginButton => 'تسجيل الدخول';
+  String get distributorLoginButton => 'Sign In';
 
   @override
-  String get distributorLoginError => 'فشل تسجيل الدخول';
+  String get distributorLoginError => 'Login failed';
 
   @override
-  String get distributorLogout => 'تسجيل الخروج';
+  String get distributorLogout => 'Sign Out';
 
   @override
-  String get distributorSar => 'ر.س';
+  String get distributorSar => 'SAR';
 
   @override
-  String get distributorRiyal => 'ريال';
+  String get distributorRiyal => 'SAR';
 
   @override
-  String get distributorUnsavedChanges => 'تغييرات غير محفوظة';
+  String get distributorUnsavedChanges => 'Unsaved Changes';
 
   @override
   String get distributorUnsavedChangesMessage =>
-      'لديك تغييرات غير محفوظة. هل تريد المغادرة بدون حفظ؟';
+      'You have unsaved changes. Do you want to leave without saving?';
 
   @override
-  String get distributorStay => 'البقاء';
+  String get distributorStay => 'Stay';
 
   @override
-  String get distributorLeave => 'مغادرة';
+  String get distributorLeave => 'Leave';
 
   @override
-  String get distributorNoDataToExport => 'لا توجد بيانات للتصدير';
+  String get distributorNoDataToExport => 'No data to export';
 
   @override
-  String get distributorReportExported => 'تم تصدير التقرير بنجاح';
+  String get distributorReportExported => 'Report exported successfully';
 
   @override
-  String get distributorExportWebOnly => 'التصدير متاح فقط على الويب';
+  String get distributorExportWebOnly => 'Export is only available on web';
 
   @override
-  String get distributorPrintWebOnly => 'الطباعة متاحة فقط على الويب';
+  String get distributorPrintWebOnly => 'Printing is only available on web';
 
   @override
-  String get distributorSaveError => 'حدث خطأ أثناء الحفظ';
+  String get distributorSaveError => 'An error occurred while saving';
 
   @override
-  String get distributorInvalidEmail => 'يرجى إدخال بريد إلكتروني صحيح';
+  String get distributorInvalidEmail => 'Please enter a valid email address';
 
   @override
-  String get distributorInvalidPhone => 'يرجى إدخال رقم هاتف صحيح';
+  String get distributorInvalidPhone => 'Please enter a valid phone number';
 
   @override
-  String get distributorActionUndone => 'تم التراجع عن الإجراء';
+  String get distributorActionUndone => 'Action undone';
 
   @override
   String get distributorSessionExpired =>
-      'انتهت الجلسة بسبب عدم النشاط. يرجى تسجيل الدخول مرة أخرى.';
+      'Session expired due to inactivity. Please log in again.';
 
   @override
-  String get distributorWelcomePortal => 'مرحباً في بوابة الموزع!';
+  String get distributorWelcomePortal => 'Welcome to the Distributor Portal!';
 
   @override
-  String get distributorGetStarted => 'ابدأ باستكشاف هذه الميزات الرئيسية:';
+  String get distributorGetStarted =>
+      'Get started by exploring these key features:';
 
   @override
-  String get distributorManagePrices => 'إدارة الأسعار';
+  String get distributorManagePrices => 'Manage Prices';
 
   @override
-  String get distributorManagePricesDesc => 'تحديد وتحديث أسعار منتجاتك';
+  String get distributorManagePricesDesc =>
+      'Set and update product prices for your distribution';
 
   @override
-  String get distributorViewReports => 'عرض التقارير';
+  String get distributorViewReports => 'View Reports';
 
   @override
-  String get distributorViewReportsDesc => 'تتبع أداء المبيعات والتحليلات';
+  String get distributorViewReportsDesc =>
+      'Track sales performance and view analytics';
 
   @override
-  String get distributorUpdateSettings => 'تحديث الإعدادات';
+  String get distributorUpdateSettings => 'Update Settings';
 
   @override
   String get distributorUpdateSettingsDesc =>
-      'إعداد معلومات الشركة ومناطق التوصيل والإشعارات';
+      'Configure company info, delivery zones, and notifications';
 
   @override
   String get distributorReviewOrdersDesc =>
-      'مراجعة وإدارة طلبات الشراء الواردة';
+      'Review and manage incoming purchase orders from stores';
 
   @override
-  String get distributorMonthlySalesSar => 'المبيعات الشهرية (ر.س)';
+  String get distributorMonthlySalesSar => 'Monthly Sales (SAR)';
 
   @override
-  String get distributorPrintReport => 'طباعة التقرير';
+  String get distributorPrintReport => 'Print Report';
 
   @override
-  String get distributorPrint => 'طباعة';
+  String get distributorPrint => 'Print';
 
   @override
-  String get distributorExportCsv => 'تصدير التقرير كملف CSV';
+  String get distributorExportCsv => 'Export report as CSV';
 
   @override
-  String get distributorExportCsvShort => 'تصدير CSV';
+  String get distributorExportCsvShort => 'Export CSV';
 
   @override
-  String get distributorSaveCtrlS => 'حفظ التغييرات (Ctrl+S)';
+  String get distributorSaveCtrlS => 'Save Changes (Ctrl+S)';
 
   @override
-  String get scanCouponBarcode => 'مسح باركود الكوبون';
+  String get scanCouponBarcode => 'Scan Coupon Barcode';
 
   @override
-  String get validateCoupon => 'تحقق';
+  String get validateCoupon => 'Validate';
 
   @override
-  String get couponValid => 'الكوبون صالح';
+  String get couponValid => 'Coupon Valid';
 
   @override
-  String get recentCoupons => 'الكوبونات الأخيرة';
+  String get recentCoupons => 'Recent Coupons';
 
   @override
-  String get noRecentCoupons => 'لا توجد كوبونات حديثة';
+  String get noRecentCoupons => 'No recent coupons';
 
   @override
-  String get noExpiry => 'بدون انتهاء';
+  String get noExpiry => 'No Expiry';
 
   @override
-  String get invalidCouponCode => 'كود كوبون غير صالح';
+  String get invalidCouponCode => 'Invalid coupon code';
 
   @override
-  String get percentageOff => 'خصم نسبة مئوية';
+  String get percentageOff => 'Percentage Off';
 
   @override
-  String get bundleDeals => 'عروض الباقات';
+  String get bundleDeals => 'Bundle Deals';
 
   @override
-  String get includedProducts => 'المنتجات المشمولة';
+  String get includedProducts => 'Included Products';
 
   @override
-  String get individualTotal => 'المجموع الفردي';
+  String get individualTotal => 'Individual Total';
 
   @override
-  String get bundlePrice => 'سعر الباقة';
+  String get bundlePrice => 'Bundle Price';
 
   @override
-  String get youSave => 'توفيرك';
+  String get youSave => 'You Save';
 
   @override
-  String get noBundleDeals => 'لا توجد عروض باقات';
+  String get noBundleDeals => 'No bundle deals';
 
   @override
-  String get bundleDealsWillAppear => 'ستظهر عروض الباقات هنا';
+  String get bundleDealsWillAppear => 'Bundle deals will appear here';
 
   @override
   String validUntilDate(String date) {
-    return 'صالح حتى: $date';
+    return 'Valid Until: $date';
   }
 
   @override
   String validFromDate(String date) {
-    return 'صالح من: $date';
+    return 'Valid From: $date';
   }
 
   @override
-  String get autoApplied => 'تطبيق تلقائي';
+  String get autoApplied => 'Auto Applied';
 
   @override
-  String get noActiveOffers => 'لا توجد عروض نشطة';
+  String get noActiveOffers => 'No active offers';
 
   @override
-  String get wastage => 'الهدر والتالف';
+  String get wastage => 'Wastage';
 
   @override
-  String get quantityWasted => 'الكمية المهدرة';
+  String get quantityWasted => 'Quantity Wasted';
 
   @override
-  String get photoLabel => 'صورة';
+  String get photoLabel => 'Photo';
 
   @override
-  String get photoAttached => 'تم إرفاق الصورة';
+  String get photoAttached => 'Photo attached';
 
   @override
-  String get tapToTakePhoto => 'انقر لالتقاط صورة';
+  String get tapToTakePhoto => 'Tap to take photo';
 
   @override
-  String get optionalLabel => 'اختياري';
+  String get optionalLabel => 'Optional';
 
   @override
-  String get recordWastage => 'تسجيل الهدر';
+  String get recordWastage => 'Record Wastage';
 
   @override
-  String get spillage => 'انسكاب';
+  String get spillage => 'Spillage';
 
   @override
-  String get transferInventory => 'نقل المخزون';
+  String get transferInventory => 'Transfer Inventory';
 
   @override
-  String get transferDetails => 'تفاصيل النقل';
+  String get transferDetails => 'Transfer Details';
 
   @override
-  String get fromStore => 'من الفرع';
+  String get fromStore => 'From Store';
 
   @override
-  String get toStore => 'إلى الفرع';
+  String get toStore => 'To Store';
 
   @override
-  String get selectStore => 'اختر الفرع';
+  String get selectStore => 'Select Store';
 
   @override
-  String get submitTransfer => 'إرسال النقل';
+  String get submitTransfer => 'Submit Transfer';
 
   @override
-  String get optionalNote => 'ملاحظة اختيارية';
+  String get optionalNote => 'Optional note';
 
   @override
-  String get addInventory => 'إضافة مخزون';
+  String get addInventory => 'Add Inventory';
 
   @override
-  String get scanLabel => 'مسح';
+  String get scanLabel => 'Scan';
 
   @override
-  String get quantityToAdd => 'الكمية المراد إضافتها';
+  String get quantityToAdd => 'Quantity to Add';
 
   @override
-  String get supplierReference => 'مرجع المورد';
+  String get supplierReference => 'Supplier Reference';
 
   @override
-  String get removeInventory => 'سحب مخزون';
+  String get removeInventory => 'Remove Inventory';
 
   @override
-  String get quantityToRemove => 'الكمية المراد سحبها';
+  String get quantityToRemove => 'Quantity to Remove';
 
   @override
-  String get sold => 'مباع';
+  String get sold => 'Sold';
 
   @override
-  String get transferred => 'منقول';
+  String get transferred => 'Transferred';
 
   @override
-  String get fieldRequired => 'الحقل مطلوب';
+  String get fieldRequired => 'Field required';
 
   @override
-  String get deviceInfo => 'معلومات الجهاز';
+  String get deviceInfo => 'Device Info';
 
   @override
-  String get deviceName => 'اسم الجهاز';
+  String get deviceName => 'Device Name';
 
   @override
-  String get deviceType => 'نوع الجهاز';
+  String get deviceType => 'Device Type';
 
   @override
-  String get connectionMethod => 'طريقة الاتصال';
+  String get connectionMethod => 'Connection Method';
 
   @override
-  String get networkSettings => 'إعدادات الشبكة';
+  String get networkSettings => 'Network Settings';
 
   @override
-  String get ipAddress => 'عنوان IP';
+  String get ipAddress => 'IP Address';
 
   @override
-  String get port => 'المنفذ';
+  String get port => 'Port';
 
   @override
-  String get connectionTestPassed => 'نجح اختبار الاتصال';
+  String get connectionTestPassed => 'Connection test passed';
 
   @override
-  String get saveDevice => 'حفظ الجهاز';
+  String get saveDevice => 'Save Device';
 
   @override
-  String get addDevice => 'إضافة جهاز';
+  String get addDevice => 'Add Device';
 
   @override
-  String get noPaymentDevices => 'لا توجد أجهزة دفع';
+  String get noPaymentDevices => 'No payment devices';
 
   @override
-  String get addFirstPaymentDevice => 'أضف أول جهاز دفع';
+  String get addFirstPaymentDevice => 'Add your first payment device';
 
   @override
-  String get totalDevices => 'إجمالي الأجهزة';
+  String get totalDevices => 'Total Devices';
 
   @override
-  String get disconnected => 'غير متصل';
+  String get disconnected => 'Disconnected';
 
   @override
   String testingConnectionName(String name) {
-    return 'جاري اختبار الاتصال $name...';
+    return 'Testing connection $name...';
   }
 
   @override
   String connectionSuccessful(String name) {
-    return '$name - تم الاتصال بنجاح';
+    return '$name - Connection successful';
   }
 
   @override
-  String get pasteFromClipboard => 'لصق من الحافظة';
+  String get pasteFromClipboard => 'Paste from Clipboard';
 
   @override
-  String get confirmRestore => 'تأكيد الاستعادة';
+  String get confirmRestore => 'Confirm Restore';
 
   @override
-  String get saleNotFound => 'لم يتم العثور على البيع';
+  String get saleNotFound => 'Sale not found';
 
   @override
-  String get noItems => 'لا توجد عناصر';
+  String get noItems => 'No items';
 
   @override
-  String get customerPaysExtra => 'العميل يدفع إضافي';
+  String get customerPaysExtra => 'Customer pays extra';
 
   @override
-  String get submitExchange => 'تأكيد الاستبدال';
+  String get submitExchange => 'Submit Exchange';
 
   @override
-  String get applyInterest => 'تطبيق الفائدة';
+  String get applyInterest => 'Apply Interest';
 
   @override
-  String get reportSettings => 'إعدادات التقرير';
+  String get reportSettings => 'Report Settings';
 
   @override
-  String get reportType => 'نوع التقرير';
+  String get reportType => 'Report Type';
 
   @override
-  String get paymentDistribution => 'توزيع المدفوعات';
+  String get paymentDistribution => 'Payment Distribution';
 
   @override
-  String get allAccountsSettled => 'جميع حسابات العملاء مسددة';
+  String get allAccountsSettled => 'All customer accounts are settled';
 
   @override
-  String get confirmInterest => 'تأكيد الفائدة';
+  String get confirmInterest => 'Confirm Interest';
 
   @override
   String confirmInterestMessage(
       String rate, int count, String amount, String currency) {
-    return 'تطبيق $rate% فائدة على $count حسابات؟\nإجمالي الفائدة: $amount $currency';
+    return 'Apply $rate% interest to $count accounts?\nTotal interest: $amount $currency';
   }
 
   @override
-  String get selectCustomers => 'اختيار العملاء';
+  String get selectCustomers => 'Select Customers';
 
   @override
-  String get deselectAll => 'إلغاء تحديد الكل';
+  String get deselectAll => 'Deselect All';
 
   @override
-  String get preview => 'معاينة';
+  String get preview => 'Preview';
 
   @override
-  String get totalDebt => 'إجمالي الديون';
+  String get totalDebt => 'Total Debt';
 
   @override
-  String get totalInterest => 'إجمالي الفائدة';
+  String get totalInterest => 'Total Interest';
 
   @override
-  String get finalizeInvoice => 'إنهاء الفاتورة';
+  String get finalizeInvoice => 'Finalize Invoice';
 
   @override
-  String get saveAsDraft => 'حفظ كمسودة';
+  String get saveAsDraft => 'Save as Draft';
 
   @override
-  String get saveDraft => 'حفظ المسودة';
+  String get saveDraft => 'Save Draft';
 
   @override
-  String get finalize => 'إنهاء';
+  String get finalize => 'Finalize';
 
   @override
-  String get adjustQuantity => 'تعديل الكمية';
+  String get adjustQuantity => 'Adjust Quantity';
 
   @override
-  String get totalItems => 'إجمالي العناصر';
+  String get totalItems => 'Total Items';
 
   @override
-  String get variance => 'الفرق';
+  String get variance => 'Variance';
 
   @override
-  String get orderNotFound => 'لم يتم العثور على الطلب';
+  String get orderNotFound => 'Order not found';
 
   @override
-  String get share => 'مشاركة';
+  String get share => 'Share';
 
   @override
-  String get full => 'كامل';
+  String get full => 'Full';
 
   @override
-  String get processRefund => 'معالجة الاسترداد';
+  String get processRefund => 'Process Refund';
 
   @override
-  String get refundToCustomer => 'استرداد للعميل';
+  String get refundToCustomer => 'Refund to customer';
 
   @override
-  String get breakdown => 'التفاصيل';
+  String get breakdown => 'Breakdown';
 
   @override
   String nTransactions(int count) {
-    return '$count معاملات';
+    return '$count Transactions';
   }
 
   @override
-  String get customReport => 'تقرير مخصص';
+  String get customReport => 'Custom Report';
 
   @override
-  String get reportBuilder => 'منشئ التقارير';
+  String get reportBuilder => 'Report Builder';
 
   @override
-  String get groupBy => 'تجميع حسب';
+  String get groupBy => 'Group By';
 
   @override
-  String get dateRange => 'النطاق الزمني';
+  String get dateRange => 'Date Range';
 
   @override
-  String get fromLabel => 'من';
+  String get fromLabel => 'From';
 
   @override
-  String get toLabel => 'إلى';
+  String get toLabel => 'To';
 
   @override
-  String get generateReport => 'إنشاء التقرير';
+  String get generateReport => 'Generate Report';
 
   @override
-  String get lastMonth => 'الشهر الماضي';
+  String get lastMonth => 'Last Month';
 
   @override
-  String get periods => 'الفترات';
+  String get periods => 'Periods';
 
   @override
-  String get valueLabel => 'القيمة';
+  String get valueLabel => 'Value';
 
   @override
-  String get tryDifferentFilters => 'جرّب فلاتر مختلفة';
+  String get tryDifferentFilters => 'Try different filters';
 
   @override
-  String get scan => 'مسح';
+  String get scan => 'Scan';
 
   @override
-  String get selectProductFirst => 'اختر منتج أولاً';
+  String get selectProductFirst => 'Select a product first';
 
   @override
-  String get selectProductsForLabels => 'اختر منتجات للملصقات';
+  String get selectProductsForLabels => 'Select products for labels';
 
   @override
   String printJobSentForLabels(int count) {
-    return 'تم إرسال طباعة $count ملصق';
+    return 'Print job sent for $count labels';
   }
 
   @override
-  String get test => 'اختبار';
+  String get test => 'Test';
 
   @override
-  String get paperSize58mm => '58مم';
+  String get paperSize58mm => '58mm';
 
   @override
-  String get paperSize80mm => '80مم';
+  String get paperSize80mm => '80mm';
 
   @override
   String errorSavingSettings(String error) {
-    return 'خطأ في حفظ الإعدادات: $error';
+    return 'Error saving settings: $error';
   }
 
   @override
   String restoreFailed(String error) {
-    return 'فشل الاستعادة: $error';
+    return 'Restore failed: $error';
   }
 
   @override
-  String get address => 'العنوان';
+  String get address => 'Address';
 
   @override
-  String get email => 'البريد الإلكتروني';
+  String get email => 'Email';
 
   @override
-  String get crNumber => 'رقم السجل التجاري';
+  String get crNumber => 'CR Number';
 
   @override
-  String get city => 'المدينة';
+  String get city => 'City';
 
   @override
-  String get optional => 'اختياري';
+  String get optional => 'Optional';
 
   @override
-  String get optionalNoteHint => 'ملاحظة اختيارية...';
+  String get optionalNoteHint => 'Optional note...';
 
   @override
-  String get clearField => 'مسح';
+  String get clearField => 'Clear';
 
   @override
-  String get decreaseQuantity => 'تقليل الكمية';
+  String get decreaseQuantity => 'Decrease quantity';
 
   @override
-  String get increaseQuantity => 'زيادة الكمية';
+  String get increaseQuantity => 'Increase quantity';
 
   @override
-  String get copyToClipboard => 'نسخ';
+  String get copyToClipboard => 'Copy';
 
   @override
-  String get invoiceAlreadyRefunded => 'تم إرجاع هذه الفاتورة بالكامل مسبقاً';
+  String get invoiceAlreadyRefunded =>
+      'This invoice has already been fully refunded';
 
   @override
   String get invoicePartiallyRefunded =>
-      'تم إرجاع بعض المنتجات مسبقاً - يتم عرض المتبقي فقط';
+      'Some items were previously refunded - showing remaining items only';
 
   @override
   String get invoiceVoidedCannotRefund =>
@@ -13284,195 +13306,208 @@ class AppLocalizationsFil extends AppLocalizations {
 
   @override
   String deviceClockInaccurate(int minutes) {
-    return 'ساعة الجهاز غير دقيقة - يرجى ضبط الوقت (فرق: $minutes دقيقة)';
+    return 'Device clock is inaccurate - please adjust the time (offset: $minutes min)';
   }
 
   @override
-  String get saSignInFailed => 'فشل تسجيل الدخول';
+  String get saSignInFailed => 'Sign in failed';
 
   @override
-  String get saAccessDenied => 'الوصول مرفوض. يلزم صلاحية المشرف العام.';
+  String get saAccessDenied => 'Access denied. Super Admin role required.';
 
   @override
-  String get saPlatformManagement => 'إدارة منصة الحي نقطة البيع';
+  String get saPlatformManagement => 'Alhai POS Platform Management';
 
   @override
-  String get saSuperAdmin => 'المشرف العام';
+  String get saSuperAdmin => 'Super Admin';
 
   @override
-  String get saEnterCredentials => 'أدخل البريد الإلكتروني وكلمة المرور';
+  String get saEnterCredentials => 'Please enter email and password';
 
   @override
-  String get saSignIn => 'تسجيل الدخول';
+  String get saSignIn => 'Sign In';
 
   @override
   String get saSuperAdminOnly =>
-      'فقط المستخدمين بصلاحية المشرف العام يمكنهم الوصول لهذه اللوحة.';
+      'Only users with Super Admin role can access this panel.';
 
   @override
-  String get saNoSubscriptionsYet => 'لا توجد اشتراكات بعد';
+  String get saNoSubscriptionsYet => 'No subscriptions yet';
 
   @override
-  String get saNoRevenueData => 'لا توجد بيانات إيرادات';
+  String get saNoRevenueData => 'No revenue data';
 
   @override
-  String get saNoLogsFound => 'لا توجد سجلات';
+  String get saNoLogsFound => 'No logs found';
 
   @override
-  String get saPlatformSummary => 'ملخص المنصة';
+  String get saPlatformSummary => 'Platform Summary';
 
   @override
-  String get saSubscriptionStatus => 'حالة الاشتراكات';
+  String get saSubscriptionStatus => 'Subscription Status';
 
   @override
-  String get saExportData => 'تصدير البيانات';
+  String get saExportData => 'Export Data';
 
   @override
-  String get saExportComingSoon => 'التصدير قريباً';
+  String get saExportComingSoon => 'Export coming soon';
 
   @override
-  String get saStoresReport => 'تقرير المتاجر';
+  String get saStoresReport => 'Stores Report';
 
   @override
-  String get saUsersReport => 'تقرير المستخدمين';
+  String get saUsersReport => 'Users Report';
 
   @override
-  String get saRevenueReport => 'تقرير الإيرادات';
+  String get saRevenueReport => 'Revenue Report';
 
   @override
-  String get saActivityLogs => 'سجل النشاط';
+  String get saActivityLogs => 'Activity Logs';
 
   @override
-  String get saWarnings => 'تحذيرات';
+  String get saWarnings => 'Warnings';
 
   @override
-  String get saZatcaEInvoicing => 'الفوترة الإلكترونية ZATCA';
+  String get saZatcaEInvoicing => 'ZATCA E-invoicing';
 
   @override
-  String get saEnableEInvoicing => 'تفعيل الفوترة الإلكترونية لجميع المتاجر';
+  String get saEnableEInvoicing =>
+      'Enable electronic invoicing compliance for all stores';
 
   @override
-  String get saApiEnvironment => 'بيئة API';
+  String get saApiEnvironment => 'API Environment';
 
   @override
-  String get saTaxRateVat => 'نسبة الضريبة (VAT)';
+  String get saTaxRateVat => 'Tax Rate (VAT)';
 
   @override
-  String get saDefaultLanguage => 'اللغة الافتراضية';
+  String get saDefaultLanguage => 'Default Language';
 
   @override
-  String get saDefaultCurrency => 'العملة الافتراضية';
+  String get saDefaultCurrency => 'Default Currency';
 
   @override
-  String get saTrialPeriodDays => 'فترة التجربة (أيام)';
+  String get saTrialPeriodDays => 'Trial Period (Days)';
 
   @override
-  String get saResourceUsage => 'استخدام الموارد';
+  String get saResourceUsage => 'Resource Usage';
 
   @override
-  String get saResponseTime => 'وقت الاستجابة';
+  String get saResponseTime => 'Response Time';
 
   @override
-  String get saDbRoundTrip => 'رحلة قاعدة البيانات';
+  String get saDbRoundTrip => 'DB Round-trip';
 
   @override
-  String get saExcellent => 'ممتاز';
+  String get saExcellent => 'Excellent';
 
   @override
-  String get saGood => 'جيد';
+  String get saGood => 'Good';
 
   @override
-  String get saSlow => 'بطيء';
+  String get saSlow => 'Slow';
 
   @override
-  String get saRoleUpdated => 'تم تحديث الصلاحية';
+  String get saRoleUpdated => 'Role updated';
 
   @override
-  String get saNoInvoices => 'لا توجد فواتير';
+  String get saNoInvoices => 'No invoices found';
 
   @override
-  String get saErrorLoading => 'خطأ في تحميل البيانات';
+  String get saErrorLoading => 'Error loading data';
 
   @override
-  String get saUpgradePlan => 'ترقية الخطة';
+  String get saUpgradePlan => 'Upgrade Plan';
 
   @override
-  String get saDowngradePlan => 'تخفيض الخطة';
+  String get saDowngradePlan => 'Downgrade Plan';
 
   @override
-  String get saEditPlan => 'تعديل الخطة';
+  String get saEditPlan => 'Edit Plan';
 
   @override
-  String get saPaymentGateways => 'بوابات الدفع';
+  String get saPaymentGateways => 'Payment Gateways';
 
   @override
-  String get saCreditDebitProcessing => 'معالجة بطاقات الائتمان والخصم';
+  String get saCreditDebitProcessing => 'Credit/debit card processing';
 
   @override
-  String get saMultiMethodGateway => 'بوابة دفع متعددة الطرق';
+  String get saMultiMethodGateway => 'Multi-method payment gateway';
 
   @override
-  String get saBuyNowPayLater => 'اشتر الآن وادفع لاحقاً';
+  String get saBuyNowPayLater => 'Buy now, pay later';
 
   @override
-  String get saInstallmentPayments => 'الدفع بالتقسيط';
+  String get saInstallmentPayments => 'Installment payments';
 
   @override
-  String get saActiveStores => 'المتاجر النشطة';
+  String get saActiveStores => 'Active Stores';
 
   @override
-  String get saActiveSubscriptions => 'الاشتراكات النشطة';
+  String get saActiveSubscriptions => 'Active Subscriptions';
 
   @override
-  String get saTrialSubscriptions => 'اشتراكات تجريبية';
+  String get saTrialSubscriptions => 'Trial Subscriptions';
 
   @override
-  String get saNewSignups30d => 'تسجيلات جديدة (30 يوم)';
+  String get saNewSignups30d => 'New Signups (30d)';
 
   @override
-  String get saSubscribers => 'المشتركون';
+  String get saSubscribers => 'Subscribers';
 
   @override
-  String get saPercentOfTotal => '% من الإجمالي';
+  String get saPercentOfTotal => '% of Total';
 
   @override
   String get saDeactivateUserConfirm =>
-      'هل أنت متأكد من تعطيل هذا المستخدم؟ سيتم إلغاء وصوله فوراً.';
+      'Are you sure you want to deactivate this user? Their access will be revoked immediately.';
 
   @override
   String get saSuspendStoreConfirm =>
-      'هل أنت متأكد من إيقاف هذا المتجر؟ سيتم تعطيل الوصول لجميع المستخدمين فوراً.';
+      'Are you sure you want to suspend this store? All user access will be revoked immediately.';
 
   @override
-  String get password => 'كلمة المرور';
+  String get password => 'Password';
 
   @override
-  String get saReportsTitle => 'التقارير';
+  String get saReportsTitle => 'Reports';
 
   @override
-  String get startDate => 'البداية';
+  String get startDate => 'Start';
 
   @override
-  String get endDate => 'النهاية';
+  String get endDate => 'End';
 
   @override
-  String get customerPhoneNumber => 'رقم جوال العميل';
+  String get customerPhoneNumber => 'Customer Phone Number';
 
   @override
-  String get continueAction => 'متابعة';
+  String get continueAction => 'Continue';
 
   @override
-  String get continueWithCustomer => 'متابعة مع العميل';
+  String get continueWithCustomer => 'Continue with Customer';
 
   @override
-  String get existingCustomers => 'عملاء موجودون';
+  String get existingCustomers => 'Existing Customers';
 
   @override
-  String get digitsRemaining => 'أرقام متبقية';
+  String get digitsRemaining => 'digits remaining';
 
   @override
-  String get phoneNumberTooLong => 'الرقم طويل جداً';
+  String get phoneNumberTooLong => 'Number is too long';
 
   @override
-  String get enterValidPhoneNumber => 'أدخل رقم هاتف صحيح';
+  String get enterValidPhoneNumber => 'Enter a valid phone number';
+
+  @override
+  String get cancelledByAdmin => 'Cancelled by admin';
+
+  @override
+  String get shiftOpenCloseReminders => 'Shift open/close reminders';
+
+  @override
+  String get setOrChangeManagerPin => 'Set or change manager PIN';
+
+  @override
+  String get dataSynchronizationStatus => 'Data synchronization status';
 }

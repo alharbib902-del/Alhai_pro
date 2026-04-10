@@ -13482,4 +13482,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get enterValidPhoneNumber => 'Enter a valid phone number';
+
+  @override
+  String get cancelledByAdmin => 'Cancelled by admin';
+
+  @override
+  String get shiftOpenCloseReminders => 'Shift open/close reminders';
+
+  @override
+  String get setOrChangeManagerPin => 'Set or change manager PIN';
+
+  @override
+  String get dataSynchronizationStatus => 'Data synchronization status';
 }

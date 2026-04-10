@@ -13449,4 +13449,16 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get enterValidPhoneNumber => 'أدخل رقم هاتف صحيح';
+
+  @override
+  String get cancelledByAdmin => 'ألغاه المسؤول';
+
+  @override
+  String get shiftOpenCloseReminders => 'تنبيهات فتح/إغلاق الورديات';
+
+  @override
+  String get setOrChangeManagerPin => 'تعيين أو تغيير رمز PIN للمدير';
+
+  @override
+  String get dataSynchronizationStatus => 'حالة مزامنة البيانات';
 }

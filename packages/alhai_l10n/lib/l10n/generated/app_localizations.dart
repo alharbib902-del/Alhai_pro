@@ -25040,6 +25040,30 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'أدخل رقم هاتف صحيح'**
   String get enterValidPhoneNumber;
+
+  /// No description provided for @cancelledByAdmin.
+  ///
+  /// In ar, this message translates to:
+  /// **'ألغاه المسؤول'**
+  String get cancelledByAdmin;
+
+  /// No description provided for @shiftOpenCloseReminders.
+  ///
+  /// In ar, this message translates to:
+  /// **'تنبيهات فتح/إغلاق الورديات'**
+  String get shiftOpenCloseReminders;
+
+  /// No description provided for @setOrChangeManagerPin.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعيين أو تغيير رمز PIN للمدير'**
+  String get setOrChangeManagerPin;
+
+  /// No description provided for @dataSynchronizationStatus.
+  ///
+  /// In ar, this message translates to:
+  /// **'حالة مزامنة البيانات'**
+  String get dataSynchronizationStatus;
 }
 
 class _AppLocalizationsDelegate
