@@ -65,16 +65,60 @@ jobs:
     needs: build
     environment: ${{ github.event_name == 'workflow_dispatch' && inputs.environment || 'production' }}
     steps:
+      - uses: actions/checkout@v4
+
       - name: Download Build Artifact
         uses: actions/download-artifact@v4
         with:
           name: cashier-web-${{ github.event_name == 'workflow_dispatch' && inputs.environment || 'production' }}
           path: build/web
-      - name: Deploy to Hosting
+
+      # ======================================================================
+      # Extract semantic version from tag (e.g. refs/tags/v1.2.3 -> 1.2.3).
+      # For manual workflow_dispatch runs, fall back to a timestamp-based tag
+      # so the release step still has a valid version string.
+      # ======================================================================
+      - name: Extract version from tag
+        id: version
         run: |
-          echo "Deploy step — configure your hosting provider here"
+          if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
+            VERSION=${GITHUB_REF#refs/tags/v}
+          else
+            VERSION="0.0.0-manual-$(date -u +%Y%m%d%H%M%S)"
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Detected version: $VERSION"
+
+      # ======================================================================
+      # Create GitHub Release with the web build + any mobile artifacts that
+      # were uploaded by the build-android / build-ios workflows.
+      # Marked as prerelease when the tag contains "beta" or "rc".
+      # ======================================================================
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v1
+        with:
+          name: Release ${{ steps.version.outputs.version }}
+          tag_name: ${{ github.ref_name }}
+          files: |
+            build/web/**/*
+            *.aab
+            *.apk
+          generate_release_notes: true
+          draft: false
+          prerelease: ${{ contains(github.ref, 'beta') || contains(github.ref, 'rc') }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # ======================================================================
+      # Hosting deploy placeholder (kept as comments for operator reference).
+      # GitHub Release above is the primary distribution mechanism for now.
+      # ======================================================================
+      - name: Deploy to Hosting (placeholder)
+        if: ${{ !startsWith(github.ref, 'refs/tags/v') }}
+        run: |
+          echo "Manual deploy triggered for environment: ${{ github.event_name == 'workflow_dispatch' && inputs.environment || 'production' }}"
           echo "Artifact downloaded to build/web/"
-          echo "Environment: ${{ github.event_name == 'workflow_dispatch' && inputs.environment || 'production' }}"
           # Examples:
           # firebase deploy --only hosting
           # aws s3 sync build/web/ s3://$BUCKET_NAME

@@ -46,7 +46,71 @@ jobs:
       - name: Bootstrap workspace
         run: melos bootstrap
 
-      - name: Build iOS (no codesign)
+      # ======================================================================
+      # iOS SIGNING SETUP (runs only when IOS_CERTIFICATE_BASE64 is configured)
+      # Imports the distribution certificate into a temporary keychain and
+      # installs the provisioning profile. Falls back to --no-codesign below
+      # when secrets aren't set (PR builds, contributor forks).
+      # ======================================================================
+      - name: Install iOS signing certificates
+        if: env.IOS_CERTIFICATE_BASE64 != ''
+        env:
+          IOS_CERTIFICATE_BASE64: ${{ secrets.IOS_CERTIFICATE_BASE64 }}
+          IOS_CERTIFICATE_PASSWORD: ${{ secrets.IOS_CERTIFICATE_PASSWORD }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+        run: |
+          # Create temporary keychain
+          security create-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          security set-keychain-settings -lut 21600 build.keychain
+
+          # Import certificate
+          echo "$IOS_CERTIFICATE_BASE64" | base64 -d > certificate.p12
+          security import certificate.p12 -k build.keychain -P "$IOS_CERTIFICATE_PASSWORD" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple: -s -k "$KEYCHAIN_PASSWORD" build.keychain
+          rm certificate.p12
+
+      - name: Install provisioning profile
+        if: env.PROVISIONING_PROFILE_BASE64 != ''
+        env:
+          PROVISIONING_PROFILE_BASE64: ${{ secrets.PROVISIONING_PROFILE_BASE64 }}
+        run: |
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          echo "$PROVISIONING_PROFILE_BASE64" | base64 -d > ~/Library/MobileDevice/Provisioning\ Profiles/profile.mobileprovision
+
+      # ======================================================================
+      # SIGNED RELEASE BUILD (IPA) — only when signing secrets are present
+      # ======================================================================
+      - name: Build signed iOS IPA
+        if: env.IOS_CERTIFICATE_BASE64 != ''
+        env:
+          IOS_CERTIFICATE_BASE64: ${{ secrets.IOS_CERTIFICATE_BASE64 }}
+        run: |
+          cd ${{ matrix.path }}
+          flutter build ipa --release \
+            --obfuscate \
+            --split-debug-info=build/debug-info \
+            --dart-define=SUPABASE_URL=${{ secrets.SUPABASE_URL }} \
+            --dart-define=SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
+
+      - name: Upload IPA artifact
+        if: env.IOS_CERTIFICATE_BASE64 != ''
+        env:
+          IOS_CERTIFICATE_BASE64: ${{ secrets.IOS_CERTIFICATE_BASE64 }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.app }}-release-ipa
+          path: ${{ matrix.path }}/build/ios/ipa/*.ipa
+          retention-days: 14
+
+      # ======================================================================
+      # UNSIGNED FALLBACK (--no-codesign) — runs on PRs / forks without secrets
+      # ======================================================================
+      - name: Build iOS (no codesign, fallback)
+        if: env.IOS_CERTIFICATE_BASE64 == ''
+        env:
+          IOS_CERTIFICATE_BASE64: ${{ secrets.IOS_CERTIFICATE_BASE64 }}
         run: |
           cd ${{ matrix.path }}
           flutter build ios --release --no-codesign \
@@ -54,3 +118,10 @@ jobs:
             --split-debug-info=build/debug-info \
             --dart-define=SUPABASE_URL=${{ secrets.SUPABASE_URL }} \
             --dart-define=SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
+
+      - name: Upload iOS debug symbols
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.app }}-ios-debug-symbols
+          path: ${{ matrix.path }}/build/debug-info/
+          if-no-files-found: ignore

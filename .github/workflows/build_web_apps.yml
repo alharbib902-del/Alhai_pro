@@ -1,0 +1,130 @@
+# ============================================================================
+# Build Web Apps (PR validation)
+# ----------------------------------------------------------------------------
+# Covers:
+#   - distributor_portal  (Flutter Web)
+#   - super_admin         (Flutter Web)
+#
+# What it does:
+#   On pull_request -> main, when files under distributor_portal/**,
+#   super_admin/**, or packages/** change, this workflow analyzes, tests,
+#   and does a release web build for each affected app. Build output is
+#   uploaded as an artifact for review (<app>-web-build, 7-day retention).
+#
+# Secrets required: NONE (build-only; deploy lives in deploy_web.yml)
+#
+# Local sanity check before pushing:
+#   cd distributor_portal && flutter pub get && flutter build web --release
+#   cd super_admin        && flutter pub get && flutter build web --release
+# ============================================================================
+
+name: Build Web Apps
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'distributor_portal/**'
+      - 'super_admin/**'
+      - 'packages/**'
+      - '.github/workflows/build_web_apps.yml'
+
+concurrency:
+  group: build-web-apps-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ==========================================================================
+  # Detect which app directories actually changed so we can skip jobs that
+  # don't need to run. A change under packages/** triggers both apps because
+  # either could depend on the shared package.
+  # ==========================================================================
+  changes:
+    name: Detect changes
+    runs-on: ubuntu-latest
+    outputs:
+      distributor_portal: ${{ steps.filter.outputs.distributor_portal }}
+      super_admin: ${{ steps.filter.outputs.super_admin }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            distributor_portal:
+              - 'distributor_portal/**'
+              - 'packages/**'
+              - '.github/workflows/build_web_apps.yml'
+            super_admin:
+              - 'super_admin/**'
+              - 'packages/**'
+              - '.github/workflows/build_web_apps.yml'
+
+  build:
+    name: Build ${{ matrix.app }}
+    runs-on: ubuntu-latest
+    needs: changes
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - app: distributor_portal
+            path: distributor_portal
+            changed: ${{ needs.changes.outputs.distributor_portal }}
+          - app: super_admin
+            path: super_admin
+            changed: ${{ needs.changes.outputs.super_admin }}
+    steps:
+      - name: Skip if app unchanged
+        if: matrix.changed != 'true'
+        run: |
+          echo "No relevant changes for ${{ matrix.app }} - skipping."
+
+      - name: Checkout code
+        if: matrix.changed == 'true'
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        if: matrix.changed == 'true'
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.27.4'
+          channel: 'stable'
+          cache: true
+
+      - name: Install melos
+        if: matrix.changed == 'true'
+        run: dart pub global activate melos
+
+      - name: Bootstrap workspace
+        if: matrix.changed == 'true'
+        run: melos bootstrap
+
+      - name: Flutter pub get
+        if: matrix.changed == 'true'
+        working-directory: ${{ matrix.path }}
+        run: flutter pub get
+
+      - name: Analyze
+        if: matrix.changed == 'true'
+        working-directory: ${{ matrix.path }}
+        run: dart analyze
+
+      - name: Test
+        if: matrix.changed == 'true'
+        working-directory: ${{ matrix.path }}
+        run: flutter test
+
+      - name: Build web (release)
+        if: matrix.changed == 'true'
+        working-directory: ${{ matrix.path }}
+        run: flutter build web --release
+
+      - name: Upload web build artifact
+        if: matrix.changed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.app }}-web-build
+          path: ${{ matrix.path }}/build/web
+          retention-days: 7
+          if-no-files-found: error

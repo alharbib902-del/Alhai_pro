@@ -63,7 +63,82 @@ jobs:
       - name: Bootstrap workspace
         run: melos bootstrap
 
-      - name: Build ${{ matrix.app }} APK
+      # ======================================================================
+      # SIGNING SETUP (runs only when KEYSTORE_BASE64 secret is configured)
+      # When the secret is not set (e.g., on PRs), we fall through to the
+      # unsigned debug build path below.
+      # ======================================================================
+      - name: Decode keystore (if secret exists)
+        id: decode_keystore
+        if: env.KEYSTORE_BASE64 != ''
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: |
+          echo "$KEYSTORE_BASE64" | base64 -d > ${{ github.workspace }}/keystore.jks
+          cat > ${{ matrix.path }}/android/key.properties <<EOF
+          storeFile=${{ github.workspace }}/keystore.jks
+          storePassword=${{ secrets.KEYSTORE_PASSWORD }}
+          keyAlias=${{ secrets.KEY_ALIAS }}
+          keyPassword=${{ secrets.KEY_PASSWORD }}
+          EOF
+          echo "signed=true" >> $GITHUB_OUTPUT
+
+      # ======================================================================
+      # SIGNED RELEASE BUILDS (APK + AAB)
+      # AAB is required for Play Store uploads; APK is kept for sideloading.
+      # ======================================================================
+      - name: Build signed release APK
+        if: env.KEYSTORE_BASE64 != ''
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        working-directory: ${{ matrix.path }}
+        run: |
+          flutter build apk --release \
+            --obfuscate \
+            --split-debug-info=build/debug-info \
+            --dart-define=SUPABASE_URL=${{ secrets.SUPABASE_URL }} \
+            --dart-define=SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
+
+      - name: Build release AAB
+        if: env.KEYSTORE_BASE64 != ''
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        working-directory: ${{ matrix.path }}
+        run: |
+          flutter build appbundle --release \
+            --obfuscate \
+            --split-debug-info=build/debug-info \
+            --dart-define=SUPABASE_URL=${{ secrets.SUPABASE_URL }} \
+            --dart-define=SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
+
+      - name: Upload signed APK artifact
+        if: env.KEYSTORE_BASE64 != ''
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.app }}-release-apk
+          path: ${{ matrix.path }}/build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 14
+
+      - name: Upload AAB artifact
+        if: env.KEYSTORE_BASE64 != ''
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.app }}-release-aab
+          path: ${{ matrix.path }}/build/app/outputs/bundle/release/app-release.aab
+          retention-days: 14
+
+      # ======================================================================
+      # UNSIGNED FALLBACK (runs only when KEYSTORE_BASE64 is NOT configured)
+      # Used for PR testing and contributor builds where secrets aren't shared.
+      # ======================================================================
+      - name: Build unsigned ${{ matrix.app }} APK (fallback)
+        if: env.KEYSTORE_BASE64 == ''
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
         run: |
           cd ${{ matrix.path }}
           flutter build apk --release \
@@ -72,7 +147,10 @@ jobs:
             --dart-define=SUPABASE_URL=${{ secrets.SUPABASE_URL }} \
             --dart-define=SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
 
-      - name: Upload APK
+      - name: Upload unsigned APK (fallback)
+        if: env.KEYSTORE_BASE64 == ''
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.app }}-release

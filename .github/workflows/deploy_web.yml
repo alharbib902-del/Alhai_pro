@@ -1,0 +1,160 @@
+# ============================================================================
+# Deploy Web Apps (main branch -> Cloudflare Pages)
+# ----------------------------------------------------------------------------
+# Covers:
+#   - distributor_portal  ->  Cloudflare Pages project: alhai-distributor
+#   - super_admin         ->  Cloudflare Pages project: alhai-super-admin
+#
+# Required GitHub secrets (add under repo Settings -> Secrets -> Actions):
+#   - CLOUDFLARE_API_TOKEN   (Pages:Edit scoped token)
+#   - CLOUDFLARE_ACCOUNT_ID  (Cloudflare dashboard -> right sidebar)
+#
+# One-time manual setup (MUST happen before the first successful deploy):
+#   1. Go to https://pages.cloudflare.com -> Create project -> Direct Upload
+#      and create a project named EXACTLY "alhai-distributor".
+#   2. Repeat for "alhai-super-admin".
+#   3. Create a Cloudflare API token with the "Cloudflare Pages: Edit"
+#      permission template and copy its value.
+#   4. Copy your Cloudflare Account ID from the dashboard sidebar.
+#   5. Add both as GitHub Actions secrets (names above).
+#
+# Local sanity check before pushing:
+#   cd distributor_portal && flutter build web --release
+#   cd super_admin        && flutter build web --release
+# ============================================================================
+
+name: Deploy Web Apps
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'distributor_portal/**'
+      - 'super_admin/**'
+      - 'packages/**'
+      - '.github/workflows/deploy_web.yml'
+
+concurrency:
+  group: deploy-web-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  changes:
+    name: Detect changes
+    runs-on: ubuntu-latest
+    outputs:
+      distributor_portal: ${{ steps.filter.outputs.distributor_portal }}
+      super_admin: ${{ steps.filter.outputs.super_admin }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            distributor_portal:
+              - 'distributor_portal/**'
+              - 'packages/**'
+              - '.github/workflows/deploy_web.yml'
+            super_admin:
+              - 'super_admin/**'
+              - 'packages/**'
+              - '.github/workflows/deploy_web.yml'
+
+  build:
+    name: Build ${{ matrix.app }}
+    runs-on: ubuntu-latest
+    needs: changes
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - app: distributor_portal
+            path: distributor_portal
+            changed: ${{ needs.changes.outputs.distributor_portal }}
+          - app: super_admin
+            path: super_admin
+            changed: ${{ needs.changes.outputs.super_admin }}
+    steps:
+      - name: Skip if app unchanged
+        if: matrix.changed != 'true'
+        run: echo "No relevant changes for ${{ matrix.app }} - skipping."
+
+      - name: Checkout code
+        if: matrix.changed == 'true'
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        if: matrix.changed == 'true'
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.27.4'
+          channel: 'stable'
+          cache: true
+
+      - name: Install melos
+        if: matrix.changed == 'true'
+        run: dart pub global activate melos
+
+      - name: Bootstrap workspace
+        if: matrix.changed == 'true'
+        run: melos bootstrap
+
+      - name: Flutter pub get
+        if: matrix.changed == 'true'
+        working-directory: ${{ matrix.path }}
+        run: flutter pub get
+
+      - name: Build web (release)
+        if: matrix.changed == 'true'
+        working-directory: ${{ matrix.path }}
+        run: flutter build web --release
+
+      - name: Upload web build artifact
+        if: matrix.changed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.app }}-web-deploy
+          path: ${{ matrix.path }}/build/web
+          retention-days: 7
+          if-no-files-found: error
+
+  deploy:
+    name: Deploy ${{ matrix.app }} to Cloudflare Pages
+    runs-on: ubuntu-latest
+    needs: [changes, build]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - app: distributor_portal
+            project: alhai-distributor
+            changed: ${{ needs.changes.outputs.distributor_portal }}
+          - app: super_admin
+            project: alhai-super-admin
+            changed: ${{ needs.changes.outputs.super_admin }}
+    steps:
+      - name: Skip if app unchanged
+        if: matrix.changed != 'true'
+        run: echo "No relevant changes for ${{ matrix.app }} - skipping."
+
+      - name: Download web build artifact
+        if: matrix.changed == 'true'
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ matrix.app }}-web-deploy
+          path: build/web
+
+      # NOTE (operator): The Cloudflare Pages projects "alhai-distributor" and
+      # "alhai-super-admin" MUST be created manually at pages.cloudflare.com
+      # before this step will succeed. Secrets CLOUDFLARE_API_TOKEN and
+      # CLOUDFLARE_ACCOUNT_ID must also be set in GitHub Actions secrets.
+      - name: Deploy to Cloudflare Pages
+        if: matrix.changed == 'true'
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: ${{ matrix.project }}
+          directory: build/web
+          branch: main
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
