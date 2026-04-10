@@ -259,11 +259,17 @@ class NetworkPrintService implements ThermalPrintService {
   Future<bool> _tryReconnect() async {
     if (_connectedAddress == null) return false;
 
-    // Close existing socket if any
+    // Close existing socket if any. A failure here is expected when the
+    // socket is already broken (that's why we're reconnecting), so we
+    // only log it and continue the reconnect sequence.
     try {
       await _socket?.close();
       _socket?.destroy();
-    } catch (_) {}
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('TCP close-before-reconnect failed (expected if socket is already broken): $e');
+      }
+    }
     _socket = null;
 
     for (var attempt = 1; attempt <= _maxReconnectAttempts; attempt++) {

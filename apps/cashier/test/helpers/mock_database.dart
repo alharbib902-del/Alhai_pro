@@ -98,6 +98,7 @@ class MockStockDeltasDao extends Mock implements StockDeltasDao {}
 
 class MockSettingsTable extends Mock implements $SettingsTableTable {}
 
+// ignore: subtype_of_sealed_class
 class MockSimpleSelectSettings extends Mock
     implements SimpleSelectStatement<$SettingsTableTable, SettingsTableData> {}
 

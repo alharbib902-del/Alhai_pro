@@ -1,18 +1,19 @@
 /// Web-specific cache cleaning utility
-/// Uses dart:html which is available in Flutter Web CanvasKit builds
+/// Uses package:web + dart:js_interop (replaces deprecated dart:html)
 library;
 
-import 'dart:html' as html;
+import 'dart:js_interop';
+import 'package:web/web.dart' as web;
 
 /// Clear all browser storage (IndexedDB, localStorage, sessionStorage, caches)
 Future<void> clearAllWebCache() async {
   // Clear localStorage and sessionStorage
   try {
-    html.window.localStorage.clear();
+    web.window.localStorage.clear();
   } catch (_) {}
 
   try {
-    html.window.sessionStorage.clear();
+    web.window.sessionStorage.clear();
   } catch (_) {}
 
   // Clear IndexedDB databases - use known database names
@@ -27,29 +28,30 @@ Future<void> clearAllWebCache() async {
   ];
   for (final name in knownDbs) {
     try {
-      html.window.indexedDB!.deleteDatabase(name);
+      web.window.indexedDB.deleteDatabase(name);
     } catch (_) {}
   }
 
   // Clear Cache Storage (Service Worker caches)
   try {
-    final cacheNames = await html.window.caches!.keys();
+    final cacheStorage = web.window.caches;
+    final cacheNames = (await cacheStorage.keys().toDart).toDart;
     for (final name in cacheNames) {
-      await html.window.caches!.delete(name);
+      await cacheStorage.delete(name.toDart).toDart;
     }
   } catch (_) {}
 
   // Unregister Service Workers
   try {
     final registrations =
-        await html.window.navigator.serviceWorker!.getRegistrations();
-    for (final reg in registrations) {
-      await reg.unregister();
+        await web.window.navigator.serviceWorker.getRegistrations().toDart;
+    for (final reg in registrations.toDart) {
+      await reg.unregister().toDart;
     }
   } catch (_) {}
 }
 
 /// Force reload the page
 void reloadPage() {
-  html.window.location.reload();
+  web.window.location.reload();
 }

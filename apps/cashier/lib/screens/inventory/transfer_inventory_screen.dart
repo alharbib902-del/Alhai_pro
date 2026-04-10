@@ -303,7 +303,7 @@ class _TransferInventoryScreenState
                   color: colorScheme.onSurfaceVariant)),
           const SizedBox(height: AlhaiSpacing.xs),
           DropdownButtonFormField<String>(
-            value: _toStoreId,
+            initialValue: _toStoreId,
             style: TextStyle(color: colorScheme.onSurface),
             dropdownColor: colorScheme.surface,
             decoration: InputDecoration(

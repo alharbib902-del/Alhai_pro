@@ -91,8 +91,10 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
             _backupSizeMb = double.tryParse(s.value) ?? 0;
         }
       }
-    } catch (_) {
-      // Silently use default values if settings cannot be loaded
+    } catch (e) {
+      // Use default values if settings cannot be loaded. This is an
+      // acceptable fallback, but we log it for debug visibility.
+      debugPrint('[Backup] Failed to load settings, using defaults: $e');
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -794,7 +796,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                   _saveAutoBackupSettings();
                 },
                 activeTrackColor: AppColors.primary.withValues(alpha: 0.5),
-                activeColor: AppColors.primary,
+                activeThumbColor: AppColors.primary,
               ),
             ],
           ),

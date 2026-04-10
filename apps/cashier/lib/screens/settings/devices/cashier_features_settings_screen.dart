@@ -9,7 +9,7 @@
 /// يحفظ الإعدادات في settings_table عبر قاعدة البيانات.
 library;
 
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kIsWeb, debugPrint;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -73,8 +73,11 @@ class _CashierFeaturesSettingsScreenState
               int.tryParse(settingsMap['nfc_timeout_seconds'] ?? '') ?? 30;
         });
       }
-    } catch (_) {
-      // استخدام القيم الافتراضية عند الخطأ
+    } catch (e) {
+      // استخدام القيم الافتراضية عند الخطأ — مع تسجيل الخطأ لتسهيل التتبع
+      debugPrint(
+        '[CashierFeaturesSettings] Failed to load settings, using defaults: $e',
+      );
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -193,7 +196,7 @@ class _CashierFeaturesSettingsScreenState
               ),
               value: _enableCustomerDisplay,
               onChanged: _toggleCustomerDisplay,
-              activeColor: AppColors.primary,
+              activeThumbColor: AppColors.primary,
             ),
             if (_enableCustomerDisplay) ...[
               const Divider(height: 1),
@@ -258,7 +261,7 @@ class _CashierFeaturesSettingsScreenState
               ),
               value: _enablePhoneCollection,
               onChanged: _togglePhoneCollection,
-              activeColor: AppColors.primary,
+              activeThumbColor: AppColors.primary,
             ),
           ],
         ),
@@ -289,7 +292,7 @@ class _CashierFeaturesSettingsScreenState
               ),
               value: _enableNfcPayment,
               onChanged: _toggleNfcPayment,
-              activeColor: AppColors.primary,
+              activeThumbColor: AppColors.primary,
             ),
             if (_enableNfcPayment) ...[
               const Divider(height: 1),
