@@ -18,6 +18,7 @@ import 'di/injection.dart';
 import 'dart:async';
 import 'router/admin_router.dart';
 import 'screens/onboarding/onboarding_screen.dart';
+import 'core/services/sentry_service.dart';
 
 /// Local theme provider (same pattern as cashier app)
 final themeProvider = StateNotifierProvider<ThemeNotifier, ThemeState>((ref) {
@@ -26,88 +27,100 @@ final themeProvider = StateNotifierProvider<ThemeNotifier, ThemeState>((ref) {
 
 void main() {
   runZonedGuarded(() async {
-    WidgetsFlutterBinding.ensureInitialized();
-
-    // Global error handlers
-    FlutterError.onError = (details) {
-      FlutterError.presentError(details);
-      debugPrint('FlutterError: ${details.exceptionAsString()}');
-    };
-    PlatformDispatcher.instance.onError = (error, stack) {
-      debugPrint('PlatformError: $error\n$stack');
-      return true;
-    };
-
-    // ── Parallel Phase 1: Firebase + Supabase + DB key ──────────────
-    // These are independent and can run concurrently to cut startup time.
-    await Future.wait([
-      // Firebase (graceful fallback if not configured)
-      Future<void>(() async {
-        try {
-          await Firebase.initializeApp();
-          if (kDebugMode) debugPrint('Firebase initialized successfully');
-        } catch (e) {
-          if (kDebugMode) debugPrint('Firebase not configured: $e');
-        }
-      }),
-      // Supabase (required for admin - online-first)
-      Future<void>(() async {
-        try {
-          if (!SupabaseConfig.isConfigured) {
-            throw StateError(
-              'Supabase not configured. ${SupabaseConfig.configurationError}',
-            );
-          }
-          await Supabase.initialize(
-            url: SupabaseConfig.url,
-            anonKey: SupabaseConfig.anonKey,
-            debug: SupabaseConfig.enableDebugLogs,
-          );
-          if (kDebugMode) debugPrint('Supabase initialized successfully');
-        } catch (e) {
-          if (kDebugMode) debugPrint('Supabase initialization failed: $e');
-        }
-      }),
-      // Database encryption key (independent of Firebase/Supabase)
-      Future<void>(() async {
-        final dbKey = await _getOrCreateDbKey();
-        setDatabaseEncryptionKey(dbKey);
-      }),
-    ]);
-
-    // DI must run before runApp (Riverpod providers use getIt synchronously)
-    await configureDependencies();
-
-    // ── Parallel Phase 2: Theme + Onboarding flag ──────────────────
-    // Both read from SharedPreferences independently.
-    final parallelResults = await Future.wait([
-      SharedPreferences.getInstance(),
-      hasSeenAdminOnboarding(),
-    ]);
-
-    final prefs = parallelResults[0] as SharedPreferences;
-    final hasSeenOnboardingFlag = parallelResults[1] as bool;
-
-    final savedTheme = prefs.getString('app_theme_mode');
-    final initialThemeMode = switch (savedTheme) {
-      'dark' => ThemeMode.dark,
-      'light' => ThemeMode.light,
-      _ => ThemeMode.system,
-    };
-
-    runApp(
-      ProviderScope(
-        overrides: [
-          themeProvider.overrideWith((ref) => ThemeNotifier(initialThemeMode)),
-          adminOnboardingSeenProvider
-              .overrideWith((ref) => hasSeenOnboardingFlag),
-        ],
-        child: const AdminApp(),
-      ),
-    );
+    await initSentry(appRunner: () async {
+      await _appMain();
+    });
   }, (error, stack) {
-    debugPrint('Uncaught error: $error\n$stack');
+    reportError(error, stackTrace: stack, hint: 'runZonedGuarded');
   });
+}
+
+Future<void> _appMain() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Global error handlers — send to Sentry
+  FlutterError.onError = (details) {
+    FlutterError.presentError(details);
+    reportError(
+      details.exception,
+      stackTrace: details.stack,
+      hint: 'FlutterError: ${details.library}',
+    );
+  };
+  PlatformDispatcher.instance.onError = (error, stack) {
+    reportError(error, stackTrace: stack, hint: 'PlatformDispatcher');
+    return true;
+  };
+
+  // ── Parallel Phase 1: Firebase + Supabase + DB key ──────────────
+  // These are independent and can run concurrently to cut startup time.
+  await Future.wait([
+    // Firebase (graceful fallback if not configured)
+    Future<void>(() async {
+      try {
+        await Firebase.initializeApp();
+        if (kDebugMode) debugPrint('Firebase initialized successfully');
+      } catch (e, stack) {
+        reportError(e, stackTrace: stack, hint: 'Firebase init');
+      }
+    }),
+    // Supabase (required for admin - online-first)
+    Future<void>(() async {
+      try {
+        if (!SupabaseConfig.isConfigured) {
+          throw StateError(
+            'Supabase not configured. ${SupabaseConfig.configurationError}',
+          );
+        }
+        await Supabase.initialize(
+          url: SupabaseConfig.url,
+          anonKey: SupabaseConfig.anonKey,
+          debug: SupabaseConfig.enableDebugLogs,
+        );
+        if (kDebugMode) debugPrint('Supabase initialized successfully');
+      } catch (e, stack) {
+        reportError(e, stackTrace: stack, hint: 'Supabase init');
+      }
+    }),
+    // Database encryption key (independent of Firebase/Supabase)
+    Future<void>(() async {
+      final dbKey = await _getOrCreateDbKey();
+      setDatabaseEncryptionKey(dbKey);
+    }),
+  ]);
+
+  // DI must run before runApp (Riverpod providers use getIt synchronously)
+  await configureDependencies();
+
+  // ── Parallel Phase 2: Theme + Onboarding flag ──────────────────
+  // Both read from SharedPreferences independently.
+  final parallelResults = await Future.wait([
+    SharedPreferences.getInstance(),
+    hasSeenAdminOnboarding(),
+  ]);
+
+  final prefs = parallelResults[0] as SharedPreferences;
+  final hasSeenOnboardingFlag = parallelResults[1] as bool;
+
+  final savedTheme = prefs.getString('app_theme_mode');
+  final initialThemeMode = switch (savedTheme) {
+    'dark' => ThemeMode.dark,
+    'light' => ThemeMode.light,
+    _ => ThemeMode.system,
+  };
+
+  addBreadcrumb(message: 'App initialized', category: 'lifecycle');
+
+  runApp(
+    ProviderScope(
+      overrides: [
+        themeProvider.overrideWith((ref) => ThemeNotifier(initialThemeMode)),
+        adminOnboardingSeenProvider
+            .overrideWith((ref) => hasSeenOnboardingFlag),
+      ],
+      child: const AdminApp(),
+    ),
+  );
 }
 
 /// Get or create database encryption key from secure storage.

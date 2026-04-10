@@ -248,45 +248,37 @@ class _PaymentDevicesSettingsScreenState
         ]),
         _buildSettingsGroup(l10n.paymentTerminal, Icons.contactless_rounded,
             AppColors.primary, isDark, [
-          Column(
-            children: [
-              RadioListTile<String>(
-                title: Text('Ingenico',
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurface)),
-                subtitle: Text(l10n.ingenicoDevices),
-                value: 'ingenico',
-                groupValue: _terminalType,
-                onChanged: (v) {
-                  setState(() => _terminalType = v!);
-                  _saveSingleSetting(_kTerminalType, v!);
-                },
-              ),
-              RadioListTile<String>(
-                title: Text('Verifone',
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurface)),
-                subtitle: Text(l10n.verifoneDevices),
-                value: 'verifone',
-                groupValue: _terminalType,
-                onChanged: (v) {
-                  setState(() => _terminalType = v!);
-                  _saveSingleSetting(_kTerminalType, v!);
-                },
-              ),
-              RadioListTile<String>(
-                title: Text('PAX',
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurface)),
-                subtitle: Text(l10n.paxDevices),
-                value: 'pax',
-                groupValue: _terminalType,
-                onChanged: (v) {
-                  setState(() => _terminalType = v!);
-                  _saveSingleSetting(_kTerminalType, v!);
-                },
-              ),
-            ],
+          RadioGroup<String>(
+            groupValue: _terminalType,
+            onChanged: (v) {
+              setState(() => _terminalType = v!);
+              _saveSingleSetting(_kTerminalType, v!);
+            },
+            child: Column(
+              children: [
+                RadioListTile<String>(
+                  title: Text('Ingenico',
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface)),
+                  subtitle: Text(l10n.ingenicoDevices),
+                  value: 'ingenico',
+                ),
+                RadioListTile<String>(
+                  title: Text('Verifone',
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface)),
+                  subtitle: Text(l10n.verifoneDevices),
+                  value: 'verifone',
+                ),
+                RadioListTile<String>(
+                  title: Text('PAX',
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface)),
+                  subtitle: Text(l10n.paxDevices),
+                  value: 'pax',
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: AlhaiSpacing.xs),
         ]),

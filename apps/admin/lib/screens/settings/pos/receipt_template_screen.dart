@@ -331,36 +331,34 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
         // Paper size
         _buildSettingsGroup(l10n.paperSize, Icons.straighten_rounded,
             AppColors.success, isDark, [
-          Column(
-            children: [
-              RadioListTile<String>(
-                title: Text('80mm',
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurface)),
-                subtitle: Text(l10n.standardSize),
-                value: '80mm',
-                groupValue: _paperSize,
-                onChanged: (v) => setState(() => _paperSize = v!),
-              ),
-              RadioListTile<String>(
-                title: Text('58mm',
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurface)),
-                subtitle: Text(l10n.smallSize),
-                value: '58mm',
-                groupValue: _paperSize,
-                onChanged: (v) => setState(() => _paperSize = v!),
-              ),
-              RadioListTile<String>(
-                title: Text('A4',
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurface)),
-                subtitle: Text(l10n.normalPrint),
-                value: 'a4',
-                groupValue: _paperSize,
-                onChanged: (v) => setState(() => _paperSize = v!),
-              ),
-            ],
+          RadioGroup<String>(
+            groupValue: _paperSize,
+            onChanged: (v) => setState(() => _paperSize = v!),
+            child: Column(
+              children: [
+                RadioListTile<String>(
+                  title: Text('80mm',
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface)),
+                  subtitle: Text(l10n.standardSize),
+                  value: '80mm',
+                ),
+                RadioListTile<String>(
+                  title: Text('58mm',
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface)),
+                  subtitle: Text(l10n.smallSize),
+                  value: '58mm',
+                ),
+                RadioListTile<String>(
+                  title: Text('A4',
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface)),
+                  subtitle: Text(l10n.normalPrint),
+                  value: 'a4',
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: AlhaiSpacing.xs),
         ]),

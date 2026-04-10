@@ -5,9 +5,10 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
+import '../../core/services/sentry_service.dart';
 
 /// شاشة إدارة الطلبات الإلكترونية (Online Orders)
-/// Reads from [OrdersDao] with channel='online' filter.
+/// Reads from [OrdersDao] with channel='app' (customer app orders, excludes POS).
 class OnlineOrdersScreen extends ConsumerStatefulWidget {
   const OnlineOrdersScreen({super.key});
 
@@ -45,60 +46,29 @@ class _OnlineOrdersScreenState extends ConsumerState<OnlineOrdersScreen> {
     setState(() => _isLoading = true);
     try {
       final storeId = ref.read(currentStoreIdProvider)!;
-      final dbOrders = await _db.ordersDao.getOrders(storeId);
+      final dbOrders = await _db.ordersDao.getOrders(storeId, channel: 'app');
 
-      // Map DB rows to UI model.
-      // If no orders in DB yet, show placeholder data for demo purposes.
-      if (dbOrders.isNotEmpty) {
-        _orders = dbOrders
-            .map((o) => _OnlineOrder(
-                  id: o.orderNumber,
-                  customerName: o.customerId ?? '',
-                  phone: '',
-                  items: [o.notes ?? ''],
-                  total: o.total,
-                  status: o.status,
-                  platform: o.channel,
-                  address: o.deliveryAddress ?? '',
-                  createdAt: o.orderDate,
-                ))
-            .toList();
-      } else {
-        // Placeholder data when DB is empty (first run / demo)
-        _orders = [
-          _OnlineOrder(
-            id: 'ORD-001',
-            customerName: '\u0623\u062D\u0645\u062F \u0645\u062D\u0645\u062F',
-            phone: '0501234567',
-            items: [
-              '\u0643\u0648\u0643\u0627\u0643\u0648\u0644\u0627 \u00D7 2',
-              '\u0634\u064A\u0628\u0633 \u00D7 1'
-            ],
-            total: 45.50,
-            status: 'created',
-            platform: 'app',
-            address:
-                '\u062D\u064A \u0627\u0644\u0639\u0644\u064A\u0627\u060C \u0627\u0644\u0631\u064A\u0627\u0636',
-            createdAt: DateTime.now().subtract(const Duration(minutes: 15)),
-          ),
-          _OnlineOrder(
-            id: 'ORD-002',
-            customerName: '\u0633\u0627\u0631\u0629 \u0639\u0644\u064A',
-            phone: '0559876543',
-            items: [
-              '\u0639\u0635\u064A\u0631 \u0628\u0631\u062A\u0642\u0627\u0644 \u00D7 3',
-              '\u0645\u0627\u0621 \u00D7 6'
-            ],
-            total: 78.00,
-            status: 'preparing',
-            platform: 'website',
-            address:
-                '\u062D\u064A \u0627\u0644\u0645\u0644\u0642\u0627\u060C \u0627\u0644\u0631\u064A\u0627\u0636',
-            createdAt: DateTime.now().subtract(const Duration(hours: 1)),
-          ),
-        ];
-      }
-    } catch (_) {
+      // Map DB rows to UI model. Empty DB results in empty list,
+      // which the UI handles via AppEmptyState.noOrders.
+      _orders = dbOrders
+          .map((o) => _OnlineOrder(
+                id: o.orderNumber,
+                customerName: o.customerId ?? '',
+                phone: '',
+                items: [o.notes ?? ''],
+                total: o.total,
+                status: o.status,
+                platform: o.channel,
+                address: o.deliveryAddress ?? '',
+                createdAt: o.orderDate,
+              ))
+          .toList();
+    } catch (e, st) {
+      await reportError(
+        e,
+        stackTrace: st,
+        hint: 'online_orders_screen: load orders failed',
+      );
       // On error keep whatever we had
     } finally {
       if (mounted) {

@@ -261,6 +261,7 @@ class _UsersManagementScreenState extends ConsumerState<UsersManagementScreen> {
     final pinEnabled = await PinService.isEnabled();
     if (!pinEnabled) return true; // PIN not configured — allow
 
+    if (!mounted) return false;
     final l10n = AppLocalizations.of(context);
     String? enteredPin;
     String? error;
@@ -438,7 +439,7 @@ class _UsersManagementScreenState extends ConsumerState<UsersManagementScreen> {
                                 border: const OutlineInputBorder())),
                         const SizedBox(height: AlhaiSpacing.sm),
                         DropdownButtonFormField<String>(
-                            value: role,
+                            initialValue: role,
                             decoration: InputDecoration(
                                 labelText: l10n.roleLabel,
                                 prefixIcon: const Icon(Icons.security),
@@ -536,7 +537,7 @@ class _UsersManagementScreenState extends ConsumerState<UsersManagementScreen> {
                         const SizedBox(height: AlhaiSpacing.sm),
                         if (user.role != 'owner')
                           DropdownButtonFormField<String>(
-                              value: role,
+                              initialValue: role,
                               decoration: InputDecoration(
                                   labelText: l10n.roleLabel,
                                   prefixIcon: const Icon(Icons.security),

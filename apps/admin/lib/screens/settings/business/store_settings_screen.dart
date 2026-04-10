@@ -8,6 +8,7 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_core/alhai_core.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
+import '../../../core/services/sentry_service.dart';
 
 /// شاشة إعدادات المتجر - بتصميم Sidebar + Header
 class StoreSettingsScreen extends ConsumerStatefulWidget {
@@ -94,7 +95,12 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
           _acceptsPickup = row['accepts_pickup'] as bool? ?? true;
         });
       }
-    } catch (_) {
+    } catch (e, st) {
+      await reportError(
+        e,
+        stackTrace: st,
+        hint: 'store_settings_screen: load store settings failed',
+      );
       // Supabase unavailable - keep defaults
     }
 
@@ -301,7 +307,7 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
             padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl,
                 AlhaiSpacing.xs, AlhaiSpacing.mdl, AlhaiSpacing.xs),
             child: DropdownButtonFormField<String>(
-              value: _language,
+              initialValue: _language,
               decoration: InputDecoration(
                 labelText: l10n.language,
                 prefixIcon: const Icon(Icons.translate),
@@ -321,7 +327,7 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
             padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl,
                 AlhaiSpacing.xs, AlhaiSpacing.mdl, AlhaiSpacing.md),
             child: DropdownButtonFormField<String>(
-              value: _currency,
+              initialValue: _currency,
               decoration: InputDecoration(
                 labelText: l10n.currencyFieldLabel,
                 prefixIcon: const Icon(Icons.attach_money),
@@ -710,7 +716,12 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
             changes: changes,
           );
         }
-      } catch (e) {
+      } catch (e, st) {
+        await reportError(
+          e,
+          stackTrace: st,
+          hint: 'store_settings_screen: save store settings failed',
+        );
         if (mounted) {
           setState(() => _isSaving = false);
           ScaffoldMessenger.of(context).showSnackBar(

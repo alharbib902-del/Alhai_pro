@@ -360,27 +360,21 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
                         PositionedDirectional(
                           top: 4,
                           start: 4,
-                          child: Material(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSurface
-                                .withValues(alpha: 0.54),
-                            borderRadius: BorderRadius.circular(16),
-                            child: InkWell(
+                          child: Tooltip(
+                            message: 'إدارة الصور — قريباً',
+                            child: Material(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withValues(alpha: 0.35),
                               borderRadius: BorderRadius.circular(16),
-                              onTap: () {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content:
-                                          Text('Image management placeholder')),
-                                );
-                              },
                               child: Padding(
                                 padding: const EdgeInsets.all(AlhaiSpacing.xxs),
                                 child: Icon(Icons.edit,
                                     color: Theme.of(context)
                                         .colorScheme
-                                        .onInverseSurface,
+                                        .onInverseSurface
+                                        .withValues(alpha: 0.6),
                                     size: 18),
                               ),
                             ),
@@ -388,36 +382,28 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
                         ),
                       ],
                     )
-                  : InkWell(
-                      onTap: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('Image upload placeholder')),
-                        );
-                      },
-                      child: Container(
-                        color: isDark
-                            ? Colors.white.withValues(alpha: 0.05)
-                            : AppColors.border.withValues(alpha: 0.3),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.add_photo_alternate_outlined,
-                                size: 36,
+                  : Container(
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.05)
+                          : AppColors.border.withValues(alpha: 0.3),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.add_photo_alternate_outlined,
+                              size: 36,
+                              color: isDark
+                                  ? Colors.white24
+                                  : AppColors.textTertiary),
+                          const SizedBox(height: AlhaiSpacing.xxs),
+                          Text(
+                            'رفع الصور — قريباً',
+                            style: TextStyle(
+                                fontSize: 11,
                                 color: isDark
-                                    ? Colors.white24
+                                    ? Colors.white38
                                     : AppColors.textTertiary),
-                            const SizedBox(height: AlhaiSpacing.xxs),
-                            Text(
-                              'Add image',
-                              style: TextStyle(
-                                  fontSize: 11,
-                                  color: isDark
-                                      ? Colors.white38
-                                      : AppColors.textTertiary),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
             ),
@@ -490,7 +476,7 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Select a product to add an image:',
+                    const Text('رفع الصور — قريباً',
                         style: TextStyle(fontWeight: FontWeight.w500)),
                     const SizedBox(height: AlhaiSpacing.xs),
                     Expanded(
@@ -499,18 +485,14 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
                         itemBuilder: (context, index) {
                           final product = displayProducts[index];
                           return ListTile(
+                            enabled: false,
                             leading: const Icon(Icons.inventory_2_outlined),
                             title: Text(product.name),
                             subtitle: Text(product.price.toStringAsFixed(2)),
-                            trailing: const Icon(Icons.add_photo_alternate,
-                                color: AppColors.primary),
-                            onTap: () {
-                              Navigator.pop(ctx);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text('Image upload placeholder')),
-                              );
-                            },
+                            trailing: Icon(Icons.add_photo_alternate,
+                                color: AppColors.primary
+                                    .withValues(alpha: 0.4)),
+                            onTap: null,
                           );
                         },
                       ),

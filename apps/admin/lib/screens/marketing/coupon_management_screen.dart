@@ -214,7 +214,7 @@ class _CouponsContent extends ConsumerWidget {
                             _toggleActive(ref, coupon, v);
                           }
                         },
-                  activeColor: AppColors.primary,
+                  activeThumbColor: AppColors.primary,
                 ),
                 onTap: () => _showDetails(context, ref, coupon),
               ),
@@ -344,7 +344,7 @@ class _CouponsContent extends ConsumerWidget {
                 ),
                 const SizedBox(height: AlhaiSpacing.sm),
                 DropdownButtonFormField<String>(
-                  value: type,
+                  initialValue: type,
                   decoration: InputDecoration(
                       labelText: l10n.couponTypeLabel,
                       prefixIcon: const Icon(Icons.category)),

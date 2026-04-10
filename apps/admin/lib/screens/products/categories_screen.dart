@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' show min;
 
 import 'package:drift/drift.dart' as drift;
@@ -10,6 +11,7 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_core/alhai_core.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
+import '../../core/services/sentry_service.dart';
 
 // ============================================================================
 // Provider - fetches CategoriesTableData directly from DAO
@@ -56,13 +58,18 @@ Color _parseColor(String? hex) {
   if (hex == null || hex.isEmpty) return _kCategoryColors[0];
   try {
     return Color(int.parse(hex.replaceFirst('#', '0xFF')));
-  } catch (_) {
+  } catch (e, st) {
+    unawaited(reportError(
+      e,
+      stackTrace: st,
+      hint: 'categories_screen: parse color hex failed',
+    ));
     return _kCategoryColors[0];
   }
 }
 
 String _colorToHex(Color color) {
-  return '#${color.value.toRadixString(16).substring(2).toUpperCase()}';
+  return '#${color.toARGB32().toRadixString(16).substring(2).toUpperCase()}';
 }
 
 IconData _parseIcon(String? iconStr) {
@@ -70,7 +77,12 @@ IconData _parseIcon(String? iconStr) {
   try {
     final code = int.parse(iconStr);
     return IconData(code, fontFamily: 'MaterialIcons');
-  } catch (_) {
+  } catch (e, st) {
+    unawaited(reportError(
+      e,
+      stackTrace: st,
+      hint: 'categories_screen: parse icon code failed',
+    ));
     return _kCategoryIcons.last;
   }
 }
@@ -210,7 +222,12 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
           ),
         );
       }
-    } catch (e) {
+    } catch (e, st) {
+      await reportError(
+        e,
+        stackTrace: st,
+        hint: 'categories_screen: save category failed',
+      );
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -276,7 +293,12 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
           ),
         );
       }
-    } catch (e) {
+    } catch (e, st) {
+      await reportError(
+        e,
+        stackTrace: st,
+        hint: 'categories_screen: delete category failed',
+      );
       if (mounted) {
         final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
@@ -1054,7 +1076,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
           Switch(
             value: _isActive,
             onChanged: (v) => setState(() => _isActive = v),
-            activeColor: AppColors.success,
+            activeThumbColor: AppColors.success,
           ),
         ],
       ),

@@ -181,9 +181,9 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
             onInvoke: (_) async {
               if (_isDirty) {
                 final shouldLeave = await _showUnsavedDialog();
-                if (shouldLeave && mounted) context.pop();
+                if (shouldLeave && context.mounted) context.pop();
               } else {
-                if (mounted) context.pop();
+                if (context.mounted) context.pop();
               }
               return null;
             },
@@ -599,7 +599,7 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
               ),
             ),
             value: _isActive,
-            activeColor: AppColors.primary,
+            activeThumbColor: AppColors.primary,
             onChanged: (value) {
               setState(() => _isActive = value);
             },
@@ -714,7 +714,7 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
     required ValueChanged<String?> onChanged,
   }) {
     return DropdownButtonFormField<String>(
-      value: value,
+      initialValue: value,
       decoration: InputDecoration(
         labelText: label,
         prefixIcon: Icon(icon),

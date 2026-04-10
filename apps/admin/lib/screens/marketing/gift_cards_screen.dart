@@ -9,6 +9,7 @@ import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'dart:math';
+import '../../core/services/sentry_service.dart';
 
 /// شاشة إدارة بطاقات الهدايا والقسائم
 /// Uses [CouponsTable] with type='gift_card' for persistence.
@@ -100,7 +101,12 @@ class _GiftCardsScreenState extends ConsumerState<GiftCardsScreen>
           ),
         ];
       }
-    } catch (_) {
+    } catch (e, st) {
+      await reportError(
+        e,
+        stackTrace: st,
+        hint: 'gift_cards_screen: load gift cards failed',
+      );
       // Keep existing data on error
     } finally {
       if (mounted) {

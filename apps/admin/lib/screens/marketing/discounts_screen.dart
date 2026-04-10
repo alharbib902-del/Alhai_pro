@@ -282,7 +282,7 @@ class _DiscountsContent extends ConsumerWidget {
                                 _toggleActive(ref, discount, v);
                               }
                             },
-                            activeColor: AppColors.primary,
+                            activeThumbColor: AppColors.primary,
                           ),
                           IconButton(
                             icon: const Icon(Icons.delete_outline,

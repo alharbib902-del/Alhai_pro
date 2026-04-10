@@ -9,6 +9,7 @@ import 'package:alhai_database/alhai_database.dart';
 import 'package:uuid/uuid.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
+import '../../core/services/sentry_service.dart';
 
 /// شاشة إدارة مناطق التوصيل وأسعارها
 /// Persists zones to [SettingsTable] as JSON under key `delivery_zones`.
@@ -89,7 +90,12 @@ class _DeliveryZonesScreenState extends ConsumerState<DeliveryZonesScreen> {
         ];
         await _persistZones();
       }
-    } catch (_) {
+    } catch (e, st) {
+      await reportError(
+        e,
+        stackTrace: st,
+        hint: 'delivery_zones_screen: load zones failed',
+      );
       // Fallback to empty on error
     } finally {
       if (mounted) setState(() => _isLoading = false);

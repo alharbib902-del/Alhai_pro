@@ -343,7 +343,7 @@ class _SupplierReturnScreenState extends ConsumerState<SupplierReturnScreen> {
                       style: const TextStyle(fontWeight: FontWeight.bold)),
                   const SizedBox(height: AlhaiSpacing.xs),
                   DropdownButtonFormField<_SupplierOption>(
-                    value: _selectedSupplier,
+                    initialValue: _selectedSupplier,
                     decoration: InputDecoration(
                       hintText: l10n.selectSupplier,
                       border: const OutlineInputBorder(),

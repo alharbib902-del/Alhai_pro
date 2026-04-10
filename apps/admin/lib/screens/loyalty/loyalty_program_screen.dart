@@ -229,7 +229,7 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
                 value: _programEnabled,
                 onChanged: (v) => setState(() => _programEnabled = v),
                 activeTrackColor: AppColors.primary.withValues(alpha: 0.4),
-                activeColor: AppColors.primary,
+                activeThumbColor: AppColors.primary,
               ),
             ),
           ],
@@ -1508,7 +1508,7 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
               ),
               const SizedBox(height: AlhaiSpacing.sm),
               DropdownButtonFormField<String>(
-                value: type,
+                initialValue: type,
                 decoration: InputDecoration(
                   labelText: l10n.type,
                   prefixIcon: const Icon(Icons.category),

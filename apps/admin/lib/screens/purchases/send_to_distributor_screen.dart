@@ -457,7 +457,7 @@ class _SendToDistributorScreenState
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                value: _selectedSupplierId,
+                initialValue: _selectedSupplierId,
                 items: suppliers
                     .map((s) => DropdownMenuItem(
                           value: s.id,

@@ -390,50 +390,34 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(l10n.barcodeFormats),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            RadioListTile<String>(
-              title: Text(l10n.allFormats),
-              value: 'all',
-              groupValue: _barcodeFormat,
-              onChanged: (v) {
-                setState(() => _barcodeFormat = v!);
-                _saveAllSettings();
-                Navigator.pop(ctx);
-              },
-            ),
-            RadioListTile<String>(
-              title: const Text('EAN-8, EAN-13'),
-              value: 'ean',
-              groupValue: _barcodeFormat,
-              onChanged: (v) {
-                setState(() => _barcodeFormat = v!);
-                _saveAllSettings();
-                Navigator.pop(ctx);
-              },
-            ),
-            RadioListTile<String>(
-              title: const Text('UPC-A, UPC-E'),
-              value: 'upc',
-              groupValue: _barcodeFormat,
-              onChanged: (v) {
-                setState(() => _barcodeFormat = v!);
-                _saveAllSettings();
-                Navigator.pop(ctx);
-              },
-            ),
-            RadioListTile<String>(
-              title: Text(l10n.qrCodeOnly),
-              value: 'qr',
-              groupValue: _barcodeFormat,
-              onChanged: (v) {
-                setState(() => _barcodeFormat = v!);
-                _saveAllSettings();
-                Navigator.pop(ctx);
-              },
-            ),
-          ],
+        content: RadioGroup<String>(
+          groupValue: _barcodeFormat,
+          onChanged: (v) {
+            setState(() => _barcodeFormat = v!);
+            _saveAllSettings();
+            Navigator.pop(ctx);
+          },
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              RadioListTile<String>(
+                title: Text(l10n.allFormats),
+                value: 'all',
+              ),
+              RadioListTile<String>(
+                title: const Text('EAN-8, EAN-13'),
+                value: 'ean',
+              ),
+              RadioListTile<String>(
+                title: const Text('UPC-A, UPC-E'),
+                value: 'upc',
+              ),
+              RadioListTile<String>(
+                title: Text(l10n.qrCodeOnly),
+                value: 'qr',
+              ),
+            ],
+          ),
         ),
       ),
     );

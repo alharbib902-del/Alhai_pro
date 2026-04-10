@@ -11,6 +11,7 @@ import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_core/alhai_core.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import '../../core/providers/unsaved_changes_provider.dart';
+import '../../core/services/sentry_service.dart';
 
 /// Admin Product Form Screen - Add/Edit product
 class ProductFormScreen extends ConsumerStatefulWidget {
@@ -78,7 +79,12 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
       if (mounted) {
         setState(() => _categories = cats);
       }
-    } catch (_) {
+    } catch (e, st) {
+      await reportError(
+        e,
+        stackTrace: st,
+        hint: 'product_form_screen: load categories failed',
+      );
       // Categories loading failed silently
     }
   }
@@ -102,7 +108,12 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
           _isLoadingProduct = false;
         });
       }
-    } catch (e) {
+    } catch (e, st) {
+      await reportError(
+        e,
+        stackTrace: st,
+        hint: 'product_form_screen: load product failed',
+      );
       if (mounted) {
         setState(() => _isLoadingProduct = false);
         final l10n = AppLocalizations.of(context);
@@ -194,9 +205,9 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
             onInvoke: (_) async {
               if (_isDirty) {
                 final shouldLeave = await _showUnsavedDialog();
-                if (shouldLeave && mounted) context.pop();
+                if (shouldLeave && context.mounted) context.pop();
               } else {
-                if (mounted) context.pop();
+                if (context.mounted) context.pop();
               }
               return null;
             },
@@ -692,7 +703,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
 
   Widget _buildCategoryDropdown(bool isDark, AppLocalizations l10n) {
     return DropdownButtonFormField<String?>(
-      value: _selectedCategoryId,
+      initialValue: _selectedCategoryId,
       isExpanded: true,
       dropdownColor: Theme.of(context).colorScheme.surface,
       style: TextStyle(
@@ -797,7 +808,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
-        activeColor: AppColors.primary,
+        activeThumbColor: AppColors.primary,
       ),
     );
   }
@@ -935,7 +946,12 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
         _setDirty(false);
         context.pop();
       }
-    } catch (e) {
+    } catch (e, st) {
+      await reportError(
+        e,
+        stackTrace: st,
+        hint: 'product_form_screen: save product failed',
+      );
       if (mounted) {
         setState(() => _isSaving = false);
         ScaffoldMessenger.of(context).showSnackBar(
