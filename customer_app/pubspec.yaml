@@ -1,7 +1,7 @@
 name: customer_app
 description: Customer mobile application for Alhai grocery stores
 publish_to: 'none'
-version: 1.0.0+1
+version: 1.0.0-beta.1+1
 
 environment:
   sdk: '>=3.4.0 <4.0.0'
@@ -42,7 +42,7 @@ dependencies:
   image_picker: ^1.0.7
 
   # Utils
-  intl: ^0.19.0
+  intl: 0.20.2
   uuid: ^4.4.0
   connectivity_plus: ^5.0.2
   permission_handler: ^11.2.0
@@ -61,7 +61,10 @@ dependencies:
   # Notifications
   firebase_core: ^3.8.0
   firebase_messaging: ^15.1.6
-  flutter_local_notifications: ^16.3.0
+  flutter_local_notifications: ^17.2.3
+
+  # Crash reporting
+  sentry_flutter: ^9.14.0
 
 dev_dependencies:
   flutter_test:
