@@ -21,6 +21,12 @@
       "runtimeExecutable": "cmd",
       "runtimeArgs": ["/c", "npx", "http-server", ".", "-p", "3001", "-c-1"],
       "port": 3001
+    },
+    {
+      "name": "site",
+      "runtimeExecutable": "cmd",
+      "runtimeArgs": ["/c", "npx", "http-server", "site", "-p", "3002", "-c-1"],
+      "port": 3002
     }
   ]
 }
