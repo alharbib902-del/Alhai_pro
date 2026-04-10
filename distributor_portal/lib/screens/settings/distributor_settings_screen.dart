@@ -822,7 +822,7 @@ class _DistributorSettingsScreenState
               onChanged(v);
               _hasChanges = true;
             },
-            activeColor: AppColors.primary,
+            activeThumbColor: AppColors.primary,
           ),
         ],
       ),

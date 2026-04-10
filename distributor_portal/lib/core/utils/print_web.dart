@@ -1,7 +1,10 @@
-// ignore: avoid_web_libraries_in_flutter
-import 'dart:html' as html;
+/// Web-specific print utility.
+/// Uses package:web + dart:js_interop (replaces deprecated dart:html).
+library;
+
+import 'package:web/web.dart' as web;
 
 /// Triggers the browser's native print dialog.
 void printPage() {
-  html.window.print();
+  web.window.print();
 }
