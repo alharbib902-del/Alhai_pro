@@ -5,6 +5,7 @@ import 'package:crypto/crypto.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pointycastle/export.dart';
 
+import 'package:alhai_zatca/src/certificate/csr_generator.dart';
 import 'package:alhai_zatca/src/signing/ecdsa_signer.dart';
 
 void main() {
@@ -208,6 +209,110 @@ void main() {
         expect(components['curve'], 'secp256k1');
         expect(components['d'], isNotNull);
         expect(components['d'], isNotEmpty);
+      });
+    });
+
+    group('private key format handling (regression)', () {
+      // These tests cover a bug where `_extractPrivateKeyValue` misclassified
+      // SEC 1 EC private keys as PKCS#8 (because both start with an INTEGER
+      // version field). The fix discriminates by the SECOND element's tag:
+      // SEQUENCE (0x30) → PKCS#8 AlgorithmIdentifier,
+      // OCTET STRING (0x04) → SEC 1 privateKey.
+
+      test('parses raw SEC 1 EC private key', () {
+        // The default test helper uses SEC 1 format.
+        final digest =
+            Uint8List.fromList(sha256.convert(utf8.encode('sec1-key')).bytes);
+
+        // Should not throw RangeError or FormatException.
+        expect(
+          () => signer.sign(digest: digest, privateKeyPem: testPrivateKeyPem),
+          returnsNormally,
+        );
+
+        final sigBase64 =
+            signer.sign(digest: digest, privateKeyPem: testPrivateKeyPem);
+        final valid = signer.verify(
+          digest: digest,
+          signature: Uint8List.fromList(base64Decode(sigBase64)),
+          publicKeyPem: testPublicKeyPem,
+        );
+        expect(valid, isTrue);
+      });
+
+      test('parses PKCS#8 wrapped SEC1 EC private key from CsrGenerator',
+          () async {
+        // Exercise the exact path that triggered the original RangeError:
+        // CsrGenerator emits a PKCS#8-wrapped SEC 1 EC private key PEM,
+        // and EcdsaSigner.sign must be able to parse & use it.
+        final csrGenerator = CsrGenerator();
+        final result = await csrGenerator.generateCsr(
+          commonName: 'Test Store',
+          organizationUnit: 'Branch-001',
+          organizationName: 'Test Org',
+          country: 'SA',
+          serialNumber: '1-TestSolution|2-1.0|3-SN001',
+          invoiceType: '1100',
+          branchLocation: 'Riyadh',
+          industryBusinessCategory: 'Food',
+        );
+
+        final pkcs8PrivateKeyPem = result['privateKey']!;
+        expect(pkcs8PrivateKeyPem, contains('BEGIN PRIVATE KEY'));
+
+        final digest = Uint8List.fromList(
+          sha256.convert(utf8.encode('csr-pkcs8-key')).bytes,
+        );
+
+        // Should not throw RangeError — this was the reported crash.
+        expect(
+          () => signer.sign(
+            digest: digest,
+            privateKeyPem: pkcs8PrivateKeyPem,
+          ),
+          returnsNormally,
+        );
+
+        final signatureBase64 = signer.sign(
+          digest: digest,
+          privateKeyPem: pkcs8PrivateKeyPem,
+        );
+        // Valid base64 DER signature
+        expect(() => base64Decode(signatureBase64), returnsNormally);
+        final sigBytes = base64Decode(signatureBase64);
+        expect(sigBytes[0], 0x30); // DER SEQUENCE tag
+      });
+
+      test(
+          'PKCS#8 key from CsrGenerator does not throw RangeError on recursive parse',
+          () async {
+        // Before the fix, the recursive call into the inner SEC 1 structure
+        // would re-enter the PKCS#8 branch and index past the buffer end.
+        final csrGenerator = CsrGenerator();
+        final result = await csrGenerator.generateCsr(
+          commonName: 'Regression Test',
+          organizationUnit: 'OU',
+          organizationName: 'O',
+          country: 'SA',
+          serialNumber: '1-a|2-b|3-c',
+          invoiceType: '1000',
+          branchLocation: 'Jeddah',
+          industryBusinessCategory: 'Retail',
+        );
+
+        final digest = Uint8List.fromList(
+          sha256.convert(utf8.encode('range-error-regression')).bytes,
+        );
+
+        // Specifically assert no RangeError is thrown.
+        try {
+          signer.sign(
+            digest: digest,
+            privateKeyPem: result['privateKey']!,
+          );
+        } on RangeError catch (e) {
+          fail('RangeError should not be thrown after the fix: $e');
+        }
       });
     });
   });

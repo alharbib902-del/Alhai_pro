@@ -112,14 +112,15 @@ class InvoiceLineBuilder {
     ];
 
     // Exemption reason for E (Exempt) or Z (Zero-rated)
-    if (line.vatExemptionReason != null) {
-      taxCategoryChildren.add(
-        _cbcElement('TaxExemptionReason', line.vatExemptionReason!),
-      );
-    }
+    // UBL 2.1 schema order: TaxExemptionReasonCode BEFORE TaxExemptionReason.
     if (line.vatExemptionReasonCode != null) {
       taxCategoryChildren.add(
         _cbcElement('TaxExemptionReasonCode', line.vatExemptionReasonCode!),
+      );
+    }
+    if (line.vatExemptionReason != null) {
+      taxCategoryChildren.add(
+        _cbcElement('TaxExemptionReason', line.vatExemptionReason!),
       );
     }
 

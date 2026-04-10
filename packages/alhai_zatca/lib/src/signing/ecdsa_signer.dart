@@ -121,37 +121,30 @@ class EcdsaSigner {
   /// Extract the private key integer from ASN.1 DER-encoded EC private key
   ///
   /// Handles both SEC 1 (EC PRIVATE KEY) and PKCS#8 (PRIVATE KEY) formats.
+  ///
+  /// ASN.1 structure distinction:
+  ///
+  /// PKCS#8 (RFC 5208):
+  ///   SEQUENCE {
+  ///     INTEGER version (0),
+  ///     SEQUENCE AlgorithmIdentifier { ... }, <- SECOND element is SEQUENCE
+  ///     OCTET STRING { SEQUENCE { ... SEC 1 ... } }
+  ///   }
+  ///
+  /// SEC 1 (RFC 5915):
+  ///   SEQUENCE {
+  ///     INTEGER version (1),
+  ///     OCTET STRING privateKey,              <- SECOND element is OCTET STRING
+  ///     [0] ECParameters (OPTIONAL),
+  ///     [1] BIT STRING publicKey (OPTIONAL)
+  ///   }
+  ///
+  /// Both formats start with an INTEGER, so the discriminator is the SECOND
+  /// element: SEQUENCE (0x30) means PKCS#8, OCTET STRING (0x04) means SEC 1.
   BigInt _extractPrivateKeyValue(Uint8List der) {
-    // Walk the ASN.1 structure
     int offset = 0;
 
-    // Check for PKCS#8 wrapper (SEQUENCE { version, algorithmIdentifier, privateKey OCTET STRING })
-    if (der[offset] == 0x30) {
-      offset++; // skip SEQUENCE tag
-      offset = _skipLength(der, offset); // skip SEQUENCE length
-
-      // Check if first element is an INTEGER (version) - this is PKCS#8
-      if (der[offset] == 0x02) {
-        // PKCS#8 format
-        offset = _skipTlv(der, offset); // skip version INTEGER
-        offset = _skipTlv(der, offset); // skip algorithmIdentifier SEQUENCE
-
-        // Next is OCTET STRING containing the EC private key
-        if (der[offset] == 0x04) {
-          offset++; // skip OCTET STRING tag
-          final len = _readLength(der, offset);
-          offset = _skipLength(der, offset);
-
-          // Now parse the inner SEC 1 EC private key
-          return _extractPrivateKeyValue(
-            Uint8List.fromList(der.sublist(offset, offset + len)),
-          );
-        }
-      }
-    }
-
-    // SEC 1 format: SEQUENCE { version INTEGER, privateKey OCTET STRING, ... }
-    offset = 0;
+    // Outer SEQUENCE
     if (der[offset] != 0x30) {
       throw FormatException(
           'Expected SEQUENCE tag, got 0x${der[offset].toRadixString(16)}');
@@ -159,20 +152,49 @@ class EcdsaSigner {
     offset++; // skip SEQUENCE tag
     offset = _skipLength(der, offset); // skip SEQUENCE length
 
-    // Skip version INTEGER
-    offset = _skipTlv(der, offset);
-
-    // Private key OCTET STRING
-    if (der[offset] != 0x04) {
+    // First element must be the version INTEGER in both PKCS#8 and SEC 1.
+    if (der[offset] != 0x02) {
       throw FormatException(
-          'Expected OCTET STRING tag for private key, got 0x${der[offset].toRadixString(16)}');
+          'Expected INTEGER version tag, got 0x${der[offset].toRadixString(16)}');
     }
-    offset++; // skip tag
-    final keyLen = _readLength(der, offset);
-    offset = _skipLength(der, offset);
+    final afterVersionOffset = _skipTlv(der, offset);
 
-    final keyBytes = der.sublist(offset, offset + keyLen);
-    return _bytesToBigInt(keyBytes);
+    // Discriminate PKCS#8 vs SEC 1 by the SECOND element's tag:
+    //   - 0x30 (SEQUENCE)     → PKCS#8 AlgorithmIdentifier
+    //   - 0x04 (OCTET STRING) → SEC 1 privateKey
+    final secondTag = der[afterVersionOffset];
+
+    if (secondTag == 0x30) {
+      // PKCS#8 format: skip AlgorithmIdentifier SEQUENCE, then read the
+      // OCTET STRING whose contents are a SEC 1 EC private key.
+      var innerOffset = _skipTlv(der, afterVersionOffset);
+
+      if (der[innerOffset] != 0x04) {
+        throw FormatException(
+            'Expected OCTET STRING tag for PKCS#8 privateKey, got 0x${der[innerOffset].toRadixString(16)}');
+      }
+      innerOffset++; // skip OCTET STRING tag
+      final len = _readLength(der, innerOffset);
+      innerOffset = _skipLength(der, innerOffset);
+
+      // Recurse into the inner SEC 1 EC private key structure.
+      return _extractPrivateKeyValue(
+        Uint8List.fromList(der.sublist(innerOffset, innerOffset + len)),
+      );
+    }
+
+    if (secondTag == 0x04) {
+      // SEC 1 format: second element is the private key OCTET STRING.
+      var keyOffset = afterVersionOffset + 1; // skip OCTET STRING tag
+      final keyLen = _readLength(der, keyOffset);
+      keyOffset = _skipLength(der, keyOffset);
+
+      final keyBytes = der.sublist(keyOffset, keyOffset + keyLen);
+      return _bytesToBigInt(keyBytes);
+    }
+
+    throw FormatException(
+        'Unrecognized EC private key format: expected SEQUENCE (PKCS#8) or OCTET STRING (SEC 1) after version, got 0x${secondTag.toRadixString(16)}');
   }
 
   /// Extract the public key point bytes from a DER-encoded public key
