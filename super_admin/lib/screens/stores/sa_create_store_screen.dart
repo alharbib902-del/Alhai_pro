@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
+import '../../core/services/audit_log_service.dart';
 import '../../providers/sa_providers.dart';
 
 /// Create new store form -- submits to Supabase.
@@ -44,7 +45,7 @@ class _SACreateStoreScreenState extends ConsumerState<SACreateStoreScreen> {
 
     try {
       final ds = ref.read(saStoresDatasourceProvider);
-      await ds.createStore(
+      final created = await ds.createStore(
         name: _nameController.text.trim(),
         businessType: _selectedBusiness,
         ownerName: _ownerNameController.text.trim(),
@@ -52,6 +53,27 @@ class _SACreateStoreScreenState extends ConsumerState<SACreateStoreScreen> {
         ownerEmail: _ownerEmailController.text.trim(),
         planSlug: _selectedPlan,
         branchCount: int.tryParse(_branchCountController.text) ?? 1,
+      );
+
+      // P0 audit trail: record the privileged mutation. Fire-and-forget
+      // (AuditLogService.log swallows errors internally) so a Sentry-level
+      // audit glitch never blocks the user flow.
+      // This is the reference pattern — wire more mutations in follow-up PRs.
+      await ref.read(auditLogServiceProvider).log(
+        action: 'store.create',
+        targetType: 'store',
+        targetId: created.id,
+        after: {
+          'name': created.name,
+          'business_type': _selectedBusiness,
+          'plan': _selectedPlan,
+          'branch_count': int.tryParse(_branchCountController.text) ?? 1,
+        },
+        metadata: {
+          'owner_name': _ownerNameController.text.trim(),
+          'owner_phone': _ownerPhoneController.text.trim(),
+          'owner_email': _ownerEmailController.text.trim(),
+        },
       );
 
       // Invalidate stores list so it refreshes
@@ -195,7 +217,7 @@ class _SACreateStoreScreenState extends ConsumerState<SACreateStoreScreen> {
                                 ),
                                 const SizedBox(height: AlhaiSpacing.md),
                                 DropdownButtonFormField<String>(
-                                  value: _selectedBusiness,
+                                  initialValue: _selectedBusiness,
                                   decoration: InputDecoration(
                                     labelText: l10n.businessType,
                                     prefixIcon:
@@ -362,10 +384,10 @@ class _PlanOption extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Radio<bool>(
-              value: true,
+            RadioGroup<bool>(
               groupValue: isSelected,
               onChanged: (_) => onTap(),
+              child: const Radio<bool>(value: true),
             ),
             Expanded(
               child: Column(

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
+import '../../core/services/audit_log_service.dart';
 import '../../providers/sa_providers.dart';
 
 /// Store detail screen: real store info, subscription, usage stats from Supabase.
@@ -284,7 +285,7 @@ class SAStoreDetailScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: AlhaiSpacing.md),
                 DropdownButtonFormField<String>(
-                  value: selectedSlug,
+                  initialValue: selectedSlug,
                   decoration: InputDecoration(
                     labelText: l10n.selectPlan,
                     border: const OutlineInputBorder(),
@@ -312,6 +313,16 @@ class SAStoreDetailScreen extends ConsumerWidget {
                 if (selectedSlug == null) return;
                 final ds = ref.read(saStoresDatasourceProvider);
                 await ds.updateStorePlan(storeId, selectedSlug!);
+                await ref.read(auditLogServiceProvider).log(
+                  action: 'subscription.plan_change',
+                  targetType: 'store',
+                  targetId: storeId,
+                  before: {'plan': currentPlanSlug},
+                  after: {'plan': selectedSlug},
+                  metadata: {
+                    'direction': isUpgrade ? 'upgrade' : 'downgrade',
+                  },
+                );
                 ref.invalidate(saStoreDetailProvider(storeId));
                 ref.invalidate(saStoresListProvider);
                 if (ctx.mounted) Navigator.pop(ctx);

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import '../../providers/sa_providers.dart';
+import '../../core/services/audit_log_service.dart';
 import '../../core/services/undo_service.dart';
 
 /// Store settings: suspend, upgrade, downgrade plan -- real Supabase operations.
@@ -90,10 +91,22 @@ class _SAStoreSettingsScreenState extends ConsumerState<SAStoreSettingsScreen> {
                                 ),
                                 value: isActive,
                                 onChanged: (v) async {
+                                  final previousActive = isActive;
                                   setState(() => _isActive = v);
                                   final ds =
                                       ref.read(saStoresDatasourceProvider);
                                   await ds.updateStoreStatus(widget.storeId, v);
+                                  await ref
+                                      .read(auditLogServiceProvider)
+                                      .log(
+                                        action: v
+                                            ? 'store.activate'
+                                            : 'store.suspend',
+                                        targetType: 'store',
+                                        targetId: widget.storeId,
+                                        before: {'is_active': previousActive},
+                                        after: {'is_active': v},
+                                      );
                                   ref.invalidate(
                                       saStoreDetailProvider(widget.storeId));
                                   ref.invalidate(saStoresListProvider);
@@ -110,29 +123,32 @@ class _SAStoreSettingsScreenState extends ConsumerState<SAStoreSettingsScreen> {
                           icon: Icons.card_membership_rounded,
                           child: Column(
                             children: [
-                              _PlanRadio(
-                                title: l10n.basicPlan,
-                                subtitle: '99 ${l10n.sar}${l10n.perMonth}',
-                                value: 'basic',
+                              RadioGroup<String>(
                                 groupValue: currentPlan,
                                 onChanged: (v) =>
                                     setState(() => _currentPlan = v),
-                              ),
-                              _PlanRadio(
-                                title: l10n.advancedPlan,
-                                subtitle: '249 ${l10n.sar}${l10n.perMonth}',
-                                value: 'advanced',
-                                groupValue: currentPlan,
-                                onChanged: (v) =>
-                                    setState(() => _currentPlan = v),
-                              ),
-                              _PlanRadio(
-                                title: l10n.professionalPlan,
-                                subtitle: '499 ${l10n.sar}${l10n.perMonth}',
-                                value: 'professional',
-                                groupValue: currentPlan,
-                                onChanged: (v) =>
-                                    setState(() => _currentPlan = v),
+                                child: Column(
+                                  children: [
+                                    _PlanRadio(
+                                      title: l10n.basicPlan,
+                                      subtitle:
+                                          '99 ${l10n.sar}${l10n.perMonth}',
+                                      value: 'basic',
+                                    ),
+                                    _PlanRadio(
+                                      title: l10n.advancedPlan,
+                                      subtitle:
+                                          '249 ${l10n.sar}${l10n.perMonth}',
+                                      value: 'advanced',
+                                    ),
+                                    _PlanRadio(
+                                      title: l10n.professionalPlan,
+                                      subtitle:
+                                          '499 ${l10n.sar}${l10n.perMonth}',
+                                      value: 'professional',
+                                    ),
+                                  ],
+                                ),
                               ),
                               const SizedBox(height: AlhaiSpacing.md),
                               Row(
@@ -144,14 +160,29 @@ class _SAStoreSettingsScreenState extends ConsumerState<SAStoreSettingsScreen> {
                                         : () async {
                                             setState(() => _saving = true);
                                             try {
+                                              final previousPlan = planSlug;
                                               final ds = ref.read(
                                                   saStoresDatasourceProvider);
                                               await ds.updateStorePlan(
                                                   widget.storeId, currentPlan);
+                                              await ref
+                                                  .read(auditLogServiceProvider)
+                                                  .log(
+                                                    action:
+                                                        'subscription.plan_change',
+                                                    targetType: 'store',
+                                                    targetId: widget.storeId,
+                                                    before: {
+                                                      'plan': previousPlan
+                                                    },
+                                                    after: {
+                                                      'plan': currentPlan
+                                                    },
+                                                  );
                                               ref.invalidate(
                                                   saStoreDetailProvider(
                                                       widget.storeId));
-                                              if (mounted) {
+                                              if (context.mounted) {
                                                 ScaffoldMessenger.of(context)
                                                     .showSnackBar(
                                                   const SnackBar(
@@ -161,7 +192,7 @@ class _SAStoreSettingsScreenState extends ConsumerState<SAStoreSettingsScreen> {
                                                 );
                                               }
                                             } catch (e) {
-                                              if (mounted) {
+                                              if (context.mounted) {
                                                 ScaffoldMessenger.of(context)
                                                     .showSnackBar(
                                                   SnackBar(
@@ -254,12 +285,30 @@ class _SAStoreSettingsScreenState extends ConsumerState<SAStoreSettingsScreen> {
 
                                         final ds = ref
                                             .read(saStoresDatasourceProvider);
+                                        final storeSnapshot =
+                                            <String, dynamic>{
+                                          'id': widget.storeId,
+                                          'name': store.name,
+                                          'is_active': true,
+                                        };
                                         await UndoService.executeWithUndo(
                                           context: context,
                                           description: 'تم تعليق المتجر',
                                           action: () async {
                                             await ds.softDeleteStore(
                                                 widget.storeId);
+                                            await ref
+                                                .read(auditLogServiceProvider)
+                                                .log(
+                                                  action: 'store.suspend',
+                                                  targetType: 'store',
+                                                  targetId: widget.storeId,
+                                                  before: storeSnapshot,
+                                                  after: {
+                                                    ...storeSnapshot,
+                                                    'is_active': false,
+                                                  },
+                                                );
                                             setState(() => _isActive = false);
                                             ref.invalidate(
                                                 saStoreDetailProvider(
@@ -270,6 +319,21 @@ class _SAStoreSettingsScreenState extends ConsumerState<SAStoreSettingsScreen> {
                                           undoAction: () async {
                                             await ds
                                                 .restoreStore(widget.storeId);
+                                            await ref
+                                                .read(auditLogServiceProvider)
+                                                .log(
+                                                  action: 'store.activate',
+                                                  targetType: 'store',
+                                                  targetId: widget.storeId,
+                                                  before: {
+                                                    ...storeSnapshot,
+                                                    'is_active': false,
+                                                  },
+                                                  after: storeSnapshot,
+                                                  metadata: const {
+                                                    'source': 'undo',
+                                                  },
+                                                );
                                             setState(() => _isActive = true);
                                             ref.invalidate(
                                                 saStoreDetailProvider(
@@ -358,15 +422,11 @@ class _PlanRadio extends StatelessWidget {
   final String title;
   final String subtitle;
   final String value;
-  final String groupValue;
-  final ValueChanged<String?> onChanged;
 
   const _PlanRadio({
     required this.title,
     required this.subtitle,
     required this.value,
-    required this.groupValue,
-    required this.onChanged,
   });
 
   @override
@@ -375,8 +435,6 @@ class _PlanRadio extends StatelessWidget {
       title: Text(title),
       subtitle: Text(subtitle),
       value: value,
-      groupValue: groupValue,
-      onChanged: onChanged,
     );
   }
 }

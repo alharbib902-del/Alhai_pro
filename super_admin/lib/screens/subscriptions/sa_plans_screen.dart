@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
+import '../../core/services/audit_log_service.dart';
 import '../../data/models/sa_subscription_model.dart';
 import '../../providers/sa_providers.dart';
 
@@ -239,6 +240,20 @@ class SAPlansScreen extends ConsumerWidget {
               }
               if (updates.isNotEmpty) {
                 await ds.updatePlan(plan.id, updates);
+                await ref.read(auditLogServiceProvider).log(
+                  action: 'plan.update',
+                  targetType: 'plan',
+                  targetId: plan.id,
+                  before: {
+                    'name': plan.name,
+                    'monthly_price': plan.monthlyPrice,
+                    'yearly_price': plan.yearlyPrice,
+                    'max_branches': plan.maxBranches,
+                    'max_products': plan.maxProducts,
+                    'max_users': plan.maxUsers,
+                  },
+                  after: updates,
+                );
                 ref.invalidate(saPlansListProvider);
               }
               if (ctx.mounted) Navigator.pop(ctx);
@@ -309,14 +324,31 @@ class SAPlansScreen extends ConsumerWidget {
               final name = nameCtrl.text.trim();
               final slug = name.toLowerCase().replaceAll(' ', '_');
               final price = double.tryParse(priceCtrl.text) ?? 0;
-              await ds.createPlan(
+              final maxBranches = int.tryParse(branchCtrl.text) ?? 0;
+              final maxProducts = int.tryParse(productCtrl.text) ?? 0;
+              final maxUsers = int.tryParse(userCtrl.text) ?? 0;
+              final created = await ds.createPlan(
                 name: name,
                 slug: slug,
                 monthlyPrice: price,
                 yearlyPrice: price * 10,
-                maxBranches: int.tryParse(branchCtrl.text) ?? 0,
-                maxProducts: int.tryParse(productCtrl.text) ?? 0,
-                maxUsers: int.tryParse(userCtrl.text) ?? 0,
+                maxBranches: maxBranches,
+                maxProducts: maxProducts,
+                maxUsers: maxUsers,
+              );
+              await ref.read(auditLogServiceProvider).log(
+                action: 'plan.create',
+                targetType: 'plan',
+                targetId: created.id,
+                after: {
+                  'name': name,
+                  'slug': slug,
+                  'monthly_price': price,
+                  'yearly_price': price * 10,
+                  'max_branches': maxBranches,
+                  'max_products': maxProducts,
+                  'max_users': maxUsers,
+                },
               );
               ref.invalidate(saPlansListProvider);
               if (ctx.mounted) Navigator.pop(ctx);

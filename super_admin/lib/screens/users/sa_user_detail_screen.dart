@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import '../../providers/sa_providers.dart';
+import '../../core/services/audit_log_service.dart';
 import '../../core/services/undo_service.dart';
 
 /// User detail / role management -- real Supabase data.
@@ -259,17 +260,52 @@ class _SAUserDetailScreenState extends ConsumerState<SAUserDetailScreen> {
                                       return;
                                     }
 
+                                    final priorUserSnapshot =
+                                        <String, dynamic>{
+                                      'id': widget.userId,
+                                      'name': name,
+                                      'email': email,
+                                      'role': role,
+                                      'is_active': true,
+                                    };
                                     await UndoService.executeWithUndo(
                                       context: context,
                                       description: 'User $name deactivated',
                                       action: () async {
                                         await ds.softDeleteUser(widget.userId);
+                                        await ref
+                                            .read(auditLogServiceProvider)
+                                            .log(
+                                              action: 'user.suspend',
+                                              targetType: 'user',
+                                              targetId: widget.userId,
+                                              before: priorUserSnapshot,
+                                              after: {
+                                                ...priorUserSnapshot,
+                                                'is_active': false,
+                                              },
+                                            );
                                         ref.invalidate(saUserDetailProvider(
                                             widget.userId));
                                         ref.invalidate(saUsersListProvider);
                                       },
                                       undoAction: () async {
                                         await ds.restoreUser(widget.userId);
+                                        await ref
+                                            .read(auditLogServiceProvider)
+                                            .log(
+                                              action: 'user.activate',
+                                              targetType: 'user',
+                                              targetId: widget.userId,
+                                              before: {
+                                                ...priorUserSnapshot,
+                                                'is_active': false,
+                                              },
+                                              after: priorUserSnapshot,
+                                              metadata: const {
+                                                'source': 'undo',
+                                              },
+                                            );
                                         ref.invalidate(saUserDetailProvider(
                                             widget.userId));
                                         ref.invalidate(saUsersListProvider);
@@ -365,7 +401,9 @@ class _SAUserDetailScreenState extends ConsumerState<SAUserDetailScreen> {
                                               _selectedRole == role
                                           ? null
                                           : () => _saveRole(
-                                              widget.userId, _selectedRole!),
+                                              widget.userId,
+                                              _selectedRole!,
+                                              previousRole: role),
                                       child: _saving
                                           ? const SizedBox(
                                               width: 16,
@@ -403,11 +441,22 @@ class _SAUserDetailScreenState extends ConsumerState<SAUserDetailScreen> {
     };
   }
 
-  Future<void> _saveRole(String userId, String newRole) async {
+  Future<void> _saveRole(
+    String userId,
+    String newRole, {
+    required String previousRole,
+  }) async {
     setState(() => _saving = true);
     try {
       final ds = ref.read(saUsersDatasourceProvider);
       await ds.updateUserRole(userId, newRole);
+      await ref.read(auditLogServiceProvider).log(
+        action: 'user.role_change',
+        targetType: 'user',
+        targetId: userId,
+        before: {'role': previousRole},
+        after: {'role': newRole},
+      );
       ref.invalidate(saUserDetailProvider(userId));
       ref.invalidate(saUsersListProvider);
       if (mounted) {
@@ -502,11 +551,13 @@ class _RoleOption extends StatelessWidget {
           ),
           child: Row(
             children: [
-              Radio<String>(
-                value: value,
+              RadioGroup<String>(
                 groupValue: groupValue,
                 onChanged: onChanged,
-                activeColor: color,
+                child: Radio<String>(
+                  value: value,
+                  activeColor: color,
+                ),
               ),
               Container(
                 width: 36,
