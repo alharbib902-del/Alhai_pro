@@ -1,7 +1,7 @@
 name: driver_app
 description: Driver/Delivery application for Alhai grocery stores
 publish_to: 'none'
-version: 1.0.0+1
+version: 1.0.0-beta.1+1
 
 environment:
   sdk: '>=3.4.0 <4.0.0'
@@ -32,6 +32,7 @@ dependencies:
   supabase_flutter: ^2.3.4
   dio: ^5.4.0
   http: ^1.2.1
+  crypto: ^3.0.3
 
   # Storage
   shared_preferences: ^2.2.2
@@ -67,13 +68,16 @@ dependencies:
   # Notifications
   firebase_core: ^3.8.0
   firebase_messaging: ^15.1.6
-  flutter_local_notifications: ^16.3.0
+  flutter_local_notifications: ^17.2.3
   
   # Camera (for delivery proof)
   camera: ^0.10.5+9
   
   # Signature capture
   signature: ^5.4.1
+
+  # Crash reporting
+  sentry_flutter: ^9.14.0
 
 dev_dependencies:
   flutter_test:

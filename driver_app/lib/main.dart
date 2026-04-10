@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,11 +9,36 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'core/router/app_router.dart';
 import 'core/services/location_service.dart';
+import 'core/services/sentry_service.dart';
 import 'core/supabase/supabase_client.dart';
 import 'di/injection.dart';
 
-void main() async {
+void main() {
+  runZonedGuarded(() async {
+    await initSentry(appRunner: () async {
+      await _appMain();
+    });
+  }, (error, stack) {
+    reportError(error, stackTrace: stack, hint: 'runZonedGuarded');
+  });
+}
+
+Future<void> _appMain() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Global error handlers — send to Sentry
+  FlutterError.onError = (details) {
+    FlutterError.presentError(details);
+    reportError(
+      details.exception,
+      stackTrace: details.stack,
+      hint: 'FlutterError: ${details.library}',
+    );
+  };
+  PlatformDispatcher.instance.onError = (error, stack) {
+    reportError(error, stackTrace: stack, hint: 'PlatformDispatcher');
+    return true;
+  };
 
   // Allow all orientations so tablets can use landscape mode
   await SystemChrome.setPreferredOrientations([
@@ -29,13 +56,23 @@ void main() async {
   );
 
   // Initialize Supabase
-  await AppSupabase.initialize();
+  try {
+    await AppSupabase.initialize();
+  } catch (e, stack) {
+    reportError(e, stackTrace: stack, hint: 'Supabase init');
+  }
 
   // Initialize DI
   configureDependencies();
 
   // Initialize location service
-  await LocationService.instance.initialize();
+  try {
+    await LocationService.instance.initialize();
+  } catch (e, stack) {
+    reportError(e, stackTrace: stack, hint: 'LocationService init');
+  }
+
+  addBreadcrumb(message: 'App initialized', category: 'lifecycle');
 
   runApp(
     const ProviderScope(
