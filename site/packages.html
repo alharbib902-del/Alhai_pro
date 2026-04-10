@@ -105,7 +105,7 @@
         <div class="layer-num l2">2</div>
         <div class="layer-content">
           <h4>طبقة الخدمات - Services</h4>
-          <p>alhai_auth, alhai_reports, alhai_zatca, alhai_notifications - المصادقة، التقارير، الفوترة</p>
+          <p>alhai_auth, alhai_reports, alhai_zatca, alhai_services - المصادقة، التقارير، الفوترة، الخدمات</p>
         </div>
       </div>
       <div class="layer-arrow fade-in">&#8595;</div>
@@ -151,10 +151,10 @@
         <div class="pkg-stats">
           <span class="pkg-stat"><strong>122</strong> ملف</span>
           <span class="pkg-stat"><strong>78K</strong> سطر</span>
-          <span class="pkg-stat"><strong>40</strong> جدول</span>
+          <span class="pkg-stat"><strong>52</strong> جدول</span>
         </div>
         <div class="pkg-exports">
-          <strong>الصادرات:</strong> 28+ DAOs, 14 migrations, AppDatabase, sync adapters
+          <strong>الصادرات:</strong> 28+ DAOs, 22 migrations, AppDatabase, sync adapters
         </div>
       </div>
 
@@ -282,28 +282,29 @@
       <div class="pkg-card fade-in">
         <div class="card-top red"></div>
         <div class="pkg-name">alhai_l10n</div>
-        <div class="pkg-desc">الترجمة والتعريب - 7 لغات مدعومة، 4620 مفتاح ترجمة</div>
+        <div class="pkg-desc">الترجمة والتعريب - 7 لغات مدعومة، 4,790 مفتاح ترجمة (العربية)، ~3,081 للغات الثانوية</div>
         <div class="pkg-stats">
           <span class="pkg-stat"><strong>10</strong> ملف</span>
           <span class="pkg-stat"><strong>7</strong> لغات</span>
-          <span class="pkg-stat"><strong>4,620</strong> مفتاح</span>
+          <span class="pkg-stat"><strong>4,790</strong> مفتاح</span>
         </div>
         <div class="pkg-exports">
-          <strong>الصادرات:</strong> ar, en, fr, tr, ur, id, ms - AppLocalizations, locale delegates
+          <strong>الصادرات:</strong> ar, en, bn (البنغالية), fil (الفلبينية), hi (الهندية), id, ur - AppLocalizations, locale delegates
         </div>
       </div>
 
-      <!-- alhai_notifications -->
+      <!-- alhai_services -->
       <div class="pkg-card fade-in">
         <div class="card-top yellow"></div>
-        <div class="pkg-name">alhai_notifications</div>
-        <div class="pkg-desc">الإشعارات - مدمجة ضمن shared_ui - إشعارات محلية وبعيدة</div>
+        <div class="pkg-name">alhai_services</div>
+        <div class="pkg-desc">طبقة الخدمات - خدمات الأعمال المشتركة، إدارة العمليات، منطق التطبيق</div>
         <div class="pkg-stats">
-          <span class="pkg-stat">ضمن <strong>shared_ui</strong></span>
-          <span class="pkg-stat"><strong>Push</strong> + Local</span>
+          <span class="pkg-stat"><strong>48</strong> ملف</span>
+          <span class="pkg-stat"><strong>8.4K</strong> سطر</span>
+          <span class="pkg-stat"><strong>Services</strong> Layer</span>
         </div>
         <div class="pkg-exports">
-          <strong>الصادرات:</strong> NotificationService, FCM handler, local notifications, badge manager
+          <strong>الصادرات:</strong> Business services, operation managers, shared application logic
         </div>
       </div>
 
@@ -380,9 +381,9 @@
           </tr>
           <tr>
             <td>alhai_design_system</td>
-            <td><span class="dep-dot yes">&#10003;</span></td>
             <td><span class="dep-dot no">-</span></td>
-            <td><span class="dep-dot yes">&#10003;</span></td>
+            <td><span class="dep-dot no">-</span></td>
+            <td><span class="dep-dot no">-</span></td>
             <td><span class="dep-dot no">-</span></td>
             <td><span class="dep-dot no">-</span></td>
             <td><span class="dep-dot no">-</span></td>
@@ -394,7 +395,7 @@
           </tr>
           <tr>
             <td>alhai_sync</td>
-            <td><span class="dep-dot yes">&#10003;</span></td>
+            <td><span class="dep-dot no">-</span></td>
             <td><span class="dep-dot yes">&#10003;</span></td>
             <td><span class="dep-dot no">-</span></td>
             <td><span class="dep-dot no">-</span></td>
@@ -422,7 +423,7 @@
           </tr>
           <tr>
             <td>alhai_reports</td>
-            <td><span class="dep-dot yes">&#10003;</span></td>
+            <td><span class="dep-dot no">-</span></td>
             <td><span class="dep-dot yes">&#10003;</span></td>
             <td><span class="dep-dot yes">&#10003;</span></td>
             <td><span class="dep-dot no">-</span></td>
@@ -436,7 +437,7 @@
           </tr>
           <tr>
             <td>alhai_zatca</td>
-            <td><span class="dep-dot yes">&#10003;</span></td>
+            <td><span class="dep-dot no">-</span></td>
             <td><span class="dep-dot no">-</span></td>
             <td><span class="dep-dot no">-</span></td>
             <td><span class="dep-dot no">-</span></td>
@@ -456,7 +457,7 @@
             <td><span class="dep-dot yes">&#10003;</span></td>
             <td><span class="dep-dot yes">&#10003;</span></td>
             <td><span class="dep-dot yes">&#10003;</span></td>
-            <td><span class="dep-dot yes">&#10003;</span></td>
+            <td><span class="dep-dot no">-</span></td>
             <td><span class="dep-dot no">-</span></td>
             <td><span class="dep-dot no">-</span></td>
             <td><span class="dep-dot no">-</span></td>

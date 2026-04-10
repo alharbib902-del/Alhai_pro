@@ -70,8 +70,8 @@
   <div class="stats-bar fade-in">
     <div class="stat-item"><div class="stat-number">23</div><div class="stat-label">ملف</div></div>
     <div class="stat-item"><div class="stat-number">7,258</div><div class="stat-label">سطر</div></div>
-    <div class="stat-item"><div class="stat-number">18</div><div class="stat-label">اختبار</div></div>
-    <div class="stat-item"><div class="stat-number">4</div><div class="stat-label">استراتيجيات</div></div>
+    <div class="stat-item"><div class="stat-number">17</div><div class="stat-label">اختبار</div></div>
+    <div class="stat-item"><div class="stat-number">5</div><div class="stat-label">استراتيجيات حل</div></div>
   </div>
 </div>
 
@@ -98,9 +98,9 @@
       <div class="card fade-in">
         <div class="card-top green"></div>
         <h3>Push - دفع للخادم</h3>
-        <p>تستخدم لإرسال البيانات المنشأة محليا إلى الخادم. تعمل كل 15 ثانية تلقائيا لدفع المبيعات والفواتير والعمليات الجديدة. تضمن عدم فقدان أي عملية حتى في حالة انقطاع الإنترنت.</p>
+        <p>تستخدم لإرسال البيانات المنشأة محليا إلى الخادم. تعمل كل 30 ثانية تلقائيا لدفع المبيعات والفواتير والعمليات الجديدة. تضمن عدم فقدان أي عملية حتى في حالة انقطاع الإنترنت.</p>
         <div class="tags">
-          <span class="ftag">كل 15 ثانية</span>
+          <span class="ftag">كل 30 ثانية</span>
           <span class="ftag">المبيعات</span>
           <span class="ftag">الفواتير</span>
         </div>
@@ -108,7 +108,7 @@
       <div class="card fade-in">
         <div class="card-top red"></div>
         <h3>Bidirectional - ثنائي الاتجاه</h3>
-        <p>تستخدم للبيانات التي يمكن تعديلها من الطرفين مثل بيانات العملاء والمنتجات. تقارن الطوابع الزمنية وتحل النزاعات تلقائيا مع الاحتفاظ بسجل التعارضات للمراجعة.</p>
+        <p>تستخدم للبيانات التي يمكن تعديلها من الطرفين مثل بيانات العملاء والمنتجات. تدعم 5 أنواع تعارضات و5 استراتيجيات حل (serverWins, localWins, lastWriteWins, merge, manual) مع الاحتفاظ بسجل كامل للتعارضات للمراجعة.</p>
         <div class="tags">
           <span class="ftag">العملاء</span>
           <span class="ftag">المنتجات</span>
@@ -149,7 +149,7 @@
       <div class="card fade-in">
         <div class="card-top green"></div>
         <h4>ConflictResolver</h4>
-        <p>يحل التعارضات بين البيانات المحلية والخادم. يستخدم استراتيجية "آخر تعديل يفوز" مع الاحتفاظ بسجل كامل للتعارضات.</p>
+        <p>يحل التعارضات بين البيانات المحلية والخادم باستخدام 5 استراتيجيات: serverWins، localWins، lastWriteWins، merge، manual. يختار الاستراتيجية المناسبة حسب نوع الجدول مع الاحتفاظ بسجل كامل للتعارضات.</p>
       </div>
       <div class="card fade-in">
         <div class="card-top green"></div>
@@ -223,9 +223,9 @@
         <div class="card-top yellow"></div>
         <div class="card-icon">&#128248;</div>
         <h3>ImageUploadService</h3>
-        <p>يرفع الصور إلى Cloudflare R2 Storage. يضغط الصور محليا قبل الرفع ويحتفظ بقائمة انتظار للصور غير المرفوعة حتى عودة الاتصال.</p>
+        <p>يرفع الصور إلى Supabase Storage. يضغط الصور محليا قبل الرفع ويحتفظ بقائمة انتظار للصور غير المرفوعة حتى عودة الاتصال.</p>
         <div class="tags">
-          <span class="ftag">R2 Storage</span>
+          <span class="ftag">Supabase Storage</span>
           <span class="ftag">Compression</span>
           <span class="ftag">Queue</span>
         </div>
@@ -275,8 +275,8 @@
         <p>يفعل الاستماع للتحديثات اللحظية من Supabase Realtime. يستقبل التغييرات فور حدوثها.</p>
       </div>
       <div class="journey-step fade-in">
-        <h4>Push every 15s <span class="step-tag">دفع دوري</span></h4>
-        <p>كل 15 ثانية يفحص قائمة الانتظار ويدفع العمليات المعلقة: مبيعات، فواتير، تعديلات.</p>
+        <h4>Push every 30s <span class="step-tag">دفع دوري</span></h4>
+        <p>كل 30 ثانية يفحص قائمة الانتظار ويدفع العمليات المعلقة: مبيعات، فواتير، تعديلات.</p>
       </div>
       <div class="journey-step fade-in">
         <h4>Pull on demand <span class="step-tag">سحب عند الطلب</span></h4>
@@ -298,7 +298,7 @@
     <div class="section-header">
       <span class="tag tag-green">الاختبارات</span>
       <h2>الاختبارات المطلوبة</h2>
-      <p>18 اختبار يغطي جميع سيناريوهات المزامنة</p>
+      <p>17 اختبار يغطي جميع سيناريوهات المزامنة</p>
     </div>
     <div style="max-width:800px;margin:0 auto">
       <div class="ai-feature fade-in">
@@ -342,6 +342,53 @@
           <h4>Stock Delta</h4>
           <p>اختبار فروقات المخزون، تعدد الأجهزة، تزامن الكميات</p>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TECHNICAL FEATURES -->
+  <section class="fade-in">
+    <div class="section-header">
+      <span class="tag tag-red">تقنيات متقدمة</span>
+      <h2>ميزات تقنية متقدمة</h2>
+      <p>آليات حماية وأمان مدمجة في محرك المزامنة لضمان سلامة البيانات</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="card fade-in">
+        <div class="card-top red"></div>
+        <div class="card-icon">&#128154;</div>
+        <h3>Health Check System</h3>
+        <p>نظام فحص صحة المزامنة عبر SyncHealthReport يراقب حالة المحرك ويتتبع عدد الرسائل الميتة (Dead Letters) ويكشف المشاكل قبل تفاقمها.</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top green"></div>
+        <div class="card-icon">&#128737;</div>
+        <h3>Sacred Data Protection</h3>
+        <p>حماية البيانات المقدسة لجداول sales وsale_items - لا يمكن حذفها أو تعديلها بعد المزامنة لضمان سلامة السجلات المالية.</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top purple"></div>
+        <div class="card-icon">&#128273;</div>
+        <h3>Idempotency Keys</h3>
+        <p>مفاتيح فريدة لكل عملية مزامنة تمنع المعالجة المكررة على الخادم حتى في حالة إعادة الإرسال بسبب انقطاع الاتصال.</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top yellow"></div>
+        <div class="card-icon">&#9201;</div>
+        <h3>Exponential Backoff</h3>
+        <p>تراجع أسي على مستوى المحرك يبدأ من 30 ثانية ويصل إلى 5 دقائق كحد أقصى لتقليل الضغط على الخادم عند تكرار الأخطاء.</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top red"></div>
+        <div class="card-icon">&#128272;</div>
+        <h3>SQL Injection Protection</h3>
+        <p>حماية من حقن SQL عبر قائمة بيضاء لأسماء الجداول المسموح بها - يرفض أي اسم جدول غير معروف لمنع الهجمات.</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top green"></div>
+        <div class="card-icon">&#128260;</div>
+        <h3>5 استراتيجيات حل تعارضات</h3>
+        <p>serverWins، localWins، lastWriteWins، merge، manual - كل جدول يستخدم الاستراتيجية الأنسب لطبيعة بياناته مع سجل كامل.</p>
       </div>
     </div>
   </section>

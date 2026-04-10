@@ -66,13 +66,13 @@
 <div class="page-hero">
   <div class="icon fade-in">&#128452;&#65039;</div>
   <h1 class="fade-in">قاعدة البيانات</h1>
-  <p class="fade-in">39 جدول + 31 وحدة وصول - بنية بيانات متكاملة</p>
+  <p class="fade-in">52 جدول + 31 وحدة وصول - بنية بيانات متكاملة</p>
   <div class="stats-bar fade-in">
-    <div class="stat-item"><div class="stat-number">39</div><div class="stat-label">جدول</div></div>
+    <div class="stat-item"><div class="stat-number">52</div><div class="stat-label">جدول</div></div>
     <div class="stat-item"><div class="stat-number">31</div><div class="stat-label">DAO</div></div>
-    <div class="stat-item"><div class="stat-number">14</div><div class="stat-label">ترحيل</div></div>
+    <div class="stat-item"><div class="stat-number">22</div><div class="stat-label">ترحيل</div></div>
     <div class="stat-item"><div class="stat-number">4</div><div class="stat-label">وظائف سحابية</div></div>
-    <div class="stat-item"><div class="stat-number">11</div><div class="stat-label">إصدار مخطط</div></div>
+    <div class="stat-item"><div class="stat-number">22</div><div class="stat-label">إصدار مخطط</div></div>
   </div>
 </div>
 
@@ -91,6 +91,8 @@
       <span class="table-mini">users</span>
       <span class="table-mini">org_members</span>
       <span class="table-mini">subscriptions</span>
+      <span class="table-mini">roles</span>
+      <span class="table-mini">user_stores</span>
     </div>
     <div class="tbl-wrap">
       <table class="tbl">
@@ -101,6 +103,8 @@
           <tr><td>users</td><td>جميع مستخدمي النظام</td><td>id, email, phone, name, role, avatar</td><td>has many org_members</td></tr>
           <tr><td>org_members</td><td>عضوية المستخدم في المنظمة</td><td>id, org_id, user_id, role, permissions</td><td>belongs to org + user</td></tr>
           <tr><td>subscriptions</td><td>اشتراكات المنظمات في الخطط</td><td>id, org_id, plan, status, start, end</td><td>belongs to organization</td></tr>
+          <tr><td>roles</td><td>الأدوار والصلاحيات في النظام</td><td>id, name, permissions, org_id</td><td>belongs to organization</td></tr>
+          <tr><td>user_stores</td><td>ربط المستخدمين بالمتاجر المسموح لهم</td><td>id, user_id, store_id, role</td><td>user + store</td></tr>
         </tbody>
       </table>
     </div>
@@ -154,10 +158,12 @@
       <span class="table-mini">sale_items</span>
       <span class="table-mini">invoices</span>
       <span class="table-mini">returns</span>
+      <span class="table-mini">return_items</span>
       <span class="table-mini">held_invoices</span>
       <span class="table-mini">shifts</span>
       <span class="table-mini">pos_terminals</span>
       <span class="table-mini">discounts</span>
+      <span class="table-mini">cash_movements</span>
     </div>
     <div class="tbl-wrap">
       <table class="tbl">
@@ -167,10 +173,12 @@
           <tr><td>sale_items</td><td>بنود كل عملية بيع</td><td>id, sale_id, product_id, qty, price, discount</td><td>belongs to sale</td></tr>
           <tr><td>invoices</td><td>الفواتير الضريبية (ZATCA)</td><td>id, sale_id, qr_code, xml_hash, status</td><td>belongs to sale</td></tr>
           <tr><td>returns</td><td>عمليات المرتجعات</td><td>id, sale_id, items, reason, refund_amount</td><td>belongs to sale</td></tr>
+          <tr><td>return_items</td><td>بنود كل عملية مرتجع</td><td>id, return_id, product_id, qty, price, reason</td><td>belongs to return</td></tr>
           <tr><td>held_invoices</td><td>الفواتير المعلقة مؤقتا</td><td>id, cashier_id, items, note, hold_time</td><td>belongs to cashier</td></tr>
           <tr><td>shifts</td><td>ورديات الكاشير</td><td>id, cashier_id, store_id, open_at, close_at, cash</td><td>cashier + store</td></tr>
           <tr><td>pos_terminals</td><td>أجهزة نقاط البيع</td><td>id, store_id, name, device_id, status</td><td>belongs to store</td></tr>
           <tr><td>discounts</td><td>الخصومات والعروض</td><td>id, name, type, value, start_date, end_date</td><td>applies to products</td></tr>
+          <tr><td>cash_movements</td><td>حركات النقدية في الصندوق</td><td>id, shift_id, type, amount, reason, created_by</td><td>belongs to shift</td></tr>
         </tbody>
       </table>
     </div>
@@ -211,12 +219,19 @@
     </div>
     <div style="text-align:center;margin-bottom:24px">
       <span class="table-mini">customers</span>
+      <span class="table-mini">customer_addresses</span>
       <span class="table-mini">accounts</span>
       <span class="table-mini">transactions</span>
       <span class="table-mini">expenses</span>
+      <span class="table-mini">expense_categories</span>
       <span class="table-mini">suppliers</span>
       <span class="table-mini">purchases</span>
+      <span class="table-mini">purchase_items</span>
       <span class="table-mini">loyalty_points</span>
+      <span class="table-mini">loyalty_transactions</span>
+      <span class="table-mini">loyalty_rewards</span>
+      <span class="table-mini">coupons</span>
+      <span class="table-mini">promotions</span>
       <span class="table-mini">daily_summaries</span>
     </div>
     <div class="tbl-wrap">
@@ -224,12 +239,19 @@
         <thead><tr><th>الجدول</th><th>الوصف</th><th>الحقول الرئيسية</th><th>العلاقات</th></tr></thead>
         <tbody>
           <tr><td>customers</td><td>بيانات العملاء</td><td>id, name, phone, email, address, loyalty_tier</td><td>has many orders, sales</td></tr>
+          <tr><td>customer_addresses</td><td>عناوين التوصيل للعملاء</td><td>id, customer_id, label, address, lat, lng, is_default</td><td>belongs to customer</td></tr>
           <tr><td>accounts</td><td>الحسابات المالية</td><td>id, name, type, balance, org_id</td><td>belongs to org</td></tr>
           <tr><td>transactions</td><td>المعاملات المالية</td><td>id, account_id, amount, type, reference</td><td>belongs to account</td></tr>
           <tr><td>expenses</td><td>المصروفات التشغيلية</td><td>id, store_id, category, amount, date, note</td><td>belongs to store</td></tr>
+          <tr><td>expense_categories</td><td>تصنيفات المصروفات</td><td>id, name, icon, org_id, is_active</td><td>belongs to organization</td></tr>
           <tr><td>suppliers</td><td>الموردون</td><td>id, name, phone, email, address, balance</td><td>has many purchases</td></tr>
           <tr><td>purchases</td><td>عمليات الشراء من الموردين</td><td>id, supplier_id, items, total, status</td><td>belongs to supplier</td></tr>
+          <tr><td>purchase_items</td><td>بنود كل عملية شراء</td><td>id, purchase_id, product_id, qty, cost, total</td><td>belongs to purchase</td></tr>
           <tr><td>loyalty_points</td><td>نقاط الولاء للعملاء</td><td>id, customer_id, points, earned_from, date</td><td>belongs to customer</td></tr>
+          <tr><td>loyalty_transactions</td><td>سجل معاملات نقاط الولاء</td><td>id, customer_id, points, type, reference_id</td><td>belongs to customer</td></tr>
+          <tr><td>loyalty_rewards</td><td>مكافآت برنامج الولاء</td><td>id, name, points_required, reward_type, value</td><td>has many redemptions</td></tr>
+          <tr><td>coupons</td><td>كوبونات الخصم</td><td>id, code, discount_type, value, max_uses, expiry</td><td>belongs to organization</td></tr>
+          <tr><td>promotions</td><td>العروض الترويجية</td><td>id, name, type, conditions, start_date, end_date</td><td>belongs to organization</td></tr>
           <tr><td>daily_summaries</td><td>الملخصات اليومية التجميعية</td><td>id, store_id, date, total_sales, total_orders</td><td>belongs to store</td></tr>
         </tbody>
       </table>
@@ -391,6 +413,47 @@
         <h4>delivery-webhook</h4>
         <p>استقبال تحديثات حالة التوصيل من خدمات التوصيل الخارجية وتحديث حالة الطلب</p>
         <div class="tags"><span class="ftag">POST</span><span class="ftag">Webhook</span><span class="ftag">External</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TECHNICAL HIGHLIGHTS -->
+  <section class="alt fade-in">
+    <div class="section-header">
+      <span class="tag tag-red">تقنيات متقدمة</span>
+      <h2>أبرز الميزات التقنية</h2>
+      <p>تقنيات متقدمة مطبقة في طبقة قاعدة البيانات لضمان الأداء والأمان والموثوقية</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="supa-card fade-in">
+        <div class="supa-icon">&#128269;</div>
+        <h4>FTS5 - بحث نصي كامل</h4>
+        <p>بحث نصي كامل باستخدام FTS5 للمنتجات - بحث فوري بالاسم، الباركود، والوصف مع دعم اللغة العربية</p>
+      </div>
+      <div class="supa-card fade-in">
+        <div class="supa-icon">&#128190;</div>
+        <h4>نسخ احتياطي تلقائي</h4>
+        <p>نسخ احتياطي تلقائي كل ساعتين مع نسخ إضافية قبل وبعد كل عملية ترحيل لضمان استعادة البيانات</p>
+      </div>
+      <div class="supa-card fade-in">
+        <div class="supa-icon">&#128737;</div>
+        <h4>PRAGMA integrity_check</h4>
+        <p>فحص سلامة قاعدة البيانات تلقائيا عند كل فتح للتطبيق للكشف المبكر عن أي تلف في البيانات</p>
+      </div>
+      <div class="supa-card fade-in">
+        <div class="supa-icon">&#128274;</div>
+        <h4>SQLCipher - تشفير كامل</h4>
+        <p>تشفير كامل لقاعدة البيانات المحلية باستخدام SQLCipher لحماية بيانات المبيعات والعملاء على الجهاز</p>
+      </div>
+      <div class="supa-card fade-in">
+        <div class="supa-icon">&#128203;</div>
+        <h4>سجل تاريخ الترحيلات</h4>
+        <p>جدول مخصص لتتبع تاريخ جميع عمليات الترحيل مع تفاصيل الإصدار والتوقيت وحالة النجاح</p>
+      </div>
+      <div class="supa-card fade-in">
+        <div class="supa-icon">&#128260;</div>
+        <h4>نسخ ما قبل/بعد الترحيل</h4>
+        <p>إنشاء نسخة احتياطية تلقائيا قبل كل ترحيل وأخرى بعده للتراجع الآمن في حالة حدوث خطأ</p>
       </div>
     </div>
   </section>
