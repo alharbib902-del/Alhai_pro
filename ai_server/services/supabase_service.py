@@ -31,7 +31,7 @@ class SupabaseService:
 
     @staticmethod
     def get_products(org_id: str, store_id: str) -> list[dict]:
-        """Get products data."""
+        """Get products data filtered by org_id AND store_id."""
         client = get_supabase_client()
         if client is None:
             return []
@@ -40,6 +40,7 @@ class SupabaseService:
                 client.table("products")
                 .select("*")
                 .eq("org_id", org_id)
+                .eq("store_id", store_id)
                 .execute()
             )
             return result.data or []
@@ -48,7 +49,7 @@ class SupabaseService:
 
     @staticmethod
     def get_customers(org_id: str, store_id: str) -> list[dict]:
-        """Get customers data."""
+        """Get customers (accounts) data filtered by org_id AND store_id."""
         client = get_supabase_client()
         if client is None:
             return []
@@ -57,7 +58,8 @@ class SupabaseService:
                 client.table("accounts")
                 .select("*")
                 .eq("org_id", org_id)
-                .eq("account_type", "customer")
+                .eq("store_id", store_id)
+                .eq("type", "receivable")
                 .execute()
             )
             return result.data or []
@@ -66,7 +68,7 @@ class SupabaseService:
 
     @staticmethod
     def get_employees(org_id: str, store_id: str) -> list[dict]:
-        """Get employees data."""
+        """Get employees data filtered by org_id AND store_id."""
         client = get_supabase_client()
         if client is None:
             return []
@@ -75,6 +77,7 @@ class SupabaseService:
                 client.table("users")
                 .select("*")
                 .eq("org_id", org_id)
+                .eq("store_id", store_id)
                 .execute()
             )
             return result.data or []

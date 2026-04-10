@@ -55,6 +55,8 @@ class ForecastResponse(BaseModel):
     predictions: list[ForecastPrediction]
     summary: ForecastSummary
     accuracy: float = Field(..., description="دقة النموذج")
+    is_mock_data: bool = False
+    data_source: str = "real"  # "real" | "mock" | "cached"
 
 
 # ============================================================================
@@ -84,6 +86,8 @@ class PricingResponse(BaseModel):
     suggestions: list[PricingSuggestion]
     total_potential_increase: float = Field(..., description="إجمالي الزيادة المحتملة %")
     strategy_used: str
+    is_mock_data: bool = False
+    data_source: str = "real"  # "real" | "mock" | "cached"
 
 
 # ============================================================================
@@ -120,6 +124,8 @@ class FraudSummary(BaseModel):
 class FraudResponse(BaseModel):
     alerts: list[FraudAlert]
     summary: FraudSummary
+    is_mock_data: bool = False
+    data_source: str = "real"  # "real" | "mock" | "cached"
 
 
 # ============================================================================
@@ -154,6 +160,8 @@ class BasketResponse(BaseModel):
     rules: list[AssociationRule]
     summary: BasketSummary
     frequently_bought_together: list[list[str]]
+    is_mock_data: bool = False
+    data_source: str = "real"  # "real" | "mock" | "cached"
 
 
 # ============================================================================
@@ -188,6 +196,8 @@ class RecommendationResponse(BaseModel):
     recommendations: list[ProductRecommendation]
     customer_segments: list[CustomerSegment]
     personalization_score: float
+    is_mock_data: bool = False
+    data_source: str = "real"  # "real" | "mock" | "cached"
 
 
 # ============================================================================
@@ -224,6 +234,8 @@ class InventoryResponse(BaseModel):
     alerts: list[InventoryAlert]
     optimization: InventoryOptimization
     abc_classification: dict[str, int] = Field(..., description="تصنيف ABC")
+    is_mock_data: bool = False
+    data_source: str = "real"  # "real" | "mock" | "cached"
 
 
 # ============================================================================
@@ -258,6 +270,8 @@ class CompetitorResponse(BaseModel):
     price_comparisons: list[PriceComparison]
     market_position: str
     opportunities: list[str]
+    is_mock_data: bool = False
+    data_source: str = "real"  # "real" | "mock" | "cached"
 
 
 # ============================================================================
@@ -293,6 +307,8 @@ class ReportResponse(BaseModel):
     sections: list[ReportSection]
     executive_summary: str
     key_metrics: dict[str, float]
+    is_mock_data: bool = False
+    data_source: str = "real"  # "real" | "mock" | "cached"
 
 
 # ============================================================================
@@ -330,6 +346,8 @@ class StaffResponse(BaseModel):
     employees: list[EmployeePerformance]
     summary: StaffSummary
     shift_recommendations: list[str]
+    is_mock_data: bool = False
+    data_source: str = "real"  # "real" | "mock" | "cached"
 
 
 # ============================================================================
@@ -357,6 +375,8 @@ class RecognitionResponse(BaseModel):
     products: list[RecognizedProduct]
     processing_time_ms: int
     method: str = Field(..., description="طريقة التعرف: image/barcode/text")
+    is_mock_data: bool = False
+    data_source: str = "real"  # "real" | "mock" | "cached"
 
 
 # ============================================================================
@@ -393,6 +413,8 @@ class SentimentSummary(BaseModel):
 class SentimentResponse(BaseModel):
     results: list[SentimentResult]
     summary: SentimentSummary
+    is_mock_data: bool = False
+    data_source: str = "real"  # "real" | "mock" | "cached"
 
 
 # ============================================================================
@@ -427,6 +449,8 @@ class ReturnResponse(BaseModel):
     predictions: list[ReturnPrediction]
     summary: ReturnSummary
     prevention_tips: list[str]
+    is_mock_data: bool = False
+    data_source: str = "real"  # "real" | "mock" | "cached"
 
 
 # ============================================================================
@@ -460,6 +484,8 @@ class PromotionResponse(BaseModel):
     best_timing: str
     target_audience: str
     estimated_total_roi: float
+    is_mock_data: bool = False
+    data_source: str = "real"  # "real" | "mock" | "cached"
 
 
 # ============================================================================
@@ -484,6 +510,8 @@ class ChatResponse(BaseModel):
     chart_type: str | None = Field(None, description="نوع الرسم البياني المقترح")
     suggestions: list[str] = Field(default_factory=list, description="أسئلة مقترحة")
     conversation_id: str
+    is_mock_data: bool = False
+    data_source: str = "real"  # "real" | "mock" | "cached"
 
 
 # ============================================================================
@@ -510,3 +538,5 @@ class AssistantResponse(BaseModel):
     data: dict | None = None
     actions: list[SuggestedAction] = Field(default_factory=list)
     related_topics: list[str] = Field(default_factory=list)
+    is_mock_data: bool = False
+    data_source: str = "real"  # "real" | "mock" | "cached"

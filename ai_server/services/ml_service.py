@@ -98,6 +98,8 @@ def generate_forecast(org_id: str, store_id: str, days_ahead: int,
             peak_day=predictions[peak_idx].date,
         ),
         accuracy=round(0.82 + _pseudo_random(s, 99) * 0.12, 2),
+        is_mock_data=True,
+        data_source="mock",
     )
 
 
@@ -138,6 +140,8 @@ def generate_pricing(org_id: str, store_id: str, product_ids: list[str] | None,
         suggestions=suggestions,
         total_potential_increase=round(total_increase, 1),
         strategy_used=strategy,
+        is_mock_data=True,
+        data_source="mock",
     )
 
 
@@ -191,6 +195,8 @@ def detect_fraud(org_id: str, store_id: str, sale_id: str | None = None,
             total_amount_flagged=round(total_amt, 2),
             period=t("last_72_hours", language),
         ),
+        is_mock_data=True,
+        data_source="mock",
     )
 
 
@@ -238,6 +244,8 @@ def analyze_basket(org_id: str, store_id: str, top_n: int = 20,
             cross_sell_opportunity=t("cross_sell_cheese_bread", language),
         ),
         frequently_bought_together=fbt,
+        is_mock_data=True,
+        data_source="mock",
     )
 
 
@@ -311,6 +319,8 @@ def generate_recommendations(org_id: str, store_id: str, customer_id: str | None
     return RecommendationResponse(
         recommendations=recs, customer_segments=segments,
         personalization_score=round(0.7 + _pseudo_random(s, 200) * 0.25, 2),
+        is_mock_data=True,
+        data_source="mock",
     )
 
 
@@ -350,6 +360,8 @@ def analyze_inventory(org_id: str, store_id: str,
             dead_stock_value=round(800 + _pseudo_random(s, 301) * 3000, 2),
         ),
         abc_classification={"A": 25, "B": 45, "C": 130},
+        is_mock_data=True,
+        data_source="mock",
     )
 
 
@@ -434,6 +446,8 @@ def analyze_competitors(org_id: str, store_id: str,
         competitors=competitors, price_comparisons=comparisons,
         market_position=cd["market_position"],
         opportunities=cd["opportunities"],
+        is_mock_data=True,
+        data_source="mock",
     )
 
 
@@ -502,6 +516,8 @@ def generate_report(org_id: str, store_id: str, report_type: str,
         sections=sections,
         executive_summary=rd["executive_summary"],
         key_metrics={"daily_revenue": 4520.0, "weekly_revenue": 28500.0, "avg_basket": 67.5, "customer_count": 67, "return_rate": 2.1},
+        is_mock_data=True,
+        data_source="mock",
     )
 
 
@@ -584,6 +600,8 @@ def analyze_staff(org_id: str, store_id: str,
             top_performer=emp_names[0], total_revenue=50900.0, efficiency_index=0.87,
         ),
         shift_recommendations=sd["shift_recs"],
+        is_mock_data=True,
+        data_source="mock",
     )
 
 
@@ -631,7 +649,10 @@ def recognize_product(org_id: str, store_id: str, barcode: str | None,
         ]
         method = "image"
 
-    return RecognitionResponse(products=products, processing_time_ms=245, method=method)
+    return RecognitionResponse(
+        products=products, processing_time_ms=245, method=method,
+        is_mock_data=True, data_source="mock",
+    )
 
 
 # ============================================================================
@@ -717,6 +738,8 @@ def analyze_sentiment(org_id: str, store_id: str, text: str | None = None,
             trending_topics=trending,
             overall_sentiment=pos_label if pos > neg else neg_label if neg > pos else neu_label,
         ),
+        is_mock_data=True,
+        data_source="mock",
     )
 
 
@@ -754,6 +777,8 @@ def predict_returns(org_id: str, store_id: str, days_ahead: int = 30,
             t("tip_expiry_display", language),
             t("tip_cosmetics_samples", language),
         ],
+        is_mock_data=True,
+        data_source="mock",
     )
 
 
@@ -815,6 +840,8 @@ def design_promotions(org_id: str, store_id: str, goal: str,
         promotions=promos, best_timing=pd["best_timing"],
         target_audience=pd["target_audience"],
         estimated_total_roi=round(sum(rois) / len(rois), 1),
+        is_mock_data=True,
+        data_source="mock",
     )
 
 
@@ -880,6 +907,7 @@ def chat_with_data(org_id: str, store_id: str, message: str,
                 ChatDataPoint(label=d["labels"][2], value=4071, unit=cur),
             ],
             chart_type="bar", suggestions=d["suggestions"], conversation_id=conv_id,
+            is_mock_data=True, data_source="mock",
         )
     elif any(w in msg_lower for w in ["مخزون", "inventory", "stock", "منتج"]):
         d = cr["inventory"]
@@ -891,6 +919,7 @@ def chat_with_data(org_id: str, store_id: str, message: str,
                 ChatDataPoint(label=d["labels"][2], value=194, unit=d["unit"]),
             ],
             chart_type="pie", suggestions=d["suggestions"], conversation_id=conv_id,
+            is_mock_data=True, data_source="mock",
         )
     elif any(w in msg_lower for w in ["موظف", "staff", "أداء", "كاشير", "employee"]):
         d = cr["staff"]
@@ -904,6 +933,7 @@ def chat_with_data(org_id: str, store_id: str, message: str,
                 ChatDataPoint(label=emp_names[2], value=78, unit="pts"),
             ],
             chart_type="bar", suggestions=d["suggestions"], conversation_id=conv_id,
+            is_mock_data=True, data_source="mock",
         )
     else:
         return ChatResponse(
@@ -916,6 +946,7 @@ def chat_with_data(org_id: str, store_id: str, message: str,
                 t("suggest_next_week_forecast", language),
             ],
             conversation_id=conv_id,
+            is_mock_data=True, data_source="mock",
         )
 
 
@@ -981,6 +1012,7 @@ def get_assistant_response(org_id: str, store_id: str, query: str,
             data={"today_sales": 4520, "transactions": 67, "avg_transaction": 67.5},
             actions=[SuggestedAction(action=a, label=l, route=r) for a, l, r in ad["sales_actions"]],
             related_topics=ad["sales_topics"],
+            is_mock_data=True, data_source="mock",
         )
     elif any(w in q_lower for w in ["مخزون", "نقص", "طلب", "inventory", "stock", "order"]):
         return AssistantResponse(
@@ -988,6 +1020,7 @@ def get_assistant_response(org_id: str, store_id: str, query: str,
             data={"low_stock": 5, "critical": 2, "total_value": 3200},
             actions=[SuggestedAction(action=a, label=l, route=r) for a, l, r in ad["inv_actions"]],
             related_topics=ad["inv_topics"],
+            is_mock_data=True, data_source="mock",
         )
     else:
         return AssistantResponse(
@@ -995,4 +1028,5 @@ def get_assistant_response(org_id: str, store_id: str, query: str,
             data=None,
             actions=[SuggestedAction(action=a, label=l, route=r) for a, l, r in ad["default_actions"]],
             related_topics=ad["default_topics"],
+            is_mock_data=True, data_source="mock",
         )
