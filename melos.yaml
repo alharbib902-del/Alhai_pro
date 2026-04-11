@@ -84,6 +84,13 @@ scripts:
   format:check:
     run: melos exec -- dart format --language-version=latest --set-exit-if-changed .
     description: Check formatting without modifying (CI) - uses latest language version for deterministic output
+    packageFilters:
+      # alhai_l10n is excluded because its lib/l10n/generated/ files are
+      # Flutter-gen-l10n outputs that format differently across OSes due to
+      # Unicode/RTL content handling. Those files are auto-generated so
+      # manual format is not meaningful.
+      ignore:
+        - alhai_l10n
 
   test:coverage:
     run: melos exec -c 4 -- flutter test --coverage
