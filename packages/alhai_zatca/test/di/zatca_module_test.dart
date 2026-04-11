@@ -98,7 +98,8 @@ void main() {
       expect(store, isA<InMemoryChainStore>());
     });
 
-    test('uses InMemoryCertificateStorage by default when no '
+    test(
+        'uses InMemoryCertificateStorage by default when no '
         'certificateStorage provided', () {
       ZatcaModule.register(getIt: getIt);
       final storage = getIt<CertificateStorage>();
@@ -157,7 +158,8 @@ void main() {
       expect(client.environment, equals(ZatcaEnvironment.simulation));
     });
 
-    test('all dependent services can be resolved without throwing '
+    test(
+        'all dependent services can be resolved without throwing '
         '(no circular deps)', () {
       ZatcaModule.register(getIt: getIt);
 

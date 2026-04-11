@@ -482,8 +482,7 @@ void main() {
               expect(
                 e.innerText,
                 matches(RegExp(r'^\d+\.\d{2}$')),
-                reason:
-                    'Value "${e.innerText}" for ${e.name.local} '
+                reason: 'Value "${e.innerText}" for ${e.name.local} '
                     'does not match 2-decimal format',
               );
             }
@@ -542,11 +541,11 @@ void main() {
         final taxTotals = builder.buildTaxTotals(invoice);
         // Direct children of TaxTotal named TaxAmount (not inside TaxSubtotal)
         final first = taxTotals[0].childElements.firstWhere(
-          (e) => e.name.local == 'TaxAmount',
-        );
+              (e) => e.name.local == 'TaxAmount',
+            );
         final second = taxTotals[1].childElements.firstWhere(
-          (e) => e.name.local == 'TaxAmount',
-        );
+              (e) => e.name.local == 'TaxAmount',
+            );
         expect(first.innerText, second.innerText);
       });
     });
