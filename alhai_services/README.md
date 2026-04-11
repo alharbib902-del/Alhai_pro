@@ -1,39 +1,26 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+# دليل المطور الدقيق لحزمة الخدمات (Alhai Services)
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/tools/pub/writing-package-pages).
+هذا المجلد `alhai_services` هو العقل المفكر لجميع تطبيقات المنصة (7 تطبيقات). بدلاً من تكرار اللوجيك (Business Logic) في كل تطبيق، تم فصل العمليات החسابية והتشغيلية لتصبح هنا.
 
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/to/develop-packages).
--->
+## المعمارية 
+تتكون هذه الحزمة من 41 خدمة برمجية (Services Layer)، وتعتمد بشكل أساسي في الداتا على `alhai_core` لطلبات المستودعات (Repositories) من قواعد `Supabase`. يتم استخدام `GetIt` للحقن الاعتمادي.
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+## أهم الخدمات المركزية ووظائفها
 
-## Features
+1. `ai_service.dart`: 
+   - محرك يتواصل مع خادم الـ AI بايثون، يقوم بطلب النماذج الاستباقية كـ `Smart Reorder`.
+2. `sync_queue_service_impl.dart`:
+   - خدمة تخزين في طابور الذاكرة المخبئية والرفع الدَّفعي (Batch Upload) تحسباً لفقدان الإنترنت.
+3. `auth_service.dart` & `pin_validation_service.dart`:
+   - إدارة رموز المرور المؤقتة، التحقق من صلاحية الكاشير قبل أداء عملية مرتجع.
+4. `debt_service.dart`:
+   - سجل مالي للمديونيات (الآجل والسلف) يرفع البيانات ويطابق الدفعات بالسجلات المحاسبية.
+5. `export_service.dart` & `report_service.dart`:
+   - خدمة مخصصة لاستخراج ملفات الكشوفات (CVS/Excel) وتهيئة تنسيق التقارير لمدير المتجر.
+6. `print_service.dart` & `receipt_service.dart`:
+   - طباعة الفواتير على الأجهزة (Android Sunmi/Zebra) وتجهيز فواتير ZATCA الضريبية.
+7. `whatsapp_service_impl.dart` & `sms_service.dart`:
+   - خدمات إرسال OTP للعملاء والرسائل الترويجية وإرسال روابط الفواتير على واتساب.
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
-
-## Getting started
-
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
-
-## Usage
-
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
-
-```dart
-const like = 'sample';
-```
-
-## Additional information
-
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+## دليل الاستخدام
+أي تعديل داخل هذه الخدمات سينعكس مباشرة وفوراً بعد البناء (`melos bootstrap`) على كافة التطبيقات المستفيدة لضمان قوة واتساق النظام.
