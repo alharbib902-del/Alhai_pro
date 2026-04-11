@@ -189,7 +189,7 @@ jobs:
       - name: Build cashier web app
         run: |
           cd apps/cashier
-          flutter build web --release --web-renderer canvaskit
+          flutter build web --release
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
