@@ -1,16 +1,16 @@
-# melos_managed_dependency_overrides: alhai_core,alhai_design_system,alhai_l10n,alhai_services,alhai_shared_ui,alhai_auth,alhai_database
+# melos_managed_dependency_overrides: alhai_core,alhai_design_system,alhai_l10n,alhai_shared_ui,alhai_auth,alhai_database,alhai_sync
 dependency_overrides:
   alhai_auth:
-    path: ../alhai_auth
+    path: ..\\alhai_auth
   alhai_core:
-    path: ../../alhai_core
+    path: ..\\..\\alhai_core
   alhai_database:
-    path: ../alhai_database
+    path: ..\\alhai_database
   alhai_design_system:
-    path: ../../alhai_design_system
+    path: ..\\..\\alhai_design_system
   alhai_l10n:
-    path: ../alhai_l10n
-  alhai_services:
-    path: ../../alhai_services
+    path: ..\\alhai_l10n
   alhai_shared_ui:
-    path: ../alhai_shared_ui
+    path: ..\\alhai_shared_ui
+  alhai_sync:
+    path: ..\\alhai_sync

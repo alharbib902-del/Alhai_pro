@@ -1,20 +1,22 @@
-# melos_managed_dependency_overrides: alhai_auth,alhai_core,alhai_database,alhai_design_system,alhai_l10n,alhai_pos,alhai_shared_ui,alhai_sync,alhai_reports
+# melos_managed_dependency_overrides: alhai_auth,alhai_core,alhai_database,alhai_design_system,alhai_l10n,alhai_pos,alhai_shared_ui,alhai_sync,alhai_reports,alhai_zatca
 dependency_overrides:
   alhai_auth:
-    path: ../../packages/alhai_auth
+    path: ..\\..\\packages\\alhai_auth
   alhai_core:
-    path: ../../alhai_core
+    path: ..\\..\\alhai_core
   alhai_database:
-    path: ../../packages/alhai_database
+    path: ..\\..\\packages\\alhai_database
   alhai_design_system:
-    path: ../../alhai_design_system
+    path: ..\\..\\alhai_design_system
   alhai_l10n:
-    path: ../../packages/alhai_l10n
+    path: ..\\..\\packages\\alhai_l10n
   alhai_pos:
-    path: ../../packages/alhai_pos
+    path: ..\\..\\packages\\alhai_pos
   alhai_reports:
-    path: ../../packages/alhai_reports
+    path: ..\\..\\packages\\alhai_reports
   alhai_shared_ui:
-    path: ../../packages/alhai_shared_ui
+    path: ..\\..\\packages\\alhai_shared_ui
   alhai_sync:
-    path: ../../packages/alhai_sync
+    path: ..\\..\\packages\\alhai_sync
+  alhai_zatca:
+    path: ..\\..\\packages\\alhai_zatca

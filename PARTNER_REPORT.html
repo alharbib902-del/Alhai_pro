@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" x-data="appData()" :class="{ 'dark': darkMode }">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الملف الفني والهندسي - منصة الحي</title>
+    <!-- TailwindCSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- AlpineJS -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: { extend: { fontFamily: { cairo: ['Cairo', 'sans-serif'] } } }
+        }
+    </script>
+    <style>
+        body { font-family: 'Cairo', sans-serif; transition: background 0.3s ease; }
+        .bg-mesh {
+            background-color: #f8fafc;
+        }
+        .dark .bg-mesh {
+            background-color: #0f172a;
+            background-image: radial-gradient(at 0% 0%, rgba(59,130,246,0.15) 0, transparent 50%), radial-gradient(at 100% 100%, rgba(168,85,247,0.15) 0, transparent 50%);
+        }
+        .glass-panel { background: rgba(255, 255, 255, 0.95); box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid rgba(255,255,255,1); border-radius: 1.5rem; }
+        .dark .glass-panel { background: rgba(30, 41, 59, 0.7); box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+        .gradient-text { background: linear-gradient(90deg, #3b82f6, #9333ea); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .dark .gradient-text { background: linear-gradient(90deg, #60a5fa, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    </style>
+</head>
+<body class="bg-mesh text-slate-800 dark:text-slate-200 min-h-screen">
+
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 glass-panel !rounded-none !border-x-0 !border-t-0 border-b px-6 py-4 flex justify-between items-center bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg">
+        <div class="flex items-center gap-4 cursor-pointer" @click="page = 'home'">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center text-white text-xl shadow-lg shadow-blue-500/30">
+                <i class="fa-solid fa-microchip"></i>
+            </div>
+            <h1 class="font-black text-2xl hidden md:block tracking-tight text-slate-800 dark:text-white">منصة <span class="gradient-text">الحي</span></h1>
+        </div>
+        <div class="flex gap-2 bg-slate-100 dark:bg-slate-800 p-1 rounded-full border dark:border-slate-700 font-bold text-sm">
+            <button @click="page = 'home'" :class="page === 'home' ? 'bg-white dark:bg-slate-700 shadow text-blue-600 dark:text-blue-400' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'" class="px-5 py-2 rounded-full transition-all">الرئيسية والكفاءة</button>
+            <button @click="page = 'apps'" :class="page === 'apps' || page === 'app_detail' ? 'bg-white dark:bg-slate-700 shadow text-purple-600 dark:text-purple-400' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'" class="px-5 py-2 rounded-full transition-all hidden sm:block">منظومة التطبيقات (7)</button>
+            <button @click="page = 'services'" :class="page === 'services' ? 'bg-white dark:bg-slate-700 shadow text-emerald-600 dark:text-emerald-400' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'" class="px-5 py-2 rounded-full transition-all hidden sm:block">قوة الخوادم (الخدمات)</button>
+        </div>
+        <button @click="darkMode = !darkMode" class="p-3 w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 hover:scale-110 transition border dark:border-slate-700">
+            <i class="fa-solid fa-moon text-slate-600" x-show="!darkMode"></i>
+            <i class="fa-solid fa-sun text-yellow-500" x-show="darkMode" x-cloak></i>
+        </button>
+    </nav>
+
+    <main class="pt-28 px-4 pb-20 max-w-7xl mx-auto">
+
+        <!-- ======================= -->
+        <!-- PAGE 1: HOME (TECHNICAL READINESS) -->
+        <!-- ======================= -->
+        <div x-show="page === 'home'" x-transition.opacity.duration.400ms>
+            
+            <div class="text-center mb-16 mt-8">
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 font-bold text-sm mb-6 border border-emerald-200 dark:border-emerald-800">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    نطاق برمجي متطور وموثوق
+                </div>
+                <h2 class="text-5xl md:text-6xl font-black mb-6">جاهزية هندسية لـ <br class="md:hidden"/><span class="gradient-text">السيطرة على العمليات</span></h2>
+                <p class="text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto font-semibold leading-relaxed">
+                    منظومة برمجية متكاملة بـ 7 تطبيقات و 12 باقة خدمية. مصممة ببنية (Monorepo) تستند على معايير عالمية لضمان الاستقرار الفني، الحماية الفائقة للبيانات، وسهولة التوسع التشغيلي.
+                </p>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-16">
+                <div class="glass-panel p-6 text-center transform hover:-translate-y-1 transition duration-300">
+                    <div class="w-12 h-12 mx-auto rounded-full bg-green-100 dark:bg-green-900/50 flex items-center justify-center text-green-500 text-xl mb-4"><i class="fa-solid fa-shield-halved"></i></div>
+                    <h3 class="text-3xl font-black text-slate-800 dark:text-slate-100 mb-1">100%</h3>
+                    <p class="text-sm font-bold text-slate-500">حماية فائقة (Data Encryption & RLS)</p>
+                </div>
+                <div class="glass-panel p-6 text-center transform hover:-translate-y-1 transition duration-300 border-b-4 border-blue-500">
+                    <div class="w-12 h-12 mx-auto rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center text-blue-500 text-xl mb-4"><i class="fa-solid fa-mobile-screen"></i></div>
+                    <h3 class="text-3xl font-black text-slate-800 dark:text-slate-100 mb-1">348</h3>
+                    <p class="text-sm font-bold text-slate-500">شاشة واجهة مستخدم بالمشروع</p>
+                </div>
+                <div class="glass-panel p-6 text-center transform hover:-translate-y-1 transition duration-300">
+                    <div class="w-12 h-12 mx-auto rounded-full bg-purple-100 dark:bg-purple-900/50 flex items-center justify-center text-purple-500 text-xl mb-4"><i class="fa-brands fa-app-store-ios"></i></div>
+                    <h3 class="text-3xl font-black text-slate-800 dark:text-slate-100 mb-1">7 + 12</h3>
+                    <p class="text-sm font-bold text-slate-500">تطبيقات متكاملة + مكتبات مساعدة</p>
+                </div>
+                <div class="glass-panel p-6 text-center transform hover:-translate-y-1 transition duration-300">
+                    <div class="w-12 h-12 mx-auto rounded-full bg-yellow-100 dark:bg-yellow-900/50 flex items-center justify-center text-yellow-600 text-xl mb-4"><i class="fa-solid fa-earth-americas"></i></div>
+                    <h3 class="text-3xl font-black text-slate-800 dark:text-slate-100 mb-1 text-yellow-600 dark:text-yellow-400">6 + 4</h3>
+                    <p class="text-sm font-bold text-slate-500">لغات تشغيل + منصات عرض (OS)</p>
+                </div>
+            </div>
+
+            <!-- Pitch Conviction Section (Technical Prowess) -->
+            <div class="glass-panel p-8 md:p-12 mb-16 relative overflow-hidden">
+                <div class="absolute -right-20 -top-20 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl"></div>
+                <div class="absolute -left-20 -bottom-20 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl"></div>
+                
+                <h3 class="text-3xl font-black mb-8 text-center relative z-10"><i class="fa-solid fa-check-double text-blue-500 mr-2"></i> مقومات نجاح المشروع والاعتمادية الفنية</h3>
+                
+                <div class="grid md:grid-cols-3 gap-8 relative z-10">
+                    <div>
+                        <div class="text-5xl opacity-20 mb-[-20px] ml-4 font-black">1</div>
+                        <h4 class="text-xl font-bold mb-3 border-r-4 border-blue-500 pr-3">مرونة للتوسع دون إنهيار (Scalability)</h4>
+                        <p class="text-slate-600 dark:text-slate-400 text-sm leading-loose font-semibold">بفضل البنية السحابية المتشابكة (Supabase) والاعتماد على الخدمات المصغرة المعزولة، يمكن إضافة مئات العمليات بالثانية وتفعيل النظام لآلاف البقالات في وقت واحد دون التسبب في تأخير الطلبات.</p>
+                    </div>
+                    <div>
+                        <div class="text-5xl opacity-20 mb-[-20px] ml-4 font-black">2</div>
+                        <h4 class="text-xl font-bold mb-3 border-r-4 border-emerald-500 pr-3">الموثوقية والخلو من الأعطال الكبرى</h4>
+                        <p class="text-slate-600 dark:text-slate-400 text-sm leading-loose font-semibold">استخدام هيكلة (Clean Architecture) والجمع المتقدم للحزم المشتركة، جعل النظام يجتاز فحص الاعتمادات (Dependency Audit) بالكامل. لا مفاجآت في الصيانة، والأكواد تعمل بانسجام.</p>
+                    </div>
+                    <div>
+                        <div class="text-5xl opacity-20 mb-[-20px] ml-4 font-black">3</div>
+                        <h4 class="text-xl font-bold mb-3 border-r-4 border-purple-500 pr-3">أتمتة ذكية وموثوقة (ZATCA & AI)</h4>
+                        <p class="text-slate-600 dark:text-slate-400 text-sm leading-loose font-semibold">النظام متوافق 100% مع أنظمة الفوترة الإلكترونية الضريبية المعقدة لتشفير الفواتير. إلى جانب محركات في الخلفية تحلل حركة البضائع لإنشاء أوامر وتنبيهات أوتوماتيكية لأصحاب المتجر.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-center gap-4">
+                <button @click="page = 'apps'" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold text-lg px-8 py-4 rounded-2xl shadow-lg hover:shadow-blue-500/30 hover:-translate-y-1 transition transform flex items-center gap-3">
+                    تصفح التطبيقات الـ 7 بالتفصيل <i class="fa-solid fa-arrow-left"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- ======================= -->
+        <!-- PAGE 2: APPS ECOSYSTEM -->
+        <!-- ======================= -->
+        <div x-show="page === 'apps'" x-transition.opacity.duration.400ms x-cloak>
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h2 class="text-4xl font-black mb-2"><i class="fa-solid fa-mobile-screen text-purple-500 ml-2"></i> منظومة التطبيقات (7 تطبيقات مفصلة)</h2>
+                    <p class="text-slate-500 font-bold">اضغط على أي تطبيق لفتح صفحته المستقلة لرؤية تفاصيل شاشاته ووظائفه التشغيلية.</p>
+                </div>
+                <button @click="page = 'home'" class="hidden md:flex text-slate-500 hover:text-slate-800 dark:hover:text-white font-bold items-center gap-2 bg-white dark:bg-slate-800 px-4 py-2 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">العودة <i class="fa-solid fa-house text-sm"></i></button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- App Cards Generated by Alpine -->
+                <template x-for="app in apps" :key="app.id">
+                    <div @click="openAppDetail(app)" class="glass-panel p-6 cursor-pointer hover:-translate-y-2 hover:shadow-[0_15px_30px_rgba(59,130,246,0.15)] transition duration-300 border-r-4 h-full flex flex-col" :class="`border-${app.color}-500`">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl" :class="`bg-${app.color}-100 dark:bg-${app.color}-900/40 text-${app.color}-500`">
+                                <i class="fa-solid" :class="app.icon"></i>
+                            </div>
+                            <span class="text-xs font-bold px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-full text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap" x-text="app.screens + ' شاشة'"></span>
+                        </div>
+                        <h3 class="text-xl font-black mb-2" x-text="app.name"></h3>
+                        <p class="text-sm font-semibold text-slate-600 dark:text-slate-400 mb-6 line-clamp-3" x-text="app.desc"></p>
+                        
+                        <div class="flex flex-wrap gap-2 mt-auto">
+                            <template x-for="tag in app.features">
+                                <span class="text-[10px] font-bold px-2 py-1 rounded bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-slate-500" x-text="tag"></span>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+        <!-- ======================= -->
+        <!-- PAGE 3: APP DETAIL VIEW -->
+        <!-- ======================= -->
+        <div x-show="page === 'app_detail' && selectedApp" x-transition.opacity.duration.400ms x-cloak>
+            <button @click="page = 'apps'" class="mb-6 font-bold text-slate-500 hover:text-blue-500 flex items-center gap-2"><i class="fa-solid fa-arrow-right"></i> العودة لقائمة التطبيقات</button>
+            
+            <div class="glass-panel overflow-hidden">
+                <div class="p-8 border-b dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex flex-col md:flex-row gap-6 items-center md:items-start justify-between relative">
+                    <div class="flex items-center gap-6">
+                        <div class="w-20 h-20 rounded-3xl flex items-center justify-center text-4xl shadow-inner border border-white/20" :class="`bg-${selectedApp.color}-100 dark:bg-${selectedApp.color}-900/40 text-${selectedApp.color}-500`">
+                            <i class="fa-solid" :class="selectedApp.icon"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-3xl font-black mb-2" x-text="selectedApp.name"></h2>
+                            <span class="text-sm font-bold px-4 py-1 rounded-full text-white shadow-sm" :class="`bg-${selectedApp.color}-500`">حجم الواجهة: <span x-text="selectedApp.screens"></span> شاشة كاملة</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-8">
+                    <h3 class="text-xl font-black mb-4 border-r-4 border-slate-300 dark:border-slate-600 pr-3">المهمة التشغيلية والدور التقني</h3>
+                    <p class="text-slate-600 dark:text-slate-400 font-semibold mb-8 text-lg leading-relaxed" x-text="selectedApp.desc"></p>
+
+                    <h3 class="text-xl font-black mb-6 border-r-4 border-blue-500 pr-3">خريطة عمل الشاشات (Screen Map & Functions)</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <template x-for="cat in selectedApp.sections">
+                            <div class="border dark:border-slate-700 bg-slate-50 dark:bg-slate-800/30 p-5 rounded-2xl">
+                                <h4 class="font-bold text-lg mb-4 text-blue-600 dark:text-blue-400 border-b dark:border-slate-700 pb-2 flex items-center gap-2">
+                                    <i class="fa-solid" :class="cat.icon"></i> <span x-text="cat.title"></span>
+                                </h4>
+                                <ul class="space-y-4">
+                                    <template x-for="screen in cat.screens">
+                                        <li class="flex items-start gap-3">
+                                            <i class="fa-solid fa-mobile-screen text-slate-400 mt-1"></i>
+                                            <div>
+                                                <div class="font-bold text-sm text-slate-800 dark:text-slate-200" x-text="screen.name"></div>
+                                                <div class="text-xs text-slate-500 dark:text-slate-400 mt-1 font-semibold" x-text="screen.func"></div>
+                                            </div>
+                                        </li>
+                                    </template>
+                                </ul>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ======================= -->
+        <!-- PAGE 4: SERVICES & INFRASTRUCTURE -->
+        <!-- ======================= -->
+        <div x-show="page === 'services'" x-transition.opacity.duration.400ms x-cloak>
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-black mb-4"><i class="fa-solid fa-server text-emerald-500 ml-2"></i> قوة السيرفرات والخدمات البنيوية</h2>
+                <p class="text-lg text-slate-500 font-bold max-w-2xl mx-auto">لضمان عدم انهيار التطبيقات تحت الضغط، تم استخراج المهام التقنية المعقدة إلى 41 خدمة برمجية منظمة (Microservice-like Architecture) لتعمل بكفاءة مطلقة وفي الخلفية.</p>
+            </div>
+
+            <!-- Databases & Central Core -->
+            <div class="glass-panel p-8 mb-8 border border-emerald-200 dark:border-emerald-900 border-4 !border-t-0 !border-l-0 !border-r-0">
+                <h3 class="text-2xl font-black mb-6 flex items-center gap-3"><i class="fa-solid fa-database text-blue-500"></i> قواعد البيانات المركزية (Supabase)</h3>
+                <div class="grid md:grid-cols-3 gap-6 font-semibold">
+                    <div class="bg-slate-100 dark:bg-slate-800 p-4 rounded-xl border dark:border-slate-700">
+                        <i class="fa-solid fa-shield-halved text-2xl text-emerald-500 mb-3 block"></i>
+                        حماية (RLS): <span class="text-sm font-normal text-slate-500 block mt-1">كل بيانات فاتورة، عميل، ومخزون معزولة تماماً ولا يمكن قراءتها من المتاجر الأخرى أمنياً.</span>
+                    </div>
+                    <div class="bg-slate-100 dark:bg-slate-800 p-4 rounded-xl border dark:border-slate-700">
+                        <i class="fa-solid fa-bolt text-2xl text-yellow-500 mb-3 block"></i>
+                        دوال الحافة (Edge RPC): <span class="text-sm font-normal text-slate-500 block mt-1">تنفيذ المهام الحسابية الضخمة داخل قاعدة البيانات مباشرة لضمان أسرع استجابة.</span>
+                    </div>
+                    <div class="bg-slate-100 dark:bg-slate-800 p-4 rounded-xl border dark:border-slate-700">
+                        <i class="fa-solid fa-key text-2xl text-red-500 mb-3 block"></i>
+                        المصادقة (Auth): <span class="text-sm font-normal text-slate-500 block mt-1">مدمج مع أعلى معايير الدخول الآمن والجلسات المشفرة لجميع المستخدمين.</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <template x-for="srv in services" :key="srv.name">
+                    <div class="glass-panel p-5 hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition">
+                        <div class="w-10 h-10 rounded-lg bg-slate-200 dark:bg-slate-700 flex items-center justify-center mb-3 text-slate-600 dark:text-slate-300">
+                            <i class="fa-solid" :class="srv.icon"></i>
+                        </div>
+                        <h4 class="font-bold text-md mb-2 text-emerald-600 dark:text-emerald-400" x-text="srv.name"></h4>
+                        <p class="text-xs text-slate-600 dark:text-slate-400 font-semibold leading-relaxed" x-text="srv.func"></p>
+                    </div>
+                </template>
+            </div>
+            
+            <div class="mt-8 p-6 glass-panel text-center font-bold text-slate-500 text-sm">
+                + بالإضافة للمعايير الصارمة لبرمجة 33 خدمة أخرى تتعلق بـ (SMS Auth, Role Management, Push Notifications) وغيرها.
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        function appData() {
+            return {
+                darkMode: true,
+                page: 'home',
+                selectedApp: null,
+                openAppDetail(app) {
+                    this.selectedApp = app;
+                    this.page = 'app_detail';
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                },
+                apps: [
+                    { 
+                        id: 'cashier', icon: 'fa-cash-register', color: 'blue', 
+                        name: 'الكاشير المتقدم (POS)', screens: 79, 
+                        desc: 'أداة الإدخال الرئيسية للمتجر. يسمح لعامل الكاشير بإتمام المبيعات بسرعة خيالية دون انتظار تحميل الإنترنت. قاعدة بياناته تعمل محلياً وترفع الفواتير آلياً حال توفر التغطية.', 
+                        features: ['ZATCA QR', 'دفع مقسم', 'أوفلاين', 'فواتير معلقة'],
+                        sections: [
+                            { icon: 'fa-cart-shopping', title: 'عمليات الوجوه البيعية', screens: [
+                                { name: 'شاشة واجهة النقطة (POS Desktop)', func: 'تستعرض شاشة المنتجات وتسمح بضرب الباركود وحساب الوزن للسلع بسلاسة.' },
+                                { name: 'شاشة الدفع المقسم (Split Payment)', func: 'تقسيم الفاتورة بأكثر من وسيلة دفع (نقد، مدى، آجل) في عملية واحدة.' },
+                                { name: 'شاشة الفواتير المعلقة (Hold)', func: 'تأجيل سلة العميل ومتابعة محاسبة عميل آخر فوراً.' }
+                            ]},
+                            { icon: 'fa-clock-rotate-left', title: 'الإداريات والورديات', screens: [
+                                { name: 'شاشة إغلاق الوردية (Z-Report)', func: 'إحصاء ومطابقة الدرج مع البيانات المسجلة لتلافي العجز.' },
+                                { name: 'شاشة المرتجعات (Refund & Returns)', func: 'مسح باركود الفاتورة وإلغاء جزء من الصنف أو الفاتورة كاملة مع توثيق ذلك.' }
+                            ]}
+                        ]
+                    },
+                    { 
+                        id: 'admin', icon: 'fa-chart-line', color: 'purple', 
+                        name: 'تحكم المتجر (Store Admin)', screens: 106, 
+                        desc: 'اللوحة الكاملة لمدير المتجر التي يعتمد عليها في بناء قاعدة المنتجات وإصدار التقارير الضريبية وطلب النواقص اللوجستية.', 
+                        features: ['إدارة الموردين', 'جرد رقمي', 'تسوية مالية'],
+                        sections: [
+                            { icon: 'fa-boxes-stacked', title: 'المستودع الرقمي', screens: [
+                                { name: 'شاشة كتالوج البضائع', func: 'إنشاء أصناف، وربط الباركودات بوحدات القياس (كرتون/حبة).' },
+                                { name: 'شاشة الجرد والتسوية', func: 'إدخال كميات الجرد الفعلية وتصحيح التالف والمفقود من المخازن.' }
+                            ]},
+                            { icon: 'fa-file-invoice-dollar', title: 'التقارير والمشتريات', screens: [
+                                { name: 'شاشات التقارير الضريبية Excel', func: 'تجميع الفواتير وتصديرها للمحاسبة بضغطة زر واحدة.' },
+                                { name: 'شاشة الموردين والطلبيات', func: 'تنظيم التعامل مع الموردين ورفع طلبيات الشراء للنواقص.' }
+                            ]}
+                        ]
+                    },
+                    { 
+                        id: 'adminlite', icon: 'fa-mobile-screen-button', color: 'orange', 
+                        name: 'إدارة السرعة (Admin Lite)', screens: 28, 
+                        desc: 'نسخة الجوال المخصصة للمدير لتلقي الإشعارات الدائمة واتخاذ التدابير السريعة في حال التواجد خارج مركز العمل.', 
+                        features: ['إعادة طلب آلي (AI)', 'نظرة سريعة', 'إشعارات حيوية'],
+                        sections: [
+                            { icon: 'fa-brain', title: 'القرارات المتسارعة', screens: [
+                                { name: 'شاشة المشورة والاستعاضة', func: 'تحليل البضائع التي توشك على النفاذ وتهيئة طلب تسوق جاهز.' },
+                                { name: 'شاشة النبض المالي (Daily Pulse)', func: 'عرض مبيعات الفروع المباشرة ومقارنة الأداء اليومي لحظياً.' }
+                            ]}
+                        ]
+                    },
+                    { 
+                        id: 'customer', icon: 'fa-basket-shopping', color: 'pink', 
+                        name: 'تطبيق العميل النهائي', screens: 40, 
+                        desc: 'واجهة تسوق إلكتروني متقدمة لتوصيل الطلبات للمنازل، مع نظام مدمج للنقاط والولاء لتعزيز ارتباط المستهلك بالمؤسسة.', 
+                        features: ['تتبع خرائط حي', 'نقاط ولاء', 'بوابات أمنة'],
+                        sections: [
+                            { icon: 'fa-store', title: 'التسوق الذكي', screens: [
+                                { name: 'شاشة الرئيسية وأقسام العروض', func: 'عرض المغريات التسويقية والمنتجات بصورة واضحة وتصفح سريع.' },
+                                { name: 'شاشة النقاط (Loyalty Wallet)', func: 'متابعة الرصيد ونقاط المكافآت لتشجيع عمليات الشراء المستمرة.' }
+                            ]},
+                            { icon: 'fa-motorcycle', title: 'متابعة الطلبات', screens: [
+                                { name: 'شاشة التتبع المباشر للخريطة', func: 'تتبع حركة المندوب عبر نظام GPS لتحديد وقت الاستلام بدقة.' },
+                                { name: 'شاشة إتمام الدفع (Checkout)', func: 'التعامل مع البطاقات وتحديد العنوان بطريقة آمنة ومعتمدة.' }
+                            ]}
+                        ]
+                    },
+                    { 
+                        id: 'driver', icon: 'fa-motorcycle', color: 'emerald', 
+                        name: 'فريق التوصيل (Driver App)', screens: 18, 
+                        desc: 'أداة لوجستية متطورة لتنظيم وتوجيه طاقم التوصيل، حيث ترسم لهم الطريق الأمثل لاستلام الطلبات وتوثيق تسليمها بنجاح.', 
+                        features: ['توجيه خرائطي', 'محفظة السائق', 'تأكيد التسليم'],
+                        sections: [
+                            { icon: 'fa-route', title: 'إدارة الطلب والوجهة', screens: [
+                                { name: 'شاشة الطلبات الواردة', func: 'استلام الأوامر الجاهزة للتوصيل وتنظيم طابور المهام للسائق.' },
+                                { name: 'شاشة الملاحة (Navigation view)', func: 'توجيه السائق وحساب المسار المباشر عبر خدمات الخرائط المدمجة.' }
+                            ]},
+                            { icon: 'fa-wallet', title: 'الماليات والتوثيق', screens: [
+                                { name: 'شاشة المحفظة للسائق', func: 'حصر المبالغ النقدية (الكاش) التي تم تحصيلها لتسويتها مع المؤسسة.' },
+                                { name: 'شاشة التوقيع / الرمز', func: 'إلزام الزبون بإدخال رمز التأكيد لضمان وصول الطلب السليم.' }
+                            ]}
+                        ]
+                    },
+                    { 
+                        id: 'distributor', icon: 'fa-truck-fast', color: 'teal', 
+                        name: 'بوابة الموردين (B2B)', screens: 25, 
+                        desc: 'منصة تستهدف موردي السلع بالجملة لتمكينهم من استقبال الأوامر التوريدية من المتاجر الكبرى آلياً وبشكل موثق.', 
+                        features: ['سوق جملة', 'كتالوج تسعير', 'لوحة تحضير'],
+                        sections: [
+                            { icon: 'fa-handshake', title: 'أوامر التوريد المباشر', screens: [
+                                { name: 'شاشة استقبال طلبات البقالات', func: 'إظهار طلبيات الفروع مع إمكانية تحضيرها وإصدار فاتورة الاستلام.' },
+                                { name: 'شاشة إدارة الكتالوج', func: 'التحكم بالمنتجات المعروضة بالجملة مع تعديل أسعار العروض التنافسية.' }
+                            ]}
+                        ]
+                    },
+                    { 
+                        id: 'superadmin', icon: 'fa-crown', color: 'yellow', 
+                        name: 'لوحة التحكم المركزية (Super)', screens: 52, 
+                        desc: 'واجهة التحكم الخاصة ببرمجة النظام الشامل لمراقبة كافة مفاصل القطاعات وإدارة المنظمات بأعلى مستوى ترخيص إداري.', 
+                        features: ['Dashboard إداري', 'صلاحيات متعددة', 'مراقبة الشبكة'],
+                        sections: [
+                            { icon: 'fa-server', title: 'إدارة أمن الشبكة', screens: [
+                                { name: 'شاشة المراقبة المركزية', func: 'مراقبة عدد الفروع النشطة وحالة الاستقرار الفني للسيرفرات.' },
+                                { name: 'شاشة التراخيص والمتاجر', func: 'تفعيل التراخيص، إيقاف التعليق، وإدارة سجلات الملاك الرئيسيين.' }
+                            ]}
+                        ]
+                    }
+                ],
+                services: [
+                    { name: 'ai_service.dart (الذكاء الاصطناعي)', icon: 'fa-microchip', func: 'يتصل بخوادم خلفية لتحليل استهلاك المنتجات عبر الأيام والتنبؤ بإنذار النفاذ وتحضير سلة المشتريات بشكل استباقي مقترح.' },
+                    { name: 'sync_queue_service.dart (المزامنة الذكية)', icon: 'fa-rotate', func: 'عند انقطاع الأنترنت بالمحل يستمر المتجر بالعمل؛ هذه الخدمة تخزن العمليات وترفعها لقواعد السحابة حال استعادة الارتباط بالشبكة.' },
+                    { name: 'receipt_service.dart (تشفير الفواتير)', icon: 'fa-barcode', func: 'أساس التوافق مع أنظمة الفوترة (ZATCA)، تبني فاتورة مشفرة بتقنية TLV Base64 وتحصّن البيانات الضريبية.' },
+                    { name: 'print_service.dart (التوجيه الطباعي)', icon: 'fa-print', func: 'مكتبة لربط كافة أنواع الطرفيات (إيصالات وشبكات IP) لإصدار السندات المطبوعة بدون أخطاء تنسيق.' },
+                    { name: 'debt_service.dart (حساب الذمم والآجل)', icon: 'fa-book-journal-whills', func: 'تنظيم ديون العملاء الموثوقين، وحفظ الأرصدة وإدارة التحديث الآلي بالدفعات لضمان عدم ضياع المستحقات.' },
+                    { name: 'delivery_service.dart (الخرائط اللوجستية)', icon: 'fa-route', func: 'تحديد المسافات واحتساب تكلفة التوصيل الديناميكية وربط مندوب التوصيل بطلب العميل الخريطي.' },
+                    { name: 'auth_service.dart (العبور الآمن)', icon: 'fa-shield-cat', func: 'إحصاء جلسات النظام، إدارة الدخول الآمن، صلاحيات الفروع المشفرة والتصدي للمتطفلين غير المصرح لهم.' },
+                    { name: 'import_server.dart (الهندسة العكسية للبيانات)', icon: 'fa-file-csv', func: 'إمكانية رفع آلاف المنتجات بأسعارها بضغطة زر واحد عبر الإكسيل لتأسيس مخزون الكتروني بظرف ثوان.' }
+                ]
+            }
+        }
+    </script>
+</body>
+</html>
