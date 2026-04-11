@@ -22,7 +22,7 @@ void main() {
       await tester.pumpWidget(
         buildTestableWidget(const ComplaintsReportScreen()),
       );
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 1));
 
       expect(find.byType(ComplaintsReportScreen), findsOneWidget);
     });
@@ -31,7 +31,7 @@ void main() {
       await tester.pumpWidget(
         buildTestableWidget(const ComplaintsReportScreen()),
       );
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 1));
 
       expect(find.byType(Scaffold), findsWidgets);
     });
@@ -40,7 +40,7 @@ void main() {
       await tester.pumpWidget(
         buildTestableWidget(const ComplaintsReportScreen()),
       );
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 1));
 
       expect(find.byType(ComplaintsReportScreen), findsOneWidget);
     });

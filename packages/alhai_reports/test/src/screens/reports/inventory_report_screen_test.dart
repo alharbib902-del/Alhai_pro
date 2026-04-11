@@ -29,7 +29,7 @@ void main() {
       await tester.pumpWidget(
         buildTestableWidget(const InventoryReportScreen()),
       );
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 1));
 
       expect(find.byType(Scaffold), findsWidgets);
     });
@@ -49,7 +49,7 @@ void main() {
       expect(find.byType(InventoryReportScreen), findsOneWidget);
 
       completer.complete(<ProductsTableData>[]);
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 1));
     });
 
     testWidgets('shows error state when loading fails', (tester) async {
@@ -60,7 +60,7 @@ void main() {
       await tester.pumpWidget(
         buildTestableWidget(const InventoryReportScreen()),
       );
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 1));
 
       // Error state shows error icon and retry button
       expect(find.byIcon(Icons.error_outline_rounded), findsOneWidget);
@@ -72,7 +72,7 @@ void main() {
       await tester.pumpWidget(
         buildTestableWidget(const InventoryReportScreen()),
       );
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 1));
 
       // Empty state shows inventory_2_outlined icon
       expect(find.byIcon(Icons.inventory_2_outlined), findsOneWidget);
@@ -103,7 +103,7 @@ void main() {
       await tester.pumpWidget(
         buildTestableWidget(const InventoryReportScreen()),
       );
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 1));
 
       // Should show the DataTable with product data
       expect(find.byType(DataTable), findsOneWidget);
@@ -114,7 +114,7 @@ void main() {
       await tester.pumpWidget(
         buildTestableWidget(const InventoryReportScreen()),
       );
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 1));
 
       // Screen renders with app bar
       expect(find.byType(AppBar), findsOneWidget);
@@ -133,14 +133,14 @@ void main() {
       await tester.pumpWidget(
         buildTestableWidget(const InventoryReportScreen()),
       );
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 1));
 
       // Should be in error state
       expect(find.byIcon(Icons.error_outline_rounded), findsOneWidget);
 
       // Tap retry button
       await tester.tap(find.byIcon(Icons.refresh_rounded));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 1));
 
       // After retry, should show empty state (no products)
       expect(find.byIcon(Icons.inventory_2_outlined), findsOneWidget);

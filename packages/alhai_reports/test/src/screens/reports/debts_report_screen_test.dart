@@ -20,14 +20,14 @@ void main() {
   group('DebtsReportScreen', () {
     testWidgets('renders without error', (tester) async {
       await tester.pumpWidget(buildTestableWidget(const DebtsReportScreen()));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 1));
 
       expect(find.byType(DebtsReportScreen), findsOneWidget);
     });
 
     testWidgets('shows Scaffold', (tester) async {
       await tester.pumpWidget(buildTestableWidget(const DebtsReportScreen()));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 1));
 
       expect(find.byType(Scaffold), findsWidgets);
     });

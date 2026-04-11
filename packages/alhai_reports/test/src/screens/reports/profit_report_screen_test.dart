@@ -25,7 +25,7 @@ void main() {
     testWidgets('renders without crashing', (tester) async {
       await tester.pumpWidget(buildTestableWidget(const ProfitReportScreen()));
       // The screen may show loading or error - either is fine, it should not crash
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 1));
 
       expect(find.byType(Scaffold), findsWidgets);
     });
@@ -58,7 +58,7 @@ void main() {
           minSale: 0,
         ),
       );
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 1));
     });
 
     testWidgets('shows error state when data loading fails', (tester) async {
@@ -76,7 +76,7 @@ void main() {
       ).thenThrow(Exception('Database error'));
 
       await tester.pumpWidget(buildTestableWidget(const ProfitReportScreen()));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 1));
 
       // Error state shows error icon
       expect(find.byIcon(Icons.error_outline), findsOneWidget);
@@ -94,7 +94,7 @@ void main() {
       ).thenThrow(Exception('DB error'));
 
       await tester.pumpWidget(buildTestableWidget(const ProfitReportScreen()));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 1));
 
       // Error state has retry button (ElevatedButton)
       expect(find.byType(ElevatedButton), findsOneWidget);
@@ -104,7 +104,7 @@ void main() {
       await tester.pumpWidget(
         buildTestableWidget(const ProfitReportScreen(), storeId: null),
       );
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 1));
 
       // Should show error state saying store not selected
       expect(find.byType(Scaffold), findsWidgets);
@@ -112,7 +112,7 @@ void main() {
 
     testWidgets('shows app bar with correct title', (tester) async {
       await tester.pumpWidget(buildTestableWidget(const ProfitReportScreen()));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 1));
 
       // There should be an AppBar
       expect(find.byType(AppBar), findsOneWidget);
@@ -131,7 +131,7 @@ void main() {
       ).thenThrow(Exception('DB error'));
 
       await tester.pumpWidget(buildTestableWidget(const ProfitReportScreen()));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 1));
 
       // The error state scaffold also has an app bar but no action buttons
       // Check that the scaffold renders

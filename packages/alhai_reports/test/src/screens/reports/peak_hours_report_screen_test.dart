@@ -22,7 +22,7 @@ void main() {
       await tester.pumpWidget(
         buildTestableWidget(const PeakHoursReportScreen()),
       );
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 1));
 
       expect(find.byType(PeakHoursReportScreen), findsOneWidget);
     });
@@ -31,7 +31,7 @@ void main() {
       await tester.pumpWidget(
         buildTestableWidget(const PeakHoursReportScreen()),
       );
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 1));
 
       expect(find.byType(Scaffold), findsWidgets);
     });

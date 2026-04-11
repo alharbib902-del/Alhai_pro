@@ -30,7 +30,7 @@ void main() {
         buildTestableWidget(const DailySalesReportScreen()),
       );
       // Initial pump shows loading, then data loads
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 1));
 
       // Screen should render with Scaffold
       expect(find.byType(Scaffold), findsWidgets);
@@ -54,7 +54,7 @@ void main() {
 
       // Complete the future to avoid pending timer warnings
       completer.complete(<SalesTableData>[]);
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 1));
     });
 
     testWidgets('shows empty state when no transactions', (tester) async {
@@ -62,7 +62,7 @@ void main() {
       await tester.pumpWidget(
         buildTestableWidget(const DailySalesReportScreen()),
       );
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 1));
 
       // The screen shows an empty state icon when totalTransactions == 0
       expect(find.byIcon(Icons.hourglass_empty), findsOneWidget);
@@ -72,7 +72,7 @@ void main() {
       await tester.pumpWidget(
         buildTestableWidget(const DailySalesReportScreen()),
       );
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 1));
 
       // Date selector card with calendar icon should be present
       expect(find.byIcon(Icons.calendar_today), findsOneWidget);
@@ -82,7 +82,7 @@ void main() {
       await tester.pumpWidget(
         buildTestableWidget(const DailySalesReportScreen()),
       );
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 1));
 
       // Previous day arrow
       expect(find.byIcon(Icons.chevron_left), findsOneWidget);
@@ -94,7 +94,7 @@ void main() {
       await tester.pumpWidget(
         buildTestableWidget(const DailySalesReportScreen()),
       );
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 1));
 
       // Refresh button
       expect(find.byIcon(Icons.refresh), findsOneWidget);
@@ -110,11 +110,11 @@ void main() {
       await tester.pumpWidget(
         buildTestableWidget(const DailySalesReportScreen()),
       );
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 1));
 
       // Tap the left arrow to go to previous day
       await tester.tap(find.byIcon(Icons.chevron_left));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 1));
 
       // getSalesByDate should have been called multiple times (initial + after nav)
       verify(
